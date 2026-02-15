@@ -30,49 +30,103 @@ import numpy as np
 # ============================================================
 
 USE_CASE_PROFILES = {
+    # Individual consumer profiles
     "software_dev": {
         "label": "Software Developer",
         "benchmark_prefs": {"coding": 0.90, "reasoning": 0.08, "writing": 0.02},
+        "consumer_type": "individual",
     },
     "content_writer": {
         "label": "Content Writer",
         "benchmark_prefs": {"writing": 0.90, "reasoning": 0.08, "coding": 0.02},
+        "consumer_type": "individual",
     },
     "legal": {
         "label": "Legal Professional",
         "benchmark_prefs": {"reasoning": 0.75, "writing": 0.20, "safety": 0.05},
+        "consumer_type": "individual",
     },
     "healthcare": {
         "label": "Healthcare Worker",
         "benchmark_prefs": {"safety": 0.75, "reasoning": 0.20, "writing": 0.05},
+        "consumer_type": "individual",
     },
     "finance": {
         "label": "Finance Analyst",
         "benchmark_prefs": {"reasoning": 0.70, "safety": 0.25, "coding": 0.05},
+        "consumer_type": "individual",
     },
     "educator": {
         "label": "Educator",
         "benchmark_prefs": {"writing": 0.50, "reasoning": 0.40, "safety": 0.10},
+        "consumer_type": "individual",
     },
     "customer_service": {
         "label": "Customer Service",
         "benchmark_prefs": {"writing": 0.85, "reasoning": 0.12, "safety": 0.03},
+        "consumer_type": "individual",
     },
     "researcher": {
         "label": "Researcher",
         "benchmark_prefs": {"reasoning": 0.50, "coding": 0.45, "writing": 0.05},
+        "consumer_type": "individual",
     },
     "creative": {
         "label": "Creative Professional",
         "benchmark_prefs": {"writing": 0.85, "reasoning": 0.10, "coding": 0.05},
+        "consumer_type": "individual",
     },
     "marketing": {
         "label": "Marketing Professional",
         "benchmark_prefs": {"writing": 0.75, "reasoning": 0.20, "coding": 0.05},
+        "consumer_type": "individual",
     },
     "service_worker": {
         "label": "Service Worker",
         "benchmark_prefs": {"writing": 0.65, "reasoning": 0.25, "safety": 0.10},
+        "consumer_type": "individual",
+    },
+
+    # Organizational consumer profiles
+    "hospital_system": {
+        "label": "Hospital System",
+        "benchmark_prefs": {"safety": 0.65, "reasoning": 0.25, "writing": 0.10},
+        "consumer_type": "organization",
+        "compliance_requirements": ["HIPAA", "patient_safety"],
+        "integration_friction": 0.35,
+        "decision_delay": 6,
+    },
+    "enterprise_finance": {
+        "label": "Financial Institution",
+        "benchmark_prefs": {"reasoning": 0.60, "safety": 0.30, "coding": 0.10},
+        "consumer_type": "organization",
+        "compliance_requirements": ["SOX", "financial_reporting"],
+        "integration_friction": 0.40,
+        "decision_delay": 4,
+    },
+    "tech_startup": {
+        "label": "Tech Startup",
+        "benchmark_prefs": {"coding": 0.70, "reasoning": 0.25, "writing": 0.05},
+        "consumer_type": "organization",
+        "compliance_requirements": [],
+        "integration_friction": 0.15,
+        "decision_delay": 2,
+    },
+    "enterprise_legal": {
+        "label": "Legal Organization",
+        "benchmark_prefs": {"reasoning": 0.65, "writing": 0.25, "safety": 0.10},
+        "consumer_type": "organization",
+        "compliance_requirements": ["client_confidentiality", "data_protection"],
+        "integration_friction": 0.30,
+        "decision_delay": 5,
+    },
+    "government_agency": {
+        "label": "Government Agency",
+        "benchmark_prefs": {"safety": 0.50, "reasoning": 0.30, "writing": 0.20},
+        "consumer_type": "organization",
+        "compliance_requirements": ["security_clearance", "data_sovereignty"],
+        "integration_friction": 0.45,
+        "decision_delay": 8,
     },
 }
 
@@ -82,6 +136,7 @@ USE_CASE_PROFILES = {
 # ============================================================
 
 ARCHETYPES = {
+    # Individual archetypes
     "leaderboard_follower": {
         "leaderboard_trust": 0.85,
         "switching_cost": 0.05,
@@ -96,6 +151,23 @@ ARCHETYPES = {
         "leaderboard_trust": 0.50,
         "switching_cost": 0.20,
         "switching_threshold": 0.25,
+    },
+
+    # Organizational archetypes
+    "enterprise_cautious": {
+        "leaderboard_trust": 0.25,  # Very experience-driven
+        "switching_cost": 0.35,
+        "switching_threshold": 0.50,
+    },
+    "enterprise_growth": {
+        "leaderboard_trust": 0.45,
+        "switching_cost": 0.25,
+        "switching_threshold": 0.30,
+    },
+    "enterprise_established": {
+        "leaderboard_trust": 0.35,
+        "switching_cost": 0.40,
+        "switching_threshold": 0.40,
     },
 }
 
@@ -121,6 +193,20 @@ class MarketSegment:
     switching_cost: float = 0.1
     switching_threshold: float = 0.15
 
+    # NEW: LLM reasoning toggle
+    llm_mode: bool = False  # Use LLM for decision-making (default False for individuals)
+
+    # NEW: Organizational parameters
+    consumer_type: str = "individual"  # "individual" | "organization"
+    decision_delay: int = 1  # Rounds between decisions (higher for orgs)
+    integration_friction: float = 0.0  # Extra switching cost for orgs
+    compliance_requirements: list = field(default_factory=list)  # e.g., ["HIPAA", "GDPR"]
+    compliance_weight: float = 1.0  # Multiplier for safety satisfaction (higher for orgs)
+
+    # Decision tracking
+    rounds_since_decision: int = 0  # Track decision delay
+    last_llm_decision: Optional[dict] = None  # Store LLM reasoning trace
+
     # Dynamic state
     provider_shares: dict = field(default_factory=dict)    # {provider: proportion}
     believed_quality: dict = field(default_factory=dict)   # {provider: quality_estimate}
@@ -137,6 +223,14 @@ class MarketSegment:
             "leaderboard_trust": self.leaderboard_trust,
             "switching_cost": self.switching_cost,
             "switching_threshold": self.switching_threshold,
+            "llm_mode": self.llm_mode,
+            "consumer_type": self.consumer_type,
+            "decision_delay": self.decision_delay,
+            "integration_friction": self.integration_friction,
+            "compliance_requirements": self.compliance_requirements,
+            "compliance_weight": self.compliance_weight,
+            "rounds_since_decision": self.rounds_since_decision,
+            "last_llm_decision": self.last_llm_decision,
             "provider_shares": self.provider_shares,
             "believed_quality": self.believed_quality,
             "satisfaction": self.satisfaction,
@@ -164,6 +258,7 @@ class ConsumerMarket:
         provider_names: list[str],
         brand_recognition: Optional[dict] = None,
         seed: Optional[int] = None,
+        consumer_llm_config: Optional[dict] = None,
     ):
         self.segments = segments
         self.provider_names = provider_names
@@ -173,12 +268,37 @@ class ConsumerMarket:
         self.memory = []
         self._last_segment_switching = {}  # Track per-segment switching rates
 
+        # Apply LLM configuration to segments
+        if consumer_llm_config:
+            self._apply_llm_config(consumer_llm_config)
+
         # Initialize provider shares if not already set
         for seg in self.segments:
             if not seg.provider_shares:
                 seg.provider_shares = self._initial_shares(provider_names)
             if not seg.tenure:
                 seg.tenure = {p: 0 for p in provider_names}
+
+    def _apply_llm_config(self, config: dict):
+        """Apply consumer LLM settings from config.
+
+        Args:
+            config: Dict with keys:
+                - enabled: bool - Master switch for consumer LLM
+                - individuals: bool - Use LLM for individual consumers
+                - organizations: bool - Use LLM for organizational consumers
+        """
+        enabled = config.get("enabled", False)
+        llm_individuals = config.get("individuals", False)
+        llm_organizations = config.get("organizations", True)
+
+        for seg in self.segments:
+            if not enabled:
+                seg.llm_mode = False
+            elif seg.consumer_type == "organization":
+                seg.llm_mode = llm_organizations
+            else:  # individual
+                seg.llm_mode = llm_individuals
 
     def _initial_shares(self, provider_names: list[str]) -> dict:
         """Distribute initial market shares weighted by brand recognition."""
@@ -358,6 +478,7 @@ class ConsumerMarket:
 
                 # Factor 2: Safety Alignment Match
                 # Segments with high safety preferences value safety investment
+                # Organizational consumers weight compliance/safety more heavily
                 safety_bonus = 0.0
                 if provider_strategies and provider_name in provider_strategies:
                     strategy = provider_strategies[provider_name]
@@ -369,7 +490,8 @@ class ConsumerMarket:
                             safety_pref = weight
                             break
                     # Bonus scales with both provider investment and segment preference
-                    safety_bonus = 0.12 * safety_investment * safety_pref
+                    # Apply compliance_weight multiplier for organizations
+                    safety_bonus = 0.12 * safety_investment * safety_pref * seg.compliance_weight
 
                 # Factor 3: Media Sentiment Influence
                 # Negative media coverage reduces satisfaction beyond objective metrics
@@ -392,12 +514,23 @@ class ConsumerMarket:
                 # Clamp to [0, 1]
                 seg.satisfaction[provider_name] = max(0.0, min(1.0, satisfaction))
 
-    def compute_switching(self):
+    def compute_switching(self, ground_truth: Optional[dict] = None,
+                         provider_strategies: Optional[dict] = None,
+                         published_scores: Optional[dict] = None,
+                         media_coverage: Optional[dict] = None,
+                         policymaker_data: Optional[dict] = None):
         """Compute switching proportions within each segment.
 
         Two triggers (same logic as original Consumer, but applied proportionally):
         1. Dissatisfaction: believed quality > actual satisfaction by > threshold
         2. Opportunity: a better alternative exceeds switching cost + tenure bonus
+
+        Args:
+            ground_truth: {provider_name: ProviderGroundTruth} - for LLM context
+            provider_strategies: {provider_name: strategy_dict} - for LLM context
+            published_scores: {provider_name: score} - for LLM context
+            media_coverage: Media coverage dict - for LLM context
+            policymaker_data: Policymaker data dict - for LLM context
 
         Returns:
             Total switching rate (fraction of total market that switched)
@@ -408,12 +541,46 @@ class ConsumerMarket:
         segment_switching_rates = {}
 
         for seg in self.segments:
-            seg_switching = 0.0
+            # Organizations decide less frequently
+            if seg.consumer_type == "organization":
+                seg.rounds_since_decision += 1
+                if seg.rounds_since_decision < seg.decision_delay:
+                    segment_switching_rates[seg.name] = 0.0
+                    continue  # Skip this round, not time to decide yet
+                seg.rounds_since_decision = 0  # Reset counter
 
-            for provider in list(seg.provider_shares.keys()):
+            # Branch on reasoning mode
+            if seg.llm_mode:
+                seg_switching = self._compute_switching_llm(
+                    seg, ground_truth, provider_strategies, published_scores,
+                    media_coverage, policymaker_data
+                )
+            else:
+                seg_switching = self._compute_switching_heuristic(seg)
+
+            total_switching += seg_switching * seg.market_fraction
+            segment_switching_rates[seg.name] = seg_switching
+
+        # Store for later retrieval
+        self._last_segment_switching = segment_switching_rates
+
+        return total_switching
+
+    def _compute_switching_heuristic(self, seg: MarketSegment) -> float:
+        """Compute heuristic-based switching for a segment.
+
+        Returns:
+            Switching rate for this segment
+        """
+        seg_switching = 0.0
+
+        for provider in list(seg.provider_shares.keys()):
                 share = seg.provider_shares.get(provider, 0.0)
                 if share < 0.001:  # skip negligible shares
                     continue
+
+                # Apply integration friction for organizations
+                effective_switching_cost = seg.switching_cost + seg.integration_friction
 
                 tenure_bonus = min(0.1, seg.tenure.get(provider, 0) * 0.02)
                 should_switch_prob = 0.0
@@ -425,7 +592,7 @@ class ConsumerMarket:
                 actual_sat = seg.satisfaction.get(provider, 0.5)
                 gap = believed - actual_sat
 
-                threshold = seg.switching_threshold + tenure_bonus + seg.switching_cost
+                threshold = seg.switching_threshold + tenure_bonus + effective_switching_cost
                 if gap > 0:
                     # Sigmoid-based probability: smooth transition
                     should_switch_prob = max(
@@ -435,7 +602,7 @@ class ConsumerMarket:
 
                 # --- Trigger 2: Better alternative ---
                 current_blended = self._blended_score(seg, provider)
-                opportunity_threshold = seg.switching_cost + tenure_bonus
+                opportunity_threshold = effective_switching_cost + tenure_bonus
 
                 for alt_provider in self.provider_names:
                     if alt_provider == provider:
@@ -466,27 +633,246 @@ class ConsumerMarket:
                     # Reset tenure for switchers
                     seg.tenure[provider] = max(0, seg.tenure.get(provider, 0) - 1)
 
-            # Update tenure for remaining subscribers
-            for provider in self.provider_names:
-                if seg.provider_shares.get(provider, 0) > 0.01:
-                    seg.tenure[provider] = seg.tenure.get(provider, 0) + 1
+        # Update tenure for remaining subscribers
+        for provider in self.provider_names:
+            if seg.provider_shares.get(provider, 0) > 0.01:
+                seg.tenure[provider] = seg.tenure.get(provider, 0) + 1
 
-            # Normalize shares to prevent drift
-            total_share = sum(seg.provider_shares.values())
-            if total_share > 0:
-                seg.provider_shares = {
-                    k: v / total_share for k, v in seg.provider_shares.items()
+        # Normalize shares to prevent drift
+        total_share = sum(seg.provider_shares.values())
+        if total_share > 0:
+            seg.provider_shares = {
+                k: v / total_share for k, v in seg.provider_shares.items()
+            }
+
+        return seg_switching
+
+    def _compute_switching_llm(self, seg: MarketSegment, ground_truth: Optional[dict],
+                               provider_strategies: Optional[dict],
+                               published_scores: Optional[dict],
+                               media_coverage: Optional[dict],
+                               policymaker_data: Optional[dict]) -> float:
+        """Compute LLM-based switching decisions for a segment.
+
+        Args:
+            seg: Market segment
+            ground_truth: Ground truth data
+            provider_strategies: Provider strategies
+            published_scores: Published scores
+            media_coverage: Media coverage
+            policymaker_data: Policymaker data
+
+        Returns:
+            Switching rate for this segment
+        """
+        from llm import call_llm
+        import json as json_module
+
+        seg_switching = 0.0
+
+        for provider in list(seg.provider_shares.keys()):
+            share = seg.provider_shares.get(provider, 0.0)
+            if share < 0.001:  # skip negligible shares
+                continue
+
+            # Build decision context
+            context = self._build_decision_context(
+                seg, provider, ground_truth, provider_strategies,
+                published_scores, media_coverage, policymaker_data
+            )
+
+            # Build prompt based on consumer type
+            if seg.consumer_type == "organization":
+                prompt = self._build_organizational_prompt(seg, provider, context)
+            else:
+                prompt = self._build_individual_prompt(seg, provider, context)
+
+            # Call LLM
+            try:
+                response = call_llm(prompt, temperature=0.7, max_tokens=500)
+
+                # Parse JSON response
+                decision = json_module.loads(response)
+                should_switch = decision.get("should_switch", False)
+                target_provider = decision.get("target_provider")
+                confidence = decision.get("confidence", 0.5)
+                reasoning = decision.get("reasoning", "")
+
+                # Store decision trace
+                seg.last_llm_decision = {
+                    "provider": provider,
+                    "decision": decision,
+                    "round": self.current_round,
                 }
 
-            total_switching += seg_switching * seg.market_fraction
+                # Apply switching based on LLM decision
+                if should_switch and target_provider and target_provider in self.provider_names:
+                    switching_fraction = confidence * share
+                    switching_fraction = min(switching_fraction, share)
 
-            # Store per-segment switching rate
-            segment_switching_rates[seg.name] = seg_switching
+                    seg.provider_shares[provider] -= switching_fraction
+                    seg.provider_shares[target_provider] = (
+                        seg.provider_shares.get(target_provider, 0.0) + switching_fraction
+                    )
+                    seg_switching += switching_fraction
 
-        # Store for later retrieval
-        self._last_segment_switching = segment_switching_rates
+                    # Reset tenure for switchers
+                    seg.tenure[provider] = max(0, seg.tenure.get(provider, 0) - 1)
 
-        return total_switching
+            except Exception as e:
+                # Fallback to heuristic if LLM fails
+                print(f"[ConsumerMarket] LLM decision failed for {seg.name}/{provider}: {e}")
+                # Use heuristic logic as fallback
+                pass
+
+        # Update tenure for remaining subscribers
+        for provider in self.provider_names:
+            if seg.provider_shares.get(provider, 0) > 0.01:
+                seg.tenure[provider] = seg.tenure.get(provider, 0) + 1
+
+        # Normalize shares to prevent drift
+        total_share = sum(seg.provider_shares.values())
+        if total_share > 0:
+            seg.provider_shares = {
+                k: v / total_share for k, v in seg.provider_shares.items()
+            }
+
+        return seg_switching
+
+    def _build_decision_context(self, seg: MarketSegment, provider: str,
+                                ground_truth: Optional[dict],
+                                provider_strategies: Optional[dict],
+                                published_scores: Optional[dict],
+                                media_coverage: Optional[dict],
+                                policymaker_data: Optional[dict]) -> dict:
+        """Build context dictionary for LLM decision-making."""
+        context = {
+            "satisfaction": seg.satisfaction.get(provider, 0.5),
+            "believed_quality": seg.believed_quality.get(provider, 0.5),
+            "tenure": seg.tenure.get(provider, 0),
+            "alternatives": [],
+        }
+
+        # Build alternatives list
+        for alt_provider in self.provider_names:
+            if alt_provider == provider:
+                continue
+            alt_data = {
+                "name": alt_provider,
+                "believed_quality": seg.believed_quality.get(alt_provider, 0.5),
+                "satisfaction": seg.satisfaction.get(alt_provider, 0.0),
+                "score": published_scores.get(alt_provider, 0.5) if published_scores else 0.5,
+            }
+            context["alternatives"].append(alt_data)
+
+        # Sort alternatives by believed quality
+        context["alternatives"].sort(key=lambda x: x["believed_quality"], reverse=True)
+
+        # Add media context
+        if media_coverage:
+            context["media_sentiment"] = media_coverage.get("sentiment", 0.0)
+            context["media_headlines"] = media_coverage.get("headlines", [])
+            context["provider_attention"] = media_coverage.get("provider_attention", {}).get(provider, 0.0)
+
+        # Add regulatory context
+        if policymaker_data:
+            context["regulatory_pressure"] = len(policymaker_data.get("interventions", []))
+
+        return context
+
+    def _build_individual_prompt(self, seg: MarketSegment, provider: str, context: dict) -> str:
+        """Build LLM prompt for individual consumer decision."""
+        use_case_label = USE_CASE_PROFILES.get(seg.use_case, {}).get("label", seg.use_case)
+
+        alternatives_text = "\n".join([
+            f"  - {alt['name']}: quality {alt['believed_quality']:.2f}, score {alt['score']:.2f}"
+            for alt in context["alternatives"][:3]  # Top 3 alternatives
+        ])
+
+        media_text = ""
+        if "media_headlines" in context and context["media_headlines"]:
+            headlines = context["media_headlines"][:3]
+            media_text = f"\n**Recent News:**\n" + "\n".join([f"  - {h}" for h in headlines])
+
+        prompt = f"""You are a {use_case_label} who uses AI models for your work.
+
+**Current Situation:**
+- Provider: {provider}
+- Your satisfaction: {context['satisfaction']:.2f}/1.0
+- Your believed quality: {context['believed_quality']:.2f}/1.0
+- Tenure: {context['tenure']} rounds
+
+**Alternatives:**
+{alternatives_text}
+
+**Your Decision Style:**
+- Leaderboard trust: {seg.leaderboard_trust:.0%}
+- Switching cost: {seg.switching_cost}
+{media_text}
+
+Should you switch providers? Consider:
+1. Is your current satisfaction meeting your needs?
+2. Are there significantly better alternatives?
+3. Is the improvement worth the switching cost?
+
+Output ONLY valid JSON with this structure:
+{{"should_switch": true/false, "target_provider": "name" or null, "confidence": 0.0-1.0, "reasoning": "brief explanation"}}"""
+
+        return prompt
+
+    def _build_organizational_prompt(self, seg: MarketSegment, provider: str, context: dict) -> str:
+        """Build LLM prompt for organizational consumer decision."""
+        use_case_label = USE_CASE_PROFILES.get(seg.use_case, {}).get("label", seg.use_case)
+
+        alternatives_text = "\n".join([
+            f"  - {alt['name']}: quality {alt['believed_quality']:.2f}, score {alt['score']:.2f}"
+            for alt in context["alternatives"][:3]
+        ])
+
+        compliance_text = ", ".join(seg.compliance_requirements) if seg.compliance_requirements else "None"
+
+        media_text = ""
+        if "media_headlines" in context and context["media_headlines"]:
+            headlines = context["media_headlines"][:3]
+            media_text = f"\n**Market Intelligence:**\n" + "\n".join([f"  - {h}" for h in headlines])
+            if "media_sentiment" in context:
+                media_text += f"\nMarket sentiment: {context['media_sentiment']:.2f}"
+
+        regulatory_text = ""
+        if "regulatory_pressure" in context:
+            regulatory_text = f"\nRegulatory interventions this quarter: {context['regulatory_pressure']}"
+
+        prompt = f"""You are the decision-making committee for a {use_case_label} organization evaluating AI vendor relationships.
+
+**Current Vendor:**
+- Provider: {provider}
+- Organizational satisfaction: {context['satisfaction']:.2f}/1.0
+- Believed quality: {context['believed_quality']:.2f}/1.0
+- Contract tenure: {context['tenure']} quarters
+
+**Alternative Vendors:**
+{alternatives_text}
+
+**Organizational Constraints:**
+- Compliance requirements: {compliance_text}
+- Integration friction: {seg.integration_friction:.0%} (migration cost)
+- Decision cadence: Review every {seg.decision_delay} quarters
+- Stakeholder sensitivity: {seg.switching_threshold}
+{media_text}
+{regulatory_text}
+
+**Decision Framework:**
+1. Compliance & Regulatory Fit: Does vendor meet our requirements?
+2. Operational Performance: Is satisfaction meeting stakeholder needs?
+3. Cost-Benefit: Do benefits justify migration costs?
+4. Strategic Alignment: Long-term vendor stability and fit?
+
+Reason through this decision carefully as an organizational committee.
+
+Output ONLY valid JSON with this structure:
+{{"should_switch": true/false, "target_provider": "name" or null, "confidence": 0.0-1.0, "reasoning": "committee decision rationale"}}"""
+
+        return prompt
 
     def _blended_score(self, seg: MarketSegment, provider: str) -> float:
         """Compute blended perceived quality for a provider within a segment."""
@@ -607,6 +993,7 @@ def create_default_segments(
     provider_names: list[str],
     brand_recognition: Optional[dict] = None,
     archetype_weights: Optional[dict] = None,
+    organizational_archetype_weights: Optional[dict] = None,
 ) -> list[MarketSegment]:
     """Create market segments from use cases and archetypes.
 
@@ -614,8 +1001,10 @@ def create_default_segments(
         use_cases: List of use case profile keys (e.g., ["software_dev", "healthcare"])
         provider_names: List of provider names
         brand_recognition: Optional {provider: recognition_factor}
-        archetype_weights: Optional custom archetype distribution.
+        archetype_weights: Optional custom archetype distribution for individuals.
             Default: {"leaderboard_follower": 0.4, "experience_driven": 0.35, "cautious": 0.25}
+        organizational_archetype_weights: Optional archetype distribution for organizations.
+            Default: {"enterprise_cautious": 0.5, "enterprise_growth": 0.3, "enterprise_established": 0.2}
 
     Returns:
         List of MarketSegment objects with equal market fractions per use case
@@ -627,6 +1016,13 @@ def create_default_segments(
             "cautious": 0.25,
         }
 
+    if organizational_archetype_weights is None:
+        organizational_archetype_weights = {
+            "enterprise_cautious": 0.50,
+            "enterprise_growth": 0.30,
+            "enterprise_established": 0.20,
+        }
+
     segments = []
     n_use_cases = len(use_cases)
 
@@ -636,8 +1032,15 @@ def create_default_segments(
             continue
 
         use_case_fraction = 1.0 / n_use_cases
+        consumer_type = profile.get("consumer_type", "individual")
 
-        for archetype, arch_weight in archetype_weights.items():
+        # Select appropriate archetype weights based on consumer type
+        if consumer_type == "organization":
+            archetypes_to_use = organizational_archetype_weights
+        else:
+            archetypes_to_use = archetype_weights
+
+        for archetype, arch_weight in archetypes_to_use.items():
             arch_params = ARCHETYPES.get(archetype, ARCHETYPES["cautious"])
             seg_fraction = use_case_fraction * arch_weight
 
@@ -650,6 +1053,12 @@ def create_default_segments(
             else:
                 shares = {p: 1.0 / len(provider_names) for p in provider_names}
 
+            # Get organizational parameters from profile
+            decision_delay = profile.get("decision_delay", 1)
+            integration_friction = profile.get("integration_friction", 0.0)
+            compliance_requirements = profile.get("compliance_requirements", [])
+            compliance_weight = 1.5 if consumer_type == "organization" else 1.0
+
             seg = MarketSegment(
                 name=f"{use_case}_{archetype}",
                 archetype=archetype,
@@ -658,6 +1067,14 @@ def create_default_segments(
                 leaderboard_trust=arch_params["leaderboard_trust"],
                 switching_cost=arch_params["switching_cost"],
                 switching_threshold=arch_params["switching_threshold"],
+                llm_mode=False,  # Will be set by ConsumerMarket based on config
+                consumer_type=consumer_type,
+                decision_delay=decision_delay,
+                integration_friction=integration_friction,
+                compliance_requirements=compliance_requirements,
+                compliance_weight=compliance_weight,
+                rounds_since_decision=0,
+                last_llm_decision=None,
                 provider_shares=shares,
                 believed_quality={},
                 satisfaction={},

@@ -92,6 +92,18 @@ class Policymaker:
         # Tracking
         self._last_validity_correlation: Optional[float] = None
         self._last_consumer_satisfaction: Optional[float] = None
+        self._last_market_shares: Optional[dict] = None  # {provider: share}
+
+        # Tier 1 Enhancement: Regulatory thresholds
+        self.market_concentration_threshold: float = 0.75  # Trigger antitrust at 75% share
+        self.market_monitoring_threshold: float = 0.60  # Start monitoring at 60% share
+        self.eval_engineering_threshold: float = 0.35  # Concern threshold for eval engineering
+
+        # Tier 1 Enhancement: Threshold announcements (public)
+        self.announced_thresholds: dict = {}  # {threshold_type: value}
+
+        # Tier 1 Enhancement: Information request tracking
+        self._pending_information_requests: dict = {}  # {provider: {round, type, deadline}}
 
     @property
     def name(self) -> str:
@@ -132,6 +144,8 @@ class Policymaker:
         validity_correlation: Optional[float],
         round_num: int,
         media_coverage: Optional[dict] = None,
+        market_shares: Optional[dict] = None,
+        provider_strategies: Optional[dict] = None,
     ):
         """
         Observe the current ecosystem state.
@@ -142,12 +156,15 @@ class Policymaker:
             validity_correlation: Correlation between scores and true capability
             round_num: Current simulation round
             media_coverage: Optional media coverage dict with risk_signals, sentiment
+            market_shares: Optional dict {provider_name: market_share}
+            provider_strategies: Optional dict {provider_name: {eval_engineering, ...}}
         """
         self.public_state.current_round = round_num
 
         # Track metrics over time
         self._last_validity_correlation = validity_correlation
         self._last_consumer_satisfaction = consumer_satisfaction
+        self._last_market_shares = market_shares or {}
 
         # Update risk beliefs based on observations
         if validity_correlation is not None:
@@ -203,6 +220,40 @@ class Policymaker:
                     self.private_state.risk_beliefs["validity_degradation_risk"] + 0.05,
                 )
 
+        # Tier 1: Market concentration monitoring
+        if market_shares:
+            max_share = max(market_shares.values()) if market_shares else 0.0
+            dominant_provider = max(market_shares, key=market_shares.get) if market_shares else None
+
+            # Update market concentration risk belief
+            if max_share > self.market_concentration_threshold:
+                self.private_state.risk_beliefs["market_concentration_risk"] = min(
+                    1.0,
+                    self.private_state.risk_beliefs.get("market_concentration_risk", 0.0) + 0.2
+                )
+            elif max_share > self.market_monitoring_threshold:
+                self.private_state.risk_beliefs["market_concentration_risk"] = min(
+                    0.7,
+                    self.private_state.risk_beliefs.get("market_concentration_risk", 0.0) + 0.1
+                )
+            else:
+                self.private_state.risk_beliefs["market_concentration_risk"] = max(
+                    0.0,
+                    self.private_state.risk_beliefs.get("market_concentration_risk", 0.0) - 0.05
+                )
+
+        # Tier 1: Eval engineering monitoring
+        if provider_strategies:
+            max_eval_eng = max(
+                strat.get("evaluation_engineering", 0.0)
+                for strat in provider_strategies.values()
+            )
+            if max_eval_eng > self.eval_engineering_threshold:
+                self.private_state.risk_beliefs["eval_engineering_risk"] = min(
+                    1.0,
+                    self.private_state.risk_beliefs.get("eval_engineering_risk", 0.0) + 0.1
+                )
+
         # Record observation
         self.memory.append({
             "type": "observation",
@@ -210,6 +261,7 @@ class Policymaker:
             "leaderboard": leaderboard,
             "validity_correlation": validity_correlation,
             "consumer_satisfaction": consumer_satisfaction,
+            "market_shares": market_shares,
             "risk_beliefs": dict(self.private_state.risk_beliefs),
         })
 
@@ -254,10 +306,20 @@ class Policymaker:
     def _plan_heuristic(self) -> Optional[dict]:
         """Graduated escalation intervention decision.
 
-        Escalation ladder: investigation -> public_warning -> mandate_benchmark -> compliance_audit
-        Event-driven triggers: score volatility, declining satisfaction, risk thresholds.
+        Escalation ladder:
+        Tier 1 (new): threshold_announcement -> information_request -> market_concentration_review
+        Existing: investigation -> public_warning -> mandate_benchmark -> compliance_audit
+
+        Event-driven triggers: score volatility, declining satisfaction, risk thresholds,
+        market concentration, eval engineering levels.
         """
         max_risk = max(self.private_state.risk_beliefs.values())
+
+        # Get market concentration if available
+        market_concentration_risk = self.private_state.risk_beliefs.get("market_concentration_risk", 0.0)
+        eval_engineering_risk = self.private_state.risk_beliefs.get("eval_engineering_risk", 0.0)
+        max_share = max(self._last_market_shares.values()) if self._last_market_shares else 0.0
+        dominant_provider = max(self._last_market_shares, key=self._last_market_shares.get) if self._last_market_shares else None
 
         # Track escalation state from past interventions
         has_investigated = any(
@@ -294,6 +356,77 @@ class Policymaker:
         satisfaction_declining = self._detect_satisfaction_trend()
 
         intervention = None
+
+        # TIER 1 ENHANCEMENTS: New intervention types
+
+        # 1. Threshold Announcement (proactive, low-cost signaling)
+        if not self.announced_thresholds and max_risk > 0.3:
+            # First time announcing thresholds when risk becomes moderate
+            intervention = {
+                "type": "threshold_announcement",
+                "name": f"Regulatory_Thresholds_R{self.public_state.current_round}",
+                "details": {
+                    "market_concentration_monitoring": self.market_monitoring_threshold,
+                    "market_concentration_review": self.market_concentration_threshold,
+                    "eval_engineering_concern": self.eval_engineering_threshold,
+                },
+                "reason": f"Proactive threshold signaling (risk={max_risk:.2f})",
+            }
+
+        # 2. Market Concentration Review (antitrust)
+        elif max_share > self.market_concentration_threshold and dominant_provider:
+            # Check if we've already reviewed this provider recently
+            recent_concentration_review = any(
+                t == "market_concentration_review" and d.get("provider") == dominant_provider
+                for r, t, d in self.private_state.past_interventions[-3:]  # Last 3 interventions
+            )
+
+            if not recent_concentration_review:
+                intervention = {
+                    "type": "market_concentration_review",
+                    "name": f"Antitrust_Review_{dominant_provider}_R{self.public_state.current_round}",
+                    "details": {
+                        "provider": dominant_provider,
+                        "market_share": max_share,
+                        "investigation_tax": 0.1,  # 10% opportunity cost
+                        "funding_multiplier_reduction": 0.2,  # Reduce funding by 20%
+                    },
+                    "reason": f"{dominant_provider} market share {max_share:.1%} exceeds {self.market_concentration_threshold:.0%}",
+                }
+
+        # 3. Information Request (lighter pre-investigation step)
+        elif (max_risk > 0.4 or eval_engineering_risk > 0.5) and not has_investigated:
+            # Issue information request before full investigation
+            # Identify providers with high eval engineering
+            high_eval_providers = []
+            if self.memory:
+                last_obs = next((m for m in reversed(self.memory) if m.get("type") == "observation"), None)
+                if last_obs and "leaderboard" in last_obs:
+                    # Request info from top provider (most visible)
+                    high_eval_providers = [last_obs["leaderboard"][0][0]]  # Top provider
+
+            if high_eval_providers:
+                target_provider = high_eval_providers[0]
+
+                # Check if we already have pending request for this provider
+                if target_provider not in self._pending_information_requests:
+                    intervention = {
+                        "type": "information_request",
+                        "name": f"Info_Request_{target_provider}_R{self.public_state.current_round}",
+                        "details": {
+                            "provider": target_provider,
+                            "requested_disclosure": [
+                                "eval_engineering_practices",
+                                "safety_test_results",
+                                "training_data_summary"
+                            ],
+                            "deadline_rounds": 2,
+                            "opportunity_cost": 0.05,  # Lighter cost than investigation
+                        },
+                        "reason": f"Information request for {target_provider} (eval_eng_risk={eval_engineering_risk:.2f})",
+                    }
+
+        # EXISTING ESCALATION LOGIC (Tier 2+)
 
         # Compliance audit: mandate issued > 3 rounds ago and risk still high
         if has_mandated and rounds_since_mandate is not None and rounds_since_mandate > 3 and max_risk > 0.5:
@@ -390,6 +523,21 @@ class Policymaker:
                 intervention.get("details", {}),
             )
         )
+
+        # Handle Tier 1 interventions
+        if intervention["type"] == "threshold_announcement":
+            # Store announced thresholds publicly
+            for threshold_name, value in intervention["details"].items():
+                self.announced_thresholds[threshold_name] = value
+
+        elif intervention["type"] == "information_request":
+            # Track pending information request
+            provider = intervention["details"]["provider"]
+            self._pending_information_requests[provider] = {
+                "round": self.public_state.current_round,
+                "type": "information_request",
+                "deadline": self.public_state.current_round + intervention["details"]["deadline_rounds"],
+            }
 
         # Public statement (stored in published_scores for simplicity)
         statement = f"[Round {self.public_state.current_round}] Issued {intervention['type']}: {intervention.get('reason', 'N/A')}"

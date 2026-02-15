@@ -203,7 +203,7 @@ This section clarifies which stakeholders are implemented in the simulation.
 | Stakeholder | Status | Notes |
 |-------------|--------|-------|
 | Individual Consumer | **Implemented** (as market segments) | `actors/consumer.py` — ConsumerMarket with archetype × use-case segments |
-| Organizational Consumer | Not implemented | Could extend ConsumerMarket with institutional segments |
+| Organizational Consumer | **Implemented** | `actors/consumer.py` — Extended MarketSegment with organizational profiles (hospital_system, enterprise_finance, etc.), decision_delay, integration_friction, compliance requirements, and optional LLM reasoning mode |
 | Policymaker | **Implemented** | `actors/policymaker.py` — media-aware |
 | Model Provider | **Implemented** | `actors/model_provider.py` — per-provider visibility |
 | Evaluation Provider | **Implemented** | Active benchmark evolution + mid-simulation benchmark introduction |
@@ -216,42 +216,55 @@ The Evaluator is **active** in two ways:
 2. **Benchmark introduction**: The evaluator can introduce new benchmarks mid-simulation when existing benchmarks become unreliable (validity < 0.4) or periodically every `cooldown` rounds (default 7). New benchmarks start with high validity (0.85) and low exploitability (0.15), resetting the measurement quality. Subject to a configurable cooldown and a maximum of 6 total benchmarks.
 
 ### Future Extensions
-- **Organizational Consumer**: Longer decision timelines, compliance constraints
 - **Multi-outlet Media**: Multiple media outlets with different editorial biases and reach
-- **LLM-Driven Consumer Decisions**: Currently, consumer market decisions (observation, satisfaction computation, switching) use algorithmic/heuristic logic. Future: enable LLM mode where consumer segments reason about leaderboard signals, use-case fit, and switching decisions using natural language reasoning. This would allow more nuanced, context-aware consumer behavior (e.g., "I'm a healthcare worker; I care more about safety than speed" or "Recent media coverage makes me distrust leaderboard rankings").
 
-#### Evaluator Enhancements (Not Implemented)
+#### Evaluator Enhancements
 
-**Benchmark Saturation & Retirement:**
-- When any provider achieves a perfect 1.000 score on a benchmark, that benchmark has been saturated/solved
-- Saturated benchmarks should be removed from the leaderboard within 1-2 rounds of saturation
-- Rationale: A saturated benchmark no longer provides signal for differentiation; keeping it active wastes eval engineering investment and clutters the leaderboard
-- Implementation considerations:
-  - Detection: Track max score per benchmark each round
-  - Retirement trigger: 1-2 round cooldown after first 1.000 score (allows confirmation, prevents premature removal due to noise)
-  - Replacement: Could trigger early introduction of next benchmark in sequence to maintain measurement diversity
-  - Logging: Mark benchmark as "saturated" in history with retirement round for analysis
+**Benchmark Saturation & Retirement:** ✓ **Implemented**
+- Detects when any provider achieves a score >= 0.9995 (near-perfect saturation)
+- Saturated benchmarks are retired after a 2-round cooldown period
+- Retirement triggers early introduction of replacement benchmarks (if below max_benchmarks limit)
+- Rationale: Saturated benchmarks no longer provide signal for differentiation
+- Implementation in `actors/evaluator.py`:
+  - `detect_saturation()`: Tracks max score per benchmark each round
+  - `retire_saturated_benchmarks()`: Removes benchmarks after cooldown
+  - `_benchmark_saturation_state`: Tracks saturation status, cooldown, and max scores
+  - `saturation_history` and `retirement_history`: Logged for analysis
+  - Consumer market benchmark weights automatically re-resolved on retirement
 
-#### Policymaker Enhancements (Not Implemented)
+#### Policymaker Enhancements
 
-The following policymaker actions would increase realism and regulatory impact. Organized by implementation priority:
+**Tier 1 (Priority) - High Impact, Low Complexity:** ✓ **Implemented**
 
-**Tier 1 (Priority) - High Impact, Low Complexity:**
+1. **Market Concentration Triggers** ✓ **Implemented**
+   - Antitrust/competition review when market share exceeds threshold (default 75%)
+   - Monitoring starts at 60% market share
+   - Effects: Investigation tax (10% opportunity cost), reduced funding multiplier (20% reduction)
+   - Implementation in `actors/policymaker.py`:
+     - `market_concentration_threshold` and `market_monitoring_threshold` parameters
+     - Market concentration risk belief tracking
+     - `market_concentration_review` intervention type
+     - Integration with simulation for funding multiplier reduction
 
-1. **Market Concentration Triggers**
-   - Antitrust/competition review when market share exceeds 70-80%
-   - Effect: Investigation tax on dominant providers, potential forced API opening, reduced funding multiplier
-   - Addresses: Winner-takes-all dynamics observed in experiments (e.g., exp25: OpenAI 99.4% share)
+2. **Information Requests** ✓ **Implemented**
+   - Lighter pre-investigation step requesting disclosure of:
+     - Eval engineering practices
+     - Safety test results
+     - Training data summary
+   - Effects: 5% opportunity cost for compliance (vs 10% for investigation)
+   - 2-round deadline; escalates to investigation if ignored
+   - Builds graduated escalation ladder before full investigation
+   - Implementation: `information_request` intervention type, pending request tracking
 
-2. **Information Requests**
-   - Lighter pre-investigation step: request explanation of eval engineering practices, safety test results, training data disclosure
-   - Effect: 1-2 round opportunity cost for provider; escalates to investigation if ignored
-   - Builds graduated escalation ladder
-
-3. **Threshold Signaling**
-   - Policymaker announces public thresholds (e.g., "monitoring providers >60% market share", "eval engineering >35% triggers investigation")
-   - Effect: Proactive behavior change, strategic uncertainty, realistic regulatory transparency
-   - Implementation: Public announcements + visible threshold tracking
+3. **Threshold Signaling** ✓ **Implemented**
+   - Proactive public announcement of regulatory thresholds
+   - Thresholds announced when risk > 0.3 (moderate concern)
+   - Published thresholds:
+     - Market concentration monitoring: 60%
+     - Market concentration review: 75%
+     - Eval engineering concern: 35%
+   - Effects: Creates strategic uncertainty, enables proactive provider behavior change
+   - Implementation: `threshold_announcement` intervention type, `announced_thresholds` dict (public state)
 
 **Tier 2 (Medium Priority) - High Impact, Medium Complexity:**
 

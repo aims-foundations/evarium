@@ -93,6 +93,7 @@ class Media:
         funder_data: Optional[dict] = None,
         per_benchmark_scores: Optional[dict] = None,
         consumer_data: Optional[dict] = None,
+        evaluator = None,
     ) -> dict:
         """
         Observe public data and publish coverage for this round.
@@ -222,13 +223,17 @@ class Media:
                             "top_amount": top_amount,
                         }
 
-        # 8. Per-benchmark leader changes
+        # 8. Per-benchmark leader changes (skip saturated benchmarks)
         if per_benchmark_scores:
             for bm_name, bm_scores in per_benchmark_scores.items():
                 if bm_scores:
                     current_leader = max(bm_scores, key=bm_scores.get)
                     prev_leader = self._previous_per_benchmark_leaders.get(bm_name)
-                    if prev_leader and prev_leader != current_leader:
+
+                    # Don't generate headlines for saturated benchmarks
+                    is_saturated = evaluator and evaluator.is_benchmark_saturated(bm_name)
+
+                    if prev_leader and prev_leader != current_leader and not is_saturated:
                         events_detected.append(f"{current_leader} takes #1 on {bm_name}")
                         coverage.provider_attention[current_leader] = max(
                             coverage.provider_attention.get(current_leader, 0), 0.5)

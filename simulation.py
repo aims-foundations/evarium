@@ -76,7 +76,12 @@ class SimulationConfig:
     # Each dict: {"name": str, "validity": float, "exploitability": float, "noise_level": float, "weight": float}
 
     # Planning mode
-    llm_mode: bool = False  # If True, use LLM for planning; if False, use heuristics
+    llm_mode: bool = False  # If True, use LLM for provider planning; if False, use heuristics
+
+    # Consumer LLM mode
+    consumer_llm_mode: bool = False  # Master switch for ALL consumer LLM reasoning
+    consumer_llm_individuals: bool = False  # When consumer_llm_mode=True, use LLM for individuals?
+    consumer_llm_organizations: bool = True  # When consumer_llm_mode=True, use LLM for orgs?
 
     # New actor settings
     enable_consumers: bool = False  # Enable consumer market
@@ -296,12 +301,20 @@ class EvalEcosystemSimulation:
             brand_recognition=brand_recognition,
         )
 
+        # Build consumer LLM config
+        consumer_llm_config = {
+            "enabled": self.config.consumer_llm_mode,
+            "individuals": self.config.consumer_llm_individuals,
+            "organizations": self.config.consumer_llm_organizations,
+        }
+
         # Create market
         self.consumer_market = ConsumerMarket(
             segments=segments,
             provider_names=provider_names,
             brand_recognition=brand_recognition,
             seed=self.config.seed,
+            consumer_llm_config=consumer_llm_config,
         )
         # Note: benchmark weight resolution happens after evaluator creation
         # (in setup()) since benchmark names aren't available yet here.
@@ -502,7 +515,24 @@ class EvalEcosystemSimulation:
         ) / len(self.providers) if self.providers else 0.0
         self.evaluator.update_benchmark(avg_eval_engineering)
 
-        # 2c. Consider introducing a new benchmark
+        # 2c. Detect benchmark saturation
+        newly_saturated = self.evaluator.detect_saturation(round_num)
+        if newly_saturated and self.config.verbose:
+            for bm_name in newly_saturated:
+                state = self.evaluator._benchmark_saturation_state[bm_name]
+                print(f"  [Saturation] {bm_name} saturated at score {state['max_score']:.4f}")
+
+        # 2d. Apply weight decay to saturated benchmarks
+        weight_decay_multipliers = self.evaluator.apply_saturation_weight_decay(round_num)
+        # Check for any benchmarks with significantly reduced weight
+        if self.config.verbose:
+            for bm_name, decay in weight_decay_multipliers.items():
+                if decay < 0.9:  # Only print if weight is noticeably reduced
+                    state = self.evaluator._benchmark_saturation_state.get(bm_name, {})
+                    if state.get("saturated"):
+                        print(f"  [Weight Decay] {bm_name} weight reduced to {decay:.2f}x")
+
+        # 2e. Consider introducing a new benchmark
         new_benchmark = self.evaluator.consider_new_benchmark(round_num)
 
         # Re-resolve consumer benchmark weights if a new benchmark was introduced
@@ -544,6 +574,7 @@ class EvalEcosystemSimulation:
                 funder_data=prev_funder_data,
                 per_benchmark_scores=per_bm_scores,
                 consumer_data=prev_consumer_data,
+                evaluator=self.evaluator,
             )
 
         # 6. Consumer actions (if enabled)
@@ -607,6 +638,28 @@ class EvalEcosystemSimulation:
                 "exploitability": new_benchmark.exploitability,
                 "trigger": self.evaluator.introduction_history[-1]["trigger"],
             }
+
+        # Record benchmark saturation events
+        if newly_saturated:
+            round_data["saturated_benchmarks"] = [
+                {
+                    "name": bm_name,
+                    "max_score": self.evaluator._benchmark_saturation_state[bm_name]["max_score"],
+                }
+                for bm_name in newly_saturated
+            ]
+
+        # Record benchmark weight decay (for saturated benchmarks)
+        saturated_benchmarks_data = []
+        for bm_name, decay in weight_decay_multipliers.items():
+            if decay < 1.0:
+                saturated_benchmarks_data.append({
+                    "name": bm_name,
+                    "weight_decay": decay,
+                    "saturation_info": self.evaluator._benchmark_saturation_state.get(bm_name, {})
+                })
+        if saturated_benchmarks_data:
+            round_data["saturated_benchmarks"] = saturated_benchmarks_data
 
         # Add media data if present
         if media_coverage:
@@ -674,7 +727,8 @@ class EvalEcosystemSimulation:
         return round_data
 
     def _run_consumer_round(self, leaderboard: list, round_num: int,
-                            media_coverage: Optional[dict] = None) -> dict:
+                            media_coverage: Optional[dict] = None,
+                            policymaker_data: Optional[dict] = None) -> dict:
         """
         Run consumer market actions for the round.
 
@@ -719,8 +773,14 @@ class EvalEcosystemSimulation:
             media_coverage=media_coverage,
         )
 
-        # Compute switching
-        switching_rate = self.consumer_market.compute_switching()
+        # Compute switching (pass context for LLM mode)
+        switching_rate = self.consumer_market.compute_switching(
+            ground_truth=self.ground_truth,
+            provider_strategies=provider_strategies,
+            published_scores=published_scores,
+            media_coverage=media_coverage,
+            policymaker_data=policymaker_data,
+        )
 
         # Get consumer data
         consumer_data = self.consumer_market.get_consumer_data()
@@ -761,6 +821,17 @@ class EvalEcosystemSimulation:
             if not isinstance(policymaker, Policymaker):
                 continue
 
+            # Build provider strategies dict for policymaker observation
+            provider_strategies = {
+                p.name: {
+                    "fundamental_research": p.fundamental_research,
+                    "training_optimization": p.training_optimization,
+                    "evaluation_engineering": p.evaluation_engineering,
+                    "safety_alignment": p.safety_alignment,
+                }
+                for p in self.providers
+            }
+
             # Policymaker observes ecosystem state
             policymaker.observe(
                 leaderboard=leaderboard,
@@ -768,6 +839,8 @@ class EvalEcosystemSimulation:
                 validity_correlation=self.evaluator.compute_validity_correlation(),
                 round_num=round_num,
                 media_coverage=media_coverage,
+                market_shares=consumer_data.get("market_shares"),
+                provider_strategies=provider_strategies,
             )
 
             # Policymaker reflects on observations
@@ -807,6 +880,41 @@ class EvalEcosystemSimulation:
                     reduction = intervention.get("details", {}).get("exploitability_reduction", 0.1)
                     for bm in self.evaluator.benchmarks:
                         bm.exploitability = max(0.1, bm.exploitability - reduction)
+
+                # TIER 1 ENHANCEMENTS: New intervention types
+
+                elif intervention_type == "threshold_announcement":
+                    # Public announcement - no direct effect, but providers observe thresholds
+                    # Thresholds are stored in policymaker.announced_thresholds (public)
+                    # Creates strategic uncertainty and potential for proactive behavior change
+                    pass
+
+                elif intervention_type == "information_request":
+                    # Lighter burden than investigation - opportunity cost to provider
+                    target_provider_name = intervention.get("details", {}).get("provider")
+                    opportunity_cost = intervention.get("details", {}).get("opportunity_cost", 0.05)
+
+                    # Apply opportunity cost to provider's effective R&D capacity
+                    # (simulates time/resources spent on disclosure compliance)
+                    for provider in self.providers:
+                        if provider.name == target_provider_name:
+                            # Note: This is applied for the next round's capability update
+                            # We could store a penalty to apply in the next provider planning phase
+                            # For now, we'll just record it (providers could see this in their context)
+                            pass
+
+                elif intervention_type == "market_concentration_review":
+                    # Antitrust review - effects:
+                    # 1. Investigation tax (opportunity cost)
+                    # 2. Reduced funding multiplier (affects funder allocations next round)
+                    target_provider_name = intervention.get("details", {}).get("provider")
+                    investigation_tax = intervention.get("details", {}).get("investigation_tax", 0.1)
+                    funding_reduction = intervention.get("details", {}).get("funding_multiplier_reduction", 0.2)
+
+                    # Store the intervention details for funders to see
+                    # Funders will reduce funding multiplier for this provider
+                    # (This is applied in the next funder round via policymaker_data)
+                    pass
 
                 policymaker_data["interventions"].append({
                     "policymaker": policymaker.name,

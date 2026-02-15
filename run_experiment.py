@@ -22,25 +22,30 @@ os.environ["NUMEXPR_NUM_THREADS"] = n_threads_str
 # ============================================================
 
 EXPERIMENT = {
-    "name": "5p_2b_3funder_highcap",
+    "name": "5p_2b_3funder_orgconsumers_tier1",
     "description": (
-        "Full ecosystem v6: 5 providers, 2 benchmarks (coding + reasoning), "
-        "30 consumer segments (10 use-cases × 3 archetypes), 1 policymaker,"
-        "3 funders (2 VC + 1 Gov) with high capital ($2B/$500M/$100M). "
-        "NEW v6 features: funder diversification (observe other funders' allocations), "
-        "per-benchmark score reporting (console output), optional benchmark sequence. "
-        "Funder rework: 10% per-round deployment cap, 2-round cooldown, "
-        "momentum-based scoring with diversification signal. "
+        "Full ecosystem v7: 5 providers, 2 benchmarks (coding + reasoning), "
+        "39 consumer segments (10 individual + 3 organizational use-cases × 3 archetypes), "
+        "1 policymaker with Tier 1 enhancements, 3 funders (2 VC + 1 Gov). "
+        "NEW v7 features: "
+        "- Organizational consumers (hospitals, enterprises) with LLM reasoning and delayed decisions "
+        "- Benchmark saturation & retirement (auto-lifecycle management) "
+        "- Tier 1 policymaker: market concentration triggers, information requests, threshold signaling "
+        "- Consumer LLM mode enabled for organizations only (individuals use heuristics) "
         "LLM mode via Ollama."
     ),
-    "tags": ["llm", "ollama", "5-provider", "2-benchmark", "12-segments",
-             "3-funder", "high-capital", "funder-diversification", "per-benchmark-reporting",
-             "full-ecosystem-v6"],
+    "tags": ["llm", "ollama", "5-provider", "2-benchmark", "39-segments",
+             "organizational-consumers", "consumer-llm", "benchmark-saturation",
+             "tier1-policymaker", "market-concentration", "3-funder", "full-ecosystem-v7"],
 }
 
 LLM = {
     "provider": "ollama",       # openai | anthropic | ollama | gemini
-    "llm_mode": True,          # True = LLM planning, False = heuristic
+    "llm_mode": False,          # True = LLM planning for providers, False = heuristic
+    # Consumer LLM config (organizational consumers use LLM reasoning)
+    "consumer_llm_mode": False,           # Enable consumer LLM
+    "consumer_llm_individuals": False,   # Individuals use heuristics
+    "consumer_llm_organizations": True,  # Organizations use LLM reasoning
 }
 
 SIMULATION = {
@@ -70,9 +75,14 @@ SIMULATION = {
     # "benchmark_sequence": None,
     # Media
     "enable_media": True,
-    # Consumer market: 10 use-cases × 3 archetypes = 30 segments
-    "use_case_profiles": ["software_dev", "content_writer", "legal", "healthcare", "finance",
-                          "customer_service", "researcher", "creative", "marketing", "service_worker"],
+    # Consumer market: 10 individual + 3 organizational use-cases × 3 archetypes = 39 segments
+    "use_case_profiles": [
+        # Individual consumers (10)
+        "software_dev", "content_writer", "legal", "healthcare", "finance",
+        "customer_service", "researcher", "creative", "marketing", "service_worker",
+        # Organizational consumers (3) - NEW v7
+        "hospital_system", "enterprise_finance", "tech_startup",
+    ],
 }
 
 # 2 benchmarks: coding (high validity, harder to game) and reasoning (more exploitable)
@@ -209,6 +219,10 @@ def run():
         max_benchmarks=SIMULATION.get("max_benchmarks", 6),
         benchmark_sequence=SIMULATION.get("benchmark_sequence"),
         llm_mode=LLM["llm_mode"],
+        # NEW v7: Consumer LLM configuration
+        consumer_llm_mode=LLM.get("consumer_llm_mode", False),
+        consumer_llm_individuals=LLM.get("consumer_llm_individuals", False),
+        consumer_llm_organizations=LLM.get("consumer_llm_organizations", True),
         enable_consumers=CONSUMERS["enabled"],
         enable_policymakers=POLICYMAKERS["enabled"],
         enable_funders=FUNDERS["enabled"],

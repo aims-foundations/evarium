@@ -23,6 +23,7 @@
 - Do not solve extra problems or add unrequested features
 - When editing JSON files (especially `experiments/index.json`), validate syntax after editing — trailing commas have caused failures multiple times
 - Before long-running experiments, do a preflight check: validate JSON configs, test LLM provider connectivity, verify output directory exists
+- Do not use unknown unicode alphabet (for example, tick marks or crosses to indicate success or failure). They cause errors and cannot be parsed always.
 
 ## Jupyter Notebooks
 
@@ -39,3 +40,4 @@
 - LLM providers: openai, anthropic, ollama, gemini (set via `LLM_PROVIDER` env var)
 - Experiment results logged to `experiments/` via ExperimentLogger
 - Incremental round logging: `rounds.jsonl` (one JSON line per round, written live)
+- Always update stakeholders.md when making changes to the simulation so that the documentation is up to date. Confirm if unsure.

@@ -195,6 +195,24 @@ class Evaluator:
             bm.name: {} for bm in self.benchmarks
         }
 
+        # Benchmark saturation tracking
+        self._saturation_threshold: float = 0.9995  # Consider saturated if score >= this
+        self._saturation_cooldown: int = 2  # Rounds to wait before starting weight decay
+        self._benchmark_saturation_state: dict[str, dict] = {
+            bm.name: {
+                "saturated": False,
+                "saturation_round": None,
+                "cooldown_remaining": 0,
+                "max_score": 0.0,
+                "perfect_score_hit": False,  # True if any provider hit exactly 1.000
+            } for bm in self.benchmarks
+        }
+        # Weight decay multipliers (1.0 = full weight, lower = downweighted)
+        self._benchmark_weight_decay: dict[str, float] = {bm.name: 1.0 for bm in self.benchmarks}
+        self._weight_decay_rate: float = 0.15  # Gradual decay per round
+        self.saturation_history: list[dict] = []  # [{round, benchmark_name, max_score}]
+        self.retirement_history: list[dict] = []  # Kept for backwards compatibility, no longer used
+
     def evaluate(
         self,
         true_capability: float,
@@ -310,9 +328,13 @@ class Evaluator:
 
                 per_benchmark_scores[benchmark.name][provider.name] = score
 
-                weight = self.benchmark_weights.get(benchmark.name, 1.0)
-                weighted_sum += score * weight
-                total_weight += weight
+                # Apply base weight and saturation decay multiplier
+                base_weight = self.benchmark_weights.get(benchmark.name, 1.0)
+                decay_multiplier = self._benchmark_weight_decay.get(benchmark.name, 1.0)
+                effective_weight = base_weight * decay_multiplier
+
+                weighted_sum += score * effective_weight
+                total_weight += effective_weight
 
             # Compute composite score (weighted average)
             composite_scores[provider.name] = weighted_sum / total_weight if total_weight > 0 else 0.0
@@ -463,6 +485,7 @@ class Evaluator:
 
         Triggers:
         - Any existing benchmark validity drops below 0.4 (degraded signal)
+        - Benchmark saturation (any benchmark retired or about to retire)
         - Periodic introduction every `cooldown` rounds
 
         Constraints:
@@ -487,7 +510,15 @@ class Evaluator:
                 trigger = f"validity_decay:{bm.name}={bm.validity:.2f}"
                 break
 
-        # Trigger 2: Periodic introduction (every cooldown rounds)
+        # Trigger 2: Benchmark saturation (replace retiring benchmarks)
+        if trigger is None:
+            for bm in self.benchmarks:
+                state = self._benchmark_saturation_state.get(bm.name)
+                if state and state["saturated"] and state["cooldown_remaining"] <= 1:
+                    trigger = f"saturation:{bm.name}={state['max_score']:.4f}"
+                    break
+
+        # Trigger 3: Periodic introduction (every cooldown rounds)
         if trigger is None and round_num > 0 and round_num % self.benchmark_introduction_cooldown == 0:
             trigger = f"periodic_introduction:round_{round_num}"
 
@@ -532,6 +563,17 @@ class Evaluator:
         self.benchmark_score_history[new_name] = []
         self._best_published_scores[new_name] = {}
 
+        # Initialize saturation tracking for new benchmark
+        self._benchmark_saturation_state[new_name] = {
+            "saturated": False,
+            "saturation_round": None,
+            "cooldown_remaining": 0,
+            "max_score": 0.0,
+            "perfect_score_hit": False,
+        }
+        # Initialize weight decay multiplier (1.0 = full weight)
+        self._benchmark_weight_decay[new_name] = 1.0
+
         # Record introduction
         self.last_introduction_round = round_num
         self.introduction_history.append({
@@ -541,6 +583,139 @@ class Evaluator:
         })
 
         return new_bm
+
+    def detect_saturation(self, round_num: int) -> list[str]:
+        """
+        Detect benchmarks that have been saturated (perfect or near-perfect scores).
+
+        A benchmark is considered saturated when any provider achieves a score >= threshold
+        (default 0.9995). Saturated benchmarks get downweighted in consumer decisions and media
+        coverage rather than being removed entirely.
+
+        Also detects when a provider hits exactly 1.000, which triggers a larger immediate
+        weight reduction.
+
+        Args:
+            round_num: Current round number
+
+        Returns:
+            List of newly saturated benchmark names
+        """
+        newly_saturated = []
+
+        for bm in self.benchmarks:
+            state = self._benchmark_saturation_state.get(bm.name)
+            if not state:
+                continue
+
+            # Get max score for this benchmark from current round
+            if bm.name in self.benchmark_score_history:
+                for r, scores in reversed(self.benchmark_score_history[bm.name]):
+                    if r == round_num:
+                        if scores:
+                            max_score = max(scores.values())
+                            state["max_score"] = max_score
+
+                            # Check for perfect score (1.000)
+                            if max_score >= 1.0 and not state["perfect_score_hit"]:
+                                state["perfect_score_hit"] = True
+
+                            # Check saturation threshold
+                            if max_score >= self._saturation_threshold and not state["saturated"]:
+                                state["saturated"] = True
+                                state["saturation_round"] = round_num
+                                state["cooldown_remaining"] = self._saturation_cooldown
+                                newly_saturated.append(bm.name)
+
+                                # Log saturation event
+                                self.saturation_history.append({
+                                    "round": round_num,
+                                    "benchmark_name": bm.name,
+                                    "max_score": max_score,
+                                })
+                        break
+
+        return newly_saturated
+
+    def apply_saturation_weight_decay(self, round_num: int) -> dict[str, float]:
+        """
+        Apply weight decay to saturated benchmarks instead of retiring them.
+
+        Saturated benchmarks have their weights gradually reduced based on validity:
+        - min_weight = max(0.1, validity - 0.3)
+        - Gradual decay per round after cooldown
+        - Immediate larger drop when perfect score (1.000) is hit
+
+        Args:
+            round_num: Current round number
+
+        Returns:
+            Dict mapping benchmark names to their current weight decay multipliers
+        """
+        for bm in self.benchmarks:
+            state = self._benchmark_saturation_state.get(bm.name)
+            if not state or not state["saturated"]:
+                continue
+
+            # Decrement cooldown
+            if state["cooldown_remaining"] > 0:
+                state["cooldown_remaining"] -= 1
+                continue
+
+            # Calculate target minimum weight based on validity
+            min_weight = max(0.1, bm.validity - 0.3)
+            current_decay = self._benchmark_weight_decay[bm.name]
+
+            # If perfect score hit, apply immediate large drop
+            if state["perfect_score_hit"]:
+                # Drop to min_weight + small buffer (0.1 of range)
+                target = min_weight + 0.1 * (1.0 - min_weight)
+                self._benchmark_weight_decay[bm.name] = min(current_decay, target)
+                # Clear flag so we don't apply this every round
+                state["perfect_score_hit"] = False
+            else:
+                # Gradual decay toward min_weight
+                if current_decay > min_weight:
+                    new_decay = current_decay - self._weight_decay_rate
+                    self._benchmark_weight_decay[bm.name] = max(min_weight, new_decay)
+
+        return dict(self._benchmark_weight_decay)
+
+    def retire_saturated_benchmarks(self, round_num: int) -> list[str]:
+        """
+        DEPRECATED: Kept for backwards compatibility.
+        Use apply_saturation_weight_decay instead.
+
+        Returns empty list - benchmarks are no longer retired.
+        """
+        return []
+
+    def is_benchmark_saturated(self, benchmark_name: str) -> bool:
+        """
+        Check if a benchmark is currently saturated (after cooldown).
+
+        Args:
+            benchmark_name: Name of the benchmark to check
+
+        Returns:
+            True if benchmark is saturated and past cooldown period
+        """
+        state = self._benchmark_saturation_state.get(benchmark_name)
+        if not state:
+            return False
+        return state.get("saturated", False) and state.get("cooldown_remaining", 0) <= 0
+
+    def get_benchmark_weight_multiplier(self, benchmark_name: str) -> float:
+        """
+        Get the current weight decay multiplier for a benchmark.
+
+        Args:
+            benchmark_name: Name of the benchmark
+
+        Returns:
+            Weight multiplier (1.0 = full weight, lower = downweighted)
+        """
+        return self._benchmark_weight_decay.get(benchmark_name, 1.0)
 
     def compute_validity_correlation(self) -> Optional[float]:
         """
@@ -658,6 +833,12 @@ class Evaluator:
             "max_benchmarks": self.max_benchmarks,
             "introduction_history": self.introduction_history,
             "_best_published_scores": self._best_published_scores,
+            # Saturation tracking
+            "_saturation_threshold": self._saturation_threshold,
+            "_saturation_cooldown": self._saturation_cooldown,
+            "_benchmark_saturation_state": self._benchmark_saturation_state,
+            "saturation_history": self.saturation_history,
+            "retirement_history": self.retirement_history,
             "regulations": [
                 {
                     "name": r.name,
@@ -716,6 +897,28 @@ class Evaluator:
             evaluator._best_published_scores = data["_best_published_scores"]
         else:
             evaluator._best_published_scores = {bm.name: {} for bm in evaluator.benchmarks}
+
+        # Load saturation tracking state if present
+        if "_saturation_threshold" in data:
+            evaluator._saturation_threshold = data["_saturation_threshold"]
+        if "_saturation_cooldown" in data:
+            evaluator._saturation_cooldown = data["_saturation_cooldown"]
+        if "_benchmark_saturation_state" in data:
+            evaluator._benchmark_saturation_state = data["_benchmark_saturation_state"]
+        else:
+            # Initialize for existing benchmarks
+            evaluator._benchmark_saturation_state = {
+                bm.name: {
+                    "saturated": False,
+                    "saturation_round": None,
+                    "cooldown_remaining": 0,
+                    "max_score": 0.0,
+                } for bm in evaluator.benchmarks
+            }
+        if "saturation_history" in data:
+            evaluator.saturation_history = data["saturation_history"]
+        if "retirement_history" in data:
+            evaluator.retirement_history = data["retirement_history"]
 
         # Load regulations if present
         if "regulations" in data:
