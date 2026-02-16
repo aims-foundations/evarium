@@ -130,6 +130,16 @@ USE_CASE_PROFILES = {
     },
 }
 
+# Field-specific benchmark keyword priorities for organizations
+# Organizations upweight benchmarks containing these keywords beyond their base preferences
+ORG_FIELD_PRIORITIES = {
+    "hospital_system": ["medical", "healthcare", "health", "safety", "clinical", "diagnosis"],
+    "enterprise_finance": ["finance", "financial", "accounting", "quant", "economic", "reasoning"],
+    "tech_startup": ["coding", "code", "software", "engineering", "swe"],
+    "enterprise_legal": ["legal", "law", "reasoning", "logic", "argument"],
+    "government_agency": ["safety", "security", "compliance", "policy"],
+}
+
 
 # ============================================================
 #  Archetype Definitions
@@ -316,6 +326,9 @@ class ConsumerMarket:
 
         Uses substring matching: "coding_bench" matches category "coding".
         Unmatched benchmarks get a small default weight (0.1).
+
+        For organizational consumers, applies additional upweighting (1.5x) to
+        benchmarks matching their field-specific priorities.
         """
         for seg in self.segments:
             profile = USE_CASE_PROFILES.get(seg.use_case, {})
@@ -330,6 +343,18 @@ class ConsumerMarket:
                         break
                 if not matched:
                     weights[bm_name] = 0.1  # small default weight
+
+            # Organizational field-specific upweighting
+            if seg.consumer_type == "organization":
+                field_keywords = ORG_FIELD_PRIORITIES.get(seg.use_case, [])
+                for bm_name in benchmark_names:
+                    # Check if benchmark name contains any field-priority keyword
+                    for keyword in field_keywords:
+                        if keyword.lower() in bm_name.lower():
+                            # Apply 1.5x multiplier to emphasize field relevance
+                            weights[bm_name] = weights.get(bm_name, 0.1) * 1.5
+                            break  # Only apply once per benchmark
+
             # Normalize
             total = sum(weights.values())
             if total > 0:

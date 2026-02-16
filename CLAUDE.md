@@ -41,3 +41,29 @@
 - Experiment results logged to `experiments/` via ExperimentLogger
 - Incremental round logging: `rounds.jsonl` (one JSON line per round, written live)
 - Always update stakeholders.md when making changes to the simulation so that the documentation is up to date. Confirm if unsure.
+
+## File Structure Quick Reference
+
+### Core Files
+- `simulation.py` — Main sim loop, SimulationConfig, provider config presets
+- `visibility.py` — State classes: PublicState, PrivateState, GroundTruth
+- `llm.py` — Multi-provider LLM integration and prompt templates
+- `experiment_logger.py` — ExperimentLogger for systematic logging
+- `plotting.py` — Visualization dashboards
+- `game_log.py` — Natural language game log generator
+
+### Actor Modules (actors/)
+- `model_provider.py` — ModelProvider with plan/observe/reflect/execute cycle
+- `evaluator.py` — Evaluator, Benchmark, Regulation classes (evolution + introduction)
+- `consumer.py` — ConsumerMarket with market segments (proportional switching)
+- `policymaker.py` — Policymaker with graduated interventions (media-aware)
+- `funder.py` — Funder (VC, gov, foundation types; media-aware)
+- `media.py` — Media actor (TechPress) with coverage influence
+
+### Experiment Results (experiments/)
+- `index.json` — Experiment index (VALIDATE JSON after edits!)
+- `exp_XXX_name/` — Individual experiment folders with history, plots, logs
+- `rounds.jsonl` — Incremental round-by-round data
+
+### Documentation
+- `stakeholders.md` — Comprehensive simulation architecture and design doc (UPDATE when making changes)

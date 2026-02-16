@@ -203,7 +203,7 @@ This section clarifies which stakeholders are implemented in the simulation.
 | Stakeholder | Status | Notes |
 |-------------|--------|-------|
 | Individual Consumer | **Implemented** (as market segments) | `actors/consumer.py` — ConsumerMarket with archetype × use-case segments |
-| Organizational Consumer | **Implemented** | `actors/consumer.py` — Extended MarketSegment with organizational profiles (hospital_system, enterprise_finance, etc.), decision_delay, integration_friction, compliance requirements, and optional LLM reasoning mode |
+| Organizational Consumer | **Implemented** | `actors/consumer.py` — Extended MarketSegment with organizational profiles (hospital_system, enterprise_finance, etc.), decision_delay, integration_friction, compliance requirements, optional LLM reasoning mode, and field-specific benchmark upweighting (1.5× multiplier for domain-relevant benchmarks). LLM reasoning traces included in game log when switching providers. |
 | Policymaker | **Implemented** | `actors/policymaker.py` — media-aware |
 | Model Provider | **Implemented** | `actors/model_provider.py` — per-provider visibility |
 | Evaluation Provider | **Implemented** | Active benchmark evolution + mid-simulation benchmark introduction |
@@ -213,10 +213,25 @@ This section clarifies which stakeholders are implemented in the simulation.
 ### Evaluator Behavior (Current)
 The Evaluator is **active** in two ways:
 1. **Benchmark evolution**: Benchmarks degrade in validity and grow in exploitability in proportion to aggregate evaluation engineering investment (gaming pressure). This creates the core Goodhart's Law feedback loop.
-2. **Benchmark introduction**: The evaluator can introduce new benchmarks mid-simulation when existing benchmarks become unreliable (validity < 0.4) or periodically every `cooldown` rounds (default 7). New benchmarks start with high validity (0.85) and low exploitability (0.15), resetting the measurement quality. Subject to a configurable cooldown and a maximum of 6 total benchmarks.
+2. **Benchmark introduction**: The evaluator can introduce new benchmarks mid-simulation when existing benchmarks become unreliable (validity < 0.4) or periodically every `cooldown` rounds (default 7). New benchmarks start with high validity (0.85) and low exploitability (0.15), resetting the measurement quality. Subject to a configurable cooldown and a maximum of 8 total benchmarks (raised from 6 to accommodate realistic benchmark suites).
 
 ### Future Extensions
-- **Multi-outlet Media**: Multiple media outlets with different editorial biases and reach
+
+#### Media Enhancements
+
+**Enterprise Deal Announcements:**
+- Generate headlines when organizational consumers (hospital_system, enterprise_finance, tech_startup, etc.) switch providers or sign new contracts
+- Examples:
+  - "Hospital System signs enterprise deal with Anthropic"
+  - "Fortune 500 finance company migrates to OpenAI"
+  - "Major tech startup adopts DeepMind for production workloads"
+- Should track organizational segment switching separately from general market share movements
+- Higher prominence than regular consumer switching (higher sentiment impact, provider attention boost)
+- Rationale: Enterprise deals are newsworthy events that signal provider credibility and generate significant media attention
+- Implementation location: `actors/media.py` in `observe_and_publish()` after consumer switching detection (TODO comment added)
+
+**Multi-outlet Media:**
+- Multiple media outlets with different editorial biases and reach
 
 #### Evaluator Enhancements
 
@@ -505,6 +520,31 @@ When media coverage is available:
 - Risk signals reduce `leaderboard_trust` by 5% for leaderboard-follower segments
 - Provider attention modulates brand awareness during switching decisions
 
+### Organizational Consumer Field-Specific Benchmark Upweighting
+
+Organizational consumers apply additional weight (1.5× multiplier) to benchmarks matching their field-specific priorities, beyond their base benchmark preferences. This reflects realistic procurement behavior where domain-specific evaluation is critical for enterprise decisions.
+
+**Implementation** (`actors/consumer.py`, `resolve_benchmark_weights()`):
+- Organizational use cases have defined field priority keywords (e.g., hospital_system: ["medical", "healthcare", "health", "safety", "clinical", "diagnosis"])
+- When resolving benchmark weights, if a benchmark name contains any field priority keyword, its weight is multiplied by 1.5× before normalization
+- This creates strong preference differentiation between organizational and individual consumers
+
+**Field Priority Mappings:**
+| Organization Type | Upweighted Benchmark Keywords |
+|-------------------|------------------------------|
+| `hospital_system` | medical, healthcare, health, safety, clinical, diagnosis |
+| `enterprise_finance` | finance, financial, accounting, quant, economic, reasoning |
+| `tech_startup` | coding, code, software, engineering, swe |
+| `enterprise_legal` | legal, law, reasoning, logic, argument |
+| `government_agency` | safety, security, compliance, policy |
+
+**Example:** A hospital system evaluating providers:
+- Base preference: safety: 0.65, reasoning: 0.25, writing: 0.10
+- When "medical" benchmark introduced: medical weight = (matched to "safety" category = 0.65) × 1.5 = 0.975 before normalization
+- Result: Hospital heavily prioritizes medical benchmark even more than individual healthcare workers
+
+**LLM Reasoning Traces:** When organizational consumers switch providers via LLM decision-making, their reasoning appears in the game log (`game_log.md`) in the "Other Actor Reasoning" section. Format: `{segment_name}: switch_{from_provider}_to_{target_provider}: {reasoning}`. Only included when actual switch decisions occur.
+
 ### Satisfaction Model (Use-Case Weighted)
 
 Consumer satisfaction is based on **use-case weighted perceived performance** (believed_quality), creating natural differentiation across segments. Software developers experience satisfaction based on coding performance, healthcare workers based on safety/reasoning performance, etc.
@@ -632,7 +672,7 @@ Type-specific signal weights:
 
 | Type | Quality | Score Momentum | Market Traction | Market Momentum | Diversification | Allocation Pattern |
 |------|---------|---------------|-----------------|-----------------|-----------------|-------------------|
-| **VC** | 0.20 | 0.25 | 0.20 | 0.20 | 0.15 | Concentrated (60/30/10 split); seeks contrarian opportunities |
+| **VC** | 0.15 | 0.25 | 0.15 | 0.20 | 0.25 | Concentrated (60/30/10 split); strong contrarian bias, actively avoids crowded trades |
 | **Government/AISI** | 0.50 | 0.10 | 0.25 | 0.05 | 0.10 | Spread proportionally; moderate ecosystem stability focus |
 | **Foundation** | 0.35 | 0.20 | 0.15 | 0.10 | 0.20 | Spread proportionally; strong ecosystem health focus |
 
@@ -789,7 +829,7 @@ The evaluator can introduce new benchmarks mid-simulation:
 | Parameter | Default | Description |
 |-----------|---------|-------------|
 | `benchmark_introduction_cooldown` | 7 rounds | Minimum rounds between introductions |
-| `max_benchmarks` | 6 | Maximum total benchmarks allowed |
+| `max_benchmarks` | 8 | Maximum total benchmarks allowed (raised from 6) |
 | `benchmark_sequence` | None | Optional pre-defined sequence of benchmarks to introduce |
 
 **Trigger conditions** (any one):
@@ -817,6 +857,71 @@ config = SimulationConfig(
     ],
 )
 ```
+
+### Realistic Benchmark Suite (Default Configuration)
+
+The simulation includes a realistic benchmark suite inspired by real-world LLM evaluation benchmarks (MMLU, HumanEval, GSM8K, HELM Safety, MultiMedQA, LegalBench, FinBen, MMLU-Pro, HumanEval+, LiveBench). This configuration is used in `run_experiment.py` and reflects the actual benchmark landscape.
+
+**Initial Benchmarks (4):**
+```python
+BENCHMARKS = [
+    {"name": "coding", "validity": 0.85, "exploitability": 0.25},      # HumanEval-style
+    {"name": "reasoning", "validity": 0.80, "exploitability": 0.30},   # MMLU/BBH-style
+    {"name": "math", "validity": 0.75, "exploitability": 0.35},        # GSM8K-style
+    {"name": "safety", "validity": 0.85, "exploitability": 0.20},      # HELM Safety-style
+]
+```
+
+**Benchmark Introduction Sequence (6 additional):**
+```python
+benchmark_sequence = [
+    # Domain-specific benchmarks (introduced as organizational consumers demand them)
+    {"name": "medical", "validity": 0.80, "exploitability": 0.25},     # MultiMedQA-style
+    {"name": "legal", "validity": 0.80, "exploitability": 0.25},       # LegalBench-style
+    {"name": "finance", "validity": 0.80, "exploitability": 0.25},     # FinBen-style
+
+    # Advanced/refined versions (introduced as initial benchmarks saturate)
+    {"name": "coding_advanced", "validity": 0.85, "exploitability": 0.15},    # SWE-bench/HumanEval+-style
+    {"name": "reasoning_advanced", "validity": 0.85, "exploitability": 0.15}, # MMLU-Pro/GPQA-style
+
+    # Contamination-resistant (introduced late-game as gaming pressure builds)
+    {"name": "live_bench", "validity": 0.90, "exploitability": 0.10},  # LiveBench/LiveCodeBench-style
+]
+```
+
+**Benchmark Progression Dynamics:**
+- **Rounds 1-6**: Competition on general capabilities (coding, reasoning, math, safety)
+- **Rounds 7+**: Domain-specific benchmarks introduced as evaluator responds to degradation or periodically
+  - Organizational consumers heavily prioritize their field-relevant benchmarks (1.5× upweighting)
+  - Hospital systems prioritize medical benchmark, finance enterprises prioritize finance benchmark
+- **Mid-Late Game**: Original benchmarks saturate (scores ≥ 0.9995), triggering retirement and introduction of advanced variants
+  - Advanced variants have lower exploitability (harder to game)
+- **Late Game**: Contamination-resistant benchmarks provide ground truth as gaming pressure peaks
+
+**Real-World Benchmark Inspirations:**
+| Simulation Benchmark | Real-World Analog | Key Features |
+|----------------------|-------------------|--------------|
+| `coding` | HumanEval | Python function writing, unit tests |
+| `coding_advanced` | SWE-bench, HumanEval+ | Real GitHub bugs, 80× more test cases |
+| `reasoning` | MMLU, BBH, ARC | Multi-domain knowledge, complex reasoning |
+| `reasoning_advanced` | MMLU-Pro, GPQA | 10 answer choices, expert-level questions |
+| `math` | GSM8K | Grade-school math, multi-step arithmetic |
+| `safety` | HELM Safety | 6 risk categories (discrimination, violence, fraud, etc.) |
+| `medical` | MultiMedQA | Healthcare Q&A, factuality, harm assessment |
+| `legal` | LegalBench | Legal reasoning, 6 categories |
+| `finance` | FinBen | 24 financial tasks, 7 domains |
+| `live_bench` | LiveBench, LiveCodeBench | Monthly updates, contamination-resistant |
+
+**Benchmark Evolution Examples:**
+- **MMLU → MMLU-Pro**: 4 to 10 answer choices, 16-33% accuracy drop, more reasoning-focused (NeurIPS 2024)
+- **HumanEval → HumanEval+**: 80× more test cases via EvalPlus framework, detects previously undetected errors
+- **GSM8K saturation**: Top models solve it, revealed memorization vs. reasoning gap
+
+This realistic suite enables studying dynamics like:
+- Organizational procurement decisions driven by domain-specific benchmarks
+- Benchmark saturation and refinement arms race
+- Provider specialization vs. generalist strategies
+- Gaming pressure and contamination resistance
 
 ---
 

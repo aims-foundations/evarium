@@ -263,6 +263,14 @@ class Media:
                         coverage.sentiment += 0.05
             self._previous_market_shares = dict(market_shares)
 
+        # TODO: Add enterprise deal announcements for organizational consumers
+        # When organizational consumers (hospital_system, enterprise_finance, etc.) switch
+        # providers, generate headline like:
+        # "Hospital System signs enterprise deal with Anthropic"
+        # "Fortune 500 finance company migrates to OpenAI"
+        # Should track organizational segment switching separately from general market share
+        # and generate more prominent headlines (higher sentiment impact, provider attention)
+
         # --- Compose coverage ---
         coverage.headlines = events_detected
 

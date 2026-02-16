@@ -11,7 +11,7 @@ Key dynamics:
 - Different funder types have different allocation strategies
 
 Funder Types:
-- VC: ROI maximization, back top performers, high concentration
+- VC: ROI maximization, momentum-driven, strong portfolio diversification (seek contrarian opportunities)
 - Government/AISI: Safety & stability, spread funding, favor consistency
 - Foundation: Mission alignment, reward capability growth
 
@@ -445,16 +445,17 @@ class Funder:
 
     def _plan_vc(self, providers: list, capital: float) -> dict:
         """
-        VC strategy: Back top performers, high concentration.
+        VC strategy: Back top performers with strong diversification emphasis.
 
-        Uses momentum signals — gaming effects emerge indirectly through
-        declining market traction when scores don't match real quality.
-        Includes diversification signal to avoid over-saturated opportunities.
+        VCs seek contrarian opportunities and avoid crowded trades. High weight
+        on diversification (0.25) means VCs actively seek under-funded providers
+        where other funders aren't concentrated. Gaming effects emerge indirectly
+        through declining market traction when scores don't match real quality.
         """
         scores = self._score_providers(providers, {
-            "quality": 0.20, "score_momentum": 0.25,
-            "market_traction": 0.20, "market_momentum": 0.20,
-            "diversification": 0.15,
+            "quality": 0.15, "score_momentum": 0.25,
+            "market_traction": 0.15, "market_momentum": 0.20,
+            "diversification": 0.25,  # Increased from 0.15 - VCs seek contrarian opportunities
         })
 
         ranked = sorted(scores.items(), key=lambda x: x[1], reverse=True)

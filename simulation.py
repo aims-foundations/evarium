@@ -71,9 +71,10 @@ class SimulationConfig:
 
     # Benchmark introduction (evaluator introduces new benchmarks mid-simulation)
     benchmark_introduction_cooldown: int = 7
-    max_benchmarks: int = 6
+    max_benchmarks: int = 8  # Raised from 6 to accommodate realistic benchmark suite
     benchmark_sequence: Optional[list] = None  # Ordered list of benchmark dicts to introduce
     # Each dict: {"name": str, "validity": float, "exploitability": float, "noise_level": float, "weight": float}
+    # Default realistic sequence inspired by real-world benchmarks (MMLU, HumanEval, GSM8K, etc.)
 
     # Planning mode
     llm_mode: bool = False  # If True, use LLM for provider planning; if False, use heuristics
@@ -711,6 +712,19 @@ class EvalEcosystemSimulation:
                     if trace:
                         actor_traces[funder.name] = trace
                     break
+
+        # Organizational consumer LLM reasoning traces (when switches happen)
+        if self.consumer_market:
+            for seg in self.consumer_market.segments:
+                if seg.consumer_type == "organization" and seg.last_llm_decision:
+                    # Only include if there was a switch decision
+                    decision = seg.last_llm_decision.get("decision", {})
+                    if decision.get("should_switch"):
+                        reasoning = decision.get("reasoning", "")
+                        target = decision.get("target_provider", "unknown")
+                        provider = seg.last_llm_decision.get("provider", "current")
+                        trace = f"switch_{provider}_to_{target}: {reasoning}"
+                        actor_traces[seg.name] = trace
 
         if actor_traces:
             round_data["actor_traces"] = actor_traces
