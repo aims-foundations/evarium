@@ -37,11 +37,11 @@ EXPERIMENT = {
 
 LLM = {
     "provider": "ollama",       # openai | anthropic | ollama | gemini
-    "llm_mode": False,          # True = LLM planning for providers, False = heuristic
+    "llm_mode": True,          # True = LLM planning for providers, False = heuristic
     # Consumer LLM config (all heuristic for incident test)
     "consumer_llm_mode": False,           # Enable consumer LLM
     "consumer_llm_individuals": False,   # Individuals use heuristics
-    "consumer_llm_organizations": False,  # Organizations use heuristics for faster testing
+    "consumer_llm_organizations": True,  # Organizations use heuristics for faster testing
 }
 
 SIMULATION = {
