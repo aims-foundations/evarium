@@ -608,7 +608,7 @@ def plot_policymaker_dashboard(
     Create a dashboard for Policymaker actors.
 
     Panels:
-    1. Validity Correlation with Intervention Markers
+    1. Validity Correlation with Intervention & Incident Markers
     2. Intervention Timeline
     3. Active Regulations Count
     4. Intervention Types Distribution
@@ -641,10 +641,19 @@ def plot_policymaker_dashboard(
                     if "type" in interv:
                         intervention_types.append(interv["type"])
 
+    # Extract incident data
+    incident_rounds = []
+    incident_severities = []
+    for h in history:
+        if "incidents" in h and h["incidents"]:
+            for inc in h["incidents"]:
+                incident_rounds.append(h["round"])
+                incident_severities.append(inc["severity"])
+
     fig, axes = plt.subplots(2, 2, figsize=figsize)
     fig.suptitle("Policymaker Dashboard", fontsize=14, fontweight='bold')
 
-    # --- Panel 1: Validity Correlation with Interventions ---
+    # --- Panel 1: Validity Correlation with Interventions & Incidents ---
     ax1 = axes[0, 0]
     validity_rounds, validity_values = compute_rolling_correlation(history)
 
@@ -659,11 +668,21 @@ def plot_policymaker_dashboard(
         ax1.axvline(x=intervention_rounds[0], color='#E63946', linestyle='--',
                    alpha=0.7, label='Intervention')
 
+    # Mark incidents with different colors by severity
+    severity_colors = {"minor": "#90EE90", "moderate": "#FFD700", "major": "#FF8C00", "critical": "#DC143C"}
+    incident_legend_added = {}
+    for ir, sev in zip(incident_rounds, incident_severities):
+        color = severity_colors.get(sev, "#666666")
+        label = f'Incident ({sev})' if sev not in incident_legend_added else None
+        if label:
+            incident_legend_added[sev] = True
+        ax1.axvline(x=ir, color=color, linestyle=':', alpha=0.6, linewidth=2, label=label)
+
     ax1.axhline(y=0.7, color='green', linestyle=':', alpha=0.5)
     ax1.axhline(y=0.5, color='orange', linestyle=':', alpha=0.5)
     ax1.axhline(y=0.3, color='red', linestyle=':', alpha=0.5)
     ax1.set_ylim(-0.2, 1.0)
-    style_axis(ax1, "Benchmark Validity & Interventions", "Round", "Correlation")
+    style_axis(ax1, "Benchmark Validity & Interventions & Incidents", "Round", "Correlation")
 
     # --- Panel 2: Intervention Timeline ---
     ax2 = axes[0, 1]
@@ -1632,6 +1651,212 @@ def plot_media_dashboard(
 
 
 # =============================================================================
+# Incident Dashboard
+# =============================================================================
+
+def plot_incident_dashboard(
+    history: list,
+    save_path: Optional[str] = None,
+    show: bool = True,
+    figsize: tuple = (16, 10),
+) -> Optional[plt.Figure]:
+    """
+    Create a comprehensive dashboard for AI safety incidents.
+
+    Panels:
+    1. Incident Timeline by Provider
+    2. Incident Severity Distribution
+    3. Incident Category Breakdown
+    4. Provider Safety vs Incident Rate
+    5. Incidents per Round
+    6. Provider Incident Comparison
+
+    Args:
+        history: List of round data dicts
+        save_path: Path to save figure
+        show: Whether to display
+        figsize: Figure size
+
+    Returns:
+        matplotlib Figure or None
+    """
+    # Extract incidents from history
+    all_incidents = []
+    for h in history:
+        if "incidents" in h and h["incidents"]:
+            for inc in h["incidents"]:
+                inc_data = inc.copy()
+                inc_data["round"] = h["round"]
+                all_incidents.append(inc_data)
+
+    if not all_incidents:
+        print("No incidents to plot")
+        return None
+
+    providers = get_providers(history)
+    rounds = [h["round"] for h in history]
+
+    fig, axes = plt.subplots(3, 2, figsize=figsize)
+    fig.suptitle("AI Safety Incident Dashboard", fontsize=16, fontweight='bold')
+
+    # --- Panel 1: Incident Timeline by Provider ---
+    ax1 = axes[0, 0]
+    provider_colors = {p: c for p, c in zip(providers, get_provider_colors(len(providers)))}
+
+    for inc in all_incidents:
+        severity_markers = {"minor": "o", "moderate": "s", "major": "^", "critical": "X"}
+        severity_sizes = {"minor": 30, "moderate": 60, "major": 100, "critical": 150}
+        marker = severity_markers.get(inc["severity"], "o")
+        size = severity_sizes.get(inc["severity"], 50)
+        color = provider_colors.get(inc["provider"], "#666666")
+
+        ax1.scatter(inc["round"], providers.index(inc["provider"]),
+                   marker=marker, s=size, color=color, alpha=0.7, edgecolors='black', linewidth=1)
+
+    ax1.set_yticks(range(len(providers)))
+    ax1.set_yticklabels(providers)
+    ax1.set_xlim(min(rounds)-1, max(rounds)+1)
+
+    # Legend for severity
+    legend_elements = [
+        mlines.Line2D([0], [0], marker='o', color='w', markerfacecolor='gray',
+                     markersize=6, label='Minor', markeredgecolor='black'),
+        mlines.Line2D([0], [0], marker='s', color='w', markerfacecolor='gray',
+                     markersize=8, label='Moderate', markeredgecolor='black'),
+        mlines.Line2D([0], [0], marker='^', color='w', markerfacecolor='gray',
+                     markersize=10, label='Major', markeredgecolor='black'),
+        mlines.Line2D([0], [0], marker='X', color='w', markerfacecolor='gray',
+                     markersize=12, label='Critical', markeredgecolor='black'),
+    ]
+    ax1.legend(handles=legend_elements, loc='upper right', fontsize=8)
+    style_axis(ax1, "Incident Timeline by Provider", "Round", "Provider", legend=False)
+
+    # --- Panel 2: Severity Distribution ---
+    ax2 = axes[0, 1]
+    severities = [inc["severity"] for inc in all_incidents]
+    severity_counts = {
+        "minor": severities.count("minor"),
+        "moderate": severities.count("moderate"),
+        "major": severities.count("major"),
+        "critical": severities.count("critical"),
+    }
+
+    severity_colors = {"minor": "#90EE90", "moderate": "#FFD700", "major": "#FF8C00", "critical": "#DC143C"}
+    labels = [f"{k.capitalize()}\n({v})" for k, v in severity_counts.items() if v > 0]
+    values = [v for v in severity_counts.values() if v > 0]
+    colors = [severity_colors[k] for k, v in severity_counts.items() if v > 0]
+
+    if values:
+        ax2.pie(values, labels=labels, autopct='%1.0f%%', colors=colors,
+                textprops={'fontsize': 9}, startangle=90)
+    ax2.set_title("Incident Severity Distribution", fontsize=11, fontweight='bold')
+
+    # --- Panel 3: Category Breakdown ---
+    ax3 = axes[1, 0]
+    categories = [inc["category"] for inc in all_incidents]
+    unique_categories = list(set(categories))
+    category_counts = [categories.count(c) for c in unique_categories]
+
+    category_colors = {
+        "healthcare_harm": "#E63946",
+        "security_breach": "#F77F00",
+        "bias_discrimination": "#FCBF49",
+        "safety_failure": "#EAE2B7",
+        "misinformation": "#457B9D",
+        "misuse": "#A8DADC",
+    }
+
+    bar_colors = [category_colors.get(c, "#666666") for c in unique_categories]
+    bars = ax3.barh(unique_categories, category_counts, color=bar_colors, alpha=0.8, edgecolor='black')
+
+    # Add count labels
+    for i, (cat, count) in enumerate(zip(unique_categories, category_counts)):
+        ax3.text(count + 0.1, i, str(count), va='center', fontsize=9, fontweight='bold')
+
+    style_axis(ax3, "Incidents by Category", "Count", "Category", legend=False)
+
+    # --- Panel 4: Provider Safety vs Incident Rate ---
+    ax4 = axes[1, 1]
+
+    # Calculate average safety and incident counts per provider
+    provider_incidents = {p: 0 for p in providers}
+    for inc in all_incidents:
+        provider_incidents[inc["provider"]] += 1
+
+    # Get average safety investment per provider
+    provider_safety = {}
+    for p in providers:
+        safety_values = [h["strategies"][p]["safety_alignment"]
+                        for h in history if p in h["strategies"]]
+        provider_safety[p] = np.mean(safety_values) if safety_values else 0
+
+    x_vals = [provider_safety[p] for p in providers]
+    y_vals = [provider_incidents[p] for p in providers]
+    colors = [provider_colors[p] for p in providers]
+
+    ax4.scatter(x_vals, y_vals, s=200, c=colors, alpha=0.7, edgecolors='black', linewidth=1.5)
+
+    # Add provider labels
+    for i, p in enumerate(providers):
+        ax4.annotate(p, (x_vals[i], y_vals[i]), fontsize=8, ha='center', va='bottom')
+
+    # Trend line
+    if len(x_vals) > 1:
+        z = np.polyfit(x_vals, y_vals, 1)
+        p_fit = np.poly1d(z)
+        x_trend = np.linspace(min(x_vals), max(x_vals), 100)
+        ax4.plot(x_trend, p_fit(x_trend), "--", color='gray', alpha=0.5, linewidth=2)
+
+    style_axis(ax4, "Safety Investment vs Incident Count",
+               "Avg Safety Alignment", "Total Incidents", legend=False)
+
+    # --- Panel 5: Incidents per Round ---
+    ax5 = axes[2, 0]
+    incidents_per_round = {r: 0 for r in rounds}
+    for inc in all_incidents:
+        incidents_per_round[inc["round"]] += 1
+
+    incident_counts = [incidents_per_round[r] for r in rounds]
+    ax5.bar(rounds, incident_counts, color='#E63946', alpha=0.7, edgecolor='black')
+    ax5.axhline(y=np.mean([v for v in incident_counts if v > 0]),
+                color='blue', linestyle='--', alpha=0.5, label=f'Avg: {np.mean([v for v in incident_counts if v > 0]):.1f}')
+
+    style_axis(ax5, "Incidents per Round", "Round", "Count")
+
+    # --- Panel 6: Provider Incident Comparison ---
+    ax6 = axes[2, 1]
+
+    provider_names = list(provider_incidents.keys())
+    incident_counts_by_provider = list(provider_incidents.values())
+    bar_colors = [provider_colors[p] for p in provider_names]
+
+    bars = ax6.bar(provider_names, incident_counts_by_provider,
+                   color=bar_colors, alpha=0.8, edgecolor='black', linewidth=1.5)
+
+    # Add count labels on bars
+    for bar, count in zip(bars, incident_counts_by_provider):
+        if count > 0:
+            ax6.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 0.1,
+                    str(count), ha='center', va='bottom', fontsize=10, fontweight='bold')
+
+    ax6.set_xticklabels(provider_names, rotation=45, ha='right')
+    style_axis(ax6, "Total Incidents by Provider", "Provider", "Count", legend=False)
+
+    plt.tight_layout()
+
+    if save_path:
+        plt.savefig(save_path, dpi=150, bbox_inches='tight')
+        print(f"Incident dashboard saved to: {save_path}")
+
+    if show:
+        plt.show()
+    else:
+        plt.close(fig)
+
+    return fig
+
+
+# =============================================================================
 # Convenience Function: Create All Dashboards
 # =============================================================================
 
@@ -1705,6 +1930,15 @@ def create_all_dashboards(
         plt.close(fig)
         saved['media_dashboard'] = path
         print(f"  - Media dashboard saved")
+
+    # Incident Dashboard
+    fig = plot_incident_dashboard(history, show=False)
+    if fig:
+        path = f"{output_dir}/incident_dashboard.png"
+        fig.savefig(path, dpi=150, bbox_inches='tight')
+        plt.close(fig)
+        saved['incident_dashboard'] = path
+        print(f"  - Incident dashboard saved")
 
     # Evaluator Dashboard
     fig = plot_evaluator_dashboard(history, show=False)

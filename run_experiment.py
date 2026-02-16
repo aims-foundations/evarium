@@ -284,7 +284,7 @@ FUNDERS = {
         {
             "name": "Horizon_Capital",
             "funder_type": "vc",
-            "total_capital": 500_000_000.0,
+            "total_capital": 1_000_000_000.0,
             "risk_tolerance": 0.6,
             "mission_statement": "Maximize returns by backing AI market leaders",
             "max_round_deployment": 0.10,
