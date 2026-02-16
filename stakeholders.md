@@ -15,6 +15,7 @@ This document describes (1) the conceptual stakeholders in the AI evaluation eco
 | `actors/policymaker.py` | Policymaker with graduated interventions, media-aware |
 | `actors/funder.py` | Funder actor (VC, gov, foundation types), media-aware |
 | `actors/media.py` | Media actor (TechPress) — observes public events, publishes coverage influencing downstream actors |
+| `incidents.py` | AI incident reporting system: `IncidentGenerator` with probabilistic incident generation based on provider safety investment and gaming |
 | `visibility.py` | State classes: PublicState, PrivateState, GroundTruth |
 | `llm.py` | Multi-provider LLM integration (OpenAI, Anthropic, Ollama, Gemini) and prompt templates |
 | `plotting.py` | Visualization dashboards (provider, consumer, policymaker, evaluator, funder, summary) |
@@ -209,6 +210,138 @@ This section clarifies which stakeholders are implemented in the simulation.
 | Evaluation Provider | **Implemented** | Active benchmark evolution + mid-simulation benchmark introduction |
 | Funder | **Implemented** | `actors/funder.py` — VC, Government, Foundation types; media-aware |
 | Media | **Implemented** | `actors/media.py` — TechPress outlet; publishes coverage influencing downstream actors |
+| Incident Reporting | **Implemented** | `incidents.py` — Probabilistic AI safety incident generation and ecosystem propagation |
+
+### Incident Reporting System ✓ **Implemented**
+
+The simulation now models AI safety failures as discrete incident events that cascade through the entire ecosystem. This addresses the gap where safety investment affected satisfaction but didn't create newsworthy events with regulatory and market consequences.
+
+#### Design Philosophy
+
+Based on real-world AI Incident Database (AIID) data:
+- 1,200+ reported incidents across healthcare, security, bias, safety domains
+- Public AI security/privacy incidents rose 56.4% from 2023 to 2024
+- Incidents trigger regulatory scrutiny, media coverage, consumer distrust, and market reactions
+- Providers face both reputational and material consequences
+
+#### Incident Categories
+
+Six categories based on AIID taxonomy:
+1. **Healthcare Harm** (20% weight): Misdiagnosis, treatment errors, insurance denials
+2. **Security Breach** (25% weight): Data leaks, PHI exposure, API vulnerabilities
+3. **Bias/Discrimination** (20% weight): Hiring bias, loan denial, facial recognition errors
+4. **Safety Failure** (20% weight): Hallucinations, critical task failures, infrastructure risks
+5. **Misinformation** (10% weight): False information generation, manipulation
+6. **Misuse** (5% weight): Jailbreak exploits, harmful content generation
+
+#### Incident Probability Model
+
+Base incident rate: 5% per provider per round
+
+**Modulating factors:**
+1. **Safety Investment** (primary): `multiplier = 1.0 - (safety_alignment × 0.8)`
+   - safety=0.0 → 1.0× (full risk)
+   - safety=0.5 → 0.6× (40% reduction)
+   - safety=1.0 → 0.2× (80% reduction)
+
+2. **Gaming Penalty**: `multiplier = 1.0 + (capability_gap × 2.0)`
+   - High published score + low true capability → deployment failures
+
+3. **Market Share** (exposure): `multiplier = 0.5 + (market_share × 1.5)`
+   - More users = more incidents discovered
+
+4. **Capability Level**: `multiplier = 0.8 + (true_capability × 0.4)`
+   - Higher capability → higher stakes deployment
+
+Combined probability clamped to [0, 0.30] maximum.
+
+#### Severity Distribution
+
+When incident occurs:
+- **Minor** (60%): Internal only, no headlines
+- **Moderate** (30%): Multiple users, local news, media coverage
+- **Major** (8%): National media, regulatory attention, lawsuits
+- **Critical** (2%): Public safety, congressional hearings, emergency response
+
+#### Ecosystem Propagation
+
+**Media (`actors/media.py`):**
+- Generates headlines for moderate+ incidents
+- Updates provider_attention (0.6 moderate → 1.0 critical)
+- Adds `incident_{category}` to risk_signals
+- Sentiment impact (-0.15 moderate → -0.40 critical)
+- Enhanced policymaker intervention headlines with specific details
+
+**Consumers (`actors/consumer.py`):**
+- Incident_penalty in satisfaction computation (Factor 4)
+- Severity weights: minor 0.02 → critical 0.30
+- 2× penalty for sector-specific incidents (e.g., healthcare_harm → hospital_system)
+- Leaderboard_trust erosion for followers (5% per incident signal)
+- Recent incidents tracked (last 5 rounds)
+
+**Policymakers (`actors/policymaker.py`):**
+- Incident-driven risk belief updates by category:
+  - healthcare_harm/safety_failure → consumer_harm_risk
+  - security_breach → security_risk
+  - bias_discrimination → fairness_risk
+  - All incidents → gaming_risk (+50% of severity impact)
+- Critical incidents trigger emergency_investigation (overrides cooldown)
+- Incidents recorded in observed_incidents list
+
+**Funders (`actors/funder.py`):**
+- Incidents increase believed_provider_gaming (0.03 minor → 0.25 critical)
+- Incident_penalty in provider scoring (0.05-0.35 per incident)
+- Recent incidents tracked (last 3 rounds)
+- Reduced funding allocation to providers with incident history
+
+#### Regulatory Style Differentiation
+
+**Policymaker Presets:**
+
+Three regulatory philosophies (`POLICYMAKER_PRESETS` in `simulation.py`):
+
+1. **us_light_touch** (Ex-post response):
+   - intervention_threshold: 0.75 (high — many incidents before action)
+   - intervention_cooldown: 6 rounds (slow)
+   - ex_ante_requirements: False (react after harm occurs)
+   - enforcement_stringency: 0.25 (light touch)
+   - compliance_burden: 0.15 (minimal)
+
+2. **eu_precautionary** (Ex-ante prevention):
+   - intervention_threshold: 0.35 (low — proactive)
+   - intervention_cooldown: 2 rounds (fast)
+   - ex_ante_requirements: True (prevent before deployment)
+   - mandatory_safety_threshold: 0.40 (early safety requirements)
+   - enforcement_stringency: 0.85 (strict)
+   - compliance_burden: 0.75 (high)
+
+3. **balanced** (Middle ground)
+
+Usage in experiments:
+```python
+policymaker_configs = [{
+    "name": "Regulator",
+    "philosophy": "eu_precautionary",  # or "us_light_touch" or "balanced"
+}]
+```
+
+**Testable hypothesis:** EU-style reduces total incident count but slows capability growth; US-style has higher incident rate but faster innovation.
+
+#### Logging and Analysis
+
+- Incidents logged to `history.json` with full AIIncident details
+- `rounds.jsonl` includes `incident_summary` with counts by severity and provider
+- Incident metrics: total_count, by_severity, by_provider
+- Per-incident data: provider, category, severity, description, affected_sectors, safety_investment_at_time, gaming_gap_at_time, market_share_at_time
+
+#### Implementation Files
+
+- `incidents.py`: IncidentGenerator class, AIIncident dataclass, category templates
+- `simulation.py`: Incident generation in run_round(), policymaker presets
+- `actors/media.py`: Incident headlines (event type #10), enhanced policymaker headlines
+- `actors/consumer.py`: Incident_penalty in satisfaction, leaderboard_trust erosion
+- `actors/policymaker.py`: Risk belief updates, emergency_investigation intervention
+- `actors/funder.py`: Gaming belief updates, incident_penalty in scoring
 
 ### Evaluator Behavior (Current)
 The Evaluator is **active** in two ways:

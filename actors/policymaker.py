@@ -146,6 +146,7 @@ class Policymaker:
         media_coverage: Optional[dict] = None,
         market_shares: Optional[dict] = None,
         provider_strategies: Optional[dict] = None,
+        incidents: Optional[list] = None,
     ):
         """
         Observe the current ecosystem state.
@@ -158,6 +159,7 @@ class Policymaker:
             media_coverage: Optional media coverage dict with risk_signals, sentiment
             market_shares: Optional dict {provider_name: market_share}
             provider_strategies: Optional dict {provider_name: {eval_engineering, ...}}
+            incidents: Optional list of AIIncident objects from this round
         """
         self.public_state.current_round = round_num
 
@@ -218,6 +220,49 @@ class Policymaker:
                 self.private_state.risk_beliefs["validity_degradation_risk"] = min(
                     1.0,
                     self.private_state.risk_beliefs["validity_degradation_risk"] + 0.05,
+                )
+
+        # Incident-driven risk belief updates
+        if incidents:
+            for incident in incidents:
+                # Record incident in observed_incidents
+                self.private_state.observed_incidents.append(
+                    (round_num, f"{incident.category}: {incident.description}")
+                )
+
+                # Update risk beliefs based on severity
+                severity_impact = {
+                    "minor": 0.02,
+                    "moderate": 0.08,
+                    "major": 0.15,
+                    "critical": 0.30,
+                }
+                impact = severity_impact.get(incident.severity, 0.05)
+
+                # Category-specific risk updates
+                if incident.category in ["healthcare_harm", "safety_failure"]:
+                    self.private_state.risk_beliefs["consumer_harm_risk"] = min(
+                        1.0, self.private_state.risk_beliefs["consumer_harm_risk"] + impact
+                    )
+                if incident.category == "security_breach":
+                    # Initialize security_risk if not present
+                    if "security_risk" not in self.private_state.risk_beliefs:
+                        self.private_state.risk_beliefs["security_risk"] = 0.3
+                    self.private_state.risk_beliefs["security_risk"] = min(
+                        1.0, self.private_state.risk_beliefs["security_risk"] + impact
+                    )
+                if incident.category == "bias_discrimination":
+                    # Initialize fairness_risk if not present
+                    if "fairness_risk" not in self.private_state.risk_beliefs:
+                        self.private_state.risk_beliefs["fairness_risk"] = 0.3
+                    self.private_state.risk_beliefs["fairness_risk"] = min(
+                        1.0, self.private_state.risk_beliefs["fairness_risk"] + impact
+                    )
+
+                # Gaming detection: if provider has high score but incidents, suspect gaming
+                # (capability gap causing real-world failures)
+                self.private_state.risk_beliefs["gaming_risk"] = min(
+                    1.0, self.private_state.risk_beliefs["gaming_risk"] + impact * 0.5
                 )
 
         # Tier 1: Market concentration monitoring
@@ -314,6 +359,41 @@ class Policymaker:
         market concentration, eval engineering levels.
         """
         max_risk = max(self.private_state.risk_beliefs.values())
+
+        # CRITICAL INCIDENT OVERRIDE: Check for critical incidents from current round
+        # Critical incidents trigger immediate emergency investigation, overriding cooldown
+        critical_incidents = [
+            inc_data for inc_data in self.private_state.observed_incidents
+            if inc_data[0] == self.public_state.current_round and "critical" in inc_data[1].lower()
+        ]
+        if critical_incidents:
+            # Extract provider from incident description (format: "category: provider description")
+            incident_desc = critical_incidents[0][1]
+            # Simple heuristic: look for provider name in description
+            provider = None
+            if self._last_market_shares:
+                for prov in self._last_market_shares.keys():
+                    if prov in incident_desc:
+                        provider = prov
+                        break
+
+            intervention = {
+                "type": "emergency_investigation",
+                "name": f"Emergency_Investigation_{provider or 'Unknown'}_R{self.public_state.current_round}",
+                "details": {
+                    "provider": provider or "Unknown",
+                    "incident_description": incident_desc,
+                    "severity": "critical",
+                },
+                "reason": f"Critical incident: {incident_desc}",
+            }
+            self.memory.append({
+                "type": "planning",
+                "round": self.public_state.current_round,
+                "decision": intervention["type"],
+                "reason": intervention["reason"],
+            })
+            return intervention
 
         # Get market concentration if available
         market_concentration_risk = self.private_state.risk_beliefs.get("market_concentration_risk", 0.0)

@@ -22,36 +22,30 @@ os.environ["NUMEXPR_NUM_THREADS"] = n_threads_str
 # ============================================================
 
 EXPERIMENT = {
-    "name": "5p_4b_realistic_suite_v8",
+    "name": "baseline_with_incidents_v1",
     "description": (
-        "Full ecosystem v8: 5 providers, 4 initial benchmarks (coding, reasoning, math, safety), "
-        "realistic benchmark suite (10 total, max 8 active) inspired by real-world evals "
-        "(HumanEval, MMLU, GSM8K, HELM Safety, domain-specific benchmarks). "
-        "39 consumer segments (10 individual + 3 organizational use-cases × 3 archetypes). "
-        "1 policymaker with Tier 1 enhancements, 3 funders (2 VC + 1 Gov). "
-        "NEW v8 features: "
-        "- Realistic benchmark progression with domain-specific evals (medical, legal, finance) "
-        "- Organizational consumers upweight field-relevant benchmarks (1.5x multiplier) "
-        "- Org consumer LLM reasoning traces in game log when switching providers "
-        "- Benchmark sequence includes advanced variants and contamination-resistant benchmarks "
-        "LLM mode via Ollama."
+        "Baseline ecosystem with incident reporting: 5 major providers (OpenAI, Anthropic, Google, MetaAI, StartupDotAI), "
+        "4 initial benchmarks (coding, reasoning, math, safety), realistic benchmark progression. "
+        "Incident reporting models AI safety failures based on provider safety investment. "
+        "EU precautionary policymaker responds to incidents. "
+        "39 consumer segments, 3 funders, media coverage. "
+        "Heuristic mode for performance."
     ),
-    "tags": ["llm", "ollama", "5-provider", "4-benchmark", "realistic-benchmarks", "39-segments",
-             "organizational-consumers", "consumer-llm", "benchmark-saturation", "domain-specific",
-             "tier1-policymaker", "market-concentration", "3-funder", "full-ecosystem-v8"],
+    "tags": ["baseline", "incidents", "heuristic", "5-provider", "4-benchmark", "39-segments",
+             "eu-precautionary", "3-funder", "realistic", "full-ecosystem"],
 }
 
 LLM = {
     "provider": "ollama",       # openai | anthropic | ollama | gemini
     "llm_mode": False,          # True = LLM planning for providers, False = heuristic
-    # Consumer LLM config (organizational consumers use LLM reasoning)
+    # Consumer LLM config (all heuristic for incident test)
     "consumer_llm_mode": False,           # Enable consumer LLM
     "consumer_llm_individuals": False,   # Individuals use heuristics
-    "consumer_llm_organizations": True,  # Organizations use LLM reasoning
+    "consumer_llm_organizations": False,  # Organizations use heuristics for faster testing
 }
 
 SIMULATION = {
-    "n_rounds": 30,
+    "n_rounds": 25,
     "seed": 42,
     "verbose": True,
     "rnd_efficiency": 0.01,
@@ -106,18 +100,174 @@ BENCHMARKS = [
      "noise_level": 0.08, "weight": 1.0},
 ]
 
-# 5 providers: OpenAI, Anthropic, NovaMind, DeepMind, Meta_AI
-PROVIDERS = "five"
+# 5 realistic providers: OpenAI, Anthropic, Google, MetaAI, StartupDotAI
+# Realistic safety investments based on public statements and observed behavior
+PROVIDERS = [
+    {
+        "name": "OpenAI",
+        "strategy_profile": "Move fast and ship products, balance safety with capability",
+        "innate_traits": "aggressive, product-focused, benchmark-aware, well-funded",
+        "initial_capability": 0.70,
+        "initial_believed_capability": 0.72,
+        "initial_believed_exploitability": 0.35,
+        "initial_strategy": {
+            "fundamental_research": 0.25,
+            "training_optimization": 0.30,
+            "evaluation_engineering": 0.20,
+            "safety_alignment": 0.25,  # Moderate safety
+        },
+        "market_presence": 0.85,
+        "brand_recognition": 0.9,
+    },
+    {
+        "name": "Anthropic",
+        "strategy_profile": "Constitutional AI and safety research focus",
+        "innate_traits": "research-oriented, safety-conscious, principled, transparent",
+        "initial_capability": 0.65,
+        "initial_believed_capability": 0.67,
+        "initial_believed_exploitability": 0.30,
+        "initial_strategy": {
+            "fundamental_research": 0.30,
+            "training_optimization": 0.20,
+            "evaluation_engineering": 0.10,
+            "safety_alignment": 0.40,  # Higher safety focus
+        },
+        "market_presence": 0.6,
+        "brand_recognition": 0.7,
+    },
+    {
+        "name": "Google",
+        "strategy_profile": (
+            "World-class research lab backed by massive infrastructure. "
+            "Excels at fundamental breakthroughs but historically slower to productize. "
+            "Now under pressure to ship Gemini competitively. "
+            "Balances scientific ambition with commercial urgency."
+        ),
+        "innate_traits": "research-first, methodical, well-resourced, scientifically-rigorous, patient",
+        "initial_capability": 0.65,
+        "initial_believed_capability": 0.68,
+        "initial_believed_exploitability": 0.35,
+        "initial_strategy": {
+            "fundamental_research": 0.45,  # Heavy research focus
+            "training_optimization": 0.30,
+            "evaluation_engineering": 0.10,  # Low gaming (scientifically rigorous)
+            "safety_alignment": 0.15,  # Moderate-low safety (focus on capabilities)
+        },
+        "market_presence": 0.7,
+        "brand_recognition": 0.8,
+    },
+    {
+        "name": "MetaAI",
+        "strategy_profile": (
+            "Big-tech AI lab using open-source as competitive moat. "
+            "Leverages massive user data and compute infrastructure. "
+            "Prioritizes broad adoption over benchmark scores. "
+            "Willing to open-source models to undermine competitors' paid APIs."
+        ),
+        "innate_traits": "open-source, pragmatic, data-rich, platform-focused, disruptive",
+        "initial_capability": 0.63,
+        "initial_believed_capability": 0.62,
+        "initial_believed_exploitability": 0.40,
+        "initial_strategy": {
+            "fundamental_research": 0.20,
+            "training_optimization": 0.45,  # Heavy scaling (massive compute)
+            "evaluation_engineering": 0.25,  # Moderate gaming (pragmatic)
+            "safety_alignment": 0.10,  # Lower safety (open-source strategy)
+        },
+        "market_presence": 0.5,
+        "brand_recognition": 0.6,
+    },
+    {
+        "name": "StartupDotAI",
+        "strategy_profile": "Scrappy startup optimizing for benchmark performance and growth",
+        "innate_traits": "risk-taking, benchmark-obsessed, capital-constrained, growth-focused",
+        "initial_capability": 0.58,
+        "initial_believed_capability": 0.62,
+        "initial_believed_exploitability": 0.45,
+        "initial_strategy": {
+            "fundamental_research": 0.15,
+            "training_optimization": 0.25,
+            "evaluation_engineering": 0.45,  # Heavy gaming (capital-constrained)
+            "safety_alignment": 0.15,  # Lower safety (resource constraints)
+        },
+        "market_presence": 0.3,
+        "brand_recognition": 0.4,
+    },
+]
+
+# Extreme test configurations (saved for future testing)
+# Uncomment to test incident system with extreme safety variance
+"""
+EXTREME_TEST_PROVIDERS = [
+    {
+        "name": "SafeCorp",
+        "strategy_profile": "Safety-first provider with heavy safety alignment investment",
+        "innate_traits": "cautious, safety-focused, risk-averse, methodical",
+        "initial_capability": 0.62,
+        "initial_believed_capability": 0.60,
+        "initial_believed_exploitability": 0.25,
+        "initial_strategy": {
+            "fundamental_research": 0.10,
+            "training_optimization": 0.05,
+            "evaluation_engineering": 0.05,
+            "safety_alignment": 0.80,  # Very high safety (low incident rate)
+        },
+        "market_presence": 0.4,
+        "brand_recognition": 0.5,
+    },
+    {
+        "name": "RiskyAI",
+        "strategy_profile": "Minimal safety investment, maximum capability/gaming focus",
+        "innate_traits": "reckless, growth-at-all-costs, benchmark-gaming, negligent",
+        "initial_capability": 0.55,
+        "initial_believed_capability": 0.60,
+        "initial_believed_exploitability": 0.50,
+        "initial_strategy": {
+            "fundamental_research": 0.20,
+            "training_optimization": 0.25,
+            "evaluation_engineering": 0.50,
+            "safety_alignment": 0.05,  # Minimal safety (high incident rate)
+        },
+        "market_presence": 0.2,
+        "brand_recognition": 0.3,
+    },
+]
+"""
 
 CONSUMERS = {
     "enabled": True,
     # 4 use_case_profiles × 3 archetypes = 12 market segments
 }
 
+# Available philosophies: "us_light_touch", "eu_precautionary", "balanced"
 POLICYMAKERS = {
     "enabled": True,
     "n_policymakers": 1,
+    # To compare US vs EU: Comment out one config, uncomment the other, update EXPERIMENT["name"]
+    "configs": [
+        # EU Precautionary Style (default)
+        {
+            "name": "Regulator",
+            "philosophy": "eu_precautionary",
+            "policy_objectives": ["safety", "fairness", "consumer_protection"],
+        }
+        # US Light-Touch Style (uncomment to compare, and change EXPERIMENT["name"] to "baseline_us_style_v1")
+        # {
+        #     "name": "Regulator",
+        #     "philosophy": "us_light_touch",
+        #     "policy_objectives": ["safety", "innovation"],
+        # }
+    ],
 }
+
+# How to compare US vs EU regulatory styles:
+# 1. Run with EU config (default above)
+# 2. Comment out EU config, uncomment US config, change EXPERIMENT["name"]
+# 3. Run again and compare results in experiments/ directory
+#
+# EU style: Lower threshold (0.35), faster intervention, ex-ante prevention
+# US style: Higher threshold (0.75), slower intervention, ex-post response
+# Available: "eu_precautionary", "us_light_touch", "balanced"
 
 FUNDERS = {
     "enabled": True,
@@ -211,6 +361,10 @@ def run():
         funder_configs = get_multi_funder_configs()
 
     n_funders = len(funder_configs) if funder_configs else 0
+
+    # --- Resolve policymaker configs ---
+    policymaker_configs = POLICYMAKERS.get("configs") if POLICYMAKERS["enabled"] else None
+
     n_rounds = SIMULATION["n_rounds"]
 
     # --- Build SimulationConfig ---
@@ -286,6 +440,8 @@ def run():
     full_config["provider_configs"] = provider_configs
     if funder_configs:
         full_config["funder_configs"] = funder_configs
+    if policymaker_configs:
+        full_config["policymaker_configs"] = policymaker_configs
     logger.log_config(full_config)
 
     print(f"Experiment: {exp_id}")
@@ -297,6 +453,7 @@ def run():
     sim.setup(
         provider_configs=provider_configs,
         funder_configs=funder_configs,
+        policymaker_configs=policymaker_configs,
     )
 
     print(f"=== Running {n_rounds} rounds ===\n")

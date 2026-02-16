@@ -94,6 +94,7 @@ class Media:
         per_benchmark_scores: Optional[dict] = None,
         consumer_data: Optional[dict] = None,
         evaluator = None,
+        incidents: Optional[list] = None,
     ) -> dict:
         """
         Observe public data and publish coverage for this round.
@@ -107,6 +108,7 @@ class Media:
             funder_data: Optional funder data from previous round
             per_benchmark_scores: Optional {bm_name: {provider: score}} from current round
             consumer_data: Optional consumer data from previous round
+            incidents: Optional list of AIIncident objects from this round
 
         Returns:
             Coverage dict for downstream actors
@@ -154,14 +156,54 @@ class Media:
                             coverage.provider_attention.get(name, 0), 0.7
                         )
 
-        # 3. Policymaker interventions
+        # 3. Policymaker interventions (with specific details)
         interventions = policymaker_data.get("interventions", [])
         for intervention in interventions:
             itype = intervention.get("type", "unknown")
             pmaker = intervention.get("policymaker", "Regulator")
-            focus = intervention.get("details", {}).get("focus", "AI evaluation practices")
+            details = intervention.get("details", {})
+            reason = intervention.get("reason", "")
+
+            # Generate specific headline based on intervention type and details
             if itype == "investigation":
-                events_detected.append(f"{pmaker} launches investigation into {focus}")
+                provider = details.get("provider", "")
+                focus = details.get("focus", "AI evaluation practices")
+                if provider:
+                    events_detected.append(f"{pmaker} launches investigation into {provider} for {focus}")
+                    coverage.provider_attention[provider] = max(
+                        coverage.provider_attention.get(provider, 0), 0.6
+                    )
+                else:
+                    events_detected.append(f"{pmaker} launches investigation into {focus}")
+            elif itype == "information_request":
+                provider = details.get("provider", "")
+                if provider:
+                    events_detected.append(f"Information request issued to {provider} for training data disclosure")
+                    coverage.provider_attention[provider] = max(
+                        coverage.provider_attention.get(provider, 0), 0.5
+                    )
+            elif itype == "market_concentration_review":
+                provider = details.get("provider", "")
+                share = details.get("market_share", 0)
+                if provider:
+                    events_detected.append(f"Antitrust review of {provider} as market share reaches {share:.0%}")
+                    coverage.provider_attention[provider] = max(
+                        coverage.provider_attention.get(provider, 0), 0.7
+                    )
+            elif itype == "sanctions_fine":
+                provider = details.get("provider", "")
+                amount = details.get("fine_amount", 0)
+                if provider:
+                    events_detected.append(f"{provider} fined ${amount:,.0f} for safety compliance failure")
+                    coverage.provider_attention[provider] = max(
+                        coverage.provider_attention.get(provider, 0), 0.8
+                    )
+            elif itype == "emergency_investigation":
+                provider = details.get("provider", "")
+                severity = details.get("severity", "")
+                if provider:
+                    events_detected.append(f"Emergency investigation of {provider} following {severity} incident")
+                    coverage.provider_attention[provider] = 1.0  # Maximum attention
             elif itype == "public_warning":
                 events_detected.append(f"{pmaker} issues public warning about AI safety concerns")
             elif itype == "mandate_benchmark":
@@ -170,8 +212,13 @@ class Media:
                 events_detected.append(f"{pmaker} initiates compliance audit on AI providers")
             else:
                 events_detected.append(f"Regulatory action: {itype}")
+
             coverage.risk_signals.append(f"regulatory_{itype}")
-            coverage.sentiment -= 0.15  # regulation is sobering
+            # Escalate sentiment impact for severe interventions
+            sentiment_impact = -0.15
+            if itype in ["sanctions_fine", "emergency_investigation"]:
+                sentiment_impact = -0.25
+            coverage.sentiment += sentiment_impact
 
         # 4. New benchmark introduction
         if new_benchmark:
@@ -262,6 +309,35 @@ class Media:
                             coverage.provider_attention.get(provider, 0), 0.4)
                         coverage.sentiment += 0.05
             self._previous_market_shares = dict(market_shares)
+
+        # 10. AI Safety Incidents (only moderate+ severity generates headlines)
+        if incidents:
+            for incident in incidents:
+                # Only report moderate, major, and critical incidents (minor are internal)
+                if incident.severity in ["moderate", "major", "critical"]:
+                    events_detected.append(incident.description)
+
+                    # Update provider attention based on severity
+                    severity_attention = {
+                        "moderate": 0.6,
+                        "major": 0.8,
+                        "critical": 1.0,
+                    }
+                    coverage.provider_attention[incident.provider] = max(
+                        coverage.provider_attention.get(incident.provider, 0),
+                        severity_attention[incident.severity]
+                    )
+
+                    # Add risk signal for incident category
+                    coverage.risk_signals.append(f"incident_{incident.category}")
+
+                    # Impact sentiment based on severity
+                    severity_sentiment = {
+                        "moderate": -0.15,
+                        "major": -0.25,
+                        "critical": -0.40,
+                    }
+                    coverage.sentiment += severity_sentiment[incident.severity]
 
         # TODO: Add enterprise deal announcements for organizational consumers
         # When organizational consumers (hospital_system, enterprise_finance, etc.) switch

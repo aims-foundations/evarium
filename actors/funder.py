@@ -129,6 +129,7 @@ class Funder:
         round_num: int,
         media_coverage: Optional[dict] = None,
         other_funder_allocations: Optional[dict] = None,
+        incidents: Optional[list] = None,
     ):
         """
         Observe the current ecosystem state.
@@ -139,6 +140,7 @@ class Funder:
         - Regulatory interventions (compliance/safety risk)
         - Media coverage (sentiment, risk signals)
         - Other funders' allocations (for portfolio diversification)
+        - Public incidents (safety failures, security breaches)
 
         Args:
             leaderboard: List of (provider_name, score) tuples
@@ -147,6 +149,7 @@ class Funder:
             round_num: Current simulation round
             media_coverage: Optional media coverage dict
             other_funder_allocations: Dict of {funder_name: {provider: amount}}
+            incidents: Optional list of AIIncident objects from this round
         """
         self.public_state.current_round = round_num
 
@@ -212,6 +215,45 @@ class Funder:
                             1.0,
                             self.private_state.believed_provider_gaming[provider_name] + gaming_bump,
                         )
+
+        # Incidents influence gaming beliefs and risk assessment
+        if incidents:
+            severity_impact = {"minor": 0.03, "moderate": 0.08, "major": 0.15, "critical": 0.25}
+            for incident in incidents:
+                provider = incident.provider
+                impact = severity_impact.get(incident.severity, 0.05)
+
+                # Incidents suggest either low safety investment or capability gaps
+                # Increase gaming suspicion (high scores but real-world failures)
+                if provider in self.private_state.believed_provider_gaming:
+                    self.private_state.believed_provider_gaming[provider] = min(
+                        1.0,
+                        self.private_state.believed_provider_gaming[provider] + impact
+                    )
+                else:
+                    self.private_state.believed_provider_gaming[provider] = impact
+
+            # Track incident counts for funding penalty
+            # Store recent incidents (last 3 rounds) per provider
+            if not hasattr(self, '_recent_incident_counts'):
+                self._recent_incident_counts = {}
+
+            for incident in incidents:
+                provider = incident.provider
+                if provider not in self._recent_incident_counts:
+                    self._recent_incident_counts[provider] = []
+                # Store (round_num, severity) tuple
+                self._recent_incident_counts[provider].append((round_num, incident.severity))
+
+            # Prune old incidents (keep only last 3 rounds)
+            for provider in list(self._recent_incident_counts.keys()):
+                self._recent_incident_counts[provider] = [
+                    (r, s) for r, s in self._recent_incident_counts[provider]
+                    if r >= round_num - 3
+                ]
+                # Remove empty lists
+                if not self._recent_incident_counts[provider]:
+                    del self._recent_incident_counts[provider]
 
         # Store previous scores for growth calculation
         self._previous_scores = {name: score for name, score in leaderboard}
@@ -433,12 +475,21 @@ class Funder:
             concentration = self._compute_portfolio_concentration(provider)
             diversification_score = 1.0 - concentration  # Higher when less concentrated
 
+            # Incident penalty: recent safety incidents reduce funding attractiveness
+            incident_penalty = 0.0
+            if hasattr(self, '_recent_incident_counts') and provider in self._recent_incident_counts:
+                # Count recent incidents with severity weighting
+                for _, severity in self._recent_incident_counts[provider]:
+                    severity_weights = {"minor": 0.05, "moderate": 0.10, "major": 0.20, "critical": 0.35}
+                    incident_penalty += severity_weights.get(severity, 0.10)
+
             composite = (
                 weights["quality"] * quality
                 + weights["score_momentum"] * score_mom * 10  # Scale: deltas ~0.01-0.05
                 + weights["market_traction"] * traction
                 + weights["market_momentum"] * market_mom * 10
                 + weights.get("diversification", 0.0) * diversification_score
+                - incident_penalty  # NEW: Subtract incident penalty
             )
             scores[provider] = max(0, composite)
         return scores

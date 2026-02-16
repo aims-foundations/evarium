@@ -17,6 +17,7 @@ from typing import Optional
 from actors.model_provider import ModelProvider
 from actors.evaluator import Evaluator, Regulation
 from visibility import ProviderGroundTruth, ConsumerGroundTruth, PolicymakerGroundTruth, FunderGroundTruth
+from incidents import IncidentGenerator
 
 
 def r4(x):
@@ -37,6 +38,27 @@ def r4(x):
         return round(float(x), 4)
     except (TypeError, ValueError):
         return x
+
+
+# Policymaker regulatory style presets
+# Simplified to use only currently implemented Policymaker parameters
+POLICYMAKER_PRESETS = {
+    "us_light_touch": {
+        "intervention_threshold": 0.75,  # High threshold - slow to intervene
+        "risk_tolerance": 0.7,  # High risk tolerance
+        "policy_objectives": ["safety", "innovation"],
+    },
+    "eu_precautionary": {
+        "intervention_threshold": 0.35,  # Low threshold - quick to intervene
+        "risk_tolerance": 0.2,  # Low risk tolerance
+        "policy_objectives": ["safety", "fairness", "consumer_protection"],
+    },
+    "balanced": {
+        "intervention_threshold": 0.50,  # Medium threshold
+        "risk_tolerance": 0.5,  # Medium risk tolerance
+        "policy_objectives": ["safety", "fairness"],
+    },
+}
 
 
 @dataclass
@@ -146,6 +168,9 @@ class EvalEcosystemSimulation:
 
         # Funder data for current round (used for funding multipliers)
         self._current_funder_data: dict = {}
+
+        # Incident reporting system
+        self.incident_generator = IncidentGenerator(seed=config.seed)
 
     def setup(
         self,
@@ -340,10 +365,21 @@ class EvalEcosystemSimulation:
             ]
 
         for pc in policymaker_configs:
+            # Check if using a preset philosophy
+            if "philosophy" in pc and pc["philosophy"] in POLICYMAKER_PRESETS:
+                preset = POLICYMAKER_PRESETS[pc["philosophy"]]
+                # Merge preset with any overrides from config
+                config_params = {**preset, **{k: v for k, v in pc.items() if k not in ["philosophy", "name"]}}
+            else:
+                # Use individual parameters from config
+                config_params = pc
+
             policymaker = Policymaker(
                 name=pc["name"],
-                policy_objectives=pc.get("policy_objectives", ["safety"]),
-                intervention_threshold=pc.get("intervention_threshold", 0.3),
+                policy_objectives=config_params.get("policy_objectives", ["safety"]),
+                intervention_threshold=config_params.get("intervention_threshold", 0.3),
+                risk_tolerance=config_params.get("risk_tolerance", 0.5),
+                llm_mode=config_params.get("llm_mode", False),
             )
             self.policymakers.append(policymaker)
 
@@ -556,6 +592,47 @@ class EvalEcosystemSimulation:
             provider.observe(own_score, competitor_scores, round_num)
             provider.reflect()
 
+        # 4b. Generate incidents based on provider strategies and safety investment
+        incidents = []
+        if round_num > 0:  # No incidents in round 0
+            # Collect current strategies
+            provider_strategies = {
+                p.name: {
+                    "fundamental_research": p.fundamental_research,
+                    "training_optimization": p.training_optimization,
+                    "evaluation_engineering": p.evaluation_engineering,
+                    "safety_alignment": p.safety_alignment,
+                }
+                for p in self.providers
+            }
+
+            # Collect ground truth capabilities
+            ground_truth_capabilities = {
+                p.name: self.ground_truth[p.name].true_capability
+                for p in self.providers
+            }
+
+            # Get market shares from previous round
+            market_shares = {}
+            if self.history and "consumer_data" in self.history[-1]:
+                market_shares = self.history[-1]["consumer_data"].get("market_shares", {})
+
+            # Generate incidents
+            incidents = self.incident_generator.generate_incidents(
+                providers=self.providers,
+                round_num=round_num,
+                ground_truth=ground_truth_capabilities,
+                published_scores=published_scores,
+                market_shares=market_shares,
+                provider_strategies=provider_strategies,
+            )
+
+            # Log incidents if verbose
+            if incidents and self.config.verbose:
+                for inc in incidents:
+                    if inc.severity != "minor":  # Only print moderate+ incidents
+                        print(f"  [Incident] {inc.severity.upper()}: {inc.description}")
+
         # 5. Media observes and publishes (if enabled)
         media_coverage = None
         if self.media:
@@ -576,18 +653,19 @@ class EvalEcosystemSimulation:
                 per_benchmark_scores=per_bm_scores,
                 consumer_data=prev_consumer_data,
                 evaluator=self.evaluator,
+                incidents=incidents,  # NEW: Pass incidents to media
             )
 
         # 6. Consumer actions (if enabled)
         consumer_data = {}
         if self.consumer_market:
-            consumer_data = self._run_consumer_round(leaderboard, round_num, media_coverage)
+            consumer_data = self._run_consumer_round(leaderboard, round_num, media_coverage, incidents=incidents)
 
         # 7. Policymaker actions (if enabled)
         policymaker_data = {}
         if self.policymakers:
             policymaker_data = self._run_policymaker_round(
-                leaderboard, consumer_data, round_num, media_coverage
+                leaderboard, consumer_data, round_num, media_coverage, incidents=incidents
             )
 
         # 8. Funder actions (if enabled)
@@ -595,7 +673,7 @@ class EvalEcosystemSimulation:
         if self.funders:
             funder_data = self._run_funder_round(
                 leaderboard, consumer_data, policymaker_data, round_num,
-                media_coverage
+                media_coverage, incidents=incidents
             )
             # Store for next round's capability gain calculation
             self._current_funder_data = funder_data
@@ -678,6 +756,22 @@ class EvalEcosystemSimulation:
         if funder_data:
             round_data["funder_data"] = funder_data
 
+        # Add incidents if any occurred
+        if incidents:
+            round_data["incidents"] = [inc.to_dict() for inc in incidents]
+            # Add summary statistics
+            round_data["incident_summary"] = {
+                "total_count": len(incidents),
+                "by_severity": {
+                    sev: len([inc for inc in incidents if inc.severity == sev])
+                    for sev in ["minor", "moderate", "major", "critical"]
+                },
+                "by_provider": {
+                    p.name: len([inc for inc in incidents if inc.provider == p.name])
+                    for p in self.providers
+                },
+            }
+
         # Capture reasoning traces from all actor types (for post-hoc analysis
         # and game log).  In LLM mode, actors store "reasoning"; in heuristic
         # mode they store "reason".  We grab whichever is present.
@@ -742,7 +836,8 @@ class EvalEcosystemSimulation:
 
     def _run_consumer_round(self, leaderboard: list, round_num: int,
                             media_coverage: Optional[dict] = None,
-                            policymaker_data: Optional[dict] = None) -> dict:
+                            policymaker_data: Optional[dict] = None,
+                            incidents: Optional[list] = None) -> dict:
         """
         Run consumer market actions for the round.
 
@@ -753,6 +848,7 @@ class EvalEcosystemSimulation:
             leaderboard: Current leaderboard [(name, score), ...]
             round_num: Current round number
             media_coverage: Optional media coverage dict from Media actor
+            incidents: Optional list of AIIncident objects from this round
 
         Returns:
             Dict with consumer data for this round
@@ -780,11 +876,25 @@ class EvalEcosystemSimulation:
             for p in self.providers
         }
         published_scores = dict(leaderboard)  # Convert to dict
+
+        # Convert incidents to history format for consumer satisfaction computation
+        incident_history = {}
+        if incidents:
+            for inc in incidents:
+                if inc.provider not in incident_history:
+                    incident_history[inc.provider] = []
+                incident_history[inc.provider].append(inc)
+
+        # Include historical incidents from incident_generator
+        all_incident_history = self.incident_generator.get_incident_history()
+
         self.consumer_market.compute_satisfaction(
             self.ground_truth,
             provider_strategies=provider_strategies,
             published_scores=published_scores,
             media_coverage=media_coverage,
+            incident_history=all_incident_history,
+            round_num=round_num,
         )
 
         # Compute switching (pass context for LLM mode)
@@ -808,6 +918,7 @@ class EvalEcosystemSimulation:
         consumer_data: dict,
         round_num: int,
         media_coverage: Optional[dict] = None,
+        incidents: Optional[list] = None,
     ) -> dict:
         """
         Run policymaker actions for the round.
@@ -817,6 +928,7 @@ class EvalEcosystemSimulation:
             consumer_data: Consumer data from this round
             round_num: Current round number
             media_coverage: Optional media coverage dict
+            incidents: Optional list of AIIncident objects from this round
 
         Returns:
             Dict with policymaker data for this round
@@ -855,6 +967,7 @@ class EvalEcosystemSimulation:
                 media_coverage=media_coverage,
                 market_shares=consumer_data.get("market_shares"),
                 provider_strategies=provider_strategies,
+                incidents=incidents,  # NEW: Pass incidents to policymaker
             )
 
             # Policymaker reflects on observations
@@ -950,6 +1063,7 @@ class EvalEcosystemSimulation:
         policymaker_data: dict,
         round_num: int,
         media_coverage: Optional[dict] = None,
+        incidents: Optional[list] = None,
     ) -> dict:
         """
         Run funder actions for the round.
@@ -960,6 +1074,7 @@ class EvalEcosystemSimulation:
             policymaker_data: Policymaker data from this round
             round_num: Current round number
             media_coverage: Optional media coverage dict
+            incidents: Optional list of AIIncident objects from this round
 
         Returns:
             Dict with funder data for this round
@@ -999,6 +1114,7 @@ class EvalEcosystemSimulation:
                 round_num=round_num,
                 media_coverage=media_coverage,
                 other_funder_allocations=others,
+                incidents=incidents,  # NEW: Pass incidents to funder
             )
 
             # Funder reflects on observations

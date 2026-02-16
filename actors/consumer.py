@@ -385,8 +385,21 @@ class ConsumerMarket:
                 # Risk signals reduce leaderboard trust for followers
                 if (media_coverage.get("risk_signals") and
                         seg.archetype == "leaderboard_follower"):
-                    # Temporarily reduce trust (doesn't permanently change archetype)
-                    pass  # Will be implemented in Phase 5
+                    # Check for incident signals specifically
+                    incident_signals = [
+                        sig for sig in media_coverage.get("risk_signals", [])
+                        if sig.startswith("incident_")
+                    ]
+                    if incident_signals:
+                        # Reduce trust by 5% per incident signal
+                        seg.leaderboard_trust *= (0.95 ** len(incident_signals))
+                    # Other risk signals also reduce trust but less severely
+                    other_risk_signals = [
+                        sig for sig in media_coverage.get("risk_signals", [])
+                        if not sig.startswith("incident_")
+                    ]
+                    if other_risk_signals:
+                        seg.leaderboard_trust *= (0.98 ** len(other_risk_signals))
 
             for provider_name, composite_score in leaderboard:
                 # Compute use-case-weighted perceived score from per-benchmark
@@ -426,6 +439,25 @@ class ConsumerMarket:
                 learning_rate = 0.3 * (1 + 0.3 * sentiment)
                 learning_rate = max(0.1, min(0.5, learning_rate))
 
+                # Risk signals reduce leaderboard trust for followers
+                if (media_coverage.get("risk_signals") and
+                        seg.archetype == "leaderboard_follower"):
+                    # Check for incident signals specifically
+                    incident_signals = [
+                        sig for sig in media_coverage.get("risk_signals", [])
+                        if sig.startswith("incident_")
+                    ]
+                    if incident_signals:
+                        # Reduce trust by 5% per incident signal
+                        seg.leaderboard_trust *= (0.95 ** len(incident_signals))
+                    # Other risk signals also reduce trust but less severely
+                    other_risk_signals = [
+                        sig for sig in media_coverage.get("risk_signals", [])
+                        if not sig.startswith("incident_")
+                    ]
+                    if other_risk_signals:
+                        seg.leaderboard_trust *= (0.98 ** len(other_risk_signals))
+
             for provider_name, _ in leaderboard:
                 # Compute weighted score based on segment's benchmark preferences
                 weighted_score = 0.0
@@ -457,6 +489,8 @@ class ConsumerMarket:
         provider_strategies: Optional[dict] = None,
         published_scores: Optional[dict] = None,
         media_coverage: Optional[dict] = None,
+        incident_history: Optional[dict] = None,
+        round_num: Optional[int] = None,
     ):
         """Compute per-segment per-provider satisfaction from ground truth.
 
@@ -465,6 +499,7 @@ class ConsumerMarket:
         1. Gaming detection penalty (score inflation above true capability)
         2. Safety alignment match (provider safety investment × segment safety preference)
         3. Media sentiment influence (negative coverage reduces satisfaction)
+        4. Incident history penalty (recent safety incidents reduce trust and satisfaction)
 
         This creates natural differentiation across use cases: software developers
         experience satisfaction based on coding performance, healthcare workers based
@@ -528,12 +563,32 @@ class ConsumerMarket:
                     if sentiment < 0:
                         media_penalty = 0.10 * abs(sentiment) * provider_attention
 
+                # Factor 4: Incident History Penalty
+                # Recent safety incidents reduce trust and satisfaction
+                incident_penalty = 0.0
+                if incident_history and provider_name in incident_history and round_num is not None:
+                    provider_incidents = incident_history[provider_name]
+                    # Focus on recent incidents (last 5 rounds)
+                    recent_incidents = [
+                        inc for inc in provider_incidents
+                        if inc.round_num >= round_num - 5
+                    ]
+                    # Weight by severity
+                    severity_weights = {"minor": 0.02, "moderate": 0.08, "major": 0.15, "critical": 0.30}
+                    for inc in recent_incidents:
+                        weight = severity_weights.get(inc.severity, 0.05)
+                        # Extra penalty if incident affects this segment's sector
+                        if seg.use_case in inc.affected_sectors or seg.consumer_type in inc.affected_sectors:
+                            weight *= 2.0  # Double penalty for sector-specific incidents
+                        incident_penalty += weight
+
                 # Compute final satisfaction
                 satisfaction = (
                     base_satisfaction
                     - gaming_penalty
                     + safety_bonus
                     - media_penalty
+                    - incident_penalty
                 )
 
                 # Clamp to [0, 1]
