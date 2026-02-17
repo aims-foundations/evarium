@@ -32,12 +32,12 @@ EXPERIMENT = {
         "Heuristic mode for performance."
     ),
     "tags": ["baseline", "incidents", "heuristic", "5-provider", "4-benchmark", "39-segments",
-             "eu-precautionary", "3-funder", "realistic", "full-ecosystem"],
+             "us-light-touch", "3-funder", "realistic", "full-ecosystem", "eval-as-company", "LMArena"],
 }
 
 LLM = {
     "provider": "ollama",       # openai | anthropic | ollama | gemini
-    "llm_mode": False,          # True = LLM planning for providers, False = heuristic
+    "llm_mode": True,          # True = LLM planning for providers, False = heuristic
     # Consumer LLM config (all heuristic for incident test)
     "consumer_llm_mode": False,           # Enable consumer LLM
     "consumer_llm_individuals": False,   # Individuals use heuristics
@@ -63,7 +63,7 @@ SIMULATION = {
     # Incident reporting
     "enable_incidents": True,  # Enable AI safety incident generation
     # Evaluator-as-company (premium access, best-of-N)
-    "evaluator_as_company": False,  # Enable evaluator business model
+    "evaluator_as_company": True,  # Enable evaluator business model
     "evaluator_base_budget": 100000.0,  # Starting budget
     "evaluator_premium_pricing": 10000.0,  # Cost per provider per round
     # Realistic benchmark sequence inspired by real-world evals
@@ -251,18 +251,18 @@ POLICYMAKERS = {
     "n_policymakers": 1,
     # To compare US vs EU: Comment out one config, uncomment the other, update EXPERIMENT["name"]
     "configs": [
-        # EU Precautionary Style (default)
-        {
-            "name": "Regulator",
-            "philosophy": "eu_precautionary",
-            "policy_objectives": ["safety", "fairness", "consumer_protection"],
-        }
-        # US Light-Touch Style (uncomment to compare, and change EXPERIMENT["name"] to "baseline_us_style_v1")
+        # # EU Precautionary Style (default)
         # {
         #     "name": "Regulator",
-        #     "philosophy": "us_light_touch",
-        #     "policy_objectives": ["safety", "innovation"],
+        #     "philosophy": "eu_precautionary",
+        #     "policy_objectives": ["safety", "fairness", "consumer_protection"],
         # }
+        # US Light-Touch Style (uncomment to compare, and change EXPERIMENT["name"] to "baseline_us_style_v1")
+        {
+            "name": "Regulator",
+            "philosophy": "us_light_touch",
+            "policy_objectives": ["safety", "innovation"],
+        }
     ],
 }
 
