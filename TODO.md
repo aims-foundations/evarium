@@ -1,5 +1,15 @@
 # TODO: Future Enhancements
 
+My additions:
+1. double check benchmark saturation process. it seems like it takes a long time for benchmarks to be introduced.
+2. Ran into this error while running on cluster: 
+- Media dashboard saved
+/lfs/skampere1/0/yashdave/evaluation-ecosystem-simulation/plotting.py:1842: UserWarning: set_ticklabels() should only be used with a fixed number of ticks, i.e. after set_ticks() or using a FixedLocator.
+  ax6.set_xticklabels(provider_names, rotation=45, ha='right')
+- Incident dashboard saved
+this was with older version of code, verify if it is fixed after changes below.
+
+
 This document tracks planned improvements and features to be implemented later.
 
 ---

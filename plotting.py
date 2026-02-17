@@ -1839,7 +1839,9 @@ def plot_incident_dashboard(
             ax6.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 0.1,
                     str(count), ha='center', va='bottom', fontsize=10, fontweight='bold')
 
-    ax6.set_xticklabels(provider_names, rotation=45, ha='right')
+    ax6.tick_params(axis='x', labelrotation=45)
+    for label in ax6.get_xticklabels():
+        label.set_ha('right')
     style_axis(ax6, "Total Incidents by Provider", "Provider", "Count", legend=False)
 
     plt.tight_layout()
