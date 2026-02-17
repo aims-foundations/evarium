@@ -115,6 +115,9 @@ class Evaluator:
         seed: Optional[int] = None,
         benchmarks: Optional[list[dict]] = None,
         benchmark_sequence: Optional[list[dict]] = None,
+        evaluator_as_company: bool = False,
+        base_budget: float = 0.0,
+        premium_pricing: float = 10000.0,
     ):
         """
         Initialize an Evaluator.
@@ -213,6 +216,16 @@ class Evaluator:
         self.saturation_history: list[dict] = []  # [{round, benchmark_name, max_score}]
         self.retirement_history: list[dict] = []  # Kept for backwards compatibility, no longer used
 
+        # Evaluator-as-company feature (premium access, funding)
+        self.evaluator_as_company = evaluator_as_company
+        self.private_state = None
+        if evaluator_as_company:
+            from visibility import EvaluatorPrivateState
+            self.private_state = EvaluatorPrivateState(
+                budget=base_budget,
+                premium_pricing=premium_pricing,
+            )
+
     def evaluate(
         self,
         true_capability: float,
@@ -273,6 +286,69 @@ class Evaluator:
             raise ValueError(f"Unknown benchmark: {benchmark_name}")
         return self.evaluate(true_capability, evaluation_engineering, benchmark)
 
+    def collect_funding(
+        self,
+        funder_allocations: dict,
+        provider_premium_payments: dict,
+        round_num: int,
+    ) -> dict:
+        """
+        Collect funding from funders and providers.
+
+        Args:
+            funder_allocations: Dict mapping funder_name -> allocation amount
+            provider_premium_payments: Dict mapping provider_name -> payment amount
+            round_num: Current simulation round
+
+        Returns:
+            Dict with funding details
+        """
+        if not self.evaluator_as_company:
+            return {}
+
+        base_funding = sum(funder_allocations.values())
+        service_revenue = sum(provider_premium_payments.values())
+
+        self.private_state.budget += base_funding + service_revenue
+        self.private_state.base_funding = base_funding
+        self.private_state.service_revenue = service_revenue
+        self.private_state.premium_providers = set(provider_premium_payments.keys())
+        self.private_state.funding_history.append(
+            (round_num, base_funding, service_revenue, base_funding + service_revenue)
+        )
+
+        return {
+            "base_funding": base_funding,
+            "service_revenue": service_revenue,
+            "total_funding": base_funding + service_revenue,
+            "budget": self.private_state.budget,
+        }
+
+    def compute_n_trials(self, provider_name: str, eval_engineering: float) -> int:
+        """
+        Compute number of trials for provider (best-of-N submission).
+
+        Formula: n_trials = 1 + min(funding_bonus, eval_eng_bonus)
+        - funding_bonus: 1 if provider has premium access, 0 otherwise
+        - eval_eng_bonus: int(eval_engineering * 5) for eval eng investment
+        - Capped at 5 trials maximum
+
+        Args:
+            provider_name: Provider name to check premium status
+            eval_engineering: Provider's evaluation engineering investment (0-1)
+
+        Returns:
+            Number of trials (1-5)
+        """
+        if not self.evaluator_as_company:
+            return 1  # Default behavior
+
+        funding_bonus = 1 if provider_name in self.private_state.premium_providers else 0
+        eval_eng_bonus = int(eval_engineering * 5)
+        n_trials = 1 + min(funding_bonus, eval_eng_bonus)
+
+        return min(5, n_trials)  # Cap at 5
+
     def evaluate_all(
         self,
         providers: list,
@@ -314,12 +390,27 @@ class Evaluator:
             weighted_sum = 0.0
             total_weight = 0.0
 
+            # Compute number of trials (best-of-N for premium providers)
+            n_trials = self.compute_n_trials(provider.name, provider.evaluation_engineering)
+
             for benchmark in self.benchmarks:
-                score = self.evaluate(
-                    true_capability=true_cap,
-                    evaluation_engineering=provider.evaluation_engineering,
-                    benchmark=benchmark,
-                )
+                # Run N trials, keep best score
+                trial_scores = []
+                for trial_idx in range(n_trials):
+                    trial_score = self.evaluate(
+                        true_capability=true_cap,
+                        evaluation_engineering=provider.evaluation_engineering,
+                        benchmark=benchmark,
+                    )
+                    trial_scores.append(trial_score)
+
+                score = max(trial_scores)
+
+                # Store trial results if company mode and multiple trials
+                if self.evaluator_as_company and n_trials > 1:
+                    if provider.name not in self.private_state.trial_results:
+                        self.private_state.trial_results[provider.name] = {}
+                    self.private_state.trial_results[provider.name][benchmark.name] = trial_scores
 
                 # Monotonicity: providers wouldn't disclose a worse score
                 best = self._best_published_scores[benchmark.name].get(provider.name, 0.0)
@@ -501,6 +592,12 @@ class Evaluator:
         if round_num - self.last_introduction_round < self.benchmark_introduction_cooldown:
             return None
 
+        # Check budget (if company mode)
+        benchmark_cost = 50000.0
+        if self.evaluator_as_company:
+            if self.private_state.budget < benchmark_cost:
+                return None
+
         # Check trigger conditions
         trigger = None
 
@@ -581,6 +678,15 @@ class Evaluator:
             "benchmark_name": new_name,
             "trigger": trigger,
         })
+
+        # Deduct cost from budget (if company mode)
+        if self.evaluator_as_company:
+            self.private_state.budget -= benchmark_cost
+            # Add to early access queue for premium providers
+            if self.private_state.premium_providers:
+                self.private_state.early_access_queue[new_name] = list(
+                    self.private_state.premium_providers
+                )
 
         return new_bm
 
@@ -849,6 +955,9 @@ class Evaluator:
                 }
                 for r in self.active_regulations
             ],
+            # Evaluator-as-company state
+            "evaluator_as_company": self.evaluator_as_company,
+            "private_state": self.private_state.to_dict() if self.private_state else None,
         }
         with open(filepath, "w") as f:
             json.dump(data, f, indent=2)
@@ -925,6 +1034,13 @@ class Evaluator:
             evaluator.active_regulations = [
                 Regulation(**r) for r in data["regulations"]
             ]
+
+        # Load evaluator-as-company state if present
+        if "evaluator_as_company" in data:
+            evaluator.evaluator_as_company = data["evaluator_as_company"]
+            if data.get("private_state") and evaluator.evaluator_as_company:
+                from visibility import EvaluatorPrivateState
+                evaluator.private_state = EvaluatorPrivateState.from_dict(data["private_state"])
 
         return evaluator
 

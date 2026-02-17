@@ -37,7 +37,7 @@ EXPERIMENT = {
 
 LLM = {
     "provider": "ollama",       # openai | anthropic | ollama | gemini
-    "llm_mode": True,          # True = LLM planning for providers, False = heuristic
+    "llm_mode": False,          # True = LLM planning for providers, False = heuristic
     # Consumer LLM config (all heuristic for incident test)
     "consumer_llm_mode": False,           # Enable consumer LLM
     "consumer_llm_individuals": False,   # Individuals use heuristics
@@ -55,11 +55,17 @@ SIMULATION = {
     "breakthrough_probability": 0.02,
     "breakthrough_magnitude": 0.05,
     # Benchmark evolution
-    "benchmark_validity_decay_rate": 0.005,
+    "benchmark_validity_decay_rate": 0.01,
     "benchmark_exploitability_growth_rate": 0.008,
     # Benchmark introduction
-    "benchmark_introduction_cooldown": 6,
+    "benchmark_introduction_cooldown": 5,
     "max_benchmarks": 8,
+    # Incident reporting
+    "enable_incidents": True,  # Enable AI safety incident generation
+    # Evaluator-as-company (premium access, best-of-N)
+    "evaluator_as_company": False,  # Enable evaluator business model
+    "evaluator_base_budget": 100000.0,  # Starting budget
+    "evaluator_premium_pricing": 10000.0,  # Cost per provider per round
     # Realistic benchmark sequence inspired by real-world evals
     # (MMLU, HumanEval, GSM8K, HELM Safety, domain-specific benchmarks)
     "benchmark_sequence": [
@@ -122,7 +128,7 @@ PROVIDERS = [
     {
         "name": "Anthropic",
         "strategy_profile": "Constitutional AI and safety research focus",
-        "innate_traits": "research-oriented, safety-conscious, principled, transparent",
+        "innate_traits": "research-oriented, enterprise-focus, safety-conscious, principled, transparent",
         "initial_capability": 0.65,
         "initial_believed_capability": 0.67,
         "initial_believed_exploitability": 0.30,
@@ -397,6 +403,11 @@ def run():
         n_policymakers=POLICYMAKERS.get("n_policymakers", 1) if POLICYMAKERS["enabled"] else 0,
         n_funders=n_funders,
         use_case_profiles=SIMULATION.get("use_case_profiles"),
+        # NEW: Incident reporting and evaluator-as-company features
+        enable_incidents=SIMULATION.get("enable_incidents", False),
+        evaluator_as_company=SIMULATION.get("evaluator_as_company", False),
+        evaluator_base_budget=SIMULATION.get("evaluator_base_budget", 0.0),
+        evaluator_premium_pricing=SIMULATION.get("evaluator_premium_pricing", 10000.0),
         verbose=SIMULATION.get("verbose", True),
     )
 
@@ -415,6 +426,10 @@ def run():
         parts.append(f"{n_funders} funder(s)")
     if SIMULATION.get("enable_media"):
         parts.append("media")
+    if SIMULATION.get("enable_incidents"):
+        parts.append("incidents")
+    if SIMULATION.get("evaluator_as_company"):
+        parts.append("eval-as-company")
 
     print()
     print("=" * 70)

@@ -118,6 +118,14 @@ class SimulationConfig:
     # Consumer market config
     use_case_profiles: Optional[list] = None  # e.g., ["software_dev", "healthcare", "legal"]
 
+    # Incident reporting system
+    enable_incidents: bool = False  # Enable probabilistic AI safety incidents
+
+    # Evaluator-as-company feature
+    evaluator_as_company: bool = False  # Evaluator operates as company with funding & premium services
+    evaluator_base_budget: float = 0.0  # Starting budget for evaluator
+    evaluator_premium_pricing: float = 10000.0  # Cost of premium access per provider per round
+
     # Output
     output_dir: Optional[str] = None
     verbose: bool = True
@@ -253,6 +261,9 @@ class EvalEcosystemSimulation:
                 benchmarks=self.config.benchmarks,
                 seed=self.config.seed,
                 benchmark_sequence=self.config.benchmark_sequence,
+                evaluator_as_company=self.config.evaluator_as_company,
+                base_budget=self.config.evaluator_base_budget,
+                premium_pricing=self.config.evaluator_premium_pricing,
             )
         else:
             # Single benchmark mode
@@ -263,6 +274,9 @@ class EvalEcosystemSimulation:
                 noise_level=self.config.benchmark_noise,
                 seed=self.config.seed,
                 benchmark_sequence=self.config.benchmark_sequence,
+                evaluator_as_company=self.config.evaluator_as_company,
+                base_budget=self.config.evaluator_base_budget,
+                premium_pricing=self.config.evaluator_premium_pricing,
             )
 
         # Apply benchmark evolution rates to all benchmarks
@@ -275,6 +289,11 @@ class EvalEcosystemSimulation:
         # Apply benchmark introduction config
         self.evaluator.benchmark_introduction_cooldown = self.config.benchmark_introduction_cooldown
         self.evaluator.max_benchmarks = self.config.max_benchmarks
+
+        # Enable evaluator-as-company mode for funders if configured
+        if self.config.evaluator_as_company and self.funders:
+            for funder in self.funders:
+                funder.set_evaluator_as_company(True)
 
         # Resolve consumer market benchmark weights now that evaluator exists
         if self.consumer_market:
@@ -678,6 +697,11 @@ class EvalEcosystemSimulation:
             # Store for next round's capability gain calculation
             self._current_funder_data = funder_data
 
+        # 8b. Evaluator funding collection (if evaluator-as-company mode enabled)
+        evaluator_funding_data = {}
+        if self.config.evaluator_as_company and round_num > 0:
+            evaluator_funding_data = self._run_evaluator_funding_round(round_num, funder_data)
+
         # Record round data
         round_data = {
             "round": round_num,
@@ -755,6 +779,23 @@ class EvalEcosystemSimulation:
         # Add funder data if present
         if funder_data:
             round_data["funder_data"] = funder_data
+
+        # Add evaluator funding data if present
+        if evaluator_funding_data:
+            round_data["evaluator_funding_data"] = evaluator_funding_data
+            # Add business metrics summary
+            if self.evaluator.private_state:
+                round_data["evaluator_business_metrics"] = {
+                    "budget": self.evaluator.private_state.budget,
+                    "premium_providers": list(self.evaluator.private_state.premium_providers),
+                    "n_premium_providers": len(self.evaluator.private_state.premium_providers),
+                    "base_funding": self.evaluator.private_state.base_funding,
+                    "service_revenue": self.evaluator.private_state.service_revenue,
+                    "trial_counts": {
+                        p.name: self.evaluator.compute_n_trials(p.name, p.evaluation_engineering)
+                        for p in self.providers
+                    },
+                }
 
         # Add incidents if any occurred
         if incidents:
@@ -1148,6 +1189,61 @@ class EvalEcosystemSimulation:
         funder_data["total_funding"] = sum(all_allocations.values())
 
         return funder_data
+
+    def _run_evaluator_funding_round(
+        self,
+        round_num: int,
+        funder_data: dict,
+    ) -> dict:
+        """
+        Collect evaluator funding from funders and providers.
+
+        Args:
+            round_num: Current round number
+            funder_data: Funder data from this round with allocations
+
+        Returns:
+            Dict with evaluator funding details
+        """
+        if not self.config.evaluator_as_company:
+            return {}
+
+        # Collect funder allocations to evaluator
+        funder_allocations = {}
+        for funder_name, allocations in funder_data.get("allocations", {}).items():
+            if "__EVALUATOR__" in allocations:
+                funder_allocations[funder_name] = allocations["__EVALUATOR__"]
+
+        # Collect premium payments from providers
+        provider_payments = {}
+        for provider in self.providers:
+            ecosystem_context = self._get_provider_ecosystem_context(provider.name)
+            decision = provider.decide_premium_access(
+                premium_pricing=self.config.evaluator_premium_pricing,
+                current_budget=100000.0,  # Simplified: assume fixed budget
+                ecosystem_context=ecosystem_context,
+            )
+
+            if decision["purchase_premium"]:
+                provider_payments[provider.name] = decision["amount"]
+                provider.private_state.evaluator_premium_access = True
+                provider.private_state.evaluator_funding_level = decision["amount"]
+            else:
+                provider.private_state.evaluator_premium_access = False
+                provider.private_state.evaluator_funding_level = 0.0
+
+        # Evaluator collects funding
+        funding_details = self.evaluator.collect_funding(
+            funder_allocations=funder_allocations,
+            provider_premium_payments=provider_payments,
+            round_num=round_num,
+        )
+
+        return {
+            "funder_allocations": funder_allocations,
+            "provider_payments": provider_payments,
+            "funding_details": funding_details,
+        }
 
     def run(self, n_rounds: Optional[int] = None) -> list[dict]:
         """

@@ -374,12 +374,17 @@ class Funder:
         else:
             return self._plan_heuristic()
 
+    def set_evaluator_as_company(self, enabled: bool):
+        """Enable or disable evaluator-as-company allocation split."""
+        self._evaluator_as_company = enabled
+
     def _plan_heuristic(self) -> dict:
         """
         Heuristic funding decision based on funder type.
 
         Returns:
             Dict mapping provider names to funding amounts
+            If evaluator_as_company is enabled, may include "__EVALUATOR__" key
         """
         if not self._last_leaderboard:
             return {}
@@ -389,24 +394,49 @@ class Funder:
 
         available_capital = self.private_state.total_capital * self.max_round_deployment
 
+        # Split capital: providers + evaluator (if company mode enabled)
+        evaluator_allocation = 0.0
+        provider_capital = available_capital
+
+        if hasattr(self, '_evaluator_as_company') and self._evaluator_as_company:
+            # Type-specific splits
+            if self.funder_type == "vc":
+                evaluator_share = 0.05  # VCs invest minimally in infrastructure
+            elif self.funder_type == "gov":
+                evaluator_share = 0.30  # Governments fund public goods
+            elif self.funder_type == "foundation":
+                evaluator_share = 0.20  # Foundations support ecosystem infrastructure
+            else:
+                evaluator_share = 0.10
+
+            evaluator_allocation = available_capital * evaluator_share
+            provider_capital = available_capital * (1 - evaluator_share)
+
         if self.funder_type == "vc":
-            allocations = self._plan_vc(providers, available_capital)
+            allocations = self._plan_vc(providers, provider_capital)
         elif self.funder_type == "gov":
-            allocations = self._plan_gov(providers, available_capital)
+            allocations = self._plan_gov(providers, provider_capital)
         elif self.funder_type == "foundation":
-            allocations = self._plan_foundation(providers, available_capital)
+            allocations = self._plan_foundation(providers, provider_capital)
         else:
             # Default: spread evenly
-            per_provider = available_capital / len(providers)
+            per_provider = provider_capital / len(providers)
             allocations = {p: per_provider for p in providers}
 
+        # Add evaluator allocation if company mode enabled
+        if evaluator_allocation > 0:
+            allocations["__EVALUATOR__"] = evaluator_allocation
+
         # Build a short reasoning summary
-        top_provider = max(allocations, key=allocations.get) if allocations else "none"
-        top_amount = allocations.get(top_provider, 0) if allocations else 0
+        top_provider = max((k for k in allocations if k != "__EVALUATOR__"),
+                          key=lambda k: allocations[k], default="none")
+        top_amount = allocations.get(top_provider, 0) if top_provider != "none" else 0
         reason = (
             f"{self.funder_type} strategy: top allocation "
             f"${top_amount:,.0f} to {top_provider}"
         )
+        if evaluator_allocation > 0:
+            reason += f", ${evaluator_allocation:,.0f} to evaluator"
 
         self.memory.append({
             "type": "planning",

@@ -623,6 +623,62 @@ class ModelProvider:
             },
         })
 
+    def decide_premium_access(
+        self,
+        premium_pricing: float,
+        current_budget: float,
+        ecosystem_context: Optional[dict] = None
+    ) -> dict:
+        """
+        Decide whether to purchase premium evaluator access.
+
+        Premium access provides:
+        - Best-of-N submission (multiple trials, publish best score)
+        - Early access to new benchmarks (3 rounds before public introduction)
+
+        Decision factors:
+        - Can afford: current budget >= premium pricing
+        - Behind competitors: own market share < 30%
+        - High eval engineering investment: evaluation_engineering > 0.3
+        - Strategic value: gaming-oriented providers benefit most
+
+        Args:
+            premium_pricing: Cost of premium access
+            current_budget: Available budget
+            ecosystem_context: Optional dict with own_market_share, competitor_scores, etc.
+
+        Returns:
+            Dict with purchase_premium (bool), amount (float), reasoning (str)
+        """
+        ctx = ecosystem_context or {}
+
+        own_share = ctx.get("own_market_share", 0.5)
+        behind = own_share < 0.3
+        high_eval_eng = self.private_state.evaluation_engineering > 0.3
+        can_afford = current_budget >= premium_pricing
+
+        # Decision logic: purchase if can afford AND (behind OR high eval eng)
+        should_purchase = can_afford and (behind or high_eval_eng)
+
+        reasoning = []
+        if should_purchase:
+            reasoning.append(f"Purchasing premium access (${premium_pricing:,.0f})")
+            if behind:
+                reasoning.append(f"Market position: {own_share:.1%} (behind competitors)")
+            if high_eval_eng:
+                reasoning.append(f"High eval engineering investment: {self.private_state.evaluation_engineering:.1%}")
+        else:
+            if not can_afford:
+                reasoning.append(f"Cannot afford premium access (budget: ${current_budget:,.0f})")
+            else:
+                reasoning.append(f"Premium access not strategic (share: {own_share:.1%}, eval_eng: {self.private_state.evaluation_engineering:.1%})")
+
+        return {
+            "purchase_premium": should_purchase,
+            "amount": premium_pricing if should_purchase else 0.0,
+            "reasoning": " | ".join(reasoning),
+        }
+
     def step(self, own_score: float, competitor_scores: dict, round_num: int,
              efficiency: float = 0.01) -> dict:
         """

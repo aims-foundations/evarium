@@ -16,11 +16,12 @@ This document describes (1) the conceptual stakeholders in the AI evaluation eco
 | `actors/funder.py` | Funder actor (VC, gov, foundation types), media-aware |
 | `actors/media.py` | Media actor (TechPress) — observes public events, publishes coverage influencing downstream actors |
 | `incidents.py` | AI incident reporting system: `IncidentGenerator` with probabilistic incident generation based on provider safety investment and gaming |
-| `visibility.py` | State classes: PublicState, PrivateState, GroundTruth |
+| `visibility.py` | State classes: PublicState, PrivateState, GroundTruth, AIIncident, EvaluatorPrivateState |
 | `llm.py` | Multi-provider LLM integration (OpenAI, Anthropic, Ollama, Gemini) and prompt templates |
-| `plotting.py` | Visualization dashboards (provider, consumer, policymaker, evaluator, funder, summary) |
+| `plotting.py` | Visualization dashboards (provider, consumer, policymaker, evaluator, funder, summary). **Incident dashboard ✅ implemented**. Evaluator-as-company dashboard planned (see TODO.md) |
 | `experiment_logger.py` | ExperimentLogger for systematic experiment logging to `experiments/` |
 | `game_log.py` | Natural language markdown game log generator |
+| `TODO.md` | **Future enhancements tracker** — Planned plotting improvements, evaluator-as-company visualizations, advanced analytics |
 
 ---
 
@@ -379,6 +380,108 @@ The Evaluator is **active** in two ways:
   - `_benchmark_saturation_state`: Tracks saturation status, cooldown, and max scores
   - `saturation_history` and `retirement_history`: Logged for analysis
   - Consumer market benchmark weights automatically re-resolved on retirement
+
+**Evaluator-as-Company:** ✓ **Implemented**
+
+Inspired by the LMSYS/LMArena business model and "Leaderboard Illusion" paper findings, this feature models evaluators operating as companies with:
+1. Budget constraints (funded by funders and provider premium payments)
+2. Premium service offerings (best-of-N submission, early access to new benchmarks)
+3. Conflicts of interest where paying providers gain systematic advantages
+
+**Design Philosophy:**
+- Real-world evaluators face financial pressures and may offer tiered services
+- Paying providers can "buy" better scores through multiple submission attempts
+- Creates tension between evaluation integrity and business sustainability
+- Tests whether market-based evaluation can remain unbiased
+
+**Configuration:**
+```python
+config = SimulationConfig(
+    evaluator_as_company=True,           # Enable feature
+    evaluator_base_budget=100000.0,      # Starting budget
+    evaluator_premium_pricing=10000.0,   # Cost per provider per round
+    enable_funders=True,                 # Required for base funding
+)
+```
+
+**Evaluator Budget Mechanics:**
+- **Income sources:**
+  - Base funding from funders (type-dependent split):
+    - VC: 5% of allocation goes to evaluator
+    - Government: 30% (public goods funding)
+    - Foundation: 20% (ecosystem infrastructure)
+  - Premium access payments from providers ($10K/round default)
+- **Expenses:**
+  - New benchmark creation: $50K per benchmark
+  - Budget must be >= $50K to introduce new benchmarks
+- **Tracking:** `EvaluatorPrivateState` with budget, base_funding, service_revenue, funding_history
+
+**Premium Access Benefits:**
+
+1. **Best-of-N Submission:**
+   - Formula: `n_trials = 1 + min(funding_bonus, eval_eng_bonus)`
+   - funding_bonus: 1 if premium access, 0 otherwise
+   - eval_eng_bonus: int(evaluation_engineering × 5)
+   - Capped at 5 trials maximum
+   - Evaluator runs N trials, publishes **max** score (not average)
+   - Trial results stored in `private_state.trial_results` for analysis
+
+2. **Early Access to New Benchmarks (Future):**
+   - Premium providers see new benchmarks 3 rounds before public introduction
+   - Allows optimization head-start before competitors
+   - Stored in `private_state.early_access_queue`
+
+**Provider Premium Access Decisions:**
+- Located in `actors/model_provider.py`: `decide_premium_access()`
+- Decision factors:
+  - Can afford: budget >= premium_pricing
+  - Behind competitors: market share < 30%
+  - High eval engineering: evaluation_engineering > 0.3
+- Logic: Purchase if `can_afford AND (behind OR high_eval_eng)`
+- Updates `private_state.evaluator_premium_access` and `evaluator_funding_level`
+
+**Funder Allocation Split:**
+- Located in `actors/funder.py`: `_plan_heuristic()` and `set_evaluator_as_company()`
+- Funders split capital between providers and evaluator (if enabled)
+- Allocations dict includes special key `"__EVALUATOR__"` for evaluator funding
+- Provider allocation uses reduced capital (1 - evaluator_share)
+
+**Integration Flow (per round):**
+1. Providers plan strategies
+2. **Evaluator collects funding** (`_run_evaluator_funding_round()`):
+   - Collect base funding from funders
+   - Providers decide premium access purchases
+   - Evaluator updates budget and premium_providers set
+3. Evaluator scores providers:
+   - Compute n_trials per provider
+   - Run N trials, publish max score
+   - Store trial results for analysis
+4. Check budget before introducing new benchmarks
+
+**Logging and Analysis:**
+- Round data includes:
+  - `evaluator_funding_data`: funder_allocations, provider_payments, funding_details
+  - `evaluator_business_metrics`: budget, premium_providers, n_premium_providers, base_funding, service_revenue, trial_counts
+- Per-provider trial counts show who benefits from best-of-N
+- Budget tracking shows evaluator financial sustainability
+
+**Testable Hypotheses:**
+- Premium access creates score inflation for paying providers
+- Providers with high eval_engineering + premium access dominate leaderboards
+- Budget constraints force evaluators to depend on provider payments
+- Paying providers gain advantage even with lower true capability
+
+**Implementation Files:**
+- `visibility.py`: EvaluatorPrivateState, extended ProviderPrivateState
+- `actors/evaluator.py`: collect_funding(), compute_n_trials(), N-trial evaluation, budget checks
+- `actors/funder.py`: set_evaluator_as_company(), allocation split logic
+- `actors/model_provider.py`: decide_premium_access()
+- `simulation.py`: _run_evaluator_funding_round(), config flags, integration
+
+**Backwards Compatibility:**
+- Default: `evaluator_as_company=False` preserves current single-submission behavior
+- All conditionals check flag before executing company-mode logic
+- No breaking changes to existing experiments
 
 #### Policymaker Enhancements
 

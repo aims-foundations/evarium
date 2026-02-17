@@ -7,29 +7,9 @@ Incidents cascade through the ecosystem affecting consumers, policymakers,
 funders, and media coverage.
 """
 
-from dataclasses import dataclass, asdict
 from typing import Optional
 import numpy as np
-
-
-@dataclass
-class AIIncident:
-    """A single AI safety incident."""
-    provider: str
-    round_num: int
-    category: str  # "healthcare_harm", "security_breach", etc.
-    severity: str  # "minor", "moderate", "major", "critical"
-    description: str  # Generated headline
-    affected_sectors: list  # ["hospital_system", "enterprise_finance"]
-
-    # Computed at generation
-    safety_investment_at_time: float
-    gaming_gap_at_time: float
-    market_share_at_time: float
-
-    def to_dict(self):
-        """Convert to dictionary for logging."""
-        return asdict(self)
+from visibility import AIIncident
 
 
 class IncidentGenerator:
@@ -325,7 +305,7 @@ class IncidentGenerator:
             category=category,
             severity=severity,
             description=description,
-            affected_sectors=affected_sectors,
+            affected_sectors=list(affected_sectors),  # Ensure it's a list
             safety_investment_at_time=safety_investment,
             gaming_gap_at_time=gaming_gap,
             market_share_at_time=market_share,

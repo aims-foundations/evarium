@@ -1,0 +1,184 @@
+{
+  "n_rounds": 25,
+  "final_scores": {
+    "OpenAI": 0.973,
+    "Anthropic": 0.9179,
+    "Google": 0.9366,
+    "MetaAI": 0.9151,
+    "StartupDotAI": 0.8873
+  },
+  "final_true_capabilities": {
+    "OpenAI": 0.8501,
+    "Anthropic": 0.775,
+    "Google": 0.7599,
+    "MetaAI": 0.7423,
+    "StartupDotAI": 0.6891
+  },
+  "final_believed_capabilities": {
+    "OpenAI": 0.9693,
+    "Anthropic": 0.9177,
+    "Google": 0.9239,
+    "MetaAI": 0.9025,
+    "StartupDotAI": 0.8657
+  },
+  "final_strategies": {
+    "OpenAI": {
+      "fundamental_research": 0.2662,
+      "training_optimization": 0.25,
+      "evaluation_engineering": 0.2338,
+      "safety_alignment": 0.25
+    },
+    "Anthropic": {
+      "fundamental_research": 0.2339,
+      "training_optimization": 0.25,
+      "evaluation_engineering": 0.2661,
+      "safety_alignment": 0.25
+    },
+    "Google": {
+      "fundamental_research": 0.2341,
+      "training_optimization": 0.25,
+      "evaluation_engineering": 0.3159,
+      "safety_alignment": 0.2
+    },
+    "MetaAI": {
+      "fundamental_research": 0.2277,
+      "training_optimization": 0.25,
+      "evaluation_engineering": 0.3223,
+      "safety_alignment": 0.2
+    },
+    "StartupDotAI": {
+      "fundamental_research": 0.2155,
+      "training_optimization": 0.25,
+      "evaluation_engineering": 0.2845,
+      "safety_alignment": 0.25
+    }
+  },
+  "leaderboard": [
+    [
+      "OpenAI",
+      0.973
+    ],
+    [
+      "Google",
+      0.9366
+    ],
+    [
+      "Anthropic",
+      0.9179
+    ],
+    [
+      "MetaAI",
+      0.9151
+    ],
+    [
+      "StartupDotAI",
+      0.8873
+    ]
+  ],
+  "validity_correlation": 0.8532298552407379,
+  "benchmark_params": {
+    "validity": 0.7618697443777059,
+    "exploitability": 0.10045583922511794,
+    "noise": 0.08
+  },
+  "provider_summaries": {
+    "OpenAI": {
+      "initial_capability": 0.7,
+      "final_capability": 0.8501,
+      "capability_growth": 0.1501,
+      "mean_score": 0.917544,
+      "score_std": 0.055161632173096546,
+      "mean_fundamental_research": 0.252776,
+      "mean_training_optimization": 0.252,
+      "mean_evaluation_engineering": 0.245224,
+      "mean_safety_alignment": 0.25
+    },
+    "Anthropic": {
+      "initial_capability": 0.65,
+      "final_capability": 0.775,
+      "capability_growth": 0.125,
+      "mean_score": 0.884652,
+      "score_std": 0.07426285811898167,
+      "mean_fundamental_research": 0.238144,
+      "mean_training_optimization": 0.248,
+      "mean_evaluation_engineering": 0.257856,
+      "mean_safety_alignment": 0.256
+    },
+    "Google": {
+      "initial_capability": 0.65,
+      "final_capability": 0.7599,
+      "capability_growth": 0.1099,
+      "mean_score": 0.879724,
+      "score_std": 0.05805833810918119,
+      "mean_fundamental_research": 0.24230000000000002,
+      "mean_training_optimization": 0.252,
+      "mean_evaluation_engineering": 0.3077,
+      "mean_safety_alignment": 0.198
+    },
+    "MetaAI": {
+      "initial_capability": 0.63,
+      "final_capability": 0.7423,
+      "capability_growth": 0.11229999999999996,
+      "mean_score": 0.8559319999999999,
+      "score_std": 0.045850825248843666,
+      "mean_fundamental_research": 0.224348,
+      "mean_training_optimization": 0.258,
+      "mean_evaluation_engineering": 0.321652,
+      "mean_safety_alignment": 0.196
+    },
+    "StartupDotAI": {
+      "initial_capability": 0.58,
+      "final_capability": 0.6891,
+      "capability_growth": 0.10910000000000009,
+      "mean_score": 0.799904,
+      "score_std": 0.05801456699829794,
+      "mean_fundamental_research": 0.20702,
+      "mean_training_optimization": 0.25,
+      "mean_evaluation_engineering": 0.29698,
+      "mean_safety_alignment": 0.24600000000000002
+    }
+  },
+  "consumer_summary": {
+    "mean_satisfaction": 0.8577119999999999,
+    "final_satisfaction": 0.913,
+    "avg_switching_rate": 0.043936,
+    "final_market_shares": {
+      "OpenAI": 0.7176,
+      "Anthropic": 0.1501,
+      "Google": 0.0551,
+      "MetaAI": 0.052,
+      "StartupDotAI": 0.0252
+    },
+    "n_segments": 39
+  },
+  "policymaker_summary": {
+    "n_policymakers": 1,
+    "total_interventions": 8,
+    "intervention_types": [
+      "mandate_benchmark",
+      "investigation",
+      "threshold_announcement",
+      "compliance_audit",
+      "public_warning"
+    ],
+    "active_regulations": [
+      "Benchmark_Mandate_R7 (mandate_benchmark): Active - {'validity': 0.7999999999999999, 'exploitability': 0.3}"
+    ]
+  },
+  "funder_summary": {
+    "n_funders": 3,
+    "total_funding_deployed": 9930000000.0,
+    "final_funding_multipliers": {
+      "OpenAI": 1.5919,
+      "Google": 1.2975,
+      "MetaAI": 1.0372,
+      "Anthropic": 1.0375,
+      "StartupDotAI": 1.036
+    },
+    "funder_types": [
+      "vc",
+      "vc",
+      "gov"
+    ]
+  }
+}

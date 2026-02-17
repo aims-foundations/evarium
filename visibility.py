@@ -16,6 +16,46 @@ from typing import Optional
 
 
 @dataclass
+class AIIncident:
+    """
+    A single AI safety incident.
+
+    Represents real-world AI failures (healthcare harm, security breaches,
+    bias incidents, safety failures) that cascade through the ecosystem.
+    """
+    provider: str
+    round_num: int
+    category: str  # "healthcare_harm", "security_breach", "bias", "safety_failure", "misinformation", "misuse"
+    severity: str  # "minor", "moderate", "major", "critical"
+    description: str  # Generated headline
+    affected_sectors: list  # ["hospital_system", "enterprise_finance", etc.]
+
+    # Computed at generation time
+    safety_investment_at_time: float = 0.0
+    gaming_gap_at_time: float = 0.0
+    market_share_at_time: float = 0.0
+
+    def to_dict(self) -> dict:
+        """Convert to dict for serialization."""
+        return {
+            "provider": self.provider,
+            "round_num": self.round_num,
+            "category": self.category,
+            "severity": self.severity,
+            "description": self.description,
+            "affected_sectors": self.affected_sectors,
+            "safety_investment_at_time": self.safety_investment_at_time,
+            "gaming_gap_at_time": self.gaming_gap_at_time,
+            "market_share_at_time": self.market_share_at_time,
+        }
+
+    @classmethod
+    def from_dict(cls, data: dict) -> "AIIncident":
+        """Create from dict."""
+        return cls(**data)
+
+
+@dataclass
 class PublicState:
     """
     State visible to all actors.
@@ -87,6 +127,10 @@ class ProviderPrivateState:
     # Reflection state
     recent_insights: list = field(default_factory=list)
 
+    # Evaluator-as-company feature (premium access)
+    evaluator_premium_access: bool = False
+    evaluator_funding_level: float = 0.0
+
     def to_dict(self) -> dict:
         """Convert to dict for serialization."""
         return {
@@ -104,6 +148,8 @@ class ProviderPrivateState:
             "past_strategies": self.past_strategies,
             "observed_competitor_scores": self.observed_competitor_scores,
             "recent_insights": self.recent_insights,
+            "evaluator_premium_access": self.evaluator_premium_access,
+            "evaluator_funding_level": self.evaluator_funding_level,
         }
 
     @classmethod
@@ -448,6 +494,58 @@ class FunderGroundTruth:
         return cls(**data)
 
 
+@dataclass
+class EvaluatorPrivateState:
+    """
+    Private state for Evaluator when operating as company.
+
+    Tracks budget, premium providers, trial results, and early access queue.
+    Only used when evaluator_as_company=True in config.
+    """
+    budget: float = 0.0
+    base_funding: float = 0.0
+    service_revenue: float = 0.0
+    premium_providers: set = field(default_factory=set)
+    premium_pricing: float = 10000.0
+    trial_results: dict = field(default_factory=dict)  # {provider: {benchmark: [scores]}}
+    early_access_queue: dict = field(default_factory=dict)  # {benchmark: [providers]}
+    early_access_rounds: int = 3
+    funding_history: list = field(default_factory=list)
+
+    def to_dict(self) -> dict:
+        """Convert to dict for serialization."""
+        return {
+            "budget": self.budget,
+            "base_funding": self.base_funding,
+            "service_revenue": self.service_revenue,
+            "premium_providers": list(self.premium_providers),
+            "premium_pricing": self.premium_pricing,
+            "trial_results": self.trial_results,
+            "early_access_queue": self.early_access_queue,
+            "early_access_rounds": self.early_access_rounds,
+            "funding_history": self.funding_history,
+        }
+
+    @classmethod
+    def from_dict(cls, data: dict) -> "EvaluatorPrivateState":
+        """Create from dict."""
+        # Convert premium_providers back to set
+        if "premium_providers" in data and isinstance(data["premium_providers"], list):
+            data = {**data, "premium_providers": set(data["premium_providers"])}
+        return cls(**data)
+
+    def get_summary(self) -> str:
+        """Get human-readable summary for prompts."""
+        summary = f"Budget: ${self.budget:,.0f}\n"
+        summary += f"Base Funding: ${self.base_funding:,.0f}\n"
+        summary += f"Service Revenue: ${self.service_revenue:,.0f}\n"
+        summary += f"Premium Pricing: ${self.premium_pricing:,.0f}\n"
+        summary += f"Premium Providers: {len(self.premium_providers)}\n"
+        if self.premium_providers:
+            summary += f"  {', '.join(sorted(self.premium_providers))}\n"
+        return summary
+
+
 # Type aliases for clarity
-PrivateState = ProviderPrivateState | ConsumerPrivateState | PolicymakerPrivateState | FunderPrivateState
+PrivateState = ProviderPrivateState | ConsumerPrivateState | PolicymakerPrivateState | FunderPrivateState | EvaluatorPrivateState
 GroundTruth = ProviderGroundTruth | ConsumerGroundTruth | PolicymakerGroundTruth | FunderGroundTruth
