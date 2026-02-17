@@ -1,0 +1,2182 @@
+{
+  "provider_names": [
+    "OpenAI",
+    "Anthropic",
+    "Google",
+    "MetaAI",
+    "StartupDotAI"
+  ],
+  "brand_recognition": {
+    "OpenAI": 0.9,
+    "Anthropic": 0.7,
+    "Google": 0.8,
+    "MetaAI": 0.6,
+    "StartupDotAI": 0.4
+  },
+  "current_round": 24,
+  "segments": [
+    {
+      "name": "software_dev_leaderboard_follower",
+      "archetype": "leaderboard_follower",
+      "use_case": "software_dev",
+      "market_fraction": 0.03076923076923077,
+      "benchmark_weights": {
+        "coding": 0.3781512605042016,
+        "reasoning": 0.03361344537815126,
+        "math": 0.04201680672268907,
+        "safety": 0.04201680672268907,
+        "medical": 0.04201680672268907,
+        "legal": 0.04201680672268907,
+        "finance": 0.04201680672268907,
+        "coding_advanced": 0.3781512605042016
+      },
+      "leaderboard_trust": 0.6182920266613126,
+      "switching_cost": 0.05,
+      "switching_threshold": 0.15,
+      "llm_mode": false,
+      "consumer_type": "individual",
+      "decision_delay": 1,
+      "integration_friction": 0.0,
+      "compliance_requirements": [],
+      "compliance_weight": 1.0,
+      "rounds_since_decision": 0,
+      "last_llm_decision": null,
+      "provider_shares": {
+        "OpenAI": 0.984330490151304,
+        "Anthropic": 0.0007551478783197341,
+        "Google": 0.0007462774878185745,
+        "MetaAI": 0.013654815851815006,
+        "StartupDotAI": 0.0005132686307427366
+      },
+      "believed_quality": {
+        "OpenAI": 0.9877754145381524,
+        "MetaAI": 0.9254531567985395,
+        "StartupDotAI": 0.8689601344133739,
+        "Google": 0.9593206400051912,
+        "Anthropic": 0.9341825029853611
+      },
+      "satisfaction": {
+        "OpenAI": 0.9280768387435739,
+        "Anthropic": 0.9100764660795801,
+        "Google": 0.9279148679588937,
+        "MetaAI": 0.8945118873059217,
+        "StartupDotAI": 0.8397303354150806
+      },
+      "tenure": {
+        "OpenAI": 20,
+        "Anthropic": 0,
+        "Google": 0,
+        "MetaAI": 5,
+        "StartupDotAI": 0
+      }
+    },
+    {
+      "name": "software_dev_experience_driven",
+      "archetype": "experience_driven",
+      "use_case": "software_dev",
+      "market_fraction": 0.026923076923076925,
+      "benchmark_weights": {
+        "coding": 0.3781512605042016,
+        "reasoning": 0.03361344537815126,
+        "math": 0.04201680672268907,
+        "safety": 0.04201680672268907,
+        "medical": 0.04201680672268907,
+        "legal": 0.04201680672268907,
+        "finance": 0.04201680672268907,
+        "coding_advanced": 0.3781512605042016
+      },
+      "leaderboard_trust": 0.315,
+      "switching_cost": 0.08,
+      "switching_threshold": 0.08,
+      "llm_mode": false,
+      "consumer_type": "individual",
+      "decision_delay": 1,
+      "integration_friction": 0.0,
+      "compliance_requirements": [],
+      "compliance_weight": 1.0,
+      "rounds_since_decision": 0,
+      "last_llm_decision": null,
+      "provider_shares": {
+        "OpenAI": 0.9820275337169434,
+        "Anthropic": 0.0009392413157974877,
+        "Google": 0.0009940147342913101,
+        "MetaAI": 0.015322210819397563,
+        "StartupDotAI": 0.0007169994135703798
+      },
+      "believed_quality": {
+        "OpenAI": 0.9877754145381524,
+        "MetaAI": 0.9254531567985395,
+        "StartupDotAI": 0.8689601344133739,
+        "Google": 0.9593206400051912,
+        "Anthropic": 0.9341825029853611
+      },
+      "satisfaction": {
+        "OpenAI": 0.9280768387435739,
+        "Anthropic": 0.9100764660795801,
+        "Google": 0.9279148679588937,
+        "MetaAI": 0.8945118873059217,
+        "StartupDotAI": 0.8397303354150806
+      },
+      "tenure": {
+        "OpenAI": 21,
+        "Anthropic": 0,
+        "Google": 0,
+        "MetaAI": 4,
+        "StartupDotAI": 0
+      }
+    },
+    {
+      "name": "software_dev_cautious",
+      "archetype": "cautious",
+      "use_case": "software_dev",
+      "market_fraction": 0.019230769230769232,
+      "benchmark_weights": {
+        "coding": 0.3781512605042016,
+        "reasoning": 0.03361344537815126,
+        "math": 0.04201680672268907,
+        "safety": 0.04201680672268907,
+        "medical": 0.04201680672268907,
+        "legal": 0.04201680672268907,
+        "finance": 0.04201680672268907,
+        "coding_advanced": 0.3781512605042016
+      },
+      "leaderboard_trust": 0.45,
+      "switching_cost": 0.2,
+      "switching_threshold": 0.25,
+      "llm_mode": false,
+      "consumer_type": "individual",
+      "decision_delay": 1,
+      "integration_friction": 0.0,
+      "compliance_requirements": [],
+      "compliance_weight": 1.0,
+      "rounds_since_decision": 0,
+      "last_llm_decision": null,
+      "provider_shares": {
+        "OpenAI": 0.8784931077194055,
+        "Anthropic": 0.0009471990594971188,
+        "Google": 0.0025857567752035717,
+        "MetaAI": 0.11711609873337661,
+        "StartupDotAI": 0.0008578377125172044
+      },
+      "believed_quality": {
+        "OpenAI": 0.9877754145381524,
+        "MetaAI": 0.9254531567985395,
+        "StartupDotAI": 0.8689601344133739,
+        "Google": 0.9593206400051912,
+        "Anthropic": 0.9341825029853611
+      },
+      "satisfaction": {
+        "OpenAI": 0.9280768387435739,
+        "Anthropic": 0.9100764660795801,
+        "Google": 0.9279148679588937,
+        "MetaAI": 0.8945118873059217,
+        "StartupDotAI": 0.8397303354150806
+      },
+      "tenure": {
+        "OpenAI": 20,
+        "Anthropic": 0,
+        "Google": 0,
+        "MetaAI": 6,
+        "StartupDotAI": 0
+      }
+    },
+    {
+      "name": "content_writer_leaderboard_follower",
+      "archetype": "leaderboard_follower",
+      "use_case": "content_writer",
+      "market_fraction": 0.03076923076923077,
+      "benchmark_weights": {
+        "coding": 0.03225806451612903,
+        "reasoning": 0.12903225806451613,
+        "math": 0.16129032258064518,
+        "safety": 0.16129032258064518,
+        "medical": 0.16129032258064518,
+        "legal": 0.16129032258064518,
+        "finance": 0.16129032258064518,
+        "coding_advanced": 0.03225806451612903
+      },
+      "leaderboard_trust": 0.6182920266613126,
+      "switching_cost": 0.05,
+      "switching_threshold": 0.15,
+      "llm_mode": false,
+      "consumer_type": "individual",
+      "decision_delay": 1,
+      "integration_friction": 0.0,
+      "compliance_requirements": [],
+      "compliance_weight": 1.0,
+      "rounds_since_decision": 0,
+      "last_llm_decision": null,
+      "provider_shares": {
+        "OpenAI": 0.5958827248484583,
+        "Anthropic": 0.0007382208329508069,
+        "Google": 0.40190306276034016,
+        "MetaAI": 0.0009357462014408067,
+        "StartupDotAI": 0.000540245356809971
+      },
+      "believed_quality": {
+        "OpenAI": 0.9709719335037384,
+        "MetaAI": 0.9529123918723563,
+        "StartupDotAI": 0.8893022309309582,
+        "Google": 0.9563663061824377,
+        "Anthropic": 0.9360483236030029
+      },
+      "satisfaction": {
+        "OpenAI": 0.91127335770916,
+        "Anthropic": 0.911942286697222,
+        "Google": 0.9249605341361401,
+        "MetaAI": 0.9219711223797386,
+        "StartupDotAI": 0.8600724319326648
+      },
+      "tenure": {
+        "OpenAI": 13,
+        "Anthropic": 0,
+        "Google": 11,
+        "MetaAI": 0,
+        "StartupDotAI": 0
+      }
+    },
+    {
+      "name": "content_writer_experience_driven",
+      "archetype": "experience_driven",
+      "use_case": "content_writer",
+      "market_fraction": 0.026923076923076925,
+      "benchmark_weights": {
+        "coding": 0.03225806451612903,
+        "reasoning": 0.12903225806451613,
+        "math": 0.16129032258064518,
+        "safety": 0.16129032258064518,
+        "medical": 0.16129032258064518,
+        "legal": 0.16129032258064518,
+        "finance": 0.16129032258064518,
+        "coding_advanced": 0.03225806451612903
+      },
+      "leaderboard_trust": 0.315,
+      "switching_cost": 0.08,
+      "switching_threshold": 0.08,
+      "llm_mode": false,
+      "consumer_type": "individual",
+      "decision_delay": 1,
+      "integration_friction": 0.0,
+      "compliance_requirements": [],
+      "compliance_weight": 1.0,
+      "rounds_since_decision": 0,
+      "last_llm_decision": null,
+      "provider_shares": {
+        "OpenAI": 0.29952847426791473,
+        "Anthropic": 0.0007181334561944657,
+        "Google": 0.6984081176413696,
+        "MetaAI": 0.0008005429085497052,
+        "StartupDotAI": 0.0005447317259716303
+      },
+      "believed_quality": {
+        "OpenAI": 0.9709719335037384,
+        "MetaAI": 0.9529123918723563,
+        "StartupDotAI": 0.8893022309309582,
+        "Google": 0.9563663061824377,
+        "Anthropic": 0.9360483236030029
+      },
+      "satisfaction": {
+        "OpenAI": 0.91127335770916,
+        "Anthropic": 0.911942286697222,
+        "Google": 0.9249605341361401,
+        "MetaAI": 0.9219711223797386,
+        "StartupDotAI": 0.8600724319326648
+      },
+      "tenure": {
+        "OpenAI": 12,
+        "Anthropic": 0,
+        "Google": 13,
+        "MetaAI": 0,
+        "StartupDotAI": 0
+      }
+    },
+    {
+      "name": "content_writer_cautious",
+      "archetype": "cautious",
+      "use_case": "content_writer",
+      "market_fraction": 0.019230769230769232,
+      "benchmark_weights": {
+        "coding": 0.03225806451612903,
+        "reasoning": 0.12903225806451613,
+        "math": 0.16129032258064518,
+        "safety": 0.16129032258064518,
+        "medical": 0.16129032258064518,
+        "legal": 0.16129032258064518,
+        "finance": 0.16129032258064518,
+        "coding_advanced": 0.03225806451612903
+      },
+      "leaderboard_trust": 0.45,
+      "switching_cost": 0.2,
+      "switching_threshold": 0.25,
+      "llm_mode": false,
+      "consumer_type": "individual",
+      "decision_delay": 1,
+      "integration_friction": 0.0,
+      "compliance_requirements": [],
+      "compliance_weight": 1.0,
+      "rounds_since_decision": 0,
+      "last_llm_decision": null,
+      "provider_shares": {
+        "OpenAI": 0.5108875672284979,
+        "Anthropic": 0.0014616553305240247,
+        "Google": 0.48158958294017945,
+        "MetaAI": 0.005335770957438223,
+        "StartupDotAI": 0.0007254235433604588
+      },
+      "believed_quality": {
+        "OpenAI": 0.9709719335037384,
+        "MetaAI": 0.9529123918723563,
+        "StartupDotAI": 0.8893022309309582,
+        "Google": 0.9563663061824377,
+        "Anthropic": 0.9360483236030029
+      },
+      "satisfaction": {
+        "OpenAI": 0.91127335770916,
+        "Anthropic": 0.911942286697222,
+        "Google": 0.9249605341361401,
+        "MetaAI": 0.9219711223797386,
+        "StartupDotAI": 0.8600724319326648
+      },
+      "tenure": {
+        "OpenAI": 13,
+        "Anthropic": 0,
+        "Google": 13,
+        "MetaAI": 0,
+        "StartupDotAI": 0
+      }
+    },
+    {
+      "name": "legal_leaderboard_follower",
+      "archetype": "leaderboard_follower",
+      "use_case": "legal",
+      "market_fraction": 0.03076923076923077,
+      "benchmark_weights": {
+        "coding": 0.07142857142857141,
+        "reasoning": 0.5357142857142856,
+        "math": 0.07142857142857141,
+        "safety": 0.035714285714285705,
+        "medical": 0.07142857142857141,
+        "legal": 0.07142857142857141,
+        "finance": 0.07142857142857141,
+        "coding_advanced": 0.07142857142857141
+      },
+      "leaderboard_trust": 0.6182920266613126,
+      "switching_cost": 0.05,
+      "switching_threshold": 0.15,
+      "llm_mode": false,
+      "consumer_type": "individual",
+      "decision_delay": 1,
+      "integration_friction": 0.0,
+      "compliance_requirements": [],
+      "compliance_weight": 1.0,
+      "rounds_since_decision": 0,
+      "last_llm_decision": null,
+      "provider_shares": {
+        "OpenAI": 0.9971880812892989,
+        "Anthropic": 0.0007226200843968415,
+        "Google": 0.0009180039579924881,
+        "MetaAI": 0.0008923458672643403,
+        "StartupDotAI": 0.00027894880104749683
+      },
+      "believed_quality": {
+        "OpenAI": 0.988198608715618,
+        "MetaAI": 0.9359455542781105,
+        "StartupDotAI": 0.9050266237209481,
+        "Google": 0.9308821116692876,
+        "Anthropic": 0.9348326879104338
+      },
+      "satisfaction": {
+        "OpenAI": 0.9294000329210396,
+        "Anthropic": 0.9113266510046529,
+        "Google": 0.9001430062896567,
+        "MetaAI": 0.9056042847854928,
+        "StartupDotAI": 0.8763968247226548
+      },
+      "tenure": {
+        "OpenAI": 21,
+        "Anthropic": 0,
+        "Google": 0,
+        "MetaAI": 0,
+        "StartupDotAI": 0
+      }
+    },
+    {
+      "name": "legal_experience_driven",
+      "archetype": "experience_driven",
+      "use_case": "legal",
+      "market_fraction": 0.026923076923076925,
+      "benchmark_weights": {
+        "coding": 0.07142857142857141,
+        "reasoning": 0.5357142857142856,
+        "math": 0.07142857142857141,
+        "safety": 0.035714285714285705,
+        "medical": 0.07142857142857141,
+        "legal": 0.07142857142857141,
+        "finance": 0.07142857142857141,
+        "coding_advanced": 0.07142857142857141
+      },
+      "leaderboard_trust": 0.315,
+      "switching_cost": 0.08,
+      "switching_threshold": 0.08,
+      "llm_mode": false,
+      "consumer_type": "individual",
+      "decision_delay": 1,
+      "integration_friction": 0.0,
+      "compliance_requirements": [],
+      "compliance_weight": 1.0,
+      "rounds_since_decision": 0,
+      "last_llm_decision": null,
+      "provider_shares": {
+        "OpenAI": 0.9907020689608456,
+        "Anthropic": 0.0005856917504270545,
+        "Google": 0.0007308506477480885,
+        "MetaAI": 0.007209926119708585,
+        "StartupDotAI": 0.0007714625212704848
+      },
+      "believed_quality": {
+        "OpenAI": 0.988198608715618,
+        "MetaAI": 0.9359455542781105,
+        "StartupDotAI": 0.9050266237209481,
+        "Google": 0.9308821116692876,
+        "Anthropic": 0.9348326879104338
+      },
+      "satisfaction": {
+        "OpenAI": 0.9294000329210396,
+        "Anthropic": 0.9113266510046529,
+        "Google": 0.9001430062896567,
+        "MetaAI": 0.9056042847854928,
+        "StartupDotAI": 0.8763968247226548
+      },
+      "tenure": {
+        "OpenAI": 21,
+        "Anthropic": 0,
+        "Google": 0,
+        "MetaAI": 2,
+        "StartupDotAI": 0
+      }
+    },
+    {
+      "name": "legal_cautious",
+      "archetype": "cautious",
+      "use_case": "legal",
+      "market_fraction": 0.019230769230769232,
+      "benchmark_weights": {
+        "coding": 0.07142857142857141,
+        "reasoning": 0.5357142857142856,
+        "math": 0.07142857142857141,
+        "safety": 0.035714285714285705,
+        "medical": 0.07142857142857141,
+        "legal": 0.07142857142857141,
+        "finance": 0.07142857142857141,
+        "coding_advanced": 0.07142857142857141
+      },
+      "leaderboard_trust": 0.45,
+      "switching_cost": 0.2,
+      "switching_threshold": 0.25,
+      "llm_mode": false,
+      "consumer_type": "individual",
+      "decision_delay": 1,
+      "integration_friction": 0.0,
+      "compliance_requirements": [],
+      "compliance_weight": 1.0,
+      "rounds_since_decision": 0,
+      "last_llm_decision": null,
+      "provider_shares": {
+        "OpenAI": 0.835390559505054,
+        "Anthropic": 0.011326983313572868,
+        "Google": 0.0009139232393646287,
+        "MetaAI": 0.15152801342803193,
+        "StartupDotAI": 0.0008405205139765814
+      },
+      "believed_quality": {
+        "OpenAI": 0.988198608715618,
+        "MetaAI": 0.9359455542781105,
+        "StartupDotAI": 0.9050266237209481,
+        "Google": 0.9308821116692876,
+        "Anthropic": 0.9348326879104338
+      },
+      "satisfaction": {
+        "OpenAI": 0.9294000329210396,
+        "Anthropic": 0.9113266510046529,
+        "Google": 0.9001430062896567,
+        "MetaAI": 0.9056042847854928,
+        "StartupDotAI": 0.8763968247226548
+      },
+      "tenure": {
+        "OpenAI": 21,
+        "Anthropic": 2,
+        "Google": 0,
+        "MetaAI": 4,
+        "StartupDotAI": 0
+      }
+    },
+    {
+      "name": "healthcare_leaderboard_follower",
+      "archetype": "leaderboard_follower",
+      "use_case": "healthcare",
+      "market_fraction": 0.03076923076923077,
+      "benchmark_weights": {
+        "coding": 0.06451612903225806,
+        "reasoning": 0.12903225806451613,
+        "math": 0.06451612903225806,
+        "safety": 0.4838709677419354,
+        "medical": 0.06451612903225806,
+        "legal": 0.06451612903225806,
+        "finance": 0.06451612903225806,
+        "coding_advanced": 0.06451612903225806
+      },
+      "leaderboard_trust": 0.6182920266613126,
+      "switching_cost": 0.05,
+      "switching_threshold": 0.15,
+      "llm_mode": false,
+      "consumer_type": "individual",
+      "decision_delay": 1,
+      "integration_friction": 0.0,
+      "compliance_requirements": [],
+      "compliance_weight": 1.0,
+      "rounds_since_decision": 0,
+      "last_llm_decision": null,
+      "provider_shares": {
+        "OpenAI": 0.010369466958034375,
+        "Anthropic": 0.0007200604715447748,
+        "Google": 0.9878216625590163,
+        "MetaAI": 0.0006306704315737412,
+        "StartupDotAI": 0.00045813957983086104
+      },
+      "believed_quality": {
+        "OpenAI": 0.9498117037637939,
+        "MetaAI": 0.9494140682604786,
+        "StartupDotAI": 0.8747109454344878,
+        "Google": 0.9714429244630935,
+        "Anthropic": 0.9307169593351032
+      },
+      "satisfaction": {
+        "OpenAI": 0.9036131279692153,
+        "Anthropic": 0.9156109224293223,
+        "Google": 0.950037152416796,
+        "MetaAI": 0.9274727987678608,
+        "StartupDotAI": 0.8544811464361944
+      },
+      "tenure": {
+        "OpenAI": 10,
+        "Anthropic": 0,
+        "Google": 15,
+        "MetaAI": 0,
+        "StartupDotAI": 0
+      }
+    },
+    {
+      "name": "healthcare_experience_driven",
+      "archetype": "experience_driven",
+      "use_case": "healthcare",
+      "market_fraction": 0.026923076923076925,
+      "benchmark_weights": {
+        "coding": 0.06451612903225806,
+        "reasoning": 0.12903225806451613,
+        "math": 0.06451612903225806,
+        "safety": 0.4838709677419354,
+        "medical": 0.06451612903225806,
+        "legal": 0.06451612903225806,
+        "finance": 0.06451612903225806,
+        "coding_advanced": 0.06451612903225806
+      },
+      "leaderboard_trust": 0.315,
+      "switching_cost": 0.08,
+      "switching_threshold": 0.08,
+      "llm_mode": false,
+      "consumer_type": "individual",
+      "decision_delay": 1,
+      "integration_friction": 0.0,
+      "compliance_requirements": [],
+      "compliance_weight": 1.0,
+      "rounds_since_decision": 0,
+      "last_llm_decision": null,
+      "provider_shares": {
+        "OpenAI": 0.027602005613455285,
+        "Anthropic": 0.0008994205078577644,
+        "Google": 0.9701698165051524,
+        "MetaAI": 0.0009499985290945408,
+        "StartupDotAI": 0.0003787588444400478
+      },
+      "believed_quality": {
+        "OpenAI": 0.9498117037637939,
+        "MetaAI": 0.9494140682604786,
+        "StartupDotAI": 0.8747109454344878,
+        "Google": 0.9714429244630935,
+        "Anthropic": 0.9307169593351032
+      },
+      "satisfaction": {
+        "OpenAI": 0.9036131279692153,
+        "Anthropic": 0.9156109224293223,
+        "Google": 0.950037152416796,
+        "MetaAI": 0.9274727987678608,
+        "StartupDotAI": 0.8544811464361944
+      },
+      "tenure": {
+        "OpenAI": 10,
+        "Anthropic": 0,
+        "Google": 15,
+        "MetaAI": 0,
+        "StartupDotAI": 0
+      }
+    },
+    {
+      "name": "healthcare_cautious",
+      "archetype": "cautious",
+      "use_case": "healthcare",
+      "market_fraction": 0.019230769230769232,
+      "benchmark_weights": {
+        "coding": 0.06451612903225806,
+        "reasoning": 0.12903225806451613,
+        "math": 0.06451612903225806,
+        "safety": 0.4838709677419354,
+        "medical": 0.06451612903225806,
+        "legal": 0.06451612903225806,
+        "finance": 0.06451612903225806,
+        "coding_advanced": 0.06451612903225806
+      },
+      "leaderboard_trust": 0.45,
+      "switching_cost": 0.2,
+      "switching_threshold": 0.25,
+      "llm_mode": false,
+      "consumer_type": "individual",
+      "decision_delay": 1,
+      "integration_friction": 0.0,
+      "compliance_requirements": [],
+      "compliance_weight": 1.0,
+      "rounds_since_decision": 0,
+      "last_llm_decision": null,
+      "provider_shares": {
+        "OpenAI": 0.28796045171763074,
+        "Anthropic": 0.0014112014443105482,
+        "Google": 0.707569013612773,
+        "MetaAI": 0.0021608444250283913,
+        "StartupDotAI": 0.0008984888002573694
+      },
+      "believed_quality": {
+        "OpenAI": 0.9498117037637939,
+        "MetaAI": 0.9494140682604786,
+        "StartupDotAI": 0.8747109454344878,
+        "Google": 0.9714429244630935,
+        "Anthropic": 0.9307169593351032
+      },
+      "satisfaction": {
+        "OpenAI": 0.9036131279692153,
+        "Anthropic": 0.9156109224293223,
+        "Google": 0.950037152416796,
+        "MetaAI": 0.9274727987678608,
+        "StartupDotAI": 0.8544811464361944
+      },
+      "tenure": {
+        "OpenAI": 10,
+        "Anthropic": 0,
+        "Google": 16,
+        "MetaAI": 0,
+        "StartupDotAI": 0
+      }
+    },
+    {
+      "name": "finance_leaderboard_follower",
+      "archetype": "leaderboard_follower",
+      "use_case": "finance",
+      "market_fraction": 0.03076923076923077,
+      "benchmark_weights": {
+        "coding": 0.03448275862068965,
+        "reasoning": 0.482758620689655,
+        "math": 0.0689655172413793,
+        "safety": 0.17241379310344823,
+        "medical": 0.0689655172413793,
+        "legal": 0.0689655172413793,
+        "finance": 0.0689655172413793,
+        "coding_advanced": 0.03448275862068965
+      },
+      "leaderboard_trust": 0.6182920266613126,
+      "switching_cost": 0.05,
+      "switching_threshold": 0.15,
+      "llm_mode": false,
+      "consumer_type": "individual",
+      "decision_delay": 1,
+      "integration_friction": 0.0,
+      "compliance_requirements": [],
+      "compliance_weight": 1.0,
+      "rounds_since_decision": 0,
+      "last_llm_decision": null,
+      "provider_shares": {
+        "OpenAI": 0.9917751418492334,
+        "Anthropic": 0.005345632176112858,
+        "Google": 0.0009813208497822137,
+        "MetaAI": 0.0014230624604557283,
+        "StartupDotAI": 0.00047484266441583464
+      },
+      "believed_quality": {
+        "OpenAI": 0.9770856546645603,
+        "MetaAI": 0.940189988948287,
+        "StartupDotAI": 0.8990574841256932,
+        "Google": 0.9401883234817607,
+        "Anthropic": 0.9335547067545009
+      },
+      "satisfaction": {
+        "OpenAI": 0.9218870788699818,
+        "Anthropic": 0.91244866984872,
+        "Google": 0.9121158847687965,
+        "MetaAI": 0.9122487194556692,
+        "StartupDotAI": 0.8728276851273998
+      },
+      "tenure": {
+        "OpenAI": 21,
+        "Anthropic": 0,
+        "Google": 0,
+        "MetaAI": 0,
+        "StartupDotAI": 0
+      }
+    },
+    {
+      "name": "finance_experience_driven",
+      "archetype": "experience_driven",
+      "use_case": "finance",
+      "market_fraction": 0.026923076923076925,
+      "benchmark_weights": {
+        "coding": 0.03448275862068965,
+        "reasoning": 0.482758620689655,
+        "math": 0.0689655172413793,
+        "safety": 0.17241379310344823,
+        "medical": 0.0689655172413793,
+        "legal": 0.0689655172413793,
+        "finance": 0.0689655172413793,
+        "coding_advanced": 0.03448275862068965
+      },
+      "leaderboard_trust": 0.315,
+      "switching_cost": 0.08,
+      "switching_threshold": 0.08,
+      "llm_mode": false,
+      "consumer_type": "individual",
+      "decision_delay": 1,
+      "integration_friction": 0.0,
+      "compliance_requirements": [],
+      "compliance_weight": 1.0,
+      "rounds_since_decision": 0,
+      "last_llm_decision": null,
+      "provider_shares": {
+        "OpenAI": 0.9491212160305608,
+        "Anthropic": 0.04796571141817105,
+        "Google": 0.0007297598646206306,
+        "MetaAI": 0.0018334405547533953,
+        "StartupDotAI": 0.00034987213189413704
+      },
+      "believed_quality": {
+        "OpenAI": 0.9770856546645603,
+        "MetaAI": 0.940189988948287,
+        "StartupDotAI": 0.8990574841256932,
+        "Google": 0.9401883234817607,
+        "Anthropic": 0.9335547067545009
+      },
+      "satisfaction": {
+        "OpenAI": 0.9218870788699818,
+        "Anthropic": 0.91244866984872,
+        "Google": 0.9121158847687965,
+        "MetaAI": 0.9122487194556692,
+        "StartupDotAI": 0.8728276851273998
+      },
+      "tenure": {
+        "OpenAI": 21,
+        "Anthropic": 2,
+        "Google": 0,
+        "MetaAI": 0,
+        "StartupDotAI": 0
+      }
+    },
+    {
+      "name": "finance_cautious",
+      "archetype": "cautious",
+      "use_case": "finance",
+      "market_fraction": 0.019230769230769232,
+      "benchmark_weights": {
+        "coding": 0.03448275862068965,
+        "reasoning": 0.482758620689655,
+        "math": 0.0689655172413793,
+        "safety": 0.17241379310344823,
+        "medical": 0.0689655172413793,
+        "legal": 0.0689655172413793,
+        "finance": 0.0689655172413793,
+        "coding_advanced": 0.03448275862068965
+      },
+      "leaderboard_trust": 0.45,
+      "switching_cost": 0.2,
+      "switching_threshold": 0.25,
+      "llm_mode": false,
+      "consumer_type": "individual",
+      "decision_delay": 1,
+      "integration_friction": 0.0,
+      "compliance_requirements": [],
+      "compliance_weight": 1.0,
+      "rounds_since_decision": 0,
+      "last_llm_decision": null,
+      "provider_shares": {
+        "OpenAI": 0.8156294419820523,
+        "Anthropic": 0.030770767320356843,
+        "Google": 0.0020425441860219898,
+        "MetaAI": 0.15056855738430514,
+        "StartupDotAI": 0.0009886891272636756
+      },
+      "believed_quality": {
+        "OpenAI": 0.9770856546645603,
+        "MetaAI": 0.940189988948287,
+        "StartupDotAI": 0.8990574841256932,
+        "Google": 0.9401883234817607,
+        "Anthropic": 0.9335547067545009
+      },
+      "satisfaction": {
+        "OpenAI": 0.9218870788699818,
+        "Anthropic": 0.91244866984872,
+        "Google": 0.9121158847687965,
+        "MetaAI": 0.9122487194556692,
+        "StartupDotAI": 0.8728276851273998
+      },
+      "tenure": {
+        "OpenAI": 21,
+        "Anthropic": 2,
+        "Google": 0,
+        "MetaAI": 4,
+        "StartupDotAI": 0
+      }
+    },
+    {
+      "name": "customer_service_leaderboard_follower",
+      "archetype": "leaderboard_follower",
+      "use_case": "customer_service",
+      "market_fraction": 0.03076923076923077,
+      "benchmark_weights": {
+        "coding": 0.13333333333333336,
+        "reasoning": 0.16000000000000003,
+        "math": 0.13333333333333336,
+        "safety": 0.04000000000000001,
+        "medical": 0.13333333333333336,
+        "legal": 0.13333333333333336,
+        "finance": 0.13333333333333336,
+        "coding_advanced": 0.13333333333333336
+      },
+      "leaderboard_trust": 0.6182920266613126,
+      "switching_cost": 0.05,
+      "switching_threshold": 0.15,
+      "llm_mode": false,
+      "consumer_type": "individual",
+      "decision_delay": 1,
+      "integration_friction": 0.0,
+      "compliance_requirements": [],
+      "compliance_weight": 1.0,
+      "rounds_since_decision": 0,
+      "last_llm_decision": null,
+      "provider_shares": {
+        "OpenAI": 0.9618983429901004,
+        "Anthropic": 0.0007478261027268463,
+        "Google": 0.0008082989821106377,
+        "MetaAI": 0.03561720171482991,
+        "StartupDotAI": 0.0009283302102320901
+      },
+      "believed_quality": {
+        "OpenAI": 0.9822454018398186,
+        "MetaAI": 0.9452154472454968,
+        "StartupDotAI": 0.8908976540763205,
+        "Google": 0.9493698313706421,
+        "Anthropic": 0.9366954018064269
+      },
+      "satisfaction": {
+        "OpenAI": 0.9230868260452401,
+        "Anthropic": 0.9129493649006459,
+        "Google": 0.9183640593243445,
+        "MetaAI": 0.914634177752879,
+        "StartupDotAI": 0.8620278550780271
+      },
+      "tenure": {
+        "OpenAI": 18,
+        "Anthropic": 0,
+        "Google": 0,
+        "MetaAI": 7,
+        "StartupDotAI": 0
+      }
+    },
+    {
+      "name": "customer_service_experience_driven",
+      "archetype": "experience_driven",
+      "use_case": "customer_service",
+      "market_fraction": 0.026923076923076925,
+      "benchmark_weights": {
+        "coding": 0.13333333333333336,
+        "reasoning": 0.16000000000000003,
+        "math": 0.13333333333333336,
+        "safety": 0.04000000000000001,
+        "medical": 0.13333333333333336,
+        "legal": 0.13333333333333336,
+        "finance": 0.13333333333333336,
+        "coding_advanced": 0.13333333333333336
+      },
+      "leaderboard_trust": 0.315,
+      "switching_cost": 0.08,
+      "switching_threshold": 0.08,
+      "llm_mode": false,
+      "consumer_type": "individual",
+      "decision_delay": 1,
+      "integration_friction": 0.0,
+      "compliance_requirements": [],
+      "compliance_weight": 1.0,
+      "rounds_since_decision": 0,
+      "last_llm_decision": null,
+      "provider_shares": {
+        "OpenAI": 0.9957309008913477,
+        "Anthropic": 0.0007125139303847408,
+        "Google": 0.0006848110154960926,
+        "MetaAI": 0.0024615822901439483,
+        "StartupDotAI": 0.0004101918726275168
+      },
+      "believed_quality": {
+        "OpenAI": 0.9822454018398186,
+        "MetaAI": 0.9452154472454968,
+        "StartupDotAI": 0.8908976540763205,
+        "Google": 0.9493698313706421,
+        "Anthropic": 0.9366954018064269
+      },
+      "satisfaction": {
+        "OpenAI": 0.9230868260452401,
+        "Anthropic": 0.9129493649006459,
+        "Google": 0.9183640593243445,
+        "MetaAI": 0.914634177752879,
+        "StartupDotAI": 0.8620278550780271
+      },
+      "tenure": {
+        "OpenAI": 23,
+        "Anthropic": 0,
+        "Google": 0,
+        "MetaAI": 0,
+        "StartupDotAI": 0
+      }
+    },
+    {
+      "name": "customer_service_cautious",
+      "archetype": "cautious",
+      "use_case": "customer_service",
+      "market_fraction": 0.019230769230769232,
+      "benchmark_weights": {
+        "coding": 0.13333333333333336,
+        "reasoning": 0.16000000000000003,
+        "math": 0.13333333333333336,
+        "safety": 0.04000000000000001,
+        "medical": 0.13333333333333336,
+        "legal": 0.13333333333333336,
+        "finance": 0.13333333333333336,
+        "coding_advanced": 0.13333333333333336
+      },
+      "leaderboard_trust": 0.45,
+      "switching_cost": 0.2,
+      "switching_threshold": 0.25,
+      "llm_mode": false,
+      "consumer_type": "individual",
+      "decision_delay": 1,
+      "integration_friction": 0.0,
+      "compliance_requirements": [],
+      "compliance_weight": 1.0,
+      "rounds_since_decision": 0,
+      "last_llm_decision": null,
+      "provider_shares": {
+        "OpenAI": 0.874471133476823,
+        "Anthropic": 0.0015037855290102643,
+        "Google": 0.005141969567030425,
+        "MetaAI": 0.1180518524246136,
+        "StartupDotAI": 0.0008312590025226831
+      },
+      "believed_quality": {
+        "OpenAI": 0.9822454018398186,
+        "MetaAI": 0.9452154472454968,
+        "StartupDotAI": 0.8908976540763205,
+        "Google": 0.9493698313706421,
+        "Anthropic": 0.9366954018064269
+      },
+      "satisfaction": {
+        "OpenAI": 0.9230868260452401,
+        "Anthropic": 0.9129493649006459,
+        "Google": 0.9183640593243445,
+        "MetaAI": 0.914634177752879,
+        "StartupDotAI": 0.8620278550780271
+      },
+      "tenure": {
+        "OpenAI": 21,
+        "Anthropic": 0,
+        "Google": 0,
+        "MetaAI": 5,
+        "StartupDotAI": 0
+      }
+    },
+    {
+      "name": "researcher_leaderboard_follower",
+      "archetype": "leaderboard_follower",
+      "use_case": "researcher",
+      "market_fraction": 0.03076923076923077,
+      "benchmark_weights": {
+        "coding": 0.23684210526315785,
+        "reasoning": 0.26315789473684204,
+        "math": 0.05263157894736841,
+        "safety": 0.05263157894736841,
+        "medical": 0.05263157894736841,
+        "legal": 0.05263157894736841,
+        "finance": 0.05263157894736841,
+        "coding_advanced": 0.23684210526315785
+      },
+      "leaderboard_trust": 0.6182920266613126,
+      "switching_cost": 0.05,
+      "switching_threshold": 0.15,
+      "llm_mode": false,
+      "consumer_type": "individual",
+      "decision_delay": 1,
+      "integration_friction": 0.0,
+      "compliance_requirements": [],
+      "compliance_weight": 1.0,
+      "rounds_since_decision": 0,
+      "last_llm_decision": null,
+      "provider_shares": {
+        "OpenAI": 0.9937329883619151,
+        "Anthropic": 0.0005563758943817796,
+        "Google": 0.000530763932938314,
+        "MetaAI": 0.0046704121503400664,
+        "StartupDotAI": 0.0005094596604248023
+      },
+      "believed_quality": {
+        "OpenAI": 0.9868408282839396,
+        "MetaAI": 0.9313377056642911,
+        "StartupDotAI": 0.888409139466969,
+        "Google": 0.9442725777381862,
+        "Anthropic": 0.9342986170838936
+      },
+      "satisfaction": {
+        "OpenAI": 0.9271422524893611,
+        "Anthropic": 0.9101925801781127,
+        "Google": 0.9128668056918886,
+        "MetaAI": 0.9003964361716733,
+        "StartupDotAI": 0.8591793404686756
+      },
+      "tenure": {
+        "OpenAI": 22,
+        "Anthropic": 0,
+        "Google": 0,
+        "MetaAI": 2,
+        "StartupDotAI": 0
+      }
+    },
+    {
+      "name": "researcher_experience_driven",
+      "archetype": "experience_driven",
+      "use_case": "researcher",
+      "market_fraction": 0.026923076923076925,
+      "benchmark_weights": {
+        "coding": 0.23684210526315785,
+        "reasoning": 0.26315789473684204,
+        "math": 0.05263157894736841,
+        "safety": 0.05263157894736841,
+        "medical": 0.05263157894736841,
+        "legal": 0.05263157894736841,
+        "finance": 0.05263157894736841,
+        "coding_advanced": 0.23684210526315785
+      },
+      "leaderboard_trust": 0.315,
+      "switching_cost": 0.08,
+      "switching_threshold": 0.08,
+      "llm_mode": false,
+      "consumer_type": "individual",
+      "decision_delay": 1,
+      "integration_friction": 0.0,
+      "compliance_requirements": [],
+      "compliance_weight": 1.0,
+      "rounds_since_decision": 0,
+      "last_llm_decision": null,
+      "provider_shares": {
+        "OpenAI": 0.9974737373787683,
+        "Anthropic": 0.0007056396416661004,
+        "Google": 0.00060340785191859,
+        "MetaAI": 0.0007523324392990438,
+        "StartupDotAI": 0.0004648826883479347
+      },
+      "believed_quality": {
+        "OpenAI": 0.9868408282839396,
+        "MetaAI": 0.9313377056642911,
+        "StartupDotAI": 0.888409139466969,
+        "Google": 0.9442725777381862,
+        "Anthropic": 0.9342986170838936
+      },
+      "satisfaction": {
+        "OpenAI": 0.9271422524893611,
+        "Anthropic": 0.9101925801781127,
+        "Google": 0.9128668056918886,
+        "MetaAI": 0.9003964361716733,
+        "StartupDotAI": 0.8591793404686756
+      },
+      "tenure": {
+        "OpenAI": 24,
+        "Anthropic": 0,
+        "Google": 0,
+        "MetaAI": 0,
+        "StartupDotAI": 0
+      }
+    },
+    {
+      "name": "researcher_cautious",
+      "archetype": "cautious",
+      "use_case": "researcher",
+      "market_fraction": 0.019230769230769232,
+      "benchmark_weights": {
+        "coding": 0.23684210526315785,
+        "reasoning": 0.26315789473684204,
+        "math": 0.05263157894736841,
+        "safety": 0.05263157894736841,
+        "medical": 0.05263157894736841,
+        "legal": 0.05263157894736841,
+        "finance": 0.05263157894736841,
+        "coding_advanced": 0.23684210526315785
+      },
+      "leaderboard_trust": 0.45,
+      "switching_cost": 0.2,
+      "switching_threshold": 0.25,
+      "llm_mode": false,
+      "consumer_type": "individual",
+      "decision_delay": 1,
+      "integration_friction": 0.0,
+      "compliance_requirements": [],
+      "compliance_weight": 1.0,
+      "rounds_since_decision": 0,
+      "last_llm_decision": null,
+      "provider_shares": {
+        "OpenAI": 0.9622773009059004,
+        "Anthropic": 0.00160790826378299,
+        "Google": 0.0018838469305446637,
+        "MetaAI": 0.033280181268093616,
+        "StartupDotAI": 0.0009507626316783815
+      },
+      "believed_quality": {
+        "OpenAI": 0.9868408282839396,
+        "MetaAI": 0.9313377056642911,
+        "StartupDotAI": 0.888409139466969,
+        "Google": 0.9442725777381862,
+        "Anthropic": 0.9342986170838936
+      },
+      "satisfaction": {
+        "OpenAI": 0.9271422524893611,
+        "Anthropic": 0.9101925801781127,
+        "Google": 0.9128668056918886,
+        "MetaAI": 0.9003964361716733,
+        "StartupDotAI": 0.8591793404686756
+      },
+      "tenure": {
+        "OpenAI": 24,
+        "Anthropic": 0,
+        "Google": 0,
+        "MetaAI": 2,
+        "StartupDotAI": 0
+      }
+    },
+    {
+      "name": "creative_leaderboard_follower",
+      "archetype": "leaderboard_follower",
+      "use_case": "creative",
+      "market_fraction": 0.03076923076923077,
+      "benchmark_weights": {
+        "coding": 0.07142857142857144,
+        "reasoning": 0.14285714285714288,
+        "math": 0.14285714285714288,
+        "safety": 0.14285714285714288,
+        "medical": 0.14285714285714288,
+        "legal": 0.14285714285714288,
+        "finance": 0.14285714285714288,
+        "coding_advanced": 0.07142857142857144
+      },
+      "leaderboard_trust": 0.6182920266613126,
+      "switching_cost": 0.05,
+      "switching_threshold": 0.15,
+      "llm_mode": false,
+      "consumer_type": "individual",
+      "decision_delay": 1,
+      "integration_friction": 0.0,
+      "compliance_requirements": [],
+      "compliance_weight": 1.0,
+      "rounds_since_decision": 0,
+      "last_llm_decision": null,
+      "provider_shares": {
+        "OpenAI": 0.6973978772965891,
+        "Anthropic": 0.0007542060158696563,
+        "Google": 0.3004618025615994,
+        "MetaAI": 0.0008257933156649298,
+        "StartupDotAI": 0.0005603208102771367
+      },
+      "believed_quality": {
+        "OpenAI": 0.9731333020886397,
+        "MetaAI": 0.9499425459696565,
+        "StartupDotAI": 0.8887423141898121,
+        "Google": 0.9550860819830953,
+        "Anthropic": 0.9358305229901616
+      },
+      "satisfaction": {
+        "OpenAI": 0.9134347262940612,
+        "Anthropic": 0.9117244860843806,
+        "Google": 0.9236803099367977,
+        "MetaAI": 0.9190012764770388,
+        "StartupDotAI": 0.8595125151915187
+      },
+      "tenure": {
+        "OpenAI": 14,
+        "Anthropic": 0,
+        "Google": 10,
+        "MetaAI": 0,
+        "StartupDotAI": 0
+      }
+    },
+    {
+      "name": "creative_experience_driven",
+      "archetype": "experience_driven",
+      "use_case": "creative",
+      "market_fraction": 0.026923076923076925,
+      "benchmark_weights": {
+        "coding": 0.07142857142857144,
+        "reasoning": 0.14285714285714288,
+        "math": 0.14285714285714288,
+        "safety": 0.14285714285714288,
+        "medical": 0.14285714285714288,
+        "legal": 0.14285714285714288,
+        "finance": 0.14285714285714288,
+        "coding_advanced": 0.07142857142857144
+      },
+      "leaderboard_trust": 0.315,
+      "switching_cost": 0.08,
+      "switching_threshold": 0.08,
+      "llm_mode": false,
+      "consumer_type": "individual",
+      "decision_delay": 1,
+      "integration_friction": 0.0,
+      "compliance_requirements": [],
+      "compliance_weight": 1.0,
+      "rounds_since_decision": 0,
+      "last_llm_decision": null,
+      "provider_shares": {
+        "OpenAI": 0.5023515757499094,
+        "Anthropic": 0.0007440876913098439,
+        "Google": 0.4953500374688198,
+        "MetaAI": 0.0009973410760044197,
+        "StartupDotAI": 0.0005569580139564485
+      },
+      "believed_quality": {
+        "OpenAI": 0.9731333020886397,
+        "MetaAI": 0.9499425459696565,
+        "StartupDotAI": 0.8887423141898121,
+        "Google": 0.9550860819830953,
+        "Anthropic": 0.9358305229901616
+      },
+      "satisfaction": {
+        "OpenAI": 0.9134347262940612,
+        "Anthropic": 0.9117244860843806,
+        "Google": 0.9236803099367977,
+        "MetaAI": 0.9190012764770388,
+        "StartupDotAI": 0.8595125151915187
+      },
+      "tenure": {
+        "OpenAI": 15,
+        "Anthropic": 0,
+        "Google": 10,
+        "MetaAI": 0,
+        "StartupDotAI": 0
+      }
+    },
+    {
+      "name": "creative_cautious",
+      "archetype": "cautious",
+      "use_case": "creative",
+      "market_fraction": 0.019230769230769232,
+      "benchmark_weights": {
+        "coding": 0.07142857142857144,
+        "reasoning": 0.14285714285714288,
+        "math": 0.14285714285714288,
+        "safety": 0.14285714285714288,
+        "medical": 0.14285714285714288,
+        "legal": 0.14285714285714288,
+        "finance": 0.14285714285714288,
+        "coding_advanced": 0.07142857142857144
+      },
+      "leaderboard_trust": 0.45,
+      "switching_cost": 0.2,
+      "switching_threshold": 0.25,
+      "llm_mode": false,
+      "consumer_type": "individual",
+      "decision_delay": 1,
+      "integration_friction": 0.0,
+      "compliance_requirements": [],
+      "compliance_weight": 1.0,
+      "rounds_since_decision": 0,
+      "last_llm_decision": null,
+      "provider_shares": {
+        "OpenAI": 0.6312673363626459,
+        "Anthropic": 0.0017015141323352247,
+        "Google": 0.3443191019921305,
+        "MetaAI": 0.021833933601005738,
+        "StartupDotAI": 0.0008781139118826899
+      },
+      "believed_quality": {
+        "OpenAI": 0.9731333020886397,
+        "MetaAI": 0.9499425459696565,
+        "StartupDotAI": 0.8887423141898121,
+        "Google": 0.9550860819830953,
+        "Anthropic": 0.9358305229901616
+      },
+      "satisfaction": {
+        "OpenAI": 0.9134347262940612,
+        "Anthropic": 0.9117244860843806,
+        "Google": 0.9236803099367977,
+        "MetaAI": 0.9190012764770388,
+        "StartupDotAI": 0.8595125151915187
+      },
+      "tenure": {
+        "OpenAI": 15,
+        "Anthropic": 0,
+        "Google": 10,
+        "MetaAI": 2,
+        "StartupDotAI": 0
+      }
+    },
+    {
+      "name": "marketing_leaderboard_follower",
+      "archetype": "leaderboard_follower",
+      "use_case": "marketing",
+      "market_fraction": 0.03076923076923077,
+      "benchmark_weights": {
+        "coding": 0.06250000000000001,
+        "reasoning": 0.25000000000000006,
+        "math": 0.12500000000000003,
+        "safety": 0.12500000000000003,
+        "medical": 0.12500000000000003,
+        "legal": 0.12500000000000003,
+        "finance": 0.12500000000000003,
+        "coding_advanced": 0.06250000000000001
+      },
+      "leaderboard_trust": 0.6182920266613126,
+      "switching_cost": 0.05,
+      "switching_threshold": 0.15,
+      "llm_mode": false,
+      "consumer_type": "individual",
+      "decision_delay": 1,
+      "integration_friction": 0.0,
+      "compliance_requirements": [],
+      "compliance_weight": 1.0,
+      "rounds_since_decision": 0,
+      "last_llm_decision": null,
+      "provider_shares": {
+        "OpenAI": 0.9961659370961929,
+        "Anthropic": 0.0009211149960173234,
+        "Google": 0.0015282062448108214,
+        "MetaAI": 0.0009610712980559562,
+        "StartupDotAI": 0.00042367036492282407
+      },
+      "believed_quality": {
+        "OpenAI": 0.9763450901277635,
+        "MetaAI": 0.9467292403062229,
+        "StartupDotAI": 0.8931762403813486,
+        "Google": 0.9489234730278715,
+        "Anthropic": 0.9355097043853418
+      },
+      "satisfaction": {
+        "OpenAI": 0.916646514333185,
+        "Anthropic": 0.9114036674795608,
+        "Google": 0.9175177009815739,
+        "MetaAI": 0.9157879708136051,
+        "StartupDotAI": 0.8639464413830552
+      },
+      "tenure": {
+        "OpenAI": 24,
+        "Anthropic": 0,
+        "Google": 0,
+        "MetaAI": 0,
+        "StartupDotAI": 0
+      }
+    },
+    {
+      "name": "marketing_experience_driven",
+      "archetype": "experience_driven",
+      "use_case": "marketing",
+      "market_fraction": 0.026923076923076925,
+      "benchmark_weights": {
+        "coding": 0.06250000000000001,
+        "reasoning": 0.25000000000000006,
+        "math": 0.12500000000000003,
+        "safety": 0.12500000000000003,
+        "medical": 0.12500000000000003,
+        "legal": 0.12500000000000003,
+        "finance": 0.12500000000000003,
+        "coding_advanced": 0.06250000000000001
+      },
+      "leaderboard_trust": 0.315,
+      "switching_cost": 0.08,
+      "switching_threshold": 0.08,
+      "llm_mode": false,
+      "consumer_type": "individual",
+      "decision_delay": 1,
+      "integration_friction": 0.0,
+      "compliance_requirements": [],
+      "compliance_weight": 1.0,
+      "rounds_since_decision": 0,
+      "last_llm_decision": null,
+      "provider_shares": {
+        "OpenAI": 0.864743351395599,
+        "Anthropic": 0.01298235767969328,
+        "Google": 0.12111868733215803,
+        "MetaAI": 0.0007737777458381728,
+        "StartupDotAI": 0.0003818258467116385
+      },
+      "believed_quality": {
+        "OpenAI": 0.9763450901277635,
+        "MetaAI": 0.9467292403062229,
+        "StartupDotAI": 0.8931762403813486,
+        "Google": 0.9489234730278715,
+        "Anthropic": 0.9355097043853418
+      },
+      "satisfaction": {
+        "OpenAI": 0.916646514333185,
+        "Anthropic": 0.9114036674795608,
+        "Google": 0.9175177009815739,
+        "MetaAI": 0.9157879708136051,
+        "StartupDotAI": 0.8639464413830552
+      },
+      "tenure": {
+        "OpenAI": 20,
+        "Anthropic": 1,
+        "Google": 4,
+        "MetaAI": 0,
+        "StartupDotAI": 0
+      }
+    },
+    {
+      "name": "marketing_cautious",
+      "archetype": "cautious",
+      "use_case": "marketing",
+      "market_fraction": 0.019230769230769232,
+      "benchmark_weights": {
+        "coding": 0.06250000000000001,
+        "reasoning": 0.25000000000000006,
+        "math": 0.12500000000000003,
+        "safety": 0.12500000000000003,
+        "medical": 0.12500000000000003,
+        "legal": 0.12500000000000003,
+        "finance": 0.12500000000000003,
+        "coding_advanced": 0.06250000000000001
+      },
+      "leaderboard_trust": 0.45,
+      "switching_cost": 0.2,
+      "switching_threshold": 0.25,
+      "llm_mode": false,
+      "consumer_type": "individual",
+      "decision_delay": 1,
+      "integration_friction": 0.0,
+      "compliance_requirements": [],
+      "compliance_weight": 1.0,
+      "rounds_since_decision": 0,
+      "last_llm_decision": null,
+      "provider_shares": {
+        "OpenAI": 0.9082400186857819,
+        "Anthropic": 0.02488070270519002,
+        "Google": 0.057651832800151,
+        "MetaAI": 0.008375962521962807,
+        "StartupDotAI": 0.0008514832869141645
+      },
+      "believed_quality": {
+        "OpenAI": 0.9763450901277635,
+        "MetaAI": 0.9467292403062229,
+        "StartupDotAI": 0.8931762403813486,
+        "Google": 0.9489234730278715,
+        "Anthropic": 0.9355097043853418
+      },
+      "satisfaction": {
+        "OpenAI": 0.916646514333185,
+        "Anthropic": 0.9114036674795608,
+        "Google": 0.9175177009815739,
+        "MetaAI": 0.9157879708136051,
+        "StartupDotAI": 0.8639464413830552
+      },
+      "tenure": {
+        "OpenAI": 22,
+        "Anthropic": 1,
+        "Google": 3,
+        "MetaAI": 0,
+        "StartupDotAI": 0
+      }
+    },
+    {
+      "name": "service_worker_leaderboard_follower",
+      "archetype": "leaderboard_follower",
+      "use_case": "service_worker",
+      "market_fraction": 0.03076923076923077,
+      "benchmark_weights": {
+        "coding": 0.10526315789473686,
+        "reasoning": 0.26315789473684215,
+        "math": 0.10526315789473686,
+        "safety": 0.10526315789473686,
+        "medical": 0.10526315789473686,
+        "legal": 0.10526315789473686,
+        "finance": 0.10526315789473686,
+        "coding_advanced": 0.10526315789473686
+      },
+      "leaderboard_trust": 0.6182920266613126,
+      "switching_cost": 0.05,
+      "switching_threshold": 0.15,
+      "llm_mode": false,
+      "consumer_type": "individual",
+      "decision_delay": 1,
+      "integration_friction": 0.0,
+      "compliance_requirements": [],
+      "compliance_weight": 1.0,
+      "rounds_since_decision": 0,
+      "last_llm_decision": null,
+      "provider_shares": {
+        "OpenAI": 0.9973739436105745,
+        "Anthropic": 0.0008801162198139059,
+        "Google": 0.000692417137890979,
+        "MetaAI": 0.0006202459986642776,
+        "StartupDotAI": 0.0004332770330562495
+      },
+      "believed_quality": {
+        "OpenAI": 0.9789208979437085,
+        "MetaAI": 0.9431366782111149,
+        "StartupDotAI": 0.8925934872372494,
+        "Google": 0.9473121234322261,
+        "Anthropic": 0.9352256681946685
+      },
+      "satisfaction": {
+        "OpenAI": 0.92102232214913,
+        "Anthropic": 0.9123196312888875,
+        "Google": 0.9172396847192619,
+        "MetaAI": 0.9133954087184971,
+        "StartupDotAI": 0.864563688238956
+      },
+      "tenure": {
+        "OpenAI": 24,
+        "Anthropic": 0,
+        "Google": 0,
+        "MetaAI": 0,
+        "StartupDotAI": 0
+      }
+    },
+    {
+      "name": "service_worker_experience_driven",
+      "archetype": "experience_driven",
+      "use_case": "service_worker",
+      "market_fraction": 0.026923076923076925,
+      "benchmark_weights": {
+        "coding": 0.10526315789473686,
+        "reasoning": 0.26315789473684215,
+        "math": 0.10526315789473686,
+        "safety": 0.10526315789473686,
+        "medical": 0.10526315789473686,
+        "legal": 0.10526315789473686,
+        "finance": 0.10526315789473686,
+        "coding_advanced": 0.10526315789473686
+      },
+      "leaderboard_trust": 0.315,
+      "switching_cost": 0.08,
+      "switching_threshold": 0.08,
+      "llm_mode": false,
+      "consumer_type": "individual",
+      "decision_delay": 1,
+      "integration_friction": 0.0,
+      "compliance_requirements": [],
+      "compliance_weight": 1.0,
+      "rounds_since_decision": 0,
+      "last_llm_decision": null,
+      "provider_shares": {
+        "OpenAI": 0.9972391213471452,
+        "Anthropic": 0.0006435376669830518,
+        "Google": 0.0007658416033226121,
+        "MetaAI": 0.0009556022120571343,
+        "StartupDotAI": 0.0003958971704920003
+      },
+      "believed_quality": {
+        "OpenAI": 0.9789208979437085,
+        "MetaAI": 0.9431366782111149,
+        "StartupDotAI": 0.8925934872372494,
+        "Google": 0.9473121234322261,
+        "Anthropic": 0.9352256681946685
+      },
+      "satisfaction": {
+        "OpenAI": 0.92102232214913,
+        "Anthropic": 0.9123196312888875,
+        "Google": 0.9172396847192619,
+        "MetaAI": 0.9133954087184971,
+        "StartupDotAI": 0.864563688238956
+      },
+      "tenure": {
+        "OpenAI": 25,
+        "Anthropic": 0,
+        "Google": 0,
+        "MetaAI": 0,
+        "StartupDotAI": 0
+      }
+    },
+    {
+      "name": "service_worker_cautious",
+      "archetype": "cautious",
+      "use_case": "service_worker",
+      "market_fraction": 0.019230769230769232,
+      "benchmark_weights": {
+        "coding": 0.10526315789473686,
+        "reasoning": 0.26315789473684215,
+        "math": 0.10526315789473686,
+        "safety": 0.10526315789473686,
+        "medical": 0.10526315789473686,
+        "legal": 0.10526315789473686,
+        "finance": 0.10526315789473686,
+        "coding_advanced": 0.10526315789473686
+      },
+      "leaderboard_trust": 0.45,
+      "switching_cost": 0.2,
+      "switching_threshold": 0.25,
+      "llm_mode": false,
+      "consumer_type": "individual",
+      "decision_delay": 1,
+      "integration_friction": 0.0,
+      "compliance_requirements": [],
+      "compliance_weight": 1.0,
+      "rounds_since_decision": 0,
+      "last_llm_decision": null,
+      "provider_shares": {
+        "OpenAI": 0.9732098170638581,
+        "Anthropic": 0.002663137182340066,
+        "Google": 0.00415531835225508,
+        "MetaAI": 0.019050713937010254,
+        "StartupDotAI": 0.0009210134645363883
+      },
+      "believed_quality": {
+        "OpenAI": 0.9789208979437085,
+        "MetaAI": 0.9431366782111149,
+        "StartupDotAI": 0.8925934872372494,
+        "Google": 0.9473121234322261,
+        "Anthropic": 0.9352256681946685
+      },
+      "satisfaction": {
+        "OpenAI": 0.92102232214913,
+        "Anthropic": 0.9123196312888875,
+        "Google": 0.9172396847192619,
+        "MetaAI": 0.9133954087184971,
+        "StartupDotAI": 0.864563688238956
+      },
+      "tenure": {
+        "OpenAI": 25,
+        "Anthropic": 0,
+        "Google": 0,
+        "MetaAI": 1,
+        "StartupDotAI": 0
+      }
+    },
+    {
+      "name": "hospital_system_enterprise_cautious",
+      "archetype": "enterprise_cautious",
+      "use_case": "hospital_system",
+      "market_fraction": 0.038461538461538464,
+      "benchmark_weights": {
+        "coding": 0.05333333333333332,
+        "reasoning": 0.1333333333333333,
+        "math": 0.05333333333333332,
+        "safety": 0.5199999999999999,
+        "medical": 0.07999999999999999,
+        "legal": 0.05333333333333332,
+        "finance": 0.05333333333333332,
+        "coding_advanced": 0.05333333333333332
+      },
+      "leaderboard_trust": 0.225,
+      "switching_cost": 0.35,
+      "switching_threshold": 0.5,
+      "llm_mode": false,
+      "consumer_type": "organization",
+      "decision_delay": 6,
+      "integration_friction": 0.35,
+      "compliance_requirements": [
+        "HIPAA",
+        "patient_safety"
+      ],
+      "compliance_weight": 1.5,
+      "rounds_since_decision": 1,
+      "last_llm_decision": null,
+      "provider_shares": {
+        "OpenAI": 0.2647058823529412,
+        "Anthropic": 0.20588235294117643,
+        "Google": 0.23529411764705882,
+        "MetaAI": 0.1764705882352941,
+        "StartupDotAI": 0.11764705882352941
+      },
+      "believed_quality": {
+        "OpenAI": 0.9479232431977871,
+        "MetaAI": 0.950762796766654,
+        "StartupDotAI": 0.8739441827851946,
+        "Google": 0.9737143110534141,
+        "Anthropic": 0.9314037986200873
+      },
+      "satisfaction": {
+        "OpenAI": 0.8857746674032085,
+        "Anthropic": 0.9189977617143064,
+        "Google": 0.9553085390071165,
+        "MetaAI": 0.9315215272740363,
+        "StartupDotAI": 0.8564143837869013
+      },
+      "tenure": {
+        "OpenAI": 4,
+        "Anthropic": 4,
+        "Google": 4,
+        "MetaAI": 4,
+        "StartupDotAI": 4
+      }
+    },
+    {
+      "name": "hospital_system_enterprise_growth",
+      "archetype": "enterprise_growth",
+      "use_case": "hospital_system",
+      "market_fraction": 0.023076923076923078,
+      "benchmark_weights": {
+        "coding": 0.05333333333333332,
+        "reasoning": 0.1333333333333333,
+        "math": 0.05333333333333332,
+        "safety": 0.5199999999999999,
+        "medical": 0.07999999999999999,
+        "legal": 0.05333333333333332,
+        "finance": 0.05333333333333332,
+        "coding_advanced": 0.05333333333333332
+      },
+      "leaderboard_trust": 0.405,
+      "switching_cost": 0.25,
+      "switching_threshold": 0.3,
+      "llm_mode": false,
+      "consumer_type": "organization",
+      "decision_delay": 6,
+      "integration_friction": 0.35,
+      "compliance_requirements": [
+        "HIPAA",
+        "patient_safety"
+      ],
+      "compliance_weight": 1.5,
+      "rounds_since_decision": 1,
+      "last_llm_decision": null,
+      "provider_shares": {
+        "OpenAI": 0.26593390178244597,
+        "Anthropic": 0.20588235294117643,
+        "Google": 0.2365027433615163,
+        "MetaAI": 0.1764705882352941,
+        "StartupDotAI": 0.11521041367956716
+      },
+      "believed_quality": {
+        "OpenAI": 0.9479232431977871,
+        "MetaAI": 0.950762796766654,
+        "StartupDotAI": 0.8739441827851946,
+        "Google": 0.9737143110534141,
+        "Anthropic": 0.9314037986200873
+      },
+      "satisfaction": {
+        "OpenAI": 0.8857746674032085,
+        "Anthropic": 0.9189977617143064,
+        "Google": 0.9553085390071165,
+        "MetaAI": 0.9315215272740363,
+        "StartupDotAI": 0.8564143837869013
+      },
+      "tenure": {
+        "OpenAI": 4,
+        "Anthropic": 4,
+        "Google": 4,
+        "MetaAI": 4,
+        "StartupDotAI": 3
+      }
+    },
+    {
+      "name": "hospital_system_enterprise_established",
+      "archetype": "enterprise_established",
+      "use_case": "hospital_system",
+      "market_fraction": 0.015384615384615385,
+      "benchmark_weights": {
+        "coding": 0.05333333333333332,
+        "reasoning": 0.1333333333333333,
+        "math": 0.05333333333333332,
+        "safety": 0.5199999999999999,
+        "medical": 0.07999999999999999,
+        "legal": 0.05333333333333332,
+        "finance": 0.05333333333333332,
+        "coding_advanced": 0.05333333333333332
+      },
+      "leaderboard_trust": 0.315,
+      "switching_cost": 0.4,
+      "switching_threshold": 0.4,
+      "llm_mode": false,
+      "consumer_type": "organization",
+      "decision_delay": 6,
+      "integration_friction": 0.35,
+      "compliance_requirements": [
+        "HIPAA",
+        "patient_safety"
+      ],
+      "compliance_weight": 1.5,
+      "rounds_since_decision": 1,
+      "last_llm_decision": null,
+      "provider_shares": {
+        "OpenAI": 0.2647058823529412,
+        "Anthropic": 0.20588235294117643,
+        "Google": 0.23529411764705882,
+        "MetaAI": 0.1764705882352941,
+        "StartupDotAI": 0.11764705882352941
+      },
+      "believed_quality": {
+        "OpenAI": 0.9479232431977871,
+        "MetaAI": 0.950762796766654,
+        "StartupDotAI": 0.8739441827851946,
+        "Google": 0.9737143110534141,
+        "Anthropic": 0.9314037986200873
+      },
+      "satisfaction": {
+        "OpenAI": 0.8857746674032085,
+        "Anthropic": 0.9189977617143064,
+        "Google": 0.9553085390071165,
+        "MetaAI": 0.9315215272740363,
+        "StartupDotAI": 0.8564143837869013
+      },
+      "tenure": {
+        "OpenAI": 4,
+        "Anthropic": 4,
+        "Google": 4,
+        "MetaAI": 4,
+        "StartupDotAI": 4
+      }
+    },
+    {
+      "name": "enterprise_finance_enterprise_cautious",
+      "archetype": "enterprise_cautious",
+      "use_case": "enterprise_finance",
+      "market_fraction": 0.038461538461538464,
+      "benchmark_weights": {
+        "coding": 0.05405405405405406,
+        "reasoning": 0.4864864864864864,
+        "math": 0.05405405405405406,
+        "safety": 0.16216216216216214,
+        "medical": 0.05405405405405406,
+        "legal": 0.05405405405405406,
+        "finance": 0.08108108108108109,
+        "coding_advanced": 0.05405405405405406
+      },
+      "leaderboard_trust": 0.225,
+      "switching_cost": 0.35,
+      "switching_threshold": 0.5,
+      "llm_mode": false,
+      "consumer_type": "organization",
+      "decision_delay": 4,
+      "integration_friction": 0.4,
+      "compliance_requirements": [
+        "SOX",
+        "financial_reporting"
+      ],
+      "compliance_weight": 1.5,
+      "rounds_since_decision": 1,
+      "last_llm_decision": null,
+      "provider_shares": {
+        "OpenAI": 0.2647058823529412,
+        "Anthropic": 0.20588235294117643,
+        "Google": 0.23529411764705882,
+        "MetaAI": 0.1764705882352941,
+        "StartupDotAI": 0.11764705882352941
+      },
+      "believed_quality": {
+        "OpenAI": 0.978597248153399,
+        "MetaAI": 0.9388364095615833,
+        "StartupDotAI": 0.8990189037079789,
+        "Google": 0.9383658069144887,
+        "Anthropic": 0.9332465130555229
+      },
+      "satisfaction": {
+        "OpenAI": 0.9069986723588206,
+        "Anthropic": 0.9145404761497419,
+        "Google": 0.9129600348681911,
+        "MetaAI": 0.9132951400689655,
+        "StartupDotAI": 0.8751891047096855
+      },
+      "tenure": {
+        "OpenAI": 6,
+        "Anthropic": 6,
+        "Google": 6,
+        "MetaAI": 6,
+        "StartupDotAI": 6
+      }
+    },
+    {
+      "name": "enterprise_finance_enterprise_growth",
+      "archetype": "enterprise_growth",
+      "use_case": "enterprise_finance",
+      "market_fraction": 0.023076923076923078,
+      "benchmark_weights": {
+        "coding": 0.05405405405405406,
+        "reasoning": 0.4864864864864864,
+        "math": 0.05405405405405406,
+        "safety": 0.16216216216216214,
+        "medical": 0.05405405405405406,
+        "legal": 0.05405405405405406,
+        "finance": 0.08108108108108109,
+        "coding_advanced": 0.05405405405405406
+      },
+      "leaderboard_trust": 0.405,
+      "switching_cost": 0.25,
+      "switching_threshold": 0.3,
+      "llm_mode": false,
+      "consumer_type": "organization",
+      "decision_delay": 4,
+      "integration_friction": 0.4,
+      "compliance_requirements": [
+        "SOX",
+        "financial_reporting"
+      ],
+      "compliance_weight": 1.5,
+      "rounds_since_decision": 1,
+      "last_llm_decision": null,
+      "provider_shares": {
+        "OpenAI": 0.2647058823529412,
+        "Anthropic": 0.20588235294117643,
+        "Google": 0.23529411764705882,
+        "MetaAI": 0.1764705882352941,
+        "StartupDotAI": 0.11764705882352941
+      },
+      "believed_quality": {
+        "OpenAI": 0.978597248153399,
+        "MetaAI": 0.9388364095615833,
+        "StartupDotAI": 0.8990189037079789,
+        "Google": 0.9383658069144887,
+        "Anthropic": 0.9332465130555229
+      },
+      "satisfaction": {
+        "OpenAI": 0.9069986723588206,
+        "Anthropic": 0.9145404761497419,
+        "Google": 0.9129600348681911,
+        "MetaAI": 0.9132951400689655,
+        "StartupDotAI": 0.8751891047096855
+      },
+      "tenure": {
+        "OpenAI": 6,
+        "Anthropic": 6,
+        "Google": 6,
+        "MetaAI": 6,
+        "StartupDotAI": 6
+      }
+    },
+    {
+      "name": "enterprise_finance_enterprise_established",
+      "archetype": "enterprise_established",
+      "use_case": "enterprise_finance",
+      "market_fraction": 0.015384615384615385,
+      "benchmark_weights": {
+        "coding": 0.05405405405405406,
+        "reasoning": 0.4864864864864864,
+        "math": 0.05405405405405406,
+        "safety": 0.16216216216216214,
+        "medical": 0.05405405405405406,
+        "legal": 0.05405405405405406,
+        "finance": 0.08108108108108109,
+        "coding_advanced": 0.05405405405405406
+      },
+      "leaderboard_trust": 0.315,
+      "switching_cost": 0.4,
+      "switching_threshold": 0.4,
+      "llm_mode": false,
+      "consumer_type": "organization",
+      "decision_delay": 4,
+      "integration_friction": 0.4,
+      "compliance_requirements": [
+        "SOX",
+        "financial_reporting"
+      ],
+      "compliance_weight": 1.5,
+      "rounds_since_decision": 1,
+      "last_llm_decision": null,
+      "provider_shares": {
+        "OpenAI": 0.2647058823529412,
+        "Anthropic": 0.20588235294117643,
+        "Google": 0.23529411764705882,
+        "MetaAI": 0.1764705882352941,
+        "StartupDotAI": 0.11764705882352941
+      },
+      "believed_quality": {
+        "OpenAI": 0.978597248153399,
+        "MetaAI": 0.9388364095615833,
+        "StartupDotAI": 0.8990189037079789,
+        "Google": 0.9383658069144887,
+        "Anthropic": 0.9332465130555229
+      },
+      "satisfaction": {
+        "OpenAI": 0.9069986723588206,
+        "Anthropic": 0.9145404761497419,
+        "Google": 0.9129600348681911,
+        "MetaAI": 0.9132951400689655,
+        "StartupDotAI": 0.8751891047096855
+      },
+      "tenure": {
+        "OpenAI": 6,
+        "Anthropic": 6,
+        "Google": 6,
+        "MetaAI": 6,
+        "StartupDotAI": 6
+      }
+    },
+    {
+      "name": "tech_startup_enterprise_cautious",
+      "archetype": "enterprise_cautious",
+      "use_case": "tech_startup",
+      "market_fraction": 0.038461538461538464,
+      "benchmark_weights": {
+        "coding": 0.36842105263157887,
+        "reasoning": 0.08771929824561403,
+        "math": 0.03508771929824561,
+        "safety": 0.03508771929824561,
+        "medical": 0.03508771929824561,
+        "legal": 0.03508771929824561,
+        "finance": 0.03508771929824561,
+        "coding_advanced": 0.36842105263157887
+      },
+      "leaderboard_trust": 0.225,
+      "switching_cost": 0.35,
+      "switching_threshold": 0.5,
+      "llm_mode": false,
+      "consumer_type": "organization",
+      "decision_delay": 2,
+      "integration_friction": 0.15,
+      "compliance_requirements": [],
+      "compliance_weight": 1.5,
+      "rounds_since_decision": 1,
+      "last_llm_decision": null,
+      "provider_shares": {
+        "OpenAI": 0.308283448754595,
+        "Anthropic": 0.19424347517710971,
+        "Google": 0.22587801704457797,
+        "MetaAI": 0.17463170358918603,
+        "StartupDotAI": 0.0969633554345313
+      },
+      "believed_quality": {
+        "OpenAI": 0.9895132858703446,
+        "MetaAI": 0.9239258806098423,
+        "StartupDotAI": 0.8727247014929165,
+        "Google": 0.9548540129344276,
+        "Anthropic": 0.9339741014055278
+      },
+      "satisfaction": {
+        "OpenAI": 0.9298147100757661,
+        "Anthropic": 0.9098680644997469,
+        "Google": 0.92344824088813,
+        "MetaAI": 0.8929846111172245,
+        "StartupDotAI": 0.8434949024946231
+      },
+      "tenure": {
+        "OpenAI": 12,
+        "Anthropic": 10,
+        "Google": 10,
+        "MetaAI": 10,
+        "StartupDotAI": 1
+      }
+    },
+    {
+      "name": "tech_startup_enterprise_growth",
+      "archetype": "enterprise_growth",
+      "use_case": "tech_startup",
+      "market_fraction": 0.023076923076923078,
+      "benchmark_weights": {
+        "coding": 0.36842105263157887,
+        "reasoning": 0.08771929824561403,
+        "math": 0.03508771929824561,
+        "safety": 0.03508771929824561,
+        "medical": 0.03508771929824561,
+        "legal": 0.03508771929824561,
+        "finance": 0.03508771929824561,
+        "coding_advanced": 0.36842105263157887
+      },
+      "leaderboard_trust": 0.405,
+      "switching_cost": 0.25,
+      "switching_threshold": 0.3,
+      "llm_mode": false,
+      "consumer_type": "organization",
+      "decision_delay": 2,
+      "integration_friction": 0.15,
+      "compliance_requirements": [],
+      "compliance_weight": 1.5,
+      "rounds_since_decision": 1,
+      "last_llm_decision": null,
+      "provider_shares": {
+        "OpenAI": 0.4458066575393341,
+        "Anthropic": 0.1411822303126516,
+        "Google": 0.17092169593514742,
+        "MetaAI": 0.17213932864552353,
+        "StartupDotAI": 0.06995008756734347
+      },
+      "believed_quality": {
+        "OpenAI": 0.9895132858703446,
+        "MetaAI": 0.9239258806098423,
+        "StartupDotAI": 0.8727247014929165,
+        "Google": 0.9548540129344276,
+        "Anthropic": 0.9339741014055278
+      },
+      "satisfaction": {
+        "OpenAI": 0.9298147100757661,
+        "Anthropic": 0.9098680644997469,
+        "Google": 0.92344824088813,
+        "MetaAI": 0.8929846111172245,
+        "StartupDotAI": 0.8434949024946231
+      },
+      "tenure": {
+        "OpenAI": 11,
+        "Anthropic": 1,
+        "Google": 1,
+        "MetaAI": 3,
+        "StartupDotAI": 1
+      }
+    },
+    {
+      "name": "tech_startup_enterprise_established",
+      "archetype": "enterprise_established",
+      "use_case": "tech_startup",
+      "market_fraction": 0.015384615384615385,
+      "benchmark_weights": {
+        "coding": 0.36842105263157887,
+        "reasoning": 0.08771929824561403,
+        "math": 0.03508771929824561,
+        "safety": 0.03508771929824561,
+        "medical": 0.03508771929824561,
+        "legal": 0.03508771929824561,
+        "finance": 0.03508771929824561,
+        "coding_advanced": 0.36842105263157887
+      },
+      "leaderboard_trust": 0.315,
+      "switching_cost": 0.4,
+      "switching_threshold": 0.4,
+      "llm_mode": false,
+      "consumer_type": "organization",
+      "decision_delay": 2,
+      "integration_friction": 0.15,
+      "compliance_requirements": [],
+      "compliance_weight": 1.5,
+      "rounds_since_decision": 1,
+      "last_llm_decision": null,
+      "provider_shares": {
+        "OpenAI": 0.26872207368043577,
+        "Anthropic": 0.20186616161368184,
+        "Google": 0.23529411764705882,
+        "MetaAI": 0.1764705882352941,
+        "StartupDotAI": 0.11764705882352941
+      },
+      "believed_quality": {
+        "OpenAI": 0.9895132858703446,
+        "MetaAI": 0.9239258806098423,
+        "StartupDotAI": 0.8727247014929165,
+        "Google": 0.9548540129344276,
+        "Anthropic": 0.9339741014055278
+      },
+      "satisfaction": {
+        "OpenAI": 0.9298147100757661,
+        "Anthropic": 0.9098680644997469,
+        "Google": 0.92344824088813,
+        "MetaAI": 0.8929846111172245,
+        "StartupDotAI": 0.8434949024946231
+      },
+      "tenure": {
+        "OpenAI": 12,
+        "Anthropic": 12,
+        "Google": 12,
+        "MetaAI": 12,
+        "StartupDotAI": 12
+      }
+    }
+  ]
+}
