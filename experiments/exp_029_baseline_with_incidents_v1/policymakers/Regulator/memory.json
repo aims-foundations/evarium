@@ -1,0 +1,1149 @@
+[
+  {
+    "type": "observation",
+    "round": 0,
+    "leaderboard": [
+      [
+        "OpenAI",
+        0.7775160194936656
+      ],
+      [
+        "MetaAI",
+        0.7233941830532286
+      ],
+      [
+        "StartupDotAI",
+        0.7119035333386237
+      ],
+      [
+        "Google",
+        0.6979352682999013
+      ],
+      [
+        "Anthropic",
+        0.5992489525228863
+      ]
+    ],
+    "validity_correlation": null,
+    "consumer_satisfaction": 0.7147609750901824,
+    "market_shares": {
+      "OpenAI": 0.4049120363977821,
+      "Anthropic": 0.09996681736434754,
+      "Google": 0.14747505999935684,
+      "MetaAI": 0.2725017122190404,
+      "StartupDotAI": 0.07514437401947303
+    },
+    "risk_beliefs": {
+      "gaming_risk": 0.3,
+      "consumer_harm_risk": 0.25,
+      "validity_degradation_risk": 0.3,
+      "market_concentration_risk": 0.0,
+      "eval_engineering_risk": 0.1
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 0,
+    "industry_trust": 0.501,
+    "avg_risk": 0.19
+  },
+  {
+    "type": "planning",
+    "round": 0,
+    "decision": "no_action",
+    "reason": "max_risk=0.30, below threshold or no escalation path"
+  },
+  {
+    "type": "observation",
+    "round": 1,
+    "leaderboard": [
+      [
+        "OpenAI",
+        0.8123781640520379
+      ],
+      [
+        "MetaAI",
+        0.7803963645396965
+      ],
+      [
+        "Google",
+        0.7537679666367918
+      ],
+      [
+        "Anthropic",
+        0.740542030879036
+      ],
+      [
+        "StartupDotAI",
+        0.7119035333386237
+      ]
+    ],
+    "validity_correlation": 0.43131076513327826,
+    "consumer_satisfaction": 0.7337297749303046,
+    "market_shares": {
+      "OpenAI": 0.5025205422578457,
+      "Anthropic": 0.07485752600861059,
+      "Google": 0.11240812785130448,
+      "MetaAI": 0.25453452963691636,
+      "StartupDotAI": 0.055679274245322895
+    },
+    "risk_beliefs": {
+      "gaming_risk": 0.4,
+      "consumer_harm_risk": 0.2,
+      "validity_degradation_risk": 0.4,
+      "market_concentration_risk": 0.0,
+      "eval_engineering_risk": 0.1
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 1,
+    "industry_trust": 0.499,
+    "avg_risk": 0.22000000000000003
+  },
+  {
+    "type": "planning",
+    "round": 1,
+    "decision": "intervene",
+    "intervention": {
+      "type": "investigation",
+      "name": "Investigation_R1",
+      "details": {
+        "focus": "score_volatility"
+      },
+      "reason": "Score volatility detected"
+    }
+  },
+  {
+    "type": "execution",
+    "round": 1,
+    "intervention": {
+      "type": "investigation",
+      "name": "Investigation_R1",
+      "details": {
+        "focus": "score_volatility"
+      },
+      "reason": "Score volatility detected"
+    }
+  },
+  {
+    "type": "observation",
+    "round": 2,
+    "leaderboard": [
+      [
+        "OpenAI",
+        0.829802618106773
+      ],
+      [
+        "MetaAI",
+        0.7933831604093418
+      ],
+      [
+        "Anthropic",
+        0.7863475745485987
+      ],
+      [
+        "Google",
+        0.764470148200313
+      ],
+      [
+        "StartupDotAI",
+        0.7329106982118524
+      ]
+    ],
+    "validity_correlation": 0.5229617622700214,
+    "consumer_satisfaction": 0.7491769227427723,
+    "market_shares": {
+      "OpenAI": 0.5594936632120107,
+      "Anthropic": 0.06496277819610138,
+      "Google": 0.09314829433229808,
+      "MetaAI": 0.23748221994008967,
+      "StartupDotAI": 0.04491304431950014
+    },
+    "risk_beliefs": {
+      "gaming_risk": 0.4,
+      "consumer_harm_risk": 0.15000000000000002,
+      "validity_degradation_risk": 0.4,
+      "market_concentration_risk": 0.0,
+      "eval_engineering_risk": 0.1
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 2,
+    "industry_trust": 0.498,
+    "avg_risk": 0.21000000000000002
+  },
+  {
+    "type": "planning",
+    "round": 2,
+    "decision": "no_action",
+    "reason": "cooldown: 1 rounds since last intervention"
+  },
+  {
+    "type": "observation",
+    "round": 3,
+    "leaderboard": [
+      [
+        "OpenAI",
+        0.829802618106773
+      ],
+      [
+        "Anthropic",
+        0.8048801443006218
+      ],
+      [
+        "MetaAI",
+        0.8027134651519856
+      ],
+      [
+        "Google",
+        0.7788096760727752
+      ],
+      [
+        "StartupDotAI",
+        0.7360295084232901
+      ]
+    ],
+    "validity_correlation": 0.5836872797140622,
+    "consumer_satisfaction": 0.7680836018274627,
+    "market_shares": {
+      "OpenAI": 0.6035156682177876,
+      "Anthropic": 0.05963317329761762,
+      "Google": 0.08144704898518244,
+      "MetaAI": 0.21689536670974907,
+      "StartupDotAI": 0.03850874278966337
+    },
+    "risk_beliefs": {
+      "gaming_risk": 0.35000000000000003,
+      "consumer_harm_risk": 0.10000000000000002,
+      "validity_degradation_risk": 0.4,
+      "market_concentration_risk": 0.1,
+      "eval_engineering_risk": 0.1
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 3,
+    "industry_trust": 0.497,
+    "avg_risk": 0.21000000000000002
+  },
+  {
+    "type": "planning",
+    "round": 3,
+    "decision": "no_action",
+    "reason": "cooldown: 2 rounds since last intervention"
+  },
+  {
+    "type": "observation",
+    "round": 4,
+    "leaderboard": [
+      [
+        "OpenAI",
+        0.8609622046156183
+      ],
+      [
+        "MetaAI",
+        0.8511691957859218
+      ],
+      [
+        "Google",
+        0.8218576030768685
+      ],
+      [
+        "Anthropic",
+        0.8048801443006218
+      ],
+      [
+        "StartupDotAI",
+        0.7360295084232901
+      ]
+    ],
+    "validity_correlation": 0.6322725405792398,
+    "consumer_satisfaction": 0.7817069921198518,
+    "market_shares": {
+      "OpenAI": 0.6243349502909967,
+      "Anthropic": 0.05665434748330515,
+      "Google": 0.07466637777732296,
+      "MetaAI": 0.20978211311020173,
+      "StartupDotAI": 0.03456221133817336
+    },
+    "risk_beliefs": {
+      "gaming_risk": 0.30000000000000004,
+      "consumer_harm_risk": 0.05000000000000002,
+      "validity_degradation_risk": 0.4,
+      "market_concentration_risk": 0.2,
+      "eval_engineering_risk": 0.1
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 4,
+    "industry_trust": 0.496,
+    "avg_risk": 0.21000000000000005
+  },
+  {
+    "type": "planning",
+    "round": 4,
+    "decision": "intervene",
+    "intervention": {
+      "type": "threshold_announcement",
+      "name": "Regulatory_Thresholds_R4",
+      "details": {
+        "market_concentration_monitoring": 0.6,
+        "market_concentration_review": 0.75,
+        "eval_engineering_concern": 0.35
+      },
+      "reason": "Proactive threshold signaling (risk=0.40)"
+    }
+  },
+  {
+    "type": "execution",
+    "round": 4,
+    "intervention": {
+      "type": "threshold_announcement",
+      "name": "Regulatory_Thresholds_R4",
+      "details": {
+        "market_concentration_monitoring": 0.6,
+        "market_concentration_review": 0.75,
+        "eval_engineering_concern": 0.35
+      },
+      "reason": "Proactive threshold signaling (risk=0.40)"
+    }
+  },
+  {
+    "type": "observation",
+    "round": 5,
+    "leaderboard": [
+      [
+        "MetaAI",
+        0.8703612361195028
+      ],
+      [
+        "OpenAI",
+        0.8614055845641769
+      ],
+      [
+        "Anthropic",
+        0.8467156465447616
+      ],
+      [
+        "Google",
+        0.8219895035342604
+      ],
+      [
+        "StartupDotAI",
+        0.7422013104974056
+      ]
+    ],
+    "validity_correlation": 0.6605383996953709,
+    "consumer_satisfaction": 0.7987636266273184,
+    "market_shares": {
+      "OpenAI": 0.6262323089427952,
+      "Anthropic": 0.05445235247217098,
+      "Google": 0.06994143276295724,
+      "MetaAI": 0.21739372491042824,
+      "StartupDotAI": 0.03198018091164822
+    },
+    "risk_beliefs": {
+      "gaming_risk": 0.30000000000000004,
+      "consumer_harm_risk": 1.3877787807814457e-17,
+      "validity_degradation_risk": 0.4,
+      "market_concentration_risk": 0.30000000000000004,
+      "eval_engineering_risk": 0.1
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 5,
+    "industry_trust": 0.494,
+    "avg_risk": 0.22000000000000003
+  },
+  {
+    "type": "planning",
+    "round": 5,
+    "decision": "no_action",
+    "reason": "cooldown: 1 rounds since last intervention"
+  },
+  {
+    "type": "observation",
+    "round": 6,
+    "leaderboard": [
+      [
+        "MetaAI",
+        0.8787528613042526
+      ],
+      [
+        "Anthropic",
+        0.8496903397827673
+      ],
+      [
+        "OpenAI",
+        0.8454760669030769
+      ],
+      [
+        "Google",
+        0.7805569544410338
+      ],
+      [
+        "StartupDotAI",
+        0.7232408805610194
+      ]
+    ],
+    "validity_correlation": 0.6682104153325003,
+    "consumer_satisfaction": 0.810384920931443,
+    "market_shares": {
+      "OpenAI": 0.5915026545055694,
+      "Anthropic": 0.053118165777559755,
+      "Google": 0.06645892489927117,
+      "MetaAI": 0.25842706477665367,
+      "StartupDotAI": 0.030493190040946014
+    },
+    "risk_beliefs": {
+      "gaming_risk": 0.25000000000000006,
+      "consumer_harm_risk": 0.0,
+      "validity_degradation_risk": 0.4,
+      "market_concentration_risk": 0.25000000000000006,
+      "eval_engineering_risk": 0.1
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 6,
+    "industry_trust": 0.494,
+    "avg_risk": 0.20000000000000004
+  },
+  {
+    "type": "planning",
+    "round": 6,
+    "decision": "no_action",
+    "reason": "cooldown: 2 rounds since last intervention"
+  },
+  {
+    "type": "observation",
+    "round": 7,
+    "leaderboard": [
+      [
+        "MetaAI",
+        0.8787528613042526
+      ],
+      [
+        "Anthropic",
+        0.8496903397827673
+      ],
+      [
+        "OpenAI",
+        0.8454760669030769
+      ],
+      [
+        "Google",
+        0.8231617942151871
+      ],
+      [
+        "StartupDotAI",
+        0.7924427840999081
+      ]
+    ],
+    "validity_correlation": 0.6682058745896773,
+    "consumer_satisfaction": 0.8191601474976187,
+    "market_shares": {
+      "OpenAI": 0.5437150767327843,
+      "Anthropic": 0.05201529708096838,
+      "Google": 0.06387164872122184,
+      "MetaAI": 0.31091508794497014,
+      "StartupDotAI": 0.02948288952005529
+    },
+    "risk_beliefs": {
+      "gaming_risk": 0.20000000000000007,
+      "consumer_harm_risk": 0.0,
+      "validity_degradation_risk": 0.4,
+      "market_concentration_risk": 0.20000000000000007,
+      "eval_engineering_risk": 0.1
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 7,
+    "industry_trust": 0.496,
+    "avg_risk": 0.18000000000000002
+  },
+  {
+    "type": "planning",
+    "round": 7,
+    "decision": "no_action",
+    "reason": "max_risk=0.40, below threshold or no escalation path"
+  },
+  {
+    "type": "observation",
+    "round": 8,
+    "leaderboard": [
+      [
+        "Anthropic",
+        0.927417096384797
+      ],
+      [
+        "MetaAI",
+        0.8787528613042526
+      ],
+      [
+        "OpenAI",
+        0.8454760669030769
+      ],
+      [
+        "Google",
+        0.831655725963546
+      ],
+      [
+        "StartupDotAI",
+        0.796738658657682
+      ]
+    ],
+    "validity_correlation": 0.6629839803869427,
+    "consumer_satisfaction": 0.8271050572174353,
+    "market_shares": {
+      "OpenAI": 0.4744162419211737,
+      "Anthropic": 0.057372372378730226,
+      "Google": 0.06211021628963428,
+      "MetaAI": 0.37718569152962156,
+      "StartupDotAI": 0.02891547788084021
+    },
+    "risk_beliefs": {
+      "gaming_risk": 0.15000000000000008,
+      "consumer_harm_risk": 0.0,
+      "validity_degradation_risk": 0.4,
+      "market_concentration_risk": 0.15000000000000008,
+      "eval_engineering_risk": 0.1
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 8,
+    "industry_trust": 0.5,
+    "avg_risk": 0.16000000000000003
+  },
+  {
+    "type": "planning",
+    "round": 8,
+    "decision": "no_action",
+    "reason": "max_risk=0.40, below threshold or no escalation path"
+  },
+  {
+    "type": "observation",
+    "round": 9,
+    "leaderboard": [
+      [
+        "Anthropic",
+        0.927417096384797
+      ],
+      [
+        "OpenAI",
+        0.8950653661018462
+      ],
+      [
+        "MetaAI",
+        0.8787528613042526
+      ],
+      [
+        "Google",
+        0.8446916074219191
+      ],
+      [
+        "StartupDotAI",
+        0.8183635222165309
+      ]
+    ],
+    "validity_correlation": 0.6834104949214646,
+    "consumer_satisfaction": 0.8370866438752532,
+    "market_shares": {
+      "OpenAI": 0.4123455959580515,
+      "Anthropic": 0.1257969040503344,
+      "Google": 0.060656577884204615,
+      "MetaAI": 0.3728486042386882,
+      "StartupDotAI": 0.02835231786872122
+    },
+    "risk_beliefs": {
+      "gaming_risk": 0.10000000000000007,
+      "consumer_harm_risk": 0.0,
+      "validity_degradation_risk": 0.4,
+      "market_concentration_risk": 0.10000000000000007,
+      "eval_engineering_risk": 0.1
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 9,
+    "industry_trust": 0.506,
+    "avg_risk": 0.14000000000000004
+  },
+  {
+    "type": "planning",
+    "round": 9,
+    "decision": "no_action",
+    "reason": "max_risk=0.40, below threshold or no escalation path"
+  },
+  {
+    "type": "observation",
+    "round": 10,
+    "leaderboard": [
+      [
+        "OpenAI",
+        0.9455002131810808
+      ],
+      [
+        "Anthropic",
+        0.927417096384797
+      ],
+      [
+        "MetaAI",
+        0.8787528613042526
+      ],
+      [
+        "Google",
+        0.8653936955054611
+      ],
+      [
+        "StartupDotAI",
+        0.8183635222165309
+      ]
+    ],
+    "validity_correlation": 0.718318417244146,
+    "consumer_satisfaction": 0.8517189694237558,
+    "market_shares": {
+      "OpenAI": 0.4009584608696648,
+      "Anthropic": 0.16018799504704018,
+      "Google": 0.05956929460381476,
+      "MetaAI": 0.35129404384936797,
+      "StartupDotAI": 0.027990205630112112
+    },
+    "risk_beliefs": {
+      "gaming_risk": 0.05000000000000007,
+      "consumer_harm_risk": 0.0,
+      "validity_degradation_risk": 0.4,
+      "market_concentration_risk": 0.05000000000000007,
+      "eval_engineering_risk": 0.1
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 10,
+    "industry_trust": 0.514,
+    "avg_risk": 0.12000000000000002
+  },
+  {
+    "type": "planning",
+    "round": 10,
+    "decision": "no_action",
+    "reason": "max_risk=0.40, below threshold or no escalation path"
+  },
+  {
+    "type": "observation",
+    "round": 11,
+    "leaderboard": [
+      [
+        "OpenAI",
+        0.9247998505366949
+      ],
+      [
+        "Anthropic",
+        0.8645102188444268
+      ],
+      [
+        "MetaAI",
+        0.8607197478989491
+      ],
+      [
+        "Google",
+        0.8387276136105019
+      ],
+      [
+        "StartupDotAI",
+        0.8144461097527448
+      ]
+    ],
+    "validity_correlation": 0.7375210508189103,
+    "consumer_satisfaction": 0.8533822368217191,
+    "market_shares": {
+      "OpenAI": 0.47435194450759033,
+      "Anthropic": 0.12964933944404838,
+      "Google": 0.05857662457267701,
+      "MetaAI": 0.309860612665595,
+      "StartupDotAI": 0.027561478810089177
+    },
+    "risk_beliefs": {
+      "gaming_risk": 0.09000000000000008,
+      "consumer_harm_risk": 0.08,
+      "validity_degradation_risk": 0.4,
+      "market_concentration_risk": 6.938893903907228e-17,
+      "eval_engineering_risk": 0.1
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 11,
+    "industry_trust": 0.5206000000000001,
+    "avg_risk": 0.13400000000000004
+  },
+  {
+    "type": "planning",
+    "round": 11,
+    "decision": "no_action",
+    "reason": "max_risk=0.40, below threshold or no escalation path"
+  },
+  {
+    "type": "observation",
+    "round": 12,
+    "leaderboard": [
+      [
+        "OpenAI",
+        0.9508514477886831
+      ],
+      [
+        "Anthropic",
+        0.9223944317904399
+      ],
+      [
+        "MetaAI",
+        0.8821693953201183
+      ],
+      [
+        "Google",
+        0.8654703942227614
+      ],
+      [
+        "StartupDotAI",
+        0.8155200032148613
+      ]
+    ],
+    "validity_correlation": 0.7642366270301211,
+    "consumer_satisfaction": 0.8615081729065912,
+    "market_shares": {
+      "OpenAI": 0.5330092316115919,
+      "Anthropic": 0.10957738264905362,
+      "Google": 0.057751535210892574,
+      "MetaAI": 0.27233204603694333,
+      "StartupDotAI": 0.027329804491518797
+    },
+    "risk_beliefs": {
+      "gaming_risk": 0.04000000000000008,
+      "consumer_harm_risk": 0.03,
+      "validity_degradation_risk": 0.4,
+      "market_concentration_risk": 0.0,
+      "eval_engineering_risk": 0.1
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 12,
+    "industry_trust": 0.5292000000000001,
+    "avg_risk": 0.11400000000000002
+  },
+  {
+    "type": "planning",
+    "round": 12,
+    "decision": "no_action",
+    "reason": "max_risk=0.40, below threshold or no escalation path"
+  },
+  {
+    "type": "observation",
+    "round": 13,
+    "leaderboard": [
+      [
+        "OpenAI",
+        0.9463522801496744
+      ],
+      [
+        "Anthropic",
+        0.9242838661764978
+      ],
+      [
+        "Google",
+        0.8990784964782893
+      ],
+      [
+        "MetaAI",
+        0.8873669058925561
+      ],
+      [
+        "StartupDotAI",
+        0.8036667581544025
+      ]
+    ],
+    "validity_correlation": 0.7870592529786715,
+    "consumer_satisfaction": 0.8772232217226895,
+    "market_shares": {
+      "OpenAI": 0.5780299881675394,
+      "Anthropic": 0.09707959465771827,
+      "Google": 0.0569945991501042,
+      "MetaAI": 0.24086876447290131,
+      "StartupDotAI": 0.027027053551736756
+    },
+    "risk_beliefs": {
+      "gaming_risk": 0.0,
+      "consumer_harm_risk": 0.0,
+      "validity_degradation_risk": 0.4,
+      "market_concentration_risk": 0.0,
+      "eval_engineering_risk": 0.1
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 13,
+    "industry_trust": 0.5392000000000001,
+    "avg_risk": 0.1
+  },
+  {
+    "type": "planning",
+    "round": 13,
+    "decision": "no_action",
+    "reason": "max_risk=0.40, below threshold or no escalation path"
+  },
+  {
+    "type": "observation",
+    "round": 14,
+    "leaderboard": [
+      [
+        "OpenAI",
+        0.9641790285610822
+      ],
+      [
+        "Anthropic",
+        0.9399844528581909
+      ],
+      [
+        "Google",
+        0.8990772000340673
+      ],
+      [
+        "MetaAI",
+        0.8911118877275485
+      ],
+      [
+        "StartupDotAI",
+        0.8036396453727093
+      ]
+    ],
+    "validity_correlation": 0.8076386568331556,
+    "consumer_satisfaction": 0.8746766258588496,
+    "market_shares": {
+      "OpenAI": 0.6095038524452477,
+      "Anthropic": 0.08999327992546975,
+      "Google": 0.056475064745178064,
+      "MetaAI": 0.21713142498826551,
+      "StartupDotAI": 0.026896377895838902
+    },
+    "risk_beliefs": {
+      "gaming_risk": 0.01,
+      "consumer_harm_risk": 0.0,
+      "validity_degradation_risk": 0.4,
+      "market_concentration_risk": 0.1,
+      "eval_engineering_risk": 0.1,
+      "security_risk": 0.32
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 14,
+    "industry_trust": 0.5437000000000001,
+    "avg_risk": 0.155
+  },
+  {
+    "type": "planning",
+    "round": 14,
+    "decision": "no_action",
+    "reason": "max_risk=0.40, below threshold or no escalation path"
+  },
+  {
+    "type": "observation",
+    "round": 15,
+    "leaderboard": [
+      [
+        "OpenAI",
+        0.9671848467359088
+      ],
+      [
+        "Anthropic",
+        0.9446631565816646
+      ],
+      [
+        "MetaAI",
+        0.9037518105620901
+      ],
+      [
+        "Google",
+        0.9023401256356004
+      ],
+      [
+        "StartupDotAI",
+        0.823102177816258
+      ]
+    ],
+    "validity_correlation": 0.8249610556043578,
+    "consumer_satisfaction": 0.8877234450987068,
+    "market_shares": {
+      "OpenAI": 0.6390347793680032,
+      "Anthropic": 0.07929574883084023,
+      "Google": 0.05594959762905166,
+      "MetaAI": 0.1990697008104633,
+      "StartupDotAI": 0.02665017336164152
+    },
+    "risk_beliefs": {
+      "gaming_risk": 0.0,
+      "consumer_harm_risk": 0.0,
+      "validity_degradation_risk": 0.4,
+      "market_concentration_risk": 0.2,
+      "eval_engineering_risk": 0.1,
+      "security_risk": 0.32
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 15,
+    "industry_trust": 0.5467000000000001,
+    "avg_risk": 0.17
+  },
+  {
+    "type": "planning",
+    "round": 15,
+    "decision": "no_action",
+    "reason": "max_risk=0.40, below threshold or no escalation path"
+  },
+  {
+    "type": "observation",
+    "round": 16,
+    "leaderboard": [
+      [
+        "OpenAI",
+        0.9516117903053531
+      ],
+      [
+        "Anthropic",
+        0.9272567206287582
+      ],
+      [
+        "MetaAI",
+        0.895861766866483
+      ],
+      [
+        "Google",
+        0.8878230296539121
+      ],
+      [
+        "StartupDotAI",
+        0.8108093982929879
+      ]
+    ],
+    "validity_correlation": 0.8343774952090942,
+    "consumer_satisfaction": 0.8966770257830413,
+    "market_shares": {
+      "OpenAI": 0.6614027428127554,
+      "Anthropic": 0.0712442815677754,
+      "Google": 0.0555642003736266,
+      "MetaAI": 0.1852129040225314,
+      "StartupDotAI": 0.02657587122331128
+    },
+    "risk_beliefs": {
+      "gaming_risk": 0.01,
+      "consumer_harm_risk": 0.02,
+      "validity_degradation_risk": 0.4,
+      "market_concentration_risk": 0.30000000000000004,
+      "eval_engineering_risk": 0.1,
+      "security_risk": 0.32
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 16,
+    "industry_trust": 0.5475333333333334,
+    "avg_risk": 0.19166666666666668
+  },
+  {
+    "type": "planning",
+    "round": 16,
+    "decision": "no_action",
+    "reason": "max_risk=0.40, below threshold or no escalation path"
+  },
+  {
+    "type": "observation",
+    "round": 17,
+    "leaderboard": [
+      [
+        "OpenAI",
+        0.951591946054336
+      ],
+      [
+        "Anthropic",
+        0.9272439403490865
+      ],
+      [
+        "MetaAI",
+        0.9052259958765175
+      ],
+      [
+        "Google",
+        0.9044938449774774
+      ],
+      [
+        "StartupDotAI",
+        0.8148422932095291
+      ]
+    ],
+    "validity_correlation": 0.8426204584074346,
+    "consumer_satisfaction": 0.9091305172984517,
+    "market_shares": {
+      "OpenAI": 0.6780144003923629,
+      "Anthropic": 0.06610269585556254,
+      "Google": 0.05514082425807147,
+      "MetaAI": 0.17438874920352637,
+      "StartupDotAI": 0.026353330290476647
+    },
+    "risk_beliefs": {
+      "gaming_risk": 0.0,
+      "consumer_harm_risk": 0.0,
+      "validity_degradation_risk": 0.4,
+      "market_concentration_risk": 0.4,
+      "eval_engineering_risk": 0.1,
+      "security_risk": 0.32
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 17,
+    "industry_trust": 0.5472000000000001,
+    "avg_risk": 0.20333333333333334
+  },
+  {
+    "type": "planning",
+    "round": 17,
+    "decision": "no_action",
+    "reason": "max_risk=0.40, below threshold or no escalation path"
+  },
+  {
+    "type": "observation",
+    "round": 18,
+    "leaderboard": [
+      [
+        "OpenAI",
+        0.9599893378462065
+      ],
+      [
+        "Anthropic",
+        0.9325106406475263
+      ],
+      [
+        "Google",
+        0.9142574622203753
+      ],
+      [
+        "MetaAI",
+        0.9060276013178161
+      ],
+      [
+        "StartupDotAI",
+        0.8476047183654533
+      ]
+    ],
+    "validity_correlation": 0.8511803640821334,
+    "consumer_satisfaction": 0.9131712614804203,
+    "market_shares": {
+      "OpenAI": 0.6907192570048424,
+      "Anthropic": 0.06209897869887418,
+      "Google": 0.054862389831222186,
+      "MetaAI": 0.1659725794681558,
+      "StartupDotAI": 0.026346794996905513
+    },
+    "risk_beliefs": {
+      "gaming_risk": 0.0,
+      "consumer_harm_risk": 0.0,
+      "validity_degradation_risk": 0.4,
+      "market_concentration_risk": 0.5,
+      "eval_engineering_risk": 0.1,
+      "security_risk": 0.32
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 18,
+    "industry_trust": 0.5452000000000001,
+    "avg_risk": 0.22
+  },
+  {
+    "type": "planning",
+    "round": 18,
+    "decision": "intervene",
+    "intervention": {
+      "type": "public_warning",
+      "name": "Public_Warning_R18",
+      "details": {
+        "warning_severity": "moderate"
+      },
+      "reason": "Follow-up to investigation, risk at 0.50"
+    }
+  },
+  {
+    "type": "execution",
+    "round": 18,
+    "intervention": {
+      "type": "public_warning",
+      "name": "Public_Warning_R18",
+      "details": {
+        "warning_severity": "moderate"
+      },
+      "reason": "Follow-up to investigation, risk at 0.50"
+    }
+  },
+  {
+    "type": "observation",
+    "round": 19,
+    "leaderboard": [
+      [
+        "OpenAI",
+        0.956668740443477
+      ],
+      [
+        "Google",
+        0.9363662885499587
+      ],
+      [
+        "Anthropic",
+        0.9314450019745695
+      ],
+      [
+        "MetaAI",
+        0.9067104444294387
+      ],
+      [
+        "StartupDotAI",
+        0.8601613131682727
+      ]
+    ],
+    "validity_correlation": 0.857493608928311,
+    "consumer_satisfaction": 0.903369608804891,
+    "market_shares": {
+      "OpenAI": 0.6829939822723838,
+      "Anthropic": 0.07635140768178647,
+      "Google": 0.054571093378753134,
+      "MetaAI": 0.15987114601638136,
+      "StartupDotAI": 0.02621237065069519
+    },
+    "risk_beliefs": {
+      "gaming_risk": 0.060000000000000005,
+      "consumer_harm_risk": 0.0,
+      "validity_degradation_risk": 0.4,
+      "market_concentration_risk": 0.6,
+      "eval_engineering_risk": 0.1,
+      "security_risk": 0.32
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 19,
+    "industry_trust": 0.5405333333333334,
+    "avg_risk": 0.2466666666666667
+  },
+  {
+    "type": "planning",
+    "round": 19,
+    "decision": "no_action",
+    "reason": "cooldown: 1 rounds since last intervention"
+  }
+]

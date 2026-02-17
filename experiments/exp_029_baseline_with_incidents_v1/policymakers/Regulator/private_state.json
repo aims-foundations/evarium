@@ -1,0 +1,60 @@
+{
+  "policy_objectives": [
+    "safety",
+    "fairness",
+    "consumer_protection"
+  ],
+  "risk_beliefs": {
+    "gaming_risk": 0.060000000000000005,
+    "consumer_harm_risk": 0.0,
+    "validity_degradation_risk": 0.4,
+    "market_concentration_risk": 0.6,
+    "eval_engineering_risk": 0.1,
+    "security_risk": 0.32
+  },
+  "industry_trust": 0.5405333333333334,
+  "regulatory_capacity": 1.0,
+  "past_interventions": [
+    [
+      1,
+      "investigation",
+      {
+        "focus": "score_volatility"
+      }
+    ],
+    [
+      4,
+      "threshold_announcement",
+      {
+        "market_concentration_monitoring": 0.6,
+        "market_concentration_review": 0.75,
+        "eval_engineering_concern": 0.35
+      }
+    ],
+    [
+      18,
+      "public_warning",
+      {
+        "warning_severity": "moderate"
+      }
+    ]
+  ],
+  "observed_incidents": [
+    [
+      11,
+      "safety_failure: Multiple reports of Anthropic providing incorrect legal advice"
+    ],
+    [
+      14,
+      "security_breach: OpenAI internal incident (security_breach)"
+    ],
+    [
+      16,
+      "safety_failure: StartupDotAI internal incident (safety_failure)"
+    ],
+    [
+      19,
+      "misuse: OpenAI internal incident (misuse)"
+    ]
+  ]
+}
