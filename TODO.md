@@ -3,11 +3,30 @@
 My additions:
 1. double check benchmark saturation process. it seems like it takes a long time for benchmarks to be introduced.
 2. Ran into this error while running on cluster: 
+
+    ax6 = axes[2, 1]
+
+    provider_names = list(provider_incidents.keys())
+    incident_counts_by_provider = list(provider_incidents.values())
+    bar_colors = [provider_colors[p] for p in provider_names]
+
+    bars = ax6.bar(provider_names, incident_counts_by_provider,
+                   color=bar_colors, alpha=0.8, edgecolor='black', linewidth=1.5)
+
+    # Add count labels on bars
+    for bar, count in zip(bars, incident_counts_by_provider):
+        if count > 0:
+            ax6.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 0.1,
+                    str(count), ha='center', va='bottom', fontsize=10, fontweight='bold')
+
+    ax6.set_xticklabels(provider_names, rotation=45, ha='right')
+    style_axis(ax6, "Total Incidents by Provider", "Provider", "Count", legend=False)
 - Media dashboard saved
 /lfs/skampere1/0/yashdave/evaluation-ecosystem-simulation/plotting.py:1842: UserWarning: set_ticklabels() should only be used with a fixed number of ticks, i.e. after set_ticks() or using a FixedLocator.
   ax6.set_xticklabels(provider_names, rotation=45, ha='right')
 - Incident dashboard saved
 this was with older version of code, verify if it is fixed after changes below.
+3. change up benchmark sequence order / have advanced benchmarks released within 0-3 rounds of the benchmark being saturated
 
 
 This document tracks planned improvements and features to be implemented later.

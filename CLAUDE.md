@@ -8,6 +8,13 @@
 - **Paths:** Use forward slashes or raw strings. Never assume Unix paths.
 - **Package manager:** pip
 
+
+Add under a new ## Jupyter Notebooks section near the top of CLAUDE.md\n\nWhen the user asks for code for Jupyter notebooks, provide it as copy-paste snippets in chat rather than attempting to use NotebookEdit or Write tools to create/edit .ipynb files directly. NotebookEdit is unreliable and frequently times out.
+Add under ## Workflow Rules or ## General Instructions section\n\nAlways update documentation (README.md, stakeholders.md, and any relevant .md files) when making code changes. Do not wait to be reminded.
+Add under ## Environment section at the top of CLAUDE.md\n\nThis project runs on Windows (not WSL/Linux). Use Windows-compatible commands (e.g., PowerShell, `python` not `python3`, backslash-aware paths). Do not assume bash/WSL unless explicitly told otherwise.
+Add under ## Common Pitfalls or ## Editing Rules section\n\nWhen editing JSON files (especially index.json or config files), validate JSON syntax after editing. Trailing commas and malformed JSON have caused experiment failures multiple times.
+Add under ## Workflow Rules section\n\nBefore implementing, always present a plan and wait for user approval. Do not start coding multi-step features without confirmation. When asked to plan, produce ONLY a plan document — no code changes.
+
 ## Project Paths
 
 - **Project root:** `C:\Users\yashd\Desktop\generative_agents\eval_sim\`
@@ -67,3 +74,4 @@
 
 ### Documentation
 - `stakeholders.md` — Comprehensive simulation architecture and design doc (UPDATE when making changes)
+

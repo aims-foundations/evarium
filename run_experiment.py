@@ -32,7 +32,7 @@ EXPERIMENT = {
         "Heuristic mode for performance."
     ),
     "tags": ["baseline", "incidents", "heuristic", "5-provider", "4-benchmark", "39-segments",
-             "us-light-touch", "3-funder", "realistic", "full-ecosystem", "eval-as-company", "LMArena"],
+             "eu-precautionary", "3-funder", "realistic", "full-ecosystem", "eval-as-company", "LMArena"],
 }
 
 LLM = {
@@ -45,7 +45,7 @@ LLM = {
 }
 
 SIMULATION = {
-    "n_rounds": 25,
+    "n_rounds": 20,
     "seed": 42,
     "verbose": True,
     "rnd_efficiency": 0.01,
@@ -251,18 +251,18 @@ POLICYMAKERS = {
     "n_policymakers": 1,
     # To compare US vs EU: Comment out one config, uncomment the other, update EXPERIMENT["name"]
     "configs": [
-        # # EU Precautionary Style (default)
-        # {
-        #     "name": "Regulator",
-        #     "philosophy": "eu_precautionary",
-        #     "policy_objectives": ["safety", "fairness", "consumer_protection"],
-        # }
-        # US Light-Touch Style (uncomment to compare, and change EXPERIMENT["name"] to "baseline_us_style_v1")
+        # EU Precautionary Style (default)
         {
             "name": "Regulator",
-            "philosophy": "us_light_touch",
-            "policy_objectives": ["safety", "innovation"],
+            "philosophy": "eu_precautionary",
+            "policy_objectives": ["safety", "fairness", "consumer_protection"],
         }
+        # # US Light-Touch Style (uncomment to compare, and change EXPERIMENT["name"] to "baseline_us_style_v1")
+        # {
+        #     "name": "Regulator",
+        #     "philosophy": "us_light_touch",
+        #     "policy_objectives": ["safety", "innovation"],
+        # }
     ],
 }
 
