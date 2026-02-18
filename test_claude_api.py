@@ -15,7 +15,7 @@ client = Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
 # Minimal test message
 print("Testing Claude API connection...")
 message = client.messages.create(
-    model="claude-3-haiku-20240307",  # Using Haiku for minimal cost
+    model="claude-sonnet-4-6",  # Using Haiku for minimal cost
     max_tokens=50,  # Keep it very short
     messages=[
         {"role": "user", "content": "Say 'API test successful' and nothing else."}

@@ -472,6 +472,7 @@ class EvalEcosystemSimulation:
         - Their OWN customer satisfaction (not competitors')
         - Their OWN market share
         - Public regulatory interventions (visible to all)
+        - Their OWN recent incidents (public record)
         """
         context = {}
         if self.history:
@@ -488,6 +489,14 @@ class EvalEcosystemSimulation:
                     context["own_market_share"] = provider_share
             if "policymaker_data" in last:
                 context["regulatory_pressure"] = last["policymaker_data"].get("interventions", [])
+            # Provider sees their own incidents from last round (public record)
+            if "incidents" in last:
+                own_incidents = [
+                    inc for inc in last["incidents"]
+                    if inc.get("provider") == provider_name
+                ]
+                if own_incidents:
+                    context["own_incidents"] = own_incidents
         return context
 
     def run_round(self) -> dict:
@@ -945,6 +954,8 @@ class EvalEcosystemSimulation:
             published_scores=published_scores,
             media_coverage=media_coverage,
             policymaker_data=policymaker_data,
+            incident_history=all_incident_history,
+            per_benchmark_scores=per_bm_scores,
         )
 
         # Get consumer data
@@ -1214,13 +1225,20 @@ class EvalEcosystemSimulation:
             if "__EVALUATOR__" in allocations:
                 funder_allocations[funder_name] = allocations["__EVALUATOR__"]
 
+        # Compute per-provider funder allocation for this round (their available budget)
+        provider_budgets = {}
+        for funder_name, alloc in funder_data.get("allocations", {}).items():
+            for pname, amount in alloc.items():
+                if pname != "__EVALUATOR__":
+                    provider_budgets[pname] = provider_budgets.get(pname, 0.0) + amount
+
         # Collect premium payments from providers
         provider_payments = {}
         for provider in self.providers:
             ecosystem_context = self._get_provider_ecosystem_context(provider.name)
             decision = provider.decide_premium_access(
                 premium_pricing=self.config.evaluator_premium_pricing,
-                current_budget=100000.0,  # Simplified: assume fixed budget
+                current_budget=provider_budgets.get(provider.name, 0.0),
                 ecosystem_context=ecosystem_context,
             )
 

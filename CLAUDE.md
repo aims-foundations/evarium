@@ -8,16 +8,9 @@
 - **Paths:** Use forward slashes or raw strings. Never assume Unix paths.
 - **Package manager:** pip
 
-
-Add under a new ## Jupyter Notebooks section near the top of CLAUDE.md\n\nWhen the user asks for code for Jupyter notebooks, provide it as copy-paste snippets in chat rather than attempting to use NotebookEdit or Write tools to create/edit .ipynb files directly. NotebookEdit is unreliable and frequently times out.
-Add under ## Workflow Rules or ## General Instructions section\n\nAlways update documentation (README.md, stakeholders.md, and any relevant .md files) when making code changes. Do not wait to be reminded.
-Add under ## Environment section at the top of CLAUDE.md\n\nThis project runs on Windows (not WSL/Linux). Use Windows-compatible commands (e.g., PowerShell, `python` not `python3`, backslash-aware paths). Do not assume bash/WSL unless explicitly told otherwise.
-Add under ## Common Pitfalls or ## Editing Rules section\n\nWhen editing JSON files (especially index.json or config files), validate JSON syntax after editing. Trailing commas and malformed JSON have caused experiment failures multiple times.
-Add under ## Workflow Rules section\n\nBefore implementing, always present a plan and wait for user approval. Do not start coding multi-step features without confirmation. When asked to plan, produce ONLY a plan document — no code changes.
-
 ## Project Paths
 
-- **Project root:** `C:\Users\yashd\Desktop\generative_agents\eval_sim\`
+- **Project root:** `C:\Users\yashd\Desktop\evaluation-ecosystem-simulation\`
 - Always search from the project root, not from `/` or `~`
 - Key entry points:
   - `run_experiment.py` — editable experiment config file (edit & run)
@@ -31,6 +24,13 @@ Add under ## Workflow Rules section\n\nBefore implementing, always present a pla
 - When editing JSON files (especially `experiments/index.json`), validate syntax after editing — trailing commas have caused failures multiple times
 - Before long-running experiments, do a preflight check: validate JSON configs, test LLM provider connectivity, verify output directory exists
 - Do not use unknown unicode alphabet (for example, tick marks or crosses to indicate success or failure). They cause errors and cannot be parsed always.
+
+## Planning & Implementation
+
+- **Before implementing any multi-step feature, present a plan and wait for user approval.** Do not start writing code until the user confirms the approach.
+- When asked to plan, produce ONLY a plan document — no code changes at that stage.
+- When asked to implement, scope your work to what was explicitly requested. Implement phase by phase if the plan has multiple phases, unless told otherwise.
+- If a task touches more than 2-3 files, stop and confirm the approach before proceeding.
 
 ## Jupyter Notebooks
 
@@ -74,4 +74,3 @@ Add under ## Workflow Rules section\n\nBefore implementing, always present a pla
 
 ### Documentation
 - `stakeholders.md` — Comprehensive simulation architecture and design doc (UPDATE when making changes)
-

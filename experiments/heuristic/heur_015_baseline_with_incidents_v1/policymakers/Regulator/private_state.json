@@ -1,0 +1,304 @@
+{
+  "policy_objectives": [
+    "safety",
+    "fairness",
+    "consumer_protection"
+  ],
+  "risk_beliefs": {
+    "gaming_risk": 1.0,
+    "consumer_harm_risk": 0.05000000000000002,
+    "validity_degradation_risk": 1.0,
+    "market_concentration_risk": 0.35000000000000003,
+    "eval_engineering_risk": 1.0,
+    "fairness_risk": 1.0,
+    "security_risk": 0.89
+  },
+  "industry_trust": 0.0,
+  "regulatory_capacity": 1.0,
+  "past_interventions": [
+    [
+      1,
+      "investigation",
+      {
+        "focus": "score_volatility"
+      }
+    ],
+    [
+      4,
+      "mandate_benchmark",
+      {
+        "validity": 0.7999999999999999,
+        "exploitability": 0.3
+      }
+    ],
+    [
+      7,
+      "public_warning",
+      {
+        "warning_severity": "high"
+      }
+    ],
+    [
+      10,
+      "emergency_investigation",
+      {
+        "provider": "Anthropic",
+        "incident_description": "safety_failure: Anthropic AI produces inconsistent outputs on safety-critical queries",
+        "severity": "critical"
+      }
+    ],
+    [
+      13,
+      "compliance_audit",
+      {
+        "exploitability_reduction": 0.1
+      }
+    ],
+    [
+      16,
+      "compliance_audit",
+      {
+        "exploitability_reduction": 0.1
+      }
+    ],
+    [
+      19,
+      "compliance_audit",
+      {
+        "exploitability_reduction": 0.1
+      }
+    ],
+    [
+      22,
+      "compliance_audit",
+      {
+        "exploitability_reduction": 0.1
+      }
+    ],
+    [
+      25,
+      "compliance_audit",
+      {
+        "exploitability_reduction": 0.1
+      }
+    ],
+    [
+      28,
+      "compliance_audit",
+      {
+        "exploitability_reduction": 0.1
+      }
+    ],
+    [
+      31,
+      "compliance_audit",
+      {
+        "exploitability_reduction": 0.1
+      }
+    ],
+    [
+      32,
+      "emergency_investigation",
+      {
+        "provider": "MetaAI",
+        "incident_description": "safety_failure: MetaAI model hallucinates in critical financial analysis task",
+        "severity": "critical"
+      }
+    ],
+    [
+      35,
+      "compliance_audit",
+      {
+        "exploitability_reduction": 0.1
+      }
+    ],
+    [
+      38,
+      "compliance_audit",
+      {
+        "exploitability_reduction": 0.1
+      }
+    ],
+    [
+      41,
+      "emergency_investigation",
+      {
+        "provider": "OpenAI",
+        "incident_description": "safety_failure: OpenAI AI produces inconsistent outputs on safety-critical queries",
+        "severity": "critical"
+      }
+    ],
+    [
+      44,
+      "compliance_audit",
+      {
+        "exploitability_reduction": 0.1
+      }
+    ],
+    [
+      47,
+      "compliance_audit",
+      {
+        "exploitability_reduction": 0.1
+      }
+    ]
+  ],
+  "observed_incidents": [
+    [
+      4,
+      "bias_discrimination: Google hiring tool shows bias against protected groups, class-action lawsuit filed"
+    ],
+    [
+      5,
+      "safety_failure: StartupDotAI internal incident (safety_failure)"
+    ],
+    [
+      10,
+      "safety_failure: Anthropic AI produces inconsistent outputs on safety-critical queries"
+    ],
+    [
+      11,
+      "bias_discrimination: Bias audit reveals Google facial recognition accuracy gaps"
+    ],
+    [
+      12,
+      "security_breach: MetaAI internal incident (security_breach)"
+    ],
+    [
+      13,
+      "security_breach: Google internal incident (security_breach)"
+    ],
+    [
+      15,
+      "safety_failure: OpenAI internal incident (safety_failure)"
+    ],
+    [
+      16,
+      "security_breach: Security vulnerability found in MetaAI API, 50K users affected"
+    ],
+    [
+      17,
+      "misinformation: OpenAI model weaponized for state-sponsored misinformation, international incident"
+    ],
+    [
+      18,
+      "bias_discrimination: Google facial recognition errors disproportionately affect minorities, contracts suspended"
+    ],
+    [
+      18,
+      "bias_discrimination: MetaAI internal incident (bias_discrimination)"
+    ],
+    [
+      20,
+      "healthcare_harm: Google internal incident (healthcare_harm)"
+    ],
+    [
+      21,
+      "healthcare_harm: Anthropic model causes incorrect medication recommendation, patient hospitalized"
+    ],
+    [
+      22,
+      "bias_discrimination: OpenAI algorithmic bias scandal triggers national reckoning on AI fairness"
+    ],
+    [
+      22,
+      "bias_discrimination: Google internal incident (bias_discrimination)"
+    ],
+    [
+      24,
+      "misinformation: Government agencies warn against OpenAI model for official information"
+    ],
+    [
+      24,
+      "security_breach: Google data leak exposes private user conversations to search engines"
+    ],
+    [
+      25,
+      "bias_discrimination: MetaAI internal incident (bias_discrimination)"
+    ],
+    [
+      27,
+      "security_breach: MetaAI internal incident (security_breach)"
+    ],
+    [
+      29,
+      "safety_failure: MetaAI internal incident (safety_failure)"
+    ],
+    [
+      30,
+      "healthcare_harm: Google healthcare AI linked to multiple misdiagnosis cases, lawsuit filed"
+    ],
+    [
+      32,
+      "healthcare_harm: Anthropic internal incident (healthcare_harm)"
+    ],
+    [
+      32,
+      "safety_failure: MetaAI model hallucinates in critical financial analysis task"
+    ],
+    [
+      34,
+      "security_breach: OpenAI data breach compromises enterprise customer credentials"
+    ],
+    [
+      35,
+      "bias_discrimination: Study finds Anthropic model produces biased hiring recommendations"
+    ],
+    [
+      35,
+      "security_breach: Google internal incident (security_breach)"
+    ],
+    [
+      36,
+      "safety_failure: StartupDotAI internal incident (safety_failure)"
+    ],
+    [
+      39,
+      "safety_failure: Google internal incident (safety_failure)"
+    ],
+    [
+      40,
+      "healthcare_harm: OpenAI model causes incorrect medication recommendation, patient hospitalized"
+    ],
+    [
+      40,
+      "healthcare_harm: Google healthcare AI linked to multiple misdiagnosis cases, lawsuit filed"
+    ],
+    [
+      40,
+      "healthcare_harm: MetaAI internal incident (healthcare_harm)"
+    ],
+    [
+      40,
+      "healthcare_harm: StartupDotAI internal incident (healthcare_harm)"
+    ],
+    [
+      41,
+      "safety_failure: OpenAI AI produces inconsistent outputs on safety-critical queries"
+    ],
+    [
+      42,
+      "security_breach: OpenAI internal incident (security_breach)"
+    ],
+    [
+      42,
+      "bias_discrimination: StartupDotAI internal incident (bias_discrimination)"
+    ],
+    [
+      43,
+      "healthcare_harm: Major hospital chain suspends Google contract following patient safety concerns"
+    ],
+    [
+      46,
+      "security_breach: MetaAI internal incident (security_breach)"
+    ],
+    [
+      47,
+      "security_breach: MetaAI reports unauthorized access to training data storage"
+    ],
+    [
+      49,
+      "security_breach: MetaAI reports unauthorized access to training data storage"
+    ]
+  ]
+}

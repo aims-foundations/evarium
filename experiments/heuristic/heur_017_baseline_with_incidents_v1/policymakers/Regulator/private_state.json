@@ -1,0 +1,51 @@
+{
+  "policy_objectives": [
+    "safety",
+    "fairness",
+    "consumer_protection"
+  ],
+  "risk_beliefs": {
+    "gaming_risk": 1.0,
+    "consumer_harm_risk": 0.0,
+    "validity_degradation_risk": 1.0,
+    "market_concentration_risk": 0.0,
+    "eval_engineering_risk": 0.9999999999999999,
+    "fairness_risk": 0.44999999999999996
+  },
+  "industry_trust": 0.2829166666666667,
+  "regulatory_capacity": 1.0,
+  "past_interventions": [
+    [
+      1,
+      "investigation",
+      {
+        "focus": "score_volatility"
+      }
+    ],
+    [
+      4,
+      "mandate_benchmark",
+      {
+        "validity": 0.7999999999999999,
+        "exploitability": 0.3
+      }
+    ],
+    [
+      7,
+      "public_warning",
+      {
+        "warning_severity": "high"
+      }
+    ]
+  ],
+  "observed_incidents": [
+    [
+      4,
+      "bias_discrimination: Google hiring tool shows bias against protected groups, class-action lawsuit filed"
+    ],
+    [
+      5,
+      "safety_failure: StartupDotAI internal incident (safety_failure)"
+    ]
+  ]
+}

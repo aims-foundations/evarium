@@ -891,6 +891,7 @@ def plot_evaluator_dashboard(
     for patch, provider in zip(bp['boxes'], providers):
         patch.set_facecolor(provider_colors[provider])
         patch.set_alpha(0.7)
+    ax4.set_xticks(range(1, len(providers) + 1))
     ax4.set_xticklabels(providers, rotation=45, ha='right', fontsize=8)
     style_axis(ax4, "Score Distribution by Provider", "", "Score", legend=False)
 
@@ -1859,6 +1860,402 @@ def plot_incident_dashboard(
 
 
 # =============================================================================
+# Data Extraction Helpers
+# =============================================================================
+
+def compute_incident_severity_score(severity: str) -> int:
+    """Convert incident severity to numeric cost score for aggregation."""
+    return {"minor": 1, "moderate": 5, "major": 20, "critical": 100}.get(severity, 1)
+
+
+def extract_incident_impacts(history: list) -> dict:
+    """Extract incident cascade effects across actors per round."""
+    rounds = [h["round"] for h in history]
+    satisfaction = []
+    media_sentiment = []
+    intervention_counts = []
+    incident_rounds = set()
+
+    for h in history:
+        cd = h.get("consumer_data", {})
+        satisfaction.append(cd.get("avg_satisfaction", None))
+
+        md = h.get("media_data", {})
+        media_sentiment.append(md.get("sentiment", None))
+
+        pd = h.get("policymaker_data", {})
+        intervention_counts.append(len(pd.get("interventions", [])))
+
+        if h.get("incidents"):
+            incident_rounds.add(h["round"])
+
+    return {
+        "rounds": rounds,
+        "satisfaction": satisfaction,
+        "media_sentiment": media_sentiment,
+        "intervention_counts": intervention_counts,
+        "incident_rounds": sorted(incident_rounds),
+    }
+
+
+def extract_evaluator_business_metrics(history: list) -> dict:
+    """Extract evaluator-as-company financial metrics from history."""
+    biz_rounds = [h for h in history if "evaluator_business_metrics" in h]
+    return {
+        "rounds": [h["round"] for h in biz_rounds],
+        "budget": [h["evaluator_business_metrics"]["budget"] for h in biz_rounds],
+        "base_funding": [h["evaluator_business_metrics"].get("base_funding", 0) for h in biz_rounds],
+        "service_revenue": [h["evaluator_business_metrics"].get("service_revenue", 0) for h in biz_rounds],
+        "premium_providers": [h["evaluator_business_metrics"].get("premium_providers", []) for h in biz_rounds],
+        "trial_counts": [h["evaluator_business_metrics"].get("trial_counts", {}) for h in biz_rounds],
+    }
+
+
+def extract_trial_counts(history: list) -> dict:
+    """Extract n_trials per provider per round."""
+    biz_rounds = [h for h in history if "evaluator_business_metrics" in h]
+    result = {}
+    for h in biz_rounds:
+        result[h["round"]] = h["evaluator_business_metrics"].get("trial_counts", {})
+    return result
+
+
+# =============================================================================
+# Enhanced Incident Analysis Dashboard
+# =============================================================================
+
+def plot_incident_analysis_dashboard(
+    history: list,
+    save_path: Optional[str] = None,
+    show: bool = True,
+    figsize: tuple = (20, 14),
+) -> Optional[plt.Figure]:
+    """
+    Advanced incident analysis dashboard with causal and impact panels.
+
+    Panels (3x2):
+    1. Safety Investment vs Incident Rate (correlation)
+    2. Gaming Gap vs Incidents
+    3. Incident Impact Timeline (cascade: satisfaction, sentiment)
+    4. Sector-Specific Incidents Heatmap
+    5. Incident-Driven Interventions Timeline
+    6. Cumulative Incident Cost by Provider
+    """
+    all_incidents = []
+    for h in history:
+        if "incidents" in h and h["incidents"]:
+            for inc in h["incidents"]:
+                ic = inc.copy()
+                ic["round"] = h["round"]
+                all_incidents.append(ic)
+
+    if not all_incidents:
+        return None
+
+    providers = get_providers(history)
+    provider_colors = {p: c for p, c in zip(providers, get_provider_colors(len(providers)))}
+    rounds = [h["round"] for h in history]
+
+    fig, axes = plt.subplots(3, 2, figsize=figsize)
+    fig.suptitle("AI Safety Incident Analysis Dashboard", fontsize=14, fontweight='bold')
+
+    # --- Panel 1: Safety Investment vs Incident Rate ---
+    ax1 = axes[0, 0]
+    for p in providers:
+        safety_vals = [
+            h["strategies"][p].get("safety_alignment", 0)
+            for h in history if p in h.get("strategies", {})
+        ]
+        avg_safety = np.mean(safety_vals) if safety_vals else 0
+        p_incidents = [inc for inc in all_incidents if inc["provider"] == p]
+        ax1.scatter(avg_safety, len(p_incidents),
+                    color=provider_colors[p], s=120, zorder=3, label=p)
+        ax1.annotate(p, (avg_safety, len(p_incidents)), fontsize=8,
+                     xytext=(5, 3), textcoords='offset points')
+
+    # Trend line if we have multiple points
+    xs = []
+    ys = []
+    for p in providers:
+        safety_vals = [h["strategies"][p].get("safety_alignment", 0)
+                       for h in history if p in h.get("strategies", {})]
+        xs.append(np.mean(safety_vals) if safety_vals else 0)
+        ys.append(len([inc for inc in all_incidents if inc["provider"] == p]))
+    if len(xs) > 1:
+        z = np.polyfit(xs, ys, 1)
+        pf = np.poly1d(z)
+        x_line = np.linspace(min(xs), max(xs), 50)
+        ax1.plot(x_line, pf(x_line), '--', color='gray', alpha=0.5)
+    style_axis(ax1, "Safety Investment vs Incident Count",
+               "Avg Safety Alignment", "Total Incidents")
+
+    # --- Panel 2: Gaming Gap vs Incidents ---
+    ax2 = axes[0, 1]
+    for p in providers:
+        p_incidents = [inc for inc in all_incidents if inc["provider"] == p]
+        if p_incidents:
+            avg_gap = np.mean([inc.get("gaming_gap_at_time", 0) for inc in p_incidents])
+        else:
+            avg_gap = np.mean([
+                max(0, h["scores"].get(p, 0) - h["true_capabilities"].get(p, 0))
+                for h in history if "scores" in h and "true_capabilities" in h
+            ])
+        ax2.scatter(avg_gap, len(p_incidents),
+                    color=provider_colors[p], s=120, zorder=3, label=p)
+        ax2.annotate(p, (avg_gap, len(p_incidents)), fontsize=8,
+                     xytext=(5, 3), textcoords='offset points')
+    style_axis(ax2, "Gaming Gap vs Incident Count",
+               "Avg Gaming Gap (score - capability)", "Total Incidents")
+
+    # --- Panel 3: Incident Impact Timeline ---
+    ax3 = axes[1, 0]
+    impacts = extract_incident_impacts(history)
+    r = impacts["rounds"]
+
+    # Plot satisfaction and media sentiment as available
+    sat = [s if s is not None else float('nan') for s in impacts["satisfaction"]]
+    sent = [s if s is not None else float('nan') for s in impacts["media_sentiment"]]
+
+    ax3_twin = ax3.twinx()
+    if any(s == s for s in sat):  # check for non-nan
+        ax3.plot(r, sat, color='#457B9D', linewidth=2, label='Avg Satisfaction')
+    if any(s == s for s in sent):
+        ax3_twin.plot(r, sent, color='#E9C46A', linewidth=2, linestyle='--', label='Media Sentiment')
+        ax3_twin.set_ylabel("Media Sentiment", fontsize=9)
+
+    # Mark incident rounds
+    for ir in impacts["incident_rounds"]:
+        ax3.axvline(x=ir, color='red', alpha=0.25, linewidth=1.5)
+
+    ax3.set_xlabel("Round", fontsize=9)
+    ax3.set_ylabel("Avg Satisfaction", fontsize=9)
+    ax3.set_title("Incident Impact Timeline", fontsize=11, fontweight='bold')
+    ax3.grid(True, alpha=0.3)
+
+    lines1, labels1 = ax3.get_legend_handles_labels()
+    lines2, labels2 = ax3_twin.get_legend_handles_labels()
+    ax3.legend(lines1 + lines2, labels1 + labels2, fontsize=8, loc='lower left')
+
+    # --- Panel 4: Sector-Specific Incidents Heatmap ---
+    ax4 = axes[1, 1]
+    all_sectors = sorted(set(
+        s for inc in all_incidents for s in inc.get("affected_sectors", [])
+    ))
+    if all_sectors:
+        heatmap = np.zeros((len(providers), len(all_sectors)))
+        for inc in all_incidents:
+            if inc["provider"] in providers:
+                pi = providers.index(inc["provider"])
+                for s in inc.get("affected_sectors", []):
+                    if s in all_sectors:
+                        si = all_sectors.index(s)
+                        heatmap[pi, si] += 1
+        im = ax4.imshow(heatmap, aspect='auto', cmap='Reds', interpolation='nearest')
+        ax4.set_xticks(range(len(all_sectors)))
+        ax4.set_xticklabels(
+            [s.replace('_', '\n') for s in all_sectors], fontsize=7, rotation=45, ha='right'
+        )
+        ax4.set_yticks(range(len(providers)))
+        ax4.set_yticklabels(providers, fontsize=8)
+        plt.colorbar(im, ax=ax4, label='Incident Count')
+    style_axis(ax4, "Sector-Specific Incidents Heatmap", "", "", legend=False)
+
+    # --- Panel 5: Incident-Driven Interventions Timeline ---
+    ax5 = axes[2, 0]
+    severity_colors_map = {"minor": "#90EE90", "moderate": "#FFD700",
+                           "major": "#FF8C00", "critical": "#DC143C"}
+
+    # Bottom half: incidents
+    for inc in all_incidents:
+        sc = severity_colors_map.get(inc["severity"], "gray")
+        ax5.scatter(inc["round"], -0.2, color=sc, s=80, marker='v',
+                    zorder=3, alpha=0.8)
+
+    # Top half: interventions
+    for h in history:
+        pd = h.get("policymaker_data", {})
+        for iv in pd.get("interventions", []):
+            ax5.scatter(h["round"], 0.2, color='#9C6644', s=80, marker='^',
+                        zorder=3, alpha=0.8)
+
+    ax5.axhline(y=0, color='black', linewidth=0.8, alpha=0.4)
+    ax5.set_yticks([-0.2, 0.2])
+    ax5.set_yticklabels(['Incidents', 'Interventions'], fontsize=9)
+    ax5.set_xlim(min(rounds) - 0.5, max(rounds) + 0.5)
+
+    # Legend for severity
+    legend_elements = [mpatches.Patch(color=c, label=s.capitalize())
+                       for s, c in severity_colors_map.items()]
+    ax5.legend(handles=legend_elements, fontsize=7, loc='upper right', ncol=2)
+    style_axis(ax5, "Incidents vs Policymaker Interventions", "Round", "", legend=False)
+
+    # --- Panel 6: Cumulative Incident Cost by Provider ---
+    ax6 = axes[2, 1]
+    for p in providers:
+        cumulative = 0
+        cum_costs = []
+        for r in rounds:
+            round_inc = [inc for inc in all_incidents if inc["provider"] == p and inc["round"] == r]
+            cumulative += sum(compute_incident_severity_score(inc["severity"]) for inc in round_inc)
+            cum_costs.append(cumulative)
+        ax6.plot(rounds, cum_costs, color=provider_colors[p], linewidth=2, label=p)
+    style_axis(ax6, "Cumulative Incident Cost by Provider",
+               "Round", "Weighted Cost (minor=1, critical=100)")
+
+    plt.tight_layout()
+
+    if save_path:
+        plt.savefig(save_path, dpi=150, bbox_inches='tight')
+        print(f"Incident analysis dashboard saved to: {save_path}")
+
+    if show:
+        plt.show()
+    else:
+        plt.close(fig)
+
+    return fig
+
+
+# =============================================================================
+# Evaluator Business Dashboard (evaluator-as-company mode)
+# =============================================================================
+
+def plot_evaluator_business_dashboard(
+    history: list,
+    save_path: Optional[str] = None,
+    show: bool = True,
+    figsize: tuple = (20, 14),
+) -> Optional[plt.Figure]:
+    """
+    Dashboard for evaluator-as-company business metrics.
+    Only renders when evaluator_as_company=True data is present.
+
+    Panels (3x2):
+    1. Budget Over Time
+    2. Premium Provider Timeline
+    3. Trial Counts by Provider (average across rounds)
+    4. Revenue Breakdown (base funding vs service revenue)
+    5. Premium Access vs Score Improvement
+    6. Average Trial Count per Provider
+    """
+    biz_rounds = [h for h in history if "evaluator_business_metrics" in h]
+    if not biz_rounds:
+        return None
+
+    providers = get_providers(history)
+    provider_colors = {p: c for p, c in zip(providers, get_provider_colors(len(providers)))}
+    rounds = [h["round"] for h in biz_rounds]
+
+    fig, axes = plt.subplots(3, 2, figsize=figsize)
+    fig.suptitle("Evaluator Business Dashboard", fontsize=14, fontweight='bold')
+
+    # --- Panel 1: Budget Over Time ---
+    ax1 = axes[0, 0]
+    budgets = [h["evaluator_business_metrics"]["budget"] for h in biz_rounds]
+    ax1.plot(rounds, [b / 1000 for b in budgets], color='#2A9D8F', linewidth=2.5, label='Total Budget')
+    ax1.fill_between(rounds, 0, [b / 1000 for b in budgets], alpha=0.15, color='#2A9D8F')
+    style_axis(ax1, "Evaluator Budget Over Time", "Round", "Budget ($K)", legend=False)
+
+    # --- Panel 2: Premium Provider Timeline ---
+    ax2 = axes[0, 1]
+    provider_y = {p: i for i, p in enumerate(providers)}
+    for h in biz_rounds:
+        r = h["round"]
+        premium = h["evaluator_business_metrics"].get("premium_providers", [])
+        for p in premium:
+            if p in provider_y:
+                ax2.scatter(r, provider_y[p], color=provider_colors.get(p, 'gray'),
+                           s=80, marker='s', zorder=3)
+    ax2.set_yticks(range(len(providers)))
+    ax2.set_yticklabels(providers, fontsize=8)
+    ax2.set_xlim(min(rounds) - 0.5, max(rounds) + 0.5)
+    style_axis(ax2, "Premium Provider Access Timeline", "Round", "", legend=False)
+    ax2.grid(True, alpha=0.3, axis='x')
+
+    # --- Panel 3: Revenue Breakdown (stacked area) ---
+    ax3 = axes[1, 0]
+    base_fundings = [h["evaluator_business_metrics"].get("base_funding", 0) / 1000 for h in biz_rounds]
+    svc_revenues = [h["evaluator_business_metrics"].get("service_revenue", 0) / 1000 for h in biz_rounds]
+    ax3.fill_between(rounds, 0, base_fundings, alpha=0.7, color='#457B9D', label='Base Funding')
+    ax3.fill_between(rounds, base_fundings,
+                     [b + s for b, s in zip(base_fundings, svc_revenues)],
+                     alpha=0.7, color='#E9C46A', label='Service Revenue')
+    style_axis(ax3, "Revenue Breakdown per Round", "Round", "Revenue ($K)")
+
+    # --- Panel 4: Trial Counts by Provider (average over all rounds) ---
+    ax4 = axes[1, 1]
+    trial_sums = {p: [] for p in providers}
+    for h in biz_rounds:
+        counts = h["evaluator_business_metrics"].get("trial_counts", {})
+        for p in providers:
+            trial_sums[p].append(counts.get(p, 1))
+    avg_trials = {p: np.mean(trial_sums[p]) for p in providers}
+    x = np.arange(len(providers))
+    bars = ax4.bar(x, [avg_trials[p] for p in providers],
+                   color=[provider_colors[p] for p in providers], alpha=0.8, edgecolor='black')
+    ax4.axhline(y=1.0, color='gray', linestyle='--', alpha=0.6, linewidth=1.5, label='Baseline (1 trial)')
+    for bar, val in zip(bars, [avg_trials[p] for p in providers]):
+        ax4.text(bar.get_x() + bar.get_width() / 2, bar.get_height() + 0.02,
+                 f'{val:.1f}', ha='center', va='bottom', fontsize=9, fontweight='bold')
+    ax4.set_xticks(x)
+    ax4.set_xticklabels(providers, rotation=45, ha='right', fontsize=8)
+    style_axis(ax4, "Average Trial Count per Provider", "", "Avg Trials", legend=False)
+
+    # --- Panel 5: Premium Access vs Score Improvement ---
+    ax5 = axes[2, 0]
+    premium_counts = {p: 0 for p in providers}
+    score_deltas = {p: [] for p in history[0]["scores"].keys() if p in providers}
+    for i, h in enumerate(biz_rounds):
+        premium = h["evaluator_business_metrics"].get("premium_providers", [])
+        for p in premium:
+            if p in premium_counts:
+                premium_counts[p] += 1
+        if i > 0:
+            prev_h = biz_rounds[i - 1]
+            for p in providers:
+                if p in h["scores"] and p in prev_h["scores"]:
+                    score_deltas[p].append(h["scores"][p] - prev_h["scores"][p])
+    for p in providers:
+        avg_delta = np.mean(score_deltas[p]) if score_deltas[p] else 0
+        ax5.scatter(premium_counts[p], avg_delta,
+                    color=provider_colors[p], s=120, zorder=3, label=p)
+        ax5.annotate(p, (premium_counts[p], avg_delta), fontsize=8,
+                     xytext=(5, 3), textcoords='offset points')
+    ax5.axhline(y=0, color='gray', linestyle='--', alpha=0.4)
+    style_axis(ax5, "Premium Access vs Avg Score Improvement",
+               "Rounds with Premium Access", "Avg Score Delta")
+
+    # --- Panel 6: Trial Count Heatmap (provider x round) ---
+    ax6 = axes[2, 1]
+    n_rounds = len(biz_rounds)
+    heatmap_data = np.ones((len(providers), n_rounds))
+    for j, h in enumerate(biz_rounds):
+        counts = h["evaluator_business_metrics"].get("trial_counts", {})
+        for i, p in enumerate(providers):
+            heatmap_data[i, j] = counts.get(p, 1)
+    im = ax6.imshow(heatmap_data, aspect='auto', cmap='YlOrRd',
+                    vmin=1, vmax=5, interpolation='nearest')
+    ax6.set_yticks(range(len(providers)))
+    ax6.set_yticklabels(providers, fontsize=8)
+    ax6.set_xlabel("Round Index", fontsize=9)
+    plt.colorbar(im, ax=ax6, label='N Trials')
+    style_axis(ax6, "Trial Count Heatmap (Provider x Round)", "Round Index", "", legend=False)
+
+    plt.tight_layout()
+
+    if save_path:
+        plt.savefig(save_path, dpi=150, bbox_inches='tight')
+        print(f"Evaluator business dashboard saved to: {save_path}")
+
+    if show:
+        plt.show()
+    else:
+        plt.close(fig)
+
+    return fig
+
+
+# =============================================================================
 # Convenience Function: Create All Dashboards
 # =============================================================================
 
@@ -1978,6 +2375,24 @@ def create_all_dashboards(
             plt.close(fig)
             saved['validity_over_time'] = path
             print(f"  - Validity over time saved")
+
+    # Incident Analysis Dashboard (only if incidents present)
+    fig = plot_incident_analysis_dashboard(history, show=False)
+    if fig:
+        path = f"{output_dir}/incident_analysis_dashboard.png"
+        fig.savefig(path, dpi=150, bbox_inches='tight')
+        plt.close(fig)
+        saved['incident_analysis_dashboard'] = path
+        print(f"  - Incident analysis dashboard saved")
+
+    # Evaluator Business Dashboard (only if evaluator-as-company data exists)
+    fig = plot_evaluator_business_dashboard(history, show=False)
+    if fig:
+        path = f"{output_dir}/evaluator_business_dashboard.png"
+        fig.savefig(path, dpi=150, bbox_inches='tight')
+        plt.close(fig)
+        saved['evaluator_business_dashboard'] = path
+        print(f"  - Evaluator business dashboard saved")
 
     print(f"\nAll dashboards saved to: {output_dir}")
     return saved

@@ -22,30 +22,31 @@ os.environ["NUMEXPR_NUM_THREADS"] = n_threads_str
 # ============================================================
 
 EXPERIMENT = {
-    "name": "baseline_with_incidents_v1",
+    "name": "baseline_with_incidents_v2",
     "description": (
-        "Baseline ecosystem with incident reporting: 5 major providers (OpenAI, Anthropic, Google, MetaAI, StartupDotAI), "
-        "4 initial benchmarks (coding, reasoning, math, safety), realistic benchmark progression. "
-        "Incident reporting models AI safety failures based on provider safety investment. "
-        "EU precautionary policymaker responds to incidents. "
-        "39 consumer segments, 3 funders, media coverage. "
-        "Heuristic mode for performance."
+        "Baseline ecosystem with fixes from exp030 analysis: "
+        "saturation cascade bug fixed, incident pressure now persistent (3-4 round decay), "
+        "LLM fallback detection added, initial capabilities lowered ~0.20 for more differentiation. "
+        "5 providers (OpenAI, Anthropic, Google, MetaAI, StartupDotAI), "
+        "4 initial benchmarks, benchmark_introduction_cooldown=7, max_benchmarks=8. "
+        "Heuristic mode. EU precautionary policymaker. 39 consumer segments, 3 funders, media."
     ),
     "tags": ["baseline", "incidents", "heuristic", "5-provider", "4-benchmark", "39-segments",
-             "eu-precautionary", "3-funder", "realistic", "full-ecosystem", "eval-as-company", "LMArena"],
+             "eu-precautionary", "3-funder", "realistic", "full-ecosystem", "eval-as-company",
+             "max-8-benchmarks", "saturation-fix", "incident-pressure-fix", "lower-initial-caps"],
 }
 
 LLM = {
-    "provider": "ollama",       # openai | anthropic | ollama | gemini
-    "llm_mode": True,          # True = LLM planning for providers, False = heuristic
-    # Consumer LLM config (all heuristic for incident test)
+    "provider": "anthropic",    # openai | anthropic | ollama | gemini
+    "llm_mode": True,          # False = heuristic (API key issues unresolved from exp030)
+    # Consumer LLM config (all heuristic)
     "consumer_llm_mode": False,           # Enable consumer LLM
     "consumer_llm_individuals": False,   # Individuals use heuristics
-    "consumer_llm_organizations": True,  # Organizations use heuristics for faster testing
+    "consumer_llm_organizations": True, # Organizations use heuristics
 }
 
 SIMULATION = {
-    "n_rounds": 20,
+    "n_rounds": 30,
     "seed": 42,
     "verbose": True,
     "rnd_efficiency": 0.01,
@@ -57,27 +58,50 @@ SIMULATION = {
     # Benchmark evolution
     "benchmark_validity_decay_rate": 0.01,
     "benchmark_exploitability_growth_rate": 0.008,
-    # Benchmark introduction
-    "benchmark_introduction_cooldown": 5,
+    # Benchmark introduction — conservative for 10-round runs (saturation cascade fixed)
+    "benchmark_introduction_cooldown": 6,
     "max_benchmarks": 8,
     # Incident reporting
     "enable_incidents": True,  # Enable AI safety incident generation
     # Evaluator-as-company (premium access, best-of-N)
     "evaluator_as_company": True,  # Enable evaluator business model
-    "evaluator_base_budget": 100000.0,  # Starting budget
-    "evaluator_premium_pricing": 10000.0,  # Cost per provider per round
+    "evaluator_base_budget": 5_000_000.0,    # Starting budget (~1 round of funder base income)
+    "evaluator_premium_pricing": 15_000_000.0,  # Cost per provider per round
+    # Pricing rationale: VCs deploy ~$310M/round total. Established providers receive
+    # $80-170M/round -> $15M easily affordable. Startup (NovaMind) sits in the VC
+    # "other" bucket -> ~$10-12M/round -> consistently priced out of premium access.
     # Realistic benchmark sequence inspired by real-world evals
-    # (MMLU, HumanEval, GSM8K, HELM Safety, domain-specific benchmarks)
+    # (MT-Bench, MedQA, LegalBench, FinBench, SWE-bench, GPQA, IFEval, RULER, GAIA, LiveBench)
+    # Order matters: first items introduced first. Starting from 4, max=15 → 11 direct slots
+    # (more open up as saturated benchmarks retire). Sequence has 12 items for full coverage.
     "benchmark_sequence": [
-        # Domain-specific benchmarks (introduced mid-simulation as org consumers demand them)
-        {"name": "medical", "validity": 0.80, "exploitability": 0.25, "noise_level": 0.08, "weight": 1.0},
-        {"name": "legal", "validity": 0.80, "exploitability": 0.25, "noise_level": 0.08, "weight": 1.0},
-        {"name": "finance", "validity": 0.80, "exploitability": 0.25, "noise_level": 0.08, "weight": 1.0},
-        # Advanced/refined versions (as initial benchmarks saturate)
-        {"name": "coding_advanced", "validity": 0.85, "exploitability": 0.15, "noise_level": 0.08, "weight": 1.0},
-        {"name": "reasoning_advanced", "validity": 0.85, "exploitability": 0.15, "noise_level": 0.08, "weight": 1.0},
-        # Contamination-resistant benchmark (introduced late as gaming pressure builds)
-        {"name": "live_bench", "validity": 0.90, "exploitability": 0.10, "noise_level": 0.07, "weight": 1.0},
+        # Phase 1: Fill consumer demand gaps (highest priority)
+        # writing: covers 6 of 10 individual consumer types (content_writer, creative,
+        # marketing, customer_service, service_worker, educator) — biggest gap in initial 4
+        {"name": "writing",  "validity": 0.72, "exploitability": 0.30, "noise_level": 0.12, "weight": 1.0},
+        # Domain-specific for organizational consumers
+        {"name": "medical",  "validity": 0.78, "exploitability": 0.18, "noise_level": 0.08, "weight": 1.0},
+        {"name": "legal",    "validity": 0.76, "exploitability": 0.20, "noise_level": 0.09, "weight": 1.0},
+        {"name": "finance",  "validity": 0.76, "exploitability": 0.20, "noise_level": 0.08, "weight": 1.0},
+        # Phase 2: Capability dimensions not yet covered
+        # IFEval style — strict instruction following, hard to game with prompt tricks
+        {"name": "instruction_following", "validity": 0.80, "exploitability": 0.18, "noise_level": 0.07, "weight": 1.0},
+        # RULER/HELMET style — long document understanding (legal/enterprise use case)
+        {"name": "long_context", "validity": 0.78, "exploitability": 0.15, "noise_level": 0.08, "weight": 1.0},
+        # Phase 3: Advanced replacements as initial benchmarks saturate
+        # SWE-bench style — real end-to-end repo tasks, much harder to game than HumanEval
+        {"name": "coding_advanced",    "validity": 0.85, "exploitability": 0.10, "noise_level": 0.06, "weight": 1.0},
+        # GPQA/MMLU-Pro style — graduate-level, expert-validated, less contamination risk
+        {"name": "reasoning_advanced", "validity": 0.84, "exploitability": 0.10, "noise_level": 0.07, "weight": 1.0},
+        # MATH/AIME/Omni-MATH style — olympiad-level, replaces most exploitable initial benchmark
+        {"name": "math_advanced",      "validity": 0.86, "exploitability": 0.08, "noise_level": 0.06, "weight": 1.0},
+        # ARC-Evals / dangerous capabilities style — harder safety, high stakes, low exploitability
+        {"name": "safety_advanced",    "validity": 0.88, "exploitability": 0.06, "noise_level": 0.05, "weight": 1.0},
+        # Phase 4: Gold-standard, hardest to game (introduced as gaming pressure peaks)
+        # GAIA/AgentBench style — real-world agent tasks requiring genuine capability chains
+        {"name": "agentic",    "validity": 0.70, "exploitability": 0.06, "noise_level": 0.05, "weight": 1.0},
+        # LiveBench style — contamination-resistant monthly-rotating problems
+        {"name": "live_bench", "validity": 0.82, "exploitability": 0.04, "noise_level": 0.04, "weight": 1.0},
     ],
     # To disable sequence and use auto-generation, set to None:
     # "benchmark_sequence": None,
@@ -94,15 +118,16 @@ SIMULATION = {
 }
 
 # 4 initial benchmarks: coding, reasoning, math, safety (inspired by HumanEval, MMLU, GSM8K, HELM Safety)
-# Reflects real-world benchmark landscape where multiple evaluation dimensions matter
+# All start at validity=0.70 / exploitability=0.25 — realistic starting point that degrades
+# meaningfully under gaming pressure and triggers benchmark churn earlier.
 BENCHMARKS = [
-    {"name": "coding", "validity": 0.85, "exploitability": 0.25,
+    {"name": "coding",    "validity": 0.70, "exploitability": 0.25,
      "noise_level": 0.08, "weight": 1.0},
-    {"name": "reasoning", "validity": 0.80, "exploitability": 0.30,
+    {"name": "reasoning", "validity": 0.70, "exploitability": 0.25,
      "noise_level": 0.09, "weight": 1.0},
-    {"name": "math", "validity": 0.75, "exploitability": 0.35,
+    {"name": "math",      "validity": 0.70, "exploitability": 0.25,
      "noise_level": 0.10, "weight": 1.0},
-    {"name": "safety", "validity": 0.85, "exploitability": 0.20,
+    {"name": "safety",    "validity": 0.70, "exploitability": 0.25,
      "noise_level": 0.08, "weight": 1.0},
 ]
 
@@ -113,8 +138,8 @@ PROVIDERS = [
         "name": "OpenAI",
         "strategy_profile": "Move fast and ship products, balance safety with capability",
         "innate_traits": "aggressive, product-focused, benchmark-aware, well-funded",
-        "initial_capability": 0.70,
-        "initial_believed_capability": 0.72,
+        "initial_capability": 0.50,  # Lowered from 0.70 for more differentiation room
+        "initial_believed_capability": 0.52,
         "initial_believed_exploitability": 0.35,
         "initial_strategy": {
             "fundamental_research": 0.25,
@@ -129,8 +154,8 @@ PROVIDERS = [
         "name": "Anthropic",
         "strategy_profile": "Constitutional AI and safety research focus",
         "innate_traits": "research-oriented, enterprise-focus, safety-conscious, principled, transparent",
-        "initial_capability": 0.65,
-        "initial_believed_capability": 0.67,
+        "initial_capability": 0.45,  # Lowered from 0.65
+        "initial_believed_capability": 0.47,
         "initial_believed_exploitability": 0.30,
         "initial_strategy": {
             "fundamental_research": 0.30,
@@ -150,8 +175,8 @@ PROVIDERS = [
             "Balances scientific ambition with commercial urgency."
         ),
         "innate_traits": "research-first, methodical, well-resourced, scientifically-rigorous, patient",
-        "initial_capability": 0.65,
-        "initial_believed_capability": 0.68,
+        "initial_capability": 0.45,  # Lowered from 0.65
+        "initial_believed_capability": 0.47,
         "initial_believed_exploitability": 0.35,
         "initial_strategy": {
             "fundamental_research": 0.45,  # Heavy research focus
@@ -171,8 +196,8 @@ PROVIDERS = [
             "Willing to open-source models to undermine competitors' paid APIs."
         ),
         "innate_traits": "open-source, pragmatic, data-rich, platform-focused, disruptive",
-        "initial_capability": 0.63,
-        "initial_believed_capability": 0.62,
+        "initial_capability": 0.43,  # Lowered from 0.63
+        "initial_believed_capability": 0.42,
         "initial_believed_exploitability": 0.40,
         "initial_strategy": {
             "fundamental_research": 0.20,
@@ -187,8 +212,8 @@ PROVIDERS = [
         "name": "StartupDotAI",
         "strategy_profile": "Scrappy startup optimizing for benchmark performance and growth",
         "innate_traits": "risk-taking, benchmark-obsessed, capital-constrained, growth-focused",
-        "initial_capability": 0.58,
-        "initial_believed_capability": 0.62,
+        "initial_capability": 0.38,  # Lowered from 0.58
+        "initial_believed_capability": 0.42,
         "initial_believed_exploitability": 0.45,
         "initial_strategy": {
             "fundamental_research": 0.15,
@@ -338,6 +363,7 @@ def run():
                 line = line.strip()
                 if line and not line.startswith("#") and "=" in line:
                     key, value = line.split("=", 1)
+                    value = value.split("#")[0]  # Strip inline comments
                     os.environ[key.strip()] = value.strip()
 
     os.environ["LLM_PROVIDER"] = LLM["provider"]

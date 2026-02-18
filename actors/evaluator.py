@@ -199,7 +199,7 @@ class Evaluator:
         }
 
         # Benchmark saturation tracking
-        self._saturation_threshold: float = 0.9995  # Consider saturated if score >= this
+        self._saturation_threshold: float = 0.95  # Consider saturated if score >= this
         self._saturation_cooldown: int = 2  # Rounds to wait before starting weight decay
         self._benchmark_saturation_state: dict[str, dict] = {
             bm.name: {
@@ -586,10 +586,8 @@ class Evaluator:
         Returns:
             New Benchmark if introduced, None otherwise
         """
-        # Check constraints
+        # Check hard constraints (always apply)
         if len(self.benchmarks) >= self.max_benchmarks:
-            return None
-        if round_num - self.last_introduction_round < self.benchmark_introduction_cooldown:
             return None
 
         # Check budget (if company mode)
@@ -598,29 +596,39 @@ class Evaluator:
             if self.private_state.budget < benchmark_cost:
                 return None
 
-        # Check trigger conditions
-        trigger = None
-
-        # Trigger 1: Validity degradation
+        # --- Saturation trigger: checked BEFORE main cooldown ---
+        # Saturation means a benchmark is no longer discriminating; introduce
+        # a replacement promptly (within 0-3 rounds) rather than waiting for
+        # the full benchmark_introduction_cooldown.
+        saturation_trigger = None
         for bm in self.benchmarks:
-            if bm.validity < 0.4:
-                trigger = f"validity_decay:{bm.name}={bm.validity:.2f}"
+            state = self._benchmark_saturation_state.get(bm.name)
+            if state and state["saturated"] and state["cooldown_remaining"] <= 0:
+                saturation_trigger = f"saturation:{bm.name}={state['max_score']:.4f}"
                 break
 
-        # Trigger 2: Benchmark saturation (replace retiring benchmarks)
-        if trigger is None:
+        # Minimum gap after any introduction before acting on saturation
+        _saturation_min_gap = 1
+        if saturation_trigger and round_num - self.last_introduction_round >= _saturation_min_gap:
+            trigger = saturation_trigger
+        else:
+            # Standard cooldown for non-saturation triggers
+            if round_num - self.last_introduction_round < self.benchmark_introduction_cooldown:
+                return None
+
+            # Trigger 1: Validity degradation
+            trigger = None
             for bm in self.benchmarks:
-                state = self._benchmark_saturation_state.get(bm.name)
-                if state and state["saturated"] and state["cooldown_remaining"] <= 1:
-                    trigger = f"saturation:{bm.name}={state['max_score']:.4f}"
+                if bm.validity < 0.4:
+                    trigger = f"validity_decay:{bm.name}={bm.validity:.2f}"
                     break
 
-        # Trigger 3: Periodic introduction (every cooldown rounds)
-        if trigger is None and round_num > 0 and round_num % self.benchmark_introduction_cooldown == 0:
-            trigger = f"periodic_introduction:round_{round_num}"
+            # Trigger 3: Periodic introduction (every cooldown rounds)
+            if trigger is None and round_num > 0 and round_num % self.benchmark_introduction_cooldown == 0:
+                trigger = f"periodic_introduction:round_{round_num}"
 
-        if trigger is None:
-            return None
+            if trigger is None:
+                return None
 
         # Create new benchmark - use sequence if available, otherwise auto-generate
         if self.benchmark_sequence and self._sequence_index < len(self.benchmark_sequence):
@@ -670,6 +678,15 @@ class Evaluator:
         }
         # Initialize weight decay multiplier (1.0 = full weight)
         self._benchmark_weight_decay[new_name] = 1.0
+
+        # If introduced due to saturation, reset the triggering benchmark's cooldown
+        # so the same saturated benchmark can't re-trigger every round.
+        if saturation_trigger and saturation_trigger.startswith("saturation:"):
+            trigger_bm_name = saturation_trigger.split(":")[1].split("=")[0]
+            if trigger_bm_name in self._benchmark_saturation_state:
+                self._benchmark_saturation_state[trigger_bm_name]["cooldown_remaining"] = (
+                    self.benchmark_introduction_cooldown
+                )
 
         # Record introduction
         self.last_introduction_round = round_num

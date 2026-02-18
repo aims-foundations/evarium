@@ -598,7 +598,9 @@ class ConsumerMarket:
                          provider_strategies: Optional[dict] = None,
                          published_scores: Optional[dict] = None,
                          media_coverage: Optional[dict] = None,
-                         policymaker_data: Optional[dict] = None):
+                         policymaker_data: Optional[dict] = None,
+                         incident_history: Optional[dict] = None,
+                         per_benchmark_scores: Optional[dict] = None):
         """Compute switching proportions within each segment.
 
         Two triggers (same logic as original Consumer, but applied proportionally):
@@ -633,7 +635,7 @@ class ConsumerMarket:
             if seg.llm_mode:
                 seg_switching = self._compute_switching_llm(
                     seg, ground_truth, provider_strategies, published_scores,
-                    media_coverage, policymaker_data
+                    media_coverage, policymaker_data, incident_history, per_benchmark_scores
                 )
             else:
                 seg_switching = self._compute_switching_heuristic(seg)
@@ -731,7 +733,9 @@ class ConsumerMarket:
                                provider_strategies: Optional[dict],
                                published_scores: Optional[dict],
                                media_coverage: Optional[dict],
-                               policymaker_data: Optional[dict]) -> float:
+                               policymaker_data: Optional[dict],
+                               incident_history: Optional[dict] = None,
+                               per_benchmark_scores: Optional[dict] = None) -> float:
         """Compute LLM-based switching decisions for a segment.
 
         Args:
@@ -758,7 +762,8 @@ class ConsumerMarket:
             # Build decision context
             context = self._build_decision_context(
                 seg, provider, ground_truth, provider_strategies,
-                published_scores, media_coverage, policymaker_data
+                published_scores, media_coverage, policymaker_data,
+                incident_history, per_benchmark_scores
             )
 
             # Build prompt based on consumer type
@@ -824,7 +829,9 @@ class ConsumerMarket:
                                 provider_strategies: Optional[dict],
                                 published_scores: Optional[dict],
                                 media_coverage: Optional[dict],
-                                policymaker_data: Optional[dict]) -> dict:
+                                policymaker_data: Optional[dict],
+                                incident_history: Optional[dict] = None,
+                                per_benchmark_scores: Optional[dict] = None) -> dict:
         """Build context dictionary for LLM decision-making."""
         context = {
             "satisfaction": seg.satisfaction.get(provider, 0.5),
@@ -833,7 +840,18 @@ class ConsumerMarket:
             "alternatives": [],
         }
 
-        # Build alternatives list
+        # Provider safety alignment (from strategies)
+        if provider_strategies:
+            context["provider_safety"] = {
+                p: strat.get("safety_alignment", 0.0)
+                for p, strat in provider_strategies.items()
+            }
+
+        # Per-benchmark scores for this provider and alternatives
+        if per_benchmark_scores:
+            context["per_benchmark_scores"] = per_benchmark_scores
+
+        # Build alternatives list (include safety and benchmark scores)
         for alt_provider in self.provider_names:
             if alt_provider == provider:
                 continue
@@ -842,6 +860,8 @@ class ConsumerMarket:
                 "believed_quality": seg.believed_quality.get(alt_provider, 0.5),
                 "satisfaction": seg.satisfaction.get(alt_provider, 0.0),
                 "score": published_scores.get(alt_provider, 0.5) if published_scores else 0.5,
+                "safety": provider_strategies.get(alt_provider, {}).get("safety_alignment", 0.0)
+                          if provider_strategies else 0.0,
             }
             context["alternatives"].append(alt_data)
 
@@ -853,10 +873,37 @@ class ConsumerMarket:
             context["media_sentiment"] = media_coverage.get("sentiment", 0.0)
             context["media_headlines"] = media_coverage.get("headlines", [])
             context["provider_attention"] = media_coverage.get("provider_attention", {}).get(provider, 0.0)
+            context["risk_signals"] = media_coverage.get("risk_signals", [])
 
         # Add regulatory context
         if policymaker_data:
             context["regulatory_pressure"] = len(policymaker_data.get("interventions", []))
+            context["regulatory_interventions"] = [
+                iv.get("type", "unknown") for iv in policymaker_data.get("interventions", [])
+            ]
+
+        # Add incident history for current provider and alternatives
+        if incident_history:
+            # Recent incidents (last 10 rounds) for current provider
+            provider_incs = incident_history.get(provider, [])
+            context["provider_incidents"] = [
+                {
+                    "severity": inc.severity,
+                    "category": inc.category,
+                    "description": inc.description,
+                    "round": inc.round_num,
+                }
+                for inc in provider_incs[-5:]  # Last 5 incidents
+            ]
+            # Incident counts per provider (summary for alternatives)
+            context["incident_counts"] = {
+                p: len(incs) for p, incs in incident_history.items()
+            }
+            # Severity breakdown for current provider
+            sev_counts = {"minor": 0, "moderate": 0, "major": 0, "critical": 0}
+            for inc in provider_incs:
+                sev_counts[inc.severity] = sev_counts.get(inc.severity, 0) + 1
+            context["provider_incident_severity"] = sev_counts
 
         return context
 
@@ -904,53 +951,115 @@ Output ONLY valid JSON with this structure:
         """Build LLM prompt for organizational consumer decision."""
         use_case_label = USE_CASE_PROFILES.get(seg.use_case, {}).get("label", seg.use_case)
 
-        alternatives_text = "\n".join([
-            f"  - {alt['name']}: quality {alt['believed_quality']:.2f}, score {alt['score']:.2f}"
-            for alt in context["alternatives"][:3]
-        ])
-
         compliance_text = ", ".join(seg.compliance_requirements) if seg.compliance_requirements else "None"
 
+        # Current provider safety vs alternatives
+        provider_safety = context.get("provider_safety", {})
+        current_safety = provider_safety.get(provider, 0.0)
+        alt_safety_lines = []
+        for alt in context["alternatives"][:4]:
+            alt_name = alt["name"]
+            alt_saf = provider_safety.get(alt_name, alt.get("safety", 0.0))
+            inc_count = context.get("incident_counts", {}).get(alt_name, 0)
+            alt_safety_lines.append(
+                f"  - {alt_name}: quality {alt['believed_quality']:.2f}, "
+                f"score {alt['score']:.2f}, safety {alt_saf:.2f}, incidents {inc_count}"
+            )
+        alternatives_text = "\n".join(alt_safety_lines) if alt_safety_lines else "  (none)"
+
+        # Per-benchmark scores for org-relevant benchmarks
+        per_bm = context.get("per_benchmark_scores", {})
+        benchmark_lines = []
+        if per_bm:
+            for bm_name, scores in per_bm.items():
+                cur_score = scores.get(provider, None)
+                if cur_score is not None:
+                    top_alt = max(
+                        ((p, s) for p, s in scores.items() if p != provider),
+                        key=lambda x: x[1], default=(None, None)
+                    )
+                    leader_note = f" (leader: {top_alt[0]} {top_alt[1]:.2f})" if top_alt[0] else ""
+                    benchmark_lines.append(f"  - {bm_name}: {cur_score:.3f}{leader_note}")
+        benchmark_text = "\n".join(benchmark_lines) if benchmark_lines else "  (not available)"
+
+        # Incident history for current provider
+        incident_lines = []
+        provider_incidents = context.get("provider_incidents", [])
+        if provider_incidents:
+            sev_counts = context.get("provider_incident_severity", {})
+            incident_lines.append(
+                f"  Current vendor safety record: "
+                f"minor={sev_counts.get('minor',0)}, "
+                f"moderate={sev_counts.get('moderate',0)}, "
+                f"major={sev_counts.get('major',0)}, "
+                f"critical={sev_counts.get('critical',0)}"
+            )
+            for inc in provider_incidents[-3:]:  # Last 3 incidents
+                incident_lines.append(
+                    f"  - [{inc['severity'].upper()}] Round {inc['round']}: {inc['description']}"
+                )
+        else:
+            incident_lines.append(f"  {provider}: no reported incidents")
+        incident_text = "\n".join(incident_lines)
+
+        # Media intelligence
         media_text = ""
         if "media_headlines" in context and context["media_headlines"]:
             headlines = context["media_headlines"][:3]
-            media_text = f"\n**Market Intelligence:**\n" + "\n".join([f"  - {h}" for h in headlines])
+            media_text = "\n**Market Intelligence (Media):**\n" + "\n".join([f"  - {h}" for h in headlines])
             if "media_sentiment" in context:
-                media_text += f"\nMarket sentiment: {context['media_sentiment']:.2f}"
+                sentiment_label = "positive" if context["media_sentiment"] > 0.1 else \
+                                  "negative" if context["media_sentiment"] < -0.1 else "neutral"
+                media_text += f"\n  Sector sentiment: {context['media_sentiment']:.2f} ({sentiment_label})"
+            risk_signals = context.get("risk_signals", [])
+            if risk_signals:
+                media_text += f"\n  Risk signals: {', '.join(risk_signals[:5])}"
 
+        # Regulatory context
         regulatory_text = ""
-        if "regulatory_pressure" in context:
-            regulatory_text = f"\nRegulatory interventions this quarter: {context['regulatory_pressure']}"
+        if "regulatory_pressure" in context and context["regulatory_pressure"] > 0:
+            interventions = context.get("regulatory_interventions", [])
+            regulatory_text = (
+                f"\n**Regulatory Environment:**\n"
+                f"  Active interventions: {context['regulatory_pressure']}\n"
+                f"  Types: {', '.join(set(interventions)) if interventions else 'general oversight'}"
+            )
 
         prompt = f"""You are the decision-making committee for a {use_case_label} organization evaluating AI vendor relationships.
 
-**Current Vendor:**
-- Provider: {provider}
+**Current Vendor: {provider}**
 - Organizational satisfaction: {context['satisfaction']:.2f}/1.0
 - Believed quality: {context['believed_quality']:.2f}/1.0
+- Safety investment: {current_safety:.2f}/1.0
 - Contract tenure: {context['tenure']} quarters
 
-**Alternative Vendors:**
+**Alternative Vendors (quality / score / safety / incidents):**
 {alternatives_text}
+
+**Benchmark Performance (current vendor vs. market leader):**
+{benchmark_text}
+
+**Safety & Incident Record:**
+{incident_text}
 
 **Organizational Constraints:**
 - Compliance requirements: {compliance_text}
 - Integration friction: {seg.integration_friction:.0%} (migration cost)
 - Decision cadence: Review every {seg.decision_delay} quarters
-- Stakeholder sensitivity: {seg.switching_threshold}
+- Stakeholder risk tolerance: {seg.switching_threshold}
 {media_text}
 {regulatory_text}
 
 **Decision Framework:**
-1. Compliance & Regulatory Fit: Does vendor meet our requirements?
-2. Operational Performance: Is satisfaction meeting stakeholder needs?
-3. Cost-Benefit: Do benefits justify migration costs?
-4. Strategic Alignment: Long-term vendor stability and fit?
+1. Safety & Compliance: Does the vendor's incident record and safety investment meet our risk standards?
+2. Performance: Are benchmark scores and satisfaction sufficient for our use case?
+3. Cost-Benefit: Do benefits justify migration costs given integration friction?
+4. Strategic Alignment: Long-term vendor stability, regulatory standing, and mission fit?
 
-Reason through this decision carefully as an organizational committee.
+Reason through this decision carefully as an organizational committee, weighting safety incidents and regulatory signals heavily for a {use_case_label}.
 
 Output ONLY valid JSON with this structure:
-{{"should_switch": true/false, "target_provider": "name" or null, "confidence": 0.0-1.0, "reasoning": "committee decision rationale"}}"""
+{{"should_switch": true/false, "target_provider": "name" or null, "confidence": 0.0-1.0, "reasoning": "committee decision rationale covering safety, performance, and compliance"}}"""
 
         return prompt
 
@@ -1019,12 +1128,29 @@ Output ONLY valid JSON with this structure:
                 "switching_rate": self._last_segment_switching.get(seg.name, 0.0),
             }
 
+        # Collect org LLM reasoning traces
+        org_llm_decisions = {}
+        for seg in self.segments:
+            if seg.consumer_type == "organization" and hasattr(seg, "last_llm_decision") and seg.last_llm_decision:
+                decision = seg.last_llm_decision
+                org_llm_decisions[seg.name] = {
+                    "provider": decision.get("provider"),
+                    "round": decision.get("round"),
+                    "should_switch": decision.get("decision", {}).get("should_switch"),
+                    "target_provider": decision.get("decision", {}).get("target_provider"),
+                    "confidence": decision.get("decision", {}).get("confidence"),
+                    "reasoning": decision.get("decision", {}).get("reasoning", ""),
+                    "use_case": seg.use_case,
+                    "archetype": seg.archetype,
+                }
+
         return {
             "market_shares": market_shares,
             "provider_satisfaction": provider_satisfaction,
             "avg_satisfaction": avg_satisfaction,
             "switching_rate": 0.0,  # set by caller after compute_switching()
             "segment_data": segment_data,
+            "org_llm_decisions": org_llm_decisions,
         }
 
     def save(self, folder: str):

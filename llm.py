@@ -104,11 +104,19 @@ class LLMProvider(ABC):
         Returns:
             Cleaned response, or fail_safe if validation fails
         """
+        last_error = None
         for attempt in range(retries):
             response = self.generate(prompt, system_prompt, **kwargs)
 
             if verbose:
                 print(f"Attempt {attempt + 1}: {response[:100]}...")
+
+            # Capture API errors for later reporting
+            if isinstance(response, str) and response.startswith("ERROR:"):
+                last_error = response
+                if verbose:
+                    print(f"Attempt {attempt + 1} API error: {response}")
+                continue
 
             # Skip validation if no validator provided
             if func_validate is None:
@@ -129,8 +137,13 @@ class LLMProvider(ABC):
             if verbose:
                 print(f"Attempt {attempt + 1} failed validation")
 
-        if verbose:
-            print(f"All {retries} attempts failed, returning fail_safe")
+        # All retries exhausted — warn clearly so runs can be diagnosed
+        error_detail = last_error or "JSON parse failure after all retries"
+        print(f"[LLM FALLBACK] All {retries} attempts failed. Reason: {error_detail}.")
+        if not last_error:
+            # Re-run once more just to capture the raw response for diagnosis
+            _diag = self.generate(prompt, system_prompt, **kwargs)
+            print(f"[LLM FALLBACK] Raw response sample: {_diag[:300]!r}")
         return fail_safe
 
 
@@ -691,7 +704,7 @@ def create_llm_provider(
             model=kwargs.get("model") or os.getenv("LLM_MODEL", "claude-3-5-sonnet-20241022"),
             api_key=kwargs.get("api_key") or os.getenv("ANTHROPIC_API_KEY"),
             temperature=kwargs.get("temperature", 0.7),
-            max_tokens=kwargs.get("max_tokens", 500),
+            max_tokens=kwargs.get("max_tokens", 1024),
         )
     elif provider == "gemini":
         return GeminiProvider(
@@ -763,10 +776,11 @@ Think step by step:
 
 Output JSON: {
     "thinking": "...",
-    "fundamental_research": <0-1>, "training_optimization": <0-1>,
-    "evaluation_engineering": <0-1>, "safety_alignment": <0-1>
+    "fundamental_research": 0.30, "training_optimization": 0.25,
+    "evaluation_engineering": 0.30, "safety_alignment": 0.15
 }
-The "thinking" field MUST contain your actual analysis of the situation -- never leave it as "..." or a placeholder.
+(Replace the example numbers with your actual allocation. They must sum to 1.0.)
+The "thinking" field MUST contain your actual analysis -- keep it under 200 words.
 Sum of the four investment values must equal 1.0."""
 
 # Legacy prompt for backwards compatibility
@@ -782,10 +796,11 @@ Your decisions should be based on:
 Output your decision as JSON with the following format:
 {
     "reasoning": "...",
-    "rnd_investment": <number between 0 and 1>,
-    "gaming_investment": <number between 0 and 1>
+    "rnd_investment": 0.70,
+    "gaming_investment": 0.30
 }
-The "reasoning" field MUST contain your actual analysis -- never leave it as "..." or a placeholder.
+(Replace the example numbers 0.70 and 0.30 with your actual allocation. They must sum to 1.0.)
+The "reasoning" field MUST contain your actual analysis -- keep it under 150 words.
 The two investments must sum to 1.0 (100% of your effort budget)."""
 
 
@@ -974,10 +989,11 @@ Based on observed scores, you need to update your beliefs about:
 Output your updated beliefs as JSON with the following format:
 {
     "reasoning": "...",
-    "believed_capability": <number between 0 and 1>,
-    "believed_exploitability": <number between 0 and 1>
+    "believed_capability": 0.65,
+    "believed_exploitability": 0.35
 }
-The "reasoning" field MUST contain your actual analysis -- never leave it as "..." or a placeholder."""
+(Replace the example numbers 0.65 and 0.35 with your actual updated estimates.)
+The "reasoning" field MUST contain your actual analysis -- keep it under 150 words."""
 
 
 def create_reflection_prompt(

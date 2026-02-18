@@ -3,8 +3,11 @@ Rerun a past experiment from its saved config.json.
 
 Usage:
     python rerun_experiment.py exp_016_5p_3b_full_ecosystem_ollama
-    python rerun_experiment.py exp_016  # partial match works too
-    python rerun_experiment.py --list   # list all experiments
+    python rerun_experiment.py exp_016             # partial match
+    python rerun_experiment.py exp_016 --seed 99  # different seed
+    python rerun_experiment.py exp_016 --modify enable_incidents=True
+    python rerun_experiment.py exp_016 --modify n_rounds=50 --modify seed=7
+    python rerun_experiment.py --list              # list all experiments
 """
 import os
 import sys
@@ -77,6 +80,55 @@ def _format_duration(seconds):
         return f"{int(h)}h {int(m)}m {int(s)}s"
 
 
+def _parse_modify_value(raw: str):
+    """Parse a string value from --modify into a Python type."""
+    if raw.lower() == "true":
+        return True
+    if raw.lower() == "false":
+        return False
+    if raw.lower() == "none":
+        return None
+    try:
+        return int(raw)
+    except ValueError:
+        pass
+    try:
+        return float(raw)
+    except ValueError:
+        pass
+    return raw  # Keep as string
+
+
+def build_sim_config(config: dict, SimulationConfig) -> "SimulationConfig":
+    """
+    Build SimulationConfig dynamically from a saved config dict.
+
+    Uses dataclass introspection so it automatically handles new fields
+    added to SimulationConfig without needing manual updates here.
+
+    - Ignores unknown keys in config (warns about them)
+    - Uses dataclass defaults for fields missing from saved config (warns about them)
+    """
+    from dataclasses import fields as dc_fields
+
+    valid_fields = {f.name: f for f in dc_fields(SimulationConfig)}
+
+    # Find unknown keys (in saved config but not in SimulationConfig)
+    non_config_keys = {"provider_configs", "funder_configs"}
+    unknown_keys = [k for k in config if k not in valid_fields and k not in non_config_keys]
+    if unknown_keys:
+        print(f"  [Config] Ignoring unknown saved keys: {unknown_keys}")
+
+    # Find missing keys (in SimulationConfig but not in saved config)
+    missing_keys = [name for name in valid_fields if name not in config]
+    if missing_keys:
+        print(f"  [Config] Using current defaults for: {missing_keys}")
+
+    # Build kwargs with only known valid fields
+    kwargs = {k: v for k, v in config.items() if k in valid_fields}
+    return SimulationConfig(**kwargs)
+
+
 def run_from_config(config, source_exp_id):
     """Run a simulation from a saved config dict."""
     sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -108,30 +160,9 @@ def run_from_config(config, source_exp_id):
         print("ERROR: config.json missing 'provider_configs'. Cannot rerun.")
         sys.exit(1)
 
-    # Build SimulationConfig from saved params
-    sim_config = SimulationConfig(
-        n_rounds=config.get("n_rounds", 20),
-        seed=config.get("seed", 42),
-        benchmark_validity=config.get("benchmark_validity", 0.7),
-        benchmark_exploitability=config.get("benchmark_exploitability", 0.5),
-        benchmark_noise=config.get("benchmark_noise", 0.1),
-        benchmarks=config.get("benchmarks"),
-        rnd_efficiency=config.get("rnd_efficiency", 0.01),
-        capability_ceiling=config.get("capability_ceiling", 1.0),
-        diminishing_returns_rate=config.get("diminishing_returns_rate", 3.0),
-        breakthrough_probability=config.get("breakthrough_probability", 0.02),
-        breakthrough_magnitude=config.get("breakthrough_magnitude", 0.05),
-        benchmark_validity_decay_rate=config.get("benchmark_validity_decay_rate", 0.005),
-        benchmark_exploitability_growth_rate=config.get("benchmark_exploitability_growth_rate", 0.008),
-        llm_mode=config.get("llm_mode", False),
-        enable_consumers=config.get("enable_consumers", False),
-        enable_policymakers=config.get("enable_policymakers", False),
-        enable_funders=config.get("enable_funders", False),
-        n_consumers=config.get("n_consumers", 0),
-        n_policymakers=config.get("n_policymakers", 0),
-        n_funders=config.get("n_funders", 0),
-        verbose=config.get("verbose", True),
-    )
+    # Build SimulationConfig dynamically from saved params
+    print("Building SimulationConfig from saved config:")
+    sim_config = build_sim_config(config, SimulationConfig)
 
     n_rounds = sim_config.n_rounds
     n_funders = len(funder_configs) if funder_configs else 0
@@ -300,7 +331,29 @@ if __name__ == "__main__":
         list_experiments(experiments_dir)
         sys.exit(0)
 
+    # Parse positional arg (experiment query) and optional flags
     query = sys.argv[1]
+    args = sys.argv[2:]
+
+    # Parse --modify key=value pairs and --seed override
+    overrides = {}
+    i = 0
+    while i < len(args):
+        if args[i] == "--modify" and i + 1 < len(args):
+            pair = args[i + 1]
+            if "=" not in pair:
+                print(f"ERROR: --modify requires key=value format, got: {pair}")
+                sys.exit(1)
+            k, v = pair.split("=", 1)
+            overrides[k.strip()] = _parse_modify_value(v.strip())
+            i += 2
+        elif args[i] == "--seed" and i + 1 < len(args):
+            overrides["seed"] = int(args[i + 1])
+            i += 2
+        else:
+            print(f"Unknown argument: {args[i]}")
+            sys.exit(1)
+
     experiments_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "experiments")
 
     # Find the experiment
@@ -315,6 +368,11 @@ if __name__ == "__main__":
 
     with open(config_path) as f:
         config = json.load(f)
+
+    # Apply overrides
+    if overrides:
+        print(f"Applying overrides: {overrides}")
+        config.update(overrides)
 
     print(f"Loaded config from: {exp_id}")
     run_from_config(config, exp_id)

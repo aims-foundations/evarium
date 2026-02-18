@@ -442,6 +442,28 @@ class GameLogGenerator:
                     sorted(market_shares.items(), key=lambda x: x[1], reverse=True)
                 )
                 lines.append(f"- Market Shares: {shares_str}")
+
+            # Org LLM reasoning traces (only when consumer_llm_organizations=True)
+            org_llm_decisions = consumer_data.get("org_llm_decisions", {})
+            if org_llm_decisions:
+                lines.append("")
+                lines.append("**Organizational Consumer Reasoning (LLM):**")
+                for seg_name, decision in org_llm_decisions.items():
+                    provider = decision.get("provider", "?")
+                    should_switch = decision.get("should_switch", False)
+                    target = decision.get("target_provider")
+                    confidence = decision.get("confidence", 0.0)
+                    reasoning = decision.get("reasoning", "")
+                    use_case = decision.get("use_case", "")
+                    archetype = decision.get("archetype", "")
+                    action = f"SWITCH -> {target}" if should_switch and target else "STAY"
+                    lines.append(
+                        f"- **{seg_name}** ({use_case}, {archetype}) "
+                        f"[{provider}] -> **{action}** (confidence {confidence:.0%})"
+                    )
+                    if reasoning:
+                        lines.append(f"  > {reasoning}")
+
             lines.append("")
 
         # Regulatory activity

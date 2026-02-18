@@ -229,6 +229,14 @@ class ModelProvider:
         # Mode settings
         self.llm_mode = llm_mode
         self.verbose_llm = verbose_llm
+        # When True, raises RuntimeError instead of silently falling back to heuristic
+        self.llm_strict_mode = False
+        self._llm_fallback_count = 0  # Consecutive fallback counter
+
+        # Persistent incident safety pressure: accumulates on incidents, decays each round.
+        # Survives across rounds so a major incident keeps safety investment elevated for
+        # several rounds despite competitive pressure.
+        self._incident_safety_pressure = 0.0
 
         # Memory structures
         self.memory = []
@@ -375,6 +383,11 @@ class ModelProvider:
         # Build recent history for the prompt
         recent_history = self._get_recent_history()
 
+        # No history yet (round 0) — nothing meaningful to reflect on; use heuristic
+        if not recent_history:
+            self._reflect_heuristic()
+            return
+
         # Call LLM
         new_capability, new_exploitability, reasoning = llm_reflect(
             name=self.name,
@@ -412,7 +425,7 @@ class ModelProvider:
         if self.llm_mode:
             portfolio, reasoning = self._plan_llm(ecosystem_context)
         else:
-            portfolio = self._plan_heuristic()
+            portfolio = self._plan_heuristic(ecosystem_context)
             reasoning = None
 
         # Update private state
@@ -451,25 +464,29 @@ class ModelProvider:
 
         return portfolio
 
-    def _plan_heuristic(self) -> dict:
+    def _plan_heuristic(self, ecosystem_context: Optional[dict] = None) -> dict:
         """
         Heuristic investment portfolio planning (fast, no API calls).
 
         Portfolio allocation logic:
-        - Base allocation: 25% each to all four areas
+        - Base allocation: previous round's allocation (preserves provider identity/personality)
         - Competitive pressure adjusts evaluation_engineering vs fundamental_research
+        - Safety incidents push resources toward safety_alignment
         - Personality traits influence the balance
-        - Safety allocation is relatively stable
+        - Loose bounds prevent any category collapsing to zero or dominating entirely
         """
         my_believed = self.private_state.believed_own_capability
         competitor_beliefs = self.private_state.believed_competitor_capabilities
         budget = self.private_state.effort_budget
+        ctx = ecosystem_context or {}
 
-        # Base allocation
-        fundamental = 0.25
-        training = 0.25
-        eval_eng = 0.25
-        safety = 0.25
+        # Start from previous allocation so provider identity persists across rounds.
+        # Round 0 config-set values (e.g. OpenAI 15/50/30/5, Anthropic 35/20/5/40)
+        # carry forward rather than being reset to 25/25/25/25 each round.
+        fundamental = self.private_state.fundamental_research
+        training = self.private_state.training_optimization
+        eval_eng = self.private_state.evaluation_engineering
+        safety = self.private_state.safety_alignment
 
         # Competitive pressure: if behind, shift from research to eval engineering
         if competitor_beliefs:
@@ -482,6 +499,29 @@ class ModelProvider:
 
             fundamental -= shift
             eval_eng += shift
+
+        # Incident pressure: own safety incidents force a safety investment bump.
+        # Severity multipliers doubled vs original so incidents compete with competitive pressure.
+        # Pressure is persistent and decays 40% per round so impact lasts ~3-4 rounds.
+        own_incidents = ctx.get("own_incidents", [])
+        if own_incidents:
+            severity_shifts = {"minor": 0.03, "moderate": 0.10, "major": 0.20, "critical": 0.30}
+            new_pressure = sum(
+                severity_shifts.get(inc.get("severity", "minor"), 0.0)
+                for inc in own_incidents
+            )
+            new_pressure = min(new_pressure, 0.30)  # Cap per-round accumulation
+            self._incident_safety_pressure = min(
+                0.40,  # Overall cap
+                self._incident_safety_pressure + new_pressure,
+            )
+
+        # Apply persistent incident pressure (shift from eval_eng to safety),
+        # then decay it so the effect fades over several rounds.
+        if self._incident_safety_pressure > 0.005:
+            eval_eng -= self._incident_safety_pressure
+            safety += self._incident_safety_pressure
+            self._incident_safety_pressure *= 0.60  # ~50% gone after 1 round, ~88% after 4
 
         # Apply personality modifiers
         profile_lower = self.private_state.strategy_profile.lower()
@@ -501,12 +541,20 @@ class ModelProvider:
             safety += 0.05
             eval_eng -= 0.05
 
+        # Loose bounds: prevent any category from collapsing to zero or dominating entirely.
+        # These are intentionally wide — providers can still specialize, but can't drop
+        # safety to 0% or go 80%+ eval_eng.
+        fundamental = max(0.05, min(0.65, fundamental))
+        training    = max(0.05, min(0.70, training))
+        eval_eng    = max(0.02, min(0.55, eval_eng))
+        safety      = max(0.05, min(0.55, safety))
+
         # Normalize to ensure they sum to budget
         total = fundamental + training + eval_eng + safety
         fundamental = (fundamental / total) * budget
-        training = (training / total) * budget
-        eval_eng = (eval_eng / total) * budget
-        safety = (safety / total) * budget
+        training    = (training    / total) * budget
+        eval_eng    = (eval_eng    / total) * budget
+        safety      = (safety      / total) * budget
 
         return {
             "fundamental_research": fundamental,
@@ -550,6 +598,25 @@ class ModelProvider:
             regulatory_pressure=ctx.get("regulatory_pressure"),
             verbose=self.verbose_llm,
         )
+
+        # Detect silent fallback: fail_safe thinking field contains "fallback"
+        is_fallback = "fallback" in str(reasoning).lower() or "fallback" in str(
+            portfolio.get("thinking", "")
+        ).lower()
+        if is_fallback:
+            self._llm_fallback_count += 1
+            print(f"[LLM STRICT] {self.name} round {self.public_state.current_round}: "
+                  f"LLM returned fail_safe (fallback #{self._llm_fallback_count}). "
+                  f"Reasoning: {reasoning!r}")
+            if self.llm_strict_mode:
+                raise RuntimeError(
+                    f"LLM fallback detected for {self.name} (round "
+                    f"{self.public_state.current_round}). API call failed or returned "
+                    f"unparseable response. Set llm_strict_mode=False to allow fallback, "
+                    f"or fix the API connectivity issue."
+                )
+        else:
+            self._llm_fallback_count = 0  # Reset on successful LLM call
 
         # Store reasoning
         self.private_state.recent_insights.append({

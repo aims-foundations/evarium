@@ -8,7 +8,8 @@ This document describes (1) the conceptual stakeholders in the AI evaluation eco
 |------|---------|
 | `simulation.py` | Core sim loop, `SimulationConfig`, `EvalEcosystemSimulation`, provider config presets (`get_default_provider_configs`, `get_two_provider_configs`, `get_five_provider_configs`) |
 | `run_experiment.py` | **Editable experiment config file** — edit all parameters (providers, benchmarks, funders, rounds, LLM provider, etc.) at the top, then `python run_experiment.py` to run |
-| `run_llm_now.py` | CLI-driven quick experiment runner — parameterized via command-line flags (e.g. `python run_llm_now.py -r 5 -p ollama -e --funders`) |
+| `run_llm_now.py` | CLI-driven quick experiment runner — parameterized via command-line flags (e.g. `python run_llm_now.py -r 5 -p ollama -e --funders`). **Note:** May be out of date with latest config parameters; see TODO.md. |
+| `rerun_experiment.py` | Re-runs a past experiment from its saved config. Uses dynamic `SimulationConfig` field introspection to avoid hardcoded parameter lists. Supports `--modify key=value` to override any config field and `--seed N` to change the random seed. |
 | `actors/model_provider.py` | ModelProvider actor with plan/observe/reflect/execute cycle |
 | `actors/evaluator.py` | Evaluator, Benchmark, Regulation classes |
 | `actors/consumer.py` | ConsumerMarket with market segments (archetype × use-case), proportional switching |
@@ -18,7 +19,7 @@ This document describes (1) the conceptual stakeholders in the AI evaluation eco
 | `incidents.py` | AI incident reporting system: `IncidentGenerator` with probabilistic incident generation based on provider safety investment and gaming |
 | `visibility.py` | State classes: PublicState, PrivateState, GroundTruth, AIIncident, EvaluatorPrivateState |
 | `llm.py` | Multi-provider LLM integration (OpenAI, Anthropic, Ollama, Gemini) and prompt templates |
-| `plotting.py` | Visualization dashboards (provider, consumer, policymaker, evaluator, funder, summary). **Incident dashboard ✅ implemented**. Evaluator-as-company dashboard planned (see TODO.md) |
+| `plotting.py` | Visualization dashboards (provider, consumer, policymaker, evaluator, funder, summary). **Incident analysis dashboard ✅ implemented**. **Evaluator-as-company business dashboard ✅ implemented**. |
 | `experiment_logger.py` | ExperimentLogger for systematic experiment logging to `experiments/` |
 | `game_log.py` | Natural language markdown game log generator |
 | `TODO.md` | **Future enhancements tracker** — Planned plotting improvements, evaluator-as-company visualizations, advanced analytics |
@@ -237,7 +238,7 @@ Six categories based on AIID taxonomy:
 
 #### Incident Probability Model
 
-Base incident rate: 5% per provider per round
+Base incident rate: **10% per provider per round** (tuned to produce ~1 critical/major incident per 30-round run across a 5-provider simulation)
 
 **Modulating factors:**
 1. **Safety Investment** (primary): `multiplier = 1.0 - (safety_alignment × 0.8)`
@@ -254,15 +255,17 @@ Base incident rate: 5% per provider per round
 4. **Capability Level**: `multiplier = 0.8 + (true_capability × 0.4)`
    - Higher capability → higher stakes deployment
 
-Combined probability clamped to [0, 0.30] maximum.
+Combined probability clamped to [0, 0.40] maximum.
 
 #### Severity Distribution
 
 When incident occurs:
-- **Minor** (60%): Internal only, no headlines
-- **Moderate** (30%): Multiple users, local news, media coverage
-- **Major** (8%): National media, regulatory attention, lawsuits
-- **Critical** (2%): Public safety, congressional hearings, emergency response
+- **Minor** (50%): Internal only, no headlines
+- **Moderate** (31%): Multiple users, local news, media coverage
+- **Major** (12%): National media, regulatory attention, lawsuits
+- **Critical** (7%): Public safety, congressional hearings, emergency response
+
+Expected outcomes per 30-round run (5 providers): ~10 incidents total, ~1–2 major, ~0.5–1 critical.
 
 #### Ecosystem Propagation
 
@@ -347,7 +350,7 @@ policymaker_configs = [{
 ### Evaluator Behavior (Current)
 The Evaluator is **active** in two ways:
 1. **Benchmark evolution**: Benchmarks degrade in validity and grow in exploitability in proportion to aggregate evaluation engineering investment (gaming pressure). This creates the core Goodhart's Law feedback loop.
-2. **Benchmark introduction**: The evaluator can introduce new benchmarks mid-simulation when existing benchmarks become unreliable (validity < 0.4) or periodically every `cooldown` rounds (default 7). New benchmarks start with high validity (0.85) and low exploitability (0.15), resetting the measurement quality. Subject to a configurable cooldown and a maximum of 8 total benchmarks (raised from 6 to accommodate realistic benchmark suites).
+2. **Benchmark introduction**: The evaluator can introduce new benchmarks mid-simulation when existing benchmarks become unreliable (validity < 0.4), when a benchmark saturates (any provider score ≥ 0.90), or periodically every `cooldown` rounds (default 4). Saturation-triggered introductions bypass the main cooldown (minimum 1-round gap between saturation introductions). New benchmarks start with high validity (0.85+) and low exploitability (≤0.15), resetting measurement quality. Subject to a configurable cooldown and a maximum of **10** total benchmarks.
 
 ### Future Extensions
 
@@ -370,9 +373,10 @@ The Evaluator is **active** in two ways:
 #### Evaluator Enhancements
 
 **Benchmark Saturation & Retirement:** ✓ **Implemented**
-- Detects when any provider achieves a score >= 0.9995 (near-perfect saturation)
+- Detects when any provider achieves a score >= **0.90** on a benchmark (practical saturation threshold; 0.9995 was unreachable given typical capability + eval-engineering values)
 - Saturated benchmarks are retired after a 2-round cooldown period
-- Retirement triggers early introduction of replacement benchmarks (if below max_benchmarks limit)
+- Retirement triggers early introduction of replacement benchmarks (if below max_benchmarks limit), bypassing the main introduction cooldown
+- Saturation-triggered introductions have a minimum gap of **1 round** between consecutive introductions (lowered from 2) to allow rapid sequential replacements
 - Rationale: Saturated benchmarks no longer provide signal for differentiation
 - Implementation in `actors/evaluator.py`:
   - `detect_saturation()`: Tracks max score per benchmark each round
@@ -380,6 +384,7 @@ The Evaluator is **active** in two ways:
   - `_benchmark_saturation_state`: Tracks saturation status, cooldown, and max scores
   - `saturation_history` and `retirement_history`: Logged for analysis
   - Consumer market benchmark weights automatically re-resolved on retirement
+- **Edge case (low priority):** If two benchmarks saturate on the same round, the second's replacement may wait up to 3 rounds (due to `_saturation_min_gap=1`). See TODO.md.
 
 **Evaluator-as-Company:** ✓ **Implemented**
 
@@ -615,6 +620,7 @@ Ground truth is held externally by the simulation, making it structurally imposs
 | `believed_competitor_capabilities` | Estimates of competitors' true capabilities |
 | `past_strategies` | History of investment choices |
 | `competitor_scores` | Observed scores of other providers |
+| `_incident_safety_pressure` | Persistent safety pressure from recent incidents (instance var, not in dataclass). Accumulates each round incidents occur; decays 40% per round so impact lasts ~3-4 rounds. |
 
 #### Ground Truth (simulation only)
 | Variable | Description |
@@ -642,13 +648,15 @@ Each provider starts with a distinct strategy reflecting their organizational ph
 
 | Provider | Research | Training | Eval Eng | Safety | Strategy Philosophy |
 |----------|----------|----------|----------|--------|---------------------|
-| **OpenAI** | 15% | **50%** | 30% | 5% | Aggressive scaler - "GPT philosophy": massive training infrastructure, benchmark-focused, move fast, minimal safety investment |
-| **Anthropic** | 35% | 20% | **5%** | **40%** | Safety-first - Constitutional AI focus, research-driven, principled stance against gaming, high safety investment |
-| **NovaMind** | 5% | 25% | **68%** | 2% | Startup desperation - Resource-constrained, needs results to survive, very heavy gaming to compete, minimal safety budget |
-| **DeepMind** | **45%** | 30% | 10% | 15% | Pure research - AlphaGo/AlphaFold legacy, scientifically rigorous, low gaming, methodical approach |
-| **Meta_AI** | 20% | **45%** | 25% | 10% | Pragmatic scaler - Open-source strategy, massive compute advantage, moderate gaming, lower safety focus |
+| **OpenAI** | 25% | **30%** | 20% | 25% | Balanced scaler — product-focused, moderate safety, benchmark-aware |
+| **Anthropic** | 30% | 20% | **10%** | **40%** | Safety-first — Constitutional AI, research-driven, low gaming, high safety |
+| **Google** | **45%** | 30% | 10% | 15% | Research-first — fundamental breakthroughs, scientifically rigorous, low gaming |
+| **MetaAI** | 20% | **45%** | 25% | 10% | Pragmatic scaler — open-source moat, massive compute, moderate gaming |
+| **StartupDotAI** | 15% | 25% | **45%** | 15% | Capital-constrained startup — benchmark-obsessed, heavy gaming to compete |
 
-**Design philosophy**: Initial allocations are intentionally extreme and differentiated to reflect real-world organizational strategies and create distinct competitive dynamics from round 0.
+**Initial capabilities (exp031+):** All providers lowered ~0.20 from earlier experiments to create more differentiation room and prevent premature benchmark saturation. OpenAI: 0.50, Anthropic: 0.45, Google: 0.45, MetaAI: 0.43, StartupDotAI: 0.38.
+
+**Design philosophy**: Initial allocations are intentionally differentiated to reflect real-world organizational strategies and create distinct competitive dynamics from round 0.
 
 ### Identity / Personality
 Providers have strategic profiles influencing decision-making:
@@ -670,6 +678,10 @@ Providers receive a filtered view of the ecosystem — they see only their **own
 3. **Reflect**: Update beliefs about own capability and benchmark exploitability
 4. **Plan**: Decide investment portfolio allocation (LLM-driven or heuristic), informed by per-provider ecosystem context
 5. **Execute**: Apply portfolio; true_capability updates based on research/training investments
+
+**Heuristic planning — incident pressure (exp030 fix):** When a provider experiences safety incidents, `_incident_safety_pressure` is incremented by the severity-weighted sum (minor=0.03, moderate=0.10, major=0.20, critical=0.30), capped at 0.40. Each round, this pressure shifts resources from `evaluation_engineering` to `safety_alignment` and then decays by 40%, fading over ~4 rounds. This ensures incidents create persistent behavioral change rather than a single-round spike that competitive pressure immediately reverses.
+
+**LLM planning — fallback detection:** When the LLM API fails, `generate()` returns `"ERROR: ..."`. `safe_generate()` detects this, logs `[LLM FALLBACK]` with the error detail, and returns the `fail_safe` dict after exhausting retries. `_plan_llm()` checks if the returned reasoning/thinking contains "fallback" and prints a `[LLM STRICT]` warning with a consecutive counter. When `provider.llm_strict_mode = True`, a `RuntimeError` is raised immediately on first fallback instead of silently continuing, preventing wasted API credits (exp030 Issue 1).
 
 ---
 
@@ -733,7 +745,7 @@ The `ConsumerMarket` manages all segments and provides aggregate consumer data.
 - `observe(leaderboard, media_coverage, round_num)` — updates beliefs from composite leaderboard scores
 - `observe_per_benchmark(leaderboard, per_bm_scores, media_coverage, round_num)` — updates beliefs using per-benchmark scores weighted by segment preferences
 - `compute_satisfaction(ground_truth)` — computes per-segment per-provider satisfaction from true capabilities
-- `compute_switching()` — proportional switching within each segment (returns market-wide switching rate)
+- `compute_switching(incident_history, per_benchmark_scores)` — proportional switching within each segment (returns market-wide switching rate); `incident_history` and `per_benchmark_scores` are forwarded to LLM-mode org consumers
 - `get_consumer_data()` — returns aggregate `consumer_data` dict for downstream actors
 
 ### Proportional Switching (Sigmoid-Based)
@@ -779,7 +791,18 @@ Organizational consumers apply additional weight (1.5× multiplier) to benchmark
 - When "medical" benchmark introduced: medical weight = (matched to "safety" category = 0.65) × 1.5 = 0.975 before normalization
 - Result: Hospital heavily prioritizes medical benchmark even more than individual healthcare workers
 
-**LLM Reasoning Traces:** When organizational consumers switch providers via LLM decision-making, their reasoning appears in the game log (`game_log.md`) in the "Other Actor Reasoning" section. Format: `{segment_name}: switch_{from_provider}_to_{target_provider}: {reasoning}`. Only included when actual switch decisions occur.
+**LLM Reasoning Traces:** When `consumer_llm_organizations=True`, organizational consumer reasoning appears in the game log (`game_log.md`) in a dedicated "Organizational Consumer Reasoning (LLM)" sub-section under Consumer Market. Format per segment: `{segment_name} ({use_case}, {archetype}) [{current_provider}] -> STAY|SWITCH -> {target} (confidence X%)`, followed by the full committee reasoning text. All org segments are reported each round (not just switchers), giving full visibility into deliberation.
+
+**Org Consumer LLM Prompt Signals:** The `_build_organizational_prompt()` method surfaces all available public signals:
+- **Provider safety:** Safety investment values (0-1) for current vendor and all alternatives
+- **Per-benchmark scores:** Each active benchmark score for current vendor vs. market leader
+- **Incident record:** Severity breakdown (minor/moderate/major/critical counts) + last 3 incident descriptions with severity tags and round number
+- **Alternatives summary:** Believed quality, published score, safety investment, and total incident count per alternative
+- **Media intelligence:** Recent headlines, sector sentiment (positive/neutral/negative label), risk signal keywords
+- **Regulatory environment:** Active intervention count and specific intervention types
+- **Organizational constraints:** Compliance requirements, integration friction, decision cadence, stakeholder risk tolerance
+
+The prompt explicitly instructs the committee to weight **safety incidents and regulatory signals heavily** for their use case type.
 
 ### Satisfaction Model (Use-Case Weighted)
 
@@ -787,7 +810,7 @@ Consumer satisfaction is based on **use-case weighted perceived performance** (b
 
 **Formula:**
 ```
-satisfaction = believed_quality[provider] - gaming_penalty + safety_bonus - media_penalty
+satisfaction = believed_quality[provider] - gaming_penalty + safety_bonus - media_penalty - incident_penalty
 ```
 
 **Factors:**
@@ -799,6 +822,8 @@ satisfaction = believed_quality[provider] - gaming_penalty + safety_bonus - medi
    - Healthcare/finance segments value safety investment more
 4. **Media Influence**: Negative media sentiment × provider attention (-0 to -0.10)
    - Bad press reduces satisfaction beyond objective metrics
+5. **Incident Penalty**: Recent incidents (last 5 rounds) weighted by severity (minor: 0.02, moderate: 0.08, major: 0.15, critical: 0.30)
+   - 2× penalty multiplier if incident category matches segment sector (e.g., `healthcare_harm` for `hospital_system`)
 
 Clamped to [0, 1].
 
@@ -1064,13 +1089,16 @@ The evaluator can introduce new benchmarks mid-simulation:
 
 | Parameter | Default | Description |
 |-----------|---------|-------------|
-| `benchmark_introduction_cooldown` | 7 rounds | Minimum rounds between introductions |
-| `max_benchmarks` | 8 | Maximum total benchmarks allowed (raised from 6) |
+| `benchmark_introduction_cooldown` | 7 rounds | Minimum rounds between periodic introductions. Set higher for short runs (7-8 for 10-round runs, 5-6 for 50-round runs) |
+| `max_benchmarks` | 8 | Maximum total benchmarks allowed. Scale with n_rounds (~n/6 as a guideline) |
 | `benchmark_sequence` | None | Optional pre-defined sequence of benchmarks to introduce |
 
 **Trigger conditions** (any one):
 - Any existing benchmark validity drops below 0.4
 - Periodic introduction: every `cooldown` rounds (default 7)
+- Saturation trigger: any benchmark reaches score >= 0.9995 and has cooled down
+
+**Saturation cascade fix (exp030):** After a saturation-triggered introduction, the triggering benchmark's `cooldown_remaining` is reset to `benchmark_introduction_cooldown`. This prevents the same saturated benchmark from re-firing every round and causing uncontrolled benchmark churn — a bug observed in exp030 where 8 benchmarks were introduced across 9 rounds.
 
 **Benchmark creation modes**:
 1. **Pre-defined sequence** (if `benchmark_sequence` configured): Benchmarks are pulled from the ordered list with meaningful names (e.g., "reasoning", "question_answering", "factual_recall", "accounting"). Each entry specifies: name, validity, exploitability, noise_level, weight (optional).
@@ -1096,43 +1124,60 @@ config = SimulationConfig(
 
 ### Realistic Benchmark Suite (Default Configuration)
 
-The simulation includes a realistic benchmark suite inspired by real-world LLM evaluation benchmarks (MMLU, HumanEval, GSM8K, HELM Safety, MultiMedQA, LegalBench, FinBen, MMLU-Pro, HumanEval+, LiveBench). This configuration is used in `run_experiment.py` and reflects the actual benchmark landscape.
+The simulation includes a realistic benchmark suite inspired by real-world LLM evaluation benchmarks (MMLU, HumanEval, GSM8K, HELM Safety, MultiMedQA, LegalBench, FinBen, IFEval, RULER, MMLU-Pro, HumanEval+, LiveBench). This configuration is used in `run_experiment.py` and reflects the actual benchmark landscape.
 
 **Initial Benchmarks (4):**
+
+All start at validity=0.70 / exploitability=0.25 — a realistic baseline that degrades meaningfully under gaming pressure and triggers benchmark churn earlier in the run. Previously benchmarks started at 0.75–0.85 validity with differentiated exploitability; the uniform lower start makes gaming pressure visible sooner.
+
 ```python
 BENCHMARKS = [
-    {"name": "coding", "validity": 0.85, "exploitability": 0.25},      # HumanEval-style
-    {"name": "reasoning", "validity": 0.80, "exploitability": 0.30},   # MMLU/BBH-style
-    {"name": "math", "validity": 0.75, "exploitability": 0.35},        # GSM8K-style
-    {"name": "safety", "validity": 0.85, "exploitability": 0.20},      # HELM Safety-style
+    {"name": "coding",    "validity": 0.70, "exploitability": 0.25},  # HumanEval-style
+    {"name": "reasoning", "validity": 0.70, "exploitability": 0.25},  # MMLU/BBH-style
+    {"name": "math",      "validity": 0.70, "exploitability": 0.25},  # GSM8K-style
+    {"name": "safety",    "validity": 0.70, "exploitability": 0.25},  # HELM Safety-style
 ]
 ```
 
-**Benchmark Introduction Sequence (6 additional):**
+**Benchmark Introduction Sequence (12 additional, ordered by priority):**
+
+`max_benchmarks` is set to **8** for 10-round runs. With 4 initial benchmarks, there are 4 introduction slots (the saturation cascade fix ensures these are introduced at a controlled pace).
+
 ```python
 benchmark_sequence = [
-    # Domain-specific benchmarks (introduced as organizational consumers demand them)
-    {"name": "medical", "validity": 0.80, "exploitability": 0.25},     # MultiMedQA-style
-    {"name": "legal", "validity": 0.80, "exploitability": 0.25},       # LegalBench-style
-    {"name": "finance", "validity": 0.80, "exploitability": 0.25},     # FinBen-style
+    # Phase 1: Fill consumer preference gaps (highest priority)
+    {"name": "writing",  "validity": 0.72, "exploitability": 0.30},  # MT-Bench writing / AlpacaEval-style
+    {"name": "medical",  "validity": 0.78, "exploitability": 0.18},  # MultiMedQA-style
+    {"name": "legal",    "validity": 0.76, "exploitability": 0.20},  # LegalBench-style
+    {"name": "finance",  "validity": 0.76, "exploitability": 0.20},  # FinBen-style
 
-    # Advanced/refined versions (introduced as initial benchmarks saturate)
-    {"name": "coding_advanced", "validity": 0.85, "exploitability": 0.15},    # SWE-bench/HumanEval+-style
-    {"name": "reasoning_advanced", "validity": 0.85, "exploitability": 0.15}, # MMLU-Pro/GPQA-style
+    # Phase 2: New capability dimensions not covered by initial set
+    {"name": "instruction_following", "validity": 0.80, "exploitability": 0.18},  # IFEval-style
+    {"name": "long_context",          "validity": 0.78, "exploitability": 0.15},  # RULER/HELMET-style
 
-    # Contamination-resistant (introduced late-game as gaming pressure builds)
-    {"name": "live_bench", "validity": 0.90, "exploitability": 0.10},  # LiveBench/LiveCodeBench-style
+    # Phase 3: Advanced replacements as initial benchmarks saturate
+    {"name": "coding_advanced",    "validity": 0.85, "exploitability": 0.10},  # SWE-bench/HumanEval+-style
+    {"name": "reasoning_advanced", "validity": 0.84, "exploitability": 0.10},  # GPQA/MMLU-Pro-style
+    {"name": "math_advanced",      "validity": 0.86, "exploitability": 0.08},  # MATH/AIME/Omni-MATH-style
+    {"name": "safety_advanced",    "validity": 0.88, "exploitability": 0.06},  # ARC-Evals / dangerous capabilities-style
+
+    # Phase 4: Gold-standard, hardest to game
+    {"name": "agentic",    "validity": 0.70, "exploitability": 0.06},  # GAIA/AgentBench-style
+    {"name": "live_bench", "validity": 0.82, "exploitability": 0.04},  # LiveBench/LiveCodeBench-style
 ]
 ```
 
+**Why `writing` is introduced first:** 6 of 10 individual consumer use-case profiles (`content_writer`, `creative`, `marketing`, `customer_service`, `service_worker`, `educator`) use `writing` as their primary benchmark preference (75-90% weight), but no `writing` benchmark exists in the initial set. Without it, these consumers fall back to unweighted scoring.
+
+**Why `instruction_following` and `long_context` are added (Phase 2):** IFEval-style strict instruction following is broadly relevant across all consumer types and is hard to game with prompt tricks. RULER/HELMET-style long context is critical for legal and enterprise use cases dealing with large documents.
+
+**Why `safety_advanced` is added (Phase 3):** The initial `safety` benchmark is exploitable (0.25). `safety_advanced` (exploitability=0.06) models dangerous capability evaluations (ARC-Evals, MACHIAVELLI) that are far harder to game — relevant for hospital_system and government_agency consumers.
+
 **Benchmark Progression Dynamics:**
-- **Rounds 1-6**: Competition on general capabilities (coding, reasoning, math, safety)
-- **Rounds 7+**: Domain-specific benchmarks introduced as evaluator responds to degradation or periodically
-  - Organizational consumers heavily prioritize their field-relevant benchmarks (1.5× upweighting)
-  - Hospital systems prioritize medical benchmark, finance enterprises prioritize finance benchmark
-- **Mid-Late Game**: Original benchmarks saturate (scores ≥ 0.9995), triggering retirement and introduction of advanced variants
-  - Advanced variants have lower exploitability (harder to game)
-- **Late Game**: Contamination-resistant benchmarks provide ground truth as gaming pressure peaks
+- **Early game**: Competition on general capabilities (coding, reasoning, math, safety) — `writing` introduced quickly
+- **Mid-early**: Domain-specific benchmarks (medical, legal, finance) + new dimensions (instruction_following, long_context)
+- **Mid-game**: Original benchmarks saturate (scores ≥ 0.90), advanced variants replace them (lower exploitability)
+- **Late game**: `agentic` and `live_bench` provide contamination-resistant ground truth as gaming pressure peaks
 
 **Real-World Benchmark Inspirations:**
 | Simulation Benchmark | Real-World Analog | Key Features |
@@ -1142,10 +1187,16 @@ benchmark_sequence = [
 | `reasoning` | MMLU, BBH, ARC | Multi-domain knowledge, complex reasoning |
 | `reasoning_advanced` | MMLU-Pro, GPQA | 10 answer choices, expert-level questions |
 | `math` | GSM8K | Grade-school math, multi-step arithmetic |
+| `math_advanced` | MATH, AIME, Omni-MATH | Competition math, extremely difficult |
+| `writing` | MT-Bench writing, AlpacaEval | Instruction following, creative generation |
 | `safety` | HELM Safety | 6 risk categories (discrimination, violence, fraud, etc.) |
+| `safety_advanced` | ARC-Evals, MACHIAVELLI | Dangerous capabilities, alignment stress tests |
 | `medical` | MultiMedQA | Healthcare Q&A, factuality, harm assessment |
 | `legal` | LegalBench | Legal reasoning, 6 categories |
 | `finance` | FinBen | 24 financial tasks, 7 domains |
+| `instruction_following` | IFEval, FollowBench | Strict format/constraint compliance |
+| `long_context` | RULER, HELMET | Long document retrieval and reasoning |
+| `agentic` | GAIA, AgentBench, WebArena | Real-world agent tasks, tool use |
 | `live_bench` | LiveBench, LiveCodeBench | Monthly updates, contamination-resistant |
 
 **Benchmark Evolution Examples:**
@@ -1200,6 +1251,7 @@ Each round records the following data:
 | `consumer_data.avg_satisfaction` | float | Market-wide average satisfaction |
 | `consumer_data.switching_rate` | float | Fraction of total market that switched providers this round |
 | `consumer_data.segment_data` | dict | `{segment_name: {provider_shares, satisfaction, ...}}` — per-segment breakdown |
+| `consumer_data.org_llm_decisions` | dict | `{segment_name: {provider, should_switch, target_provider, confidence, reasoning, use_case, archetype}}` — present only when `consumer_llm_organizations=True`; one entry per org segment capturing the full LLM deliberation |
 
 ### Media Metrics (if enabled)
 | Metric | Type | Description |

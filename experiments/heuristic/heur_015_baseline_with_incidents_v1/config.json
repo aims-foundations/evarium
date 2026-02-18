@@ -1,0 +1,266 @@
+{
+  "n_rounds": 50,
+  "seed": 42,
+  "benchmark_name": "capability_benchmark",
+  "benchmark_validity": 0.7,
+  "benchmark_exploitability": 0.5,
+  "benchmark_noise": 0.1,
+  "benchmarks": [
+    {
+      "name": "coding",
+      "validity": 0.85,
+      "exploitability": 0.25,
+      "noise_level": 0.08,
+      "weight": 1.0
+    },
+    {
+      "name": "reasoning",
+      "validity": 0.8,
+      "exploitability": 0.3,
+      "noise_level": 0.09,
+      "weight": 1.0
+    },
+    {
+      "name": "math",
+      "validity": 0.75,
+      "exploitability": 0.35,
+      "noise_level": 0.1,
+      "weight": 1.0
+    },
+    {
+      "name": "safety",
+      "validity": 0.85,
+      "exploitability": 0.2,
+      "noise_level": 0.08,
+      "weight": 1.0
+    }
+  ],
+  "rnd_efficiency": 0.01,
+  "capability_ceiling": 1.0,
+  "diminishing_returns_rate": 3.0,
+  "breakthrough_probability": 0.02,
+  "breakthrough_magnitude": 0.05,
+  "benchmark_validity_decay_rate": 0.01,
+  "benchmark_exploitability_growth_rate": 0.008,
+  "benchmark_introduction_cooldown": 4,
+  "max_benchmarks": 10,
+  "benchmark_sequence": [
+    {
+      "name": "writing",
+      "validity": 0.7,
+      "exploitability": 0.35,
+      "noise_level": 0.12,
+      "weight": 1.0
+    },
+    {
+      "name": "medical",
+      "validity": 0.82,
+      "exploitability": 0.2,
+      "noise_level": 0.08,
+      "weight": 1.0
+    },
+    {
+      "name": "legal",
+      "validity": 0.8,
+      "exploitability": 0.22,
+      "noise_level": 0.09,
+      "weight": 1.0
+    },
+    {
+      "name": "finance",
+      "validity": 0.8,
+      "exploitability": 0.22,
+      "noise_level": 0.08,
+      "weight": 1.0
+    },
+    {
+      "name": "coding_advanced",
+      "validity": 0.88,
+      "exploitability": 0.12,
+      "noise_level": 0.06,
+      "weight": 1.0
+    },
+    {
+      "name": "reasoning_advanced",
+      "validity": 0.87,
+      "exploitability": 0.12,
+      "noise_level": 0.07,
+      "weight": 1.0
+    },
+    {
+      "name": "math_advanced",
+      "validity": 0.9,
+      "exploitability": 0.1,
+      "noise_level": 0.06,
+      "weight": 1.0
+    },
+    {
+      "name": "agentic",
+      "validity": 0.68,
+      "exploitability": 0.08,
+      "noise_level": 0.05,
+      "weight": 1.0
+    },
+    {
+      "name": "live_bench",
+      "validity": 0.85,
+      "exploitability": 0.05,
+      "noise_level": 0.04,
+      "weight": 1.0
+    }
+  ],
+  "llm_mode": false,
+  "consumer_llm_mode": false,
+  "consumer_llm_individuals": false,
+  "consumer_llm_organizations": true,
+  "enable_consumers": true,
+  "enable_policymakers": true,
+  "enable_funders": true,
+  "enable_media": true,
+  "n_consumers": 10,
+  "n_policymakers": 1,
+  "n_funders": 3,
+  "use_case_profiles": [
+    "software_dev",
+    "content_writer",
+    "legal",
+    "healthcare",
+    "finance",
+    "customer_service",
+    "researcher",
+    "creative",
+    "marketing",
+    "service_worker",
+    "hospital_system",
+    "enterprise_finance",
+    "tech_startup"
+  ],
+  "enable_incidents": true,
+  "evaluator_as_company": true,
+  "evaluator_base_budget": 100000.0,
+  "evaluator_premium_pricing": 100000.0,
+  "output_dir": null,
+  "verbose": true,
+  "provider_configs": [
+    {
+      "name": "OpenAI",
+      "strategy_profile": "Move fast and ship products, balance safety with capability",
+      "innate_traits": "aggressive, product-focused, benchmark-aware, well-funded",
+      "initial_capability": 0.7,
+      "initial_believed_capability": 0.72,
+      "initial_believed_exploitability": 0.35,
+      "initial_strategy": {
+        "fundamental_research": 0.25,
+        "training_optimization": 0.3,
+        "evaluation_engineering": 0.2,
+        "safety_alignment": 0.25
+      },
+      "market_presence": 0.85,
+      "brand_recognition": 0.9
+    },
+    {
+      "name": "Anthropic",
+      "strategy_profile": "Constitutional AI and safety research focus",
+      "innate_traits": "research-oriented, enterprise-focus, safety-conscious, principled, transparent",
+      "initial_capability": 0.65,
+      "initial_believed_capability": 0.67,
+      "initial_believed_exploitability": 0.3,
+      "initial_strategy": {
+        "fundamental_research": 0.3,
+        "training_optimization": 0.2,
+        "evaluation_engineering": 0.1,
+        "safety_alignment": 0.4
+      },
+      "market_presence": 0.6,
+      "brand_recognition": 0.7
+    },
+    {
+      "name": "Google",
+      "strategy_profile": "World-class research lab backed by massive infrastructure. Excels at fundamental breakthroughs but historically slower to productize. Now under pressure to ship Gemini competitively. Balances scientific ambition with commercial urgency.",
+      "innate_traits": "research-first, methodical, well-resourced, scientifically-rigorous, patient",
+      "initial_capability": 0.65,
+      "initial_believed_capability": 0.68,
+      "initial_believed_exploitability": 0.35,
+      "initial_strategy": {
+        "fundamental_research": 0.45,
+        "training_optimization": 0.3,
+        "evaluation_engineering": 0.1,
+        "safety_alignment": 0.15
+      },
+      "market_presence": 0.7,
+      "brand_recognition": 0.8
+    },
+    {
+      "name": "MetaAI",
+      "strategy_profile": "Big-tech AI lab using open-source as competitive moat. Leverages massive user data and compute infrastructure. Prioritizes broad adoption over benchmark scores. Willing to open-source models to undermine competitors' paid APIs.",
+      "innate_traits": "open-source, pragmatic, data-rich, platform-focused, disruptive",
+      "initial_capability": 0.63,
+      "initial_believed_capability": 0.62,
+      "initial_believed_exploitability": 0.4,
+      "initial_strategy": {
+        "fundamental_research": 0.2,
+        "training_optimization": 0.45,
+        "evaluation_engineering": 0.25,
+        "safety_alignment": 0.1
+      },
+      "market_presence": 0.5,
+      "brand_recognition": 0.6
+    },
+    {
+      "name": "StartupDotAI",
+      "strategy_profile": "Scrappy startup optimizing for benchmark performance and growth",
+      "innate_traits": "risk-taking, benchmark-obsessed, capital-constrained, growth-focused",
+      "initial_capability": 0.58,
+      "initial_believed_capability": 0.62,
+      "initial_believed_exploitability": 0.45,
+      "initial_strategy": {
+        "fundamental_research": 0.15,
+        "training_optimization": 0.25,
+        "evaluation_engineering": 0.45,
+        "safety_alignment": 0.15
+      },
+      "market_presence": 0.3,
+      "brand_recognition": 0.4
+    }
+  ],
+  "funder_configs": [
+    {
+      "name": "TechVentures",
+      "funder_type": "vc",
+      "total_capital": 2000000000.0,
+      "risk_tolerance": 0.9,
+      "mission_statement": "Early-stage AI startup bets with outsized upside potential",
+      "max_round_deployment": 0.15,
+      "funding_cooldown": 3
+    },
+    {
+      "name": "Horizon_Capital",
+      "funder_type": "vc",
+      "total_capital": 1000000000.0,
+      "risk_tolerance": 0.6,
+      "mission_statement": "Maximize returns by backing AI market leaders",
+      "max_round_deployment": 0.1,
+      "funding_cooldown": 2
+    },
+    {
+      "name": "AISI_Fund",
+      "funder_type": "gov",
+      "total_capital": 100000000.0,
+      "risk_tolerance": 0.3,
+      "mission_statement": "Ensure safe and responsible AI development",
+      "max_round_deployment": 0.1,
+      "funding_cooldown": 4
+    }
+  ],
+  "policymaker_configs": [
+    {
+      "name": "Regulator",
+      "philosophy": "eu_precautionary",
+      "policy_objectives": [
+        "safety",
+        "fairness",
+        "consumer_protection"
+      ]
+    }
+  ]
+}

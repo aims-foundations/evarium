@@ -146,11 +146,12 @@ class IncidentGenerator:
     }
 
     # Severity distribution probabilities
+    # Tuned to produce ~1 critical/major incident per 30 rounds across a 5-provider sim
     SEVERITY_PROBS = {
-        "minor": 0.60,
-        "moderate": 0.30,
-        "major": 0.08,
-        "critical": 0.02,
+        "minor": 0.50,
+        "moderate": 0.31,
+        "major": 0.12,
+        "critical": 0.07,
     }
 
     def __init__(self, seed: Optional[int] = None):
@@ -227,7 +228,7 @@ class IncidentGenerator:
         Returns probability clamped to [0, 0.30]
         """
         # Base incident rate
-        base_incident_rate = 0.05  # 5% baseline per round
+        base_incident_rate = 0.10  # 10% baseline per round (tuned for ~1 critical per 30 rounds)
 
         # Factor 1: Safety Investment (primary)
         strategy = provider_strategies.get(provider_name, {})
@@ -264,8 +265,8 @@ class IncidentGenerator:
             * capability_multiplier
         )
 
-        # Clamp to maximum 30% per round
-        return min(incident_prob, 0.30)
+        # Clamp to maximum 40% per round
+        return min(incident_prob, 0.40)
 
     def _create_incident(
         self,
