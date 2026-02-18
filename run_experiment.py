@@ -22,18 +22,17 @@ os.environ["NUMEXPR_NUM_THREADS"] = n_threads_str
 # ============================================================
 
 EXPERIMENT = {
-    "name": "baseline_with_incidents_v2",
+    "name": "us_lighttouch_no_eval_company",
     "description": (
-        "Baseline ecosystem with fixes from exp030 analysis: "
-        "saturation cascade bug fixed, incident pressure now persistent (3-4 round decay), "
-        "LLM fallback detection added, initial capabilities lowered ~0.20 for more differentiation. "
+        "US light-touch policy (threshold=0.75, risk_tolerance=0.7), evaluator-as-company DISABLED. "
+        "Controlled comparison against exp033 (same config, eval-as-company enabled). "
         "5 providers (OpenAI, Anthropic, Google, MetaAI, StartupDotAI), "
-        "4 initial benchmarks, benchmark_introduction_cooldown=7, max_benchmarks=8. "
-        "Heuristic mode. EU precautionary policymaker. 39 consumer segments, 3 funders, media."
+        "4 initial benchmarks + 12-item sequence, max_benchmarks=8. "
+        "LLM mode (Anthropic). 39 consumer segments, 3 funders, media, incidents enabled."
     ),
-    "tags": ["baseline", "incidents", "heuristic", "5-provider", "4-benchmark", "39-segments",
-             "us-light-touch", "3-funder", "realistic", "full-ecosystem", "eval-as-company",
-             "max-8-benchmarks", "saturation-fix", "incident-pressure-fix", "lower-initial-caps"],
+    "tags": ["incidents", "llm", "5-provider", "4-benchmark", "39-segments",
+             "us-light-touch", "3-funder", "full-ecosystem", "no-eval-company",
+             "max-8-benchmarks"],
 }
 
 LLM = {
@@ -64,9 +63,12 @@ SIMULATION = {
     # Incident reporting
     "enable_incidents": True,  # Enable AI safety incident generation
     # Evaluator-as-company (premium access, best-of-N)
-    "evaluator_as_company": True,  # Enable evaluator business model
-    "evaluator_base_budget": 5_000_000.0,    # Starting budget (~1 round of funder base income)
-    "evaluator_premium_pricing": 15_000_000.0,  # Cost per provider per round
+    # "evaluator_as_company": True,          # exp033: enabled
+    # "evaluator_base_budget": 5_000_000.0,
+    # "evaluator_premium_pricing": 15_000_000.0,
+    "evaluator_as_company": False,           # exp034: disabled
+    "evaluator_base_budget": 0.0,
+    "evaluator_premium_pricing": 0.0,
     # Pricing rationale: VCs deploy ~$310M/round total. Established providers receive
     # $80-170M/round -> $15M easily affordable. Startup (NovaMind) sits in the VC
     # "other" bucket -> ~$10-12M/round -> consistently priced out of premium access.
