@@ -48,6 +48,7 @@
 - Experiment results logged to `experiments/` via ExperimentLogger
 - Incremental round logging: `rounds.jsonl` (one JSON line per round, written live)
 - Always update stakeholders.md when making changes to the simulation so that the documentation is up to date. Confirm if unsure.
+- Always update TODO.md when implementing something from it (remove the item) or when identifying new work to track (add it).
 
 ## File Structure Quick Reference
 
