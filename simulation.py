@@ -46,7 +46,7 @@ POLICYMAKER_PRESETS = {
     "us_light_touch": {
         "intervention_threshold": 0.75,  # High threshold - slow to intervene
         "risk_tolerance": 0.7,  # High risk tolerance
-        "policy_objectives": ["safety", "innovation"],
+        "policy_objectives": ["safety", "innovation", "free market"],
     },
     "eu_precautionary": {
         "intervention_threshold": 0.35,  # Low threshold - quick to intervene

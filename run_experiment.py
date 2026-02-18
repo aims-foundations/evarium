@@ -32,7 +32,7 @@ EXPERIMENT = {
         "Heuristic mode. EU precautionary policymaker. 39 consumer segments, 3 funders, media."
     ),
     "tags": ["baseline", "incidents", "heuristic", "5-provider", "4-benchmark", "39-segments",
-             "eu-precautionary", "3-funder", "realistic", "full-ecosystem", "eval-as-company",
+             "us-light-touch", "3-funder", "realistic", "full-ecosystem", "eval-as-company",
              "max-8-benchmarks", "saturation-fix", "incident-pressure-fix", "lower-initial-caps"],
 }
 
@@ -136,10 +136,10 @@ BENCHMARKS = [
 PROVIDERS = [
     {
         "name": "OpenAI",
-        "strategy_profile": "Move fast and ship products, balance safety with capability",
+        "strategy_profile": "Move fast and ship products, consumer focus, balance safety with capability",
         "innate_traits": "aggressive, product-focused, benchmark-aware, well-funded",
-        "initial_capability": 0.50,  # Lowered from 0.70 for more differentiation room
-        "initial_believed_capability": 0.52,
+        "initial_capability": 0.49,  # Lowered from 0.70 for more differentiation room
+        "initial_believed_capability": 0.51,
         "initial_believed_exploitability": 0.35,
         "initial_strategy": {
             "fundamental_research": 0.25,
@@ -152,10 +152,10 @@ PROVIDERS = [
     },
     {
         "name": "Anthropic",
-        "strategy_profile": "Constitutional AI and safety research focus",
-        "innate_traits": "research-oriented, enterprise-focus, safety-conscious, principled, transparent",
-        "initial_capability": 0.45,  # Lowered from 0.65
-        "initial_believed_capability": 0.47,
+        "strategy_profile": "Constitutional AI and safety research focus, reliability and enterprise focus",
+        "innate_traits": "research-oriented, enterprise-focus, coding-focus, safety-conscious, principled, transparent",
+        "initial_capability": 0.50,  # Lowered from 0.65
+        "initial_believed_capability": 0.49,
         "initial_believed_exploitability": 0.30,
         "initial_strategy": {
             "fundamental_research": 0.30,
@@ -175,8 +175,8 @@ PROVIDERS = [
             "Balances scientific ambition with commercial urgency."
         ),
         "innate_traits": "research-first, methodical, well-resourced, scientifically-rigorous, patient",
-        "initial_capability": 0.45,  # Lowered from 0.65
-        "initial_believed_capability": 0.47,
+        "initial_capability": 0.47,  # Lowered from 0.65
+        "initial_believed_capability": 0.48,
         "initial_believed_exploitability": 0.35,
         "initial_strategy": {
             "fundamental_research": 0.45,  # Heavy research focus
@@ -276,18 +276,18 @@ POLICYMAKERS = {
     "n_policymakers": 1,
     # To compare US vs EU: Comment out one config, uncomment the other, update EXPERIMENT["name"]
     "configs": [
-        # EU Precautionary Style (default)
-        {
-            "name": "Regulator",
-            "philosophy": "eu_precautionary",
-            "policy_objectives": ["safety", "fairness", "consumer_protection"],
-        }
-        # # US Light-Touch Style (uncomment to compare, and change EXPERIMENT["name"] to "baseline_us_style_v1")
+        # # EU Precautionary Style (default)
         # {
         #     "name": "Regulator",
-        #     "philosophy": "us_light_touch",
-        #     "policy_objectives": ["safety", "innovation"],
+        #     "philosophy": "eu_precautionary",
+        #     "policy_objectives": ["safety", "fairness", "consumer_protection"],
         # }
+        # US Light-Touch Style (uncomment to compare, and change EXPERIMENT["name"] to "baseline_us_style_v1")
+        {
+            "name": "Regulator",
+            "philosophy": "us_light_touch",
+            "policy_objectives": ["safety", "innovation", "free market"],
+        }
     ],
 }
 
