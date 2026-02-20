@@ -49,6 +49,13 @@ class Policymaker:
         intervention_threshold: float = 0.3,
         risk_tolerance: float = 0.5,
         llm_mode: bool = False,
+        # Enforcement calibration parameters (vary by regulatory style)
+        intervention_cooldown: int = 3,          # Rounds between interventions (EU=2, US=5)
+        sanction_fine_multiplier: float = 0.30,  # Base multiplier in fine formula (EU=0.35, US=0.10)
+        sanction_incident_threshold: int = 2,    # Min major/critical incidents for Condition 2 (EU=2, US=4)
+        sanction_duration: int = 3,              # Rounds a sanction lasts (EU=4, US=2)
+        mandate_risk_threshold: float = 0.60,    # Risk level required to trigger benchmark mandate (EU=0.50, US=0.75)
+        sanction_min_severity: str = "major",    # Min incident severity for Condition 2 (EU="major", US="critical")
     ):
         """
         Initialize a Policymaker.
@@ -86,6 +93,14 @@ class Policymaker:
         self.risk_tolerance = risk_tolerance
         self.llm_mode = llm_mode
 
+        # Enforcement calibration parameters
+        self.intervention_cooldown = intervention_cooldown
+        self.sanction_fine_multiplier = sanction_fine_multiplier
+        self.sanction_incident_threshold = sanction_incident_threshold
+        self.sanction_duration = sanction_duration
+        self.mandate_risk_threshold = mandate_risk_threshold
+        self.sanction_min_severity = sanction_min_severity
+
         # Memory
         self.memory = []
 
@@ -104,6 +119,10 @@ class Policymaker:
 
         # Tier 1 Enhancement: Information request tracking
         self._pending_information_requests: dict = {}  # {provider: {round, type, deadline}}
+
+        # Tier 2: Active sanctions tracking
+        self._active_sanctions: dict = {}
+        # Format: {provider_name: {"fine_amount": float, "expires_round": int, "reason": str}}
 
     @property
     def name(self) -> str:
@@ -225,9 +244,9 @@ class Policymaker:
         # Incident-driven risk belief updates
         if incidents:
             for incident in incidents:
-                # Record incident in observed_incidents
+                # Record incident in observed_incidents (4-element tuple for AI incidents)
                 self.private_state.observed_incidents.append(
-                    (round_num, f"{incident.category}: {incident.description}")
+                    (round_num, f"{incident.category}: {incident.description}", incident.severity, incident.provider)
                 )
 
                 # Update risk beliefs based on severity
@@ -358,6 +377,14 @@ class Policymaker:
         Event-driven triggers: score volatility, declining satisfaction, risk thresholds,
         market concentration, eval engineering levels.
         """
+        round_num = self.public_state.current_round
+
+        # Expire sanctions that have elapsed
+        self._active_sanctions = {
+            p: s for p, s in self._active_sanctions.items()
+            if s["expires_round"] > round_num
+        }
+
         max_risk = max(self.private_state.risk_beliefs.values())
 
         # CRITICAL INCIDENT OVERRIDE: Check for critical incidents from current round
@@ -421,8 +448,8 @@ class Policymaker:
             if t == "mandate_benchmark" and rounds_since_mandate is None:
                 rounds_since_mandate = self.public_state.current_round - r
 
-        # Cooldown: don't intervene again within 3 rounds of last intervention
-        if rounds_since_last_intervention is not None and rounds_since_last_intervention < 3:
+        # Cooldown: don't intervene again within intervention_cooldown rounds of last intervention
+        if rounds_since_last_intervention is not None and rounds_since_last_intervention < self.intervention_cooldown:
             self.memory.append({
                 "type": "planning",
                 "round": self.public_state.current_round,
@@ -519,7 +546,7 @@ class Policymaker:
                 "reason": f"Risk still high ({max_risk:.2f}) after mandate {rounds_since_mandate} rounds ago",
             }
         # High risk + prior investigation -> mandate benchmark (only if not already mandated recently)
-        elif max_risk > 0.6 and has_investigated and not has_mandated:
+        elif max_risk > self.mandate_risk_threshold and has_investigated and not has_mandated:
             intervention = {
                 "type": "mandate_benchmark",
                 "name": f"Benchmark_Mandate_R{self.public_state.current_round}",
@@ -559,6 +586,65 @@ class Policymaker:
                 },
                 "reason": "Consumer satisfaction declining over 3+ rounds",
             }
+
+        # TIER 2: Sanctions and fines (incident-driven, overrides lower-priority interventions)
+
+        # Condition 1: Critical incident this round after a prior public warning
+        sanctions_intervention = None
+        if has_warned:
+            current_critical = [
+                inc_data for inc_data in self.private_state.observed_incidents
+                if inc_data[0] == round_num and len(inc_data) >= 4 and inc_data[2] == "critical"
+            ]
+            for inc_data in current_critical:
+                target = inc_data[3]
+                if target and target not in self._active_sanctions:
+                    market_share = self._last_market_shares.get(target, 0.1) if self._last_market_shares else 0.1
+                    fine_amount = min(0.4, self.sanction_fine_multiplier * market_share * (1.0 - self.risk_tolerance))
+                    sanctions_intervention = {
+                        "type": "sanctions_and_fines",
+                        "name": f"Sanction_{target}_R{round_num}",
+                        "details": {
+                            "provider": target,
+                            "fine_amount": fine_amount,
+                            "duration_rounds": self.sanction_duration,
+                            "expires_round": round_num + self.sanction_duration,
+                            "reason": "Critical incident after public warning",
+                        },
+                        "reason": f"Sanctioning {target}: critical incident after prior public warning",
+                    }
+                    break  # One sanction per round
+
+        # Condition 2: Repeated incidents (severity >= sanction_min_severity) with prior investigation
+        # Severity ordering for threshold comparison
+        _severity_rank = {"minor": 0, "moderate": 1, "major": 2, "critical": 3}
+        _min_rank = _severity_rank.get(self.sanction_min_severity, 2)
+        if sanctions_intervention is None and has_investigated:
+            from collections import defaultdict
+            incident_counts = defaultdict(int)
+            for inc_data in self.private_state.observed_incidents:
+                if len(inc_data) >= 4 and _severity_rank.get(inc_data[2], 0) >= _min_rank:
+                    incident_counts[inc_data[3]] += 1
+            for target, count in incident_counts.items():
+                if count >= self.sanction_incident_threshold and target not in self._active_sanctions:
+                    market_share = self._last_market_shares.get(target, 0.1) if self._last_market_shares else 0.1
+                    fine_amount = min(0.4, self.sanction_fine_multiplier * market_share * (1.0 - self.risk_tolerance))
+                    sanctions_intervention = {
+                        "type": "sanctions_and_fines",
+                        "name": f"Sanction_{target}_R{round_num}",
+                        "details": {
+                            "provider": target,
+                            "fine_amount": fine_amount,
+                            "duration_rounds": self.sanction_duration,
+                            "expires_round": round_num + self.sanction_duration,
+                            "reason": f"Repeated {self.sanction_min_severity}+ incidents",
+                        },
+                        "reason": f"Sanctioning {target}: {count} {self.sanction_min_severity}+ incidents after investigation",
+                    }
+                    break  # One sanction per round
+
+        if sanctions_intervention:
+            intervention = sanctions_intervention
 
         if intervention:
             self.memory.append({
@@ -619,6 +705,14 @@ class Policymaker:
                 "deadline": self.public_state.current_round + intervention["details"]["deadline_rounds"],
             }
 
+        elif intervention["type"] == "sanctions_and_fines":
+            details = intervention["details"]
+            self._active_sanctions[details["provider"]] = {
+                "fine_amount": details["fine_amount"],
+                "expires_round": details["expires_round"],
+                "reason": details["reason"],
+            }
+
         # Public statement (stored in published_scores for simplicity)
         statement = f"[Round {self.public_state.current_round}] Issued {intervention['type']}: {intervention.get('reason', 'N/A')}"
         self.public_state.published_scores.append(
@@ -659,8 +753,8 @@ class Policymaker:
 
         if self.private_state.observed_incidents:
             context += "\nObserved Incidents:\n"
-            for round_num, incident in self.private_state.observed_incidents[-5:]:
-                context += f"  Round {round_num}: {incident}\n"
+            for inc_data in self.private_state.observed_incidents[-5:]:
+                context += f"  Round {inc_data[0]}: {inc_data[1]}\n"
 
         return context
 
@@ -683,6 +777,12 @@ class Policymaker:
                 "intervention_threshold": self.intervention_threshold,
                 "risk_tolerance": self.risk_tolerance,
                 "llm_mode": self.llm_mode,
+                "intervention_cooldown": self.intervention_cooldown,
+                "sanction_fine_multiplier": self.sanction_fine_multiplier,
+                "sanction_incident_threshold": self.sanction_incident_threshold,
+                "sanction_duration": self.sanction_duration,
+                "mandate_risk_threshold": self.mandate_risk_threshold,
+                "sanction_min_severity": self.sanction_min_severity,
             }, f, indent=2)
 
     @classmethod
@@ -703,6 +803,12 @@ class Policymaker:
             intervention_threshold=params.get("intervention_threshold", 0.3),
             risk_tolerance=params.get("risk_tolerance", 0.5),
             llm_mode=params.get("llm_mode", False),
+            intervention_cooldown=params.get("intervention_cooldown", 3),
+            sanction_fine_multiplier=params.get("sanction_fine_multiplier", 0.30),
+            sanction_incident_threshold=params.get("sanction_incident_threshold", 2),
+            sanction_duration=params.get("sanction_duration", 3),
+            mandate_risk_threshold=params.get("mandate_risk_threshold", 0.60),
+            sanction_min_severity=params.get("sanction_min_severity", "major"),
         )
 
         policymaker.public_state = PublicState.from_dict(public_data)

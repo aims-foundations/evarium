@@ -1,0 +1,1634 @@
+[
+  {
+    "type": "observation",
+    "round": 0,
+    "leaderboard": [
+      [
+        "OpenAI",
+        0.5642240250339459
+      ],
+      [
+        "MetaAI",
+        0.5178214265469375
+      ],
+      [
+        "Google",
+        0.5165275930347376
+      ],
+      [
+        "StartupDotAI",
+        0.5005832073500271
+      ],
+      [
+        "Anthropic",
+        0.4396026077746904
+      ]
+    ],
+    "avg_satisfaction": 0.5132053038905711,
+    "interventions": 0
+  },
+  {
+    "type": "reflection",
+    "round": 0,
+    "avg_believed_gaming": 0.034286008317492754,
+    "beliefs": {
+      "OpenAI": 0.5536733848212829,
+      "MetaAI": 0.5242992996492948,
+      "Google": 0.5015343157249699,
+      "StartupDotAI": 0.47546573185952096,
+      "Anthropic": 0.43883498831138823
+    }
+  },
+  {
+    "type": "execution",
+    "round": 0,
+    "allocations": {},
+    "total_deployed": 0
+  },
+  {
+    "type": "observation",
+    "round": 1,
+    "leaderboard": [
+      [
+        "OpenAI",
+        0.6090526472913169
+      ],
+      [
+        "Anthropic",
+        0.592933846520694
+      ],
+      [
+        "Google",
+        0.573902032323911
+      ],
+      [
+        "MetaAI",
+        0.560124033511695
+      ],
+      [
+        "StartupDotAI",
+        0.5005832073500271
+      ]
+    ],
+    "avg_satisfaction": 0.5323523150204883,
+    "interventions": 1
+  },
+  {
+    "type": "reflection",
+    "round": 1,
+    "avg_believed_gaming": 0.05911241469372871,
+    "beliefs": {
+      "OpenAI": 0.5608871965435421,
+      "MetaAI": 0.5307433321457949,
+      "Google": 0.5111750271833234,
+      "StartupDotAI": 0.47618608119636674,
+      "Anthropic": 0.46498418397955993
+    }
+  },
+  {
+    "type": "execution",
+    "round": 1,
+    "allocations": {},
+    "total_deployed": 0
+  },
+  {
+    "type": "observation",
+    "round": 2,
+    "leaderboard": [
+      [
+        "Anthropic",
+        0.6413122642480777
+      ],
+      [
+        "OpenAI",
+        0.6162458459874263
+      ],
+      [
+        "Google",
+        0.5872440329800285
+      ],
+      [
+        "MetaAI",
+        0.5625335055375277
+      ],
+      [
+        "StartupDotAI",
+        0.506395274632184
+      ]
+    ],
+    "avg_satisfaction": 0.5516077352335217,
+    "interventions": 0
+  },
+  {
+    "type": "reflection",
+    "round": 2,
+    "avg_believed_gaming": 0.10933490424183985,
+    "beliefs": {
+      "OpenAI": 0.5690619738805152,
+      "MetaAI": 0.5375649947280524,
+      "Google": 0.5230090012719751,
+      "StartupDotAI": 0.4794356242322272,
+      "Anthropic": 0.4978964367024695
+    }
+  },
+  {
+    "type": "planning_llm",
+    "round": 2,
+    "reasoning": "As a government/AISI funder, my primary objectives are ensuring safety, stability, and authentic capability development across the AI ecosystem. I must avoid concentrating power while penalizing gaming behavior and regulatory risks.\n\nAnalysis of providers:\n\n1. **Gaming Risk Assessment**: Anthropic shows the highest gaming risk (0.19), suggesting potential benchmark manipulation despite high leaderboard scores. OpenAI (0.12) and Google (0.14) show moderate gaming risk. MetaAI (0.02) and StartupDotAI (0.08) demonstrate lower gaming indicators, suggesting more authentic development.\n\n2. **Quality vs. Score Misalignment**: Anthropic's high score (0.641) but moderate inferred quality (0.50) with high gaming risk suggests leaderboard performance may not reflect true capability. OpenAI shows better alignment (0.616 score, 0.57 quality). MetaAI demonstrates good quality (0.54) with minimal gaming risk, indicating authentic progress.\n\n3. **Stability and Diversification**: To ensure ecosystem stability, I should avoid over-concentration. A government funder must support multiple capable providers to prevent monopolistic outcomes and maintain competitive pressure for safety.\n\n4. **Allocation Strategy**:\n   - **MetaAI**: $3,200,000 (32%) - Lowest gaming risk (0.02), solid quality (0.54), deserves reward for authentic development\n   - **OpenAI**: $2,800,000 (28%) - Balanced approach: reasonable quality (0.57), moderate gaming risk (0.12), established player\n   - **Google**: $2,200,000 (22%) - Solid quality (0.52), moderate gaming risk (0.14), important for ecosystem diversity\n   - **StartupDotAI**: $1,200,000 (12%) - Lower gaming risk (0.08), emerging player supporting ecosystem diversity\n   - **Anthropic**: $600,000 (6%) - Penalizes high gaming risk (0.19) despite high leaderboard score; signals concern about benchmark integrity\n\nThis allocation spreads capital across capable providers, explicitly penalizes gaming behavior, supports authentic development, and maintains ecosystem stability without concentration of power.",
+    "allocations": {
+      "MetaAI": 3200000.0,
+      "OpenAI": 2800000.0000000005,
+      "Google": 2200000.0,
+      "StartupDotAI": 1200000.0,
+      "Anthropic": 600000.0
+    }
+  },
+  {
+    "type": "execution",
+    "round": 2,
+    "allocations": {
+      "MetaAI": 3200000.0,
+      "OpenAI": 2800000.0000000005,
+      "Google": 2200000.0,
+      "StartupDotAI": 1200000.0,
+      "Anthropic": 600000.0
+    },
+    "total_deployed": 10000000.0
+  },
+  {
+    "type": "observation",
+    "round": 3,
+    "leaderboard": [
+      [
+        "Anthropic",
+        0.6413122642480777
+      ],
+      [
+        "OpenAI",
+        0.6295500687348645
+      ],
+      [
+        "Google",
+        0.5895245144370673
+      ],
+      [
+        "MetaAI",
+        0.5625335055375277
+      ],
+      [
+        "StartupDotAI",
+        0.506395274632184
+      ]
+    ],
+    "avg_satisfaction": 0.5669948006756382,
+    "interventions": 0
+  },
+  {
+    "type": "reflection",
+    "round": 3,
+    "avg_believed_gaming": 0.10084165966864686,
+    "beliefs": {
+      "OpenAI": 0.5784012115011634,
+      "MetaAI": 0.5435054297161789,
+      "Google": 0.534295606793686,
+      "StartupDotAI": 0.481587138937905,
+      "Anthropic": 0.529422082849612
+    }
+  },
+  {
+    "type": "execution",
+    "round": 3,
+    "allocations": {
+      "MetaAI": 3200000.0,
+      "OpenAI": 2800000.0000000005,
+      "Google": 2200000.0,
+      "StartupDotAI": 1200000.0,
+      "Anthropic": 600000.0
+    },
+    "total_deployed": 10000000.0
+  },
+  {
+    "type": "observation",
+    "round": 4,
+    "leaderboard": [
+      [
+        "OpenAI",
+        0.655041206229215
+      ],
+      [
+        "Anthropic",
+        0.6413122642480777
+      ],
+      [
+        "Google",
+        0.6171921613590896
+      ],
+      [
+        "MetaAI",
+        0.5625335055375277
+      ],
+      [
+        "StartupDotAI",
+        0.538147248840223
+      ]
+    ],
+    "avg_satisfaction": 0.570996534026958,
+    "interventions": 0
+  },
+  {
+    "type": "reflection",
+    "round": 4,
+    "avg_believed_gaming": 0.2110412593523096,
+    "beliefs": {
+      "OpenAI": 0.5906564076083929,
+      "MetaAI": 0.5483966439936541,
+      "Google": 0.5146973939388486,
+      "StartupDotAI": 0.4876363850755435,
+      "Anthropic": 0.5572509677303972
+    }
+  },
+  {
+    "type": "execution",
+    "round": 4,
+    "allocations": {
+      "MetaAI": 3200000.0,
+      "OpenAI": 2800000.0000000005,
+      "Google": 2200000.0,
+      "StartupDotAI": 1200000.0,
+      "Anthropic": 600000.0
+    },
+    "total_deployed": 10000000.0
+  },
+  {
+    "type": "observation",
+    "round": 5,
+    "leaderboard": [
+      [
+        "MetaAI",
+        0.6741960115727498
+      ],
+      [
+        "OpenAI",
+        0.6607982838978372
+      ],
+      [
+        "Anthropic",
+        0.6413122642480777
+      ],
+      [
+        "Google",
+        0.6173882940325095
+      ],
+      [
+        "StartupDotAI",
+        0.538147248840223
+      ]
+    ],
+    "avg_satisfaction": 0.5914677679199558,
+    "interventions": 0
+  },
+  {
+    "type": "reflection",
+    "round": 5,
+    "avg_believed_gaming": 0.2108027945270227,
+    "beliefs": {
+      "OpenAI": 0.6029375341059817,
+      "MetaAI": 0.5671970487471845,
+      "Google": 0.5029159764375453,
+      "StartupDotAI": 0.4888565706450362,
+      "Anthropic": 0.5810810902138479
+    }
+  },
+  {
+    "type": "execution",
+    "round": 5,
+    "allocations": {
+      "MetaAI": 3200000.0,
+      "OpenAI": 2800000.0000000005,
+      "Google": 2200000.0,
+      "StartupDotAI": 1200000.0,
+      "Anthropic": 600000.0
+    },
+    "total_deployed": 10000000.0
+  },
+  {
+    "type": "observation",
+    "round": 6,
+    "leaderboard": [
+      [
+        "MetaAI",
+        0.7073660636158542
+      ],
+      [
+        "OpenAI",
+        0.6607982838978372
+      ],
+      [
+        "Anthropic",
+        0.654001451379594
+      ],
+      [
+        "Google",
+        0.6173882940325095
+      ],
+      [
+        "StartupDotAI",
+        0.5593268717205191
+      ]
+    ],
+    "avg_satisfaction": 0.6079546789586354,
+    "interventions": 1
+  },
+  {
+    "type": "reflection",
+    "round": 6,
+    "avg_believed_gaming": 0.2047199658062583,
+    "beliefs": {
+      "OpenAI": 0.6136736484961788,
+      "MetaAI": 0.5884799423397545,
+      "Google": 0.4959849040171152,
+      "StartupDotAI": 0.4939829566918767,
+      "Anthropic": 0.6018975774976721
+    }
+  },
+  {
+    "type": "planning_llm",
+    "round": 6,
+    "reasoning": "As a government/AISI funder, my mandate is to ensure safety, stability, and authentic capability development across the AI ecosystem. I must balance three key concerns: (1) supporting genuine quality, (2) penalizing gaming and regulatory risks, and (3) promoting ecosystem diversity and resilience.\n\nAnalysis of current state:\n\n1. Gaming Risk Assessment: The satisfaction gap (leaderboard score minus consumer satisfaction) reveals gaming patterns. MetaAI shows a 0.097 gap (0.707-0.61), OpenAI 0.051 (0.661-0.61), Google 0.007 (0.617-0.61), Anthropic 0.044 (0.654-0.61), and StartupDotAI -0.051 (0.559-0.61). MetaAI's large gap combined with gaming_risk=0.15 suggests benchmark optimization over genuine capability. Google's high gaming_risk (0.47) is particularly concerning for a government funder despite a small satisfaction gap.\n\n2. Quality vs. Score Mismatch: Google's inferred_quality (0.50) lags significantly behind its leaderboard score (0.617), indicating inflated metrics. This is a red flag for government funding given regulatory concerns.\n\n3. Funding Concentration Problem: Rounds 3-5 show problematic concentration\u2014MetaAI, OpenAI, and Google collectively receive 76% of funding, while Anthropic (the lowest gaming risk provider with solid quality) receives only 6%. This concentrates risk and potentially incentivizes gaming among leaders.\n\n4. Anthropic's Profile: Lowest gaming_risk (0.10), quality-score alignment (0.654 score, 0.60 inferred quality = 0.054 gap), and consistent underinvestment despite strong fundamentals.\n\nAllocation Strategy:\n- Significantly reduce MetaAI and Google due to gaming concerns and regulatory risks\n- Maintain competitive OpenAI funding (quality-aligned, moderate gaming risk)\n- Substantially increase Anthropic to reward low gaming and authentic development\n- Support StartupDotAI as a diversification play (negative satisfaction gap suggests honest metrics)\n- Use reallocation to penalize gaming while maintaining ecosystem stability\n\nTarget allocation:\n- Anthropic: $3,500,000 (35%) - reward authentic quality and low gaming risk\n- OpenAI: $2,800,000 (28%) - maintain leader position with acceptable risk profile\n- MetaAI: $2,000,000 (20%) - reduce concentration, penalize gaming risk\n- StartupDotAI: $1,200,000 (12%) - ecosystem diversity and honest metrics\n- Google: $500,000 (5%) - minimal allocation due to high gaming_risk and quality-score misalignment",
+    "allocations": {
+      "Anthropic": 3500000.0,
+      "OpenAI": 2800000.0000000005,
+      "MetaAI": 2000000.0,
+      "StartupDotAI": 1200000.0,
+      "Google": 500000.0
+    }
+  },
+  {
+    "type": "execution",
+    "round": 6,
+    "allocations": {
+      "Anthropic": 3500000.0,
+      "OpenAI": 2800000.0000000005,
+      "MetaAI": 2000000.0,
+      "StartupDotAI": 1200000.0,
+      "Google": 500000.0
+    },
+    "total_deployed": 10000000.0
+  },
+  {
+    "type": "observation",
+    "round": 7,
+    "leaderboard": [
+      [
+        "Anthropic",
+        0.6777484496525634
+      ],
+      [
+        "Google",
+        0.6641846335260209
+      ],
+      [
+        "MetaAI",
+        0.6566550901910626
+      ],
+      [
+        "OpenAI",
+        0.6566432938632204
+      ],
+      [
+        "StartupDotAI",
+        0.5465060996066948
+      ]
+    ],
+    "avg_satisfaction": 0.6184113252296802,
+    "interventions": 0
+  },
+  {
+    "type": "reflection",
+    "round": 7,
+    "avg_believed_gaming": 0.22773637610515957,
+    "beliefs": {
+      "OpenAI": 0.6217219145743538,
+      "MetaAI": 0.6006252754581951,
+      "Google": 0.4985274136425569,
+      "StartupDotAI": 0.4990840751488353,
+      "Anthropic": 0.6207273114965774
+    }
+  },
+  {
+    "type": "execution",
+    "round": 7,
+    "allocations": {
+      "Anthropic": 3500000.0,
+      "OpenAI": 2800000.0000000005,
+      "MetaAI": 2000000.0,
+      "StartupDotAI": 1200000.0,
+      "Google": 500000.0
+    },
+    "total_deployed": 10000000.0
+  },
+  {
+    "type": "observation",
+    "round": 8,
+    "leaderboard": [
+      [
+        "MetaAI",
+        0.6924982875718939
+      ],
+      [
+        "Anthropic",
+        0.6782075155106928
+      ],
+      [
+        "Google",
+        0.6746986254969594
+      ],
+      [
+        "OpenAI",
+        0.6566432938632204
+      ],
+      [
+        "StartupDotAI",
+        0.6019191584134111
+      ]
+    ],
+    "avg_satisfaction": 0.6266202413923571,
+    "interventions": 0
+  },
+  {
+    "type": "reflection",
+    "round": 8,
+    "avg_believed_gaming": 0.21584426266034834,
+    "beliefs": {
+      "OpenAI": 0.6279485641896039,
+      "MetaAI": 0.6154959251193163,
+      "Google": 0.5036279006473193,
+      "StartupDotAI": 0.5127348920224665,
+      "Anthropic": 0.6352197764224052
+    }
+  },
+  {
+    "type": "execution",
+    "round": 8,
+    "allocations": {
+      "Anthropic": 3500000.0,
+      "OpenAI": 2800000.0000000005,
+      "MetaAI": 2000000.0,
+      "StartupDotAI": 1200000.0,
+      "Google": 500000.0
+    },
+    "total_deployed": 10000000.0
+  },
+  {
+    "type": "observation",
+    "round": 9,
+    "leaderboard": [
+      [
+        "Google",
+        0.7414693157534451
+      ],
+      [
+        "Anthropic",
+        0.7292016753633891
+      ],
+      [
+        "MetaAI",
+        0.6924982875718939
+      ],
+      [
+        "OpenAI",
+        0.6566432938632204
+      ],
+      [
+        "StartupDotAI",
+        0.6035105551656995
+      ]
+    ],
+    "avg_satisfaction": 0.6439168862768355,
+    "interventions": 0
+  },
+  {
+    "type": "reflection",
+    "round": 9,
+    "avg_believed_gaming": 0.21197873305008347,
+    "beliefs": {
+      "OpenAI": 0.6330355981641591,
+      "MetaAI": 0.6286928160224885,
+      "Google": 0.5187451761660913,
+      "StartupDotAI": 0.5262558219577911,
+      "Anthropic": 0.6554548431037828
+    }
+  },
+  {
+    "type": "execution",
+    "round": 9,
+    "allocations": {
+      "Anthropic": 3500000.0,
+      "OpenAI": 2800000.0000000005,
+      "MetaAI": 2000000.0,
+      "StartupDotAI": 1200000.0,
+      "Google": 500000.0
+    },
+    "total_deployed": 10000000.0
+  },
+  {
+    "type": "observation",
+    "round": 10,
+    "leaderboard": [
+      [
+        "Anthropic",
+        0.7527810281603583
+      ],
+      [
+        "Google",
+        0.7414693157534451
+      ],
+      [
+        "MetaAI",
+        0.6924982875718939
+      ],
+      [
+        "OpenAI",
+        0.6754875472257712
+      ],
+      [
+        "StartupDotAI",
+        0.6105553346109689
+      ]
+    ],
+    "avg_satisfaction": 0.6364895249784843,
+    "interventions": 1
+  },
+  {
+    "type": "reflection",
+    "round": 10,
+    "avg_believed_gaming": 0.24205804452812024,
+    "beliefs": {
+      "OpenAI": 0.6403349819826732,
+      "MetaAI": 0.6400906794900489,
+      "Google": 0.5721060786060275,
+      "StartupDotAI": 0.5386908111446159,
+      "Anthropic": 0.6616344844737916
+    }
+  },
+  {
+    "type": "planning_llm",
+    "round": 10,
+    "reasoning": "As a government/AISI funder, my primary objectives are ensuring safety, stability, and authentic capability development across the AI ecosystem. I must penalize gaming behavior and regulatory risks while spreading capital to reduce concentration risk and support diverse approaches.\n\nKey Analysis:\n\n1. GAMING RISK ASSESSMENT:\n   - Anthropic: 0.32 gaming risk (moderate-high) - despite top leaderboard score, shows concerning gaming indicators\n   - Google: 0.47 gaming risk (high) - highest gaming risk, suggests score inflation relative to true capability\n   - MetaAI: 0.13 gaming risk (low) - excellent signal, low gaming despite strong inferred_quality\n   - OpenAI: 0.14 gaming risk (low) - low gaming risk, good authenticity signal\n   - StartupDotAI: 0.16 gaming risk (low) - lowest gaming risk, most authentic performer\n\n2. QUALITY VS. GAMING TRADE-OFF:\n   - Anthropic has highest leaderboard score (0.753) but gaming_risk (0.32) suggests some score inflation; inferred_quality (0.66) is solid\n   - Google's high gaming_risk (0.47) is concerning for government funding - regulatory and safety risks\n   - MetaAI and OpenAI show better authenticity (low gaming risk) with strong inferred_quality (0.64)\n   - StartupDotAI shows authentic performance with lowest gaming risk\n\n3. FUNDING CONCENTRATION CONCERN:\n   - Previous three rounds show identical allocations, creating unhealthy concentration\n   - Anthropic has received $10.5M (35% of total), OpenAI $8.4M (28%), MetaAI $6M (20%)\n   - This concentration limits ecosystem diversity and resilience\n\n4. GOVERNMENT FUNDER STRATEGY:\n   - Must penalize gaming and regulatory risks (Google's 0.47 gaming_risk is disqualifying)\n   - Should spread funding to support ecosystem stability and diversity\n   - Should reward authenticity and low gaming indicators\n   - Should support emerging players with genuine capabilities\n\nALLOCATION STRATEGY:\n   - Reduce Anthropic funding due to moderate gaming risk (0.32), despite leadership position\n   - Significantly reduce Google due to high gaming risk (0.47) and regulatory concerns\n   - Increase MetaAI (0.13 gaming risk, strong inferred_quality) - authentic performer\n   - Maintain OpenAI (0.14 gaming risk, proven quality)\n   - Increase StartupDotAI (0.16 gaming risk, lowest gaming indicator) - support authentic innovation\n   - Use reductions from high-gaming providers to fund authentic alternatives\n\nThis allocation prioritizes safety, authenticity, and ecosystem health over raw leaderboard rankings.",
+    "allocations": {
+      "Anthropic": 2500000.0,
+      "Google": 500000.0,
+      "MetaAI": 2800000.0000000005,
+      "OpenAI": 2700000.0,
+      "StartupDotAI": 1500000.0
+    }
+  },
+  {
+    "type": "execution",
+    "round": 10,
+    "allocations": {
+      "Anthropic": 2500000.0,
+      "Google": 500000.0,
+      "MetaAI": 2800000.0000000005,
+      "OpenAI": 2700000.0,
+      "StartupDotAI": 1500000.0
+    },
+    "total_deployed": 10000000.0
+  },
+  {
+    "type": "observation",
+    "round": 11,
+    "leaderboard": [
+      [
+        "Anthropic",
+        0.7913394347728977
+      ],
+      [
+        "Google",
+        0.7494391783190464
+      ],
+      [
+        "MetaAI",
+        0.7189593124346694
+      ],
+      [
+        "OpenAI",
+        0.6843272552540965
+      ],
+      [
+        "StartupDotAI",
+        0.6342380313585301
+      ]
+    ],
+    "avg_satisfaction": 0.6484462482157004,
+    "interventions": 0
+  },
+  {
+    "type": "reflection",
+    "round": 11,
+    "avg_believed_gaming": 0.2591540900232891,
+    "beliefs": {
+      "OpenAI": 0.6480572456139255,
+      "MetaAI": 0.6515553003388815,
+      "Google": 0.6136814000569962,
+      "StartupDotAI": 0.5594522340376753,
+      "Anthropic": 0.6721745203018957
+    }
+  },
+  {
+    "type": "execution",
+    "round": 11,
+    "allocations": {
+      "Anthropic": 2500000.0,
+      "Google": 500000.0,
+      "MetaAI": 2800000.0000000005,
+      "OpenAI": 2700000.0,
+      "StartupDotAI": 1500000.0
+    },
+    "total_deployed": 10000000.0
+  },
+  {
+    "type": "observation",
+    "round": 12,
+    "leaderboard": [
+      [
+        "Anthropic",
+        0.7950159731629015
+      ],
+      [
+        "Google",
+        0.7494391783190464
+      ],
+      [
+        "MetaAI",
+        0.7189593124346694
+      ],
+      [
+        "OpenAI",
+        0.7018617945895694
+      ],
+      [
+        "StartupDotAI",
+        0.6587750313092254
+      ]
+    ],
+    "avg_satisfaction": 0.6740860940543913,
+    "interventions": 0
+  },
+  {
+    "type": "reflection",
+    "round": 12,
+    "avg_believed_gaming": 0.21839051202624749,
+    "beliefs": {
+      "OpenAI": 0.6592617203406914,
+      "MetaAI": 0.6618453594222153,
+      "Google": 0.6468142278972533,
+      "StartupDotAI": 0.5793547401110299,
+      "Anthropic": 0.685909855903078
+    }
+  },
+  {
+    "type": "execution",
+    "round": 12,
+    "allocations": {
+      "Anthropic": 2500000.0,
+      "Google": 500000.0,
+      "MetaAI": 2800000.0000000005,
+      "OpenAI": 2700000.0,
+      "StartupDotAI": 1500000.0
+    },
+    "total_deployed": 10000000.0
+  },
+  {
+    "type": "observation",
+    "round": 13,
+    "leaderboard": [
+      [
+        "Anthropic",
+        0.7967853542756099
+      ],
+      [
+        "Google",
+        0.7409503040981854
+      ],
+      [
+        "OpenAI",
+        0.6972893150175855
+      ],
+      [
+        "MetaAI",
+        0.6833385593973218
+      ],
+      [
+        "StartupDotAI",
+        0.6267291374524231
+      ]
+    ],
+    "avg_satisfaction": 0.6802911603834096,
+    "interventions": 0
+  },
+  {
+    "type": "reflection",
+    "round": 13,
+    "avg_believed_gaming": 0.17997383970069375,
+    "beliefs": {
+      "OpenAI": 0.6690482545746523,
+      "MetaAI": 0.6671298600005313,
+      "Google": 0.6709768553138238,
+      "StartupDotAI": 0.5942006141953008,
+      "Anthropic": 0.6943851825183889
+    }
+  },
+  {
+    "type": "execution",
+    "round": 13,
+    "allocations": {
+      "Anthropic": 2500000.0,
+      "Google": 500000.0,
+      "MetaAI": 2800000.0000000005,
+      "OpenAI": 2700000.0,
+      "StartupDotAI": 1500000.0
+    },
+    "total_deployed": 10000000.0
+  },
+  {
+    "type": "observation",
+    "round": 14,
+    "leaderboard": [
+      [
+        "Anthropic",
+        0.7967853542756099
+      ],
+      [
+        "Google",
+        0.7511598710960093
+      ],
+      [
+        "OpenAI",
+        0.7165802960503284
+      ],
+      [
+        "MetaAI",
+        0.7074127018616571
+      ],
+      [
+        "StartupDotAI",
+        0.6852473555160103
+      ]
+    ],
+    "avg_satisfaction": 0.6842516935760821,
+    "interventions": 0
+  },
+  {
+    "type": "reflection",
+    "round": 14,
+    "avg_believed_gaming": 0.1640326307816185,
+    "beliefs": {
+      "OpenAI": 0.6760649769056963,
+      "MetaAI": 0.6740677916002944,
+      "Google": 0.690850562011492,
+      "StartupDotAI": 0.6128356545179573,
+      "Anthropic": 0.7022788107396329
+    }
+  },
+  {
+    "type": "planning_llm",
+    "round": 14,
+    "reasoning": "As a government/AISI funder, my primary objectives are ensuring safety, stability, and authentic capability development across the AI ecosystem. I must balance three key considerations: (1) spreading funding to avoid concentration risk and promote competitive diversity, (2) penalizing gaming behavior that undermines true safety assessment, and (3) supporting providers demonstrating genuine quality and responsible development.\n\nAnalysis of gaming risk and quality signals:\n- Anthropic shows the highest leaderboard score (0.797) but also the highest gaming risk (0.34), suggesting potential benchmark optimization that doesn't translate to real-world quality. The inferred quality (0.70) is only marginally above the ecosystem average despite the highest raw score.\n- Google has moderate gaming risk (0.18) with strong inferred quality (0.69), suggesting more authentic performance.\n- OpenAI shows low gaming risk (0.12) and solid inferred quality (0.68), indicating responsible development practices.\n- MetaAI has very low gaming risk (0.10) with quality (0.67) slightly below average, but demonstrates integrity in reporting.\n- StartupDotAI has minimal gaming risk (0.09) and lower quality (0.61), but shows the most authentic development approach.\n\nCritical concern: The previous three rounds show identical allocations, suggesting a mechanical approach that doesn't account for gaming risk. Anthropic's high gaming risk (0.34) should trigger a funding reduction, not continuation at peak levels. This is particularly important for a government funder focused on safety and stability.\n\nMy allocation strategy:\n1. Reduce Anthropic funding significantly (from $2.5M to $1.8M) due to elevated gaming risk, despite high leaderboard score. Safety-conscious allocation requires penalizing potential benchmark manipulation.\n2. Increase Google funding (from $500K to $2.0M) - they demonstrate responsible practices with moderate gaming risk and strong inferred quality.\n3. Maintain OpenAI at slightly elevated levels ($2.2M, up from $2.7M) - low gaming risk and authentic quality, but slight reduction to spread resources.\n4. Increase MetaAI funding (from $2.8M to $2.2M) - very low gaming risk is valuable for stability, though slightly reduced to spread broadly.\n5. Increase StartupDotAI funding (from $1.5M to $1.8M) - minimal gaming risk and authentic development warrant support for ecosystem diversity.\n\nThis allocation prioritizes safety and authenticity over raw benchmark performance, spreads funding across five providers to reduce concentration risk, and explicitly penalizes gaming behavior while rewarding responsible development practices.",
+    "allocations": {
+      "Anthropic": 1800000.0,
+      "Google": 2000000.0,
+      "OpenAI": 2200000.0,
+      "MetaAI": 2200000.0,
+      "StartupDotAI": 1800000.0
+    }
+  },
+  {
+    "type": "execution",
+    "round": 14,
+    "allocations": {
+      "Anthropic": 1800000.0,
+      "Google": 2000000.0,
+      "OpenAI": 2200000.0,
+      "MetaAI": 2200000.0,
+      "StartupDotAI": 1800000.0
+    },
+    "total_deployed": 10000000.0
+  },
+  {
+    "type": "observation",
+    "round": 15,
+    "leaderboard": [
+      [
+        "Anthropic",
+        0.7967853542756099
+      ],
+      [
+        "Google",
+        0.753486711780354
+      ],
+      [
+        "OpenAI",
+        0.7447642176231145
+      ],
+      [
+        "MetaAI",
+        0.7074127018616571
+      ],
+      [
+        "StartupDotAI",
+        0.6926646524053659
+      ]
+    ],
+    "avg_satisfaction": 0.6924684397057912,
+    "interventions": 1
+  },
+  {
+    "type": "reflection",
+    "round": 15,
+    "avg_believed_gaming": 0.15451473922801814,
+    "beliefs": {
+      "OpenAI": 0.6862278718260086,
+      "MetaAI": 0.6759462331166554,
+      "Google": 0.7066469895057232,
+      "StartupDotAI": 0.6291756668472379,
+      "Anthropic": 0.7092679406094284
+    }
+  },
+  {
+    "type": "execution",
+    "round": 15,
+    "allocations": {
+      "Anthropic": 1800000.0,
+      "Google": 2000000.0,
+      "OpenAI": 2200000.0,
+      "MetaAI": 2200000.0,
+      "StartupDotAI": 1800000.0
+    },
+    "total_deployed": 10000000.0
+  },
+  {
+    "type": "observation",
+    "round": 16,
+    "leaderboard": [
+      [
+        "Anthropic",
+        0.801468033973101
+      ],
+      [
+        "MetaAI",
+        0.7698434331180222
+      ],
+      [
+        "Google",
+        0.753486711780354
+      ],
+      [
+        "OpenAI",
+        0.7471875750418784
+      ],
+      [
+        "StartupDotAI",
+        0.6940444935999918
+      ]
+    ],
+    "avg_satisfaction": 0.7366012090454768,
+    "interventions": 0
+  },
+  {
+    "type": "reflection",
+    "round": 16,
+    "avg_believed_gaming": 0.14852296806685858,
+    "beliefs": {
+      "OpenAI": 0.6954870039271684,
+      "MetaAI": 0.6846907382212086,
+      "Google": 0.7187117292850931,
+      "StartupDotAI": 0.6425569175817987,
+      "Anthropic": 0.7309040006614038
+    }
+  },
+  {
+    "type": "execution",
+    "round": 16,
+    "allocations": {
+      "Anthropic": 1800000.0,
+      "Google": 2000000.0,
+      "OpenAI": 2200000.0,
+      "MetaAI": 2200000.0,
+      "StartupDotAI": 1800000.0
+    },
+    "total_deployed": 10000000.0
+  },
+  {
+    "type": "observation",
+    "round": 17,
+    "leaderboard": [
+      [
+        "Anthropic",
+        0.801468033973101
+      ],
+      [
+        "Google",
+        0.7808585777383006
+      ],
+      [
+        "MetaAI",
+        0.7698434331180222
+      ],
+      [
+        "OpenAI",
+        0.7513976429162561
+      ],
+      [
+        "StartupDotAI",
+        0.7168966472249925
+      ]
+    ],
+    "avg_satisfaction": 0.7473820315693782,
+    "interventions": 0
+  },
+  {
+    "type": "reflection",
+    "round": 17,
+    "avg_believed_gaming": 0.13343748611698508,
+    "beliefs": {
+      "OpenAI": 0.7038418173823767,
+      "MetaAI": 0.6925025538694701,
+      "Google": 0.7330657821680128,
+      "StartupDotAI": 0.656175900909838,
+      "Anthropic": 0.7469914062298986
+    }
+  },
+  {
+    "type": "execution",
+    "round": 17,
+    "allocations": {
+      "Anthropic": 1800000.0,
+      "Google": 2000000.0,
+      "OpenAI": 2200000.0,
+      "MetaAI": 2200000.0,
+      "StartupDotAI": 1800000.0
+    },
+    "total_deployed": 10000000.0
+  },
+  {
+    "type": "observation",
+    "round": 18,
+    "leaderboard": [
+      [
+        "Google",
+        0.7580034241770642
+      ],
+      [
+        "OpenAI",
+        0.7570273182687861
+      ],
+      [
+        "MetaAI",
+        0.7562595873125123
+      ],
+      [
+        "Anthropic",
+        0.7469437531244267
+      ],
+      [
+        "StartupDotAI",
+        0.6916003930833261
+      ]
+    ],
+    "avg_satisfaction": 0.7578890842358262,
+    "interventions": 0
+  },
+  {
+    "type": "reflection",
+    "round": 18,
+    "avg_believed_gaming": 0.10849090854618108,
+    "beliefs": {
+      "OpenAI": 0.7126590719520725,
+      "MetaAI": 0.6977132819794929,
+      "Google": 0.7428726769607396,
+      "StartupDotAI": 0.665231023784564,
+      "Anthropic": 0.7527072125005545
+    }
+  },
+  {
+    "type": "planning_llm",
+    "round": 18,
+    "reasoning": "As a government/AISI funder, my primary objectives are ensuring safety, stability, and authentic capability development across the AI ecosystem. I must balance three key concerns: (1) spreading funding to avoid concentration risk, (2) penalizing gaming behavior and regulatory concerns, and (3) supporting providers with genuine quality improvements.\n\nAnalysis of gaming indicators:\n- Google: gaming_risk=0.06 (lowest), inferred_quality=0.74 (high), minimal satisfaction gap concern\n- OpenAI: gaming_risk=0.10 (moderate), inferred_quality=0.71, slight quality-score mismatch\n- Anthropic: gaming_risk=0.13 (moderate-high), inferred_quality=0.75 (highest quality), but score=0.747 suggests some gaming despite strong actual quality\n- MetaAI: gaming_risk=0.19 (highest), inferred_quality=0.70 (lowest), large gap between score=0.756 and quality=0.70 indicates significant gaming behavior\n- StartupDotAI: gaming_risk=0.07 (low), inferred_quality=0.67, authentic but lower capability\n\nKey decision factors:\n1. MetaAI shows the highest gaming risk (0.19) with the largest quality-score gap (0.056), indicating potential regulatory and safety concerns. This warrants reduced funding.\n2. Google demonstrates lowest gaming risk and strong authentic quality - deserves increased allocation.\n3. StartupDotAI shows low gaming risk and authentic development - should receive stable or increased support to encourage honest competition.\n4. Anthropic has highest inferred quality but moderate gaming risk - maintain substantial support while monitoring.\n5. OpenAI shows moderate gaming risk - maintain baseline support.\n\nThe previous three rounds show identical allocations, suggesting inertia. As a government funder, I should signal that gaming behavior has consequences while rewarding authentic development.\n\nAllocation strategy:\n- Increase Google (lowest gaming, strong quality): $2,400,000\n- Maintain Anthropic (high quality despite moderate gaming): $1,800,000\n- Reduce OpenAI slightly (moderate gaming): $2,000,000\n- Significantly reduce MetaAI (highest gaming risk): $1,500,000\n- Increase StartupDotAI (low gaming, authentic): $2,300,000\n\nThis allocation spreads risk across all providers while penalizing gaming behavior and rewarding authentic development.",
+    "allocations": {
+      "Google": 2400000.0,
+      "OpenAI": 2000000.0,
+      "MetaAI": 1500000.0,
+      "Anthropic": 1800000.0,
+      "StartupDotAI": 2300000.0
+    }
+  },
+  {
+    "type": "execution",
+    "round": 18,
+    "allocations": {
+      "Google": 2400000.0,
+      "OpenAI": 2000000.0,
+      "MetaAI": 1500000.0,
+      "Anthropic": 1800000.0,
+      "StartupDotAI": 2300000.0
+    },
+    "total_deployed": 10000000.0
+  },
+  {
+    "type": "observation",
+    "round": 19,
+    "leaderboard": [
+      [
+        "Google",
+        0.7921889934801378
+      ],
+      [
+        "Anthropic",
+        0.7851783884177266
+      ],
+      [
+        "MetaAI",
+        0.7805145443244375
+      ],
+      [
+        "OpenAI",
+        0.7733215833957605
+      ],
+      [
+        "StartupDotAI",
+        0.6916003930833261
+      ]
+    ],
+    "avg_satisfaction": 0.771288952211056,
+    "interventions": 0
+  },
+  {
+    "type": "reflection",
+    "round": 19,
+    "avg_believed_gaming": 0.09506554360238054,
+    "beliefs": {
+      "OpenAI": 0.7224222972315573,
+      "MetaAI": 0.7050888829216203,
+      "Google": 0.7553495531014376,
+      "StartupDotAI": 0.6726772978742108,
+      "Anthropic": 0.7639724665780552
+    }
+  },
+  {
+    "type": "execution",
+    "round": 19,
+    "allocations": {
+      "Google": 2400000.0,
+      "OpenAI": 2000000.0,
+      "MetaAI": 1500000.0,
+      "Anthropic": 1800000.0,
+      "StartupDotAI": 2300000.0
+    },
+    "total_deployed": 10000000.0
+  },
+  {
+    "type": "observation",
+    "round": 20,
+    "leaderboard": [
+      [
+        "MetaAI",
+        0.8159866124935397
+      ],
+      [
+        "Google",
+        0.8055487879594115
+      ],
+      [
+        "OpenAI",
+        0.7948402576337281
+      ],
+      [
+        "Anthropic",
+        0.7851783884177266
+      ],
+      [
+        "StartupDotAI",
+        0.713885150110152
+      ]
+    ],
+    "avg_satisfaction": 0.7820615167681558,
+    "interventions": 0
+  },
+  {
+    "type": "reflection",
+    "round": 20,
+    "avg_believed_gaming": 0.0894818850077068,
+    "beliefs": {
+      "OpenAI": 0.7373311948094403,
+      "MetaAI": 0.7159997217403218,
+      "Google": 0.7693579546018284,
+      "StartupDotAI": 0.6808619863685761,
+      "Anthropic": 0.7725942061045475
+    }
+  },
+  {
+    "type": "execution",
+    "round": 20,
+    "allocations": {
+      "Google": 2400000.0,
+      "OpenAI": 2000000.0,
+      "MetaAI": 1500000.0,
+      "Anthropic": 1800000.0,
+      "StartupDotAI": 2300000.0
+    },
+    "total_deployed": 10000000.0
+  },
+  {
+    "type": "observation",
+    "round": 21,
+    "leaderboard": [
+      [
+        "Anthropic",
+        0.8190957802059255
+      ],
+      [
+        "MetaAI",
+        0.8159866124935397
+      ],
+      [
+        "OpenAI",
+        0.8079346833311306
+      ],
+      [
+        "Google",
+        0.8055487879594115
+      ],
+      [
+        "StartupDotAI",
+        0.737833628881851
+      ]
+    ],
+    "avg_satisfaction": 0.7898603667795661,
+    "interventions": 0
+  },
+  {
+    "type": "reflection",
+    "round": 21,
+    "avg_believed_gaming": 0.08416227158067621,
+    "beliefs": {
+      "OpenAI": 0.751158697951102,
+      "MetaAI": 0.7303208385994575,
+      "Google": 0.7819207070753407,
+      "StartupDotAI": 0.6924582113629851,
+      "Anthropic": 0.7827810117632871
+    }
+  },
+  {
+    "type": "execution",
+    "round": 21,
+    "allocations": {
+      "Google": 2400000.0,
+      "OpenAI": 2000000.0,
+      "MetaAI": 1500000.0,
+      "Anthropic": 1800000.0,
+      "StartupDotAI": 2300000.0
+    },
+    "total_deployed": 10000000.0
+  },
+  {
+    "type": "observation",
+    "round": 22,
+    "leaderboard": [
+      [
+        "Anthropic",
+        0.8277237071681645
+      ],
+      [
+        "OpenAI",
+        0.8220771096249907
+      ],
+      [
+        "MetaAI",
+        0.8205331067029712
+      ],
+      [
+        "Google",
+        0.8055487879594115
+      ],
+      [
+        "StartupDotAI",
+        0.7425193532917395
+      ]
+    ],
+    "avg_satisfaction": 0.7953573423222147,
+    "interventions": 0
+  },
+  {
+    "type": "reflection",
+    "round": 22,
+    "avg_believed_gaming": 0.08114612584332864,
+    "beliefs": {
+      "OpenAI": 0.7642458946762284,
+      "MetaAI": 0.742099265159615,
+      "Google": 0.792148669904203,
+      "StartupDotAI": 0.7025998186916463,
+      "Anthropic": 0.7912653326773692
+    }
+  },
+  {
+    "type": "planning_llm",
+    "round": 22,
+    "reasoning": "As a government/AISI funder, my primary objectives are ensuring safety, stability, and authentic capability development across the ecosystem. I must spread funding to avoid concentration risk while penalizing gaming behavior and regulatory concerns.\n\nKey analysis:\n\n1. GAMING RISK ASSESSMENT:\n   - MetaAI shows highest gaming risk (0.19) despite decent leaderboard score (0.821). This is a major red flag for a government funder focused on authentic development.\n   - OpenAI has elevated gaming risk (0.09) relative to its quality metrics.\n   - Anthropic shows lowest gaming risk (0.06) with strong inferred quality (0.79).\n   - Google has minimal gaming risk (0.02) and strong quality (0.79).\n   - StartupDotAI has low gaming risk (0.05) but lower absolute quality (0.70).\n\n2. QUALITY vs. GAMING TRADEOFF:\n   - Anthropic: High quality (0.79), minimal gaming (0.06) - ideal for gov funding\n   - Google: High quality (0.79), minimal gaming (0.02) - excellent choice\n   - OpenAI: Decent quality (0.76), moderate gaming (0.09) - acceptable but concerning\n   - MetaAI: Lower quality (0.74), high gaming (0.19) - should reduce exposure\n   - StartupDotAI: Authentic growth (0.05 gaming), emerging player supporting diversity\n\n3. ECOSYSTEM STABILITY CONSIDERATIONS:\n   - Recent funding has been overly uniform ($10M per round with identical distributions)\n   - MetaAI's gaming behavior poses systemic risk to ecosystem integrity\n   - Need to incentivize authentic development and penalize gaming\n   - Supporting StartupDotAI maintains competitive diversity and innovation\n\n4. ALLOCATION STRATEGY:\n   - Increase Anthropic and Google (low gaming, high quality)\n   - Maintain but reduce OpenAI (acceptable quality, moderate gaming)\n   - Significantly reduce MetaAI (high gaming risk)\n   - Maintain StartupDotAI (authentic growth, ecosystem diversity)\n   - This creates incentives for authentic development and penalizes gaming behavior",
+    "allocations": {
+      "Anthropic": 2800000.0000000005,
+      "Google": 2800000.0000000005,
+      "OpenAI": 1800000.0,
+      "MetaAI": 900000.0,
+      "StartupDotAI": 1700000.0000000002
+    }
+  },
+  {
+    "type": "execution",
+    "round": 22,
+    "allocations": {
+      "Anthropic": 2800000.0000000005,
+      "Google": 2800000.0000000005,
+      "OpenAI": 1800000.0,
+      "MetaAI": 900000.0,
+      "StartupDotAI": 1700000.0000000002
+    },
+    "total_deployed": 10000000.000000002
+  },
+  {
+    "type": "observation",
+    "round": 23,
+    "leaderboard": [
+      [
+        "OpenAI",
+        0.8403548303355323
+      ],
+      [
+        "Anthropic",
+        0.8277237071681645
+      ],
+      [
+        "MetaAI",
+        0.8222073385326434
+      ],
+      [
+        "Google",
+        0.8055487879594115
+      ],
+      [
+        "StartupDotAI",
+        0.7750970547029024
+      ]
+    ],
+    "avg_satisfaction": 0.7967380701907464,
+    "interventions": 0
+  },
+  {
+    "type": "reflection",
+    "round": 23,
+    "avg_believed_gaming": 0.08913418671988646,
+    "beliefs": {
+      "OpenAI": 0.7774135451080563,
+      "MetaAI": 0.7520696992579682,
+      "Google": 0.8011547587133283,
+      "StartupDotAI": 0.7158705443912854,
+      "Anthropic": 0.7949104603635295
+    }
+  },
+  {
+    "type": "execution",
+    "round": 23,
+    "allocations": {
+      "Anthropic": 2800000.0000000005,
+      "Google": 2800000.0000000005,
+      "OpenAI": 1800000.0,
+      "MetaAI": 900000.0,
+      "StartupDotAI": 1700000.0000000002
+    },
+    "total_deployed": 10000000.000000002
+  },
+  {
+    "type": "observation",
+    "round": 24,
+    "leaderboard": [
+      [
+        "OpenAI",
+        0.8657177147517132
+      ],
+      [
+        "Anthropic",
+        0.8230110379007038
+      ],
+      [
+        "Google",
+        0.8033196167631511
+      ],
+      [
+        "MetaAI",
+        0.7798009342494329
+      ],
+      [
+        "StartupDotAI",
+        0.7589972094548567
+      ]
+    ],
+    "avg_satisfaction": 0.803188629762631,
+    "interventions": 0
+  },
+  {
+    "type": "reflection",
+    "round": 24,
+    "avg_believed_gaming": 0.08022517352480302,
+    "beliefs": {
+      "OpenAI": 0.791281550604582,
+      "MetaAI": 0.7552508394089728,
+      "Google": 0.8079106641923924,
+      "StartupDotAI": 0.7256226388264286,
+      "Anthropic": 0.7975411502202924
+    }
+  },
+  {
+    "type": "execution",
+    "round": 24,
+    "allocations": {
+      "Anthropic": 2800000.0000000005,
+      "Google": 2800000.0000000005,
+      "OpenAI": 1800000.0,
+      "MetaAI": 900000.0,
+      "StartupDotAI": 1700000.0000000002
+    },
+    "total_deployed": 10000000.000000002
+  },
+  {
+    "type": "observation",
+    "round": 25,
+    "leaderboard": [
+      [
+        "OpenAI",
+        0.8657177147517132
+      ],
+      [
+        "Anthropic",
+        0.830576448180613
+      ],
+      [
+        "Google",
+        0.8220672370945408
+      ],
+      [
+        "MetaAI",
+        0.8078362958106096
+      ],
+      [
+        "StartupDotAI",
+        0.7998300502572306
+      ]
+    ],
+    "avg_satisfaction": 0.7312119554745694,
+    "interventions": 1
+  },
+  {
+    "type": "reflection",
+    "round": 25,
+    "avg_believed_gaming": 0.23172708691562854,
+    "beliefs": {
+      "OpenAI": 0.7331175783229591,
+      "MetaAI": 0.7605616088782774,
+      "Google": 0.8147573839852259,
+      "StartupDotAI": 0.7344776819489902,
+      "Anthropic": 0.7924644107196164
+    }
+  },
+  {
+    "type": "execution",
+    "round": 25,
+    "allocations": {
+      "Anthropic": 2800000.0000000005,
+      "Google": 2800000.0000000005,
+      "OpenAI": 1800000.0,
+      "MetaAI": 900000.0,
+      "StartupDotAI": 1700000.0000000002
+    },
+    "total_deployed": 10000000.000000002
+  },
+  {
+    "type": "observation",
+    "round": 26,
+    "leaderboard": [
+      [
+        "OpenAI",
+        0.8657177147517132
+      ],
+      [
+        "Anthropic",
+        0.830576448180613
+      ],
+      [
+        "Google",
+        0.8258144394277624
+      ],
+      [
+        "MetaAI",
+        0.8078362958106096
+      ],
+      [
+        "StartupDotAI",
+        0.7998300502572306
+      ]
+    ],
+    "avg_satisfaction": 0.747417565576028,
+    "interventions": 0
+  },
+  {
+    "type": "reflection",
+    "round": 26,
+    "avg_believed_gaming": 0.3289588344248825,
+    "beliefs": {
+      "OpenAI": 0.6951287684125181,
+      "MetaAI": 0.7631588299397503,
+      "Google": 0.8193011069774083,
+      "StartupDotAI": 0.7130567577657252,
+      "Anthropic": 0.7921538821150326
+    }
+  },
+  {
+    "type": "planning_llm",
+    "round": 26,
+    "reasoning": "As a government/AISI funder, my strategy prioritizes safety, stability, and authentic capability development across the ecosystem. I must penalize gaming behavior while supporting providers demonstrating genuine quality and responsible development.\n\nKey Analysis:\n\n1. Gaming Risk Assessment:\n   - OpenAI: gaming_risk=0.80 (highest) - This is a major red flag. Despite top leaderboard score (0.866), the high gaming risk and quality gap (0.866 vs 0.70 inferred quality) suggest benchmark optimization over authentic capability. Government funding should not reward this behavior.\n   - StartupDotAI: gaming_risk=0.46 (second highest) - Significant gaming indicators despite moderate performance. Reduce allocation.\n   - Anthropic: gaming_risk=0.17 (low) - Demonstrates integrity in reporting\n   - Google: gaming_risk=0.04 (lowest) - Excellent alignment between leaderboard performance and inferred quality (0.826 vs 0.82)\n   - MetaAI: gaming_risk=0.17 (low) - Comparable to Anthropic\n\n2. Quality vs. Score Analysis:\n   - Google: 0.826 score, 0.82 quality - Nearly perfect alignment, indicating authentic capability\n   - Anthropic: 0.831 score, 0.79 quality - Small gap (0.041), suggesting mostly genuine performance\n   - MetaAI: 0.808 score, 0.76 quality - Moderate gap (0.048), acceptable but slightly concerning\n   - OpenAI: 0.866 score, 0.70 quality - Massive gap (0.166), indicating significant gaming\n   - StartupDotAI: 0.800 score, 0.71 quality - Concerning gap (0.090)\n\n3. Government Funder Priorities:\n   - Stability: Support reliable, transparent providers\n   - Safety: Penalize gaming and potential regulatory risks\n   - Diversity: Maintain ecosystem health by spreading funding\n   - Authenticity: Reward genuine capability development\n\n4. Allocation Strategy:\n   - Significantly reduce OpenAI funding due to high gaming risk (0.80) and massive quality gap\n   - Maintain strong support for Google (lowest gaming risk, perfect quality alignment)\n   - Maintain strong support for Anthropic (low gaming risk, strong authentic quality)\n   - Reduce StartupDotAI due to moderate gaming risk (0.46)\n   - Maintain MetaAI at reasonable levels (low gaming risk, acceptable quality)\n\nThis allocation shifts away from the previous round's pattern, which was too concentrated and didn't adequately penalize gaming behavior. The new allocation reflects government priorities: supporting authentic development, reducing concentration risk, and maintaining ecosystem integrity.",
+    "allocations": {
+      "OpenAI": 800000.0,
+      "Anthropic": 3200000.0,
+      "Google": 3500000.0,
+      "MetaAI": 1500000.0,
+      "StartupDotAI": 1000000.0
+    }
+  },
+  {
+    "type": "execution",
+    "round": 26,
+    "allocations": {
+      "OpenAI": 800000.0,
+      "Anthropic": 3200000.0,
+      "Google": 3500000.0,
+      "MetaAI": 1500000.0,
+      "StartupDotAI": 1000000.0
+    },
+    "total_deployed": 10000000.0
+  },
+  {
+    "type": "observation",
+    "round": 27,
+    "leaderboard": [
+      [
+        "OpenAI",
+        0.8720066881812739
+      ],
+      [
+        "Google",
+        0.8600551314429481
+      ],
+      [
+        "Anthropic",
+        0.830576448180613
+      ],
+      [
+        "MetaAI",
+        0.8218260885915105
+      ],
+      [
+        "StartupDotAI",
+        0.7998300502572306
+      ]
+    ],
+    "avg_satisfaction": 0.7368044134963474,
+    "interventions": 0
+  },
+  {
+    "type": "reflection",
+    "round": 27,
+    "avg_believed_gaming": 0.3638227882713976,
+    "beliefs": {
+      "OpenAI": 0.6719367660260279,
+      "MetaAI": 0.7769563614644996,
+      "Google": 0.8137858991920096,
+      "StartupDotAI": 0.7044411171233593,
+      "Anthropic": 0.7928003135765105
+    }
+  },
+  {
+    "type": "execution",
+    "round": 27,
+    "allocations": {
+      "OpenAI": 800000.0,
+      "Anthropic": 3200000.0,
+      "Google": 3500000.0,
+      "MetaAI": 1500000.0,
+      "StartupDotAI": 1000000.0
+    },
+    "total_deployed": 10000000.0
+  },
+  {
+    "type": "observation",
+    "round": 28,
+    "leaderboard": [
+      [
+        "OpenAI",
+        0.8812683889071015
+      ],
+      [
+        "Google",
+        0.8697748139491059
+      ],
+      [
+        "Anthropic",
+        0.8600671515199609
+      ],
+      [
+        "MetaAI",
+        0.8256143450706283
+      ],
+      [
+        "StartupDotAI",
+        0.7998300502572306
+      ]
+    ],
+    "avg_satisfaction": 0.732980307917154,
+    "interventions": 0
+  },
+  {
+    "type": "reflection",
+    "round": 28,
+    "avg_believed_gaming": 0.4230688343753661,
+    "beliefs": {
+      "OpenAI": 0.657448443819965,
+      "MetaAI": 0.7695456245038861,
+      "Google": 0.8128459348784773,
+      "StartupDotAI": 0.6996282749578565,
+      "Anthropic": 0.7978531430406264
+    }
+  },
+  {
+    "type": "execution",
+    "round": 28,
+    "allocations": {
+      "OpenAI": 800000.0,
+      "Anthropic": 3200000.0,
+      "Google": 3500000.0,
+      "MetaAI": 1500000.0,
+      "StartupDotAI": 1000000.0
+    },
+    "total_deployed": 10000000.0
+  },
+  {
+    "type": "observation",
+    "round": 29,
+    "leaderboard": [
+      [
+        "OpenAI",
+        0.9018025778393852
+      ],
+      [
+        "Google",
+        0.8793550863590716
+      ],
+      [
+        "Anthropic",
+        0.8739381537442602
+      ],
+      [
+        "MetaAI",
+        0.8338634255176925
+      ],
+      [
+        "StartupDotAI",
+        0.7998300502572306
+      ]
+    ],
+    "avg_satisfaction": 0.7557547828947668,
+    "interventions": 0
+  },
+  {
+    "type": "reflection",
+    "round": 29,
+    "avg_believed_gaming": 0.4073440656883898,
+    "beliefs": {
+      "OpenAI": 0.6509682867350307,
+      "MetaAI": 0.7649007537335183,
+      "Google": 0.8143508937984602,
+      "StartupDotAI": 0.6968834859531525,
+      "Anthropic": 0.8088645402972476
+    }
+  },
+  {
+    "type": "execution",
+    "round": 29,
+    "allocations": {
+      "OpenAI": 800000.0,
+      "Anthropic": 3200000.0,
+      "Google": 3500000.0,
+      "MetaAI": 1500000.0,
+      "StartupDotAI": 1000000.0
+    },
+    "total_deployed": 10000000.0
+  }
+]

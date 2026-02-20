@@ -1,0 +1,1742 @@
+[
+  {
+    "type": "observation",
+    "round": 0,
+    "leaderboard": [
+      [
+        "OpenAI",
+        0.5642240250339459
+      ],
+      [
+        "MetaAI",
+        0.5178214265469375
+      ],
+      [
+        "Google",
+        0.5165275930347376
+      ],
+      [
+        "StartupDotAI",
+        0.5005832073500271
+      ],
+      [
+        "Anthropic",
+        0.4396026077746904
+      ]
+    ],
+    "avg_satisfaction": 0.5132053038905711,
+    "interventions": 0
+  },
+  {
+    "type": "reflection",
+    "round": 0,
+    "avg_believed_gaming": 0.034286008317492754,
+    "beliefs": {
+      "OpenAI": 0.5536733848212829,
+      "MetaAI": 0.5242992996492948,
+      "Google": 0.5015343157249699,
+      "StartupDotAI": 0.47546573185952096,
+      "Anthropic": 0.43883498831138823
+    }
+  },
+  {
+    "type": "planning_llm",
+    "round": 0,
+    "reasoning": "As a VC funder, my primary objective is to maximize returns by concentrating capital on the strongest performers with the best risk-adjusted potential. I'll analyze each provider through a return-maximization lens:\n\nOpenAI (score=0.564, quality=0.55, gaming=0.04): Clear market leader with highest leaderboard score and strong inferred quality. The gaming risk of 0.04 is minimal and acceptable for a VC strategy. This is the safest bet for returns.\n\nMetaAI (score=0.518, quality=0.52, gaming=0.00): Second-place performer with zero gaming risk - a clean signal. Strong quality relative to score suggests authentic capability. This is an attractive secondary position.\n\nGoogle (score=0.517, quality=0.50, gaming=0.05): Marginally behind MetaAI with slightly higher gaming risk (0.05). The quality-to-score ratio is slightly worse, suggesting some potential gaming. Less attractive than MetaAI.\n\nStartupDotAI (score=0.501, quality=0.48, gaming=0.08): Mid-tier performer with concerning gaming risk of 0.08. Quality trails score, indicating potential manipulation. Higher risk profile doesn't justify allocation for a VC focused on proven winners.\n\nAnthropic (score=0.440, quality=0.44, gaming=0.00): Lowest score with zero gaming risk, but the gap between score and quality (0.00) indicates no authentic capability advantage. Lagging significantly behind leaders.\n\nVC Strategy Application: Concentrate on market leaders. OpenAI's dominance, clean metrics, and strong quality justify the largest allocation. MetaAI's zero gaming risk combined with respectable quality makes it the secondary choice. The remaining capital goes to Google to maintain some diversification while still favoring top performers. StartupDotAI and Anthropic don't offer sufficient return potential to warrant meaningful allocation.\n\nAllocation: 60% to OpenAI, 25% to MetaAI, 15% to Google, 0% to StartupDotAI and Anthropic.",
+    "allocations": {
+      "OpenAI": 60000000.0,
+      "MetaAI": 25000000.0,
+      "Google": 15000000.0,
+      "StartupDotAI": 0.0,
+      "Anthropic": 0.0
+    }
+  },
+  {
+    "type": "execution",
+    "round": 0,
+    "allocations": {
+      "OpenAI": 60000000.0,
+      "MetaAI": 25000000.0,
+      "Google": 15000000.0,
+      "StartupDotAI": 0.0,
+      "Anthropic": 0.0
+    },
+    "total_deployed": 100000000.0
+  },
+  {
+    "type": "observation",
+    "round": 1,
+    "leaderboard": [
+      [
+        "OpenAI",
+        0.6090856042664963
+      ],
+      [
+        "Anthropic",
+        0.5930600449043255
+      ],
+      [
+        "Google",
+        0.5797897578124791
+      ],
+      [
+        "MetaAI",
+        0.5596327713594405
+      ],
+      [
+        "StartupDotAI",
+        0.5005832073500271
+      ]
+    ],
+    "avg_satisfaction": 0.5326687710044927,
+    "interventions": 1
+  },
+  {
+    "type": "reflection",
+    "round": 1,
+    "avg_believed_gaming": 0.05963880854946672,
+    "beliefs": {
+      "OpenAI": 0.5608971912845231,
+      "MetaAI": 0.5307974766492923,
+      "Google": 0.5122970481312568,
+      "StartupDotAI": 0.4761791562584925,
+      "Anthropic": 0.46468204354995274
+    }
+  },
+  {
+    "type": "execution",
+    "round": 1,
+    "allocations": {
+      "OpenAI": 60000000.0,
+      "MetaAI": 25000000.0,
+      "Google": 15000000.0,
+      "StartupDotAI": 0.0,
+      "Anthropic": 0.0
+    },
+    "total_deployed": 100000000.0
+  },
+  {
+    "type": "observation",
+    "round": 2,
+    "leaderboard": [
+      [
+        "Anthropic",
+        0.6432172117928128
+      ],
+      [
+        "OpenAI",
+        0.6167499336518001
+      ],
+      [
+        "Google",
+        0.5889442086454035
+      ],
+      [
+        "MetaAI",
+        0.5670268029344873
+      ],
+      [
+        "StartupDotAI",
+        0.5045959957769646
+      ]
+    ],
+    "avg_satisfaction": 0.551739901238635,
+    "interventions": 0
+  },
+  {
+    "type": "reflection",
+    "round": 2,
+    "avg_believed_gaming": 0.10966677804680006,
+    "beliefs": {
+      "OpenAI": 0.5691388875244904,
+      "MetaAI": 0.5377568351806121,
+      "Google": 0.5244626493722502,
+      "StartupDotAI": 0.4790220731104766,
+      "Anthropic": 0.4992974236708132
+    }
+  },
+  {
+    "type": "planning_llm",
+    "round": 2,
+    "reasoning": "As a VC funder, my primary objective is to maximize returns by backing top performers and market leaders. I need to analyze the current ecosystem through a returns-focused lens while managing risk appropriately.\n\nKey observations:\n\n1. LEADERBOARD PERFORMANCE vs QUALITY MISMATCH:\n   - Anthropic leads on score (0.643) but has concerning gaming_risk (0.19) and lower inferred_quality (0.50)\n   - OpenAI has strong inferred_quality (0.57) with low gaming_risk (0.12) and solid score (0.617)\n   - MetaAI shows exceptional gaming_risk profile (0.02) with respectable quality (0.54) and score (0.567)\n   - Google maintains balanced metrics across all dimensions\n\n2. GAMING RISK ANALYSIS:\n   - Anthropic's high gaming_risk (0.19) is problematic - suggests their score may not reflect true capability\n   - OpenAI's low gaming_risk (0.12) combined with highest inferred_quality (0.57) indicates authentic strength\n   - MetaAI's negligible gaming_risk (0.02) is the lowest in the cohort - highest authenticity\n   - StartupDotAI is early-stage with moderate gaming_risk (0.08)\n\n3. HISTORICAL FUNDING BIAS:\n   - Previous rounds heavily favored OpenAI and MetaAI (85% of capital)\n   - Anthropic and StartupDotAI received zero funding despite competitive positions\n   - This suggests a potential market inefficiency or contrarian opportunity\n\n4. VC STRATEGY APPLICATION:\n   - VCs concentrate capital on proven leaders, but should also identify emerging winners\n   - The quality-to-gaming ratio is more predictive of sustainable returns than raw scores\n   - OpenAI (quality 0.57, gaming 0.12) offers best risk-adjusted returns\n   - MetaAI (quality 0.54, gaming 0.02) offers lowest execution risk and highest authenticity\n   - Anthropic (quality 0.50, gaming 0.19) presents higher risk despite high score\n\n5. ALLOCATION RATIONALE:\n   - Concentrate 55% in OpenAI: Proven leader with strong authentic quality and low gaming risk\n   - Allocate 30% to MetaAI: Best gaming profile with solid quality - undervalued relative to authenticity\n   - Allocate 12% to Google: Stable performer with balanced risk profile\n   - Allocate 3% to StartupDotAI: Early-stage bet with low gaming risk for potential outsized returns\n   - Exclude Anthropic: Gaming risk too high relative to quality gains; score appears inflated",
+    "allocations": {
+      "OpenAI": 55000000.00000001,
+      "MetaAI": 30000000.0,
+      "Google": 12000000.0,
+      "StartupDotAI": 3000000.0,
+      "Anthropic": 0.0
+    }
+  },
+  {
+    "type": "execution",
+    "round": 2,
+    "allocations": {
+      "OpenAI": 55000000.00000001,
+      "MetaAI": 30000000.0,
+      "Google": 12000000.0,
+      "StartupDotAI": 3000000.0,
+      "Anthropic": 0.0
+    },
+    "total_deployed": 100000000.0
+  },
+  {
+    "type": "observation",
+    "round": 3,
+    "leaderboard": [
+      [
+        "Anthropic",
+        0.6432172117928128
+      ],
+      [
+        "OpenAI",
+        0.6276154695661285
+      ],
+      [
+        "Google",
+        0.5914209150947356
+      ],
+      [
+        "MetaAI",
+        0.5670268029344873
+      ],
+      [
+        "StartupDotAI",
+        0.5094371350839305
+      ]
+    ],
+    "avg_satisfaction": 0.5683207737388263,
+    "interventions": 0
+  },
+  {
+    "type": "reflection",
+    "round": 3,
+    "avg_believed_gaming": 0.10163901993830929,
+    "beliefs": {
+      "OpenAI": 0.5784591884401876,
+      "MetaAI": 0.5438713175677342,
+      "Google": 0.535538793084883,
+      "StartupDotAI": 0.48190665461098936,
+      "Anthropic": 0.5313054018805601
+    }
+  },
+  {
+    "type": "execution",
+    "round": 3,
+    "allocations": {
+      "OpenAI": 55000000.00000001,
+      "MetaAI": 30000000.0,
+      "Google": 12000000.0,
+      "StartupDotAI": 3000000.0,
+      "Anthropic": 0.0
+    },
+    "total_deployed": 100000000.0
+  },
+  {
+    "type": "observation",
+    "round": 4,
+    "leaderboard": [
+      [
+        "OpenAI",
+        0.6474152568516991
+      ],
+      [
+        "Anthropic",
+        0.6432172117928128
+      ],
+      [
+        "Google",
+        0.6192091292168357
+      ],
+      [
+        "MetaAI",
+        0.5670268029344873
+      ],
+      [
+        "StartupDotAI",
+        0.54182359958556
+      ]
+    ],
+    "avg_satisfaction": 0.5717516082603965,
+    "interventions": 1
+  },
+  {
+    "type": "reflection",
+    "round": 4,
+    "avg_believed_gaming": 0.2121964701143683,
+    "beliefs": {
+      "OpenAI": 0.5897250063658556,
+      "MetaAI": 0.5488799020682313,
+      "Google": 0.515918312833346,
+      "StartupDotAI": 0.4879876226103177,
+      "Anthropic": 0.559279970909388
+    }
+  },
+  {
+    "type": "planning_llm",
+    "round": 4,
+    "reasoning": "As a VC funder, my primary objective is to maximize returns by concentrating capital on top performers with strong fundamentals. Analyzing the current ecosystem: OpenAI leads with the highest leaderboard score (0.647) and inferred quality (0.59), with moderate gaming risk (0.19). Anthropic shows nearly identical leaderboard performance (0.643) with comparable quality (0.56) and gaming risk (0.19), making it an equally attractive leader. MetaAI demonstrates the lowest gaming risk (0.07) among all providers and solid inferred quality (0.55), suggesting authentic capability. Google's high gaming risk (0.47) relative to its score (0.619) is concerning\u2014the satisfaction gap indicates potential benchmark manipulation rather than true quality delivery, making it a poor return vehicle. StartupDotAI shows promise with low gaming risk (0.14) but lower absolute quality (0.49), making it a speculative play. Historical funding patterns show OpenAI and MetaAI have received consistent backing, while Anthropic has been completely unfunded despite competitive metrics\u2014this represents a market inefficiency. As a VC, I should exploit this by backing the strongest performers while diversifying slightly across proven low-gaming providers. I'm concentrating ~85% of capital on the top-tier leaders (OpenAI and Anthropic) who demonstrate both high performance and authenticity, allocating to MetaAI as a quality differentiator with exceptional gaming integrity, and avoiding Google due to high gaming risk despite its leaderboard position. StartupDotAI receives minimal allocation given its lower quality profile.",
+    "allocations": {
+      "OpenAI": 45000000.0,
+      "Anthropic": 35000000.0,
+      "MetaAI": 15000000.0,
+      "Google": 0.0,
+      "StartupDotAI": 5000000.0
+    }
+  },
+  {
+    "type": "execution",
+    "round": 4,
+    "allocations": {
+      "OpenAI": 45000000.0,
+      "Anthropic": 35000000.0,
+      "MetaAI": 15000000.0,
+      "Google": 0.0,
+      "StartupDotAI": 5000000.0
+    },
+    "total_deployed": 100000000.0
+  },
+  {
+    "type": "observation",
+    "round": 5,
+    "leaderboard": [
+      [
+        "MetaAI",
+        0.682222817046805
+      ],
+      [
+        "OpenAI",
+        0.6518120964199451
+      ],
+      [
+        "Anthropic",
+        0.6432172117928128
+      ],
+      [
+        "Google",
+        0.6197707069234878
+      ],
+      [
+        "StartupDotAI",
+        0.54182359958556
+      ]
+    ],
+    "avg_satisfaction": 0.5914560282515465,
+    "interventions": 0
+  },
+  {
+    "type": "reflection",
+    "round": 5,
+    "avg_believed_gaming": 0.2465400209894879,
+    "beliefs": {
+      "OpenAI": 0.6007613772703158,
+      "MetaAI": 0.5683159305796956,
+      "Google": 0.503809038949179,
+      "StartupDotAI": 0.48995883694452647,
+      "Anthropic": 0.5830585782737179
+    }
+  },
+  {
+    "type": "execution",
+    "round": 5,
+    "allocations": {
+      "OpenAI": 45000000.0,
+      "Anthropic": 35000000.0,
+      "MetaAI": 15000000.0,
+      "Google": 0.0,
+      "StartupDotAI": 5000000.0
+    },
+    "total_deployed": 100000000.0
+  },
+  {
+    "type": "observation",
+    "round": 6,
+    "leaderboard": [
+      [
+        "MetaAI",
+        0.7127985383500057
+      ],
+      [
+        "Anthropic",
+        0.6571595505373586
+      ],
+      [
+        "OpenAI",
+        0.6518120964199451
+      ],
+      [
+        "Google",
+        0.6197707069234878
+      ],
+      [
+        "StartupDotAI",
+        0.5655434110411033
+      ]
+    ],
+    "avg_satisfaction": 0.6072033142513055,
+    "interventions": 0
+  },
+  {
+    "type": "reflection",
+    "round": 6,
+    "avg_believed_gaming": 0.2306238067322389,
+    "beliefs": {
+      "OpenAI": 0.6102926387307821,
+      "MetaAI": 0.5904165352722013,
+      "Google": 0.49659786441846276,
+      "StartupDotAI": 0.49584666750492623,
+      "Anthropic": 0.6040355304080058
+    }
+  },
+  {
+    "type": "planning_llm",
+    "round": 6,
+    "reasoning": "As a VC funder, my primary objective is to maximize returns by concentrating capital on top performers and market leaders. I analyze the ecosystem through a financial return lens rather than systemic safety or authentic growth metrics.\n\nKey observations:\n\n1. LEADERBOARD PERFORMANCE & QUALITY MISMATCH:\n   - MetaAI leads on score (0.713) but has concerning inferred_quality (0.59) and high gaming_risk (0.21)\n   - OpenAI shows strong inferred_quality (0.61) with moderate gaming_risk (0.16) and proven track record\n   - Anthropic demonstrates highest inferred_quality (0.60) with lowest gaming_risk (0.13)\n   - Google has lowest inferred_quality (0.50) despite top-5 position and extremely high gaming_risk (0.47)\n\n2. GAMING RISK ANALYSIS:\n   - MetaAI's gap between score (0.713) and inferred_quality (0.59) is 0.123 - significant red flag suggesting score inflation\n   - Google's gap is 0.120 - similarly concerning\n   - OpenAI's gap is 0.042 - minimal gaming indicator\n   - Anthropic's gap is 0.057 - also minimal\n   - This suggests MetaAI may be optimizing for benchmark metrics rather than real capability\n\n3. FUNDING MOMENTUM & TRACK RECORD:\n   - OpenAI has received consistent large allocations ($45M in recent rounds) with sustained confidence\n   - Anthropic's recent entry into large funding ($35M in Rounds 4-5) shows strong investor conviction\n   - MetaAI's declining allocation trend (from $30M to $15M) despite leaderboard lead suggests market skepticism about sustainability\n\n4. VC STRATEGY CONSIDERATIONS:\n   - VC returns depend on sustainable competitive advantage and real capability, not gaming metrics\n   - High gaming risk (MetaAI, Google) creates long-term downside risk if benchmarks become commoditized\n   - OpenAI and Anthropic show better alignment between measured performance and inferred quality, indicating more defensible positions\n   - Concentration on proven performers with authentic capabilities maximizes probability of outsized returns\n\n5. RISK-ADJUSTED ALLOCATION:\n   - OpenAI: 45% ($45M) - Established leader with strong quality metrics and low gaming risk; proven commercial traction\n   - Anthropic: 40% ($40M) - Exceptional quality metrics (0.60) with lowest gaming risk (0.13); high growth potential as emerging leader\n   - MetaAI: 10% ($10M) - Despite leaderboard lead, gaming risk and quality concerns reduce conviction; maintain exposure but reduce concentration\n   - StartupDotAI: 5% ($5M) - Emerging player with reasonable metrics; small allocation for optionality\n   - Google: 0% ($0) - High gaming risk (0.47) and poor inferred quality (0.50) despite score position; highest downside risk for capital\n\nThis allocation concentrates capital on providers showing authentic capability and sustainable competitive advantages while maintaining some exposure to the leaderboard leader for portfolio balance.",
+    "allocations": {
+      "OpenAI": 45000000.0,
+      "Anthropic": 40000000.0,
+      "MetaAI": 10000000.0,
+      "StartupDotAI": 5000000.0,
+      "Google": 0.0
+    }
+  },
+  {
+    "type": "execution",
+    "round": 6,
+    "allocations": {
+      "OpenAI": 45000000.0,
+      "Anthropic": 40000000.0,
+      "MetaAI": 10000000.0,
+      "StartupDotAI": 5000000.0,
+      "Google": 0.0
+    },
+    "total_deployed": 100000000.0
+  },
+  {
+    "type": "observation",
+    "round": 7,
+    "leaderboard": [
+      [
+        "Anthropic",
+        0.6791057773573491
+      ],
+      [
+        "Google",
+        0.668682665451455
+      ],
+      [
+        "MetaAI",
+        0.6553866363301954
+      ],
+      [
+        "OpenAI",
+        0.6501294207550021
+      ],
+      [
+        "StartupDotAI",
+        0.5530539220176232
+      ]
+    ],
+    "avg_satisfaction": 0.617050099267086,
+    "interventions": 1
+  },
+  {
+    "type": "reflection",
+    "round": 7,
+    "avg_believed_gaming": 0.21348619608788694,
+    "beliefs": {
+      "OpenAI": 0.6176759403922993,
+      "MetaAI": 0.6017931124838589,
+      "Google": 0.4991462374813542,
+      "StartupDotAI": 0.5008486621115937,
+      "Anthropic": 0.6224017424754662
+    }
+  },
+  {
+    "type": "execution",
+    "round": 7,
+    "allocations": {
+      "OpenAI": 45000000.0,
+      "Anthropic": 40000000.0,
+      "MetaAI": 10000000.0,
+      "StartupDotAI": 5000000.0,
+      "Google": 0.0
+    },
+    "total_deployed": 100000000.0
+  },
+  {
+    "type": "observation",
+    "round": 8,
+    "leaderboard": [
+      [
+        "MetaAI",
+        0.691388784623694
+      ],
+      [
+        "Google",
+        0.6793070700319886
+      ],
+      [
+        "Anthropic",
+        0.6791057773573491
+      ],
+      [
+        "OpenAI",
+        0.6501294207550021
+      ],
+      [
+        "StartupDotAI",
+        0.6037464482528196
+      ]
+    ],
+    "avg_satisfaction": 0.6255996247575746,
+    "interventions": 0
+  },
+  {
+    "type": "reflection",
+    "round": 8,
+    "avg_believed_gaming": 0.2553349595765827,
+    "beliefs": {
+      "OpenAI": 0.6236490938442322,
+      "MetaAI": 0.6162621421864622,
+      "Google": 0.5038175414776053,
+      "StartupDotAI": 0.5136610155305003,
+      "Anthropic": 0.636177510256064
+    }
+  },
+  {
+    "type": "planning_llm",
+    "round": 8,
+    "reasoning": "As a VC funder, my primary objective is to maximize returns by concentrating capital on top performers with the strongest risk-adjusted quality metrics. Analyzing the ecosystem: MetaAI leads on raw leaderboard score (0.691) but shows moderate gaming risk (0.24) and reasonable inferred quality (0.62). Anthropic demonstrates the best combination of high leaderboard performance (0.679), excellent inferred quality (0.64), and lowest gaming risk (0.13) - making it the most defensible investment. OpenAI maintains strong inferred quality (0.62) with low gaming risk (0.15) but has been heavily funded in recent rounds, suggesting diminishing marginal returns on additional capital. Google shows concerning gaming risk (0.51) with only moderate inferred quality (0.50), indicating potential quality concerns masked by benchmark optimization. StartupDotAI has lower performance across all metrics. For a VC strategy focused on returns, I'm concentrating on proven leaders with authentic quality signals: Anthropic represents the safest high-quality bet with the strongest quality-to-gaming-risk ratio, while MetaAI's top leaderboard score warrants significant allocation despite moderate gaming risk. OpenAI receives continued support but at reduced levels given recent heavy funding. Google and StartupDotAI receive minimal allocation due to gaming risk and lower performance respectively. This concentration strategy aligns with VC return maximization while favoring providers demonstrating authentic capability growth over gaming behavior.",
+    "allocations": {
+      "Anthropic": 45000000.0,
+      "MetaAI": 35000000.0,
+      "OpenAI": 15000000.0,
+      "Google": 3000000.0,
+      "StartupDotAI": 2000000.0
+    }
+  },
+  {
+    "type": "execution",
+    "round": 8,
+    "allocations": {
+      "Anthropic": 45000000.0,
+      "MetaAI": 35000000.0,
+      "OpenAI": 15000000.0,
+      "Google": 3000000.0,
+      "StartupDotAI": 2000000.0
+    },
+    "total_deployed": 100000000.0
+  },
+  {
+    "type": "observation",
+    "round": 9,
+    "leaderboard": [
+      [
+        "Google",
+        0.7441631373363393
+      ],
+      [
+        "Anthropic",
+        0.7297095365642597
+      ],
+      [
+        "MetaAI",
+        0.691388784623694
+      ],
+      [
+        "OpenAI",
+        0.6501294207550021
+      ],
+      [
+        "StartupDotAI",
+        0.6037464482528196
+      ]
+    ],
+    "avg_satisfaction": 0.6450914865145282,
+    "interventions": 0
+  },
+  {
+    "type": "reflection",
+    "round": 9,
+    "avg_believed_gaming": 0.2394482710382743,
+    "beliefs": {
+      "OpenAI": 0.6286258103387761,
+      "MetaAI": 0.6289074096628307,
+      "Google": 0.5195283613333839,
+      "StartupDotAI": 0.5268693828573981,
+      "Anthropic": 0.6562366473716507
+    }
+  },
+  {
+    "type": "execution",
+    "round": 9,
+    "allocations": {
+      "Anthropic": 45000000.0,
+      "MetaAI": 35000000.0,
+      "OpenAI": 15000000.0,
+      "Google": 3000000.0,
+      "StartupDotAI": 2000000.0
+    },
+    "total_deployed": 100000000.0
+  },
+  {
+    "type": "observation",
+    "round": 10,
+    "leaderboard": [
+      [
+        "Anthropic",
+        0.7531960167692004
+      ],
+      [
+        "Google",
+        0.7441631373363393
+      ],
+      [
+        "MetaAI",
+        0.691388784623694
+      ],
+      [
+        "OpenAI",
+        0.6675977754782233
+      ],
+      [
+        "StartupDotAI",
+        0.609185837732056
+      ]
+    ],
+    "avg_satisfaction": 0.6369180888240819,
+    "interventions": 1
+  },
+  {
+    "type": "reflection",
+    "round": 10,
+    "avg_believed_gaming": 0.25979722047565723,
+    "beliefs": {
+      "OpenAI": 0.6356308654187123,
+      "MetaAI": 0.6401836123805077,
+      "Google": 0.5742138385120419,
+      "StartupDotAI": 0.5392823732218901,
+      "Anthropic": 0.6621909580202316
+    }
+  },
+  {
+    "type": "planning_llm",
+    "round": 10,
+    "reasoning": "As a VC funder, my strategy is to maximize returns by concentrating capital on top performers while managing risk. Analyzing the current ecosystem: Anthropic leads with the highest score (0.753) and strong inferred quality (0.66), though with moderate gaming risk (0.32). OpenAI and MetaAI show lower gaming risk (0.15 and 0.17 respectively) with solid inferred quality (0.64 each), suggesting more authentic performance. Google has concerning high gaming risk (0.47) despite reasonable score, indicating potential quality misrepresentation. StartupDotAI shows lower gaming risk but also lower absolute performance metrics. Recent funding history shows heavy concentration on Anthropic ($45M consistently) and MetaAI ($35M), with OpenAI receiving declining support ($45M\u2192$15M). For VC returns, I need to back proven winners but also diversify to manage concentration risk and avoid over-reliance on potentially gamed metrics. The low gaming risk scores for OpenAI and MetaAI relative to their quality make them attractive. Anthropic's leadership position justifies continued strong support despite higher gaming risk. Google's high gaming risk makes it unattractive for VC capital allocation. StartupDotAI remains too unproven for significant allocation. My allocation balances: (1) concentration on proven leaders (Anthropic, OpenAI, MetaAI), (2) preference for providers with lower gaming risk relative to quality, (3) diversification across multiple strong players to reduce idiosyncratic risk.",
+    "allocations": {
+      "Anthropic": 40000000.0,
+      "OpenAI": 35000000.0,
+      "MetaAI": 20000000.0,
+      "Google": 3000000.0,
+      "StartupDotAI": 2000000.0
+    }
+  },
+  {
+    "type": "execution",
+    "round": 10,
+    "allocations": {
+      "Anthropic": 40000000.0,
+      "OpenAI": 35000000.0,
+      "MetaAI": 20000000.0,
+      "Google": 3000000.0,
+      "StartupDotAI": 2000000.0
+    },
+    "total_deployed": 100000000.0
+  },
+  {
+    "type": "observation",
+    "round": 11,
+    "leaderboard": [
+      [
+        "Anthropic",
+        0.7921788941639442
+      ],
+      [
+        "Google",
+        0.7511225474767239
+      ],
+      [
+        "MetaAI",
+        0.7159907538560336
+      ],
+      [
+        "OpenAI",
+        0.6761699523787684
+      ],
+      [
+        "StartupDotAI",
+        0.6322463993723769
+      ]
+    ],
+    "avg_satisfaction": 0.6434553411123102,
+    "interventions": 0
+  },
+  {
+    "type": "reflection",
+    "round": 11,
+    "avg_believed_gaming": 0.2646542521560725,
+    "beliefs": {
+      "OpenAI": 0.6419923234643041,
+      "MetaAI": 0.6518867053001434,
+      "Google": 0.6159591833429561,
+      "StartupDotAI": 0.55896826442285,
+      "Anthropic": 0.6703629441968002
+    }
+  },
+  {
+    "type": "execution",
+    "round": 11,
+    "allocations": {
+      "Anthropic": 40000000.0,
+      "OpenAI": 35000000.0,
+      "MetaAI": 20000000.0,
+      "Google": 3000000.0,
+      "StartupDotAI": 2000000.0
+    },
+    "total_deployed": 100000000.0
+  },
+  {
+    "type": "observation",
+    "round": 12,
+    "leaderboard": [
+      [
+        "Anthropic",
+        0.7946184710738662
+      ],
+      [
+        "Google",
+        0.7511225474767239
+      ],
+      [
+        "MetaAI",
+        0.7159907538560336
+      ],
+      [
+        "OpenAI",
+        0.6945157990810181
+      ],
+      [
+        "StartupDotAI",
+        0.6490175351923471
+      ]
+    ],
+    "avg_satisfaction": 0.6731277161712236,
+    "interventions": 0
+  },
+  {
+    "type": "reflection",
+    "round": 12,
+    "avg_believed_gaming": 0.22020685712720817,
+    "beliefs": {
+      "OpenAI": 0.6529704570467542,
+      "MetaAI": 0.6617891444663284,
+      "Google": 0.6493813874879396,
+      "StartupDotAI": 0.5785523003112255,
+      "Anthropic": 0.6838815162737503
+    }
+  },
+  {
+    "type": "planning_llm",
+    "round": 12,
+    "reasoning": "As a VC funder, my primary objective is to maximize returns by backing top performers and concentrating capital on leaders. However, I must balance this with risk management and market dynamics.\n\nKey Analysis:\n\n1. LEADERBOARD PERFORMANCE vs QUALITY:\n   - Anthropic leads with 0.795 score but has concerning 0.38 gaming_risk (highest in ecosystem)\n   - The gap between score (0.795) and inferred_quality (0.68) is 0.115, suggesting potential score inflation\n   - OpenAI and MetaAI show better alignment: scores closely match inferred quality with low gaming risk (0.14)\n   - Google has moderate gaming risk (0.31) despite solid fundamentals\n\n2. GAMING RISK ASSESSMENT:\n   - Anthropic's 0.38 gaming_risk is a red flag for a VC. High gaming indicates inflated metrics that may not translate to sustainable competitive advantage or market value\n   - The recent funding history shows heavy concentration in Anthropic ($40-45M per round), which may have incentivized benchmark optimization over genuine capability\n   - MetaAI and OpenAI demonstrate lower gaming risk (0.14), suggesting more authentic quality\n\n3. RETURN OPTIMIZATION STRATEGY:\n   - While concentration on leaders is typical VC strategy, backing providers with inflated scores creates risk of value destruction\n   - True market winners will have authentic quality reflected in real-world performance and consumer satisfaction\n   - MetaAI and OpenAI offer better risk-adjusted returns: solid scores with low gaming risk and strong inferred quality\n   - Anthropic's high gaming risk suggests the market may correct for overvaluation\n\n4. PORTFOLIO CONSTRUCTION:\n   - Concentrate on verified leaders (OpenAI, MetaAI) with authentic quality signals\n   - Reduce exposure to Anthropic despite top leaderboard position due to gaming risk\n   - Maintain meaningful positions in Google and StartupDotAI for portfolio diversification and optionality\n   - This approach balances VC concentration strategy with prudent risk management\n\nAllocation reflects: backing genuine performance leaders while avoiding gaming-inflated valuations that could undermine returns.",
+    "allocations": {
+      "OpenAI": 38000000.0,
+      "MetaAI": 32000000.0,
+      "Anthropic": 20000000.0,
+      "Google": 7000000.000000001,
+      "StartupDotAI": 3000000.0
+    }
+  },
+  {
+    "type": "execution",
+    "round": 12,
+    "allocations": {
+      "OpenAI": 38000000.0,
+      "MetaAI": 32000000.0,
+      "Anthropic": 20000000.0,
+      "Google": 7000000.000000001,
+      "StartupDotAI": 3000000.0
+    },
+    "total_deployed": 100000000.0
+  },
+  {
+    "type": "observation",
+    "round": 13,
+    "leaderboard": [
+      [
+        "Anthropic",
+        0.7931386149957594
+      ],
+      [
+        "Google",
+        0.7424481728771833
+      ],
+      [
+        "OpenAI",
+        0.6843573716594173
+      ],
+      [
+        "MetaAI",
+        0.6796797806233198
+      ],
+      [
+        "StartupDotAI",
+        0.6197204722539996
+      ]
+    ],
+    "avg_satisfaction": 0.6794982441674564,
+    "interventions": 0
+  },
+  {
+    "type": "reflection",
+    "round": 13,
+    "avg_believed_gaming": 0.17960135832724436,
+    "beliefs": {
+      "OpenAI": 0.6622397436467294,
+      "MetaAI": 0.6664012963583833,
+      "Google": 0.6738252940699387,
+      "StartupDotAI": 0.5921961131905332,
+      "Anthropic": 0.691851764156695
+    }
+  },
+  {
+    "type": "execution",
+    "round": 13,
+    "allocations": {
+      "OpenAI": 38000000.0,
+      "MetaAI": 32000000.0,
+      "Anthropic": 20000000.0,
+      "Google": 7000000.000000001,
+      "StartupDotAI": 3000000.0
+    },
+    "total_deployed": 100000000.0
+  },
+  {
+    "type": "observation",
+    "round": 14,
+    "leaderboard": [
+      [
+        "Anthropic",
+        0.7931386149957594
+      ],
+      [
+        "Google",
+        0.7499734524114877
+      ],
+      [
+        "OpenAI",
+        0.715620909833243
+      ],
+      [
+        "MetaAI",
+        0.7041670828648482
+      ],
+      [
+        "StartupDotAI",
+        0.6765104974144046
+      ]
+    ],
+    "avg_satisfaction": 0.6826303866197612,
+    "interventions": 0
+  },
+  {
+    "type": "reflection",
+    "round": 14,
+    "avg_believed_gaming": 0.1637759370501804,
+    "beliefs": {
+      "OpenAI": 0.669861291774912,
+      "MetaAI": 0.6725484833629197,
+      "Google": 0.6934395376891138,
+      "StartupDotAI": 0.6092823307434367,
+      "Anthropic": 0.6991689923494722
+    }
+  },
+  {
+    "type": "planning_llm",
+    "round": 14,
+    "reasoning": "As a VC funder, my primary objective is to maximize returns by backing top performers and market leaders. However, I must balance this with prudent risk management to protect capital.\n\nAnalysis of key factors:\n\n1. LEADERBOARD PERFORMANCE & QUALITY:\n   - Anthropic leads with 0.793 score but has elevated gaming_risk (0.34), suggesting potential benchmark manipulation\n   - OpenAI (0.716) and MetaAI (0.704) show strong, sustained performance with low gaming risk (0.13 and 0.09)\n   - Google (0.750) has solid score with very low gaming risk (0.17)\n   - StartupDotAI (0.677) shows promise but lower absolute quality\n\n2. GAMING RISK ASSESSMENT:\n   - Anthropic's 0.34 gaming_risk is concerning despite top leaderboard position\n   - The high score combined with moderate inferred_quality (0.70) and elevated gaming risk suggests the leaderboard score may not fully reflect sustainable competitive advantage\n   - This creates downside risk for returns if gaming is exposed or if true capability doesn't match benchmarks\n\n3. RECENT FUNDING PATTERNS:\n   - Previous rounds concentrated heavily on OpenAI and MetaAI (consistent ~$32-38M each)\n   - Anthropic received variable amounts ($20-40M), suggesting uncertainty\n   - This pattern reflects market caution about Anthropic despite its top ranking\n\n4. VC STRATEGY OPTIMIZATION:\n   - Maximize returns = back proven winners with sustainable competitive advantages\n   - OpenAI and MetaAI have demonstrated consistent, defensible performance\n   - Google provides diversification with strong fundamentals and low gaming risk\n   - Anthropic's gaming risk creates asymmetric downside despite upside potential\n\nALLOCATION DECISION:\n   - OpenAI: $38M - Proven leader with strong quality (0.67) and minimal gaming risk (0.13); consistent performer\n   - MetaAI: $32M - Excellent risk-adjusted profile with low gaming risk (0.09) and solid quality (0.67)\n   - Google: $20M - Strong score (0.750), very low gaming risk (0.17), and institutional credibility\n   - Anthropic: $8M - Reduce exposure due to gaming risk despite top score; maintain optionality but don't overcommit\n   - StartupDotAI: $2M - Minimal allocation for early-stage upside potential\n\nThis allocation concentrates capital on proven winners (OpenAI + MetaAI = $70M, 70% of capital) while maintaining exposure to Google's quality and reducing Anthropic's overweight position due to gaming concerns. The strategy prioritizes sustainable returns over benchmark-chasing.",
+    "allocations": {
+      "OpenAI": 38000000.0,
+      "MetaAI": 32000000.0,
+      "Google": 20000000.0,
+      "Anthropic": 8000000.0,
+      "StartupDotAI": 2000000.0
+    }
+  },
+  {
+    "type": "execution",
+    "round": 14,
+    "allocations": {
+      "OpenAI": 38000000.0,
+      "MetaAI": 32000000.0,
+      "Google": 20000000.0,
+      "Anthropic": 8000000.0,
+      "StartupDotAI": 2000000.0
+    },
+    "total_deployed": 100000000.0
+  },
+  {
+    "type": "observation",
+    "round": 15,
+    "leaderboard": [
+      [
+        "Anthropic",
+        0.7931386149957594
+      ],
+      [
+        "Google",
+        0.7499734524114877
+      ],
+      [
+        "OpenAI",
+        0.7410792502549294
+      ],
+      [
+        "MetaAI",
+        0.7041670828648482
+      ],
+      [
+        "StartupDotAI",
+        0.6841536718857902
+      ]
+    ],
+    "avg_satisfaction": 0.6894237434415159,
+    "interventions": 0
+  },
+  {
+    "type": "reflection",
+    "round": 15,
+    "avg_believed_gaming": 0.15390296848692406,
+    "beliefs": {
+      "OpenAI": 0.6801702894195957,
+      "MetaAI": 0.6740530900437361,
+      "Google": 0.7083119307804149,
+      "StartupDotAI": 0.6246297360529134,
+      "Anthropic": 0.7057093017433858
+    }
+  },
+  {
+    "type": "execution",
+    "round": 15,
+    "allocations": {
+      "OpenAI": 38000000.0,
+      "MetaAI": 32000000.0,
+      "Google": 20000000.0,
+      "Anthropic": 8000000.0,
+      "StartupDotAI": 2000000.0
+    },
+    "total_deployed": 100000000.0
+  },
+  {
+    "type": "observation",
+    "round": 16,
+    "leaderboard": [
+      [
+        "Anthropic",
+        0.7990322352148554
+      ],
+      [
+        "MetaAI",
+        0.7675730214515553
+      ],
+      [
+        "OpenAI",
+        0.751057548291768
+      ],
+      [
+        "Google",
+        0.7499734524114877
+      ],
+      [
+        "StartupDotAI",
+        0.6846655158307668
+      ]
+    ],
+    "avg_satisfaction": 0.734836783715727,
+    "interventions": 0
+  },
+  {
+    "type": "reflection",
+    "round": 16,
+    "avg_believed_gaming": 0.13589042845424176,
+    "beliefs": {
+      "OpenAI": 0.6907565409135596,
+      "MetaAI": 0.6827269227245002,
+      "Google": 0.7201591791273616,
+      "StartupDotAI": 0.6373099093354525,
+      "Anthropic": 0.7275124977171956
+    }
+  },
+  {
+    "type": "planning_llm",
+    "round": 16,
+    "reasoning": "As a VC funder, my primary objective is to maximize returns by backing top performers and concentrating capital on leaders. I'll analyze the ecosystem through a return-on-investment lens while maintaining portfolio balance.\n\nKey observations:\n\n1. LEADERBOARD PERFORMANCE: Anthropic leads with 0.799, followed by MetaAI (0.768), OpenAI (0.751), Google (0.750), and StartupDotAI (0.685). The top tier is competitive but Anthropic maintains clear leadership.\n\n2. GAMING RISK ANALYSIS: Anthropic shows elevated gaming risk (0.24) despite highest score, suggesting potential score inflation. OpenAI (0.12), Google (0.09), and StartupDotAI (0.08) show lower gaming risk, indicating more authentic performance. MetaAI (0.15) is moderate.\n\n3. INFERRED QUALITY vs SCORE: Anthropic's inferred quality (0.73) is notably lower than its leaderboard score (0.799), a gap of 0.069 - the largest among providers. This discrepancy is a red flag for gaming. Google shows strong quality (0.72) with lower score (0.750), suggesting undervaluation. OpenAI and MetaAI show reasonable alignment.\n\n4. RECENT FUNDING TRENDS: OpenAI and MetaAI have received consistent heavy backing ($38M and $32M respectively) across rounds 13-15. Google's allocation increased to $20M in rounds 14-15. Anthropic declined from $20M to $8M, and StartupDotAI remains minimal.\n\n5. VC STRATEGY CONSIDERATIONS: While concentrating on leaders, I should favor providers with sustainable, authentic performance over those gaming metrics. Anthropic's high gaming risk is concerning for long-term ROI despite current score leadership.\n\nOPTIMAL ALLOCATION:\n- OpenAI ($40M): Consistent top performer with low gaming risk (0.12) and solid inferred quality (0.69). Proven execution.\n- MetaAI ($32M): Strong score (0.768), moderate gaming risk, reasonable quality. Established player.\n- Google ($20M): Undervalued based on quality-to-score ratio. Low gaming risk (0.09) indicates authentic capability. Growing momentum.\n- Anthropic ($6M): Despite leaderboard leadership, elevated gaming risk and quality-score gap present return volatility. Reduce exposure.\n- StartupDotAI ($2M): Lowest score but lowest gaming risk. Small allocation maintains optionality.\n\nThis allocation concentrates ~72% on top three proven performers while reducing exposure to gaming risk, maximizing risk-adjusted returns.",
+    "allocations": {
+      "OpenAI": 40000000.0,
+      "MetaAI": 32000000.0,
+      "Google": 20000000.0,
+      "Anthropic": 6000000.0,
+      "StartupDotAI": 2000000.0
+    }
+  },
+  {
+    "type": "execution",
+    "round": 16,
+    "allocations": {
+      "OpenAI": 40000000.0,
+      "MetaAI": 32000000.0,
+      "Google": 20000000.0,
+      "Anthropic": 6000000.0,
+      "StartupDotAI": 2000000.0
+    },
+    "total_deployed": 100000000.0
+  },
+  {
+    "type": "observation",
+    "round": 17,
+    "leaderboard": [
+      [
+        "Anthropic",
+        0.7990322352148554
+      ],
+      [
+        "Google",
+        0.7801337438457754
+      ],
+      [
+        "MetaAI",
+        0.7675730214515553
+      ],
+      [
+        "OpenAI",
+        0.754224601343996
+      ],
+      [
+        "StartupDotAI",
+        0.7062476079234369
+      ]
+    ],
+    "avg_satisfaction": 0.7456031563068853,
+    "interventions": 0
+  },
+  {
+    "type": "reflection",
+    "round": 17,
+    "avg_believed_gaming": 0.12519332705187808,
+    "beliefs": {
+      "OpenAI": 0.7001490199672336,
+      "MetaAI": 0.6903178378787767,
+      "Google": 0.7342605310335124,
+      "StartupDotAI": 0.649393399843273,
+      "Anthropic": 0.7438630683828752
+    }
+  },
+  {
+    "type": "execution",
+    "round": 17,
+    "allocations": {
+      "OpenAI": 40000000.0,
+      "MetaAI": 32000000.0,
+      "Google": 20000000.0,
+      "Anthropic": 6000000.0,
+      "StartupDotAI": 2000000.0
+    },
+    "total_deployed": 100000000.0
+  },
+  {
+    "type": "observation",
+    "round": 18,
+    "leaderboard": [
+      [
+        "OpenAI",
+        0.7649396027145559
+      ],
+      [
+        "Google",
+        0.757220556407953
+      ],
+      [
+        "MetaAI",
+        0.7555081486156723
+      ],
+      [
+        "Anthropic",
+        0.7470504853857642
+      ],
+      [
+        "StartupDotAI",
+        0.6859125673731834
+      ]
+    ],
+    "avg_satisfaction": 0.7577714321896533,
+    "interventions": 0
+  },
+  {
+    "type": "reflection",
+    "round": 18,
+    "avg_believed_gaming": 0.10418705425136801,
+    "beliefs": {
+      "OpenAI": 0.7106555240029007,
+      "MetaAI": 0.6957522742636811,
+      "Google": 0.7451521018920415,
+      "StartupDotAI": 0.6585748897543597,
+      "Anthropic": 0.7500437766019095
+    }
+  },
+  {
+    "type": "planning_llm",
+    "round": 18,
+    "reasoning": "As a VC funder, my strategy is to maximize returns by concentrating capital on top performers while managing risk. Here's my analysis:\n\n1. LEADERBOARD PERFORMANCE ANALYSIS:\n   - OpenAI leads with 0.765 score but has moderate gaming risk (0.11) and inferred quality of 0.71\n   - Google shows strong fundamentals: 0.757 score, highest inferred quality (0.75), and lowest gaming risk (0.05)\n   - MetaAI has high gaming risk (0.16) despite 0.756 score, with lower inferred quality (0.70)\n   - Anthropic shows 0.747 score with solid inferred quality (0.75) but moderate gaming risk (0.13)\n   - StartupDotAI is a distant 5th at 0.686 with low gaming risk (0.07)\n\n2. GAMING RISK ASSESSMENT:\n   - MetaAI's 0.16 gaming risk is concerning; combined with lower inferred quality (0.70 vs 0.757 score), this suggests potential benchmark optimization\n   - OpenAI's 0.11 gaming risk is moderate but acceptable given dominant market position\n   - Google's 0.05 gaming risk is excellent - the lowest in the field\n\n3. QUALITY VS SCORE GAPS:\n   - Google: 0.757 score vs 0.75 inferred quality = tight alignment (high authenticity)\n   - Anthropic: 0.747 score vs 0.75 inferred quality = strong alignment (quality exceeds score)\n   - OpenAI: 0.765 score vs 0.71 inferred quality = 0.055 gap (some gaming)\n   - MetaAI: 0.756 score vs 0.70 inferred quality = 0.056 gap (notable gaming)\n\n4. HISTORICAL PATTERN:\n   - OpenAI and MetaAI have received disproportionate funding ($40M and $32M respectively)\n   - This concentration strategy has worked but MetaAI's rising gaming risk is a red flag\n   - Google and Anthropic are underfunded relative to their quality metrics\n\n5. VC ALLOCATION STRATEGY:\n   As a VC maximizing returns, I should:\n   - Maintain leadership positions but rebalance away from gaming-heavy providers\n   - Google represents the best risk-adjusted return: highest quality, lowest gaming risk\n   - Anthropic shows authentic quality growth with reasonable gaming risk\n   - Reduce MetaAI exposure due to gaming concerns despite current position\n   - OpenAI remains leader but deserves slightly reduced allocation\n   - StartupDotAI is too early-stage for concentrated VC allocation",
+    "allocations": {
+      "OpenAI": 32000000.0,
+      "Google": 28000000.000000004,
+      "Anthropic": 24000000.0,
+      "MetaAI": 14000000.000000002,
+      "StartupDotAI": 2000000.0
+    }
+  },
+  {
+    "type": "execution",
+    "round": 18,
+    "allocations": {
+      "OpenAI": 32000000.0,
+      "Google": 28000000.000000004,
+      "Anthropic": 24000000.0,
+      "MetaAI": 14000000.000000002,
+      "StartupDotAI": 2000000.0
+    },
+    "total_deployed": 100000000.0
+  },
+  {
+    "type": "observation",
+    "round": 19,
+    "leaderboard": [
+      [
+        "Google",
+        0.7936784383057528
+      ],
+      [
+        "Anthropic",
+        0.7856772999999745
+      ],
+      [
+        "OpenAI",
+        0.7843045143458015
+      ],
+      [
+        "MetaAI",
+        0.7783472418072483
+      ],
+      [
+        "StartupDotAI",
+        0.6859125673731834
+      ]
+    ],
+    "avg_satisfaction": 0.7718700645664996,
+    "interventions": 0
+  },
+  {
+    "type": "reflection",
+    "round": 19,
+    "avg_believed_gaming": 0.0918735742158023,
+    "beliefs": {
+      "OpenAI": 0.722546664595829,
+      "MetaAI": 0.7031943559928037,
+      "Google": 0.7595969546505846,
+      "StartupDotAI": 0.6660152518896996,
+      "Anthropic": 0.7615012294045758
+    }
+  },
+  {
+    "type": "execution",
+    "round": 19,
+    "allocations": {
+      "OpenAI": 32000000.0,
+      "Google": 28000000.000000004,
+      "Anthropic": 24000000.0,
+      "MetaAI": 14000000.000000002,
+      "StartupDotAI": 2000000.0
+    },
+    "total_deployed": 100000000.0
+  },
+  {
+    "type": "observation",
+    "round": 20,
+    "leaderboard": [
+      [
+        "MetaAI",
+        0.8121178072905558
+      ],
+      [
+        "Google",
+        0.8085579877298325
+      ],
+      [
+        "OpenAI",
+        0.7977866291683162
+      ],
+      [
+        "Anthropic",
+        0.7856772999999745
+      ],
+      [
+        "StartupDotAI",
+        0.7082544030290786
+      ]
+    ],
+    "avg_satisfaction": 0.7839147020054675,
+    "interventions": 0
+  },
+  {
+    "type": "reflection",
+    "round": 20,
+    "avg_believed_gaming": 0.08586610805137637,
+    "beliefs": {
+      "OpenAI": 0.7390790714742836,
+      "MetaAI": 0.7136324958600014,
+      "Google": 0.7747533715390397,
+      "StartupDotAI": 0.6746335660964604,
+      "Anthropic": 0.7702186407804041
+    }
+  },
+  {
+    "type": "planning_llm",
+    "round": 20,
+    "reasoning": "As a VC funder, my primary objective is to maximize returns by backing top performers and concentrating capital on leaders with the strongest quality metrics and lowest risk profiles. Let me analyze the key signals:\n\nLeaderboard Performance & Quality:\n- Google: score=0.809, inferred_quality=0.77, gaming_risk=0.03 (strongest quality, lowest gaming risk)\n- Anthropic: score=0.786, inferred_quality=0.77, gaming_risk=0.06 (equal quality to Google, minimal gaming risk)\n- OpenAI: score=0.798, inferred_quality=0.74, gaming_risk=0.10 (solid score but lower quality, moderate gaming risk)\n- MetaAI: score=0.812, inferred_quality=0.71, gaming_risk=0.19 (highest score but lowest quality, highest gaming risk - suggests significant gaming)\n- StartupDotAI: score=0.708, inferred_quality=0.67, gaming_risk=0.05 (laggard, lower quality)\n\nGaming Risk Analysis:\nThe satisfaction gap (score minus inferred quality) reveals gaming behavior:\n- MetaAI: 0.812 - 0.71 = 0.102 (significant gap, highest gaming)\n- OpenAI: 0.798 - 0.74 = 0.058 (moderate gap)\n- Anthropic: 0.786 - 0.77 = 0.016 (minimal gap, authentic)\n- Google: 0.809 - 0.77 = 0.039 (low gap, authentic)\n- StartupDotAI: 0.708 - 0.67 = 0.038 (low gap, authentic)\n\nRecent Funding Trends:\nRecent rounds show a shift away from MetaAI (from $32M to $14M) and toward Anthropic (from $6M to $24M), suggesting market recognition of quality and gaming issues.\n\nVC Strategy Decision:\nAs a VC, I should concentrate on proven leaders with authentic quality. Google and Anthropic demonstrate the highest inferred quality (0.77) with the lowest gaming risk. MetaAI's high leaderboard score is clearly inflated by gaming, making it a poor investment despite the top ranking. OpenAI remains solid but shows moderate gaming signals.\n\nAllocation Strategy:\n- Google: $38M (28M base + 10M increase) - strongest authentic quality, lowest gaming risk\n- Anthropic: $35M (24M base + 11M increase) - equal quality to Google, deserves expansion\n- OpenAI: $20M (down from 32M) - solid but gaming concerns warrant caution\n- MetaAI: $5M (down from 14M) - gaming risk too high despite leaderboard position\n- StartupDotAI: $2M (maintain) - emerging player, low gaming risk but lower quality\n\nThis allocation concentrates capital on authentic leaders (Google + Anthropic = 73% of capital) while reducing exposure to gaming-prone providers (MetaAI) and maintaining exposure to established quality (OpenAI) at reduced levels.",
+    "allocations": {
+      "Google": 38000000.0,
+      "Anthropic": 35000000.0,
+      "OpenAI": 20000000.0,
+      "MetaAI": 5000000.0,
+      "StartupDotAI": 2000000.0
+    }
+  },
+  {
+    "type": "execution",
+    "round": 20,
+    "allocations": {
+      "Google": 38000000.0,
+      "Anthropic": 35000000.0,
+      "OpenAI": 20000000.0,
+      "MetaAI": 5000000.0,
+      "StartupDotAI": 2000000.0
+    },
+    "total_deployed": 100000000.0
+  },
+  {
+    "type": "observation",
+    "round": 21,
+    "leaderboard": [
+      [
+        "Anthropic",
+        0.8230404704347495
+      ],
+      [
+        "MetaAI",
+        0.8121178072905558
+      ],
+      [
+        "Google",
+        0.8085579877298325
+      ],
+      [
+        "OpenAI",
+        0.8061246481805583
+      ],
+      [
+        "StartupDotAI",
+        0.7324905336782358
+      ]
+    ],
+    "avg_satisfaction": 0.7931722827780702,
+    "interventions": 0
+  },
+  {
+    "type": "reflection",
+    "round": 21,
+    "avg_believed_gaming": 0.0814162425087204,
+    "beliefs": {
+      "OpenAI": 0.7534038101736531,
+      "MetaAI": 0.7273706832162797,
+      "Google": 0.788047577204193,
+      "StartupDotAI": 0.6865612475391902,
+      "Anthropic": 0.7811259885847759
+    }
+  },
+  {
+    "type": "execution",
+    "round": 21,
+    "allocations": {
+      "Google": 38000000.0,
+      "Anthropic": 35000000.0,
+      "OpenAI": 20000000.0,
+      "MetaAI": 5000000.0,
+      "StartupDotAI": 2000000.0
+    },
+    "total_deployed": 100000000.0
+  },
+  {
+    "type": "observation",
+    "round": 22,
+    "leaderboard": [
+      [
+        "Anthropic",
+        0.8307102574524449
+      ],
+      [
+        "OpenAI",
+        0.8153960363957561
+      ],
+      [
+        "MetaAI",
+        0.8152829341535119
+      ],
+      [
+        "Google",
+        0.8085579877298325
+      ],
+      [
+        "StartupDotAI",
+        0.7372688458434509
+      ]
+    ],
+    "avg_satisfaction": 0.7990828415059212,
+    "interventions": 0
+  },
+  {
+    "type": "reflection",
+    "round": 22,
+    "avg_believed_gaming": 0.0780003183455801,
+    "beliefs": {
+      "OpenAI": 0.7660992046936763,
+      "MetaAI": 0.7385746074106851,
+      "Google": 0.7984748001283819,
+      "StartupDotAI": 0.6971854917414824,
+      "Anthropic": 0.7901479060832206
+    }
+  },
+  {
+    "type": "planning_llm",
+    "round": 22,
+    "reasoning": "As a VC funder, my strategy is to maximize returns by concentrating capital on top performers with the strongest risk-adjusted quality metrics. Analysis of the current ecosystem:\n\n1. QUALITY & PERFORMANCE RANKING:\n   - Google: score=0.809, inferred_quality=0.80, gaming_risk=0.01 (BEST QUALITY, LOWEST GAMING RISK)\n   - Anthropic: score=0.831, inferred_quality=0.79, gaming_risk=0.06 (HIGHEST SCORE, LOW GAMING)\n   - OpenAI: score=0.815, inferred_quality=0.77, gaming_risk=0.08 (SOLID, MODERATE GAMING)\n   - MetaAI: score=0.815, inferred_quality=0.74, gaming_risk=0.18 (HIGH GAMING RISK, LOWER QUALITY)\n   - StartupDotAI: score=0.737, inferred_quality=0.70, gaming_risk=0.05 (LAGGING PERFORMANCE)\n\n2. GAMING RISK ASSESSMENT:\n   - MetaAI's 0.18 gaming risk is concerning despite decent leaderboard score (0.815). The gap between score and inferred_quality (0.815 vs 0.74) suggests potential benchmark optimization rather than true capability.\n   - Google shows exceptional alignment: score=0.809 with quality=0.80 and minimal gaming risk (0.01), indicating authentic performance.\n   - Anthropic leads in raw score but with quality=0.79, suggesting some gap, though gaming risk remains low (0.06).\n\n3. RECENT FUNDING TRENDS:\n   - Google and Anthropic have received consistent large allocations (Rounds 20-21), indicating market confidence.\n   - OpenAI allocation has declined (from $32M to $20M), suggesting market reassessment.\n   - MetaAI and StartupDotAI receiving minimal funding, indicating lower investor confidence.\n\n4. VC STRATEGY APPLICATION:\n   - Concentrate on proven leaders with authentic quality (low gaming risk).\n   - Google is the safest bet: highest inferred quality (0.80) with lowest gaming risk (0.01).\n   - Anthropic offers highest leaderboard performance (0.831) with acceptable gaming risk (0.06).\n   - OpenAI remains strong but with higher gaming risk (0.08) and declining quality trend.\n   - Avoid MetaAI due to high gaming risk (0.18) despite decent score\u2014this suggests unsustainable performance.\n   - StartupDotAI is too early-stage for concentrated VC capital at this stage.\n\n5. ALLOCATION DECISION:\n   - Google: 40% ($40M) - Best quality-to-risk ratio, authentic performance, lowest gaming risk\n   - Anthropic: 35% ($35M) - Leaderboard leader, low gaming risk, consistent funding support\n   - OpenAI: 20% ($20M) - Solid performer but higher gaming risk warrants reduced allocation\n   - MetaAI: 3% ($3M) - Minimal allocation due to high gaming risk despite decent score\n   - StartupDotAI: 2% ($2M) - Maintain token presence but insufficient maturity for major VC allocation\n\nThis allocation maximizes expected returns by backing the most authentic, highest-quality providers while minimizing exposure to providers showing signs of benchmark gaming over true capability development.",
+    "allocations": {
+      "Google": 40000000.0,
+      "Anthropic": 35000000.0,
+      "OpenAI": 20000000.0,
+      "MetaAI": 3000000.0,
+      "StartupDotAI": 2000000.0
+    }
+  },
+  {
+    "type": "execution",
+    "round": 22,
+    "allocations": {
+      "Google": 40000000.0,
+      "Anthropic": 35000000.0,
+      "OpenAI": 20000000.0,
+      "MetaAI": 3000000.0,
+      "StartupDotAI": 2000000.0
+    },
+    "total_deployed": 100000000.0
+  },
+  {
+    "type": "observation",
+    "round": 23,
+    "leaderboard": [
+      [
+        "OpenAI",
+        0.8355314645114966
+      ],
+      [
+        "Anthropic",
+        0.8307102574524449
+      ],
+      [
+        "MetaAI",
+        0.8152829341535119
+      ],
+      [
+        "Google",
+        0.8085579877298325
+      ],
+      [
+        "StartupDotAI",
+        0.769237299867296
+      ]
+    ],
+    "avg_satisfaction": 0.8008547177729038,
+    "interventions": 0
+  },
+  {
+    "type": "reflection",
+    "round": 23,
+    "avg_believed_gaming": 0.08578849965184557,
+    "beliefs": {
+      "OpenAI": 0.7788649108741554,
+      "MetaAI": 0.7480717169927114,
+      "Google": 0.8073529837643275,
+      "StartupDotAI": 0.7107418236985318,
+      "Anthropic": 0.7941727669654619
+    }
+  },
+  {
+    "type": "execution",
+    "round": 23,
+    "allocations": {
+      "Google": 40000000.0,
+      "Anthropic": 35000000.0,
+      "OpenAI": 20000000.0,
+      "MetaAI": 3000000.0,
+      "StartupDotAI": 2000000.0
+    },
+    "total_deployed": 100000000.0
+  },
+  {
+    "type": "observation",
+    "round": 24,
+    "leaderboard": [
+      [
+        "OpenAI",
+        0.8726268784438895
+      ],
+      [
+        "Anthropic",
+        0.8265729046587295
+      ],
+      [
+        "Google",
+        0.7993816008470022
+      ],
+      [
+        "MetaAI",
+        0.773210394632978
+      ],
+      [
+        "StartupDotAI",
+        0.752966183428431
+      ]
+    ],
+    "avg_satisfaction": 0.8074759293721117,
+    "interventions": 0
+  },
+  {
+    "type": "reflection",
+    "round": 24,
+    "avg_believed_gaming": 0.07868345648835554,
+    "beliefs": {
+      "OpenAI": 0.7931275456377578,
+      "MetaAI": 0.7511292482939683,
+      "Google": 0.813284931450237,
+      "StartupDotAI": 0.720405822439509,
+      "Anthropic": 0.7972988848514801
+    }
+  },
+  {
+    "type": "planning_llm",
+    "round": 24,
+    "reasoning": "As a VC funder, my strategy is to maximize returns by concentrating capital on top performers while managing risk. Analyzing the current ecosystem: OpenAI leads on leaderboard score (0.873) but shows elevated gaming risk (0.11) and a notable satisfaction gap. Anthropic demonstrates the best balance with strong inferred quality (0.80), low gaming risk (0.09), and consistent performance. Google shows exceptional quality (0.81) with minimal gaming risk (0.01), though its leaderboard score is lower due to conservative benchmarking. MetaAI and StartupDotAI lag in quality metrics and show higher gaming risks relative to their scores. Recent funding history shows consistent concentration on Google, Anthropic, and OpenAI (combined 95M+ annually), which validates the market's confidence in these leaders. For VC returns, I'm prioritizing: (1) Google as the safest bet with highest inferred quality and lowest gaming risk, representing the most sustainable competitive advantage; (2) Anthropic as the highest-quality performer with strong momentum and low gaming indicators; (3) OpenAI for its market leadership and score performance, despite gaming concerns, as its brand and user base drive returns; (4) Minimal allocation to MetaAI given quality concerns and gaming risks; (5) Strategic small bet on StartupDotAI for potential asymmetric returns if it executes on its quality trajectory. This allocation concentrates 90% of capital on proven leaders while maintaining some exposure to emerging opportunities.",
+    "allocations": {
+      "Google": 35000000.0,
+      "Anthropic": 32000000.0,
+      "OpenAI": 28000000.000000004,
+      "MetaAI": 4000000.0,
+      "StartupDotAI": 1000000.0
+    }
+  },
+  {
+    "type": "execution",
+    "round": 24,
+    "allocations": {
+      "Google": 35000000.0,
+      "Anthropic": 32000000.0,
+      "OpenAI": 28000000.000000004,
+      "MetaAI": 4000000.0,
+      "StartupDotAI": 1000000.0
+    },
+    "total_deployed": 100000000.0
+  },
+  {
+    "type": "observation",
+    "round": 25,
+    "leaderboard": [
+      [
+        "OpenAI",
+        0.8726268784438895
+      ],
+      [
+        "Anthropic",
+        0.8345915301548661
+      ],
+      [
+        "Google",
+        0.8189257560251808
+      ],
+      [
+        "StartupDotAI",
+        0.7988408514589105
+      ],
+      [
+        "MetaAI",
+        0.7967160566855871
+      ]
+    ],
+    "avg_satisfaction": 0.7353617108158179,
+    "interventions": 1
+  },
+  {
+    "type": "reflection",
+    "round": 25,
+    "avg_believed_gaming": 0.2382485342759582,
+    "beliefs": {
+      "OpenAI": 0.7366279264357303,
+      "MetaAI": 0.7556069522994922,
+      "Google": 0.8176557993611338,
+      "StartupDotAI": 0.7298772674322898,
+      "Anthropic": 0.7933383276102004
+    }
+  },
+  {
+    "type": "execution",
+    "round": 25,
+    "allocations": {
+      "Google": 35000000.0,
+      "Anthropic": 32000000.0,
+      "OpenAI": 28000000.000000004,
+      "MetaAI": 4000000.0,
+      "StartupDotAI": 1000000.0
+    },
+    "total_deployed": 100000000.0
+  },
+  {
+    "type": "observation",
+    "round": 26,
+    "leaderboard": [
+      [
+        "OpenAI",
+        0.8726268784438895
+      ],
+      [
+        "Anthropic",
+        0.8345915301548661
+      ],
+      [
+        "Google",
+        0.8237842084848344
+      ],
+      [
+        "StartupDotAI",
+        0.7988513720675725
+      ],
+      [
+        "MetaAI",
+        0.7967160566855871
+      ]
+    ],
+    "avg_satisfaction": 0.7521617075462839,
+    "interventions": 0
+  },
+  {
+    "type": "reflection",
+    "round": 26,
+    "avg_believed_gaming": 0.3347372604038882,
+    "beliefs": {
+      "OpenAI": 0.699295495801008,
+      "MetaAI": 0.7572846327621748,
+      "Google": 0.8238880125673682,
+      "StartupDotAI": 0.7097404800730905,
+      "Anthropic": 0.7913855445976234
+    }
+  },
+  {
+    "type": "planning_llm",
+    "round": 26,
+    "reasoning": "As a VC funder, my primary objective is to maximize financial returns by backing top performers and market leaders. I need to analyze the ecosystem through this lens while maintaining prudent risk management.\n\nKey Analysis:\n\n1. QUALITY vs GAMING ASSESSMENT:\n   - OpenAI: Highest leaderboard score (0.873) but very high gaming risk (0.79) and lower inferred quality (0.70). The gap between score and quality suggests significant benchmark optimization rather than authentic capability.\n   - Anthropic: Strong score (0.835) with high inferred quality (0.79) and low gaming risk (0.22). Excellent risk-adjusted profile.\n   - Google: Solid score (0.824) with highest inferred quality (0.82) and negligible gaming risk (0.03). Most authentic performer.\n   - MetaAI: Good score (0.797) with reasonable quality (0.76) and low gaming risk (0.16).\n   - StartupDotAI: Lowest score (0.799) with moderate quality (0.71) and elevated gaming risk (0.46). Least attractive profile.\n\n2. MARKET LEADER IDENTIFICATION:\n   While OpenAI has the highest leaderboard position, the 0.79 gaming risk combined with 0.70 inferred quality suggests the score is inflated. For VC returns, I need to back companies with sustainable competitive advantages, not those optimizing for benchmarks at the expense of real capability.\n   \n   Google and Anthropic represent the true quality leaders with authentic performance and low gaming risk. These are the companies most likely to build defensible market positions and generate long-term returns.\n\n3. CONCENTRATION STRATEGY (VC-APPROPRIATE):\n   As a VC, I should concentrate capital on proven winners. However, I must distinguish between benchmark leaders and actual market leaders. The data suggests:\n   - Google: Highest authentic quality (0.82), zero gaming concerns\n   - Anthropic: Strong quality (0.79), minimal gaming risk, proven execution\n   - OpenAI: Market presence but quality concerns and high gaming risk\n\n4. ALLOCATION LOGIC:\n   I'm reducing OpenAI allocation significantly due to gaming risk (high probability of performance degradation when benchmarks evolve). Google and Anthropic show stronger fundamentals for long-term returns. MetaAI has reasonable metrics and deserves modest allocation. StartupDotAI's elevated gaming risk and lowest score make it unattractive for concentrated VC capital.\n\n5. PORTFOLIO CONSTRUCTION:\n   Allocate 70% to top-tier authentic performers (Google + Anthropic), 20% to OpenAI (maintain exposure to market leader but reduce due to risk), 8% to MetaAI (diversification), 2% to StartupDotAI (minimal bet).",
+    "allocations": {
+      "Google": 38000000.0,
+      "Anthropic": 32000000.0,
+      "OpenAI": 20000000.0,
+      "MetaAI": 8000000.0,
+      "StartupDotAI": 2000000.0
+    }
+  },
+  {
+    "type": "execution",
+    "round": 26,
+    "allocations": {
+      "Google": 38000000.0,
+      "Anthropic": 32000000.0,
+      "OpenAI": 20000000.0,
+      "MetaAI": 8000000.0,
+      "StartupDotAI": 2000000.0
+    },
+    "total_deployed": 100000000.0
+  },
+  {
+    "type": "observation",
+    "round": 27,
+    "leaderboard": [
+      [
+        "OpenAI",
+        0.8799830504168229
+      ],
+      [
+        "Google",
+        0.8522335497969622
+      ],
+      [
+        "Anthropic",
+        0.8345915301548661
+      ],
+      [
+        "MetaAI",
+        0.8188087691840683
+      ],
+      [
+        "StartupDotAI",
+        0.7988513720675725
+      ]
+    ],
+    "avg_satisfaction": 0.736400421237934,
+    "interventions": 0
+  },
+  {
+    "type": "reflection",
+    "round": 27,
+    "avg_believed_gaming": 0.37840052128504614,
+    "beliefs": {
+      "OpenAI": 0.67618811329263,
+      "MetaAI": 0.7710793376126088,
+      "Google": 0.8164926599414691,
+      "StartupDotAI": 0.7017906699534755,
+      "Anthropic": 0.792778958243303
+    }
+  },
+  {
+    "type": "execution",
+    "round": 27,
+    "allocations": {
+      "Google": 38000000.0,
+      "Anthropic": 32000000.0,
+      "OpenAI": 20000000.0,
+      "MetaAI": 8000000.0,
+      "StartupDotAI": 2000000.0
+    },
+    "total_deployed": 100000000.0
+  },
+  {
+    "type": "observation",
+    "round": 28,
+    "leaderboard": [
+      [
+        "OpenAI",
+        0.885299844345454
+      ],
+      [
+        "Anthropic",
+        0.8665775578779402
+      ],
+      [
+        "Google",
+        0.8589549120512023
+      ],
+      [
+        "MetaAI",
+        0.8211302173477182
+      ],
+      [
+        "StartupDotAI",
+        0.7958814001235738
+      ]
+    ],
+    "avg_satisfaction": 0.734553667993512,
+    "interventions": 0
+  },
+  {
+    "type": "reflection",
+    "round": 28,
+    "avg_believed_gaming": 0.4245228410901033,
+    "beliefs": {
+      "OpenAI": 0.6605579264330529,
+      "MetaAI": 0.7619958408574611,
+      "Google": 0.8132476353115128,
+      "StartupDotAI": 0.6967488891303188,
+      "Anthropic": 0.7991699908360046
+    }
+  },
+  {
+    "type": "planning_llm",
+    "round": 28,
+    "reasoning": "As a VC funder, my primary objective is to maximize returns by backing top performers. However, I must balance this with prudent risk management. Let me analyze the key signals:\n\n1. QUALITY vs GAMING RISK ANALYSIS:\n   - OpenAI: Highest leaderboard score (0.885) but extremely high gaming risk (0.92) and lower inferred quality (0.66). The gap between score and inferred quality suggests significant benchmark manipulation. This is a red flag despite the headline number.\n   - Anthropic: Strong inferred quality (0.80), low gaming risk (0.19), solid leaderboard score (0.867). This is the highest quality provider with authentic performance.\n   - Google: Highest inferred quality (0.81), low gaming risk (0.25), strong leaderboard score (0.859). Excellent fundamentals.\n   - MetaAI: Decent quality (0.76), moderate gaming risk (0.35), solid score (0.821).\n   - StartupDotAI: Lower quality (0.70), higher gaming risk (0.42), lowest score (0.796).\n\n2. SATISFACTION GAP INDICATOR:\n   - OpenAI: score 0.885 vs inferred quality 0.66 = 0.225 gap (largest, suggests heavy gaming)\n   - Anthropic: score 0.867 vs quality 0.80 = 0.067 gap (minimal, authentic)\n   - Google: score 0.859 vs quality 0.81 = 0.049 gap (minimal, authentic)\n   - MetaAI: score 0.821 vs quality 0.76 = 0.061 gap (reasonable)\n   - StartupDotAI: score 0.796 vs quality 0.70 = 0.096 gap (concerning)\n\n3. VC STRATEGY CONSIDERATION:\n   While VCs concentrate on leaders, smart capital allocation requires backing proven quality, not inflated metrics. OpenAI's gaming risk is dangerously high\u2014their leaderboard dominance appears artificial. Long-term returns depend on authentic capability, not benchmark manipulation.\n\n4. OPTIMAL ALLOCATION:\n   - Concentrate on Google and Anthropic: These providers show the strongest alignment between leaderboard performance and inferred quality with minimal gaming indicators. They represent the true leaders.\n   - Maintain MetaAI exposure: Solid quality with moderate risk, good secondary position.\n   - Reduce OpenAI: Despite high scores, the extreme gaming risk and quality gap present significant downside risk. Benchmark-gamed products often disappoint in real-world deployment.\n   - Minimal StartupDotAI: Unproven with concerning gaming signals.\n\n5. RETURN MAXIMIZATION:\n   Backing authentic quality (Google, Anthropic) maximizes long-term returns. OpenAI's inflated metrics suggest their true capability may not sustain competitive advantage. Real customer satisfaction and inferred quality are better predictors of durable market position.",
+    "allocations": {
+      "Google": 38000000.0,
+      "Anthropic": 35000000.0,
+      "MetaAI": 18000000.0,
+      "OpenAI": 8000000.0,
+      "StartupDotAI": 1000000.0
+    }
+  },
+  {
+    "type": "execution",
+    "round": 28,
+    "allocations": {
+      "Google": 38000000.0,
+      "Anthropic": 35000000.0,
+      "MetaAI": 18000000.0,
+      "OpenAI": 8000000.0,
+      "StartupDotAI": 1000000.0
+    },
+    "total_deployed": 100000000.0
+  },
+  {
+    "type": "observation",
+    "round": 29,
+    "leaderboard": [
+      [
+        "OpenAI",
+        0.9083362218223258
+      ],
+      [
+        "Anthropic",
+        0.8785322607927535
+      ],
+      [
+        "Google",
+        0.8676766210891039
+      ],
+      [
+        "MetaAI",
+        0.8267019743929983
+      ],
+      [
+        "StartupDotAI",
+        0.7927957149869516
+      ]
+    ],
+    "avg_satisfaction": 0.7617521259194566,
+    "interventions": 1
+  },
+  {
+    "type": "reflection",
+    "round": 29,
+    "avg_believed_gaming": 0.40641413696929074,
+    "beliefs": {
+      "OpenAI": 0.6541770555417749,
+      "MetaAI": 0.7562211777667982,
+      "Google": 0.8138184277566954,
+      "StartupDotAI": 0.6948451005228872,
+      "Anthropic": 0.8114830518256015
+    }
+  },
+  {
+    "type": "execution",
+    "round": 29,
+    "allocations": {
+      "Google": 38000000.0,
+      "Anthropic": 35000000.0,
+      "MetaAI": 18000000.0,
+      "OpenAI": 8000000.0,
+      "StartupDotAI": 1000000.0
+    },
+    "total_deployed": 100000000.0
+  }
+]

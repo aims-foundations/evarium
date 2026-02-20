@@ -135,51 +135,36 @@ Evaluators are **companies** that:
 
 ### Multiple Submission Formula
 
-**Number of trials per provider per round:**
+**Number of trials per provider per round (actual implementation in `actors/evaluator.py`):**
 
 ```python
-def compute_n_trials(provider) -> int:
-    """
-    Compute how many strategy variants a provider can test per round.
-    Requires BOTH funding (to pay for compute) AND expertise (to generate variants).
+def compute_n_trials(self, provider_name: str, eval_engineering: float) -> int:
+    if not self.evaluator_as_company:
+        return 1  # Default behavior
 
-    Returns: Integer from 1 (baseline) to 5+ (well-resourced lab)
-    """
-    base_trials = 1  # Everyone gets at least one submission
+    # Binary premium access: provider is either a subscriber or not
+    funding_bonus = 1 if provider_name in self.private_state.premium_providers else 0
+    eval_eng_bonus = int(eval_engineering * 5)
+    # eval_eng=0.2 → +1; eval_eng=0.4 → +2; eval_eng=0.8 → +4
 
-    # Factor 1: Funding level (can provider afford premium access?)
-    funding_threshold = 1000000  # Minimum funding to access premium tier
-    if provider.funding_level > funding_threshold:
-        funding_bonus = int(2 + (provider.funding_level - funding_threshold) / 500000)
-        # High funding → +2 to +4 extra trials
-    else:
-        funding_bonus = 0
+    # Need BOTH premium access AND eval engineering expertise
+    n_trials = 1 + min(funding_bonus, eval_eng_bonus)
 
-    # Factor 2: Eval engineering investment (expertise to generate good variants)
-    eval_eng_bonus = int(provider.eval_engineering_investment * 5)
-    # eval_eng=0.2 → +1 trial
-    # eval_eng=0.5 → +2 trials
-    # eval_eng=0.8 → +4 trials
-
-    # Need BOTH money and expertise: take minimum
-    n_trials = base_trials + min(funding_bonus, eval_eng_bonus)
-
-    return max(1, min(n_trials, 5))  # Clamp to [1, 5]
+    return min(5, n_trials)  # Cap at 5
 ```
 
 **Why minimum of funding_bonus and eval_eng_bonus?**
-- **High funding + low eval_eng:** Money to pay, but no expertise to generate good variants → limited benefit
-- **Low funding + high eval_eng:** Expertise, but can't afford compute for many runs → limited benefit
-- **High both:** Maximum advantage (OpenAI, Anthropic, Google)
+- **Premium access + low eval_eng:** Subscription paid, but no expertise to generate meaningful variants → limited benefit
+- **High eval_eng + no premium access:** Expertise, but no extra trials granted → limited benefit
+- **Premium + high eval_eng:** Maximum advantage
 
-**Selection mechanism:**
+Note: `funding_bonus` is binary (0 or 1), not a gradient — providers are either premium subscribers or not. Premium status is determined by whether they appear in `private_state.premium_providers`, which is populated from `provider_premium_payments` passed to `collect_funding()`.
+
+**Selection mechanism (in `evaluate_all`):**
 ```python
-# Premium provider tests N strategies
-strategies = [sample_strategy() for _ in range(n_trials)]
-scores = [evaluate(strategy) for strategy in strategies]
-
-# Publish only the best (selective disclosure)
-published_score = max(scores)
+# Premium provider runs N trials, keeps best score per benchmark
+trial_scores = [self.evaluate(true_cap, eval_eng, benchmark) for _ in range(n_trials)]
+score = max(trial_scores)
 ```
 
 **Effect:** ~10-20 point score inflation per extra trial (calibrated from Leaderboard Illusion paper).
@@ -253,25 +238,24 @@ class Evaluator:
         )
 
         # Service fees from premium providers
-        premium_fee_per_round = 100000  # $100K per round
-        service_fees = len(self.premium_subscribers) * premium_fee_per_round
+        # pricing is set by evaluator_premium_pricing in SimulationConfig (default: $15M/round in experiments)
+        service_revenue = sum(provider_premium_payments.values())
 
-        self.budget += base_funding + service_fees
+        self.private_state.budget += base_funding + service_revenue
+        self.private_state.premium_providers = set(provider_premium_payments.keys())
 
     def can_introduce_benchmark(self) -> bool:
         """Check if evaluator has budget to introduce new benchmark."""
-        return self.budget >= self.benchmark_introduction_cost
-
-    def can_operate_benchmarks(self, n_benchmarks: int) -> bool:
-        """Check if evaluator can afford to run existing benchmarks."""
-        operation_cost = n_benchmarks * self.benchmark_operation_cost
-        return self.budget >= operation_cost
+        benchmark_cost = 50000.0  # hardcoded in consider_new_benchmark()
+        return self.private_state.budget >= benchmark_cost
+    # Note: benchmark_operation_cost is not implemented — only introduction cost is gated
 ```
 
 **Budget constraints affect:**
 1. **Benchmark introduction frequency:** Low budget → can't afford new benchmarks → stale evaluation suite
-2. **Benchmark retirement decisions:** Might keep saturated benchmarks active (benefits incumbents who optimized)
-3. **Dependence on provider fees:** Low base funding → more dependent on provider revenue → more conflicts of interest
+2. **Dependence on provider fees:** Low base funding → more dependent on provider revenue → more conflicts of interest
+
+Note: Benchmark retirement/operation cost is not implemented — only introduction is budget-gated.
 
 ---
 
@@ -368,28 +352,26 @@ Premium access
 
 ### Configuration Flags
 
-**Toggle evaluator business model on/off:**
+**Actual `SimulationConfig` parameters (in `simulation.py`):**
 
 ```python
 class SimulationConfig:
     # Evaluator-as-company feature flag
-    evaluator_as_company: bool = False  # Default: OFF (backwards compatible)
-
-    # If enabled, configure premium access
-    premium_access_enabled: bool = True
-    premium_fee_per_round: float = 100000
-    early_access_rounds: int = 3  # How many rounds early
-    max_trials_per_provider: int = 5
-
-    # Evaluator budget constraints
-    evaluator_needs_funding: bool = True
-    benchmark_introduction_cost: float = 50000
-    benchmark_operation_cost: float = 10000
+    evaluator_as_company: bool = False      # Default: OFF (backwards compatible)
+    evaluator_base_budget: float = 0.0      # Starting budget
+    evaluator_premium_pricing: float = 10000.0  # Cost per provider per round
+    # (experiments use $15M/round — easily affordable for established providers,
+    #  puts StartupDotAI out of reach given their VC funding level)
 ```
 
+Parameters NOT exposed as config (hardcoded in evaluator):
+- `benchmark_introduction_cost = 50000.0`
+- `max_trials = 5`
+- `early_access_rounds` — queue populated but provider pre-optimization not yet wired
+
 **Backwards compatibility:**
-- `evaluator_as_company=False`: Current behavior (1 trial, no funding dependency)
-- `evaluator_as_company=True`: New business model (N trials, funding, premium access)
+- `evaluator_as_company=False`: 1 trial per provider, no funding or premium access
+- `evaluator_as_company=True`: N trials (best-of-N), budget gating, premium subscriber set
 
 ### Provider Configuration
 
@@ -476,42 +458,37 @@ class Evaluator:
 
 ---
 
-## Part 6: Implementation Checklist
+## Part 6: Implementation Status
 
-### Phase 1: Evaluator Budget System
-- [ ] Add `budget` attribute to Evaluator
-- [ ] Add `collect_funding()` method (funders + provider fees)
-- [ ] Add `can_introduce_benchmark()` budget check
-- [ ] Test: Evaluator without funding cannot introduce benchmarks
+### Phase 1: Evaluator Budget System — DONE
+- [x] `EvaluatorPrivateState` with `budget`, `base_funding`, `service_revenue`, `funding_history`
+- [x] `collect_funding(funder_allocations, provider_premium_payments, round_num)`
+- [x] Budget check in `consider_new_benchmark()` (cost = $50K)
 
-### Phase 2: Premium Access (Best-of-N)
-- [ ] Add `has_premium_access` to Provider
-- [ ] Implement `compute_n_trials()` formula (funding × eval_eng)
-- [ ] Modify provider strategy execution: sample N, publish max
-- [ ] Test: Premium providers get score inflation
+### Phase 2: Premium Access (Best-of-N) — DONE
+- [x] `compute_n_trials()` implemented (binary funding_bonus + eval_eng_bonus, capped at 5)
+- [x] N trials run in `evaluate_all()`, best score published
+- [x] Trial results stored in `private_state.trial_results`
 
-### Phase 3: Early Access to Benchmarks
-- [ ] Add `upcoming_benchmarks` queue to Evaluator
-- [ ] Implement early notification system (N-3 rounds)
-- [ ] Allow premium providers to pre-optimize
-- [ ] Test: Early access providers score higher on new benchmarks
+### Phase 3: Early Access to Benchmarks — DONE
+- [x] `early_access_queue` populated in `private_state` when new benchmark introduced
+- [x] `_get_effective_benchmark()` applies 1.5x exploitability multiplier for providers in the
+      early-access window (first `early_access_rounds=3` rounds after public introduction)
+- [x] Wired into `evaluate_all()` — effective benchmark passed to all N trials
 
-### Phase 4: Funder Allocation to Evaluators
-- [ ] Modify Funder to split capital: evaluator vs providers
-- [ ] Funder type affects split (gov high, VC low)
-- [ ] Test: Gov-funded evaluators less dependent on provider fees
+### Phase 4: Funder Allocation to Evaluators — NOT DONE
+- [ ] Funders do not currently split capital between providers and evaluator
+- [ ] Evaluator receives budget via `evaluator_base_budget` initial value only (set in config)
+- [ ] Provider premium payments flow through simulation.py → `collect_funding()`
 
-### Phase 5: Logging and Visualization
-- [ ] Log evaluator budget and revenue sources to history.json
-- [ ] Log n_trials per provider per round
-- [ ] Log premium_subscribers list
-- [ ] Add evaluator funding dashboard plot
+### Phase 5: Logging and Visualization — DONE
+- [x] `private_state` serialized in evaluator `save()` / `load()`
+- [x] `trial_counts` per provider logged to `rounds.jsonl` via `evaluator_business_metrics`
+- [x] `plot_evaluator_business_dashboard()` implemented in `plotting.py`, wired into `create_all_dashboards()`
 
-### Phase 6: Configuration and Backwards Compatibility
-- [ ] Add `evaluator_as_company` config flag
-- [ ] Ensure `evaluator_as_company=False` preserves current behavior
-- [ ] Add preset configurations (us_evaluator, eu_evaluator)
-- [ ] Update stakeholders.md with new evaluator model
+### Phase 6: Configuration — DONE
+- [x] `evaluator_as_company`, `evaluator_base_budget`, `evaluator_premium_pricing` in `SimulationConfig`
+- [x] `evaluator_as_company=False` preserves single-trial behavior (backwards compatible)
 
 ---
 
@@ -538,3 +515,4 @@ class Evaluator:
 ## Document History
 
 - **2026-02-16:** Initial design based on Leaderboard Illusion paper and LMArena business model
+- **2026-02-18:** Updated to reflect actual implementation — corrected `compute_n_trials` formula (binary not gradient funding_bonus), updated config params to match `SimulationConfig`, corrected funding model signatures; implemented Phase 3 item 2 (`_get_effective_benchmark()` with 1.5x exploitability multiplier for early access window); corrected Phase 5 checklist (both logging and dashboard were already implemented)

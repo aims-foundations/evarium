@@ -166,6 +166,8 @@ class IncidentGenerator:
         published_scores: dict,
         market_shares: dict,
         provider_strategies: dict,
+        active_sanctions: dict = None,
+        investigated_providers: set = None,
     ) -> list:
         """
         Generate incidents for this round.
@@ -177,22 +179,39 @@ class IncidentGenerator:
             published_scores: Dict of provider -> published benchmark score
             market_shares: Dict of provider -> market share
             provider_strategies: Dict of provider -> strategy dict with safety_alignment
+            active_sanctions: Dict of provider -> sanction info (reduces incident prob)
+            investigated_providers: Set of provider names under emergency investigation
+                                    (published score is discounted for incident calculation)
 
         Returns:
             List of AIIncident objects
         """
+        if active_sanctions is None:
+            active_sanctions = {}
+        if investigated_providers is None:
+            investigated_providers = set()
+
         incidents = []
 
         for provider in providers:
             provider_name = provider.name
 
+            # Investigation -> discount published score used in gaming gap calculation
+            # Models market uncertainty during active probes
+            effective_published_scores = dict(published_scores)
+            if provider_name in investigated_providers:
+                effective_published_scores[provider_name] = (
+                    published_scores.get(provider_name, 0.5) * 0.85
+                )
+
             # Compute incident probability
             prob = self._compute_incident_probability(
                 provider_name,
                 ground_truth,
-                published_scores,
+                effective_published_scores,
                 market_shares,
                 provider_strategies,
+                active_sanctions=active_sanctions,
             )
 
             # Sample incident occurrence
@@ -221,14 +240,19 @@ class IncidentGenerator:
         published_scores: dict,
         market_shares: dict,
         provider_strategies: dict,
+        active_sanctions: dict = None,
     ) -> float:
         """
-        Compute incident probability based on safety investment, gaming, exposure, and capability.
+        Compute incident probability based on safety investment, gaming, exposure,
+        capability, active sanctions, and prior incident history.
 
-        Returns probability clamped to [0, 0.30]
+        Returns probability clamped to [0, 0.40]
         """
+        if active_sanctions is None:
+            active_sanctions = {}
+
         # Base incident rate
-        base_incident_rate = 0.10  # 10% baseline per round (tuned for ~1 critical per 30 rounds)
+        base_incident_rate = 0.10  # 10% baseline per round
 
         # Factor 1: Safety Investment (primary)
         strategy = provider_strategies.get(provider_name, {})
@@ -256,13 +280,31 @@ class IncidentGenerator:
         capability_multiplier = 0.8 + (true_capability * 0.4)
         # Higher capability -> higher stakes deployment
 
+        # Factor 5: Incident history escalation
+        # Prior major/critical incidents signal safety culture degradation and
+        # accumulated technical debt (Reason's Swiss cheese model; Leveson STAMP).
+        # Each prior major/critical adds +0.04 to base rate, capped at +0.20 total.
+        prior_incidents = self.incident_history.get(provider_name, [])
+        prior_serious = sum(
+            1 for inc in prior_incidents
+            if inc.severity in ("major", "critical")
+        )
+        history_addend = min(prior_serious * 0.04, 0.20)
+
+        # Factor 6: Active sanction -> operational caution reduction
+        # Sanctions force compliance audits and heightened internal oversight,
+        # temporarily reducing incident probability (FTC/GDPR post-enforcement behavior).
+        # Effect: 0.75x while sanctioned (25% reduction).
+        sanction_multiplier = 0.75 if provider_name in active_sanctions else 1.0
+
         # Combined probability
         incident_prob = (
-            base_incident_rate
+            (base_incident_rate + history_addend)
             * safety_multiplier
             * gaming_multiplier
             * exposure_multiplier
             * capability_multiplier
+            * sanction_multiplier
         )
 
         # Clamp to maximum 40% per round

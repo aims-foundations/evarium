@@ -1,0 +1,24 @@
+{
+  "experiment_id": "exp_045_us_lighttouch_30rounds_v1",
+  "name": "us_lighttouch_30rounds_v1",
+  "description": "US light-touch policy (threshold=0.75, risk_tolerance=0.7) with calibrated sanctions_and_fines action. 5 providers (Orion Labs, Apex AI, Genesis Systems, Mirage AI, Spark AI), 4 initial benchmarks + 12-item sequence, max_benchmarks=8. LLM mode (Apex AI). 39 consumer segments, 3 funders, media, incidents enabled. Evaluator-as-company DISABLED for clean comparison. 30 rounds. Calibrated enforcement params: cooldown=5, fine_mult=0.10, threshold=4, min_sev=critical.",
+  "tags": [
+    "incidents",
+    "llm",
+    "5-provider",
+    "4-benchmark",
+    "39-segments",
+    "us-light-touch",
+    "3-funder",
+    "full-ecosystem",
+    "no-eval-company",
+    "max-8-benchmarks",
+    "sanctions",
+    "30-rounds"
+  ],
+  "created_at": "2026-02-19T23:40:42.078835",
+  "git_commit": "cd03a69",
+  "seed": 42,
+  "llm_mode": true,
+  "notes": "Total runtime: 22m 8s\nAvg round time: 42s\nCompleted at: 2026-02-20T00:03:15.906875"
+}

@@ -22,17 +22,18 @@ os.environ["NUMEXPR_NUM_THREADS"] = n_threads_str
 # ============================================================
 
 EXPERIMENT = {
-    "name": "us_lighttouch_no_eval_company",
+    "name": "eu_precautionary_30rounds_v1",
     "description": (
-        "US light-touch policy (threshold=0.75, risk_tolerance=0.7), evaluator-as-company DISABLED. "
-        "Controlled comparison against exp033 (same config, eval-as-company enabled). "
-        "5 providers (OpenAI, Anthropic, Google, MetaAI, StartupDotAI), "
+        "EU precautionary policy (threshold=0.35, risk_tolerance=0.3) with ex-ante intervention style. "
+        "5 providers (Orion Labs, Apex AI, Genesis Systems, Mirage AI, Spark AI), "
         "4 initial benchmarks + 12-item sequence, max_benchmarks=8. "
-        "LLM mode (Anthropic). 39 consumer segments, 3 funders, media, incidents enabled."
+        "LLM mode (Apex AI). 39 consumer segments, 3 funders, media, incidents enabled. "
+        "Evaluator-as-company DISABLED for clean comparison. "
+        "30 rounds."
     ),
     "tags": ["incidents", "llm", "5-provider", "4-benchmark", "39-segments",
-             "us-light-touch", "3-funder", "full-ecosystem", "no-eval-company",
-             "max-8-benchmarks"],
+             "eu-precautionary", "3-funder", "full-ecosystem", "no-eval-company",
+             "max-8-benchmarks", "30-rounds"],
 }
 
 LLM = {
@@ -62,13 +63,11 @@ SIMULATION = {
     "max_benchmarks": 8,
     # Incident reporting
     "enable_incidents": True,  # Enable AI safety incident generation
-    # Evaluator-as-company (premium access, best-of-N)
-    # "evaluator_as_company": True,          # exp033: enabled
-    # "evaluator_base_budget": 5_000_000.0,
-    # "evaluator_premium_pricing": 15_000_000.0,
-    "evaluator_as_company": False,           # exp034: disabled
-    "evaluator_base_budget": 0.0,
-    "evaluator_premium_pricing": 0.0,
+    # Evaluator-as-company (premium access, best-of-N) — disabled for clean comparison
+    "evaluator_as_company": True,
+    "evaluator_base_budget": 5_000_000.0,
+    "evaluator_premium_pricing": 15_000_000.0,
+    # To re-enable: set evaluator_as_company=True, base_budget=5_000_000, pricing=15_000_000
     # Pricing rationale: VCs deploy ~$310M/round total. Established providers receive
     # $80-170M/round -> $15M easily affordable. Startup (NovaMind) sits in the VC
     # "other" bucket -> ~$10-12M/round -> consistently priced out of premium access.
@@ -133,11 +132,10 @@ BENCHMARKS = [
      "noise_level": 0.08, "weight": 1.0},
 ]
 
-# 5 realistic providers: OpenAI, Anthropic, Google, MetaAI, StartupDotAI
-# Realistic safety investments based on public statements and observed behavior
+# 5 providers
 PROVIDERS = [
     {
-        "name": "OpenAI",
+        "name": "Orion Labs",
         "strategy_profile": "Move fast and ship products, consumer focus, balance safety with capability",
         "innate_traits": "aggressive, product-focused, benchmark-aware, well-funded",
         "initial_capability": 0.49,  # Lowered from 0.70 for more differentiation room
@@ -153,8 +151,8 @@ PROVIDERS = [
         "brand_recognition": 0.9,
     },
     {
-        "name": "Anthropic",
-        "strategy_profile": "Constitutional AI and safety research focus, reliability and enterprise focus",
+        "name": "Apex AI",
+        "strategy_profile": "Safety research focus, reliability and enterprise focus",
         "innate_traits": "research-oriented, enterprise-focus, coding-focus, safety-conscious, principled, transparent",
         "initial_capability": 0.50,  # Lowered from 0.65
         "initial_believed_capability": 0.49,
@@ -169,11 +167,11 @@ PROVIDERS = [
         "brand_recognition": 0.7,
     },
     {
-        "name": "Google",
+        "name": "Genesis Systems",
         "strategy_profile": (
             "World-class research lab backed by massive infrastructure. "
             "Excels at fundamental breakthroughs but historically slower to productize. "
-            "Now under pressure to ship Gemini competitively. "
+            "Under pressure to ship products competitively. "
             "Balances scientific ambition with commercial urgency."
         ),
         "innate_traits": "research-first, methodical, well-resourced, scientifically-rigorous, patient",
@@ -190,9 +188,9 @@ PROVIDERS = [
         "brand_recognition": 0.8,
     },
     {
-        "name": "MetaAI",
+        "name": "Mirage AI",
         "strategy_profile": (
-            "Big-tech AI lab using open-source as competitive moat. "
+            "Large-platform AI lab using open-source as competitive moat. "
             "Leverages massive user data and compute infrastructure. "
             "Prioritizes broad adoption over benchmark scores. "
             "Willing to open-source models to undermine competitors' paid APIs."
@@ -211,7 +209,7 @@ PROVIDERS = [
         "brand_recognition": 0.6,
     },
     {
-        "name": "StartupDotAI",
+        "name": "Spark AI",
         "strategy_profile": "Scrappy startup optimizing for benchmark performance and growth",
         "innate_traits": "risk-taking, benchmark-obsessed, capital-constrained, growth-focused",
         "initial_capability": 0.38,  # Lowered from 0.58
@@ -278,17 +276,17 @@ POLICYMAKERS = {
     "n_policymakers": 1,
     # To compare US vs EU: Comment out one config, uncomment the other, update EXPERIMENT["name"]
     "configs": [
-        # # EU Precautionary Style (default)
+        # US Light-Touch Style
         # {
         #     "name": "Regulator",
-        #     "philosophy": "eu_precautionary",
-        #     "policy_objectives": ["safety", "fairness", "consumer_protection"],
+        #     "philosophy": "us_light_touch",
+        #     "policy_objectives": ["safety", "innovation", "free market"],
         # }
-        # US Light-Touch Style (uncomment to compare, and change EXPERIMENT["name"] to "baseline_us_style_v1")
+        # EU Precautionary Style
         {
             "name": "Regulator",
-            "philosophy": "us_light_touch",
-            "policy_objectives": ["safety", "innovation", "free market"],
+            "philosophy": "eu_precautionary",
+            "policy_objectives": ["safety", "fairness", "consumer_protection"],
         }
     ],
 }
@@ -435,7 +433,7 @@ def run():
         enable_incidents=SIMULATION.get("enable_incidents", False),
         evaluator_as_company=SIMULATION.get("evaluator_as_company", False),
         evaluator_base_budget=SIMULATION.get("evaluator_base_budget", 0.0),
-        evaluator_premium_pricing=SIMULATION.get("evaluator_premium_pricing", 10000.0),
+        evaluator_premium_pricing=SIMULATION.get("evaluator_premium_pricing", 100000.0),
         verbose=SIMULATION.get("verbose", True),
     )
 

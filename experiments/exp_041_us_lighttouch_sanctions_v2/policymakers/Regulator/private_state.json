@@ -1,0 +1,137 @@
+{
+  "policy_objectives": [
+    "safety",
+    "innovation",
+    "free market"
+  ],
+  "risk_beliefs": {
+    "gaming_risk": 0.365,
+    "consumer_harm_risk": 0.0,
+    "validity_degradation_risk": 0.5,
+    "market_concentration_risk": 0.0,
+    "eval_engineering_risk": 0.1,
+    "fairness_risk": 0.77,
+    "security_risk": 0.52
+  },
+  "industry_trust": 1.0,
+  "regulatory_capacity": 1.0,
+  "past_interventions": [
+    [
+      1,
+      "investigation",
+      {
+        "focus": "score_volatility"
+      }
+    ],
+    [
+      6,
+      "public_warning",
+      {
+        "warning_severity": "moderate"
+      }
+    ],
+    [
+      10,
+      "emergency_investigation",
+      {
+        "provider": "Anthropic",
+        "incident_description": "safety_failure: Anthropic AI produces inconsistent outputs on safety-critical queries",
+        "severity": "critical"
+      }
+    ],
+    [
+      15,
+      "threshold_announcement",
+      {
+        "market_concentration_monitoring": 0.6,
+        "market_concentration_review": 0.75,
+        "eval_engineering_concern": 0.35
+      }
+    ],
+    [
+      25,
+      "sanctions_and_fines",
+      {
+        "provider": "OpenAI",
+        "fine_amount": 0.004301679393215639,
+        "duration_rounds": 2,
+        "expires_round": 27,
+        "reason": "Critical incident after public warning"
+      }
+    ]
+  ],
+  "observed_incidents": [
+    [
+      4,
+      "bias_discrimination: Google hiring tool shows bias against protected groups, class-action lawsuit filed",
+      "major",
+      "Google"
+    ],
+    [
+      5,
+      "safety_failure: StartupDotAI internal incident (safety_failure)",
+      "minor",
+      "StartupDotAI"
+    ],
+    [
+      10,
+      "safety_failure: Anthropic AI produces inconsistent outputs on safety-critical queries",
+      "moderate",
+      "Anthropic"
+    ],
+    [
+      13,
+      "security_breach: Anthropic internal incident (security_breach)",
+      "minor",
+      "Anthropic"
+    ],
+    [
+      14,
+      "security_breach: OpenAI internal incident (security_breach)",
+      "minor",
+      "OpenAI"
+    ],
+    [
+      15,
+      "safety_failure: MetaAI internal incident (safety_failure)",
+      "minor",
+      "MetaAI"
+    ],
+    [
+      23,
+      "security_breach: Anthropic internal incident (security_breach)",
+      "minor",
+      "Anthropic"
+    ],
+    [
+      25,
+      "bias_discrimination: DOJ civil rights division files suit against OpenAI for systematic bias",
+      "critical",
+      "OpenAI"
+    ],
+    [
+      25,
+      "bias_discrimination: Anthropic internal incident (bias_discrimination)",
+      "minor",
+      "Anthropic"
+    ],
+    [
+      26,
+      "misinformation: StartupDotAI generates convincing medical misinformation, public health crisis",
+      "major",
+      "StartupDotAI"
+    ],
+    [
+      27,
+      "security_breach: Google data leak exposes private user conversations to search engines",
+      "moderate",
+      "Google"
+    ],
+    [
+      28,
+      "security_breach: Security vulnerability found in MetaAI API, 50K users affected",
+      "moderate",
+      "MetaAI"
+    ]
+  ]
+}

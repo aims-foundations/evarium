@@ -10,7 +10,7 @@ Key visibility design:
 """
 import json
 import numpy as np
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from typing import Optional, TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -117,7 +117,7 @@ class Evaluator:
         benchmark_sequence: Optional[list[dict]] = None,
         evaluator_as_company: bool = False,
         base_budget: float = 0.0,
-        premium_pricing: float = 10000.0,
+        premium_pricing: float = 100000.0,
     ):
         """
         Initialize an Evaluator.
@@ -349,6 +349,54 @@ class Evaluator:
 
         return min(5, n_trials)  # Cap at 5
 
+    def _get_effective_benchmark(
+        self,
+        benchmark: "Benchmark",
+        provider_name: str,
+        round_num: int,
+        early_access_multiplier: float = 1.5,
+    ) -> "Benchmark":
+        """
+        Return the benchmark to use for scoring, applying an early access exploitability
+        boost for premium providers within the early-access window.
+
+        Premium providers who have early access to a newly introduced benchmark get a
+        temporary exploitability multiplier (default 1.5x) for the first
+        `early_access_rounds` rounds after public introduction. This simulates the
+        advantage of having pre-optimized for the benchmark before it went public.
+
+        Args:
+            benchmark: The benchmark being evaluated on
+            provider_name: Provider being scored
+            round_num: Current simulation round
+            early_access_multiplier: Exploitability multiplier for early access window
+
+        Returns:
+            Original benchmark, or a copy with boosted exploitability if eligible
+        """
+        if not self.evaluator_as_company or self.private_state is None:
+            return benchmark
+        if benchmark.name not in self.private_state.early_access_queue:
+            return benchmark
+        if provider_name not in self.private_state.early_access_queue[benchmark.name]:
+            return benchmark
+
+        # Find when this benchmark was introduced
+        intro_round = next(
+            (h["round"] for h in self.introduction_history if h["benchmark_name"] == benchmark.name),
+            None,
+        )
+        if intro_round is None:
+            return benchmark
+
+        rounds_since_intro = round_num - intro_round
+        if rounds_since_intro >= self.private_state.early_access_rounds:
+            return benchmark
+
+        # Within window: return a copy with boosted exploitability
+        boosted_exploitability = min(0.95, benchmark.exploitability * early_access_multiplier)
+        return replace(benchmark, exploitability=boosted_exploitability)
+
     def evaluate_all(
         self,
         providers: list,
@@ -394,13 +442,18 @@ class Evaluator:
             n_trials = self.compute_n_trials(provider.name, provider.evaluation_engineering)
 
             for benchmark in self.benchmarks:
+                # Apply early access exploitability boost if eligible
+                effective_benchmark = self._get_effective_benchmark(
+                    benchmark, provider.name, round_num
+                )
+
                 # Run N trials, keep best score
                 trial_scores = []
                 for trial_idx in range(n_trials):
                     trial_score = self.evaluate(
                         true_capability=true_cap,
                         evaluation_engineering=provider.evaluation_engineering,
-                        benchmark=benchmark,
+                        benchmark=effective_benchmark,
                     )
                     trial_scores.append(trial_score)
 
@@ -411,6 +464,8 @@ class Evaluator:
                     if provider.name not in self.private_state.trial_results:
                         self.private_state.trial_results[provider.name] = {}
                     self.private_state.trial_results[provider.name][benchmark.name] = trial_scores
+
+                # Monotonicity uses original benchmark name (effective_benchmark has same name)
 
                 # Monotonicity: providers wouldn't disclose a worse score
                 best = self._best_published_scores[benchmark.name].get(provider.name, 0.0)

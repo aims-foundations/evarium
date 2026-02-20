@@ -44,19 +44,41 @@ def r4(x):
 # Simplified to use only currently implemented Policymaker parameters
 POLICYMAKER_PRESETS = {
     "us_light_touch": {
-        "intervention_threshold": 0.75,  # High threshold - slow to intervene
-        "risk_tolerance": 0.7,  # High risk tolerance
-        "policy_objectives": ["safety", "innovation", "free market"],
+        # Threshold / stance
+        "intervention_threshold": 0.75,  # High bar — only intervenes when risk is very clear
+        "risk_tolerance": 0.7,           # High risk tolerance — market correction preferred
+        "policy_objectives": ["safety", "innovation", "free_market"],
+        # Enforcement calibration (empirically grounded: FTC/DOJ enforcement patterns)
+        "intervention_cooldown": 5,          # US regulatory cycles ~18-36 months; slow follow-up
+        "sanction_fine_multiplier": 0.10,    # Light fines — US relies on consent orders, not direct % revenue fines
+        "sanction_incident_threshold": 4,    # US needs a clear pattern before sanctioning
+        "sanction_duration": 2,              # Short-term — US consent decrees expire; market corrects
+        "mandate_risk_threshold": 0.75,      # US almost never mandates benchmark compliance (ex-post philosophy)
+        "sanction_min_severity": "critical", # US only acts on critical incidents (not mere majors)
     },
     "eu_precautionary": {
-        "intervention_threshold": 0.35,  # Low threshold - quick to intervene
-        "risk_tolerance": 0.2,  # Low risk tolerance
+        # Threshold / stance
+        "intervention_threshold": 0.35,  # Low threshold — precautionary, acts early
+        "risk_tolerance": 0.2,           # Low risk tolerance — prevent harm upfront
         "policy_objectives": ["safety", "fairness", "consumer_protection"],
+        # Enforcement calibration (empirically grounded: GDPR/DMA/EU AI Act patterns)
+        "intervention_cooldown": 2,          # EU follows up aggressively — ~6-12 month regulatory cycles
+        "sanction_fine_multiplier": 0.35,    # Larger economic bite (EU 7% global turnover ceiling)
+        "sanction_incident_threshold": 2,    # EU sanctions on accumulated patterns; low bar
+        "sanction_duration": 4,              # EU compliance cycles take longer; sanctions persist
+        "mandate_risk_threshold": 0.50,      # EU mandates at moderate risk (ex-ante philosophy)
+        "sanction_min_severity": "major",    # EU acts on major incidents, not just critical
     },
     "balanced": {
-        "intervention_threshold": 0.50,  # Medium threshold
-        "risk_tolerance": 0.5,  # Medium risk tolerance
+        "intervention_threshold": 0.50,
+        "risk_tolerance": 0.5,
         "policy_objectives": ["safety", "fairness"],
+        "intervention_cooldown": 3,
+        "sanction_fine_multiplier": 0.22,
+        "sanction_incident_threshold": 3,
+        "sanction_duration": 3,
+        "mandate_risk_threshold": 0.62,
+        "sanction_min_severity": "major",
     },
 }
 
@@ -124,7 +146,7 @@ class SimulationConfig:
     # Evaluator-as-company feature
     evaluator_as_company: bool = False  # Evaluator operates as company with funding & premium services
     evaluator_base_budget: float = 0.0  # Starting budget for evaluator
-    evaluator_premium_pricing: float = 10000.0  # Cost of premium access per provider per round
+    evaluator_premium_pricing: float = 100000.0  # Cost of premium access per provider per round
 
     # Output
     output_dir: Optional[str] = None
@@ -399,6 +421,12 @@ class EvalEcosystemSimulation:
                 intervention_threshold=config_params.get("intervention_threshold", 0.3),
                 risk_tolerance=config_params.get("risk_tolerance", 0.5),
                 llm_mode=config_params.get("llm_mode", False),
+                intervention_cooldown=config_params.get("intervention_cooldown", 3),
+                sanction_fine_multiplier=config_params.get("sanction_fine_multiplier", 0.30),
+                sanction_incident_threshold=config_params.get("sanction_incident_threshold", 2),
+                sanction_duration=config_params.get("sanction_duration", 3),
+                mandate_risk_threshold=config_params.get("mandate_risk_threshold", 0.60),
+                sanction_min_severity=config_params.get("sanction_min_severity", "major"),
             )
             self.policymakers.append(policymaker)
 
@@ -532,6 +560,14 @@ class EvalEcosystemSimulation:
 
                 # Apply funding multiplier (1.0 if no funding, up to 2.0 with max funding)
                 funding_multiplier = funding_multipliers.get(provider.name, 1.0)
+
+                # Apply active sanctions from previous round (same timing as funder multipliers)
+                prev_pm_data = self.history[-1].get("policymaker_data", {}) if self.history else {}
+                active_sanctions = prev_pm_data.get("active_sanctions", {})
+                if provider.name in active_sanctions:
+                    fine_amount = active_sanctions[provider.name].get("fine_amount", 0.0)
+                    funding_multiplier = max(0.1, funding_multiplier * (1.0 - fine_amount))
+
                 effective_efficiency = base_efficiency * funding_multiplier
 
                 # S-curve: diminishing returns near the capability ceiling
@@ -634,6 +670,26 @@ class EvalEcosystemSimulation:
                 for p in self.providers
             }
 
+            # Mandatory safety floor: policymaker interventions at compliance_audit level
+            # or above enforce a minimum safety_alignment of 0.15.
+            # Models EU AI Act Art. 9 — ongoing risk management cannot be zeroed out.
+            # Applied here (before incident generation) so the floor affects incident prob
+            # in the same round the compliance state is active.
+            prev_pm_data = self.history[-1].get("policymaker_data", {}) if self.history else {}
+            active_regulations = prev_pm_data.get("active_regulations", [])
+            FLOOR_TRIGGERS = {"compliance_audit", "sanctions_and_fines", "emergency_investigation"}
+            floor_applies_to = set()
+            for reg in active_regulations:
+                if isinstance(reg, dict) and reg.get("type") in FLOOR_TRIGGERS:
+                    target = reg.get("target")
+                    if target:
+                        floor_applies_to.add(target)
+            SAFETY_FLOOR = 0.15
+            for p_name, strat in provider_strategies.items():
+                if p_name in floor_applies_to:
+                    if strat["safety_alignment"] < SAFETY_FLOOR:
+                        strat["safety_alignment"] = SAFETY_FLOOR
+
             # Collect ground truth capabilities
             ground_truth_capabilities = {
                 p.name: self.ground_truth[p.name].true_capability
@@ -645,6 +701,14 @@ class EvalEcosystemSimulation:
             if self.history and "consumer_data" in self.history[-1]:
                 market_shares = self.history[-1]["consumer_data"].get("market_shares", {})
 
+            # Collect active sanctions and investigated providers from previous round
+            active_sanctions = prev_pm_data.get("active_sanctions", {})
+            investigated_providers = {
+                iv.get("target")
+                for iv in prev_pm_data.get("interventions", [])
+                if iv.get("type") == "emergency_investigation" and iv.get("target")
+            }
+
             # Generate incidents
             incidents = self.incident_generator.generate_incidents(
                 providers=self.providers,
@@ -653,6 +717,8 @@ class EvalEcosystemSimulation:
                 published_scores=published_scores,
                 market_shares=market_shares,
                 provider_strategies=provider_strategies,
+                active_sanctions=active_sanctions,
+                investigated_providers=investigated_providers,
             )
 
             # Log incidents if verbose
@@ -1095,11 +1161,22 @@ class EvalEcosystemSimulation:
                     # (This is applied in the next funder round via policymaker_data)
                     pass
 
+                elif intervention_type == "sanctions_and_fines":
+                    # Mechanical effect applied via _active_sanctions in next round's capability update
+                    pass
+
                 policymaker_data["interventions"].append({
                     "policymaker": policymaker.name,
                     "type": intervention_type,
                     "details": intervention.get("details"),
                 })
+
+        # Collect active sanctions from all policymakers
+        all_active_sanctions = {}
+        for pm in self.policymakers:
+            for provider_name, sanction in pm._active_sanctions.items():
+                all_active_sanctions[provider_name] = sanction
+        policymaker_data["active_sanctions"] = all_active_sanctions
 
         # Record active regulations
         policymaker_data["active_regulations"] = [
@@ -1518,12 +1595,7 @@ class EvalEcosystemSimulation:
 
 def get_default_provider_configs() -> list[dict]:
     """
-    Get default provider configurations modeled after real AI companies.
-
-    Profiles are informed by public information about company strategies:
-    - OpenAI: Market leader, aggressive scaling, benchmark-focused
-    - Anthropic: Safety-focused, research-driven, Constitutional AI
-    - NovaMind: Resource-constrained startup, scrappy, efficiency-focused
+    Get default provider configurations for the simulation.
 
     Investment allocations reflect approximate R&D priorities:
     - fundamental_research: Novel architectures, breakthrough research
@@ -1532,12 +1604,9 @@ def get_default_provider_configs() -> list[dict]:
     - safety_alignment: RLHF, red-teaming, alignment research
     """
     return [
-        # === OpenAI ===
-        # Market leader with GPT-4, known for aggressive scaling and benchmark performance.
-        # Heavy investment in training infrastructure, moderate eval engineering.
-        # Safety investment present but secondary to capability advancement.
+        # === Orion Labs ===
         {
-            "name": "OpenAI",
+            "name": "Orion Labs",
             "strategy_profile": (
                 "Market leader focused on maintaining benchmark dominance and rapid capability scaling. "
                 "Prioritizes shipping products quickly and staying ahead of competition. "
@@ -1557,15 +1626,12 @@ def get_default_provider_configs() -> list[dict]:
             "market_presence": 0.8,  # Established brand, most consumers start here
             "brand_recognition": 0.9,
         },
-        # === Anthropic ===
-        # Safety-focused lab founded by ex-OpenAI researchers.
-        # Known for Constitutional AI, interpretability research, and cautious deployment.
-        # Higher research and safety investment, less benchmark gaming.
+        # === Apex AI ===
         {
-            "name": "Anthropic",
+            "name": "Apex AI",
             "strategy_profile": (
                 "Safety-focused AI lab prioritizing responsible development and alignment research. "
-                "Believes in Constitutional AI and careful capability advancement. "
+                "Believes in careful capability advancement and interpretability research. "
                 "Willing to sacrifice short-term benchmark performance for long-term safety. "
                 "Research-driven culture with academic rigor."
             ),
@@ -1610,9 +1676,9 @@ def get_default_provider_configs() -> list[dict]:
 
 
 def get_two_provider_configs() -> list[dict]:
-    """Get a simpler 2-provider configuration (OpenAI vs Anthropic only)."""
+    """Get a simpler 2-provider configuration (Orion Labs vs Apex AI only)."""
     all_configs = get_default_provider_configs()
-    return [all_configs[0], all_configs[1]]  # OpenAI and Anthropic
+    return [all_configs[0], all_configs[1]]  # Orion Labs and Apex AI
 
 
 def get_legacy_provider_configs() -> list[dict]:
@@ -1637,21 +1703,19 @@ def get_legacy_provider_configs() -> list[dict]:
 
 def get_five_provider_configs() -> list[dict]:
     """
-    Get 5-provider configuration: OpenAI, Anthropic, NovaMind + Google DeepMind, Meta AI.
+    Get 5-provider configuration: Orion Labs, Apex AI, NovaMind + Genesis Systems, Mirage AI.
 
     Extends the default 3-provider configs with two additional major players.
     """
-    configs = get_default_provider_configs()  # OpenAI, Anthropic, NovaMind
+    configs = get_default_provider_configs()  # Orion Labs, Apex AI, NovaMind
     configs.extend([
-        # === Google DeepMind ===
-        # Deep research pedigree (AlphaGo, AlphaFold). Strong fundamentals,
-        # massive compute from Google, but historically slower to ship products.
+        # === Genesis Systems ===
         {
-            "name": "DeepMind",
+            "name": "Genesis Systems",
             "strategy_profile": (
-                "World-class research lab backed by Google's infrastructure. "
+                "World-class research lab backed by massive infrastructure. "
                 "Excels at fundamental breakthroughs but historically slower to productize. "
-                "Now under pressure to ship Gemini competitively. "
+                "Under pressure to ship products competitively. "
                 "Balances scientific ambition with commercial urgency from parent company."
             ),
             "innate_traits": "research-first, methodical, well-resourced, scientifically-rigorous, patient",
@@ -1667,13 +1731,11 @@ def get_five_provider_configs() -> list[dict]:
             "market_presence": 0.7,
             "brand_recognition": 0.8,
         },
-        # === Meta AI ===
-        # Open-source strategy (LLaMA). Massive data + compute advantage.
-        # Less benchmark-obsessed, more focused on open ecosystem and engagement.
+        # === Mirage AI ===
         {
-            "name": "Meta_AI",
+            "name": "Mirage AI",
             "strategy_profile": (
-                "Big-tech AI lab using open-source as competitive moat. "
+                "Large-platform AI lab using open-source as competitive moat. "
                 "Leverages massive user data and compute infrastructure. "
                 "Prioritizes broad adoption over benchmark scores. "
                 "Willing to open-source models to undermine competitors' paid APIs."

@@ -481,7 +481,7 @@ class ModelProvider:
         ctx = ecosystem_context or {}
 
         # Start from previous allocation so provider identity persists across rounds.
-        # Round 0 config-set values (e.g. OpenAI 15/50/30/5, Anthropic 35/20/5/40)
+        # Round 0 config-set values (e.g. Orion Labs 15/50/30/5, Apex AI 35/20/5/40)
         # carry forward rather than being reset to 25/25/25/25 each round.
         fundamental = self.private_state.fundamental_research
         training = self.private_state.training_optimization

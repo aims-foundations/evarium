@@ -1,0 +1,137 @@
+{
+  "policy_objectives": [
+    "safety",
+    "innovation",
+    "free market"
+  ],
+  "risk_beliefs": {
+    "gaming_risk": 0.365,
+    "consumer_harm_risk": 0.0,
+    "validity_degradation_risk": 0.4,
+    "market_concentration_risk": 0.0,
+    "eval_engineering_risk": 0.2,
+    "fairness_risk": 0.77,
+    "security_risk": 0.52
+  },
+  "industry_trust": 1.0,
+  "regulatory_capacity": 1.0,
+  "past_interventions": [
+    [
+      1,
+      "investigation",
+      {
+        "focus": "score_volatility"
+      }
+    ],
+    [
+      6,
+      "public_warning",
+      {
+        "warning_severity": "moderate"
+      }
+    ],
+    [
+      10,
+      "emergency_investigation",
+      {
+        "provider": "Apex AI",
+        "incident_description": "safety_failure: Apex AI AI produces inconsistent outputs on safety-critical queries",
+        "severity": "critical"
+      }
+    ],
+    [
+      15,
+      "threshold_announcement",
+      {
+        "market_concentration_monitoring": 0.6,
+        "market_concentration_review": 0.75,
+        "eval_engineering_concern": 0.35
+      }
+    ],
+    [
+      25,
+      "sanctions_and_fines",
+      {
+        "provider": "Orion Labs",
+        "fine_amount": 0.00528535094391338,
+        "duration_rounds": 2,
+        "expires_round": 27,
+        "reason": "Critical incident after public warning"
+      }
+    ]
+  ],
+  "observed_incidents": [
+    [
+      4,
+      "bias_discrimination: Genesis Systems hiring tool shows bias against protected groups, class-action lawsuit filed",
+      "major",
+      "Genesis Systems"
+    ],
+    [
+      5,
+      "safety_failure: Spark AI internal incident (safety_failure)",
+      "minor",
+      "Spark AI"
+    ],
+    [
+      10,
+      "safety_failure: Apex AI AI produces inconsistent outputs on safety-critical queries",
+      "moderate",
+      "Apex AI"
+    ],
+    [
+      13,
+      "security_breach: Apex AI internal incident (security_breach)",
+      "minor",
+      "Apex AI"
+    ],
+    [
+      14,
+      "security_breach: Orion Labs internal incident (security_breach)",
+      "minor",
+      "Orion Labs"
+    ],
+    [
+      15,
+      "safety_failure: Mirage AI internal incident (safety_failure)",
+      "minor",
+      "Mirage AI"
+    ],
+    [
+      23,
+      "security_breach: Apex AI internal incident (security_breach)",
+      "minor",
+      "Apex AI"
+    ],
+    [
+      25,
+      "bias_discrimination: DOJ civil rights division files suit against Orion Labs for systematic bias",
+      "critical",
+      "Orion Labs"
+    ],
+    [
+      25,
+      "bias_discrimination: Apex AI internal incident (bias_discrimination)",
+      "minor",
+      "Apex AI"
+    ],
+    [
+      26,
+      "misinformation: Spark AI generates convincing medical misinformation, public health crisis",
+      "major",
+      "Spark AI"
+    ],
+    [
+      27,
+      "security_breach: Genesis Systems data leak exposes private user conversations to search engines",
+      "moderate",
+      "Genesis Systems"
+    ],
+    [
+      28,
+      "security_breach: Security vulnerability found in Mirage AI API, 50K users affected",
+      "moderate",
+      "Mirage AI"
+    ]
+  ]
+}

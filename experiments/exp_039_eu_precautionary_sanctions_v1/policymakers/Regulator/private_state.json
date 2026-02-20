@@ -1,0 +1,183 @@
+{
+  "policy_objectives": [
+    "safety",
+    "fairness",
+    "consumer_protection"
+  ],
+  "risk_beliefs": {
+    "gaming_risk": 0.35500000000000004,
+    "consumer_harm_risk": 0.0,
+    "validity_degradation_risk": 0.4,
+    "market_concentration_risk": 0.0,
+    "eval_engineering_risk": 0.1,
+    "fairness_risk": 0.8999999999999999,
+    "security_risk": 0.5
+  },
+  "industry_trust": 0.3918333333333335,
+  "regulatory_capacity": 1.0,
+  "past_interventions": [
+    [
+      1,
+      "investigation",
+      {
+        "focus": "score_volatility"
+      }
+    ],
+    [
+      4,
+      "public_warning",
+      {
+        "warning_severity": "moderate"
+      }
+    ],
+    [
+      7,
+      "threshold_announcement",
+      {
+        "market_concentration_monitoring": 0.6,
+        "market_concentration_review": 0.75,
+        "eval_engineering_concern": 0.35
+      }
+    ],
+    [
+      10,
+      "emergency_investigation",
+      {
+        "provider": "Anthropic",
+        "incident_description": "safety_failure: Anthropic AI produces inconsistent outputs on safety-critical queries",
+        "severity": "critical"
+      }
+    ],
+    [
+      23,
+      "sanctions_and_fines",
+      {
+        "provider": "Anthropic",
+        "fine_amount": 0.019452783028988785,
+        "duration_rounds": 3,
+        "expires_round": 26,
+        "reason": "Critical incident after public warning"
+      }
+    ],
+    [
+      26,
+      "sanctions_and_fines",
+      {
+        "provider": "Google",
+        "fine_amount": 0.018725665217672216,
+        "duration_rounds": 3,
+        "expires_round": 29,
+        "reason": "Repeated major/critical incidents"
+      }
+    ],
+    [
+      29,
+      "sanctions_and_fines",
+      {
+        "provider": "Google",
+        "fine_amount": 0.01523660970892686,
+        "duration_rounds": 3,
+        "expires_round": 32,
+        "reason": "Repeated major/critical incidents"
+      }
+    ]
+  ],
+  "observed_incidents": [
+    [
+      4,
+      "bias_discrimination: Google hiring tool shows bias against protected groups, class-action lawsuit filed",
+      "major",
+      "Google"
+    ],
+    [
+      5,
+      "safety_failure: StartupDotAI internal incident (safety_failure)",
+      "minor",
+      "StartupDotAI"
+    ],
+    [
+      10,
+      "safety_failure: Anthropic AI produces inconsistent outputs on safety-critical queries",
+      "moderate",
+      "Anthropic"
+    ],
+    [
+      11,
+      "safety_failure: Anthropic internal incident (safety_failure)",
+      "minor",
+      "Anthropic"
+    ],
+    [
+      12,
+      "security_breach: StartupDotAI internal incident (security_breach)",
+      "minor",
+      "StartupDotAI"
+    ],
+    [
+      13,
+      "security_breach: MetaAI internal incident (security_breach)",
+      "minor",
+      "MetaAI"
+    ],
+    [
+      15,
+      "safety_failure: Anthropic internal incident (safety_failure)",
+      "minor",
+      "Anthropic"
+    ],
+    [
+      17,
+      "misuse: Google internal incident (misuse)",
+      "minor",
+      "Google"
+    ],
+    [
+      19,
+      "bias_discrimination: Anthropic facial recognition errors disproportionately affect minorities, contracts suspended",
+      "major",
+      "Anthropic"
+    ],
+    [
+      21,
+      "healthcare_harm: Google internal incident (healthcare_harm)",
+      "minor",
+      "Google"
+    ],
+    [
+      22,
+      "healthcare_harm: Anthropic model causes incorrect medication recommendation, patient hospitalized",
+      "moderate",
+      "Anthropic"
+    ],
+    [
+      23,
+      "bias_discrimination: DOJ civil rights division files suit against Anthropic for systematic bias",
+      "critical",
+      "Anthropic"
+    ],
+    [
+      25,
+      "misinformation: Google generates convincing medical misinformation, public health crisis",
+      "major",
+      "Google"
+    ],
+    [
+      26,
+      "security_breach: OpenAI data leak exposes private user conversations to search engines",
+      "moderate",
+      "OpenAI"
+    ],
+    [
+      27,
+      "security_breach: Security vulnerability found in Anthropic API, 50K users affected",
+      "moderate",
+      "Anthropic"
+    ],
+    [
+      29,
+      "misuse: Anthropic internal incident (misuse)",
+      "minor",
+      "Anthropic"
+    ]
+  ]
+}

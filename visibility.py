@@ -506,10 +506,10 @@ class EvaluatorPrivateState:
     base_funding: float = 0.0
     service_revenue: float = 0.0
     premium_providers: set = field(default_factory=set)
-    premium_pricing: float = 10000.0
+    premium_pricing: float = 100000.0
     trial_results: dict = field(default_factory=dict)  # {provider: {benchmark: [scores]}}
     early_access_queue: dict = field(default_factory=dict)  # {benchmark: [providers]}
-    early_access_rounds: int = 3
+    early_access_rounds: int = 2
     funding_history: list = field(default_factory=list)
 
     def to_dict(self) -> dict:
