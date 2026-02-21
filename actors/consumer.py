@@ -151,16 +151,19 @@ ARCHETYPES = {
         "leaderboard_trust": 0.85,
         "switching_cost": 0.05,
         "switching_threshold": 0.15,
+        "cost_sensitivity": 0.15,  # Follows scores, not price
     },
     "experience_driven": {
         "leaderboard_trust": 0.35,
         "switching_cost": 0.08,
         "switching_threshold": 0.08,
+        "cost_sensitivity": 0.30,  # Will switch for better value
     },
     "cautious": {
         "leaderboard_trust": 0.50,
         "switching_cost": 0.20,
         "switching_threshold": 0.25,
+        "cost_sensitivity": 0.20,  # Weighs cost but risk-averse about quality
     },
 
     # Organizational archetypes
@@ -168,16 +171,19 @@ ARCHETYPES = {
         "leaderboard_trust": 0.25,  # Very experience-driven
         "switching_cost": 0.35,
         "switching_threshold": 0.50,
+        "cost_sensitivity": 0.10,  # Enterprises care less about per-token cost
     },
     "enterprise_growth": {
         "leaderboard_trust": 0.45,
         "switching_cost": 0.25,
         "switching_threshold": 0.30,
+        "cost_sensitivity": 0.15,  # Some cost awareness
     },
     "enterprise_established": {
         "leaderboard_trust": 0.35,
         "switching_cost": 0.40,
         "switching_threshold": 0.40,
+        "cost_sensitivity": 0.08,  # Inertia dominates
     },
 }
 
@@ -202,6 +208,9 @@ class MarketSegment:
     leaderboard_trust: float = 0.7
     switching_cost: float = 0.1
     switching_threshold: float = 0.15
+
+    # Cost sensitivity: how much cost_efficiency factors into satisfaction
+    cost_sensitivity: float = 0.0  # 0=no price sensitivity, 0.3=max individual sensitivity
 
     # NEW: LLM reasoning toggle
     llm_mode: bool = False  # Use LLM for decision-making (default False for individuals)
@@ -233,6 +242,7 @@ class MarketSegment:
             "leaderboard_trust": self.leaderboard_trust,
             "switching_cost": self.switching_cost,
             "switching_threshold": self.switching_threshold,
+            "cost_sensitivity": self.cost_sensitivity,
             "llm_mode": self.llm_mode,
             "consumer_type": self.consumer_type,
             "decision_delay": self.decision_delay,
@@ -491,6 +501,7 @@ class ConsumerMarket:
         media_coverage: Optional[dict] = None,
         incident_history: Optional[dict] = None,
         round_num: Optional[int] = None,
+        provider_cost_efficiency: Optional[dict] = None,
     ):
         """Compute per-segment per-provider satisfaction from ground truth.
 
@@ -582,6 +593,13 @@ class ConsumerMarket:
                             weight *= 2.0  # Double penalty for sector-specific incidents
                         incident_penalty += weight
 
+                # Factor 5: Cost Efficiency Bonus
+                # Open-source providers offer lower cost; price-sensitive segments benefit
+                cost_bonus = 0.0
+                if provider_cost_efficiency and provider_name in provider_cost_efficiency:
+                    cost_eff = provider_cost_efficiency[provider_name]
+                    cost_bonus = seg.cost_sensitivity * cost_eff * 0.15
+
                 # Compute final satisfaction
                 satisfaction = (
                     base_satisfaction
@@ -589,6 +607,7 @@ class ConsumerMarket:
                     + safety_bonus
                     - media_penalty
                     - incident_penalty
+                    + cost_bonus
                 )
 
                 # Clamp to [0, 1]
@@ -1273,6 +1292,7 @@ def create_default_segments(
                 leaderboard_trust=arch_params["leaderboard_trust"],
                 switching_cost=arch_params["switching_cost"],
                 switching_threshold=arch_params["switching_threshold"],
+                cost_sensitivity=arch_params.get("cost_sensitivity", 0.0),
                 llm_mode=False,  # Will be set by ConsumerMarket based on config
                 consumer_type=consumer_type,
                 decision_delay=decision_delay,

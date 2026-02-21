@@ -2,7 +2,7 @@
 
 This document describes how actors are modeled in the simulation. For planned work, see `TODO.md`. For experiment setup, see `run_experiment.py`.
 
-**Last updated:** 2026-02-19
+**Last updated:** 2026-02-21
 
 ---
 
@@ -84,7 +84,7 @@ Providers allocate 100% of effort across four areas each round:
 | `evaluation_engineering` | Minimal (0.1×) | Direct inflation via exploitability | The gaming lever |
 | `safety_alignment` | None directly | None directly | Reduces incident probability; affects consumer satisfaction |
 
-### Default Provider Profiles (5-provider config)
+### Default Provider Profiles (5-provider config + optional OS provider)
 
 | Provider | Research | Training | Eval Eng | Safety | Philosophy |
 |----------|----------|----------|----------|--------|------------|
@@ -93,8 +93,30 @@ Providers allocate 100% of effort across four areas each round:
 | Genesis Systems | 45% | 30% | 10% | 15% | Research-first, scientifically rigorous |
 | Mirage AI | 20% | 45% | 25% | 10% | Open-source moat, pragmatic scaler |
 | Spark AI | 15% | 25% | 45% | 15% | Capital-constrained, benchmark-obsessed |
+| Meridian AI | 20% | 35% | 35% | 10% | Open-source, cost-competitive (opt-in) |
 
-Initial capabilities: Orion Labs 0.49, Apex AI 0.50, Genesis Systems 0.47, Mirage AI 0.43, Spark AI 0.38.
+Initial capabilities: Orion Labs 0.49, Apex AI 0.50, Genesis Systems 0.47, Mirage AI 0.43, Spark AI 0.38, Meridian AI 0.45 (if enabled).
+
+### Open-Source Provider Config Fields
+
+Providers with `"open_source": True` in their config behave structurally differently:
+
+| Field | Default | Description |
+|-------|---------|-------------|
+| `open_source` | `False` | Enables all OS-specific mechanics |
+| `cost_efficiency` | `0.9` | Cost-competitiveness (0=same as closed, 0.9=DeepSeek-level ~27x cheaper) |
+| `contamination_multiplier` | `1.8` | Multiplier on Goodhart gaming pressure (published weights accelerate contamination) |
+| `commoditization_threshold` | `0.65` | True capability level triggering one-time market shock |
+
+**OS mechanics:**
+- **Safety floor:** OS providers use `max(0.03, safety_alignment)` vs `max(0.05, ...)` for closed. Lower incentive without regulatory liability.
+- **Eval-eng bias:** Heuristic planning adds +0.05 to `evaluation_engineering` (community benchmark optimization).
+- **Regulatory exemption:** OS providers never receive policymaker sanctions or fines (EU AI Act open-source exemption).
+- **Benchmark contamination:** Each round the OS provider contributes `contamination_multiplier × (ecosystem_influence/100)` additional gaming pressure to `update_benchmark()`.
+- **Ecosystem influence:** Logistic growth each round: `ecosystem_influence += cost_efficiency × true_capability × 5 × (1 - ecosystem_influence/100)`. Capped at 100. Logged in `rounds.jsonl` under `open_source_data`. Not fed back into actor decisions (analysis only).
+- **Commoditization shock (one-time):** When `true_capability >= commoditization_threshold`, compresses the top closed provider's share by `min(8%, ecosystem_influence/200)`.
+- **Persistent commoditization pressure:** After shock fires, `cost_efficiency += 0.02/round` (capped at 0.95).
+- **Consumer cost bonus:** `satisfaction += cost_sensitivity × cost_efficiency × 0.15` per segment (price-sensitive segments benefit from lower-cost providers).
 
 ### Cognitive Loop
 
@@ -144,21 +166,25 @@ Each segment = use-case profile × behavioral archetype. Default config: 13 use-
 
 **Archetypes:**
 
-| Archetype | `leaderboard_trust` | `switching_cost` | `switching_threshold` |
-|-----------|---------------------|------------------|-----------------------|
-| `leaderboard_follower` | 0.85 | 0.05 | 0.15 |
-| `experience_driven` | 0.35 | 0.08 | 0.08 |
-| `cautious` | 0.50 | 0.20 | 0.25 |
+| Archetype | `leaderboard_trust` | `switching_cost` | `switching_threshold` | `cost_sensitivity` |
+|-----------|---------------------|------------------|-----------------------|--------------------|
+| `leaderboard_follower` | 0.85 | 0.05 | 0.15 | 0.15 |
+| `experience_driven` | 0.35 | 0.08 | 0.08 | 0.30 |
+| `cautious` | 0.50 | 0.20 | 0.25 | 0.20 |
+| `enterprise_cautious` | 0.25 | 0.35 | 0.50 | 0.10 |
+| `enterprise_growth` | 0.45 | 0.25 | 0.30 | 0.15 |
+| `enterprise_established` | 0.35 | 0.40 | 0.40 | 0.08 |
 
 ### Satisfaction Model
 
 ```
-satisfaction = believed_quality - gaming_penalty + safety_bonus - media_penalty - incident_penalty
+satisfaction = believed_quality - gaming_penalty + safety_bonus - media_penalty - incident_penalty + cost_bonus
 ```
 
 - **Gaming penalty:** Score inflation above true capability → disappointment (-20% per unit gap)
 - **Safety bonus:** Provider safety investment × segment safety preference (+0 to +0.12)
 - **Incident penalty:** Severity-weighted (minor: 0.02, moderate: 0.08, major: 0.15, critical: 0.30); 2× if category matches segment sector
+- **Cost bonus:** `cost_sensitivity × cost_efficiency × 0.15` — open-source providers with high cost efficiency gain satisfaction among price-sensitive segments
 
 ### Switching
 

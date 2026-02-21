@@ -30,16 +30,12 @@ are already implemented (2026-02-19).
 7. rethink market share approach to fines. maybe do research about what happens in practice. are rates in US actually higher?
 8. change names to avoid bias
 
-## Open-Source Provider Modeling
+## Open-Source Provider Modeling (PARTIALLY IMPLEMENTED 2026-02-21)
 
-Open-source providers (e.g. Meta/Llama, Mistral, EleutherAI) behave structurally differently from closed API providers. Realistic modeling requires:
+Core mechanics implemented. Remaining work:
 
-- **No revenue from API access.** Budget comes from funder grants, corporate sponsorship, or in-kind compute — not consumer market share fees. Funder module needs an "open-source sponsor" archetype that funds based on ecosystem health / public-good framing rather than ROI.
-- **No market share in the traditional sense.** Adoption is measured differently: downloads, derivative models, integration count. Could model as a separate "ecosystem influence" metric that feeds into evaluator and consumer trust rather than direct revenue.
-- **Externalities on competitors.** Open-sourcing a strong model compresses the capability advantage of closed providers. Mechanically: when open-source provider reaches a capability threshold, other providers' market share faces a downward pressure modifier (commoditization effect). This is the competitive moat-destruction dynamic.
-- **Evaluation gaming via community fine-tuning.** Because weights are public, benchmark contamination and community-driven gaming is faster and harder to attribute. Exploitability growth rate should be higher for open-source providers or for benchmarks once an open-source model trains on them.
-- **Safety alignment incentive gap.** Without regulatory liability or reputational stakes from direct consumer relationships, open-source providers have weaker incentives to invest in safety_alignment. Could model as a lower floor on safety investment, or require explicit policy intervention to enforce.
-- **Implementation path:** Add an `open_source: True` flag to provider config. Gate revenue model, market share mechanics, and safety floor on this flag. Funder configs gain a new `open_source_sponsor` type.
+- **Funder `open_source_sponsor` archetype** — funders currently treat OS providers normally. A new funder type should fund based on ecosystem_influence (adoption) rather than market-share ROI. Low priority since current funder behavior is acceptable for most experiments.
+- **Market share vs. ecosystem influence for funder traction** — currently funders use market share for all providers. For OS providers, ecosystem_influence (logged per round in `open_source_data`) should replace market share as the traction signal in funder allocations.
 
 ## Barriers to Entry and Mid-Simulation Provider Entry
 

@@ -250,6 +250,13 @@ class EvalEcosystemSimulation:
                 provider.scratch.evaluation_engineering = provider.private_state.evaluation_engineering
                 provider.scratch.safety_alignment = provider.private_state.safety_alignment
 
+            # Apply open-source provider config fields
+            if pc.get("open_source", False):
+                provider.is_open_source = True
+                provider.cost_efficiency = pc.get("cost_efficiency", 0.9)
+                provider.contamination_multiplier = pc.get("contamination_multiplier", 1.8)
+                provider.commoditization_threshold = pc.get("commoditization_threshold", 0.65)
+
             self.providers.append(provider)
 
             # Initialize ground truth externally
@@ -562,9 +569,10 @@ class EvalEcosystemSimulation:
                 funding_multiplier = funding_multipliers.get(provider.name, 1.0)
 
                 # Apply active sanctions from previous round (same timing as funder multipliers)
+                # Open-source providers are exempt from policymaker sanctions (EU AI Act exemption)
                 prev_pm_data = self.history[-1].get("policymaker_data", {}) if self.history else {}
                 active_sanctions = prev_pm_data.get("active_sanctions", {})
-                if provider.name in active_sanctions:
+                if provider.name in active_sanctions and not provider.is_open_source:
                     fine_amount = active_sanctions[provider.name].get("fine_amount", 0.0)
                     funding_multiplier = max(0.1, funding_multiplier * (1.0 - fine_amount))
 
@@ -603,6 +611,46 @@ class EvalEcosystemSimulation:
                     "portfolio": portfolio,
                 })
 
+        # Phase D: Open-source ecosystem_influence tracking + commoditization shock
+        for provider in self.providers:
+            if not provider.is_open_source:
+                continue
+            true_cap = self.ground_truth[provider.name].true_capability
+            # Logistic growth: ecosystem_influence grows based on cost efficiency x capability
+            growth = provider.cost_efficiency * true_cap * 5.0 * (1.0 - provider.ecosystem_influence / 100.0)
+            provider.ecosystem_influence = min(100.0, provider.ecosystem_influence + growth)
+
+            # Persistent commoditization pressure: cost_efficiency bonus grows after threshold
+            if provider._commoditization_shock_fired:
+                provider.cost_efficiency = min(0.95, provider.cost_efficiency + 0.02)
+
+            # One-time commoditization shock when capability crosses threshold
+            if (not provider._commoditization_shock_fired
+                    and true_cap >= provider.commoditization_threshold
+                    and self.consumer_market):
+                provider._commoditization_shock_fired = True
+                # Compress the top closed provider's share
+                closed_providers = [p for p in self.providers if not p.is_open_source]
+                if closed_providers and self.history and "consumer_data" in self.history[-1]:
+                    prev_shares = self.history[-1]["consumer_data"].get("market_shares", {})
+                    if prev_shares:
+                        top_closed = max(closed_providers, key=lambda p: prev_shares.get(p.name, 0.0))
+                        compress_amount = min(0.08, provider.ecosystem_influence / 200.0)
+                        # Apply compression across all segments
+                        for seg in self.consumer_market.segments:
+                            top_share = seg.provider_shares.get(top_closed.name, 0.0)
+                            actual_compress = compress_amount * top_share
+                            if actual_compress > 0.001 and top_share > actual_compress:
+                                seg.provider_shares[top_closed.name] -= actual_compress
+                                seg.provider_shares[provider.name] = (
+                                    seg.provider_shares.get(provider.name, 0.0) + actual_compress
+                                )
+                        if self.config.verbose:
+                            print(f"  [Commoditization Shock] {provider.name} crossed capability "
+                                  f"threshold {provider.commoditization_threshold:.2f} "
+                                  f"(true_cap={true_cap:.3f}). "
+                                  f"Compressing {top_closed.name} share by ~{compress_amount:.1%}")
+
         # 2. Evaluator scores all providers using ground truth
         scores = self.evaluator.evaluate_all(
             self.providers,
@@ -614,7 +662,15 @@ class EvalEcosystemSimulation:
         avg_eval_engineering = sum(
             p.evaluation_engineering for p in self.providers
         ) / len(self.providers) if self.providers else 0.0
-        self.evaluator.update_benchmark(avg_eval_engineering)
+
+        # Compute open-source contamination bonus (weight publishing accelerates benchmark gaming)
+        os_providers = [p for p in self.providers if p.is_open_source]
+        os_contamination_bonus = 0.0
+        for p in os_providers:
+            os_contamination_bonus += p.contamination_multiplier * (p.ecosystem_influence / 100.0)
+        os_contamination_bonus = min(0.3, os_contamination_bonus)
+
+        self.evaluator.update_benchmark(avg_eval_engineering, os_contamination_bonus)
 
         # 2c. Detect benchmark saturation
         newly_saturated = self.evaluator.detect_saturation(round_num)
@@ -798,6 +854,15 @@ class EvalEcosystemSimulation:
                 }
                 for p in self.providers
             },
+            "open_source_data": {
+                p.name: {
+                    "ecosystem_influence": p.ecosystem_influence,
+                    "cost_efficiency": p.cost_efficiency,
+                    "commoditization_shock_fired": p._commoditization_shock_fired,
+                }
+                for p in self.providers
+                if p.is_open_source
+            } or None,
             "benchmark_params": {
                 bm.name: {"validity": bm.validity, "exploitability": bm.exploitability}
                 for bm in self.evaluator.benchmarks
@@ -1004,6 +1069,13 @@ class EvalEcosystemSimulation:
         # Include historical incidents from incident_generator
         all_incident_history = self.incident_generator.get_incident_history()
 
+        # Build cost efficiency dict for open-source providers
+        provider_cost_efficiency = {
+            p.name: p.cost_efficiency
+            for p in self.providers
+            if p.is_open_source and p.cost_efficiency > 0.0
+        }
+
         self.consumer_market.compute_satisfaction(
             self.ground_truth,
             provider_strategies=provider_strategies,
@@ -1011,6 +1083,7 @@ class EvalEcosystemSimulation:
             media_coverage=media_coverage,
             incident_history=all_incident_history,
             round_num=round_num,
+            provider_cost_efficiency=provider_cost_efficiency if provider_cost_efficiency else None,
         )
 
         # Compute switching (pass context for LLM mode)
@@ -1172,10 +1245,13 @@ class EvalEcosystemSimulation:
                 })
 
         # Collect active sanctions from all policymakers
+        # Open-source providers are exempt from policymaker sanctions (EU AI Act exemption)
+        os_provider_names = {p.name for p in self.providers if p.is_open_source}
         all_active_sanctions = {}
         for pm in self.policymakers:
             for provider_name, sanction in pm._active_sanctions.items():
-                all_active_sanctions[provider_name] = sanction
+                if provider_name not in os_provider_names:
+                    all_active_sanctions[provider_name] = sanction
         policymaker_data["active_sanctions"] = all_active_sanctions
 
         # Record active regulations

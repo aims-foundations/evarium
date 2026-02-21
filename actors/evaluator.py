@@ -601,7 +601,8 @@ class Evaluator:
         """Get list of active regulations."""
         return [r for r in self.active_regulations if r.active]
 
-    def update_benchmark(self, aggregate_eval_engineering: float = 0.0):
+    def update_benchmark(self, aggregate_eval_engineering: float = 0.0,
+                         os_contamination_bonus: float = 0.0):
         """
         Update benchmark properties based on gaming pressure.
 
@@ -611,8 +612,10 @@ class Evaluator:
 
         Args:
             aggregate_eval_engineering: Average eval_engineering investment across providers
+            os_contamination_bonus: Additional gaming pressure from open-source benchmark
+                contamination (weight publishing accelerates exploitability growth)
         """
-        gaming_pressure = max(0.1, aggregate_eval_engineering)
+        gaming_pressure = max(0.1, aggregate_eval_engineering + os_contamination_bonus)
         for bm in self.benchmarks:
             if bm.validity_decay_rate > 0:
                 validity_decay = bm.validity_decay_rate * gaming_pressure

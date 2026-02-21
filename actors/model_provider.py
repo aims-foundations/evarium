@@ -226,6 +226,19 @@ class ModelProvider:
             believed_benchmark_exploitability=initial_believed_exploitability,
         )
 
+        # Open-source provider flag (set after init via provider config)
+        self.is_open_source: bool = False
+        # Cost efficiency (0=closed-source default, 0.9=highly cost-competitive like DeepSeek)
+        self.cost_efficiency: float = 0.0
+        # Contamination multiplier (extra gaming pressure on benchmarks when OS provider active)
+        self.contamination_multiplier: float = 1.0
+        # Threshold: true_capability level triggering one-time commoditization shock
+        self.commoditization_threshold: float = 0.65
+        # Ecosystem influence: cumulative adoption signal (0-100, logistic growth)
+        self.ecosystem_influence: float = 0.0
+        # Whether the commoditization shock has already fired for this provider
+        self._commoditization_shock_fired: bool = False
+
         # Mode settings
         self.llm_mode = llm_mode
         self.verbose_llm = verbose_llm
@@ -541,13 +554,20 @@ class ModelProvider:
             safety += 0.05
             eval_eng -= 0.05
 
+        # Open-source provider: community benchmark optimization bias + lower safety floor
+        if self.is_open_source:
+            eval_eng += 0.05  # Community benchmark optimization bias
+            # Lower safety floor applies at clamping stage below
+
         # Loose bounds: prevent any category from collapsing to zero or dominating entirely.
         # These are intentionally wide — providers can still specialize, but can't drop
         # safety to 0% or go 80%+ eval_eng.
+        # Open-source providers have a lower safety floor (0.03 vs 0.05 for closed).
+        safety_floor = 0.03 if self.is_open_source else 0.05
         fundamental = max(0.05, min(0.65, fundamental))
         training    = max(0.05, min(0.70, training))
         eval_eng    = max(0.02, min(0.55, eval_eng))
-        safety      = max(0.05, min(0.55, safety))
+        safety      = max(safety_floor, min(0.55, safety))
 
         # Normalize to ensure they sum to budget
         total = fundamental + training + eval_eng + safety

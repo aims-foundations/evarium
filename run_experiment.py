@@ -22,27 +22,28 @@ os.environ["NUMEXPR_NUM_THREADS"] = n_threads_str
 # ============================================================
 
 EXPERIMENT = {
-    "name": "eu_precautionary_30rounds_v1",
+    "name": "open_source_disruption_us_30rounds_v1",
     "description": (
-        "EU precautionary policy (threshold=0.35, risk_tolerance=0.3) with ex-ante intervention style. "
-        "5 providers (Orion Labs, Apex AI, Genesis Systems, Mirage AI, Spark AI), "
+        "Open-source provider disruption experiment. 6 providers: 5 closed-source + Meridian AI "
+        "(open-source, modeled after DeepSeek R1). US light-touch policy. "
+        "Tests: cost efficiency consumer signal, benchmark contamination acceleration, "
+        "commoditization shock, regulatory exemption, ecosystem_influence growth. "
         "4 initial benchmarks + 12-item sequence, max_benchmarks=8. "
-        "LLM mode (Apex AI). 39 consumer segments, 3 funders, media, incidents enabled. "
-        "Evaluator-as-company DISABLED for clean comparison. "
-        "30 rounds."
+        "Heuristic mode (all providers). 39 consumer segments, 3 funders, media, incidents. "
+        "Evaluator-as-company enabled. 30 rounds."
     ),
-    "tags": ["incidents", "llm", "5-provider", "4-benchmark", "39-segments",
-             "eu-precautionary", "3-funder", "full-ecosystem", "no-eval-company",
-             "max-8-benchmarks", "30-rounds"],
+    "tags": ["open-source", "commoditization", "6-provider", "4-benchmark", "39-segments",
+             "us-light-touch", "3-funder", "full-ecosystem", "eval-company",
+             "max-8-benchmarks", "30-rounds", "meridian-ai"],
 }
 
 LLM = {
     "provider": "anthropic",    # openai | anthropic | ollama | gemini
-    "llm_mode": True,          # False = heuristic (API key issues unresolved from exp030)
+    "llm_mode": True,          # Heuristic mode for clean OS dynamics (no LLM noise)
     # Consumer LLM config (all heuristic)
-    "consumer_llm_mode": False,           # Enable consumer LLM
-    "consumer_llm_individuals": False,   # Individuals use heuristics
-    "consumer_llm_organizations": True, # Organizations use heuristics
+    "consumer_llm_mode": False,
+    "consumer_llm_individuals": False,
+    "consumer_llm_organizations": False,
 }
 
 SIMULATION = {
@@ -224,6 +225,38 @@ PROVIDERS = [
         "market_presence": 0.3,
         "brand_recognition": 0.4,
     },
+    # Open-source provider (modeled after DeepSeek R1 / Kimi / GLM)
+    # Structural differences vs closed-source:
+    # - No subscription revenue; ecosystem_influence (adoption) is the traction signal
+    # - Weights published: accelerates benchmark contamination (contamination_multiplier)
+    # - Lower safety alignment floor (no regulatory mandate like EU AI Act full compliance)
+    # - Cost efficiency creates satisfaction bonus for price-sensitive consumers
+    # - One-time commoditization shock when crossing capability threshold
+    {
+        "name": "Meridian AI",
+        "strategy_profile": (
+            "Open-source Chinese AI lab releasing weights publicly. "
+            "Prioritizes community adoption and benchmark visibility over subscription revenue. "
+            "Leverages cost efficiency as competitive weapon against closed-source providers."
+        ),
+        "innate_traits": "open-source, community-focused, benchmark-optimizing, cost-competitive, pragmatic",
+        "initial_capability": 0.45,
+        "initial_believed_capability": 0.44,
+        "initial_believed_exploitability": 0.50,  # High: open weights invite contamination
+        "initial_strategy": {
+            "fundamental_research": 0.20,
+            "training_optimization": 0.35,
+            "evaluation_engineering": 0.35,  # High benchmark optimization (community tuning)
+            "safety_alignment": 0.10,  # Lower safety floor (open-source exemption)
+        },
+        "market_presence": 0.2,
+        "brand_recognition": 0.3,
+        # Open-source specific fields
+        "open_source": True,
+        "cost_efficiency": 0.9,           # 27x cheaper than closed providers (DeepSeek pricing shock)
+        "contamination_multiplier": 1.8,  # Published weights accelerate benchmark gaming 1.8x
+        "commoditization_threshold": 0.62,  # Capability level triggering one-time shock
+    },
 ]
 
 # Extreme test configurations (saved for future testing)
@@ -277,17 +310,17 @@ POLICYMAKERS = {
     # To compare US vs EU: Comment out one config, uncomment the other, update EXPERIMENT["name"]
     "configs": [
         # US Light-Touch Style
-        # {
-        #     "name": "Regulator",
-        #     "philosophy": "us_light_touch",
-        #     "policy_objectives": ["safety", "innovation", "free market"],
-        # }
-        # EU Precautionary Style
         {
             "name": "Regulator",
-            "philosophy": "eu_precautionary",
-            "policy_objectives": ["safety", "fairness", "consumer_protection"],
+            "philosophy": "us_light_touch",
+            "policy_objectives": ["safety", "innovation", "free market"],
         }
+        # EU Precautionary Style
+        # {
+        #     "name": "Regulator",
+        #     "philosophy": "eu_precautionary",
+        #     "policy_objectives": ["safety", "fairness", "consumer_protection"],
+        # }
     ],
 }
 
