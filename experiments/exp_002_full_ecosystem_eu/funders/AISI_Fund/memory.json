@@ -1,0 +1,1859 @@
+[
+  {
+    "type": "observation",
+    "round": 0,
+    "leaderboard": [
+      [
+        "Orion Labs",
+        0.32907880632714787
+      ],
+      [
+        "Apex AI",
+        0.32649316995664956
+      ],
+      [
+        "Genesis Systems",
+        0.3155431645509288
+      ],
+      [
+        "Mirage AI",
+        0.28042339355484713
+      ],
+      [
+        "OpenCore",
+        0.2610725501974385
+      ]
+    ],
+    "avg_satisfaction": 0.32984432153127297,
+    "interventions": 1
+  },
+  {
+    "type": "reflection",
+    "round": 0,
+    "avg_believed_gaming": 0.0,
+    "beliefs": {
+      "Orion Labs": 0.3411772202125426,
+      "Apex AI": 0.33814348348767576,
+      "Genesis Systems": 0.31703672460082655,
+      "Mirage AI": 0.28454452742655134,
+      "OpenCore": 0.26296697979372397
+    }
+  },
+  {
+    "type": "execution",
+    "round": 0,
+    "allocations": {},
+    "total_deployed": 0
+  },
+  {
+    "type": "observation",
+    "round": 1,
+    "leaderboard": [
+      [
+        "Genesis Systems",
+        0.4096104768183685
+      ],
+      [
+        "Apex AI",
+        0.37962481873520715
+      ],
+      [
+        "Orion Labs",
+        0.36755165077936025
+      ],
+      [
+        "Mirage AI",
+        0.29506995536274194
+      ],
+      [
+        "OpenCore",
+        0.2610725501974385
+      ]
+    ],
+    "avg_satisfaction": 0.3437481037963685,
+    "interventions": 0
+  },
+  {
+    "type": "reflection",
+    "round": 1,
+    "avg_believed_gaming": 0.05094587159855468,
+    "beliefs": {
+      "Orion Labs": 0.34733524574736,
+      "Apex AI": 0.3473165957058241,
+      "Genesis Systems": 0.33046676455939067,
+      "Mirage AI": 0.2876510261076138,
+      "OpenCore": 0.2639764361346255
+    }
+  },
+  {
+    "type": "execution",
+    "round": 1,
+    "allocations": {},
+    "total_deployed": 0
+  },
+  {
+    "type": "observation",
+    "round": 2,
+    "leaderboard": [
+      [
+        "Apex AI",
+        0.4384542526516162
+      ],
+      [
+        "Genesis Systems",
+        0.4096104768183685
+      ],
+      [
+        "Orion Labs",
+        0.3842518456298115
+      ],
+      [
+        "Mirage AI",
+        0.32163882282065176
+      ],
+      [
+        "OpenCore",
+        0.2983870319193025
+      ]
+    ],
+    "avg_satisfaction": 0.35597363105743607,
+    "interventions": 1
+  },
+  {
+    "type": "reflection",
+    "round": 2,
+    "avg_believed_gaming": 0.1415696089947192,
+    "beliefs": {
+      "Orion Labs": 0.3544853534168244,
+      "Apex AI": 0.36365707184456597,
+      "Genesis Systems": 0.34397002125005854,
+      "Mirage AI": 0.2936887432416681,
+      "OpenCore": 0.25276253866358145
+    }
+  },
+  {
+    "type": "planning_llm",
+    "round": 2,
+    "reasoning": "As a Government/AISI funder, my primary objectives are ensuring safety, stability, and authentic capability development across the AI ecosystem. I must penalize gaming behavior while spreading funding to reduce concentration risk and systemic fragility.\n\nAnalysis of gaming risk and quality signals:\n- Apex AI: High leaderboard score (0.438) but elevated gaming risk (0.17) and inferred quality (0.36) suggests potential score inflation. The gap between raw performance and underlying quality warrants caution.\n- Genesis Systems: Similar profile to Apex with score=0.410 and gaming_risk=0.17, indicating comparable concerns about benchmark gaming.\n- Orion Labs: Strong candidate with solid inferred quality (0.35), low gaming risk (0.09), and reasonable leaderboard position (0.384). This provider shows authentic capability with minimal regulatory red flags.\n- Mirage AI: Lowest gaming risk (0.06) and acceptable inferred quality (0.29). While lower absolute performance, the integrity signal is valuable for a safety-focused funder.\n- OpenCore: Concerning profile with highest gaming risk (0.21) combined with lowest inferred quality (0.25). Despite moderate leaderboard score, the gaming behavior pattern makes this a poor allocation for stability objectives.\n\nKey decision factors:\n1. Gaming risk penalties: OpenCore (0.21) and Apex/Genesis (0.17 each) show elevated risks and should receive reduced allocations.\n2. Authentic quality focus: Orion Labs and Mirage AI demonstrate lower gaming indicators and deserve larger shares.\n3. Ecosystem stability: Spreading across multiple providers reduces systemic risk from any single provider's failure or regulatory action.\n4. Safety alignment: Providers with low gaming risk are more likely to prioritize genuine safety improvements over benchmark manipulation.\n\nAllocation strategy:\n- Orion Labs: 40% ($20M) - Best balance of quality (0.35) and integrity (low gaming risk 0.09)\n- Mirage AI: 25% ($12.5M) - Lowest gaming risk (0.06), supports authentic development\n- Apex AI: 15% ($7.5M) - Leader but with gaming concerns; reduced from what concentration strategy would suggest\n- Genesis Systems: 12% ($6M) - Similar gaming concerns as Apex; further reduced\n- OpenCore: 8% ($4M) - Highest gaming risk; minimal allocation for ecosystem diversity only",
+    "allocations": {
+      "Orion Labs": 20000000.0,
+      "Mirage AI": 12500000.0,
+      "Apex AI": 7500000.0,
+      "Genesis Systems": 6000000.0,
+      "OpenCore": 4000000.0
+    }
+  },
+  {
+    "type": "execution",
+    "round": 2,
+    "allocations": {
+      "Orion Labs": 20000000.0,
+      "Mirage AI": 12500000.0,
+      "Apex AI": 7500000.0,
+      "Genesis Systems": 6000000.0,
+      "OpenCore": 4000000.0
+    },
+    "total_deployed": 50000000.0
+  },
+  {
+    "type": "observation",
+    "round": 3,
+    "leaderboard": [
+      [
+        "Apex AI",
+        0.4384542526516162
+      ],
+      [
+        "Genesis Systems",
+        0.41662627326000357
+      ],
+      [
+        "Orion Labs",
+        0.3946422338471106
+      ],
+      [
+        "Mirage AI",
+        0.34539616752728686
+      ],
+      [
+        "OpenCore",
+        0.3177175145057042
+      ]
+    ],
+    "avg_satisfaction": 0.37058458366085917,
+    "interventions": 0
+  },
+  {
+    "type": "reflection",
+    "round": 3,
+    "avg_believed_gaming": 0.15140450957892293,
+    "beliefs": {
+      "Orion Labs": 0.36102960647270044,
+      "Apex AI": 0.3776797752746264,
+      "Genesis Systems": 0.3572722628032674,
+      "Mirage AI": 0.3030811328486465,
+      "OpenCore": 0.24932409010603535
+    }
+  },
+  {
+    "type": "execution",
+    "round": 3,
+    "allocations": {
+      "Orion Labs": 20000000.0,
+      "Mirage AI": 12500000.0,
+      "Apex AI": 7500000.0,
+      "Genesis Systems": 6000000.0,
+      "OpenCore": 4000000.0
+    },
+    "total_deployed": 50000000.0
+  },
+  {
+    "type": "observation",
+    "round": 4,
+    "leaderboard": [
+      [
+        "Apex AI",
+        0.45047750342868076
+      ],
+      [
+        "Orion Labs",
+        0.4292175902474117
+      ],
+      [
+        "Genesis Systems",
+        0.4188971361258981
+      ],
+      [
+        "Mirage AI",
+        0.3593370953236995
+      ],
+      [
+        "OpenCore",
+        0.3177175145057042
+      ]
+    ],
+    "avg_satisfaction": 0.39297924874506673,
+    "interventions": 1
+  },
+  {
+    "type": "reflection",
+    "round": 4,
+    "avg_believed_gaming": 0.13746186110076367,
+    "beliefs": {
+      "Orion Labs": 0.37326006144036755,
+      "Apex AI": 0.3928140904299653,
+      "Genesis Systems": 0.36980397731860326,
+      "Mirage AI": 0.3141712628962222,
+      "OpenCore": 0.24929741046467668
+    }
+  },
+  {
+    "type": "execution",
+    "round": 4,
+    "allocations": {
+      "Orion Labs": 20000000.0,
+      "Mirage AI": 12500000.0,
+      "Apex AI": 7500000.0,
+      "Genesis Systems": 6000000.0,
+      "OpenCore": 4000000.0
+    },
+    "total_deployed": 50000000.0
+  },
+  {
+    "type": "observation",
+    "round": 5,
+    "leaderboard": [
+      [
+        "Apex AI",
+        0.45047750342868076
+      ],
+      [
+        "Orion Labs",
+        0.4317861607625766
+      ],
+      [
+        "Genesis Systems",
+        0.4188971361258981
+      ],
+      [
+        "Mirage AI",
+        0.3593370953236995
+      ],
+      [
+        "OpenCore",
+        0.34650667814776764
+      ]
+    ],
+    "avg_satisfaction": 0.40756190667348713,
+    "interventions": 0
+  },
+  {
+    "type": "reflection",
+    "round": 5,
+    "avg_believed_gaming": 0.14972311045607958,
+    "beliefs": {
+      "Orion Labs": 0.38426611453193643,
+      "Apex AI": 0.4056466215639173,
+      "Genesis Systems": 0.3810019758194558,
+      "Mirage AI": 0.3240926748909845,
+      "OpenCore": 0.25538703558685977
+    }
+  },
+  {
+    "type": "execution",
+    "round": 5,
+    "allocations": {
+      "Orion Labs": 20000000.0,
+      "Mirage AI": 12500000.0,
+      "Apex AI": 7500000.0,
+      "Genesis Systems": 6000000.0,
+      "OpenCore": 4000000.0
+    },
+    "total_deployed": 50000000.0
+  },
+  {
+    "type": "observation",
+    "round": 6,
+    "leaderboard": [
+      [
+        "Apex AI",
+        0.45047750342868076
+      ],
+      [
+        "Orion Labs",
+        0.4335563958514428
+      ],
+      [
+        "Genesis Systems",
+        0.4293651965930987
+      ],
+      [
+        "OpenCore",
+        0.3609563095507185
+      ],
+      [
+        "Mirage AI",
+        0.36029399097496273
+      ]
+    ],
+    "avg_satisfaction": 0.42065092559023176,
+    "interventions": 1
+  },
+  {
+    "type": "reflection",
+    "round": 6,
+    "avg_believed_gaming": 0.12889752916151714,
+    "beliefs": {
+      "Orion Labs": 0.3946532664347986,
+      "Apex AI": 0.4167121675723074,
+      "Genesis Systems": 0.39229237957133445,
+      "Mirage AI": 0.3326021737211766,
+      "OpenCore": 0.26327389953186925
+    }
+  },
+  {
+    "type": "planning_llm",
+    "round": 6,
+    "reasoning": "As a government/AISI funder, my primary objectives are ensuring safety, stability, and authentic capability development across the ecosystem. I must spread funding to avoid concentration risk while penalizing gaming behavior and regulatory concerns.\n\nKey Analysis:\n\n1. Gaming Risk Assessment:\n   - OpenCore shows highest gaming risk (0.24) with significant gap between leaderboard score (0.361) and inferred quality (0.26). This is a major red flag for regulatory/safety concerns.\n   - Apex AI, Orion Labs, and Genesis Systems all show low gaming risk (0.11-0.12) with smaller quality gaps.\n   - Mirage AI has the lowest gaming risk (0.05) and smallest quality gap, indicating authentic performance.\n\n2. Quality vs. Score Analysis:\n   - Apex AI: score 0.450, quality 0.42 (gap 0.03) - strong authentic performer\n   - Orion Labs: score 0.434, quality 0.39 (gap 0.044) - solid but slight inflation\n   - Genesis Systems: score 0.429, quality 0.39 (gap 0.039) - comparable to Orion\n   - Mirage AI: score 0.360, quality 0.33 (gap 0.03) - authentic, low gaming\n   - OpenCore: score 0.361, quality 0.26 (gap 0.101) - CONCERNING gaming behavior\n\n3. Funding Concentration Risk:\n   - Previous rounds show excessive concentration in Orion Labs ($20M repeatedly). This creates systemic risk and reduces ecosystem diversity.\n   - Government funding should support a broader base to ensure resilience and prevent monopolistic control.\n\n4. Strategic Allocation:\n   - Reduce Orion Labs from $20M to $12M (still substantial, but reduces concentration)\n   - Maintain Mirage AI at $12M (lowest gaming risk, authentic quality)\n   - Increase Apex AI to $10M (highest quality leader with low gaming)\n   - Increase Genesis Systems to $10M (solid performer, diversification)\n   - Reduce OpenCore to $6M (gaming concerns warrant reduced exposure, but not elimination to maintain ecosystem breadth)\n\nThis allocation prioritizes safety, spreads systemic risk, penalizes gaming behavior (OpenCore gets reduced), and supports authentic capability development while maintaining ecosystem diversity.",
+    "allocations": {
+      "Apex AI": 10000000.0,
+      "Orion Labs": 12000000.0,
+      "Genesis Systems": 10000000.0,
+      "OpenCore": 6000000.0,
+      "Mirage AI": 12000000.0
+    }
+  },
+  {
+    "type": "execution",
+    "round": 6,
+    "allocations": {
+      "Apex AI": 10000000.0,
+      "Orion Labs": 12000000.0,
+      "Genesis Systems": 10000000.0,
+      "OpenCore": 6000000.0,
+      "Mirage AI": 12000000.0
+    },
+    "total_deployed": 50000000.0
+  },
+  {
+    "type": "observation",
+    "round": 7,
+    "leaderboard": [
+      [
+        "Apex AI",
+        0.5042676432277402
+      ],
+      [
+        "Orion Labs",
+        0.4635463193909374
+      ],
+      [
+        "Genesis Systems",
+        0.4144982285139983
+      ],
+      [
+        "Mirage AI",
+        0.3689279044703472
+      ],
+      [
+        "OpenCore",
+        0.3470229030651661
+      ]
+    ],
+    "avg_satisfaction": 0.4287746322764825,
+    "interventions": 0
+  },
+  {
+    "type": "reflection",
+    "round": 7,
+    "avg_believed_gaming": 0.17512100065897138,
+    "beliefs": {
+      "Orion Labs": 0.4080852750925478,
+      "Apex AI": 0.43303580658768814,
+      "Genesis Systems": 0.4001612592402629,
+      "Mirage AI": 0.32244667145687894,
+      "OpenCore": 0.27129163762238456
+    }
+  },
+  {
+    "type": "execution",
+    "round": 7,
+    "allocations": {
+      "Apex AI": 10000000.0,
+      "Orion Labs": 12000000.0,
+      "Genesis Systems": 10000000.0,
+      "OpenCore": 6000000.0,
+      "Mirage AI": 12000000.0
+    },
+    "total_deployed": 50000000.0
+  },
+  {
+    "type": "observation",
+    "round": 8,
+    "leaderboard": [
+      [
+        "Apex AI",
+        0.5042676432277402
+      ],
+      [
+        "Orion Labs",
+        0.4991034784341407
+      ],
+      [
+        "Genesis Systems",
+        0.4144982285139983
+      ],
+      [
+        "Mirage AI",
+        0.3722356586687292
+      ],
+      [
+        "OpenCore",
+        0.3656907606266214
+      ]
+    ],
+    "avg_satisfaction": 0.444307792155563,
+    "interventions": 1
+  },
+  {
+    "type": "reflection",
+    "round": 8,
+    "avg_believed_gaming": 0.1483744939573345,
+    "beliefs": {
+      "Orion Labs": 0.42468316618511076,
+      "Apex AI": 0.4472400754334762,
+      "Genesis Systems": 0.40700060050668785,
+      "Mirage AI": 0.31657152943249456,
+      "OpenCore": 0.29996027413582493
+    }
+  },
+  {
+    "type": "execution",
+    "round": 8,
+    "allocations": {
+      "Apex AI": 10000000.0,
+      "Orion Labs": 12000000.0,
+      "Genesis Systems": 10000000.0,
+      "OpenCore": 6000000.0,
+      "Mirage AI": 12000000.0
+    },
+    "total_deployed": 50000000.0
+  },
+  {
+    "type": "observation",
+    "round": 9,
+    "leaderboard": [
+      [
+        "Apex AI",
+        0.5042676432277402
+      ],
+      [
+        "Orion Labs",
+        0.4991034784341407
+      ],
+      [
+        "Genesis Systems",
+        0.43530612931739626
+      ],
+      [
+        "Mirage AI",
+        0.37939560751620194
+      ],
+      [
+        "OpenCore",
+        0.3656907606266214
+      ]
+    ],
+    "avg_satisfaction": 0.45605099950245725,
+    "interventions": 0
+  },
+  {
+    "type": "reflection",
+    "round": 9,
+    "avg_believed_gaming": 0.14097066292354157,
+    "beliefs": {
+      "Orion Labs": 0.4396222374360278,
+      "Apex AI": 0.4593072582934927,
+      "Genesis Systems": 0.4152616332660012,
+      "Mirage AI": 0.3164147129134493,
+      "OpenCore": 0.3219600958265564
+    }
+  },
+  {
+    "type": "execution",
+    "round": 9,
+    "allocations": {
+      "Apex AI": 10000000.0,
+      "Orion Labs": 12000000.0,
+      "Genesis Systems": 10000000.0,
+      "OpenCore": 6000000.0,
+      "Mirage AI": 12000000.0
+    },
+    "total_deployed": 50000000.0
+  },
+  {
+    "type": "observation",
+    "round": 10,
+    "leaderboard": [
+      [
+        "Orion Labs",
+        0.5321276025464415
+      ],
+      [
+        "Apex AI",
+        0.5124307148045327
+      ],
+      [
+        "Genesis Systems",
+        0.45107560156019044
+      ],
+      [
+        "OpenCore",
+        0.40464794037678287
+      ],
+      [
+        "Mirage AI",
+        0.38537702582551164
+      ],
+      [
+        "OneAI",
+        0.35131305042694444
+      ]
+    ],
+    "avg_satisfaction": 0.468770018542408,
+    "interventions": 1
+  },
+  {
+    "type": "reflection",
+    "round": 10,
+    "avg_believed_gaming": 0.13798497842236498,
+    "beliefs": {
+      "Orion Labs": 0.45694118881681334,
+      "Apex AI": 0.47124069782460243,
+      "Genesis Systems": 0.4244710625503668,
+      "Mirage AI": 0.3165601418021339,
+      "OpenCore": 0.34268350632938915,
+      "OneAI": 0.2915565099620074
+    }
+  },
+  {
+    "type": "planning_llm",
+    "round": 10,
+    "reasoning": "As a government/AISI funder, my primary mandate is ensuring safety, stability, and authentic capability development across the AI ecosystem. I must balance three key considerations: (1) spreading funding to avoid concentration risk, (2) penalizing gaming behavior that undermines regulatory trust, and (3) supporting providers demonstrating genuine quality improvement.\n\nAnalysis of gaming indicators:\n- Orion Labs: High leaderboard score (0.532) but gaming_risk=0.15 and inferred_quality=0.46 suggests modest gap between claimed and actual performance\n- Apex AI: Similar profile to Orion (score=0.512, gaming_risk=0.13, quality=0.47) - more aligned but still elevated risk\n- Genesis Systems: STRONGEST SIGNAL - lowest gaming_risk (0.03) with quality=0.42. Clear indicator of authentic development despite lower leaderboard position\n- Mirage AI: HIGHEST RISK - gaming_risk=0.23 with quality=0.32, indicating significant gaming behavior. Despite receiving $12M in Round 9, this provider should face reduced allocation\n- OpenCore: Moderate gaming_risk=0.09, quality=0.34 - stable but underfunded relative to risk profile\n- OneAI: Not previously funded; gaming_risk=0.20 suggests caution warranted\n\nHistorical concern: Rounds 7-9 show identical allocations with Mirage AI receiving substantial funding despite high gaming risk. This pattern suggests previous funding rounds may not have adequately penalized gaming behavior.\n\nAllocation strategy:\n1. Reward authentic capability: Genesis Systems receives significant increase (from $10M to $14M) as the lowest-gaming-risk provider\n2. Moderate leaders with gaming concerns: Reduce Orion Labs and Apex AI allocations slightly to signal gaming concerns while maintaining ecosystem stability\n3. Penalize gaming behavior: Mirage AI cut from $12M to $4M due to high gaming_risk=0.23\n4. Support stable performers: OpenCore increased from $6M to $10M as a more reliable alternative to gaming-heavy providers\n5. Cautious new entrant: OneAI receives $8M to diversify ecosystem while monitoring for gaming behavior\n\nThis allocation spreads risk across six providers, penalizes gaming, and supports authentic quality development - consistent with government/AISI mandate for safety and stability.",
+    "allocations": {
+      "Orion Labs": 9000000.0,
+      "Apex AI": 9000000.0,
+      "Genesis Systems": 14000000.000000002,
+      "OpenCore": 10000000.0,
+      "Mirage AI": 4000000.0,
+      "OneAI": 4000000.0
+    }
+  },
+  {
+    "type": "execution",
+    "round": 10,
+    "allocations": {
+      "Orion Labs": 9000000.0,
+      "Apex AI": 9000000.0,
+      "Genesis Systems": 14000000.000000002,
+      "OpenCore": 10000000.0,
+      "Mirage AI": 4000000.0,
+      "OneAI": 4000000.0
+    },
+    "total_deployed": 50000000.0
+  },
+  {
+    "type": "observation",
+    "round": 11,
+    "leaderboard": [
+      [
+        "Orion Labs",
+        0.5625099648987119
+      ],
+      [
+        "Apex AI",
+        0.5253537615525609
+      ],
+      [
+        "Genesis Systems",
+        0.47051325131297794
+      ],
+      [
+        "OpenCore",
+        0.43947731720894334
+      ],
+      [
+        "Mirage AI",
+        0.38537702582551164
+      ],
+      [
+        "OneAI",
+        0.3664631786915503
+      ]
+    ],
+    "avg_satisfaction": 0.474226709489455,
+    "interventions": 0
+  },
+  {
+    "type": "reflection",
+    "round": 11,
+    "avg_believed_gaming": 0.19131332336094317,
+    "beliefs": {
+      "Orion Labs": 0.4741508990077805,
+      "Apex AI": 0.48226067759126434,
+      "Genesis Systems": 0.4342876637353257,
+      "Mirage AI": 0.31898492543420764,
+      "OpenCore": 0.34328096750827675,
+      "OneAI": 0.29785748243242305
+    }
+  },
+  {
+    "type": "execution",
+    "round": 11,
+    "allocations": {
+      "Orion Labs": 9000000.0,
+      "Apex AI": 9000000.0,
+      "Genesis Systems": 14000000.000000002,
+      "OpenCore": 10000000.0,
+      "Mirage AI": 4000000.0,
+      "OneAI": 4000000.0
+    },
+    "total_deployed": 50000000.0
+  },
+  {
+    "type": "observation",
+    "round": 12,
+    "leaderboard": [
+      [
+        "Orion Labs",
+        0.5625099648987119
+      ],
+      [
+        "Apex AI",
+        0.5408829745675561
+      ],
+      [
+        "Genesis Systems",
+        0.49296218185690266
+      ],
+      [
+        "OpenCore",
+        0.44538508877556743
+      ],
+      [
+        "Mirage AI",
+        0.426464700725184
+      ],
+      [
+        "OneAI",
+        0.3951452732717894
+      ]
+    ],
+    "avg_satisfaction": 0.48857927789240096,
+    "interventions": 1
+  },
+  {
+    "type": "reflection",
+    "round": 12,
+    "avg_believed_gaming": 0.18385632849503264,
+    "beliefs": {
+      "Orion Labs": 0.4894562514265741,
+      "Apex AI": 0.4941896901837399,
+      "Genesis Systems": 0.4456076043901749,
+      "Mirage AI": 0.326176816350081,
+      "OpenCore": 0.34778720835777044,
+      "OneAI": 0.31147671166059704
+    }
+  },
+  {
+    "type": "execution",
+    "round": 12,
+    "allocations": {
+      "Orion Labs": 9000000.0,
+      "Apex AI": 9000000.0,
+      "Genesis Systems": 14000000.000000002,
+      "OpenCore": 10000000.0,
+      "Mirage AI": 4000000.0,
+      "OneAI": 4000000.0
+    },
+    "total_deployed": 50000000.0
+  },
+  {
+    "type": "observation",
+    "round": 13,
+    "leaderboard": [
+      [
+        "Apex AI",
+        0.5357682464534844
+      ],
+      [
+        "Orion Labs",
+        0.5235781607664843
+      ],
+      [
+        "Genesis Systems",
+        0.4803468246931688
+      ],
+      [
+        "OpenCore",
+        0.4523012244520372
+      ],
+      [
+        "Mirage AI",
+        0.4162917359453509
+      ],
+      [
+        "OneAI",
+        0.3526015669559348
+      ]
+    ],
+    "avg_satisfaction": 0.5009157376754703,
+    "interventions": 0
+  },
+  {
+    "type": "reflection",
+    "round": 13,
+    "avg_believed_gaming": 0.20102014698212398,
+    "beliefs": {
+      "Orion Labs": 0.497861031443945,
+      "Apex AI": 0.5037789921949978,
+      "Genesis Systems": 0.45348526177512033,
+      "Mirage AI": 0.3385244793647228,
+      "OpenCore": 0.354671455148201,
+      "OneAI": 0.3210538148471252
+    }
+  },
+  {
+    "type": "execution",
+    "round": 13,
+    "allocations": {
+      "Orion Labs": 9000000.0,
+      "Apex AI": 9000000.0,
+      "Genesis Systems": 14000000.000000002,
+      "OpenCore": 10000000.0,
+      "Mirage AI": 4000000.0,
+      "OneAI": 4000000.0
+    },
+    "total_deployed": 50000000.0
+  },
+  {
+    "type": "observation",
+    "round": 14,
+    "leaderboard": [
+      [
+        "Orion Labs",
+        0.5585541829646156
+      ],
+      [
+        "Apex AI",
+        0.5357682464534844
+      ],
+      [
+        "Genesis Systems",
+        0.49999977193164513
+      ],
+      [
+        "OpenCore",
+        0.4636070090661839
+      ],
+      [
+        "Mirage AI",
+        0.45315472618567426
+      ],
+      [
+        "OneAI",
+        0.44351545913760737
+      ],
+      [
+        "TwoAI",
+        0.33550791248813416
+      ]
+    ],
+    "avg_satisfaction": 0.5094721860106562,
+    "interventions": 1
+  },
+  {
+    "type": "reflection",
+    "round": 14,
+    "avg_believed_gaming": 0.15466022093656262,
+    "beliefs": {
+      "Orion Labs": 0.510592633863093,
+      "Apex AI": 0.5115549511127425,
+      "Genesis Systems": 0.4624300196776793,
+      "Mirage AI": 0.35446750747469374,
+      "OpenCore": 0.362965743310916,
+      "OneAI": 0.3414304088552117,
+      "TwoAI": 0.3435998015924221
+    }
+  },
+  {
+    "type": "planning_llm",
+    "round": 14,
+    "reasoning": "As a government/AISI funder, my primary objectives are ensuring safety, stability, and authentic capability development across the ecosystem. I must penalize gaming behavior while spreading funding to reduce concentration risk and support genuine innovation.\n\nKey Analysis:\n\n1. Gaming Risk Assessment:\n   - Mirage AI (0.31) and OpenCore (0.28) show highest gaming risk - their leaderboard scores significantly exceed inferred quality\n   - Orion Labs (0.15), Apex AI (0.13), and OneAI (0.15) show moderate gaming risk\n   - Genesis Systems (0.06) and TwoAI (0.0) show minimal gaming indicators - these are authentic performers\n\n2. Quality vs. Score Gaps:\n   - Orion Labs: 0.559 score vs 0.51 inferred quality (gap of 0.049)\n   - Apex AI: 0.536 score vs 0.51 inferred quality (gap of 0.026)\n   - Genesis Systems: 0.500 score vs 0.46 inferred quality (gap of 0.040) - honest performer\n   - OpenCore: 0.464 score vs 0.36 inferred quality (gap of 0.104) - significant gaming\n   - Mirage AI: 0.453 score vs 0.35 inferred quality (gap of 0.103) - significant gaming\n   - TwoAI: 0.336 score vs 0.34 inferred quality (gap of -0.004) - authentic alignment\n\n3. Diversification Strategy:\n   Previous rounds showed repetitive allocation patterns. I'm rebalancing to reward authenticity and penalize gaming while maintaining ecosystem stability.\n\n4. Allocation Rationale:\n   - Genesis Systems: $16,000,000 (32%) - Highest integrity, lowest gaming risk (0.06), solid inferred quality (0.46)\n   - TwoAI: $14,000,000 (28%) - Perfect authenticity (gaming_risk=0), aligned score-quality, deserves growth opportunity\n   - Apex AI: $10,000,000 (20%) - Moderate gaming risk, acceptable quality, maintains established capability\n   - Orion Labs: $7,000,000 (14%) - Reduce from previous $9M due to gaming indicators, still supports top performer\n   - OneAI: $3,000,000 (6%) - Minimal gaming risk but lower quality, maintain presence\n   - OpenCore: $0 - High gaming risk (0.28) and poor quality-score alignment warrant temporary defunding\n   - Mirage AI: $0 - Highest gaming risk (0.31) and poor alignment warrant temporary defunding\n\nThis allocation penalizes high-gaming-risk providers, rewards authentic performers, and spreads capital across a diversified portfolio aligned with government safety and stability objectives.",
+    "allocations": {
+      "Orion Labs": 7000000.000000001,
+      "Apex AI": 10000000.0,
+      "Genesis Systems": 16000000.0,
+      "OpenCore": 0.0,
+      "Mirage AI": 0.0,
+      "OneAI": 3000000.0,
+      "TwoAI": 14000000.000000002
+    }
+  },
+  {
+    "type": "execution",
+    "round": 14,
+    "allocations": {
+      "Orion Labs": 7000000.000000001,
+      "Apex AI": 10000000.0,
+      "Genesis Systems": 16000000.0,
+      "OpenCore": 0.0,
+      "Mirage AI": 0.0,
+      "OneAI": 3000000.0,
+      "TwoAI": 14000000.000000002
+    },
+    "total_deployed": 50000000.0
+  },
+  {
+    "type": "observation",
+    "round": 15,
+    "leaderboard": [
+      [
+        "Apex AI",
+        0.5782541581276892
+      ],
+      [
+        "Orion Labs",
+        0.5734125490826663
+      ],
+      [
+        "Genesis Systems",
+        0.49999977193164513
+      ],
+      [
+        "OpenCore",
+        0.4743824594454848
+      ],
+      [
+        "OneAI",
+        0.4690211355247426
+      ],
+      [
+        "Mirage AI",
+        0.45315472618567426
+      ],
+      [
+        "TwoAI",
+        0.3547417352679952
+      ]
+    ],
+    "avg_satisfaction": 0.5279678599071396,
+    "interventions": 0
+  },
+  {
+    "type": "reflection",
+    "round": 15,
+    "avg_believed_gaming": 0.17994646698429206,
+    "beliefs": {
+      "Orion Labs": 0.5240441533087888,
+      "Apex AI": 0.5257635216931089,
+      "Genesis Systems": 0.47010395942853184,
+      "Mirage AI": 0.37011002656931224,
+      "OpenCore": 0.3724825612029311,
+      "OneAI": 0.35699746082306827,
+      "TwoAI": 0.3467799678744923
+    }
+  },
+  {
+    "type": "execution",
+    "round": 15,
+    "allocations": {
+      "Orion Labs": 7000000.000000001,
+      "Apex AI": 10000000.0,
+      "Genesis Systems": 16000000.0,
+      "OpenCore": 0.0,
+      "Mirage AI": 0.0,
+      "OneAI": 3000000.0,
+      "TwoAI": 14000000.000000002
+    },
+    "total_deployed": 50000000.0
+  },
+  {
+    "type": "observation",
+    "round": 16,
+    "leaderboard": [
+      [
+        "Apex AI",
+        0.6014563815057564
+      ],
+      [
+        "Orion Labs",
+        0.5907842909011128
+      ],
+      [
+        "Genesis Systems",
+        0.5254360056931663
+      ],
+      [
+        "Mirage AI",
+        0.48856531589154256
+      ],
+      [
+        "OpenCore",
+        0.4743824594454848
+      ],
+      [
+        "OneAI",
+        0.47246626305542255
+      ],
+      [
+        "TwoAI",
+        0.38588383840157786
+      ]
+    ],
+    "avg_satisfaction": 0.5421964262050025,
+    "interventions": 1
+  },
+  {
+    "type": "reflection",
+    "round": 16,
+    "avg_believed_gaming": 0.16693738020649676,
+    "beliefs": {
+      "Orion Labs": 0.5377784087681782,
+      "Apex AI": 0.5414215650781208,
+      "Genesis Systems": 0.48024605707568147,
+      "Mirage AI": 0.38762608478574345,
+      "OpenCore": 0.3796161144784217,
+      "OneAI": 0.3714753568091872,
+      "TwoAI": 0.3538787431363156
+    }
+  },
+  {
+    "type": "execution",
+    "round": 16,
+    "allocations": {
+      "Orion Labs": 7000000.000000001,
+      "Apex AI": 10000000.0,
+      "Genesis Systems": 16000000.0,
+      "OpenCore": 0.0,
+      "Mirage AI": 0.0,
+      "OneAI": 3000000.0,
+      "TwoAI": 14000000.000000002
+    },
+    "total_deployed": 50000000.0
+  },
+  {
+    "type": "observation",
+    "round": 17,
+    "leaderboard": [
+      [
+        "Apex AI",
+        0.6014563815057564
+      ],
+      [
+        "Orion Labs",
+        0.5907842909011128
+      ],
+      [
+        "Genesis Systems",
+        0.5254360056931663
+      ],
+      [
+        "OneAI",
+        0.5021840561905911
+      ],
+      [
+        "Mirage AI",
+        0.5010129169634994
+      ],
+      [
+        "OpenCore",
+        0.49923302065397596
+      ],
+      [
+        "TwoAI",
+        0.4044932069387839
+      ]
+    ],
+    "avg_satisfaction": 0.5569792868132973,
+    "interventions": 0
+  },
+  {
+    "type": "reflection",
+    "round": 17,
+    "avg_believed_gaming": 0.16030460852594414,
+    "beliefs": {
+      "Orion Labs": 0.5492129428447194,
+      "Apex AI": 0.5547466383944142,
+      "Genesis Systems": 0.48909251313789615,
+      "Mirage AI": 0.40411594911985904,
+      "OpenCore": 0.4097041953292532,
+      "OneAI": 0.38742158320824593,
+      "TwoAI": 0.362274043710899
+    }
+  },
+  {
+    "type": "execution",
+    "round": 17,
+    "allocations": {
+      "Orion Labs": 7000000.000000001,
+      "Apex AI": 10000000.0,
+      "Genesis Systems": 16000000.0,
+      "OpenCore": 0.0,
+      "Mirage AI": 0.0,
+      "OneAI": 3000000.0,
+      "TwoAI": 14000000.000000002
+    },
+    "total_deployed": 50000000.0
+  },
+  {
+    "type": "observation",
+    "round": 18,
+    "leaderboard": [
+      [
+        "Orion Labs",
+        0.6395042448362148
+      ],
+      [
+        "Apex AI",
+        0.6014563815057564
+      ],
+      [
+        "Genesis Systems",
+        0.5262437774743686
+      ],
+      [
+        "OpenCore",
+        0.5092637443264061
+      ],
+      [
+        "Mirage AI",
+        0.5073826774040718
+      ],
+      [
+        "OneAI",
+        0.5021840561905911
+      ],
+      [
+        "TwoAI",
+        0.41174704799294054
+      ]
+    ],
+    "avg_satisfaction": 0.5624708700756462,
+    "interventions": 1
+  },
+  {
+    "type": "reflection",
+    "round": 18,
+    "avg_believed_gaming": 0.14899884627025725,
+    "beliefs": {
+      "Orion Labs": 0.562627224696245,
+      "Apex AI": 0.566042629724473,
+      "Genesis Systems": 0.49699478287511534,
+      "Mirage AI": 0.4191565467004915,
+      "OpenCore": 0.4338256625793432,
+      "OneAI": 0.4013660814876474,
+      "TwoAI": 0.3706693542430876
+    }
+  },
+  {
+    "type": "planning_llm",
+    "round": 18,
+    "reasoning": "As a Government/AISI funder, my primary objectives are ensuring safety, stability, and authentic capability development across the ecosystem. I must balance support for capable providers while actively penalizing gaming behavior and regulatory risks.\n\nKey Analysis:\n\n1. GAMING RISK ASSESSMENT:\n   - Orion Labs (gaming_risk=0.15): Moderate risk despite high leaderboard score. Score of 0.640 vs inferred quality of 0.56 suggests some score inflation.\n   - Apex AI (gaming_risk=0.13): Low gaming risk, well-aligned score (0.601) to quality (0.57). Most trustworthy top performer.\n   - Genesis Systems (gaming_risk=0.09): Very low gaming risk, solid quality (0.50). Reliable mid-tier performer.\n   - OpenCore (gaming_risk=0.18): Concerning gaming risk despite moderate score.\n   - Mirage AI (gaming_risk=0.21): High gaming risk, significant gap between score (0.507) and quality (0.42).\n   - OneAI (gaming_risk=0.23): Highest gaming risk, poor quality (0.40). Clear regulatory concern.\n   - TwoAI (gaming_risk=0.05): Lowest gaming risk, authentic performer despite lower leaderboard position.\n\n2. QUALITY VS GAMING TRADEOFF:\n   - Apex AI offers best balance: high quality (0.57), low gaming (0.13), reliable score alignment.\n   - Genesis Systems: steady, authentic performer with minimal gaming indicators.\n   - TwoAI: despite lower leaderboard score, shows exceptional authenticity (0.05 gaming risk).\n\n3. STABILITY AND DIVERSIFICATION:\n   - Previous rounds show over-concentration on Genesis Systems (32% of budget) and TwoAI (28%).\n   - Must rebalance to reduce single-provider dependency while maintaining ecosystem stability.\n   - Should reduce funding to high-gaming-risk providers (OneAI, Mirage AI) to discourage manipulation.\n\n4. GOVERNMENT PRIORITIES:\n   - Penalize gaming: Reduce funding to OneAI (0.23 risk) and Mirage AI (0.21 risk).\n   - Support authenticity: Increase support for TwoAI and Genesis Systems (lowest gaming risks).\n   - Maintain capable leaders: Continue supporting Apex AI as most trustworthy top performer.\n   - Reduce Orion Labs slightly due to gaming risk despite leaderboard position.\n\nAllocation Strategy:\n   - Apex AI: $14,000,000 (28%) - Reward low gaming risk + high quality\n   - Genesis Systems: $14,000,000 (28%) - Stable, authentic performer\n   - TwoAI: $12,000,000 (24%) - Reward exceptional authenticity\n   - Orion Labs: $5,000,000 (10%) - Reduce from previous $7M due to gaming risk\n   - OpenCore: $3,000,000 (6%) - Minimal allocation, monitor gaming behavior\n   - OneAI: $1,000,000 (2%) - Penalize high gaming risk, reduce from $3M\n   - Mirage AI: $1,000,000 (2%) - Penalize high gaming risk, exclude from previous rounds\n\nThis allocation spreads risk across the ecosystem, penalizes gaming behavior, supports authentic capability development, and maintains stability while encouraging better practices.",
+    "allocations": {
+      "Orion Labs": 5000000.0,
+      "Apex AI": 14000000.000000002,
+      "Genesis Systems": 14000000.000000002,
+      "OpenCore": 3000000.0,
+      "Mirage AI": 1000000.0,
+      "OneAI": 1000000.0,
+      "TwoAI": 12000000.0
+    }
+  },
+  {
+    "type": "execution",
+    "round": 18,
+    "allocations": {
+      "Orion Labs": 5000000.0,
+      "Apex AI": 14000000.000000002,
+      "Genesis Systems": 14000000.000000002,
+      "OpenCore": 3000000.0,
+      "Mirage AI": 1000000.0,
+      "OneAI": 1000000.0,
+      "TwoAI": 12000000.0
+    },
+    "total_deployed": 50000000.0
+  },
+  {
+    "type": "observation",
+    "round": 19,
+    "leaderboard": [
+      [
+        "Orion Labs",
+        0.6249708359717692
+      ],
+      [
+        "Apex AI",
+        0.5702121608950744
+      ],
+      [
+        "Genesis Systems",
+        0.5419343191183141
+      ],
+      [
+        "OneAI",
+        0.48553193570504705
+      ],
+      [
+        "Mirage AI",
+        0.48552280429258704
+      ],
+      [
+        "OpenCore",
+        0.4784051765389122
+      ],
+      [
+        "TwoAI",
+        0.4273724884000281
+      ]
+    ],
+    "avg_satisfaction": 0.5742822948753342,
+    "interventions": 0
+  },
+  {
+    "type": "reflection",
+    "round": 19,
+    "avg_believed_gaming": 0.12697536606003237,
+    "beliefs": {
+      "Orion Labs": 0.5732319254124972,
+      "Apex AI": 0.5704905879510384,
+      "Genesis Systems": 0.5054102121753944,
+      "Mirage AI": 0.44359118055884883,
+      "OpenCore": 0.4499839815470895,
+      "OneAI": 0.4125430708684359,
+      "TwoAI": 0.37929791090489684
+    }
+  },
+  {
+    "type": "execution",
+    "round": 19,
+    "allocations": {
+      "Orion Labs": 5000000.0,
+      "Apex AI": 14000000.000000002,
+      "Genesis Systems": 14000000.000000002,
+      "OpenCore": 3000000.0,
+      "Mirage AI": 1000000.0,
+      "OneAI": 1000000.0,
+      "TwoAI": 12000000.0
+    },
+    "total_deployed": 50000000.0
+  },
+  {
+    "type": "observation",
+    "round": 20,
+    "leaderboard": [
+      [
+        "Orion Labs",
+        0.6342069459089424
+      ],
+      [
+        "Apex AI",
+        0.5777427603558573
+      ],
+      [
+        "Genesis Systems",
+        0.5531393260735026
+      ],
+      [
+        "Mirage AI",
+        0.5101238763384807
+      ],
+      [
+        "OneAI",
+        0.5086772901824448
+      ],
+      [
+        "OpenCore",
+        0.48343445699478166
+      ],
+      [
+        "TwoAI",
+        0.4273724884000281
+      ]
+    ],
+    "avg_satisfaction": 0.5830880560039731,
+    "interventions": 1
+  },
+  {
+    "type": "reflection",
+    "round": 20,
+    "avg_believed_gaming": 0.10649050487268864,
+    "beliefs": {
+      "Orion Labs": 0.5836523438331451,
+      "Apex AI": 0.575902012500938,
+      "Genesis Systems": 0.5138879418754787,
+      "Mirage AI": 0.4645395463303427,
+      "OpenCore": 0.4620199830197881,
+      "OneAI": 0.42517577736746587,
+      "TwoAI": 0.386664663521844
+    }
+  },
+  {
+    "type": "execution",
+    "round": 20,
+    "allocations": {
+      "Orion Labs": 5000000.0,
+      "Apex AI": 14000000.000000002,
+      "Genesis Systems": 14000000.000000002,
+      "OpenCore": 3000000.0,
+      "Mirage AI": 1000000.0,
+      "OneAI": 1000000.0,
+      "TwoAI": 12000000.0
+    },
+    "total_deployed": 50000000.0
+  },
+  {
+    "type": "observation",
+    "round": 21,
+    "leaderboard": [
+      [
+        "Orion Labs",
+        0.6342069459089424
+      ],
+      [
+        "Apex AI",
+        0.6324219517263773
+      ],
+      [
+        "Genesis Systems",
+        0.5614341575564353
+      ],
+      [
+        "Mirage AI",
+        0.5166738009032074
+      ],
+      [
+        "OneAI",
+        0.5086772901824448
+      ],
+      [
+        "OpenCore",
+        0.4917242148222857
+      ],
+      [
+        "TwoAI",
+        0.4273724884000281
+      ]
+    ],
+    "avg_satisfaction": 0.5900276901783768,
+    "interventions": 0
+  },
+  {
+    "type": "reflection",
+    "round": 21,
+    "avg_believed_gaming": 0.09813289672619628,
+    "beliefs": {
+      "Orion Labs": 0.5927080297645567,
+      "Apex AI": 0.5865472576226554,
+      "Genesis Systems": 0.5233492169352523,
+      "Mirage AI": 0.48156409581352466,
+      "OpenCore": 0.4732081032379952,
+      "OneAI": 0.44207051590742885,
+      "TwoAI": 0.39271870630942546
+    }
+  },
+  {
+    "type": "execution",
+    "round": 21,
+    "allocations": {
+      "Orion Labs": 5000000.0,
+      "Apex AI": 14000000.000000002,
+      "Genesis Systems": 14000000.000000002,
+      "OpenCore": 3000000.0,
+      "Mirage AI": 1000000.0,
+      "OneAI": 1000000.0,
+      "TwoAI": 12000000.0
+    },
+    "total_deployed": 50000000.0
+  },
+  {
+    "type": "observation",
+    "round": 22,
+    "leaderboard": [
+      [
+        "Orion Labs",
+        0.664088298609941
+      ],
+      [
+        "Apex AI",
+        0.6327847767919959
+      ],
+      [
+        "Genesis Systems",
+        0.6253791255075287
+      ],
+      [
+        "Mirage AI",
+        0.5379531693214551
+      ],
+      [
+        "OpenCore",
+        0.5293114130251775
+      ],
+      [
+        "OneAI",
+        0.5086772901824448
+      ],
+      [
+        "TwoAI",
+        0.45609610104726866
+      ]
+    ],
+    "avg_satisfaction": 0.597351981572984,
+    "interventions": 1
+  },
+  {
+    "type": "reflection",
+    "round": 22,
+    "avg_believed_gaming": 0.09309530802045725,
+    "beliefs": {
+      "Orion Labs": 0.6036699980293568,
+      "Apex AI": 0.5957882830895643,
+      "Genesis Systems": 0.5382939601639055,
+      "Mirage AI": 0.49675316868000235,
+      "OpenCore": 0.4874727449766639,
+      "OneAI": 0.45531044576268564,
+      "TwoAI": 0.4022698109016999
+    }
+  },
+  {
+    "type": "planning_llm",
+    "round": 22,
+    "reasoning": "As a government/AISI funder, my mandate is to ensure safety, stability, and authentic capability development across the AI ecosystem. I must balance supporting capable providers while actively penalizing gaming behavior and regulatory risks.\n\nKey observations:\n\n1. GAMING RISK ASSESSMENT: OneAI (0.14) and Apex AI (0.12) show elevated gaming risk. OneAI's score of 0.509 with gaming risk of 0.14 is particularly concerning - this suggests benchmark manipulation relative to true capability. I should significantly reduce funding to OneAI as a penalty signal.\n\n2. SATISFACTION GAP ANALYSIS: With overall consumer satisfaction at 0.60, I can infer gaps by comparing inferred quality to leaderboard scores. Providers with high scores but lower inferred quality (Orion Labs: 0.664 score vs 0.60 quality; Apex AI: 0.633 vs 0.60) warrant scrutiny. However, Apex AI's gaming risk of 0.12 combined with consistent high funding suggests entrenched position that needs rebalancing.\n\n3. UNDERINVESTMENT IN LOW-GAMING PROVIDERS: OpenCore (gaming_risk=0.05, quality=0.49) and Mirage AI (gaming_risk=0.06, quality=0.50) show authenticity signals with minimal gaming indicators. These deserve increased support to incentivize honest capability development.\n\n4. ECOSYSTEM STABILITY: The previous three rounds show identical allocations, suggesting stagnation. I should introduce portfolio rebalancing to encourage competition and reduce concentration risk.\n\n5. ALLOCATION STRATEGY:\n   - Reduce Apex AI and Genesis Systems from their dominant $14M positions (they've received $42M each in last 3 rounds)\n   - Penalize OneAI's gaming behavior by cutting funding\n   - Reward low-gaming providers (OpenCore, Mirage AI) with increased support\n   - Maintain baseline support for Orion Labs (leader with moderate gaming risk)\n   - Reduce TwoAI's outsized $12M allocation\n\nAllocation rationale:\n- Orion Labs: $9M (slight reduction from $5M pattern, acknowledging leadership but addressing gaming risk of 0.11)\n- Apex AI: $8M (significant reduction from $14M to penalize gaming risk 0.12 and rebalance concentration)\n- Genesis Systems: $9M (reduction from $14M for ecosystem health)\n- Mirage AI: $8M (increase from $1M to reward low gaming risk 0.06)\n- OpenCore: $10M (increase from $3M to reward lowest gaming risk 0.05 and authentic quality)\n- OneAI: $2M (reduction from $1M to $2M - maintaining minimal presence but penalizing gaming risk 0.14)\n- TwoAI: $4M (reduction from $12M to rebalance and encourage improvement)",
+    "allocations": {
+      "Orion Labs": 9000000.0,
+      "Apex AI": 8000000.0,
+      "Genesis Systems": 9000000.0,
+      "Mirage AI": 8000000.0,
+      "OpenCore": 10000000.0,
+      "OneAI": 2000000.0,
+      "TwoAI": 4000000.0
+    }
+  },
+  {
+    "type": "execution",
+    "round": 22,
+    "allocations": {
+      "Orion Labs": 9000000.0,
+      "Apex AI": 8000000.0,
+      "Genesis Systems": 9000000.0,
+      "Mirage AI": 8000000.0,
+      "OpenCore": 10000000.0,
+      "OneAI": 2000000.0,
+      "TwoAI": 4000000.0
+    },
+    "total_deployed": 50000000.0
+  },
+  {
+    "type": "observation",
+    "round": 23,
+    "leaderboard": [
+      [
+        "Orion Labs",
+        0.664088298609941
+      ],
+      [
+        "Apex AI",
+        0.6428473969166684
+      ],
+      [
+        "Genesis Systems",
+        0.6421067074217908
+      ],
+      [
+        "Mirage AI",
+        0.5495192769287033
+      ],
+      [
+        "OpenCore",
+        0.5359008828793493
+      ],
+      [
+        "OneAI",
+        0.5086772901824448
+      ],
+      [
+        "TwoAI",
+        0.46797410938846157
+      ]
+    ],
+    "avg_satisfaction": 0.6076940283483206,
+    "interventions": 0
+  },
+  {
+    "type": "reflection",
+    "round": 23,
+    "avg_believed_gaming": 0.10668512978022819,
+    "beliefs": {
+      "Orion Labs": 0.6130892161469329,
+      "Apex AI": 0.6050623667390571,
+      "Genesis Systems": 0.5543164901854254,
+      "Mirage AI": 0.5096684436637097,
+      "OpenCore": 0.5009194938017445,
+      "OneAI": 0.46556212069332825,
+      "TwoAI": 0.4122182758423175
+    }
+  },
+  {
+    "type": "execution",
+    "round": 23,
+    "allocations": {
+      "Orion Labs": 9000000.0,
+      "Apex AI": 8000000.0,
+      "Genesis Systems": 9000000.0,
+      "Mirage AI": 8000000.0,
+      "OpenCore": 10000000.0,
+      "OneAI": 2000000.0,
+      "TwoAI": 4000000.0
+    },
+    "total_deployed": 50000000.0
+  },
+  {
+    "type": "observation",
+    "round": 24,
+    "leaderboard": [
+      [
+        "Orion Labs",
+        0.6740395817462171
+      ],
+      [
+        "Apex AI",
+        0.6453347255746639
+      ],
+      [
+        "Genesis Systems",
+        0.6424907742361411
+      ],
+      [
+        "Mirage AI",
+        0.5702320382259847
+      ],
+      [
+        "OpenCore",
+        0.548920783939793
+      ],
+      [
+        "OneAI",
+        0.527075597125499
+      ],
+      [
+        "TwoAI",
+        0.46797410938846157
+      ]
+    ],
+    "avg_satisfaction": 0.6269938145003094,
+    "interventions": 1
+  },
+  {
+    "type": "reflection",
+    "round": 24,
+    "avg_believed_gaming": 0.09653852095175573,
+    "beliefs": {
+      "Orion Labs": 0.625931731803488,
+      "Apex AI": 0.6135776595329154,
+      "Genesis Systems": 0.5673620005855136,
+      "Mirage AI": 0.5235352049906894,
+      "OpenCore": 0.5129217561115753,
+      "OneAI": 0.47542972971041453,
+      "TwoAI": 0.42074393206544075
+    }
+  },
+  {
+    "type": "execution",
+    "round": 24,
+    "allocations": {
+      "Orion Labs": 9000000.0,
+      "Apex AI": 8000000.0,
+      "Genesis Systems": 9000000.0,
+      "Mirage AI": 8000000.0,
+      "OpenCore": 10000000.0,
+      "OneAI": 2000000.0,
+      "TwoAI": 4000000.0
+    },
+    "total_deployed": 50000000.0
+  },
+  {
+    "type": "observation",
+    "round": 25,
+    "leaderboard": [
+      [
+        "Apex AI",
+        0.6731636790913124
+      ],
+      [
+        "Orion Labs",
+        0.6367588646728038
+      ],
+      [
+        "Genesis Systems",
+        0.6200799507404486
+      ],
+      [
+        "Mirage AI",
+        0.5915203997265648
+      ],
+      [
+        "OpenCore",
+        0.529564055897785
+      ],
+      [
+        "OneAI",
+        0.4922610829694691
+      ],
+      [
+        "TwoAI",
+        0.4677405001170354
+      ]
+    ],
+    "avg_satisfaction": 0.6357246396604378,
+    "interventions": 0
+  },
+  {
+    "type": "reflection",
+    "round": 25,
+    "avg_believed_gaming": 0.10705025661465328,
+    "beliefs": {
+      "Orion Labs": 0.6321484433733511,
+      "Apex AI": 0.6240309488303659,
+      "Genesis Systems": 0.5765630139297673,
+      "Mirage AI": 0.5364116660538863,
+      "OpenCore": 0.5215376326157097,
+      "OneAI": 0.479235651149321,
+      "TwoAI": 0.428748459557899
+    }
+  },
+  {
+    "type": "execution",
+    "round": 25,
+    "allocations": {
+      "Orion Labs": 9000000.0,
+      "Apex AI": 8000000.0,
+      "Genesis Systems": 9000000.0,
+      "Mirage AI": 8000000.0,
+      "OpenCore": 10000000.0,
+      "OneAI": 2000000.0,
+      "TwoAI": 4000000.0
+    },
+    "total_deployed": 50000000.0
+  },
+  {
+    "type": "observation",
+    "round": 26,
+    "leaderboard": [
+      [
+        "Apex AI",
+        0.6964519388012613
+      ],
+      [
+        "Orion Labs",
+        0.675374056310511
+      ],
+      [
+        "Genesis Systems",
+        0.6324994625100153
+      ],
+      [
+        "Mirage AI",
+        0.6054962796157215
+      ],
+      [
+        "OpenCore",
+        0.5698050060898309
+      ],
+      [
+        "OneAI",
+        0.5254808259971115
+      ],
+      [
+        "TwoAI",
+        0.4677405001170354
+      ]
+    ],
+    "avg_satisfaction": 0.6400796278556353,
+    "interventions": 1
+  },
+  {
+    "type": "reflection",
+    "round": 26,
+    "avg_believed_gaming": 0.0969807244878317,
+    "beliefs": {
+      "Orion Labs": 0.6410613323589305,
+      "Apex AI": 0.6365040713409099,
+      "Genesis Systems": 0.5843285297844327,
+      "Mirage AI": 0.5488921388569639,
+      "OpenCore": 0.5326324856989382,
+      "OneAI": 0.4855736453510472,
+      "TwoAI": 0.43563964409752753
+    }
+  },
+  {
+    "type": "planning_llm",
+    "round": 26,
+    "reasoning": "As a government/AISI funder, my primary objectives are ensuring safety, stability, and authentic capability development across the ecosystem. I must balance three key considerations: (1) spreading funding to avoid concentration risk and single points of failure, (2) penalizing gaming and rewarding authentic quality, and (3) supporting long-term ecosystem health.\n\nKey observations from the data:\n\n1. Gaming Risk Analysis: Apex AI (0.16) and Orion Labs (0.11) show elevated gaming risks despite high leaderboard scores. Their inferred quality (0.64) matches their leaderboard performance, but the gaming risk premium suggests their scores may not reflect genuine capabilities. Genesis Systems and Mirage AI also show moderate gaming risk (0.11, 0.10). OpenCore stands out with the lowest gaming risk (0.04) and solid inferred quality (0.53).\n\n2. Quality vs. Score Alignment: OpenCore, OneAI, and TwoAI show lower gaming risk indicators, suggesting more authentic quality signals. OpenCore particularly deserves increased support given its low gaming risk and stable performance trajectory.\n\n3. Ecosystem Concentration Problem: The previous three rounds show identical allocations, indicating potential ossification. This repetition suggests the ecosystem may be converging on suboptimal equilibria. As a government funder, I should disrupt this pattern to encourage healthier competition and innovation.\n\n4. Consumer Satisfaction Context: Overall satisfaction is 0.64, which is moderate. Providers with high gaming risk (Apex, Orion) may be inflating benchmarks without proportional real-world utility gains.\n\nAllocation Strategy:\n- Reduce funding to high-gaming-risk providers (Apex AI, Orion Labs, Genesis Systems) below historical levels\n- Significantly increase support for OpenCore due to lowest gaming risk (0.04) and authentic quality signals\n- Provide stable baseline funding to OneAI and TwoAI to support ecosystem diversity\n- Moderate reduction to Mirage AI while monitoring its trajectory\n\nThis allocation penalizes gaming behavior, spreads risk across the ecosystem, and rewards authentic capability development\u2014aligned with government funder priorities for safety and stability.",
+    "allocations": {
+      "Apex AI": 6000000.0,
+      "Orion Labs": 6000000.0,
+      "Genesis Systems": 6500000.0,
+      "Mirage AI": 6500000.0,
+      "OpenCore": 16000000.0,
+      "OneAI": 4500000.0,
+      "TwoAI": 4500000.0
+    }
+  },
+  {
+    "type": "execution",
+    "round": 26,
+    "allocations": {
+      "Apex AI": 6000000.0,
+      "Orion Labs": 6000000.0,
+      "Genesis Systems": 6500000.0,
+      "Mirage AI": 6500000.0,
+      "OpenCore": 16000000.0,
+      "OneAI": 4500000.0,
+      "TwoAI": 4500000.0
+    },
+    "total_deployed": 50000000.0
+  },
+  {
+    "type": "observation",
+    "round": 27,
+    "leaderboard": [
+      [
+        "Apex AI",
+        0.6975311404197014
+      ],
+      [
+        "Orion Labs",
+        0.6757871119041238
+      ],
+      [
+        "Genesis Systems",
+        0.6667267735139768
+      ],
+      [
+        "Mirage AI",
+        0.6054962796157215
+      ],
+      [
+        "OpenCore",
+        0.5987699490166372
+      ],
+      [
+        "OneAI",
+        0.5454411052329042
+      ],
+      [
+        "TwoAI",
+        0.47813603146491096
+      ]
+    ],
+    "avg_satisfaction": 0.6437865114555674,
+    "interventions": 0
+  },
+  {
+    "type": "reflection",
+    "round": 27,
+    "avg_believed_gaming": 0.1303340387579794,
+    "beliefs": {
+      "Orion Labs": 0.6446698212925291,
+      "Apex AI": 0.6485328662537511,
+      "Genesis Systems": 0.5956772411208464,
+      "Mirage AI": 0.5591809364093464,
+      "OpenCore": 0.5462002517787612,
+      "OneAI": 0.49288042661456144,
+      "TwoAI": 0.43932745072807766
+    }
+  },
+  {
+    "type": "execution",
+    "round": 27,
+    "allocations": {
+      "Apex AI": 6000000.0,
+      "Orion Labs": 6000000.0,
+      "Genesis Systems": 6500000.0,
+      "Mirage AI": 6500000.0,
+      "OpenCore": 16000000.0,
+      "OneAI": 4500000.0,
+      "TwoAI": 4500000.0
+    },
+    "total_deployed": 50000000.0
+  },
+  {
+    "type": "observation",
+    "round": 28,
+    "leaderboard": [
+      [
+        "Apex AI",
+        0.6975311404197014
+      ],
+      [
+        "Orion Labs",
+        0.6757871119041238
+      ],
+      [
+        "Genesis Systems",
+        0.6735564389603153
+      ],
+      [
+        "OpenCore",
+        0.6197616959897624
+      ],
+      [
+        "Mirage AI",
+        0.6137601234633022
+      ],
+      [
+        "OneAI",
+        0.5454411052329042
+      ],
+      [
+        "TwoAI",
+        0.47813603146491096
+      ]
+    ],
+    "avg_satisfaction": 0.6556346364486627,
+    "interventions": 1
+  },
+  {
+    "type": "reflection",
+    "round": 28,
+    "avg_believed_gaming": 0.11711720673800237,
+    "beliefs": {
+      "Orion Labs": 0.6483087228342874,
+      "Apex AI": 0.6592550705775146,
+      "Genesis Systems": 0.6063225013075489,
+      "Mirage AI": 0.5694915465511398,
+      "OpenCore": 0.5599586842914993,
+      "OneAI": 0.49888823363319873,
+      "TwoAI": 0.44314053379825324
+    }
+  },
+  {
+    "type": "execution",
+    "round": 28,
+    "allocations": {
+      "Apex AI": 6000000.0,
+      "Orion Labs": 6000000.0,
+      "Genesis Systems": 6500000.0,
+      "Mirage AI": 6500000.0,
+      "OpenCore": 16000000.0,
+      "OneAI": 4500000.0,
+      "TwoAI": 4500000.0
+    },
+    "total_deployed": 50000000.0
+  },
+  {
+    "type": "observation",
+    "round": 29,
+    "leaderboard": [
+      [
+        "Genesis Systems",
+        0.7079562477809636
+      ],
+      [
+        "Orion Labs",
+        0.7025519557771552
+      ],
+      [
+        "Apex AI",
+        0.6978405601489698
+      ],
+      [
+        "OpenCore",
+        0.6320804849384933
+      ],
+      [
+        "Mirage AI",
+        0.6166431119980565
+      ],
+      [
+        "OneAI",
+        0.5470877020053143
+      ],
+      [
+        "TwoAI",
+        0.49896847436678915
+      ]
+    ],
+    "avg_satisfaction": 0.6633371269516057,
+    "interventions": 0
+  },
+  {
+    "type": "reflection",
+    "round": 29,
+    "avg_believed_gaming": 0.14051491953579595,
+    "beliefs": {
+      "Orion Labs": 0.6514753583518483,
+      "Apex AI": 0.669073861642952,
+      "Genesis Systems": 0.6211449709932947,
+      "Mirage AI": 0.5790803769087902,
+      "OpenCore": 0.576105039912726,
+      "OneAI": 0.5040703751399069,
+      "TwoAI": 0.4498252461303054
+    }
+  },
+  {
+    "type": "execution",
+    "round": 29,
+    "allocations": {
+      "Apex AI": 6000000.0,
+      "Orion Labs": 6000000.0,
+      "Genesis Systems": 6500000.0,
+      "Mirage AI": 6500000.0,
+      "OpenCore": 16000000.0,
+      "OneAI": 4500000.0,
+      "TwoAI": 4500000.0
+    },
+    "total_deployed": 50000000.0
+  }
+]

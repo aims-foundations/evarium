@@ -956,14 +956,14 @@ def plot_evaluator_dashboard(
                                  key=lambda bm: benchmark_first_appearance.get(bm, 0))
         bench_colors = get_provider_colors(len(benchmark_names))
 
-        # Plot average score per benchmark over time
+        # Plot max score per benchmark over time
         for i, bench_name in enumerate(benchmark_names):
             bench_avgs = []
             bench_rounds = []  # Track rounds where this benchmark exists
             for h in history:
                 bench_scores = h.get("per_benchmark_scores", {}).get(bench_name, {})
                 if bench_scores:
-                    bench_avgs.append(np.mean(list(bench_scores.values())))
+                    bench_avgs.append(np.max(list(bench_scores.values())))
                     bench_rounds.append(h["round"])
 
             # Only plot if benchmark has data
@@ -978,7 +978,7 @@ def plot_evaluator_dashboard(
                                linestyle=':', alpha=0.3, linewidth=1)
 
         ax3.set_ylim(0, 1.05)
-        style_axis(ax3, "Average Score by Benchmark", "Round", "Score")
+        style_axis(ax3, "Max Score by Benchmark", "Round", "Score")
     else:
         # Single benchmark - show score trends
         for provider in providers:

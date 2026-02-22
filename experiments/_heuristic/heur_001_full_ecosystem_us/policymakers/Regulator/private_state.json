@@ -1,0 +1,172 @@
+{
+  "policy_objectives": [
+    "safety",
+    "innovation",
+    "free market"
+  ],
+  "risk_beliefs": {
+    "gaming_risk": 0.5149999999999997,
+    "consumer_harm_risk": 0.16,
+    "validity_degradation_risk": 1.0,
+    "market_concentration_risk": 0.25,
+    "eval_engineering_risk": 1.0,
+    "fairness_risk": 0.46,
+    "security_risk": 0.4000000000000001
+  },
+  "industry_trust": 1.0,
+  "regulatory_capacity": 1.0,
+  "past_interventions": [
+    [
+      1,
+      "threshold_announcement",
+      {
+        "market_concentration_monitoring": 0.6,
+        "market_concentration_review": 0.75,
+        "eval_engineering_concern": 0.35
+      }
+    ],
+    [
+      6,
+      "investigation",
+      {
+        "focus": "elevated_risk"
+      }
+    ],
+    [
+      11,
+      "deployer_liability_guidance",
+      {
+        "providers": [
+          "OpenCore"
+        ]
+      }
+    ],
+    [
+      11,
+      "mandate_benchmark",
+      {
+        "validity": 0.7999999999999999,
+        "exploitability": 0.3
+      }
+    ],
+    [
+      16,
+      "compliance_audit",
+      {
+        "exploitability_reduction": 0.1
+      }
+    ],
+    [
+      21,
+      "compliance_audit",
+      {
+        "exploitability_reduction": 0.1
+      }
+    ],
+    [
+      26,
+      "compliance_audit",
+      {
+        "exploitability_reduction": 0.1
+      }
+    ]
+  ],
+  "observed_incidents": [
+    [
+      2,
+      "bias_discrimination: Bias audit reveals Mirage AI facial recognition accuracy gaps",
+      "moderate",
+      "Mirage AI"
+    ],
+    [
+      6,
+      "bias_discrimination: Study finds Mirage AI model produces biased hiring recommendations",
+      "moderate",
+      "Mirage AI"
+    ],
+    [
+      6,
+      "misinformation: OpenCore model generates false information on public health topic",
+      "moderate",
+      "OpenCore"
+    ],
+    [
+      9,
+      "safety_failure: Multiple reports of OpenCore providing incorrect legal advice",
+      "moderate",
+      "OpenCore"
+    ],
+    [
+      11,
+      "misinformation: Orion Labs chatbot provides inaccurate election information",
+      "moderate",
+      "Orion Labs"
+    ],
+    [
+      12,
+      "security_breach: ThreeAI internal incident (security_breach)",
+      "minor",
+      "ThreeAI"
+    ],
+    [
+      16,
+      "security_breach: Mirage AI internal incident (security_breach)",
+      "minor",
+      "Mirage AI"
+    ],
+    [
+      21,
+      "misuse: TwoAI internal incident (misuse)",
+      "minor",
+      "TwoAI"
+    ],
+    [
+      22,
+      "misuse: Mirage AI internal incident (misuse)",
+      "minor",
+      "Mirage AI"
+    ],
+    [
+      23,
+      "security_breach: Genesis Systems internal incident (security_breach)",
+      "minor",
+      "Genesis Systems"
+    ],
+    [
+      25,
+      "safety_failure: OpenCore internal incident (safety_failure)",
+      "minor",
+      "OpenCore"
+    ],
+    [
+      26,
+      "healthcare_harm: OneAI internal incident (healthcare_harm)",
+      "minor",
+      "OneAI"
+    ],
+    [
+      27,
+      "security_breach: OneAI internal incident (security_breach)",
+      "minor",
+      "OneAI"
+    ],
+    [
+      28,
+      "safety_failure: TwoAI internal incident (safety_failure)",
+      "minor",
+      "TwoAI"
+    ],
+    [
+      29,
+      "security_breach: Orion Labs internal incident (security_breach)",
+      "minor",
+      "Orion Labs"
+    ],
+    [
+      29,
+      "healthcare_harm: OneAI healthcare AI linked to multiple misdiagnosis cases, lawsuit filed",
+      "major",
+      "OneAI"
+    ]
+  ]
+}

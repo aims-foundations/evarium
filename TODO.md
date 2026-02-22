@@ -1,5 +1,93 @@
 # TODO
 
+## Experiment Script (Planned)
+
+### Primary Runs
+
+These are the two canonical full-feature runs to establish baseline results.
+Both use LLM mode, 30 rounds, 5 providers + OpenCore, full ecosystem.
+
+| ID | Policy | Command |
+|----|--------|---------|
+| exp_001 | US light-touch | `python run_experiment.py --policy us` |
+| exp_002 | EU precautionary | `python run_experiment.py --policy eu` |
+
+Key things to observe:
+- Does EU precautionary policy reduce incident rate and severity vs US?
+- Does US light-touch lead to faster capability gains but higher gaming gaps?
+- Do startup entrants behave differently under each regime (BTE, funding, survival)?
+- How does OpenCore's commoditization shock play out under each regime?
+- Do benchmark focus specializations hold up over 30 rounds, or do competitive
+  pressures homogenize providers?
+
+---
+
+### Ablations (demonstrating complex systems value)
+
+Each ablation isolates one feedback loop or emergent mechanism to show what the
+simulation captures that simpler models miss. Run heuristic mode (fast) unless
+noted. All vs the US full-feature baseline.
+
+#### 1. No media (`enable_media=False`)
+- **Tests:** Whether media coverage meaningfully amplifies incidents into
+  consumer switching and funder reallocation, or if it's cosmetic.
+- **Hypothesis:** Without media, incidents cause weaker consumer response and
+  slower regulatory escalation — safety underinvestment goes less punished.
+
+#### 2. No incidents (`enable_incidents=False`)
+- **Tests:** Whether the incident system creates meaningful safety investment
+  pressure, or providers would converge to similar safety allocations anyway.
+- **Hypothesis:** Without incidents, safety_alignment collapses for all
+  providers — no endogenous force counters the competitive pressure to defund it.
+
+#### 3. No startups (`startup_entry_probability=0`)
+- **Tests:** Whether dynamic entry disciplines incumbents, or whether the
+  established 5 providers settle into stable oligopoly regardless.
+- **Hypothesis:** Without entry threat, incumbents sustain higher gaming gaps
+  and less capability investment; market concentration increases monotonically.
+
+#### 4. No benchmark specialization (uniform benchmark_focus)
+- **Tests:** The new benchmark_focus feature — does it produce meaningfully
+  differentiated leaderboard profiles, or is it noise?
+- **Hypothesis:** Without specialization, all providers converge to similar
+  per-benchmark profiles; safety benchmark is inflated even for non-safety labs.
+  With specialization, Apex AI clearly leads safety; OpenCore leads math.
+
+#### 5. No funders (`enable_funders=False`)
+- **Tests:** Whether funder allocation creates meaningful feedback between
+  market performance and capability investment, or if providers self-fund evenly.
+- **Hypothesis:** Without funders, capability gaps narrow (no Matthew effect);
+  startup survival rate drops (no VC runway extension).
+
+#### 6. No open-source provider (remove OpenCore)
+- **Tests:** Whether OS disruption dynamics (commoditization shock, cost
+  pressure, contamination multiplier) materially reshape the ecosystem, or
+  whether the closed-source race dynamics dominate regardless.
+- **Hypothesis:** Without OpenCore, consumer cost sensitivity matters less,
+  gaming gap is lower (no contamination pressure), market concentration is higher.
+
+#### 7. Single benchmark (remove multi-benchmark setup)
+- **Tests:** Whether multiple benchmarks with different validity/exploitability
+  produce richer dynamics than a single aggregate score.
+- **Hypothesis:** Single-benchmark runs show faster Goodhart degradation and
+  less provider differentiation; no benchmark churn or saturation dynamics.
+
+#### 9. Evaluator as company (`evaluator_as_company=True`)
+- **Tests:** Whether commercializing the evaluator (premium access, best-of-N
+  submissions, early benchmark access) creates conflicts of interest that worsen
+  ecosystem outcomes — a structural critique of for-profit evaluation bodies.
+- **Hypothesis:** Premium providers gain systematic scoring advantages decoupled
+  from true capability; well-funded incumbents widen their lead; gaming gaps
+  grow faster; smaller providers and startups are structurally disadvantaged.
+  Safety-focused providers (Apex AI) may opt out of premium access on principle,
+  worsening their competitive position despite genuine capability.
+
+#### 10. No benchmark evolution (fix validity/exploitability, no new benchmarks)
+- **Tests:** The benchmark lifecycle — does validity decay + new benchmark
+  introduction actually reset gaming incentives, or do providers adapt instantly?
+- **Hypothesis:** Without evolution, gaming gaps widen monotonically; with
+  evolution, new benchmarks create periodic resets in the leaderboard order.
+
 1. make vcs want to diversify more. not solely based on leaderboard
 2. double cehck that VCs cant fund opensource, opensource cant invest in safety
 
