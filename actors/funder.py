@@ -110,6 +110,9 @@ class Funder:
         self._score_history: list[dict] = []  # [{provider: score}, ...] last N rounds
         self._previous_market_shares: dict = {}  # {provider: share} from prior round
 
+        # Open-source provider names (VCs do not fund these)
+        self._open_source_providers: set = set()
+
         # Cooldown tracking
         self._last_funding_round: int = -2  # Ensures funding happens on round 0
 
@@ -130,6 +133,7 @@ class Funder:
         media_coverage: Optional[dict] = None,
         other_funder_allocations: Optional[dict] = None,
         incidents: Optional[list] = None,
+        open_source_providers: Optional[set] = None,
     ):
         """
         Observe the current ecosystem state.
@@ -158,6 +162,7 @@ class Funder:
         self._last_consumer_data = consumer_data
         self._last_policymaker_data = policymaker_data
         self._other_funder_allocations = other_funder_allocations or {}
+        self._open_source_providers = open_source_providers or set()
 
         # Update beliefs about provider quality using public signals
         for provider_name, score in leaderboard:
@@ -532,7 +537,15 @@ class Funder:
         on diversification (0.25) means VCs actively seek under-funded providers
         where other funders aren't concentrated. Gaming effects emerge indirectly
         through declining market traction when scores don't match real quality.
+
+        Open-source providers are excluded: VCs require equity stakes, which
+        open-source labs do not offer (no subscription revenue, no equity model).
         """
+        # VCs cannot take equity in open-source providers
+        providers = [p for p in providers if p not in self._open_source_providers]
+        if not providers:
+            return {}
+
         scores = self._score_providers(providers, {
             "quality": 0.15, "score_momentum": 0.25,
             "market_traction": 0.15, "market_momentum": 0.20,
@@ -634,6 +647,10 @@ class Funder:
                 recent_history=self.private_state.funding_history[-5:],
                 verbose=False,
             )
+
+            # VCs cannot fund open-source providers (no equity model) — enforce same rule as heuristic
+            if self.funder_type == "vc" and self._open_source_providers:
+                allocations = {p: v for p, v in allocations.items() if p not in self._open_source_providers}
 
             self.memory.append({
                 "type": "planning_llm",

@@ -470,8 +470,19 @@ class GameLogGenerator:
         policymaker_data = record.get("policymaker_data", {})
         if policymaker_data.get("interventions"):
             lines.append("### Regulatory Activity")
+            actor_traces = record.get("actor_traces", {})
             for intervention in policymaker_data["interventions"]:
-                lines.append(f"- **{intervention.get('type')}** by {intervention.get('policymaker')}")
+                pm_name = intervention.get("policymaker", "")
+                target = intervention.get("provider")
+                target_text = f" targeting {target}" if target else ""
+                lines.append(f"- **{intervention.get('type')}** by {pm_name}{target_text}")
+                # Include LLM reasoning inline if available
+                pm_reasoning = actor_traces.get(pm_name, "")
+                if pm_reasoning and not pm_reasoning.startswith("no_action"):
+                    # Strip the "type: " prefix if present to avoid duplication
+                    colon_idx = pm_reasoning.find(": ")
+                    reasoning_text = pm_reasoning[colon_idx + 2:] if colon_idx != -1 else pm_reasoning
+                    lines.append(f"  > {reasoning_text}")
             lines.append("")
 
         lines.append("---")

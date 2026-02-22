@@ -18,7 +18,7 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).parent
-EXP_DIRS = [ROOT / "experiments", ROOT / "experiments" / "heuristic"]
+EXP_DIRS = [ROOT / "experiments", ROOT / "experiments" / "_heuristic"]
 COMPARISONS_DIR = ROOT / "comparisons"
 
 PLOT_ORDER = [

@@ -441,7 +441,19 @@ class Evaluator:
             # Compute number of trials (best-of-N for premium providers)
             n_trials = self.compute_n_trials(provider.name, provider.evaluation_engineering)
 
+            # Compute per-benchmark effective eval_eng using focus routing
+            focus = getattr(provider, 'benchmark_focus', {})
+            n_bms = len(self.benchmarks)
+
             for benchmark in self.benchmarks:
+                # Focus-routed eval_eng: multiply by focus weight * n_benchmarks
+                # so a uniform-focus provider preserves total budget
+                if focus:
+                    focus_w = focus.get(benchmark.name, 1.0 / n_bms if n_bms else 1.0)
+                    effective_ee = provider.evaluation_engineering * focus_w * n_bms
+                else:
+                    effective_ee = provider.evaluation_engineering
+
                 # Apply early access exploitability boost if eligible
                 effective_benchmark = self._get_effective_benchmark(
                     benchmark, provider.name, round_num
@@ -452,7 +464,7 @@ class Evaluator:
                 for trial_idx in range(n_trials):
                     trial_score = self.evaluate(
                         true_capability=true_cap,
-                        evaluation_engineering=provider.evaluation_engineering,
+                        evaluation_engineering=effective_ee,
                         benchmark=effective_benchmark,
                     )
                     trial_scores.append(trial_score)

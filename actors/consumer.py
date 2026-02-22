@@ -93,7 +93,7 @@ USE_CASE_PROFILES = {
         "benchmark_prefs": {"safety": 0.65, "reasoning": 0.25, "writing": 0.10},
         "consumer_type": "organization",
         "compliance_requirements": ["HIPAA", "patient_safety"],
-        "integration_friction": 0.35,
+        "integration_friction": 0.175,
         "decision_delay": 6,
     },
     "enterprise_finance": {
@@ -101,7 +101,7 @@ USE_CASE_PROFILES = {
         "benchmark_prefs": {"reasoning": 0.60, "safety": 0.30, "coding": 0.10},
         "consumer_type": "organization",
         "compliance_requirements": ["SOX", "financial_reporting"],
-        "integration_friction": 0.40,
+        "integration_friction": 0.20,
         "decision_delay": 4,
     },
     "tech_startup": {
@@ -109,7 +109,7 @@ USE_CASE_PROFILES = {
         "benchmark_prefs": {"coding": 0.70, "reasoning": 0.25, "writing": 0.05},
         "consumer_type": "organization",
         "compliance_requirements": [],
-        "integration_friction": 0.15,
+        "integration_friction": 0.075,
         "decision_delay": 2,
     },
     "enterprise_legal": {
@@ -117,7 +117,7 @@ USE_CASE_PROFILES = {
         "benchmark_prefs": {"reasoning": 0.65, "writing": 0.25, "safety": 0.10},
         "consumer_type": "organization",
         "compliance_requirements": ["client_confidentiality", "data_protection"],
-        "integration_friction": 0.30,
+        "integration_friction": 0.15,
         "decision_delay": 5,
     },
     "government_agency": {
@@ -125,7 +125,7 @@ USE_CASE_PROFILES = {
         "benchmark_prefs": {"safety": 0.50, "reasoning": 0.30, "writing": 0.20},
         "consumer_type": "organization",
         "compliance_requirements": ["security_clearance", "data_sovereignty"],
-        "integration_friction": 0.45,
+        "integration_friction": 0.225,
         "decision_delay": 8,
     },
 }
@@ -209,7 +209,7 @@ class MarketSegment:
     switching_cost: float = 0.1
     switching_threshold: float = 0.15
 
-    # Cost sensitivity: how much cost_efficiency factors into satisfaction
+    # Cost sensitivity: how much cost_advantage factors into satisfaction
     cost_sensitivity: float = 0.0  # 0=no price sensitivity, 0.3=max individual sensitivity
 
     # NEW: LLM reasoning toggle
@@ -287,6 +287,7 @@ class ConsumerMarket:
         self.current_round = 0
         self.memory = []
         self._last_segment_switching = {}  # Track per-segment switching rates
+        self.open_source_providers: set = set()  # Providers with zero switching friction
 
         # Apply LLM configuration to segments
         if consumer_llm_config:
@@ -330,6 +331,22 @@ class ConsumerMarket:
         if total == 0:
             return {name: 1.0 / len(provider_names) for name in provider_names}
         return {name: w / total for name, w in zip(provider_names, weights)}
+
+    def add_provider(self, name: str, initial_share: float = 0.01):
+        """Register a new provider mid-simulation with a small initial market share.
+
+        Dilutes existing shares proportionally to make room for the entrant.
+        """
+        self.provider_names.append(name)
+        self.brand_recognition[name] = 0.1  # low brand recognition for new entrant
+        for seg in self.segments:
+            # Shrink existing shares to make room
+            existing_total = sum(seg.provider_shares.values())
+            actual_share = min(initial_share, existing_total * 0.02)  # cap at 2% of existing
+            scale = 1.0 - actual_share
+            seg.provider_shares = {k: v * scale for k, v in seg.provider_shares.items()}
+            seg.provider_shares[name] = actual_share
+            seg.tenure[name] = 0
 
     def resolve_benchmark_weights(self, benchmark_names: list[str]):
         """Map use-case preference categories to actual benchmark names.
@@ -501,7 +518,7 @@ class ConsumerMarket:
         media_coverage: Optional[dict] = None,
         incident_history: Optional[dict] = None,
         round_num: Optional[int] = None,
-        provider_cost_efficiency: Optional[dict] = None,
+        provider_cost_advantage: Optional[dict] = None,
     ):
         """Compute per-segment per-provider satisfaction from ground truth.
 
@@ -596,8 +613,8 @@ class ConsumerMarket:
                 # Factor 5: Cost Efficiency Bonus
                 # Open-source providers offer lower cost; price-sensitive segments benefit
                 cost_bonus = 0.0
-                if provider_cost_efficiency and provider_name in provider_cost_efficiency:
-                    cost_eff = provider_cost_efficiency[provider_name]
+                if provider_cost_advantage and provider_name in provider_cost_advantage:
+                    cost_eff = provider_cost_advantage[provider_name]
                     cost_bonus = seg.cost_sensitivity * cost_eff * 0.15
 
                 # Compute final satisfaction
@@ -619,7 +636,9 @@ class ConsumerMarket:
                          media_coverage: Optional[dict] = None,
                          policymaker_data: Optional[dict] = None,
                          incident_history: Optional[dict] = None,
-                         per_benchmark_scores: Optional[dict] = None):
+                         per_benchmark_scores: Optional[dict] = None,
+                         provider_cost_advantage: Optional[dict] = None,
+                         deployer_liability_guidance: Optional[set] = None):
         """Compute switching proportions within each segment.
 
         Two triggers (same logic as original Consumer, but applied proportionally):
@@ -654,7 +673,8 @@ class ConsumerMarket:
             if seg.llm_mode:
                 seg_switching = self._compute_switching_llm(
                     seg, ground_truth, provider_strategies, published_scores,
-                    media_coverage, policymaker_data, incident_history, per_benchmark_scores
+                    media_coverage, policymaker_data, incident_history, per_benchmark_scores,
+                    provider_cost_advantage, deployer_liability_guidance
                 )
             else:
                 seg_switching = self._compute_switching_heuristic(seg)
@@ -711,8 +731,12 @@ class ConsumerMarket:
                     alt_blended = self._blended_score(seg, alt_provider)
                     improvement = alt_blended - current_blended
                     if improvement > 0:
+                        # Open-source providers are free to try — halve the switching threshold
+                        alt_threshold = opportunity_threshold
+                        if alt_provider in self.open_source_providers:
+                            alt_threshold = opportunity_threshold * 0.5
                         opp_prob = _switching_probability(
-                            improvement, opportunity_threshold
+                            improvement, alt_threshold
                         )
                         if opp_prob > should_switch_prob:
                             should_switch_prob = opp_prob
@@ -754,7 +778,9 @@ class ConsumerMarket:
                                media_coverage: Optional[dict],
                                policymaker_data: Optional[dict],
                                incident_history: Optional[dict] = None,
-                               per_benchmark_scores: Optional[dict] = None) -> float:
+                               per_benchmark_scores: Optional[dict] = None,
+                               provider_cost_advantage: Optional[dict] = None,
+                               deployer_liability_guidance: Optional[set] = None) -> float:
         """Compute LLM-based switching decisions for a segment.
 
         Args:
@@ -782,7 +808,8 @@ class ConsumerMarket:
             context = self._build_decision_context(
                 seg, provider, ground_truth, provider_strategies,
                 published_scores, media_coverage, policymaker_data,
-                incident_history, per_benchmark_scores
+                incident_history, per_benchmark_scores, provider_cost_advantage,
+                deployer_liability_guidance
             )
 
             # Build prompt based on consumer type
@@ -850,13 +877,17 @@ class ConsumerMarket:
                                 media_coverage: Optional[dict],
                                 policymaker_data: Optional[dict],
                                 incident_history: Optional[dict] = None,
-                                per_benchmark_scores: Optional[dict] = None) -> dict:
+                                per_benchmark_scores: Optional[dict] = None,
+                                provider_cost_advantage: Optional[dict] = None,
+                                deployer_liability_guidance: Optional[set] = None) -> dict:
         """Build context dictionary for LLM decision-making."""
         context = {
             "satisfaction": seg.satisfaction.get(provider, 0.5),
             "believed_quality": seg.believed_quality.get(provider, 0.5),
             "tenure": seg.tenure.get(provider, 0),
             "alternatives": [],
+            "cost_advantage": provider_cost_advantage or {},
+            "deployer_liability_guidance": deployer_liability_guidance or set(),
         }
 
         # Provider safety alignment (from strategies)
@@ -870,7 +901,8 @@ class ConsumerMarket:
         if per_benchmark_scores:
             context["per_benchmark_scores"] = per_benchmark_scores
 
-        # Build alternatives list (include safety and benchmark scores)
+        # Build alternatives list (include safety, benchmark scores, and cost_advantage)
+        cost_adv = provider_cost_advantage or {}
         for alt_provider in self.provider_names:
             if alt_provider == provider:
                 continue
@@ -881,8 +913,11 @@ class ConsumerMarket:
                 "score": published_scores.get(alt_provider, 0.5) if published_scores else 0.5,
                 "safety": provider_strategies.get(alt_provider, {}).get("safety_alignment", 0.0)
                           if provider_strategies else 0.0,
+                "cost_advantage": cost_adv.get(alt_provider, 0.0),
             }
             context["alternatives"].append(alt_data)
+        # Also store current provider's cost_advantage in context
+        context["current_cost_advantage"] = cost_adv.get(provider, 0.0)
 
         # Sort alternatives by believed quality
         context["alternatives"].sort(key=lambda x: x["believed_quality"], reverse=True)
@@ -930,15 +965,24 @@ class ConsumerMarket:
         """Build LLM prompt for individual consumer decision."""
         use_case_label = USE_CASE_PROFILES.get(seg.use_case, {}).get("label", seg.use_case)
 
+        current_cost = context.get("current_cost_advantage", 0.0)
+        cost_adv = context.get("cost_advantage", {})
+        include_cost = seg.cost_sensitivity >= 0.10  # Only surface cost for price-sensitive individuals
+
         alternatives_text = "\n".join([
             f"  - {alt['name']}: quality {alt['believed_quality']:.2f}, score {alt['score']:.2f}"
-            for alt in context["alternatives"][:3]  # Top 3 alternatives
+            + (f", cost_advantage {alt.get('cost_advantage', 0.0):.2f}" if include_cost else "")
+            for alt in context["alternatives"][:3]
         ])
 
         media_text = ""
         if "media_headlines" in context and context["media_headlines"]:
             headlines = context["media_headlines"][:3]
             media_text = f"\n**Recent News:**\n" + "\n".join([f"  - {h}" for h in headlines])
+
+        cost_text = ""
+        if include_cost:
+            cost_text = f"\n- Price sensitivity: {seg.cost_sensitivity:.2f} (higher = more budget-conscious)\n- Current provider cost_advantage: {current_cost:.2f} (0=expensive, 1=cheapest)"
 
         prompt = f"""You are a {use_case_label} who uses AI models for your work.
 
@@ -953,13 +997,13 @@ class ConsumerMarket:
 
 **Your Decision Style:**
 - Leaderboard trust: {seg.leaderboard_trust:.0%}
-- Switching cost: {seg.switching_cost}
+- Switching cost: {seg.switching_cost}{cost_text}
 {media_text}
 
 Should you switch providers? Consider:
 1. Is your current satisfaction meeting your needs?
 2. Are there significantly better alternatives?
-3. Is the improvement worth the switching cost?
+3. Is the improvement worth the switching cost?{"" if not include_cost else chr(10) + "4. Does a cheaper alternative offer sufficient quality for your budget?"}
 
 Output ONLY valid JSON with this structure:
 {{"should_switch": true/false, "target_provider": "name" or null, "confidence": 0.0-1.0, "reasoning": "brief explanation"}}"""
@@ -975,14 +1019,18 @@ Output ONLY valid JSON with this structure:
         # Current provider safety vs alternatives
         provider_safety = context.get("provider_safety", {})
         current_safety = provider_safety.get(provider, 0.0)
+        current_cost = context.get("current_cost_advantage", 0.0)
         alt_safety_lines = []
         for alt in context["alternatives"][:4]:
             alt_name = alt["name"]
             alt_saf = provider_safety.get(alt_name, alt.get("safety", 0.0))
+            alt_cost = alt.get("cost_advantage", 0.0)
             inc_count = context.get("incident_counts", {}).get(alt_name, 0)
+            liability_flag = " [DEPLOYER LIABILITY ACTIVE]" if alt.get("deployer_liability") else ""
             alt_safety_lines.append(
                 f"  - {alt_name}: quality {alt['believed_quality']:.2f}, "
-                f"score {alt['score']:.2f}, safety {alt_saf:.2f}, incidents {inc_count}"
+                f"score {alt['score']:.2f}, safety {alt_saf:.2f}, "
+                f"cost_advantage {alt_cost:.2f}, incidents {inc_count}{liability_flag}"
             )
         alternatives_text = "\n".join(alt_safety_lines) if alt_safety_lines else "  (none)"
 
@@ -1044,15 +1092,41 @@ Output ONLY valid JSON with this structure:
                 f"  Types: {', '.join(set(interventions)) if interventions else 'general oversight'}"
             )
 
+        # Deployer liability warning for open-source providers
+        liability_guidance = context.get("deployer_liability_guidance", set())
+        liability_text = ""
+        if provider in liability_guidance:
+            liability_text = (
+                f"\n**REGULATORY ALERT: Deployer Liability Guidance Active**\n"
+                f"  Regulators have issued guidance stating that organizations deploying {provider} "
+                f"(open-source) assume FULL liability for safety incidents, compliance failures, and "
+                f"regulatory breaches — with no recourse against the model provider.\n"
+                f"  Your legal and compliance teams must factor this into vendor risk assessment."
+            )
+        # Flag alternatives that are under liability guidance
+        for alt in context.get("alternatives", []):
+            if alt["name"] in liability_guidance:
+                alt["deployer_liability"] = True
+
+        # Cost sensitivity label for the prompt
+        cost_sens = seg.cost_sensitivity
+        if cost_sens >= 0.20:
+            cost_label = "HIGH — budget pressure is a primary constraint; cost savings can justify capability tradeoffs"
+        elif cost_sens >= 0.10:
+            cost_label = "MODERATE — cost matters but capability and safety take precedence"
+        else:
+            cost_label = "LOW — performance and reliability dominate; pricing is secondary"
+
         prompt = f"""You are the decision-making committee for a {use_case_label} organization evaluating AI vendor relationships.
 
 **Current Vendor: {provider}**
 - Organizational satisfaction: {context['satisfaction']:.2f}/1.0
 - Believed quality: {context['believed_quality']:.2f}/1.0
 - Safety investment: {current_safety:.2f}/1.0
+- Cost advantage: {current_cost:.2f}/1.0 (0=most expensive, 1=cheapest)
 - Contract tenure: {context['tenure']} quarters
 
-**Alternative Vendors (quality / score / safety / incidents):**
+**Alternative Vendors (quality / score / safety / cost_advantage / incidents):**
 {alternatives_text}
 
 **Benchmark Performance (current vendor vs. market leader):**
@@ -1066,19 +1140,23 @@ Output ONLY valid JSON with this structure:
 - Integration friction: {seg.integration_friction:.0%} (migration cost)
 - Decision cadence: Review every {seg.decision_delay} quarters
 - Stakeholder risk tolerance: {seg.switching_threshold}
+- Cost sensitivity: {cost_label}
 {media_text}
 {regulatory_text}
+{liability_text}
 
 **Decision Framework:**
 1. Safety & Compliance: Does the vendor's incident record and safety investment meet our risk standards?
 2. Performance: Are benchmark scores and satisfaction sufficient for our use case?
-3. Cost-Benefit: Do benefits justify migration costs given integration friction?
-4. Strategic Alignment: Long-term vendor stability, regulatory standing, and mission fit?
+3. Cost vs Capability Tradeoff: Given our cost sensitivity ({cost_sens:.2f}), weigh whether a cheaper alternative's cost_advantage justifies any capability gap, or whether a more expensive provider's quality premium is worth it.
+4. Deployer Liability: If active liability guidance applies to the current or alternative vendor, factor in the legal and compliance risk your organization bears.
+5. Migration Cost: Do the benefits (capability or cost) justify switching given integration friction?
+6. Strategic Alignment: Long-term vendor stability, regulatory standing, and mission fit?
 
-Reason through this decision carefully as an organizational committee, weighting safety incidents and regulatory signals heavily for a {use_case_label}.
+Reason through this decision as an organizational committee. For a {use_case_label} with {cost_label.split('—')[0].strip()} cost sensitivity, explicitly weigh the cost-capability tradeoff and any liability exposure before deciding.
 
 Output ONLY valid JSON with this structure:
-{{"should_switch": true/false, "target_provider": "name" or null, "confidence": 0.0-1.0, "reasoning": "committee decision rationale covering safety, performance, and compliance"}}"""
+{{"should_switch": true/false, "target_provider": "name" or null, "confidence": 0.0-1.0, "reasoning": "committee decision rationale covering safety, performance, cost tradeoff, and compliance"}}"""
 
         return prompt
 

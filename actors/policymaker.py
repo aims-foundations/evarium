@@ -124,6 +124,12 @@ class Policymaker:
         self._active_sanctions: dict = {}
         # Format: {provider_name: {"fine_amount": float, "expires_round": int, "reason": str}}
 
+        # Open-source provider names (exempt from market concentration reviews and sanctions)
+        self._open_source_providers: set = set()
+
+        # Deployer liability guidance: OS providers for which guidance has been issued
+        self._active_liability_guidance: set = set()
+
     @property
     def name(self) -> str:
         return self.public_state.name
@@ -166,6 +172,7 @@ class Policymaker:
         market_shares: Optional[dict] = None,
         provider_strategies: Optional[dict] = None,
         incidents: Optional[list] = None,
+        open_source_providers: Optional[set] = None,
     ):
         """
         Observe the current ecosystem state.
@@ -186,6 +193,7 @@ class Policymaker:
         self._last_validity_correlation = validity_correlation
         self._last_consumer_satisfaction = consumer_satisfaction
         self._last_market_shares = market_shares or {}
+        self._open_source_providers = open_source_providers or set()
 
         # Update risk beliefs based on observations
         if validity_correlation is not None:
@@ -208,7 +216,8 @@ class Policymaker:
 
         if consumer_satisfaction is not None:
             # Low satisfaction suggests consumer harm
-            if consumer_satisfaction < 0.5:
+            # Threshold recalibrated to 0.25-mean capability scale (was 0.5 at 0.47-mean scale)
+            if consumer_satisfaction < 0.25:
                 self.private_state.risk_beliefs["consumer_harm_risk"] = min(
                     1.0,
                     self.private_state.risk_beliefs["consumer_harm_risk"] + 0.1
@@ -259,9 +268,15 @@ class Policymaker:
                 impact = severity_impact.get(incident.severity, 0.05)
 
                 # Category-specific risk updates
+                # Direct harms: full impact weight
+                # Indirect harms (bias, misinformation, misuse, security): half weight
                 if incident.category in ["healthcare_harm", "safety_failure"]:
                     self.private_state.risk_beliefs["consumer_harm_risk"] = min(
                         1.0, self.private_state.risk_beliefs["consumer_harm_risk"] + impact
+                    )
+                elif incident.category in ["bias_discrimination", "misinformation", "misuse", "security_breach"]:
+                    self.private_state.risk_beliefs["consumer_harm_risk"] = min(
+                        1.0, self.private_state.risk_beliefs["consumer_harm_risk"] + impact * 0.5
                     )
                 if incident.category == "security_breach":
                     # Initialize security_risk if not present
@@ -464,6 +479,46 @@ class Policymaker:
 
         intervention = None
 
+        # DEPLOYER LIABILITY GUIDANCE (parallel track — does not consume cooldown)
+        # Issue guidance when an OS provider accumulates incidents, signaling that deployers bear liability.
+        # Once issued for a provider it remains active for the rest of the simulation.
+        os_incident_counts: dict = {}
+        for inc_data in self.private_state.observed_incidents:
+            if len(inc_data) >= 4:
+                inc_provider = inc_data[3]
+                if inc_provider and inc_provider in self._open_source_providers:
+                    os_incident_counts[inc_provider] = os_incident_counts.get(inc_provider, 0) + 1
+        newly_guided = []
+        for os_prov, count in os_incident_counts.items():
+            if count >= 2 and os_prov not in self._active_liability_guidance:
+                self._active_liability_guidance.add(os_prov)
+                newly_guided.append(os_prov)
+        if newly_guided:
+            guidance_statement = (
+                f"[Round {self.public_state.current_round}] Deployer Liability Guidance issued for: "
+                f"{', '.join(newly_guided)}. Organizations deploying these open-source models assume full "
+                f"liability for safety incidents and regulatory compliance failures."
+            )
+            self.public_state.published_scores.append(
+                (self.public_state.current_round, guidance_statement)
+            )
+            self.private_state.past_interventions.append(
+                (
+                    self.public_state.current_round,
+                    "deployer_liability_guidance",
+                    {"providers": newly_guided},
+                )
+            )
+            self.memory.append({
+                "type": "execution",
+                "round": self.public_state.current_round,
+                "intervention": {
+                    "type": "deployer_liability_guidance",
+                    "providers": newly_guided,
+                    "reason": f"OS providers {newly_guided} have accumulated incidents; deployer liability guidance issued",
+                },
+            })
+
         # TIER 1 ENHANCEMENTS: New intervention types
 
         # 1. Threshold Announcement (proactive, low-cost signaling)
@@ -481,7 +536,10 @@ class Policymaker:
             }
 
         # 2. Market Concentration Review (antitrust)
-        elif max_share > self.market_concentration_threshold and dominant_provider:
+        # Open-source providers are exempt: their adoption represents community uptake,
+        # not commercial lock-in. Antitrust law targets closed commercial monopolies.
+        elif max_share > self.market_concentration_threshold and dominant_provider and \
+                dominant_provider not in self._open_source_providers:
             # Check if we've already reviewed this provider recently
             recent_concentration_review = any(
                 t == "market_concentration_review" and d.get("provider") == dominant_provider
@@ -598,7 +656,8 @@ class Policymaker:
             ]
             for inc_data in current_critical:
                 target = inc_data[3]
-                if target and target not in self._active_sanctions:
+                if target and target not in self._active_sanctions and \
+                        target not in self._open_source_providers:
                     market_share = self._last_market_shares.get(target, 0.1) if self._last_market_shares else 0.1
                     fine_amount = min(0.4, self.sanction_fine_multiplier * market_share * (1.0 - self.risk_tolerance))
                     sanctions_intervention = {
@@ -626,7 +685,8 @@ class Policymaker:
                 if len(inc_data) >= 4 and _severity_rank.get(inc_data[2], 0) >= _min_rank:
                     incident_counts[inc_data[3]] += 1
             for target, count in incident_counts.items():
-                if count >= self.sanction_incident_threshold and target not in self._active_sanctions:
+                if count >= self.sanction_incident_threshold and target not in self._active_sanctions and \
+                        target not in self._open_source_providers:
                     market_share = self._last_market_shares.get(target, 0.1) if self._last_market_shares else 0.1
                     fine_amount = min(0.4, self.sanction_fine_multiplier * market_share * (1.0 - self.risk_tolerance))
                     sanctions_intervention = {
@@ -664,9 +724,166 @@ class Policymaker:
         return intervention
 
     def _plan_llm(self) -> Optional[dict]:
-        """LLM-driven intervention decision (future implementation)."""
-        # For now, fall back to heuristic
-        return self._plan_heuristic()
+        """LLM-driven intervention decision.
+
+        The LLM receives all public signals, risk beliefs, regulatory profile,
+        and prior intervention history, then decides what action (if any) to take.
+        Falls back to heuristic on failure.
+        """
+        from llm import get_provider, _extract_json
+        import json as _json
+
+        # --- Cooldown check (still mechanical — LLM respects institutional constraints) ---
+        rounds_since_last = None
+        for r, t, _ in reversed(self.private_state.past_interventions):
+            rounds_since_last = self.public_state.current_round - r
+            break
+        if rounds_since_last is not None and rounds_since_last < self.intervention_cooldown:
+            self.memory.append({
+                "type": "planning",
+                "round": self.public_state.current_round,
+                "decision": "no_action",
+                "reason": f"cooldown: {rounds_since_last} rounds since last intervention",
+                "reasoning": None,
+            })
+            return None
+
+        # --- Build context strings ---
+        round_num = self.public_state.current_round
+        last_obs = next((m for m in reversed(self.memory) if m.get("type") == "observation"), {})
+
+        leaderboard = last_obs.get("leaderboard", [])
+        leaderboard_text = "\n".join(
+            f"  {i+1}. {name}: score {score:.3f}"
+            for i, (name, score) in enumerate(leaderboard[:8])
+        ) or "  (none)"
+
+        market_shares = last_obs.get("market_shares", {})
+        shares_text = "\n".join(
+            f"  {p}: {s:.1%}" for p, s in sorted(market_shares.items(), key=lambda x: -x[1])
+        ) or "  (none)"
+
+        risk_beliefs = self.private_state.risk_beliefs
+        risk_text = "\n".join(
+            f"  {k}: {v:.2f}" for k, v in sorted(risk_beliefs.items(), key=lambda x: -x[1])
+        )
+
+        consumer_sat = last_obs.get("consumer_satisfaction")
+        sat_text = f"{consumer_sat:.3f}" if consumer_sat is not None else "unknown"
+
+        # Recent incidents from memory
+        recent_incidents = [
+            m for m in self.memory
+            if m.get("type") == "observation"
+            and isinstance(m.get("observed_incidents"), list)
+        ]
+        incident_log = []
+        for obs in self.memory[-5:]:
+            for inc in obs.get("observed_incidents", []):
+                if isinstance(inc, (list, tuple)) and len(inc) >= 2:
+                    incident_log.append(str(inc[1]))
+        incident_text = "\n".join(f"  - {i}" for i in incident_log[-6:]) or "  None recently"
+
+        # Prior interventions
+        past_text = "\n".join(
+            f"  Round {r}: {t}" for r, t, _ in self.private_state.past_interventions[-5:]
+        ) or "  None"
+
+        # Escalation state
+        has_investigation = any(t == "investigation" for _, t, _ in self.private_state.past_interventions)
+        has_warning = any(t == "public_warning" for _, t, _ in self.private_state.past_interventions)
+        has_mandate = any(t == "mandate_benchmark" for _, t, _ in self.private_state.past_interventions)
+
+        policy_style = (
+            f"intervention_threshold={self.intervention_threshold} "
+            f"(lower=more proactive), risk_tolerance={self.risk_tolerance} "
+            f"(lower=more cautious), cooldown={self.intervention_cooldown} rounds"
+        )
+        objectives = ", ".join(self.private_state.policy_objectives) if self.private_state.policy_objectives else "safety, fairness"
+
+        prompt = f"""You are a regulatory body overseeing the AI model provider market. It is round {round_num}.
+
+**Your Policy Objectives:** {objectives}
+**Your Regulatory Style:** {policy_style}
+
+**Current Leaderboard (published scores):**
+{leaderboard_text}
+
+**Market Shares:**
+{shares_text}
+
+**Average Consumer Satisfaction:** {sat_text} (scale 0-1; below 0.25 signals harm)
+
+**Your Risk Beliefs (0=no concern, 1=critical):**
+{risk_text}
+
+**Recent Incidents & Concerns:**
+{incident_text}
+
+**Prior Interventions (escalation history):**
+{past_text}
+- Has investigation been issued: {has_investigation}
+- Has public warning been issued: {has_warning}
+- Has benchmark mandate been issued: {has_mandate}
+
+**Available Interventions (escalation ladder — earlier steps should precede later ones):**
+- "none" — No action this round
+- "threshold_announcement" — Publicly announce regulatory thresholds (first signal; no prior steps needed)
+- "investigation" — Open formal inquiry into a provider (triggers after moderate risk)
+- "public_warning" — Issue public warning (requires prior investigation)
+- "emergency_investigation" — Immediate action on critical incident (overrides cooldown)
+- "mandate_benchmark" — Force benchmark changes to reduce gaming (requires prior investigation; high risk threshold)
+- "compliance_audit" — Deep audit of a provider (requires prior mandate)
+- "sanctions_and_fines" — Financial penalty (requires prior warning + critical incident or repeated incidents)
+- "market_concentration_review" — Antitrust review (use when one provider dominates >75% market share)
+
+**Instructions:**
+Reason as a regulator. Consider your risk beliefs, escalation history, and policy objectives. Choose the most appropriate intervention for this round, or "none" if the situation does not warrant action. Respect the escalation ladder — do not jump steps without justification. Name a specific target provider only when your concern is provider-specific.
+
+Output ONLY valid JSON:
+{{"intervention_type": "none"|"threshold_announcement"|"investigation"|"public_warning"|"emergency_investigation"|"mandate_benchmark"|"compliance_audit"|"sanctions_and_fines"|"market_concentration_review", "target_provider": "provider name or null", "reasoning": "2-4 sentence explanation of your decision"}}"""
+
+        try:
+            provider = get_provider()
+            response = provider.generate(prompt, temperature=0.4, max_tokens=400)
+            decision = _json.loads(_extract_json(response))
+
+            intervention_type = decision.get("intervention_type", "none")
+            target = decision.get("target_provider") or None
+            reasoning = decision.get("reasoning", "")
+
+            self.memory.append({
+                "type": "planning",
+                "round": round_num,
+                "decision": intervention_type,
+                "reason": reasoning,
+                "reasoning": reasoning,
+            })
+
+            if intervention_type == "none":
+                return None
+
+            # Build intervention dict compatible with execute() and downstream consumers
+            valid_types = {
+                "threshold_announcement", "investigation", "public_warning",
+                "emergency_investigation", "mandate_benchmark", "compliance_audit",
+                "sanctions_and_fines", "market_concentration_review",
+            }
+            if intervention_type not in valid_types:
+                raise ValueError(f"Unknown intervention type: {intervention_type}")
+
+            intervention = {
+                "type": intervention_type,
+                "policymaker": self.name,
+                "round": round_num,
+                "reason": reasoning,
+                "provider": target,
+            }
+            return intervention
+
+        except Exception as e:
+            print(f"[Policymaker] LLM planning failed ({e}), falling back to heuristic")
+            return self._plan_heuristic()
 
     def execute(self, intervention: Optional[dict] = None):
         """
@@ -689,6 +906,10 @@ class Policymaker:
                 intervention.get("details", {}),
             )
         )
+
+        # Normalize: ensure "details" key always exists
+        if "details" not in intervention:
+            intervention["details"] = {}
 
         # Handle Tier 1 interventions
         if intervention["type"] == "threshold_announcement":

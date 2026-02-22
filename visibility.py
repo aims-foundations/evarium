@@ -131,6 +131,11 @@ class ProviderPrivateState:
     evaluator_premium_access: bool = False
     evaluator_funding_level: float = 0.0
 
+    # Per-benchmark eval_eng routing: {benchmark_name: weight}, sums to 1.0
+    # A provider with uniform focus gets equal weight on all benchmarks.
+    # A specialist gets more weight on focused benchmarks, less on others.
+    benchmark_focus: dict = field(default_factory=dict)
+
     def to_dict(self) -> dict:
         """Convert to dict for serialization."""
         return {
@@ -150,12 +155,16 @@ class ProviderPrivateState:
             "recent_insights": self.recent_insights,
             "evaluator_premium_access": self.evaluator_premium_access,
             "evaluator_funding_level": self.evaluator_funding_level,
+            "benchmark_focus": self.benchmark_focus,
         }
 
     @classmethod
     def from_dict(cls, data: dict) -> "ProviderPrivateState":
         """Create from dict."""
-        return cls(**data)
+        # Backwards-compatible: older serialized states may lack benchmark_focus
+        known_fields = {f.name for f in cls.__dataclass_fields__.values()}
+        filtered = {k: v for k, v in data.items() if k in known_fields}
+        return cls(**filtered)
 
     def get_summary(self) -> str:
         """Get human-readable summary for prompts."""

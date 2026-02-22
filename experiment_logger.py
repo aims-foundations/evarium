@@ -81,14 +81,14 @@ class ExperimentLogger:
 
         Args:
             base_dir: Base experiments directory
-            use_heuristic_subdir: If True, uses experiments/heuristic/ with separate numbering
+            use_heuristic_subdir: If True, uses experiments/_heuristic/ with separate numbering
         """
         self.base_experiments_dir = base_dir
         self.use_heuristic_subdir = use_heuristic_subdir
 
         # Set paths based on whether using heuristic subdir
         if use_heuristic_subdir:
-            self.base_dir = os.path.join(base_dir, "heuristic")
+            self.base_dir = os.path.join(base_dir, "_heuristic")
             self.index_file = os.path.join(self.base_dir, "heuristic_index.json")
             self.exp_prefix = "heur"
         else:
@@ -124,7 +124,7 @@ class ExperimentLogger:
         # Remove consecutive underscores
         name = re.sub(r'_+', '_', name)
         # Trim length
-        return name[:30].strip('_')
+        return name[:50].strip('_')
 
     def _get_next_id(self) -> int:
         """Get next experiment ID."""
@@ -439,11 +439,15 @@ def generate_summary(
     # Per-provider summaries
     for provider in providers:
         name = provider.name
-        scores = [h["scores"][name] for h in history]
-        true_caps = [h["true_capabilities"][name] for h in history]
+        # Only include rounds where this provider exists (startups enter mid-run)
+        provider_history = [h for h in history if name in h.get("scores", {})]
+        if not provider_history:
+            continue
+        scores = [h["scores"][name] for h in provider_history]
+        true_caps = [h["true_capabilities"][name] for h in provider_history]
 
         # Calculate mean investments (handle both old and new formats)
-        strategies = [h["strategies"][name] for h in history]
+        strategies = [h["strategies"][name] for h in provider_history]
 
         # New portfolio format
         if "fundamental_research" in strategies[0]:
@@ -453,9 +457,9 @@ def generate_summary(
             mean_safety = sum(s.get("safety_alignment", 0) for s in strategies) / len(strategies)
 
             summary["provider_summaries"][name] = {
-                "initial_capability": history[0]["true_capabilities"][name],
+                "initial_capability": provider_history[0]["true_capabilities"][name],
                 "final_capability": final["true_capabilities"][name],
-                "capability_growth": final["true_capabilities"][name] - history[0]["true_capabilities"][name],
+                "capability_growth": final["true_capabilities"][name] - provider_history[0]["true_capabilities"][name],
                 "mean_score": sum(scores) / len(scores),
                 "score_std": (sum((s - sum(scores)/len(scores))**2 for s in scores) / len(scores)) ** 0.5,
                 "mean_fundamental_research": mean_research,
@@ -466,9 +470,9 @@ def generate_summary(
         else:
             # Legacy format
             summary["provider_summaries"][name] = {
-                "initial_capability": history[0]["true_capabilities"][name],
+                "initial_capability": provider_history[0]["true_capabilities"][name],
                 "final_capability": final["true_capabilities"][name],
-                "capability_growth": final["true_capabilities"][name] - history[0]["true_capabilities"][name],
+                "capability_growth": final["true_capabilities"][name] - provider_history[0]["true_capabilities"][name],
                 "mean_score": sum(scores) / len(scores),
                 "score_std": (sum((s - sum(scores)/len(scores))**2 for s in scores) / len(scores)) ** 0.5,
                 "mean_rnd_investment": sum(s.get("rnd", 0) for s in strategies) / len(strategies),

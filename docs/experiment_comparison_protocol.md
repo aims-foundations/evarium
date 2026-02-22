@@ -10,7 +10,7 @@ User will specify two experiment IDs (e.g., `exp_032_...`, `heur_009_...`). Expe
 
 ```
 experiments/           # LLM-mode experiments (exp_XXX_name/)
-experiments/heuristic/ # Heuristic-mode experiments (heur_XXX_name/)
+experiments/_heuristic/ # Heuristic-mode experiments (heur_XXX_name/)
 ```
 
 If you're unsure which folder, use `Glob` on `experiments/**/summary.json` to find all.
@@ -236,7 +236,7 @@ Mark each as CORRECT / WRONG / PARTIAL with the specific numbers.
 
 - **game_log.md is too large to read wholesale.** Always use offset+limit or the script.
 - **rounds.jsonl field names**: actual field names are `strategy_allocations` (not `strategies`), `consumer_data` (not `consumers`), `policymaker_data` (not `policymaker`). Verify against a single parsed line if unsure.
-- **Heuristic vs LLM experiments**: heuristic experiments are in `experiments/heuristic/`, LLM-mode in `experiments/`. Check both locations.
+- **Heuristic vs LLM experiments**: heuristic experiments are in `experiments/_heuristic/`, LLM-mode in `experiments/`. Check both locations.
 - **JSON trailing commas**: if editing any index.json files, validate JSON after editing.
 - **Path quoting on Windows**: always quote paths passed to python. Use `python "C:\path\to\script.py"`, not unquoted paths.
 - **market_shares in rounds.jsonl**: lives at `consumer_data.market_shares`, not top-level.

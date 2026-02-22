@@ -1,17 +1,15 @@
 # TODO
 
+1. make vcs want to diversify more. not solely based on leaderboard
+2. double cehck that VCs cant fund opensource, opensource cant invest in safety
+
 ## Policymaker → Incident Probability (Medium Complexity)
 
 These extend how policymaker actions reduce incident probability. The easy items
 (safety floor, sanction reduction, investigation score discount, history escalation)
 are already implemented (2026-02-19).
 
-- **Pre-deployment gate (ex-ante requirement):** EU policymaker sets a flag requiring
-  providers to pass a minimum true_capability/safety_alignment threshold before new
-  capability gains are published to the market. Failed checks delay market impact by
-  1 round and trigger a forced safety bump. Requires a new policymaker action type and
-  a gate in the benchmark scoring / market update loop. Most structurally accurate model
-  of EU AI Act conformity assessment (Art. 43). High realism.
+- **Pre-deployment gate (ex-ante requirement):** Superseded by startup entry probability approach — EU vs US regulatory difference is now captured via `startup_entry_probability` config (EU ~0.05, US ~0.20). The gate mechanic (delay market impact, forced safety bump) remains an option for future work if more granular conformity assessment modeling is needed.
 
 - **Compliance burden R&D tax:** While under active regulation (compliance_audit or
   higher), provider faces a small `rnd_efficiency` reduction (e.g. 0.05–0.15x) modelling
@@ -25,7 +23,7 @@ are already implemented (2026-02-19).
 2. VCs should be able to invest in non-AI companies (no need to model deeply — just allow the option).
 3. Benchmark spacing should scale with total rounds (rough target: ~8 benchmarks over 50 rounds).
 4. Slow down benchmark saturation; make introduction timing more realistic without overloading the system.
-5. Scope to introduce a new provider during the round. Can be useful to model the barriers to entry in the market, and the probability of a new startup entering the provider space.
+5. ~~Introduce a new provider during the round~~ — DONE (2026-02-22). Startup entry implemented via `startup_entry_probability` config field; BTE index logged each round.
 6. Tier 2 and Tier 3 implementation of policymakers
 7. rethink market share approach to fines. maybe do research about what happens in practice. are rates in US actually higher?
 8. change names to avoid bias
@@ -37,16 +35,13 @@ Core mechanics implemented. Remaining work:
 - **Funder `open_source_sponsor` archetype** — funders currently treat OS providers normally. A new funder type should fund based on ecosystem_influence (adoption) rather than market-share ROI. Low priority since current funder behavior is acceptable for most experiments.
 - **Market share vs. ecosystem influence for funder traction** — currently funders use market share for all providers. For OS providers, ecosystem_influence (logged per round in `open_source_data`) should replace market share as the traction signal in funder allocations.
 
-## Barriers to Entry and Mid-Simulation Provider Entry
+## Barriers to Entry and Mid-Simulation Provider Entry (IMPLEMENTED 2026-02-22)
 
-New providers entering mid-simulation is structurally important for modeling market competition and contestability. Design considerations:
+Core mechanic implemented. Remaining follow-on work:
 
-- **Entry trigger conditions.** A new provider should enter when: (a) market is profitable enough (top providers generating high revenue), (b) a funder has excess capital and no good investment target, or (c) a random "startup formation" probability fires each round. Could be exogenous (scheduled) or endogenous (market-driven).
-- **Initial conditions.** Entrant starts with low capability (0.30–0.40), low market presence, high evaluation_engineering weight (startups game benchmarks to signal quality cheaply), and limited funding. Mirrors real patterns: new labs often benchmark-optimize aggressively before establishing research depth.
-- **Barriers to entry parameters.** Should be configurable: compute cost floor (min capital required to enter), regulatory barrier (EU gate means new entrants must pass pre-deployment check before round 1 of participation), and brand barrier (consumers with high trust sensitivity won't switch to unknown providers for N rounds).
-- **Funder interaction.** Entry events should consume funder capital. TechVentures-type VCs are most likely to fund entrants. Gov funders should not fund new entrants by default.
-- **Simulation mechanic.** `EvalEcosystemSimulation.run_round()` checks entry conditions each round; if triggered, instantiates a new `ModelProvider` and appends to `sim.providers`. History logging needs to handle variable-length provider arrays gracefully (already partially true since providers are keyed by name).
-- **Item 5 in Simulation Behavior above** overlaps with this — consolidate once implementation starts.
+- **Endogenous entry triggers:** Currently exogenous (fixed probability per round). Could make entry probability market-driven — e.g. spike when top provider's market share exceeds 0.5 or when a funder has excess undeployed capital.
+- **Brand barrier for consumers:** Consumers with high trust sensitivity currently don't distinguish new entrants from incumbents. Could add a `new_entrant_trust_penalty` that decays over N rounds post-entry.
+- **Gov funder exclusion:** Government funders currently can allocate to new entrants after the delay. Could add a flag to restrict gov/foundation funders from funding startups in early rounds.
 
 ## Research-Backed Sources for Simulation Components
 

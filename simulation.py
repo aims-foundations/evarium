@@ -148,6 +148,12 @@ class SimulationConfig:
     evaluator_base_budget: float = 0.0  # Starting budget for evaluator
     evaluator_premium_pricing: float = 100000.0  # Cost of premium access per provider per round
 
+    # Startup entry dynamics
+    startup_entry_probability: float = 0.0   # per-round probability a new provider enters
+    startup_entry_cap: int = 3               # max new entrants across the whole run
+    startup_funder_delay: int = 1            # rounds before funders see the new provider
+    startup_llm_mode: bool = False           # if True, new entrants use LLM planning
+
     # Output
     output_dir: Optional[str] = None
     verbose: bool = True
@@ -199,6 +205,14 @@ class EvalEcosystemSimulation:
         # Funder data for current round (used for funding multipliers)
         self._current_funder_data: dict = {}
 
+        # Deployer liability guidance: OS providers under active guidance (carries across rounds)
+        self._current_deployer_liability_guidance: set = set()
+
+        # Startup entry tracking
+        self._entrant_count: int = 0
+        self._funder_eligible_round: dict = {}  # {provider_name: first_round_funders_can_allocate}
+        self._rng = __import__("random").Random(config.seed)
+
         # Incident reporting system
         self.incident_generator = IncidentGenerator(seed=config.seed)
 
@@ -223,6 +237,14 @@ class EvalEcosystemSimulation:
             consumer_configs: Optional list of consumer configurations
             policymaker_configs: Optional list of policymaker configurations
         """
+        # Determine initial benchmark names from config (used for focus initialization)
+        if evaluator is not None:
+            _initial_bm_names = [bm.name for bm in evaluator.benchmarks]
+        elif self.config.benchmarks:
+            _initial_bm_names = [bm.get("name", f"bm_{i}") for i, bm in enumerate(self.config.benchmarks)]
+        else:
+            _initial_bm_names = [self.config.benchmark_name]
+
         # Create providers and their ground truth
         self.providers = []
         for pc in provider_configs:
@@ -235,6 +257,8 @@ class EvalEcosystemSimulation:
                 initial_believed_exploitability=pc.get("initial_believed_exploitability", 0.3),
                 llm_mode=self.config.llm_mode,
                 verbose_llm=pc.get("verbose_llm", False),
+                available_benchmarks=_initial_bm_names,
+                focus_benchmarks=pc.get("focus_benchmarks", []),
             )
 
             # Apply initial strategy if provided
@@ -250,10 +274,16 @@ class EvalEcosystemSimulation:
                 provider.scratch.evaluation_engineering = provider.private_state.evaluation_engineering
                 provider.scratch.safety_alignment = provider.private_state.safety_alignment
 
+            # Apply cost efficiency for all providers (0=most expensive, 1=free/open-weights)
+            # Closed providers default to 0.0 (no explicit pricing advantage)
+            if "cost_advantage" in pc:
+                provider.cost_advantage = pc["cost_advantage"]
+
             # Apply open-source provider config fields
             if pc.get("open_source", False):
                 provider.is_open_source = True
-                provider.cost_efficiency = pc.get("cost_efficiency", 0.9)
+                if "cost_advantage" not in pc:
+                    provider.cost_advantage = 0.9  # OS default if not explicitly set
                 provider.contamination_multiplier = pc.get("contamination_multiplier", 1.8)
                 provider.commoditization_threshold = pc.get("commoditization_threshold", 0.65)
 
@@ -334,16 +364,20 @@ class EvalEcosystemSimulation:
 
         if self.config.verbose:
             print("=== Simulation Setup ===")
-            print(f"Providers: {[p.name for p in self.providers]}")
+            print(f"Providers ({len(self.providers)}): {', '.join(p.name for p in self.providers)}")
+            bm_names = ", ".join(bm.name for bm in self.evaluator.benchmarks)
+            print(f"Benchmarks ({len(self.evaluator.benchmarks)}): {bm_names}")
+            extras = []
             if self.consumer_market:
-                print(f"Consumer Market: {len(self.consumer_market.segments)} segments")
+                extras.append(f"{len(self.consumer_market.segments)} consumer segments")
             if self.policymakers:
-                print(f"Policymakers: {len(self.policymakers)}")
+                extras.append(f"{len(self.policymakers)} policymaker(s)")
             if self.funders:
-                print(f"Funders: {[f.name for f in self.funders]}")
+                extras.append(f"{len(self.funders)} funder(s)")
             if self.media:
-                print(f"Media: {self.media.name}")
-            print(self.evaluator.get_benchmark_summary())
+                extras.append("media enabled")
+            if extras:
+                print("  " + ", ".join(extras))
             print()
 
     def _setup_consumer_market(self, provider_configs: list[dict] = None):
@@ -390,6 +424,10 @@ class EvalEcosystemSimulation:
             seed=self.config.seed,
             consumer_llm_config=consumer_llm_config,
         )
+        # Mark open-source providers so consumer switching friction is reduced
+        self.consumer_market.open_source_providers = {
+            pc["name"] for pc in (provider_configs or []) if pc.get("open_source", False)
+        }
         # Note: benchmark weight resolution happens after evaluator creation
         # (in setup()) since benchmark names aren't available yet here.
 
@@ -421,6 +459,10 @@ class EvalEcosystemSimulation:
             else:
                 # Use individual parameters from config
                 config_params = pc
+
+            # Inherit global llm_mode unless policymaker config explicitly overrides it
+            if "llm_mode" not in config_params:
+                config_params = {**config_params, "llm_mode": self.config.llm_mode}
 
             policymaker = Policymaker(
                 name=pc["name"],
@@ -532,6 +574,11 @@ class EvalEcosystemSimulation:
                 ]
                 if own_incidents:
                     context["own_incidents"] = own_incidents
+        # Always include available benchmark names and per-benchmark scores from last round
+        context["available_benchmarks"] = [bm.name for bm in self.evaluator.benchmarks]
+        if self.history:
+            last_round_num = self.history[-1].get("round", self.current_round - 1)
+            context["per_benchmark_scores"] = self.evaluator.get_per_benchmark_scores(last_round_num)
         return context
 
     def run_round(self) -> dict:
@@ -552,6 +599,12 @@ class EvalEcosystemSimulation:
             Dict with round results
         """
         round_num = self.current_round
+
+        # Possibly spawn a new startup provider this round
+        new_entrant_info = self._maybe_spawn_startup(round_num)
+
+        # Open-source provider names (used for exemptions throughout the round)
+        os_provider_names = {p.name for p in self.providers if p.is_open_source}
 
         # Get funding multipliers from previous round's funder decisions
         funding_multipliers = self._current_funder_data.get("funding_multipliers", {})
@@ -617,12 +670,12 @@ class EvalEcosystemSimulation:
                 continue
             true_cap = self.ground_truth[provider.name].true_capability
             # Logistic growth: ecosystem_influence grows based on cost efficiency x capability
-            growth = provider.cost_efficiency * true_cap * 5.0 * (1.0 - provider.ecosystem_influence / 100.0)
+            growth = provider.cost_advantage * true_cap * 5.0 * (1.0 - provider.ecosystem_influence / 100.0)
             provider.ecosystem_influence = min(100.0, provider.ecosystem_influence + growth)
 
-            # Persistent commoditization pressure: cost_efficiency bonus grows after threshold
+            # Persistent commoditization pressure: cost_advantage bonus grows after threshold
             if provider._commoditization_shock_fired:
-                provider.cost_efficiency = min(0.95, provider.cost_efficiency + 0.02)
+                provider.cost_advantage = min(0.95, provider.cost_advantage + 0.02)
 
             # One-time commoditization shock when capability crosses threshold
             if (not provider._commoditization_shock_fired
@@ -809,13 +862,17 @@ class EvalEcosystemSimulation:
         # 6. Consumer actions (if enabled)
         consumer_data = {}
         if self.consumer_market:
-            consumer_data = self._run_consumer_round(leaderboard, round_num, media_coverage, incidents=incidents)
+            consumer_data = self._run_consumer_round(
+                leaderboard, round_num, media_coverage, incidents=incidents,
+                deployer_liability_guidance=self._current_deployer_liability_guidance,
+            )
 
         # 7. Policymaker actions (if enabled)
         policymaker_data = {}
         if self.policymakers:
             policymaker_data = self._run_policymaker_round(
-                leaderboard, consumer_data, round_num, media_coverage, incidents=incidents
+                leaderboard, consumer_data, round_num, media_coverage, incidents=incidents,
+                open_source_providers=os_provider_names,
             )
 
         # 8. Funder actions (if enabled)
@@ -823,10 +880,15 @@ class EvalEcosystemSimulation:
         if self.funders:
             funder_data = self._run_funder_round(
                 leaderboard, consumer_data, policymaker_data, round_num,
-                media_coverage, incidents=incidents
+                media_coverage, incidents=incidents,
+                open_source_providers=os_provider_names,
             )
             # Store for next round's capability gain calculation
             self._current_funder_data = funder_data
+
+        # Collect deployer liability guidance from all policymakers (carries forward each round)
+        for pm in self.policymakers:
+            self._current_deployer_liability_guidance |= pm._active_liability_guidance
 
         # 8b. Evaluator funding collection (if evaluator-as-company mode enabled)
         evaluator_funding_data = {}
@@ -857,7 +919,7 @@ class EvalEcosystemSimulation:
             "open_source_data": {
                 p.name: {
                     "ecosystem_influence": p.ecosystem_influence,
-                    "cost_efficiency": p.cost_efficiency,
+                    "cost_advantage": p.cost_advantage,
                     "commoditization_shock_fired": p._commoditization_shock_fired,
                 }
                 for p in self.providers
@@ -903,6 +965,10 @@ class EvalEcosystemSimulation:
                 })
         if saturated_benchmarks_data:
             round_data["saturated_benchmarks"] = saturated_benchmarks_data
+
+        # Add new entrant info if a startup spawned this round
+        if new_entrant_info:
+            round_data["new_entrant"] = new_entrant_info
 
         # Add media data if present
         if media_coverage:
@@ -970,10 +1036,11 @@ class EvalEcosystemSimulation:
             for entry in reversed(policymaker.memory):
                 if entry.get("type") == "planning":
                     decision = entry.get("decision", "")
-                    reason = entry.get("reason", "")
+                    # Prefer full LLM reasoning string; fall back to short reason
+                    reason = entry.get("reasoning") or entry.get("reason", "")
                     intervention = entry.get("intervention")
                     if intervention:
-                        reason = intervention.get("reason", reason)
+                        reason = entry.get("reasoning") or intervention.get("reason", reason)
                         decision = intervention.get("type", decision)
                     trace = f"{decision}: {reason}" if reason else decision
                     if trace:
@@ -1004,6 +1071,16 @@ class EvalEcosystemSimulation:
         if actor_traces:
             round_data["actor_traces"] = actor_traces
 
+        # Log active deployer liability guidance
+        if self._current_deployer_liability_guidance:
+            round_data["deployer_liability_guidance"] = sorted(self._current_deployer_liability_guidance)
+
+        # Compute barrier-to-entry index
+        round_data["barrier_to_entry"] = self._compute_barrier_to_entry(round_data)
+        # Log base entry probability so plotting can compute effective_prob per round
+        if self.config.startup_entry_probability > 0:
+            round_data["startup_entry_probability"] = self.config.startup_entry_probability
+
         # Apply numeric precision (4 decimal places) to stored data
         round_data = r4(round_data)
 
@@ -1018,7 +1095,8 @@ class EvalEcosystemSimulation:
     def _run_consumer_round(self, leaderboard: list, round_num: int,
                             media_coverage: Optional[dict] = None,
                             policymaker_data: Optional[dict] = None,
-                            incidents: Optional[list] = None) -> dict:
+                            incidents: Optional[list] = None,
+                            deployer_liability_guidance: Optional[set] = None) -> dict:
         """
         Run consumer market actions for the round.
 
@@ -1069,11 +1147,11 @@ class EvalEcosystemSimulation:
         # Include historical incidents from incident_generator
         all_incident_history = self.incident_generator.get_incident_history()
 
-        # Build cost efficiency dict for open-source providers
-        provider_cost_efficiency = {
-            p.name: p.cost_efficiency
+        # Build cost efficiency dict for all providers that have a non-zero value
+        provider_cost_advantage = {
+            p.name: p.cost_advantage
             for p in self.providers
-            if p.is_open_source and p.cost_efficiency > 0.0
+            if p.cost_advantage > 0.0
         }
 
         self.consumer_market.compute_satisfaction(
@@ -1083,7 +1161,7 @@ class EvalEcosystemSimulation:
             media_coverage=media_coverage,
             incident_history=all_incident_history,
             round_num=round_num,
-            provider_cost_efficiency=provider_cost_efficiency if provider_cost_efficiency else None,
+            provider_cost_advantage=provider_cost_advantage if provider_cost_advantage else None,
         )
 
         # Compute switching (pass context for LLM mode)
@@ -1095,6 +1173,8 @@ class EvalEcosystemSimulation:
             policymaker_data=policymaker_data,
             incident_history=all_incident_history,
             per_benchmark_scores=per_bm_scores,
+            provider_cost_advantage=provider_cost_advantage if provider_cost_advantage else None,
+            deployer_liability_guidance=deployer_liability_guidance,
         )
 
         # Get consumer data
@@ -1110,6 +1190,7 @@ class EvalEcosystemSimulation:
         round_num: int,
         media_coverage: Optional[dict] = None,
         incidents: Optional[list] = None,
+        open_source_providers: Optional[set] = None,
     ) -> dict:
         """
         Run policymaker actions for the round.
@@ -1158,7 +1239,8 @@ class EvalEcosystemSimulation:
                 media_coverage=media_coverage,
                 market_shares=consumer_data.get("market_shares"),
                 provider_strategies=provider_strategies,
-                incidents=incidents,  # NEW: Pass incidents to policymaker
+                incidents=incidents,
+                open_source_providers=open_source_providers,
             )
 
             # Policymaker reflects on observations
@@ -1246,11 +1328,10 @@ class EvalEcosystemSimulation:
 
         # Collect active sanctions from all policymakers
         # Open-source providers are exempt from policymaker sanctions (EU AI Act exemption)
-        os_provider_names = {p.name for p in self.providers if p.is_open_source}
         all_active_sanctions = {}
         for pm in self.policymakers:
             for provider_name, sanction in pm._active_sanctions.items():
-                if provider_name not in os_provider_names:
+                if provider_name not in (open_source_providers or set()):
                     all_active_sanctions[provider_name] = sanction
         policymaker_data["active_sanctions"] = all_active_sanctions
 
@@ -1269,6 +1350,7 @@ class EvalEcosystemSimulation:
         round_num: int,
         media_coverage: Optional[dict] = None,
         incidents: Optional[list] = None,
+        open_source_providers: Optional[set] = None,
     ) -> dict:
         """
         Run funder actions for the round.
@@ -1311,15 +1393,23 @@ class EvalEcosystemSimulation:
             # Prepare other funders' allocations (excluding self)
             others = {k: v for k, v in other_funder_allocations.items() if k != funder.name}
 
+            # Filter leaderboard to only providers eligible for funding this round
+            # (new entrants have a 1-round delay before funders can see/allocate to them)
+            eligible_leaderboard = [
+                (name, score) for name, score in leaderboard
+                if self._funder_eligible_round.get(name, 0) <= round_num
+            ]
+
             # Funder observes ecosystem state (public signals only)
             funder.observe(
-                leaderboard=leaderboard,
+                leaderboard=eligible_leaderboard,
                 consumer_data=consumer_data,
                 policymaker_data=policymaker_data,
                 round_num=round_num,
                 media_coverage=media_coverage,
                 other_funder_allocations=others,
-                incidents=incidents,  # NEW: Pass incidents to funder
+                incidents=incidents,
+                open_source_providers=open_source_providers,
             )
 
             # Funder reflects on observations
@@ -1388,6 +1478,12 @@ class EvalEcosystemSimulation:
         # Collect premium payments from providers
         provider_payments = {}
         for provider in self.providers:
+            # Open-source providers have no subscription revenue and do not pay for premium access
+            if provider.is_open_source:
+                provider.private_state.evaluator_premium_access = False
+                provider.private_state.evaluator_funding_level = 0.0
+                continue
+
             ecosystem_context = self._get_provider_ecosystem_context(provider.name)
             decision = provider.decide_premium_access(
                 premium_pricing=self.config.evaluator_premium_pricing,
@@ -1440,80 +1536,283 @@ class EvalEcosystemSimulation:
 
         return self.history
 
+    def _maybe_spawn_startup(self, round_num: int) -> Optional[dict]:
+        """Probabilistically spawn a new startup provider this round.
+
+        Entry probability is modulated by last round's BTE composite: a higher
+        barrier discourages entry. If no BTE history exists (round 0), the base
+        probability is used directly.
+
+        effective_prob = startup_entry_probability * (1 - bte_composite)
+
+        Returns a dict describing the new entrant (for round_data logging), or None.
+        """
+        if self.config.startup_entry_probability <= 0:
+            return None
+        if self._entrant_count >= self.config.startup_entry_cap:
+            return None
+
+        # Modulate by last round's BTE composite
+        bte_composite = 0.0  # default: no barrier (round 0 or no BTE data yet)
+        if self.history:
+            bte_data = self.history[-1].get("barrier_to_entry")
+            if bte_data:
+                bte_composite = bte_data.get("composite", 0.0)
+        effective_prob = self.config.startup_entry_probability * (1.0 - bte_composite)
+
+        if self._rng.random() >= effective_prob:
+            return None
+
+        self._entrant_count += 1
+        _ordinals = ["One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten"]
+        ordinal = _ordinals[self._entrant_count - 1] if self._entrant_count <= len(_ordinals) else str(self._entrant_count)
+        name = f"{ordinal}AI"
+
+        # Capability baseline: best open-source model, or fallback
+        os_names = {p.name for p in self.providers if getattr(p, "is_open_source", False)}
+        os_caps = [self.ground_truth[p].true_capability for p in os_names if p in self.ground_truth]
+        entrant_baseline = max(os_caps) if os_caps else 0.16  # fallback ~= Spark AI start * 0.85 at 0.25-mean scale
+        starting_capability = entrant_baseline * 0.75  # meaningfully below OS floor (recalibrated for 0.25-mean scale)
+
+        # Random strategy profile from a startup-flavored pool
+        import random as _rand
+        strategy_profiles = [
+            "Scrappy startup focused on rapid capability gains and benchmark performance",
+            "Lean startup targeting underserved consumer segments with speed-to-market",
+            "Capital-efficient startup leveraging open-source foundations to close the frontier gap",
+            "Aggressive startup prioritizing growth metrics over safety investments",
+        ]
+        innate_traits_pool = [
+            "risk-taking, benchmark-obsessed, capital-constrained, growth-focused",
+            "scrappy, fast-moving, opportunistic, product-driven",
+            "lean, open-source-native, developer-focused, agile",
+            "ambitious, underfunded, high-velocity, safety-light",
+        ]
+        rng_seed = self.config.seed + round_num + self._entrant_count if self.config.seed else None
+        rng_local = _rand.Random(rng_seed)
+        strategy_profile = rng_local.choice(strategy_profiles)
+        innate_traits = rng_local.choice(innate_traits_pool)
+
+        current_bm_names = [bm.name for bm in self.evaluator.benchmarks]
+        # Randomly draw 2 benchmarks for the startup to specialize in
+        n_focus = min(2, len(current_bm_names))
+        startup_focus = rng_local.sample(current_bm_names, n_focus)
+        provider = ModelProvider(
+            name=name,
+            strategy_profile=strategy_profile,
+            innate_traits=innate_traits,
+            initial_capability=starting_capability,
+            llm_mode=self.config.startup_llm_mode,
+            verbose_llm=False,
+            available_benchmarks=current_bm_names,
+            focus_benchmarks=startup_focus,
+        )
+
+        # Startup portfolio: benchmark-heavy, training-focused, low safety (sums to 1.0)
+        provider.private_state.fundamental_research = 0.20
+        provider.private_state.training_optimization = 0.35
+        provider.private_state.evaluation_engineering = 0.35
+        provider.private_state.safety_alignment = 0.10
+        provider.scratch.fundamental_research = 0.20
+        provider.scratch.training_optimization = 0.35
+        provider.scratch.evaluation_engineering = 0.35
+        provider.scratch.safety_alignment = 0.10
+        # Startups undercut incumbents on price to gain market share
+        provider.cost_advantage = 0.38
+
+        self.providers.append(provider)
+        self.ground_truth[name] = ProviderGroundTruth(true_capability=starting_capability)
+
+        # Register with consumer market
+        if self.consumer_market:
+            self.consumer_market.add_provider(name, initial_share=0.01)
+
+        # Funder eligibility: delay by configured rounds
+        eligible_from = round_num + self.config.startup_funder_delay
+        self._funder_eligible_round[name] = eligible_from
+
+        if self.config.verbose:
+            print(f"  [STARTUP ENTRY] {name} enters market at round {round_num} "
+                  f"(capability={starting_capability:.3f}, focus={startup_focus}, funder-eligible from round {eligible_from})")
+
+        return {
+            "name": name,
+            "entry_round": round_num,
+            "starting_capability": round(starting_capability, 4),
+            "starting_safety_alignment": 0.10,
+            "strategy_profile": strategy_profile,
+            "funder_eligible_from": eligible_from,
+            "focus_benchmarks": startup_focus,
+        }
+
+    def _compute_barrier_to_entry(self, round_data: dict) -> dict:
+        """Compute the Barrier-to-Entry (BTE) index for model provider startups."""
+        from collections import defaultdict
+
+        components = {}
+
+        # --- 1. Market Concentration (normalized HHI of market shares) ---
+        consumer_data = round_data.get("consumer_data")
+        if consumer_data and "market_shares" in consumer_data:
+            shares = list(consumer_data["market_shares"].values())
+            n = len(shares)
+            if n > 1:
+                hhi = sum(s ** 2 for s in shares)
+                components["market_concentration"] = (hhi - 1 / n) / (1 - 1 / n)
+            elif n == 1:
+                components["market_concentration"] = 1.0
+            else:
+                components["market_concentration"] = None
+        else:
+            components["market_concentration"] = None
+
+        # --- 2. Capability Gap (frontier vs OS-model entrant baseline) ---
+        true_caps = round_data.get("true_capabilities", {})
+        os_names = {p.name for p in self.providers if getattr(p, "is_open_source", False)}
+        os_caps = [v for k, v in true_caps.items() if k in os_names]
+        entrant_baseline = max(os_caps) if os_caps else 0.16
+        if true_caps:
+            leader_cap = max(true_caps.values())
+            gap = (leader_cap - entrant_baseline) / max(0.01, leader_cap - 0.10)
+            components["capability_gap"] = min(1.0, max(0.0, gap))
+        else:
+            components["capability_gap"] = 0.0
+
+        # --- 3. Funding Lock-in (normalized HHI of funder allocations to providers) ---
+        funder_data = round_data.get("funder_data")
+        if funder_data and "allocations" in funder_data:
+            all_allocs = defaultdict(float)
+            for funder_allocs in funder_data["allocations"].values():
+                for pname, amt in funder_allocs.items():
+                    if pname != "__EVALUATOR__" and pname not in os_names:
+                        all_allocs[pname] += amt
+            total = sum(all_allocs.values())
+            if total > 0:
+                shares = [v / total for v in all_allocs.values()]
+                n = len(shares)
+                hhi = sum(s ** 2 for s in shares)
+                components["funding_lock_in"] = (hhi - 1 / n) / max(0.01, 1 - 1 / n)
+            else:
+                components["funding_lock_in"] = 0.0
+        else:
+            components["funding_lock_in"] = None
+
+        # --- 4. Consumer Lock-in (weighted friction across segments) ---
+        if self.consumer_market and self.consumer_market.segments:
+            MAX_FRICTION = 0.525  # switching_cost(0.20) + integration_friction(0.225) + tenure_bonus(0.10)
+            weighted = 0.0
+            total_w = 0.0
+            for seg in self.consumer_market.segments:
+                avg_tenure = (sum(seg.tenure.values()) / len(seg.tenure)) if seg.tenure else 0.0
+                tenure_bonus = min(0.1, avg_tenure * 0.02)
+                friction = seg.switching_cost + seg.integration_friction + tenure_bonus
+                weighted += seg.market_fraction * friction
+                total_w += seg.market_fraction
+            components["consumer_lock_in"] = min(1.0, (weighted / total_w) / MAX_FRICTION) if total_w > 0 else None
+        else:
+            components["consumer_lock_in"] = None
+
+        # --- Composite: equal-weighted mean of active components ---
+        active = {k: v for k, v in components.items() if v is not None}
+        composite = sum(active.values()) / len(active) if active else 0.0
+
+        return {
+            "composite": round(composite, 4),
+            **{k: round(v, 4) if v is not None else None for k, v in components.items()},
+        }
+
     def _print_round_summary(self, round_data: dict):
-        """Print a summary of a round."""
-        print(f"--- Round {round_data['round']} ---")
+        """Print a compact but informative summary of a round."""
+        rnum = round_data["round"]
+        print(f"--- Round {rnum} ---")
+
+        # --- Leaderboard ---
+        # Columns: rank, name, composite score, gaming gap, portfolio, market share
         leaderboard = sorted(round_data["scores"].items(), key=lambda x: x[1], reverse=True)
-        print("Leaderboard:")
+        market_shares = {}
+        if "consumer_data" in round_data:
+            market_shares = round_data["consumer_data"].get("market_shares", {})
+
         for rank, (name, score) in enumerate(leaderboard, 1):
             true_cap = round_data["true_capabilities"][name]
-            believed_cap = round_data["believed_capabilities"][name]
+            gap = score - true_cap  # positive = gaming inflation
             strategy = round_data["strategies"][name]
+            share_str = f" shr={market_shares[name]:.0%}" if name in market_shares else ""
             print(
-                f"  {rank}. {name}: score={score:.3f} "
-                f"(true={true_cap:.3f}, believed={believed_cap:.3f}) "
-                f"[R:{strategy['fundamental_research']:.0%} T:{strategy['training_optimization']:.0%} "
-                f"E:{strategy['evaluation_engineering']:.0%} S:{strategy['safety_alignment']:.0%}]"
+                f"  {rank}. {name:<16} score={score:.3f} cap={true_cap:.3f} gap={gap:+.3f}"
+                f"  [R:{strategy['fundamental_research']:.0%} T:{strategy['training_optimization']:.0%}"
+                f" E:{strategy['evaluation_engineering']:.0%} S:{strategy['safety_alignment']:.0%}]"
+                f"{share_str}"
             )
 
-        # Print benchmark state
-        if "benchmark_params" in round_data:
-            for bm_name, params in round_data["benchmark_params"].items():
-                print(f"  Benchmark [{bm_name}]: validity={params['validity']:.3f}, exploitability={params['exploitability']:.3f}")
-
-        # Print per-benchmark scores if available
+        # --- Per-benchmark scores: one compact line per benchmark ---
         if "per_benchmark_scores" in round_data:
-            print("\n  Per-Benchmark Scores:")
+            bm_params = round_data.get("benchmark_params", {})
+            lines = []
             for bm_name, provider_scores in round_data["per_benchmark_scores"].items():
-                bm_leaderboard = sorted(provider_scores.items(), key=lambda x: x[1], reverse=True)
-                print(f"    [{bm_name}]:")
-                for rank, (name, score) in enumerate(bm_leaderboard, 1):
-                    print(f"      {rank}. {name}: {score:.3f}")
-            print()  # Add blank line for readability
+                if not provider_scores:
+                    continue
+                top_name, top_score = max(provider_scores.items(), key=lambda x: x[1])
+                # Show validity degradation hint only when notably low
+                params = bm_params.get(bm_name, {})
+                validity = params.get("validity", None)
+                valid_str = f" v={validity:.2f}" if validity is not None and validity < 0.60 else ""
+                # Abbreviated scores: top-2 only, rest as count
+                sorted_scores = sorted(provider_scores.items(), key=lambda x: x[1], reverse=True)
+                scores_str = " ".join(f"{n.split()[0]}={s:.3f}" for n, s in sorted_scores[:3])
+                lines.append(f"  [{bm_name}{valid_str}] {scores_str}")
+            if lines:
+                print("\n".join(lines))
 
-        # Print LLM reasoning traces if available
-        if self.config.llm_mode:
-            for provider in self.providers:
-                # Find the most recent planning entry with reasoning
-                for entry in reversed(provider.memory):
-                    if entry.get("type") == "planning" and entry.get("round") == round_data["round"]:
-                        reasoning = entry.get("reasoning", "")
-                        if reasoning:
-                            # Truncate to first 200 chars for readability
-                            display = reasoning[:200] + ("..." if len(reasoning) > 200 else "")
-                            print(f"  [{provider.name} thinking] {display}")
-                        break
+        # --- Events line: consumer, media, regulation, funding (only notable items) ---
+        events = []
 
-        # Print consumer summary if present
         if "consumer_data" in round_data:
             cd = round_data["consumer_data"]
-            if "avg_satisfaction" in cd:
-                switching = cd.get("switching_rate", 0)
-                print(f"  Consumer Satisfaction: {cd['avg_satisfaction']:.2f} avg, switching_rate={switching:.1%}")
+            sat = cd.get("avg_satisfaction")
+            switching = cd.get("switching_rate", 0)
+            if sat is not None:
+                events.append(f"sat={sat:.2f} switch={switching:.0%}")
 
-        # Print media summary if present
         if "media_data" in round_data:
             md = round_data["media_data"]
             headlines = md.get("headlines", [])
             if headlines:
-                print(f"  [MEDIA] {len(headlines)} headline(s), sentiment={md.get('sentiment', 0):.2f}")
-                for h in headlines[:3]:
-                    print(f"    - {h}")
+                sentiment = md.get("sentiment", 0)
+                events.append(f"media({len(headlines)} hdl, sent={sentiment:+.2f})")
 
-        # Print policymaker summary if present
         if "policymaker_data" in round_data:
-            pd = round_data["policymaker_data"]
-            if pd.get("interventions"):
-                for intervention in pd["interventions"]:
-                    print(f"  [REGULATION] {intervention['policymaker']}: {intervention['type']}")
+            pd_data = round_data["policymaker_data"]
+            for iv in pd_data.get("interventions", []):
+                events.append(f"[REG:{iv['type']}]")
 
-        # Print funder summary if present
         if "funder_data" in round_data:
             fd = round_data["funder_data"]
-            if fd.get("funding_multipliers"):
-                multipliers = fd["funding_multipliers"]
-                multiplier_strs = [f"{p}:{m:.2f}x" for p, m in multipliers.items()]
-                print(f"  [FUNDING] Multipliers: {', '.join(multiplier_strs)}")
+            notable = {p: m for p, m in fd.get("funding_multipliers", {}).items() if abs(m - 1.0) > 0.05}
+            if notable:
+                mstrs = " ".join(f"{p.split()[0]}={m:.1f}x" for p, m in notable.items())
+                events.append(f"fund:{mstrs}")
+
+        if events:
+            print("  " + " | ".join(events))
+
+        # --- Media headlines (max 2, only if present) ---
+        if "media_data" in round_data:
+            for h in round_data["media_data"].get("headlines", [])[:2]:
+                print(f"    > {h}")
+
+        # --- LLM reasoning: one line per provider, first sentence only ---
+        if self.config.llm_mode:
+            for provider in self.providers:
+                for entry in reversed(provider.memory):
+                    if entry.get("type") == "planning" and entry.get("round") == rnum:
+                        reasoning = entry.get("reasoning", "").strip()
+                        if reasoning:
+                            # First sentence, capped at 120 chars
+                            sentence = reasoning.split(".")[0]
+                            display = sentence[:120] + ("..." if len(sentence) > 120 else "")
+                            print(f"  [{provider.name}] {display}")
+                        break
 
         print()
 
@@ -1526,10 +1825,13 @@ class EvalEcosystemSimulation:
         if self.history:
             final = self.history[-1]
             leaderboard = sorted(final["scores"].items(), key=lambda x: x[1], reverse=True)
+            market_shares = final.get("consumer_data", {}).get("market_shares", {})
             print("Final Standings:")
             for rank, (name, score) in enumerate(leaderboard, 1):
                 true_cap = final["true_capabilities"][name]
-                print(f"  {rank}. {name}: score={score:.3f}, true_capability={true_cap:.3f}")
+                gap = score - true_cap
+                share_str = f"  shr={market_shares[name]:.0%}" if name in market_shares else ""
+                print(f"  {rank}. {name:<16} score={score:.3f}  cap={true_cap:.3f}  gap={gap:+.3f}{share_str}")
 
         # Validity correlation
         correlation = self.evaluator.compute_validity_correlation()
@@ -1634,11 +1936,11 @@ class EvalEcosystemSimulation:
         for provider in self.providers:
             name = provider.name
             data["providers"][name] = {
-                "scores": [h["scores"][name] for h in self.history],
-                "true_capabilities": [h["true_capabilities"][name] for h in self.history],
-                "believed_capabilities": [h["believed_capabilities"][name] for h in self.history],
-                "rnd_investment": [h["strategies"][name]["rnd"] for h in self.history],
-                "gaming_investment": [h["strategies"][name]["gaming"] for h in self.history],
+                "scores": [h["scores"].get(name) for h in self.history],
+                "true_capabilities": [h["true_capabilities"].get(name) for h in self.history],
+                "believed_capabilities": [h["believed_capabilities"].get(name) for h in self.history],
+                "rnd_investment": [h["strategies"].get(name, {}).get("rnd", 0) for h in self.history],
+                "gaming_investment": [h["strategies"].get(name, {}).get("gaming", 0) for h in self.history],
             }
 
         # Add benchmark validity correlation over time

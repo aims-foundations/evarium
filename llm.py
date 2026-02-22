@@ -887,6 +887,8 @@ def create_planning_prompt_portfolio(
     recent_history: list,
     consumer_satisfaction: Optional[float] = None,
     regulatory_pressure: Optional[list] = None,
+    per_benchmark_scores: Optional[dict] = None,
+    benchmark_focus: Optional[dict] = None,
 ) -> str:
     """
     Create a prompt for the provider to decide their investment portfolio.
@@ -966,6 +968,22 @@ Believed benchmark exploitability: {believed_exploitability:.2f}
                           f"{entry.get('training_optimization', 0):.0%} | "
                           f"{entry.get('evaluation_engineering', 0):.0%} | "
                           f"{entry.get('safety_alignment', 0):.0%} |\n")
+
+    # Per-benchmark scores and focus weights (context for benchmark-aware reasoning)
+    if per_benchmark_scores and benchmark_focus:
+        prompt += "\n## Per-Benchmark Scores\n"
+        prompt += "| Benchmark | Your Score | Leader | Focus Weight |\n"
+        prompt += "|-----------|------------|--------|--------------|\n"
+        for bm_name, provider_scores in per_benchmark_scores.items():
+            if not provider_scores:
+                continue
+            own_score = provider_scores.get(name, None)
+            leader_score = max(provider_scores.values()) if provider_scores else None
+            n_bms = len(benchmark_focus)
+            focus_w = benchmark_focus.get(bm_name, 1.0 / n_bms if n_bms else 1.0)
+            own_str = f"{own_score:.3f}" if own_score is not None else "N/A"
+            leader_str = f"{leader_score:.3f}" if leader_score is not None else "N/A"
+            prompt += f"| {bm_name} | {own_str} | {leader_str} | {focus_w:.2f} |\n"
 
     # Decision section emphasizes dynamics over identity
     prompt += """
@@ -1148,6 +1166,8 @@ def llm_plan_portfolio(
     recent_history: list,
     consumer_satisfaction: Optional[float] = None,
     regulatory_pressure: Optional[list] = None,
+    per_benchmark_scores: Optional[dict] = None,
+    benchmark_focus: Optional[dict] = None,
     verbose: bool = False,
 ) -> tuple[dict, str]:
     """
@@ -1171,6 +1191,8 @@ def llm_plan_portfolio(
         recent_history=recent_history,
         consumer_satisfaction=consumer_satisfaction,
         regulatory_pressure=regulatory_pressure,
+        per_benchmark_scores=per_benchmark_scores,
+        benchmark_focus=benchmark_focus,
     )
 
     result = provider.generate_json(

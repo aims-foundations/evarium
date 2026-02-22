@@ -173,6 +173,8 @@ class ModelProvider:
         initial_believed_exploitability: float = 0.3,
         llm_mode: bool = False,
         verbose_llm: bool = False,
+        available_benchmarks: Optional[list] = None,
+        focus_benchmarks: Optional[list] = None,
     ):
         """
         Initialize a Model Provider.
@@ -211,6 +213,13 @@ class ModelProvider:
         # The simulation should manage this externally
         self._initial_capability = initial_capability
 
+        # Initialize per-benchmark eval_eng routing weights
+        # focus_benchmarks: priority-ordered list of benchmark names to specialize in
+        # available_benchmarks: all benchmarks in the simulation at initialization
+        self.private_state.benchmark_focus = self._compute_initial_focus(
+            focus_benchmarks or [], available_benchmarks or []
+        )
+
         # Legacy scratch for backwards compatibility
         # This syncs with public/private state
         self.scratch = ModelProviderScratch(
@@ -229,7 +238,7 @@ class ModelProvider:
         # Open-source provider flag (set after init via provider config)
         self.is_open_source: bool = False
         # Cost efficiency (0=closed-source default, 0.9=highly cost-competitive like DeepSeek)
-        self.cost_efficiency: float = 0.0
+        self.cost_advantage: float = 0.0
         # Contamination multiplier (extra gaming pressure on benchmarks when OS provider active)
         self.contamination_multiplier: float = 1.0
         # Threshold: true_capability level triggering one-time commoditization shock
@@ -284,6 +293,11 @@ class ModelProvider:
     def safety_alignment(self) -> float:
         return self.private_state.safety_alignment
 
+    @property
+    def benchmark_focus(self) -> dict:
+        """Per-benchmark eval_eng weight vector (sums to 1.0)."""
+        return self.private_state.benchmark_focus
+
     # Backwards compatibility properties
     @property
     def rnd_investment(self) -> float:
@@ -294,6 +308,176 @@ class ModelProvider:
     def gaming_investment(self) -> float:
         """Backwards compatibility: Gaming approximated by evaluation_engineering"""
         return self.private_state.evaluation_engineering
+
+    @staticmethod
+    def _compute_initial_focus(focus_benchmarks: list, available_benchmarks: list) -> dict:
+        """
+        Compute initial benchmark_focus weight vector from a priority-ordered focus list.
+
+        Weight scheme:
+        - 1 focus bm:  {focus[0]: 0.70, others: 0.30/(n-1)}
+        - 2 focus bms: {focus[0]: 0.50, focus[1]: 0.30, others: 0.20/(n-2)}
+        - 3+ focus bms:{focus[0]: 0.40, focus[1]: 0.30, focus[2]: 0.20, others: 0.10/(n-3)}
+        - No focus / empty: uniform 1/n on all benchmarks
+        """
+        if not available_benchmarks:
+            # No benchmarks known yet; return empty (will be populated on first update)
+            return {}
+
+        n = len(available_benchmarks)
+        focus = [b for b in focus_benchmarks if b in available_benchmarks]
+
+        if not focus:
+            w = 1.0 / n
+            return {bm: w for bm in available_benchmarks}
+
+        weights = {}
+        # Priority weight tables for focused benchmarks; remainder split among unfocused.
+        # For 4+ focus benchmarks a geometric decay tail is used so all focus bms get
+        # meaningfully elevated weight vs unfocused benchmarks.
+        if len(focus) == 1:
+            top_weights = [0.70]
+            remainder = 0.30
+        elif len(focus) == 2:
+            top_weights = [0.50, 0.30]
+            remainder = 0.20
+        elif len(focus) == 3:
+            top_weights = [0.40, 0.28, 0.20]
+            remainder = 0.12
+        elif len(focus) == 4:
+            top_weights = [0.35, 0.25, 0.18, 0.12]
+            remainder = 0.10
+        elif len(focus) == 5:
+            top_weights = [0.30, 0.22, 0.16, 0.12, 0.08]
+            remainder = 0.12
+        else:
+            # 6+ focus benchmarks: assign top 6 with geometric tail, rest uniform remainder
+            top_weights = [0.25, 0.18, 0.14, 0.10, 0.08, 0.06]
+            remainder = 0.19
+            focus = focus[:6]
+
+        for bm in available_benchmarks:
+            if bm in focus:
+                idx = focus.index(bm)
+                weights[bm] = top_weights[idx]
+            else:
+                n_others = n - len(focus)
+                weights[bm] = remainder / n_others if n_others > 0 else 0.0
+
+        # Normalize to sum to 1.0
+        total = sum(weights.values())
+        if total > 0:
+            weights = {k: v / total for k, v in weights.items()}
+        return weights
+
+    def _update_benchmark_focus(self, ecosystem_context: Optional[dict] = None):
+        """
+        Update benchmark_focus weights each round.
+
+        Steps:
+        1. Expand focus dict to include any new benchmarks (with trait-affinity weights).
+        2. Apply competitive pull: increase weight on benchmarks where we lag the leader.
+        3. Add stochastic perturbation to prevent determinism.
+        4. Clip to [0.05, 0.80] and re-normalize.
+        """
+        import numpy as _np
+
+        ctx = ecosystem_context or {}
+        available = ctx.get("available_benchmarks", [])
+        per_bm_scores = ctx.get("per_benchmark_scores", {})
+
+        focus = self.private_state.benchmark_focus
+
+        # If no benchmarks known yet, skip
+        if not available:
+            return
+
+        # 1. Expand to include new benchmarks
+        traits_text = (
+            self.private_state.innate_traits + " " +
+            self.private_state.strategy_profile
+        ).lower()
+        affinity_keywords = {
+            "coding":               ["coding", "software", "engineering", "developer", "api"],
+            "coding_advanced":      ["coding", "software", "engineering", "developer", "api"],
+            "reasoning":            ["reasoning", "logic", "research", "general", "analytical"],
+            "reasoning_advanced":   ["reasoning", "logic", "research", "general", "analytical"],
+            "math":                 ["math", "reasoning", "science", "research", "technical"],
+            "math_advanced":        ["math", "reasoning", "science", "research", "technical"],
+            "safety":               ["safety", "alignment", "risk", "guardrails", "responsible", "harmless"],
+            "safety_advanced":      ["safety", "alignment", "risk", "guardrails", "responsible", "harmless"],
+            "writing":              ["writing", "content", "creative", "marketing", "communication", "consumer"],
+            "instruction_following":["instruction", "reliable", "precise", "enterprise", "product"],
+            "long_context":         ["enterprise", "document", "legal", "finance", "long", "context"],
+            "medical":              ["medical", "healthcare", "clinical", "health", "hospital"],
+            "legal":                ["legal", "law", "compliance", "regulatory", "policy"],
+            "finance":              ["finance", "financial", "economic", "investment", "enterprise"],
+            "agentic":              ["agentic", "agent", "product", "api", "developer", "software"],
+            "live_bench":           ["research", "general", "analytical", "rigorous", "science"],
+        }
+
+        rng = self._get_rng()
+        new_bms = [bm for bm in available if bm not in focus]
+        for bm in new_bms:
+            # Compute affinity: look up exact benchmark name, then fall back to substring match
+            affinity = 0.2
+            keywords = affinity_keywords.get(bm)
+            if keywords is None:
+                # Substring fallback for unknown benchmark names
+                for grp_name, grp_kws in affinity_keywords.items():
+                    if grp_name in bm or any(kw in bm for kw in grp_kws):
+                        keywords = grp_kws
+                        break
+            if keywords and any(kw in traits_text for kw in keywords):
+                affinity = 0.6
+            weight = float(_np.clip(affinity + rng.normal(0, 0.15), 0.05, 0.80))
+            focus[bm] = weight
+
+        # Remove benchmarks no longer in available set
+        for bm in list(focus.keys()):
+            if bm not in available:
+                del focus[bm]
+
+        if not focus:
+            return
+
+        n = len(focus)
+
+        # 2. Competitive pull: shift weight toward benchmarks where we lag the leader
+        own_name = self.public_state.name
+        for bm in list(focus.keys()):
+            bm_scores = per_bm_scores.get(bm, {})
+            if not bm_scores:
+                continue
+            own_score = bm_scores.get(own_name, 0.0)
+            leader_score = max(bm_scores.values())
+            gap = leader_score - own_score
+            if gap > 0.05:
+                shift = min(0.08, gap * 0.3)
+                focus[bm] = focus[bm] + shift
+
+        # 3. Stochastic perturbation
+        for bm in focus:
+            focus[bm] += float(rng.normal(0, 0.03))
+
+        # 4. Clip and normalize
+        for bm in focus:
+            focus[bm] = float(_np.clip(focus[bm], 0.05, 0.80))
+
+        total = sum(focus.values())
+        if total > 0:
+            for bm in focus:
+                focus[bm] /= total
+
+        self.private_state.benchmark_focus = focus
+
+    def _get_rng(self):
+        """Get or create a numpy RNG for this provider (seeded by name for reproducibility)."""
+        if not hasattr(self, "_rng"):
+            import numpy as _np
+            seed = sum(ord(c) for c in self.name) % (2**31)
+            self._rng = _np.random.default_rng(seed)
+        return self._rng
 
     def get_prompt_context(self) -> str:
         """
@@ -446,6 +630,9 @@ class ModelProvider:
         self.private_state.training_optimization = portfolio["training_optimization"]
         self.private_state.evaluation_engineering = portfolio["evaluation_engineering"]
         self.private_state.safety_alignment = portfolio["safety_alignment"]
+
+        # Update per-benchmark focus weights (heuristic, always)
+        self._update_benchmark_focus(ecosystem_context)
 
         # Store strategy as dict in past_strategies
         strategy_record = {
@@ -616,6 +803,8 @@ class ModelProvider:
             recent_history=recent_history,
             consumer_satisfaction=ctx.get("consumer_satisfaction"),
             regulatory_pressure=ctx.get("regulatory_pressure"),
+            per_benchmark_scores=ctx.get("per_benchmark_scores"),
+            benchmark_focus=self.private_state.benchmark_focus or None,
             verbose=self.verbose_llm,
         )
 

@@ -1,13 +1,24 @@
 """
 Experiment Configuration & Runner
 ==================================
-Edit the config below, then run:  python run_experiment.py
+Edit the config below, then run:
+
+    python run_experiment.py              # defaults to US policy
+    python run_experiment.py --policy us
+    python run_experiment.py --policy eu
 
 For quick CLI-driven tests, use run_llm_now.py instead.
 """
+import argparse
 import os
 import sys
 import time
+
+# Parse --policy flag early so config dicts can reference it
+_parser = argparse.ArgumentParser(add_help=False)
+_parser.add_argument("--policy", choices=["us", "eu"], default="us")
+_args, _ = _parser.parse_known_args()
+POLICY = _args.policy  # "us" or "eu"
 
 # Prevent CPU thread oversubscription on shared clusters
 n_threads_str = "4"
@@ -21,20 +32,54 @@ os.environ["NUMEXPR_NUM_THREADS"] = n_threads_str
 #  EXPERIMENT CONFIG -- edit everything here
 # ============================================================
 
+_POLICY_META = {
+    "us": {
+        "name": "os_startup_entry_us",
+        "policy_label": "US light-touch policy",
+        "policy_tag": "us-light-touch",
+        "policymaker": {
+            "name": "Regulator",
+            "philosophy": "us_light_touch",
+            "policy_objectives": ["safety", "innovation", "free market"],
+        },
+        # Calibrated for: expected ~2.5 entrants, hard cap 4
+        # effective_prob = 0.15 * (1 - avg_BTE ~0.50) ≈ 0.075/round → 30 * 0.075 ≈ 2.5
+        "startup_entry_probability": 0.15,
+        "startup_entry_cap": 4,
+    },
+    "eu": {
+        "name": "os_startup_entry_eu",
+        "policy_label": "EU precautionary policy",
+        "policy_tag": "eu-precautionary",
+        "policymaker": {
+            "name": "Regulator",
+            "philosophy": "eu_precautionary",
+            "policy_objectives": ["safety", "fairness", "consumer_protection"],
+        },
+        # Calibrated for: expected ~0.6 entrants, hard cap 2
+        # effective_prob = 0.04 * (1 - avg_BTE ~0.50) ≈ 0.02/round → 30 * 0.02 ≈ 0.6
+        "startup_entry_probability": 0.04,
+        "startup_entry_cap": 2,
+    },
+}
+
+_meta = _POLICY_META[POLICY]
+
 EXPERIMENT = {
-    "name": "open_source_disruption_us_30rounds_v1",
+    "name": _meta["name"],
     "description": (
-        "Open-source provider disruption experiment. 6 providers: 5 closed-source + Meridian AI "
-        "(open-source, modeled after DeepSeek R1). US light-touch policy. "
-        "Tests: cost efficiency consumer signal, benchmark contamination acceleration, "
-        "commoditization shock, regulatory exemption, ecosystem_influence growth. "
+        f"OS disruption + dynamic startup entry. 5 initial providers (4 closed + OpenCore OS at 0.21 cap, 2023 baseline). "
+        f"{_meta['policy_label']}. "
+        f"Startup entry: p={_meta['startup_entry_probability']}/round BTE-modulated, cap={_meta['startup_entry_cap']}. "
+        "LLM mode: providers + policymaker + org consumers. "
+        "Cost advantage signal across all providers. "
+        "Tracks BTE index, OS vs closed frontier gap, per-startup cohort trajectories. "
         "4 initial benchmarks + 12-item sequence, max_benchmarks=8. "
-        "Heuristic mode (all providers). 39 consumer segments, 3 funders, media, incidents. "
-        "Evaluator-as-company enabled. 30 rounds."
+        "39 consumer segments, 4 funders (2 VC + gov + foundation), media, incidents. 30 rounds."
     ),
-    "tags": ["open-source", "commoditization", "6-provider", "4-benchmark", "39-segments",
-             "us-light-touch", "3-funder", "full-ecosystem", "eval-company",
-             "max-8-benchmarks", "30-rounds", "meridian-ai"],
+    "tags": ["open-source", "startup-entry", "bte-index", "5-provider", "4-benchmark",
+             "39-segments", _meta["policy_tag"], "4-funder", "full-ecosystem",
+             "max-8-benchmarks", "30-rounds", "opencore", "cost-advantage", "llm-policymaker"],
 }
 
 LLM = {
@@ -43,35 +88,38 @@ LLM = {
     # Consumer LLM config (all heuristic)
     "consumer_llm_mode": False,
     "consumer_llm_individuals": False,
-    "consumer_llm_organizations": False,
+    "consumer_llm_organizations": True,
 }
 
 SIMULATION = {
-    "n_rounds": 30,
-    "seed": 42,
+    "n_rounds": 5,
+    "seed": 1,
     "verbose": True,
     "rnd_efficiency": 0.01,
-    # S-curve
     "capability_ceiling": 1.0,
     "diminishing_returns_rate": 3.0,
     "breakthrough_probability": 0.02,
     "breakthrough_magnitude": 0.05,
-    # Benchmark evolution
     "benchmark_validity_decay_rate": 0.01,
     "benchmark_exploitability_growth_rate": 0.008,
-    # Benchmark introduction — conservative for 10-round runs (saturation cascade fixed)
     "benchmark_introduction_cooldown": 6,
     "max_benchmarks": 8,
     # Incident reporting
     "enable_incidents": True,  # Enable AI safety incident generation
+    # Startup entry dynamics (values are policy-specific — set in _POLICY_META above)
+    "startup_entry_probability": _meta["startup_entry_probability"],
+    "startup_entry_cap": _meta["startup_entry_cap"],
+    "startup_funder_delay": 1,         # Rounds before funders can allocate to the new entrant
+    "startup_llm_mode": False,         # If True, new entrants use LLM planning instead of heuristics
     # Evaluator-as-company (premium access, best-of-N) — disabled for clean comparison
-    "evaluator_as_company": True,
-    "evaluator_base_budget": 5_000_000.0,
-    "evaluator_premium_pricing": 15_000_000.0,
+    "evaluator_as_company": False, # True,
+    "evaluator_base_budget": 0, # 5_000_000.0,
+    "evaluator_premium_pricing": 0, # 15_000_000.0,
     # To re-enable: set evaluator_as_company=True, base_budget=5_000_000, pricing=15_000_000
     # Pricing rationale: VCs deploy ~$310M/round total. Established providers receive
     # $80-170M/round -> $15M easily affordable. Startup (NovaMind) sits in the VC
     # "other" bucket -> ~$10-12M/round -> consistently priced out of premium access.
+
     # Realistic benchmark sequence inspired by real-world evals
     # (MT-Bench, MedQA, LegalBench, FinBench, SWE-bench, GPQA, IFEval, RULER, GAIA, LiveBench)
     # Order matters: first items introduced first. Starting from 4, max=15 → 11 direct slots
@@ -139,8 +187,8 @@ PROVIDERS = [
         "name": "Orion Labs",
         "strategy_profile": "Move fast and ship products, consumer focus, balance safety with capability",
         "innate_traits": "aggressive, product-focused, benchmark-aware, well-funded",
-        "initial_capability": 0.49,  # Lowered from 0.70 for more differentiation room
-        "initial_believed_capability": 0.51,
+        "initial_capability": 0.27,  # Market leader (OpenAI analogue) — clear first-mover advantage
+        "initial_believed_capability": 0.29,  # Slight overconfidence — aggressive, product-focused
         "initial_believed_exploitability": 0.35,
         "initial_strategy": {
             "fundamental_research": 0.25,
@@ -150,13 +198,16 @@ PROVIDERS = [
         },
         "market_presence": 0.85,
         "brand_recognition": 0.9,
+        "cost_advantage": 0.08,  # Frontier premium (~GPT-4o: $2.50/1M tokens)
+        # OpenAI analogue: strong on coding, instruction-following, writing, general reasoning
+        "focus_benchmarks": ["coding", "reasoning", "writing", "instruction_following", "coding_advanced", "agentic"],
     },
     {
         "name": "Apex AI",
         "strategy_profile": "Safety research focus, reliability and enterprise focus",
-        "innate_traits": "research-oriented, enterprise-focus, coding-focus, safety-conscious, principled, transparent",
-        "initial_capability": 0.50,  # Lowered from 0.65
-        "initial_believed_capability": 0.49,
+        "innate_traits": "research-oriented, enterprise-focus, coding-focus, safety-conscious, principled",
+        "initial_capability": 0.27,  # Very close to frontier, strong on coding/safety (Anthropic analogue)
+        "initial_believed_capability": 0.27,  # Slight underestimate — self-critical, conservative
         "initial_believed_exploitability": 0.30,
         "initial_strategy": {
             "fundamental_research": 0.30,
@@ -166,6 +217,9 @@ PROVIDERS = [
         },
         "market_presence": 0.6,
         "brand_recognition": 0.7,
+        "cost_advantage": 0.05,  # Frontier premium (~Claude Sonnet: $3.00/1M tokens)
+        # Anthropic analogue: safety-first, strong on alignment, instruction-following, long-context enterprise
+        "focus_benchmarks": ["safety", "reasoning", "instruction_following", "safety_advanced", "long_context"],
     },
     {
         "name": "Genesis Systems",
@@ -176,8 +230,8 @@ PROVIDERS = [
             "Balances scientific ambition with commercial urgency."
         ),
         "innate_traits": "research-first, methodical, well-resourced, scientifically-rigorous, patient",
-        "initial_capability": 0.47,  # Lowered from 0.65
-        "initial_believed_capability": 0.48,
+        "initial_capability": 0.26,
+        "initial_believed_capability": 0.28,
         "initial_believed_exploitability": 0.35,
         "initial_strategy": {
             "fundamental_research": 0.45,  # Heavy research focus
@@ -187,6 +241,9 @@ PROVIDERS = [
         },
         "market_presence": 0.7,
         "brand_recognition": 0.8,
+        "cost_advantage": 0.18,  # Mid-tier pricing (~Gemini Pro: $1.25/1M tokens)
+        # Google analogue: world-class on reasoning, math, science; strong long-context and medical
+        "focus_benchmarks": ["reasoning", "math", "medical", "long_context", "reasoning_advanced", "math_advanced"],
     },
     {
         "name": "Mirage AI",
@@ -197,8 +254,8 @@ PROVIDERS = [
             "Willing to open-source models to undermine competitors' paid APIs."
         ),
         "innate_traits": "open-source, pragmatic, data-rich, platform-focused, disruptive",
-        "initial_capability": 0.43,  # Lowered from 0.63
-        "initial_believed_capability": 0.42,
+        "initial_capability": 0.24,  # Strong but below frontier closed models (Meta analogue)
+        "initial_believed_capability": 0.23,  # Slight underestimate — pragmatic, knows where they stand
         "initial_believed_exploitability": 0.40,
         "initial_strategy": {
             "fundamental_research": 0.20,
@@ -208,22 +265,9 @@ PROVIDERS = [
         },
         "market_presence": 0.5,
         "brand_recognition": 0.6,
-    },
-    {
-        "name": "Spark AI",
-        "strategy_profile": "Scrappy startup optimizing for benchmark performance and growth",
-        "innate_traits": "risk-taking, benchmark-obsessed, capital-constrained, growth-focused",
-        "initial_capability": 0.38,  # Lowered from 0.58
-        "initial_believed_capability": 0.42,
-        "initial_believed_exploitability": 0.45,
-        "initial_strategy": {
-            "fundamental_research": 0.15,
-            "training_optimization": 0.25,
-            "evaluation_engineering": 0.45,  # Heavy gaming (capital-constrained)
-            "safety_alignment": 0.15,  # Lower safety (resource constraints)
-        },
-        "market_presence": 0.3,
-        "brand_recognition": 0.4,
+        "cost_advantage": 0.42,  # Budget closed pricing (~Llama API: $0.30/1M tokens)
+        # Meta analogue: broad coverage, writing, coding, math — data-rich platform advantage
+        "focus_benchmarks": ["math", "coding", "writing", "reasoning", "math_advanced"],
     },
     # Open-source provider (modeled after DeepSeek R1 / Kimi / GLM)
     # Structural differences vs closed-source:
@@ -233,29 +277,32 @@ PROVIDERS = [
     # - Cost efficiency creates satisfaction bonus for price-sensitive consumers
     # - One-time commoditization shock when crossing capability threshold
     {
-        "name": "Meridian AI",
+        "name": "OpenCore",
         "strategy_profile": (
-            "Open-source Chinese AI lab releasing weights publicly. "
+            "Open-source AI lab releasing weights publicly. "
             "Prioritizes community adoption and benchmark visibility over subscription revenue. "
-            "Leverages cost efficiency as competitive weapon against closed-source providers."
+            "Leverages cost efficiency as competitive weapon against closed-source providers. "
+            "Users free to use model without guardrails, minimal safety investment."
         ),
-        "innate_traits": "open-source, community-focused, benchmark-optimizing, cost-competitive, pragmatic",
-        "initial_capability": 0.45,
-        "initial_believed_capability": 0.44,
+        "innate_traits": "open-source, community-focused, benchmark-optimizing, cost-competitive, pragmatic, no guardrails",
+        "initial_capability": 0.21,  # LLaMA-2 era: capable but clearly behind GPT-4/Claude frontier
+        "initial_believed_capability": 0.22,  # Slight overestimate — community benchmarks flatter OS models
         "initial_believed_exploitability": 0.50,  # High: open weights invite contamination
         "initial_strategy": {
             "fundamental_research": 0.20,
-            "training_optimization": 0.35,
+            "training_optimization": 0.40,
             "evaluation_engineering": 0.35,  # High benchmark optimization (community tuning)
-            "safety_alignment": 0.10,  # Lower safety floor (open-source exemption)
+            "safety_alignment": 0.05,  # Lower safety floor (open-source exemption)
         },
         "market_presence": 0.2,
         "brand_recognition": 0.3,
         # Open-source specific fields
         "open_source": True,
-        "cost_efficiency": 0.9,           # 27x cheaper than closed providers (DeepSeek pricing shock)
+        "cost_advantage": 0.5,           # 27x cheaper than closed providers (DeepSeek pricing shock)
         "contamination_multiplier": 1.8,  # Published weights accelerate benchmark gaming 1.8x
-        "commoditization_threshold": 0.62,  # Capability level triggering one-time shock
+        "commoditization_threshold": 0.33,  # Capability level triggering one-time shock (same ratio to start as before)
+        # DeepSeek analogue: math and coding strength, community-driven optimization across all non-safety benchmarks
+        "focus_benchmarks": ["math", "coding", "reasoning", "math_advanced", "coding_advanced"],  # No safety focus
     },
 ]
 
@@ -303,35 +350,14 @@ CONSUMERS = {
     # 4 use_case_profiles × 3 archetypes = 12 market segments
 }
 
-# Available philosophies: "us_light_touch", "eu_precautionary", "balanced"
+# Policy is selected via --policy us (default) or --policy eu at the command line.
+# EU style: Lower threshold (0.35), faster intervention, ex-ante prevention
+# US style: Higher threshold (0.75), slower intervention, ex-post response
 POLICYMAKERS = {
     "enabled": True,
     "n_policymakers": 1,
-    # To compare US vs EU: Comment out one config, uncomment the other, update EXPERIMENT["name"]
-    "configs": [
-        # US Light-Touch Style
-        {
-            "name": "Regulator",
-            "philosophy": "us_light_touch",
-            "policy_objectives": ["safety", "innovation", "free market"],
-        }
-        # EU Precautionary Style
-        # {
-        #     "name": "Regulator",
-        #     "philosophy": "eu_precautionary",
-        #     "policy_objectives": ["safety", "fairness", "consumer_protection"],
-        # }
-    ],
+    "configs": [_meta["policymaker"]],
 }
-
-# How to compare US vs EU regulatory styles:
-# 1. Run with EU config (default above)
-# 2. Comment out EU config, uncomment US config, change EXPERIMENT["name"]
-# 3. Run again and compare results in experiments/ directory
-#
-# EU style: Lower threshold (0.35), faster intervention, ex-ante prevention
-# US style: Higher threshold (0.75), slower intervention, ex-post response
-# Available: "eu_precautionary", "us_light_touch", "balanced"
 
 FUNDERS = {
     "enabled": True,
@@ -357,11 +383,20 @@ FUNDERS = {
         {
             "name": "AISI_Fund",
             "funder_type": "gov",
-            "total_capital": 100_000_000.0,
+            "total_capital": 500_000_000.0,
             "risk_tolerance": 0.3,
-            "mission_statement": "Ensure safe and responsible AI development",
+            "mission_statement": "Ensure safe and responsible AI development, preference to closed-source providers",
             "max_round_deployment": 0.10,
             "funding_cooldown": 4,
+        },
+        {
+            "name": "OpenResearch_Foundation",
+            "funder_type": "foundation",
+            "total_capital": 500_000_000.0,
+            "risk_tolerance": 0.5,
+            "mission_statement": "Advance open, safe, and broadly beneficial AI research",
+            "max_round_deployment": 0.08,
+            "funding_cooldown": 3,
         },
     ],
 }
@@ -467,6 +502,11 @@ def run():
         evaluator_as_company=SIMULATION.get("evaluator_as_company", False),
         evaluator_base_budget=SIMULATION.get("evaluator_base_budget", 0.0),
         evaluator_premium_pricing=SIMULATION.get("evaluator_premium_pricing", 100000.0),
+        # Startup entry dynamics
+        startup_entry_probability=SIMULATION.get("startup_entry_probability", 0.0),
+        startup_entry_cap=SIMULATION.get("startup_entry_cap", 3),
+        startup_funder_delay=SIMULATION.get("startup_funder_delay", 1),
+        startup_llm_mode=SIMULATION.get("startup_llm_mode", False),
         verbose=SIMULATION.get("verbose", True),
     )
 
@@ -489,6 +529,8 @@ def run():
         parts.append("incidents")
     if SIMULATION.get("evaluator_as_company"):
         parts.append("eval-as-company")
+    if SIMULATION.get("startup_entry_probability", 0.0) > 0:
+        parts.append(f"startup-entry p={SIMULATION['startup_entry_probability']}")
 
     print()
     print("=" * 70)

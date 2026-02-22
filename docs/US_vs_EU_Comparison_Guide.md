@@ -40,7 +40,7 @@ python run_experiment.py
 
 ### Step 3: Compare Results
 
-Check `experiments/heuristic/` directory for both experiment folders.
+Check `experiments/_heuristic/` directory for both experiment folders.
 
 **Key Metrics to Compare:**
 
@@ -87,7 +87,7 @@ Check `experiments/heuristic/` directory for both experiment folders.
 ### Count Incidents
 
 ```bash
-cd experiments/heuristic/[experiment_id]
+cd experiments/_heuristic/[experiment_id]
 python -c "
 import json
 total = sum(1 for line in open('rounds.jsonl')
