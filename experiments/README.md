@@ -10,7 +10,7 @@ experiments/
 ├── exp_001_name/              # Main experiment
 ├── exp_002_name/
 ├── ...
-└── heuristic/                 # Heuristic experiments (separate numbering)
+└── _heuristic/                # Heuristic experiments (separate numbering; _ prefix sorts to top)
     ├── heuristic_index.json
     ├── heur_001_name/
     ├── heur_002_name/
@@ -25,9 +25,9 @@ experiments/
 - **When to use**: Final runs, publishable results, deep agent reasoning analysis
 - **Settings**: `llm_mode = True` in `run_experiment.py`
 
-### Heuristic Experiments (`heuristic/heur_XXX_*`)
+### Heuristic Experiments (`_heuristic/heur_XXX_*`)
 - **Purpose**: Fast iteration, parameter sweeps, debugging, baselines
-- **Numbering**: Separate sequence (`heur_001`, `heur_002`, ...) tracked in `heuristic/heuristic_index.json`
+- **Numbering**: Separate sequence (`heur_001`, `heur_002`, ...) tracked in `_heuristic/heuristic_index.json`
 - **When to use**: Quick what-if scenarios, mechanics testing, rapid iteration
 - **Settings**: `llm_mode = False` in `run_experiment.py`
 
@@ -63,11 +63,11 @@ cat experiments/index.json
 
 **List all heuristic experiments:**
 ```bash
-cat experiments/heuristic/heuristic_index.json
+cat experiments/_heuristic/heuristic_index.json
 ```
 
 **Count experiments:**
 ```bash
-ls -d exp_* | wc -l                    # Main experiments
-ls -d heuristic/heur_* | wc -l         # Heuristic experiments
+ls -d exp_* | wc -l                     # Main experiments
+ls -d _heuristic/heur_* | wc -l         # Heuristic experiments
 ```
