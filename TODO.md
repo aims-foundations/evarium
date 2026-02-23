@@ -1,8 +1,5 @@
 # TODO
 
-1. check that colors are consistent for providers across runs in plotting.py. especially for the non startups. make deterministic
-2. use tueplot with proper greek letters for plots.
-
 ## Experiment Script (Planned)
 
 ### Primary Runs
@@ -92,17 +89,10 @@ noted. All vs the US full-feature baseline.
   evolution, new benchmarks create periodic resets in the leaderboard order.
 
 1. make vcs want to diversify more. not solely based on leaderboard
-2. double cehck that VCs cant fund opensource, opensource cant invest in safety
-
+2. double check that VCs cant fund opensource, opensource cant invest in safety
 
 
 ## Policymaker → Incident Probability (Medium Complexity)
-
-These extend how policymaker actions reduce incident probability. The easy items
-(safety floor, sanction reduction, investigation score discount, history escalation)
-are already implemented (2026-02-19).
-
-- **Pre-deployment gate (ex-ante requirement):** Superseded by startup entry probability approach — EU vs US regulatory difference is now captured via `startup_entry_probability` config (EU ~0.05, US ~0.20). The gate mechanic (delay market impact, forced safety bump) remains an option for future work if more granular conformity assessment modeling is needed.
 
 - **Compliance burden R&D tax:** While under active regulation (compliance_audit or
   higher), provider faces a small `rnd_efficiency` reduction (e.g. 0.05–0.15x) modelling
@@ -116,19 +106,18 @@ are already implemented (2026-02-19).
 2. VCs should be able to invest in non-AI companies (no need to model deeply — just allow the option).
 3. Benchmark spacing should scale with total rounds (rough target: ~8 benchmarks over 50 rounds).
 4. Slow down benchmark saturation; make introduction timing more realistic without overloading the system.
-5. ~~Introduce a new provider during the round~~ — DONE (2026-02-22). Startup entry implemented via `startup_entry_probability` config field; BTE index logged each round.
-6. Tier 2 and Tier 3 implementation of policymakers
-7. rethink market share approach to fines. maybe do research about what happens in practice. are rates in US actually higher?
-8. change names to avoid bias
+5. Tier 2 and Tier 3 implementation of policymakers
+6. Rethink market share approach to fines. Maybe do research about what happens in practice — are fine rates in the US actually higher?
+7. Change provider names to avoid bias
 
-## Open-Source Provider Modeling (PARTIALLY IMPLEMENTED 2026-02-21)
+## Open-Source Provider Modeling
 
 Core mechanics implemented. Remaining work:
 
 - **Funder `open_source_sponsor` archetype** — funders currently treat OS providers normally. A new funder type should fund based on ecosystem_influence (adoption) rather than market-share ROI. Low priority since current funder behavior is acceptable for most experiments.
 - **Market share vs. ecosystem influence for funder traction** — currently funders use market share for all providers. For OS providers, ecosystem_influence (logged per round in `open_source_data`) should replace market share as the traction signal in funder allocations.
 
-## Barriers to Entry and Mid-Simulation Provider Entry (IMPLEMENTED 2026-02-22)
+## Barriers to Entry / Startup Entry
 
 Core mechanic implemented. Remaining follow-on work:
 

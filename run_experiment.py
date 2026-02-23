@@ -16,7 +16,7 @@ import time
 
 # Parse --policy flag early so config dicts can reference it
 _parser = argparse.ArgumentParser(add_help=False)
-_parser.add_argument("--policy", choices=["us", "eu"], default="us")
+_parser.add_argument("--policy", choices=["us", "eu", "balanced"], default="balanced")
 _args, _ = _parser.parse_known_args()
 POLICY = _args.policy  # "us" or "eu"
 
@@ -59,23 +59,36 @@ _POLICY_META = {
         "startup_entry_probability": 0.04,
         "startup_entry_cap": 2,
     },
+    "balanced": {
+        "policy_label": "Balanced policy",
+        "policy_tag": "balanced",
+        "policymaker": {
+            "name": "Regulator",
+            "philosophy": "balanced",
+            "policy_objectives": ["safety", "innovation", "fairness"],
+        },
+        # Midpoint between US and EU: expected ~1.5 entrants, hard cap 3
+        # effective_prob = 0.09 * (1 - avg_BTE ~0.50) ≈ 0.045/round → 30 * 0.045 ≈ 1.5
+        "startup_entry_probability": 0.09,
+        "startup_entry_cap": 3,
+    },
 }
 
 _meta = _POLICY_META[POLICY]
 
 EXPERIMENT = {
-    "name": f"full_ecosystem_{POLICY}",
+    "name": f"ablation_no_media_{POLICY}",
     "description": (
-        f"Full-ecosystem canonical run. {_meta['policy_label']}. "
+        f"Ablation: media disabled. {_meta['policy_label']}. "
         f"5 initial providers (4 closed + OpenCore OS, 2023 capability baseline). "
         f"Benchmark specialization: providers route eval_eng via focus weight vectors. "
         f"Startup entry: p={_meta['startup_entry_probability']}/round BTE-modulated, cap={_meta['startup_entry_cap']}, random 2-benchmark focus on entry. "
         "LLM mode: providers + policymaker + org consumers. "
         "4 initial benchmarks + 12-item introduction sequence, max 8 active. "
-        "39 consumer segments, 4 funders (2 VC + gov + foundation), media, incidents, deployer liability. "
-        "30 rounds."
+        "39 consumer segments, 4 funders (2 VC + gov + foundation), NO media, incidents, deployer liability. "
+        "30 rounds. Isolates whether media amplification meaningfully drives consumer switching and regulatory escalation."
     ),
-    "tags": ["full-ecosystem", "canonical", "5-provider", "4-benchmark", "max-8-benchmarks",
+    "tags": ["ablation", "no-media", "5-provider", "4-benchmark", "max-8-benchmarks",
              "30-rounds", "open-source", "startup-entry", "bte-index", "benchmark-specialization",
              "39-segments", _meta["policy_tag"], "4-funder", "opencore", "cost-advantage",
              "llm-providers", "llm-policymaker", "llm-org-consumers"],
