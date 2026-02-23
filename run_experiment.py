@@ -77,26 +77,26 @@ _POLICY_META = {
 _meta = _POLICY_META[POLICY]
 
 EXPERIMENT = {
-    "name": f"ablation_no_media_{POLICY}",
+    "name": f"ablation_no_startups_{POLICY}",
     "description": (
-        f"Ablation: media disabled. {_meta['policy_label']}. "
+        f"Ablation: startup entry disabled. {_meta['policy_label']}. "
         f"5 initial providers (4 closed + OpenCore OS, 2023 capability baseline). "
         f"Benchmark specialization: providers route eval_eng via focus weight vectors. "
-        f"Startup entry: p={_meta['startup_entry_probability']}/round BTE-modulated, cap={_meta['startup_entry_cap']}, random 2-benchmark focus on entry. "
+        "NO startup entry (startup_entry_probability=0). "
         "LLM mode: providers + policymaker + org consumers. "
         "4 initial benchmarks + 12-item introduction sequence, max 8 active. "
-        "39 consumer segments, 4 funders (2 VC + gov + foundation), NO media, incidents, deployer liability. "
-        "30 rounds. Isolates whether media amplification meaningfully drives consumer switching and regulatory escalation."
+        "39 consumer segments, 4 funders (2 VC + gov + foundation), media, incidents. "
+        "30 rounds. Isolates whether dynamic entry disciplines incumbents or stable oligopoly forms regardless."
     ),
-    "tags": ["ablation", "no-media", "5-provider", "4-benchmark", "max-8-benchmarks",
-             "30-rounds", "open-source", "startup-entry", "bte-index", "benchmark-specialization",
+    "tags": ["ablation", "no-startups", "5-provider", "4-benchmark", "max-8-benchmarks",
+             "30-rounds", "open-source", "bte-index", "benchmark-specialization",
              "39-segments", _meta["policy_tag"], "4-funder", "opencore", "cost-advantage",
              "llm-providers", "llm-policymaker", "llm-org-consumers"],
 }
 
 LLM = {
     "provider": "anthropic",    # openai | anthropic | ollama | gemini
-    "llm_mode": False,          # Heuristic mode for clean OS dynamics (no LLM noise)
+    "llm_mode": True,          # Heuristic mode for clean OS dynamics (no LLM noise)
     # Consumer LLM config (all heuristic)
     "consumer_llm_mode": False,
     "consumer_llm_individuals": False,
@@ -117,10 +117,10 @@ SIMULATION = {
     "benchmark_introduction_cooldown": 6,
     "max_benchmarks": 8,
     # Incident reporting
-    "enable_incidents": True,  # Enable AI safety incident generation
+    "enable_incidents": True,
     # Startup entry dynamics (values are policy-specific — set in _POLICY_META above)
-    "startup_entry_probability": _meta["startup_entry_probability"],
-    "startup_entry_cap": _meta["startup_entry_cap"],
+    "startup_entry_probability": 0,  # ABLATION: no startup entry
+    "startup_entry_cap": 0,
     "startup_min_round": 2,            # Earliest round a startup may enter (round 1 = established providers settling in)
     "startup_funder_delay": 1,         # Rounds before funders can allocate to the new entrant
     "startup_llm_mode": False,         # If True, new entrants use LLM planning instead of heuristics
