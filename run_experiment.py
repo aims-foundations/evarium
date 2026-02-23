@@ -77,20 +77,20 @@ _POLICY_META = {
 _meta = _POLICY_META[POLICY]
 
 EXPERIMENT = {
-    "name": f"ablation_no_startups_{POLICY}",
+    "name": f"ablation_no_opencore_{POLICY}",
     "description": (
-        f"Ablation: startup entry disabled. {_meta['policy_label']}. "
-        f"5 initial providers (4 closed + OpenCore OS, 2023 capability baseline). "
+        f"Ablation: OpenCore (open-source provider) removed. {_meta['policy_label']}. "
+        f"4 initial providers (closed-source only, 2023 capability baseline). "
         f"Benchmark specialization: providers route eval_eng via focus weight vectors. "
-        "NO startup entry (startup_entry_probability=0). "
+        f"Startup entry: p={_meta['startup_entry_probability']}/round BTE-modulated, cap={_meta['startup_entry_cap']}, random 2-benchmark focus on entry. "
         "LLM mode: providers + policymaker + org consumers. "
         "4 initial benchmarks + 12-item introduction sequence, max 8 active. "
         "39 consumer segments, 4 funders (2 VC + gov + foundation), media, incidents. "
-        "30 rounds. Isolates whether dynamic entry disciplines incumbents or stable oligopoly forms regardless."
+        "30 rounds. Tests whether OS disruption dynamics materially reshape the ecosystem."
     ),
-    "tags": ["ablation", "no-startups", "5-provider", "4-benchmark", "max-8-benchmarks",
-             "30-rounds", "open-source", "bte-index", "benchmark-specialization",
-             "39-segments", _meta["policy_tag"], "4-funder", "opencore", "cost-advantage",
+    "tags": ["ablation", "no-opencore", "no-open-source", "4-provider", "4-benchmark", "max-8-benchmarks",
+             "30-rounds", "startup-entry", "bte-index", "benchmark-specialization",
+             "39-segments", _meta["policy_tag"], "4-funder", "cost-advantage",
              "llm-providers", "llm-policymaker", "llm-org-consumers"],
 }
 
@@ -119,8 +119,8 @@ SIMULATION = {
     # Incident reporting
     "enable_incidents": True,
     # Startup entry dynamics (values are policy-specific — set in _POLICY_META above)
-    "startup_entry_probability": 0,  # ABLATION: no startup entry
-    "startup_entry_cap": 0,
+    "startup_entry_probability": _meta["startup_entry_probability"],
+    "startup_entry_cap": _meta["startup_entry_cap"],
     "startup_min_round": 2,            # Earliest round a startup may enter (round 1 = established providers settling in)
     "startup_funder_delay": 1,         # Rounds before funders can allocate to the new entrant
     "startup_llm_mode": False,         # If True, new entrants use LLM planning instead of heuristics
@@ -282,41 +282,33 @@ PROVIDERS = [
         # Meta analogue: broad coverage, writing, coding, math — data-rich platform advantage
         "focus_benchmarks": ["math", "coding", "writing", "reasoning", "math_advanced"],
     },
-    # Open-source provider (modeled after DeepSeek R1 / Kimi / GLM)
-    # Structural differences vs closed-source:
-    # - No subscription revenue; ecosystem_influence (adoption) is the traction signal
-    # - Weights published: accelerates benchmark contamination (contamination_multiplier)
-    # - Lower safety alignment floor (no regulatory mandate like EU AI Act full compliance)
-    # - Cost efficiency creates satisfaction bonus for price-sensitive consumers
-    # - One-time commoditization shock when crossing capability threshold
-    {
-        "name": "OpenCore",
-        "strategy_profile": (
-            "Open-source AI lab releasing weights publicly. "
-            "Prioritizes community adoption and benchmark visibility over subscription revenue. "
-            "Leverages cost efficiency as competitive weapon against closed-source providers. "
-            "Users free to use model without guardrails, minimal safety investment."
-        ),
-        "innate_traits": "open-source, community-focused, benchmark-optimizing, cost-competitive, pragmatic, no guardrails",
-        "initial_capability": 0.21,  # LLaMA-2 era: capable but clearly behind GPT-4/Claude frontier
-        "initial_believed_capability": 0.22,  # Slight overestimate — community benchmarks flatter OS models
-        "initial_believed_exploitability": 0.50,  # High: open weights invite contamination
-        "initial_strategy": {
-            "fundamental_research": 0.20,
-            "training_optimization": 0.40,
-            "evaluation_engineering": 0.35,  # High benchmark optimization (community tuning)
-            "safety_alignment": 0.05,  # Lower safety floor (open-source exemption)
-        },
-        "market_presence": 0.2,
-        "brand_recognition": 0.3,
-        # Open-source specific fields
-        "open_source": True,
-        "cost_advantage": 0.5,           # 27x cheaper than closed providers (DeepSeek pricing shock)
-        "contamination_multiplier": 1.8,  # Published weights accelerate benchmark gaming 1.8x
-        "commoditization_threshold": 0.33,  # Capability level triggering one-time shock (same ratio to start as before)
-        # DeepSeek analogue: math and coding strength, community-driven optimization across all non-safety benchmarks
-        "focus_benchmarks": ["math", "coding", "reasoning", "math_advanced", "coding_advanced"],  # No safety focus
-    },
+    # ABLATION: OpenCore removed for no-opencore run. Restore by uncommenting below.
+    # {
+    #     "name": "OpenCore",
+    #     "strategy_profile": (
+    #         "Open-source AI lab releasing weights publicly. "
+    #         "Prioritizes community adoption and benchmark visibility over subscription revenue. "
+    #         "Leverages cost efficiency as competitive weapon against closed-source providers. "
+    #         "Users free to use model without guardrails, minimal safety investment."
+    #     ),
+    #     "innate_traits": "open-source, community-focused, benchmark-optimizing, cost-competitive, pragmatic, no guardrails",
+    #     "initial_capability": 0.21,
+    #     "initial_believed_capability": 0.22,
+    #     "initial_believed_exploitability": 0.50,
+    #     "initial_strategy": {
+    #         "fundamental_research": 0.20,
+    #         "training_optimization": 0.40,
+    #         "evaluation_engineering": 0.35,
+    #         "safety_alignment": 0.05,
+    #     },
+    #     "market_presence": 0.2,
+    #     "brand_recognition": 0.3,
+    #     "open_source": True,
+    #     "cost_advantage": 0.5,
+    #     "contamination_multiplier": 1.8,
+    #     "commoditization_threshold": 0.33,
+    #     "focus_benchmarks": ["math", "coding", "reasoning", "math_advanced", "coding_advanced"],
+    # },
 ]
 
 # Extreme test configurations (saved for future testing)
