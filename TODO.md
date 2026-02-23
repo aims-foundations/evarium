@@ -1,5 +1,8 @@
 # TODO
 
+1. check that colors are consistent for providers across runs in plotting.py. especially for the non startups. make deterministic
+2. use tueplot with proper greek letters for plots.
+
 ## Experiment Script (Planned)
 
 ### Primary Runs
@@ -90,6 +93,8 @@ noted. All vs the US full-feature baseline.
 
 1. make vcs want to diversify more. not solely based on leaderboard
 2. double cehck that VCs cant fund opensource, opensource cant invest in safety
+
+
 
 ## Policymaker → Incident Probability (Medium Complexity)
 

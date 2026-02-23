@@ -151,6 +151,7 @@ class SimulationConfig:
     # Startup entry dynamics
     startup_entry_probability: float = 0.0   # per-round probability a new provider enters
     startup_entry_cap: int = 3               # max new entrants across the whole run
+    startup_min_round: int = 2               # earliest round a startup may enter (inclusive)
     startup_funder_delay: int = 1            # rounds before funders see the new provider
     startup_llm_mode: bool = False           # if True, new entrants use LLM planning
 
@@ -1550,6 +1551,8 @@ class EvalEcosystemSimulation:
         if self.config.startup_entry_probability <= 0:
             return None
         if self._entrant_count >= self.config.startup_entry_cap:
+            return None
+        if round_num < self.config.startup_min_round:
             return None
 
         # Modulate by last round's BTE composite

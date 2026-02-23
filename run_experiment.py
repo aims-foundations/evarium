@@ -83,7 +83,7 @@ EXPERIMENT = {
 
 LLM = {
     "provider": "anthropic",    # openai | anthropic | ollama | gemini
-    "llm_mode": True,          # Heuristic mode for clean OS dynamics (no LLM noise)
+    "llm_mode": False,          # Heuristic mode for clean OS dynamics (no LLM noise)
     # Consumer LLM config (all heuristic)
     "consumer_llm_mode": False,
     "consumer_llm_individuals": False,
@@ -108,6 +108,7 @@ SIMULATION = {
     # Startup entry dynamics (values are policy-specific — set in _POLICY_META above)
     "startup_entry_probability": _meta["startup_entry_probability"],
     "startup_entry_cap": _meta["startup_entry_cap"],
+    "startup_min_round": 2,            # Earliest round a startup may enter (round 1 = established providers settling in)
     "startup_funder_delay": 1,         # Rounds before funders can allocate to the new entrant
     "startup_llm_mode": False,         # If True, new entrants use LLM planning instead of heuristics
     # Evaluator-as-company (premium access, best-of-N) — disabled for clean comparison
@@ -504,6 +505,7 @@ def run():
         # Startup entry dynamics
         startup_entry_probability=SIMULATION.get("startup_entry_probability", 0.0),
         startup_entry_cap=SIMULATION.get("startup_entry_cap", 3),
+        startup_min_round=SIMULATION.get("startup_min_round", 2),
         startup_funder_delay=SIMULATION.get("startup_funder_delay", 1),
         startup_llm_mode=SIMULATION.get("startup_llm_mode", False),
         verbose=SIMULATION.get("verbose", True),

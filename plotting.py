@@ -4,35 +4,78 @@ Plotting utilities for Evaluation Ecosystem Simulation
 Provides dashboards for each actor type and a summary dashboard.
 Scalable to N providers/actors.
 """
+import os
+import warnings
 import matplotlib.pyplot as plt
 import matplotlib.lines as mlines
 import matplotlib.patches as mpatches
+import matplotlib as mpl
 import numpy as np
 from typing import Optional
+
+# Apply tueplots NeurIPS bundle for publication-quality styling.
+# Falls back gracefully if tueplots is not installed or LaTeX is unavailable.
+try:
+    from tueplots import bundles as _tueplots_bundles
+    _NEURIPS_RC = _tueplots_bundles.neurips2024()
+    # Dashboards need more space than a single paper column — drop figsize override.
+    _NEURIPS_RC.pop("figure.figsize", None)
+    # Disable usetex by default: pdflatex may be present (e.g. TinyTeX) but
+    # missing required packages (type1cm.sty, etc.) which cause hard runtime
+    # errors.  Set MPLLATEX=1 in the environment to re-enable LaTeX rendering
+    # once a full TeX Live / MiKTeX distribution is confirmed working.
+    if not os.environ.get("MPLLATEX"):
+        _NEURIPS_RC["text.usetex"] = False
+    mpl.rcParams.update(_NEURIPS_RC)
+except ImportError:
+    warnings.warn(
+        "tueplots not installed — using default matplotlib style. "
+        "Run: pip install tueplots",
+        stacklevel=1,
+    )
 
 
 # =============================================================================
 # Color Palettes and Styling
 # =============================================================================
 
-def get_provider_colors(n_providers: int) -> list:
-    """Get a color palette that scales to N providers."""
-    # Use a colorblind-friendly palette
-    base_colors = [
-        "#E63946",  # Red
-        "#457B9D",  # Blue
-        "#2A9D8F",  # Teal
-        "#E9C46A",  # Yellow
-        "#F4A261",  # Orange
-        "#9C6644",  # Brown
-        "#6A4C93",  # Purple
-        "#1D3557",  # Dark Blue
-    ]
-    if n_providers <= len(base_colors):
-        return base_colors[:n_providers]
-    # If more providers, use a colormap
-    cmap = plt.cm.get_cmap('tab20')
-    return [cmap(i / n_providers) for i in range(n_providers)]
+# Fixed colors for all known named providers — stable across runs.
+PROVIDER_COLOR_MAP = {
+    # Core 5-provider set
+    "Orion Labs":      "#E63946",   # red
+    "Apex AI":         "#457B9D",   # steel blue
+    "Genesis Systems": "#2A9D8F",   # teal
+    "Mirage AI":       "#E9C46A",   # gold
+    "OpenCore":        "#6A4C93",   # purple (open-source)
+}
+
+# Overflow palette for dynamic startup entrants (OneAI, TwoAI, …)
+# Reuses legacy colors + additional distinct picks (avoids purple overlap with OpenCore)
+_STARTUP_OVERFLOW = ["#F4A261", "#264653", "#A8DADC", "#FB5607", "#FF006E",
+                     "#3A86FF", "#06D6A0", "#9C6644", "#FFB703"]
+
+
+def get_provider_colors(providers: list) -> dict:
+    """Return a {provider_name: hex_color} dict.
+
+    Known providers get their fixed color from PROVIDER_COLOR_MAP.
+    Unknown providers (startups) are assigned overflow colors in order of
+    first appearance.
+    """
+    result = {}
+    overflow_index = 0
+    for p in providers:
+        if p in PROVIDER_COLOR_MAP:
+            result[p] = PROVIDER_COLOR_MAP[p]
+        else:
+            result[p] = _STARTUP_OVERFLOW[overflow_index % len(_STARTUP_OVERFLOW)]
+            overflow_index += 1
+    return result
+
+
+def _dashboard_figsize(rows: int, cols: int, base_w: float = 5.5, base_h: float = 4.0) -> tuple:
+    """Return a sensible figure size scaled to the number of dashboard panels."""
+    return (base_w * cols, base_h * rows)
 
 
 def get_investment_colors() -> dict:
@@ -46,13 +89,16 @@ def get_investment_colors() -> dict:
 
 
 def style_axis(ax, title: str, xlabel: str, ylabel: str, legend: bool = True):
-    """Apply consistent styling to an axis."""
-    ax.set_title(title, fontsize=11, fontweight='bold')
-    ax.set_xlabel(xlabel, fontsize=9)
-    ax.set_ylabel(ylabel, fontsize=9)
+    """Apply consistent styling to an axis.
+
+    Font sizes are inherited from tueplots rcParams — no overrides needed.
+    """
+    ax.set_title(title, fontweight='bold')
+    ax.set_xlabel(xlabel)
+    ax.set_ylabel(ylabel)
     ax.grid(True, alpha=0.3)
     if legend:
-        ax.legend(loc='best', fontsize=8)
+        ax.legend(loc='best')
 
 
 # =============================================================================
@@ -233,8 +279,7 @@ def plot_provider_dashboard(
 
     providers = get_providers(history)
     n_providers = len(providers)
-    colors = get_provider_colors(n_providers)
-    provider_colors = {p: colors[i] for i, p in enumerate(providers)}
+    provider_colors = get_provider_colors(providers)
     inv_colors = get_investment_colors()
 
     rounds = [h["round"] for h in history]
@@ -261,8 +306,13 @@ def plot_provider_dashboard(
             return f"{provider} [OS]"
         return provider
 
+    from matplotlib.gridspec import GridSpecFromSubplotSpec
+
     fig, axes = plt.subplots(2, 3, figsize=figsize)
-    fig.suptitle("Provider Dashboard", fontsize=14, fontweight='bold')
+    fig.suptitle("Provider Dashboard", fontweight='bold')
+
+    investment_types = ["fundamental_research", "training_optimization",
+                        "evaluation_engineering", "safety_alignment"]
 
     # --- Panel 1: Scores over time ---
     ax1 = axes[0, 0]
@@ -285,7 +335,6 @@ def plot_provider_dashboard(
         ax2.plot(rounds, believed_caps, ':', color=provider_colors[provider],
                  linewidth=1.5, alpha=0.6)
     _add_entry_lines(ax2)
-    # Legend: provider colors + line-style key
     handles = [
         mlines.Line2D([], [], color=provider_colors[p], linewidth=2,
                       label=_provider_label(p))
@@ -297,65 +346,71 @@ def plot_provider_dashboard(
     ax2.legend(handles=handles, loc='best', fontsize=7)
     style_axis(ax2, "True vs Believed Capability", "Round", "Capability", legend=False)
 
-    # --- Panel 3: Investment Portfolio (all providers in grid) ---
+    # --- Panel 3: Investment Portfolio (mini-grid inside top-right cell) ---
     ax3 = axes[0, 2]
-    ax3.axis('off')  # Turn off main axis, we'll use subplots
+    ax3.axis('off')
 
-    investment_types = ["fundamental_research", "training_optimization",
-                        "evaluation_engineering", "safety_alignment"]
-
-    # Create grid of subplots within Panel 3
-    from matplotlib.gridspec import GridSpecFromSubplotSpec
-
-    # Determine grid layout based on number of providers
+    # Determine mini-grid layout: prefer 2 columns, as few rows as needed
     if n_providers <= 2:
         grid_rows, grid_cols = 1, 2
     elif n_providers <= 4:
         grid_rows, grid_cols = 2, 2
     elif n_providers <= 6:
-        grid_rows, grid_cols = 2, 3
+        grid_rows, grid_cols = 3, 2
     else:
-        grid_rows, grid_cols = 3, 3
+        grid_rows, grid_cols = 4, 2
 
-    gs = GridSpecFromSubplotSpec(grid_rows, grid_cols, subplot_spec=ax3.get_subplotspec(),
-                                  hspace=0.4, wspace=0.3)
+    # Add a title row (index 0) and legend row (last) via height_ratios so the
+    # mini-subplots don't fill the entire cell — no floating text/legend overlaps.
+    title_ratio = 0.15
+    legend_ratio = 0.18
+    gs = GridSpecFromSubplotSpec(
+        grid_rows + 2, grid_cols,
+        subplot_spec=ax3.get_subplotspec(),
+        hspace=0.12, wspace=0.12,
+        height_ratios=[title_ratio] + [1.0] * grid_rows + [legend_ratio],
+    )
+
+    # Title row — single invisible axis spanning all columns
+    ax_title = fig.add_subplot(gs[0, :])
+    ax_title.axis('off')
+    ax_title.text(0.5, 0.5, "Investment Portfolio",
+                  ha='center', va='center', fontsize=9, fontweight='bold',
+                  transform=ax_title.transAxes)
 
     for idx, provider in enumerate(providers):
         if idx >= grid_rows * grid_cols:
             break
-
         row = idx // grid_cols
         col = idx % grid_cols
-        sub_ax = fig.add_subplot(gs[row, col])
+        sub_ax = fig.add_subplot(gs[row + 1, col])  # +1 to skip title row
 
-        # Stacked area chart for this provider
-        bottom = np.zeros(len(rounds))
+        bottom_arr = np.zeros(len(rounds))
         for inv_type in investment_types:
             values = np.array(extract_investment(history, provider, inv_type))
-            sub_ax.fill_between(rounds, bottom, bottom + values,
+            sub_ax.fill_between(rounds, bottom_arr, bottom_arr + values,
                                alpha=0.7, color=inv_colors[inv_type])
-            bottom += values
+            bottom_arr += values
 
         sub_ax.set_ylim(0, 1.05)
-        sub_ax.set_title(provider, fontsize=8, fontweight='bold')
-        sub_ax.tick_params(labelsize=6)
+        sub_ax.set_title(provider, fontsize=7, fontweight='bold', pad=2)
+        sub_ax.tick_params(labelsize=5)
         sub_ax.grid(True, alpha=0.2)
+        if row < grid_rows - 1:
+            sub_ax.set_xticklabels([])
+        if col > 0:
+            sub_ax.set_yticklabels([])
 
-        # Only show x-label on bottom row
-        if row == grid_rows - 1:
-            sub_ax.set_xlabel("Round", fontsize=7)
-        # Only show y-label on left column
-        if col == 0:
-            sub_ax.set_ylabel("Allocation", fontsize=7)
-
-    # Add single legend for all subplots (outside the grid)
+    # Legend row — single invisible axis spanning all columns, below the plots
+    ax_legend = fig.add_subplot(gs[grid_rows + 1, :])
+    ax_legend.axis('off')
     legend_elements = [
-        mpatches.Patch(facecolor=inv_colors[inv_type], alpha=0.7,
-                      label=inv_type.replace("_", " ").title()[:12])
-        for inv_type in investment_types
+        mpatches.Patch(facecolor=inv_colors[t], alpha=0.7,
+                       label=t.replace("_", " ").title()[:14])
+        for t in investment_types
     ]
-    ax3.legend(handles=legend_elements, loc='upper center',
-              bbox_to_anchor=(0.5, 1.15), ncol=2, fontsize=7, frameon=False)
+    ax_legend.legend(handles=legend_elements, loc='center',
+                     ncol=2, fontsize=6, frameon=True)
 
     # --- Panel 4: Gaming vs Safety Investment ---
     ax4 = axes[1, 0]
@@ -365,14 +420,12 @@ def plot_provider_dashboard(
         style = _provider_line_style(provider)
         ax4.plot(rounds, eval_eng, label=_provider_label(provider),
                  color=provider_colors[provider], markersize=3, linewidth=2, **style)
-        # Safety as same-color dashed
         ax4.plot(rounds, safety_al,
                  color=provider_colors[provider], markersize=2, linewidth=1.2,
                  linestyle=':', alpha=0.7)
     _add_entry_lines(ax4)
     ax4.axhline(y=0.25, color='gray', linestyle=':', alpha=0.5, label='Balanced (0.25)')
     ax4.set_ylim(0, 1)
-    # Add style legend note
     solid_patch = mlines.Line2D([], [], color='gray', linestyle='-', label='Eval Eng')
     dot_patch = mlines.Line2D([], [], color='gray', linestyle=':', label='Safety')
     handles_p4, labels_p4 = ax4.get_legend_handles_labels()
@@ -404,11 +457,8 @@ def plot_provider_dashboard(
             closed_caps = [tc[p] for p in providers if p not in os_provider_names and p in tc]
             os_caps = [tc[p] for p in providers if p in os_provider_names and p in tc]
             if closed_caps and os_caps:
-                closed_leader = max(closed_caps)
-                os_leader = max(os_caps)
-                gap_vals.append(closed_leader - os_leader)
+                gap_vals.append(max(closed_caps) - max(os_caps))
                 gap_rounds.append(h["round"])
-
         if gap_vals:
             gap_arr = np.array(gap_vals)
             ax6.plot(gap_rounds, gap_vals, 'o-', color='#457B9D', linewidth=2)
@@ -420,15 +470,12 @@ def plot_provider_dashboard(
                              interpolate=True, label='OS ahead')
             ax6.axhline(y=0, color='black', linestyle='-', linewidth=1, alpha=0.5)
             _add_entry_lines(ax6)
-            style_axis(ax6, "OS vs Closed Frontier Gap", "Round",
-                       "Closed Leader - OS Leader")
+            style_axis(ax6, "OS vs Closed Frontier Gap", "Round", "Closed Leader - OS Leader")
         else:
             ax6.text(0.5, 0.5, "No OS capability data", ha='center', va='center',
                      transform=ax6.transAxes, fontsize=10, alpha=0.5)
             style_axis(ax6, "OS vs Closed Frontier Gap", "Round", "Gap", legend=False)
     else:
-        # Fallback: original capability growth bar chart
-        # Use first/last round where each provider exists (handles mid-run entrants)
         initial_caps = [
             next(h["true_capabilities"][p] for h in history if p in h["true_capabilities"])
             for p in providers
@@ -438,22 +485,19 @@ def plot_provider_dashboard(
             for p in providers
         ]
         growth = [f - i for i, f in zip(initial_caps, final_caps)]
-
         x = np.arange(len(providers))
         bars = ax6.bar(x, growth, color=[provider_colors[p] for p in providers], alpha=0.8)
         ax6.set_xticks(x)
         ax6.set_xticklabels(providers, rotation=45, ha='right', fontsize=8)
         ax6.axhline(y=0, color='black', linestyle='-', linewidth=0.5)
         style_axis(ax6, "Capability Growth (Final - Initial)", "", "Growth", legend=False)
-
         for bar, val in zip(bars, growth):
             ax6.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 0.005,
                     f'{val:.3f}', ha='center', va='bottom', fontsize=8)
 
-    plt.tight_layout()
 
     if save_path:
-        plt.savefig(save_path, dpi=150, bbox_inches='tight')
+        plt.savefig(save_path, dpi=300, bbox_inches='tight')
         print(f"Provider dashboard saved to: {save_path}")
 
     if show:
@@ -500,7 +544,7 @@ def plot_consumer_dashboard(
         return None
 
     providers = get_providers(history)
-    provider_colors = {p: c for p, c in zip(providers, get_provider_colors(len(providers)))}
+    provider_colors = get_provider_colors(providers)
 
     rounds = [h["round"] for h in consumer_rounds]
 
@@ -527,7 +571,8 @@ def plot_consumer_dashboard(
                 use_cases_set.add(use_case)
 
     use_cases = sorted(use_cases_set)
-    use_case_colors = get_provider_colors(len(use_cases))
+    _use_case_color_list = list(get_provider_colors(use_cases).values())
+    use_case_colors = _use_case_color_list
 
     for i, use_case in enumerate(use_cases):
         use_case_satisfaction = []
@@ -602,7 +647,7 @@ def plot_consumer_dashboard(
                 archetypes_set.add(archetype)
 
     archetypes = sorted(archetypes_set)
-    archetype_colors = get_provider_colors(len(archetypes))
+    archetype_colors = list(get_provider_colors(archetypes).values())
 
     archetype_switching = {arch: [] for arch in archetypes}
     for h in consumer_rounds:
@@ -688,10 +733,9 @@ def plot_consumer_dashboard(
     _add_consumer_entry_lines(ax6)
     style_axis(ax6, "Satisfaction Gap (Score - Satisfaction)", "Round", "Gap")
 
-    plt.tight_layout()
 
     if save_path:
-        plt.savefig(save_path, dpi=150, bbox_inches='tight')
+        plt.savefig(save_path, dpi=300, bbox_inches='tight')
         print(f"Consumer dashboard saved to: {save_path}")
 
     if show:
@@ -834,10 +878,9 @@ def plot_policymaker_dashboard(
         ax4.set_title("Intervention Types", fontsize=11, fontweight='bold')
         ax4.axis('off')
 
-    plt.tight_layout()
 
     if save_path:
-        plt.savefig(save_path, dpi=150, bbox_inches='tight')
+        plt.savefig(save_path, dpi=300, bbox_inches='tight')
         print(f"Policymaker dashboard saved to: {save_path}")
 
     if show:
@@ -881,7 +924,7 @@ def plot_evaluator_dashboard(
         return None
 
     providers = get_providers(history)
-    provider_colors = {p: c for p, c in zip(providers, get_provider_colors(len(providers)))}
+    provider_colors = get_provider_colors(providers)
     rounds = [h["round"] for h in history]
 
     has_multi_benchmark = "per_benchmark_scores" in history[0]
@@ -954,7 +997,7 @@ def plot_evaluator_dashboard(
 
         benchmark_names = sorted(all_benchmark_names,
                                  key=lambda bm: benchmark_first_appearance.get(bm, 0))
-        bench_colors = get_provider_colors(len(benchmark_names))
+        bench_colors = list(get_provider_colors(benchmark_names).values())
 
         # Plot max score per benchmark over time
         for i, bench_name in enumerate(benchmark_names):
@@ -1003,10 +1046,9 @@ def plot_evaluator_dashboard(
     ax4.set_xticklabels(providers, rotation=45, ha='right', fontsize=8)
     style_axis(ax4, "Score Distribution by Provider", "", "Score", legend=False)
 
-    plt.tight_layout()
 
     if save_path:
-        plt.savefig(save_path, dpi=150, bbox_inches='tight')
+        plt.savefig(save_path, dpi=300, bbox_inches='tight')
         print(f"Evaluator dashboard saved to: {save_path}")
 
     if show:
@@ -1052,9 +1094,7 @@ def plot_summary_dashboard(
         return None
 
     providers = get_providers(history)
-    n_providers = len(providers)
-    colors = get_provider_colors(n_providers)
-    provider_colors = {p: colors[i] for i, p in enumerate(providers)}
+    provider_colors = get_provider_colors(providers)
     inv_colors = get_investment_colors()
 
     rounds = [h["round"] for h in history]
@@ -1180,7 +1220,7 @@ def plot_summary_dashboard(
     if per_benchmark:
         # Plot per-benchmark correlations
         benchmark_names = sorted(per_benchmark.keys())
-        bm_colors = get_provider_colors(len(benchmark_names))
+        bm_colors = list(get_provider_colors(benchmark_names).values())
 
         for i, benchmark in enumerate(benchmark_names):
             bm_rounds, bm_corrs = per_benchmark[benchmark]
@@ -1292,10 +1332,9 @@ def plot_summary_dashboard(
         ax_bte.set_ylabel("BTE Composite", fontsize=7, color='purple')
         ax_bte.tick_params(labelsize=6, colors='purple')
 
-    plt.tight_layout()
 
     if save_path:
-        plt.savefig(save_path, dpi=150, bbox_inches='tight')
+        plt.savefig(save_path, dpi=300, bbox_inches='tight')
         print(f"Summary dashboard saved to: {save_path}")
 
     if show:
@@ -1320,7 +1359,7 @@ def plot_scores_over_time(
         return None
 
     providers = get_providers(history)
-    provider_colors = {p: c for p, c in zip(providers, get_provider_colors(len(providers)))}
+    provider_colors = get_provider_colors(providers)
     rounds = [h["round"] for h in history]
 
     fig, ax = plt.subplots(figsize=(10, 6))
@@ -1333,10 +1372,9 @@ def plot_scores_over_time(
     ax.set_ylim(0, 1)
     style_axis(ax, "Benchmark Scores Over Time", "Round", "Score")
 
-    plt.tight_layout()
 
     if save_path:
-        plt.savefig(save_path, dpi=150, bbox_inches='tight')
+        plt.savefig(save_path, dpi=300, bbox_inches='tight')
     if show:
         plt.show()
     else:
@@ -1364,7 +1402,7 @@ def plot_validity_over_time(
     if per_benchmark:
         # Plot per-benchmark correlations
         benchmark_names = sorted(per_benchmark.keys())
-        colors = get_provider_colors(len(benchmark_names))
+        colors = list(get_provider_colors(benchmark_names).values())
 
         for i, benchmark in enumerate(benchmark_names):
             rounds, correlations = per_benchmark[benchmark]
@@ -1393,12 +1431,11 @@ def plot_validity_over_time(
     ax.axhline(y=0.3, color='red', linestyle=':', alpha=0.4, linewidth=1)
     ax.set_ylim(-0.2, 1.0)
 
-    style_axis(ax, title, "Round", "Correlation (Score vs True Capability)")
+    style_axis(ax, title, "Round", r"Correlation ($\rho$, Score vs True Capability)")
 
-    plt.tight_layout()
 
     if save_path:
-        plt.savefig(save_path, dpi=150, bbox_inches='tight')
+        plt.savefig(save_path, dpi=300, bbox_inches='tight')
     if show:
         plt.show()
     else:
@@ -1417,7 +1454,7 @@ def plot_investment_comparison(
         return None
 
     providers = get_providers(history)
-    provider_colors = {p: c for p, c in zip(providers, get_provider_colors(len(providers)))}
+    provider_colors = get_provider_colors(providers)
     inv_colors = get_investment_colors()
     investment_types = list(inv_colors.keys())
 
@@ -1436,10 +1473,9 @@ def plot_investment_comparison(
         ax.set_ylim(0, 1)
         style_axis(ax, inv_type.replace("_", " ").title(), "Round", "Investment")
 
-    plt.tight_layout()
 
     if save_path:
-        plt.savefig(save_path, dpi=150, bbox_inches='tight')
+        plt.savefig(save_path, dpi=300, bbox_inches='tight')
     if show:
         plt.show()
     else:
@@ -1482,7 +1518,7 @@ def plot_funder_dashboard(
         return None
 
     providers = get_providers(history)
-    provider_colors = {p: c for p, c in zip(providers, get_provider_colors(len(providers)))}
+    provider_colors = get_provider_colors(providers)
 
     rounds = [h["round"] for h in funder_rounds]
 
@@ -1588,7 +1624,7 @@ def plot_funder_dashboard(
         funder_names.update(h["funder_data"].get("allocations", {}).keys())
     funder_names = sorted(funder_names)
 
-    funder_line_colors = get_provider_colors(len(funder_names))
+    funder_line_colors = list(get_provider_colors(funder_names).values())
     for i, funder in enumerate(funder_names):
         top_allocs = []
         for h in funder_rounds:
@@ -1629,10 +1665,9 @@ def plot_funder_dashboard(
     ax6.axhline(y=0, color='black', linestyle='-', linewidth=1, alpha=0.5)
     style_axis(ax6, "Score Momentum (3-Round Avg Delta)", "Round", "Avg Delta")
 
-    plt.tight_layout()
 
     if save_path:
-        plt.savefig(save_path, dpi=150, bbox_inches='tight')
+        plt.savefig(save_path, dpi=300, bbox_inches='tight')
         print(f"Funder dashboard saved to: {save_path}")
 
     if show:
@@ -1679,8 +1714,8 @@ def plot_media_dashboard(
     providers = get_providers(history)
     rounds = [h["round"] for h in media_rounds]
 
-    fig, axes = plt.subplots(2, 2, figsize=figsize)
-    fig.suptitle("Media Dashboard", fontsize=14, fontweight='bold')
+    fig, axes = plt.subplots(2, 2, figsize=figsize, layout="constrained")
+    fig.suptitle("Media Dashboard", fontweight='bold')
 
     # --- Panel 1: Media Sentiment Over Time ---
     ax1 = axes[0, 0]
@@ -1759,10 +1794,8 @@ def plot_media_dashboard(
              ha='right', va='top', fontsize=10, fontweight='bold')
     style_axis(ax4, "Risk Signals Per Round", "Round", "Count", legend=False)
 
-    plt.tight_layout()
-
     if save_path:
-        plt.savefig(save_path, dpi=150, bbox_inches='tight')
+        plt.savefig(save_path, dpi=300, bbox_inches='tight')
         print(f"Media dashboard saved to: {save_path}")
 
     if show:
@@ -1824,7 +1857,7 @@ def plot_incident_dashboard(
 
     # --- Panel 1: Incident Timeline by Provider ---
     ax1 = axes[0, 0]
-    provider_colors = {p: c for p, c in zip(providers, get_provider_colors(len(providers)))}
+    provider_colors = get_provider_colors(providers)
 
     for inc in all_incidents:
         severity_markers = {"minor": "o", "moderate": "s", "major": "^", "critical": "X"}
@@ -1967,10 +2000,9 @@ def plot_incident_dashboard(
         label.set_ha('right')
     style_axis(ax6, "Total Incidents by Provider", "Provider", "Count", legend=False)
 
-    plt.tight_layout()
 
     if save_path:
-        plt.savefig(save_path, dpi=150, bbox_inches='tight')
+        plt.savefig(save_path, dpi=300, bbox_inches='tight')
         print(f"Incident dashboard saved to: {save_path}")
 
     if show:
@@ -2075,7 +2107,7 @@ def plot_incident_analysis_dashboard(
         return None
 
     providers = get_providers(history)
-    provider_colors = {p: c for p, c in zip(providers, get_provider_colors(len(providers)))}
+    provider_colors = get_provider_colors(providers)
     rounds = [h["round"] for h in history]
 
     fig, axes = plt.subplots(3, 2, figsize=figsize)
@@ -2224,10 +2256,9 @@ def plot_incident_analysis_dashboard(
     style_axis(ax6, "Cumulative Incident Cost by Provider",
                "Round", "Weighted Cost (minor=1, critical=100)")
 
-    plt.tight_layout()
 
     if save_path:
-        plt.savefig(save_path, dpi=150, bbox_inches='tight')
+        plt.savefig(save_path, dpi=300, bbox_inches='tight')
         print(f"Incident analysis dashboard saved to: {save_path}")
 
     if show:
@@ -2265,7 +2296,7 @@ def plot_evaluator_business_dashboard(
         return None
 
     providers = get_providers(history)
-    provider_colors = {p: c for p, c in zip(providers, get_provider_colors(len(providers)))}
+    provider_colors = get_provider_colors(providers)
     rounds = [h["round"] for h in biz_rounds]
 
     fig, axes = plt.subplots(3, 2, figsize=figsize)
@@ -2363,10 +2394,9 @@ def plot_evaluator_business_dashboard(
     plt.colorbar(im, ax=ax6, label='N Trials')
     style_axis(ax6, "Trial Count Heatmap (Provider x Round)", "Round Index", "", legend=False)
 
-    plt.tight_layout()
 
     if save_path:
-        plt.savefig(save_path, dpi=150, bbox_inches='tight')
+        plt.savefig(save_path, dpi=300, bbox_inches='tight')
         print(f"Evaluator business dashboard saved to: {save_path}")
 
     if show:
@@ -2547,10 +2577,9 @@ def plot_barrier_to_entry_dashboard(
     lines2, labels2 = ax4_twin.get_legend_handles_labels()
     ax4.legend(lines1 + lines2, labels1 + labels2, fontsize=8, loc='best')
 
-    plt.tight_layout()
 
     if save_path:
-        plt.savefig(save_path, dpi=150, bbox_inches='tight')
+        plt.savefig(save_path, dpi=300, bbox_inches='tight')
         print(f"BTE dashboard saved to: {save_path}")
 
     if show:
@@ -2591,8 +2620,7 @@ def plot_startup_cohort_dashboard(
         return None
 
     providers = get_providers(history)
-    colors = get_provider_colors(len(providers))
-    provider_colors = {p: colors[i] for i, p in enumerate(providers)}
+    provider_colors = get_provider_colors(providers)
 
     # Auto-detect OS provider names
     entrant_names = set(entrant_rounds.keys())
@@ -2699,7 +2727,7 @@ def plot_startup_cohort_dashboard(
     fig.subplots_adjust(top=0.93, hspace=0.55, wspace=0.35)
 
     if save_path:
-        plt.savefig(save_path, dpi=150, bbox_inches='tight')
+        plt.savefig(save_path, dpi=300, bbox_inches='tight')
         print(f"Startup cohort dashboard saved to: {save_path}")
 
     if show:
@@ -2744,7 +2772,7 @@ def create_all_dashboards(
     fig = plot_provider_dashboard(history, show=False)
     if fig:
         path = f"{output_dir}/provider_dashboard.png"
-        fig.savefig(path, dpi=150, bbox_inches='tight')
+        fig.savefig(path, dpi=300, bbox_inches='tight')
         plt.close(fig)
         saved['provider_dashboard'] = path
         print(f"  - Provider dashboard saved")
@@ -2753,7 +2781,7 @@ def create_all_dashboards(
     fig = plot_consumer_dashboard(history, show=False)
     if fig:
         path = f"{output_dir}/consumer_dashboard.png"
-        fig.savefig(path, dpi=150, bbox_inches='tight')
+        fig.savefig(path, dpi=300, bbox_inches='tight')
         plt.close(fig)
         saved['consumer_dashboard'] = path
         print(f"  - Consumer dashboard saved")
@@ -2762,7 +2790,7 @@ def create_all_dashboards(
     fig = plot_policymaker_dashboard(history, show=False)
     if fig:
         path = f"{output_dir}/policymaker_dashboard.png"
-        fig.savefig(path, dpi=150, bbox_inches='tight')
+        fig.savefig(path, dpi=300, bbox_inches='tight')
         plt.close(fig)
         saved['policymaker_dashboard'] = path
         print(f"  - Policymaker dashboard saved")
@@ -2771,7 +2799,7 @@ def create_all_dashboards(
     fig = plot_funder_dashboard(history, show=False)
     if fig:
         path = f"{output_dir}/funder_dashboard.png"
-        fig.savefig(path, dpi=150, bbox_inches='tight')
+        fig.savefig(path, dpi=300, bbox_inches='tight')
         plt.close(fig)
         saved['funder_dashboard'] = path
         print(f"  - Funder dashboard saved")
@@ -2780,7 +2808,7 @@ def create_all_dashboards(
     fig = plot_media_dashboard(history, show=False)
     if fig:
         path = f"{output_dir}/media_dashboard.png"
-        fig.savefig(path, dpi=150, bbox_inches='tight')
+        fig.savefig(path, dpi=300, bbox_inches='tight')
         plt.close(fig)
         saved['media_dashboard'] = path
         print(f"  - Media dashboard saved")
@@ -2789,7 +2817,7 @@ def create_all_dashboards(
     fig = plot_incident_dashboard(history, show=False)
     if fig:
         path = f"{output_dir}/incident_dashboard.png"
-        fig.savefig(path, dpi=150, bbox_inches='tight')
+        fig.savefig(path, dpi=300, bbox_inches='tight')
         plt.close(fig)
         saved['incident_dashboard'] = path
         print(f"  - Incident dashboard saved")
@@ -2798,7 +2826,7 @@ def create_all_dashboards(
     fig = plot_evaluator_dashboard(history, show=False)
     if fig:
         path = f"{output_dir}/evaluator_dashboard.png"
-        fig.savefig(path, dpi=150, bbox_inches='tight')
+        fig.savefig(path, dpi=300, bbox_inches='tight')
         plt.close(fig)
         saved['evaluator_dashboard'] = path
         print(f"  - Evaluator dashboard saved")
@@ -2807,7 +2835,7 @@ def create_all_dashboards(
     fig = plot_summary_dashboard(history, show=False, metadata=metadata)
     if fig:
         path = f"{output_dir}/summary_dashboard.png"
-        fig.savefig(path, dpi=150, bbox_inches='tight')
+        fig.savefig(path, dpi=300, bbox_inches='tight')
         plt.close(fig)
         saved['summary_dashboard'] = path
         print(f"  - Summary dashboard saved")
@@ -2816,7 +2844,7 @@ def create_all_dashboards(
     fig = plot_investment_comparison(history, show=False)
     if fig:
         path = f"{output_dir}/investment_comparison.png"
-        fig.savefig(path, dpi=150, bbox_inches='tight')
+        fig.savefig(path, dpi=300, bbox_inches='tight')
         plt.close(fig)
         saved['investment_comparison'] = path
         print(f"  - Investment comparison saved")
@@ -2826,7 +2854,7 @@ def create_all_dashboards(
         fig = plot_validity_over_time(history, show=False)
         if fig:
             path = f"{output_dir}/validity_over_time.png"
-            fig.savefig(path, dpi=150, bbox_inches='tight')
+            fig.savefig(path, dpi=300, bbox_inches='tight')
             plt.close(fig)
             saved['validity_over_time'] = path
             print(f"  - Validity over time saved")
@@ -2835,7 +2863,7 @@ def create_all_dashboards(
     fig = plot_incident_analysis_dashboard(history, show=False)
     if fig:
         path = f"{output_dir}/incident_analysis_dashboard.png"
-        fig.savefig(path, dpi=150, bbox_inches='tight')
+        fig.savefig(path, dpi=300, bbox_inches='tight')
         plt.close(fig)
         saved['incident_analysis_dashboard'] = path
         print(f"  - Incident analysis dashboard saved")
@@ -2844,7 +2872,7 @@ def create_all_dashboards(
     fig = plot_evaluator_business_dashboard(history, show=False)
     if fig:
         path = f"{output_dir}/evaluator_business_dashboard.png"
-        fig.savefig(path, dpi=150, bbox_inches='tight')
+        fig.savefig(path, dpi=300, bbox_inches='tight')
         plt.close(fig)
         saved['evaluator_business_dashboard'] = path
         print(f"  - Evaluator business dashboard saved")
@@ -2889,7 +2917,7 @@ def plot_belief_accuracy(history, save_path=None, show=True):
         return None
 
     providers = get_providers(history)
-    provider_colors = {p: c for p, c in zip(providers, get_provider_colors(len(providers)))}
+    provider_colors = get_provider_colors(providers)
     rounds = [h["round"] for h in history]
 
     fig, ax = plt.subplots(figsize=(10, 5))
@@ -2906,10 +2934,9 @@ def plot_belief_accuracy(history, save_path=None, show=True):
 
     style_axis(ax, "Belief Accuracy (Believed - True Capability)", "Round", "Error")
 
-    plt.tight_layout()
 
     if save_path:
-        plt.savefig(save_path, dpi=150, bbox_inches='tight')
+        plt.savefig(save_path, dpi=300, bbox_inches='tight')
     if show:
         plt.show()
     else:
