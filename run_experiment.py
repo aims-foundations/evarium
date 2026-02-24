@@ -77,20 +77,19 @@ _POLICY_META = {
 _meta = _POLICY_META[POLICY]
 
 EXPERIMENT = {
-    "name": f"ablation_eval_as_company_{POLICY}",
+    "name": f"full_ecosystem_{POLICY}",
     "description": (
-        f"Ablation: evaluator-as-company (premium benchmark access enabled). {_meta['policy_label']}. "
+        f"Full ecosystem run. {_meta['policy_label']}. "
         f"5 initial providers (4 closed + OpenCore OS, 2023 capability baseline). "
         f"Benchmark specialization: providers route eval_eng via focus weight vectors. "
         f"Startup entry: p={_meta['startup_entry_probability']}/round BTE-modulated, cap={_meta['startup_entry_cap']}, random 2-benchmark focus on entry. "
         "LLM mode: providers + policymaker + org consumers. "
         "4 initial benchmarks + introduction sequence, max 8 active. "
         "39 consumer segments, 4 funders (2 VC + gov + foundation), media, incidents. "
-        "Evaluator charges $15M/round for premium access (best-of-N runs); base budget $5M. "
-        "30 rounds. Tests whether a commercialised evaluator creates access inequality and distorts benchmark validity."
+        "50 rounds."
     ),
-    "tags": ["ablation", "eval-as-company", "5-provider", "4-benchmark",
-             "max-8-benchmarks", "30-rounds", "open-source", "startup-entry", "bte-index",
+    "tags": ["full-ecosystem", "canonical", "5-provider", "4-benchmark",
+             "max-8-benchmarks", "50-rounds", "open-source", "startup-entry", "bte-index",
              "benchmark-specialization", "39-segments", _meta["policy_tag"], "4-funder",
              "opencore", "cost-advantage", "llm-providers", "llm-policymaker", "llm-org-consumers"],
 }
@@ -126,9 +125,9 @@ SIMULATION = {
     "startup_funder_delay": 1,         # Rounds before funders can allocate to the new entrant
     "startup_llm_mode": True,         # If True, new entrants use LLM planning instead of heuristics
     # Evaluator-as-company (premium access, best-of-N) — disabled for clean comparison
-    "evaluator_as_company": True,   # ABLATION: evaluator as company
-    "evaluator_base_budget": 5_000_000.0,
-    "evaluator_premium_pricing": 15_000_000.0,
+    "evaluator_as_company": False,
+    "evaluator_base_budget": 0,
+    "evaluator_premium_pricing": 0,
     # To re-enable: set evaluator_as_company=True, base_budget=5_000_000, pricing=15_000_000
     # Pricing rationale: VCs deploy ~$310M/round total. Established providers receive
     # $80-170M/round -> $15M easily affordable. Startup (NovaMind) sits in the VC
