@@ -45,29 +45,29 @@ def r4(x):
 POLICYMAKER_PRESETS = {
     "us_light_touch": {
         # Threshold / stance
-        "intervention_threshold": 0.75,  # High bar — only intervenes when risk is very clear
-        "risk_tolerance": 0.7,           # High risk tolerance — market correction preferred
+        "intervention_threshold": 0.85,  # Very high bar — almost entirely hands-off until crisis
+        "risk_tolerance": 0.85,          # Very high risk tolerance — strong market correction preference
         "policy_objectives": ["safety", "innovation", "free_market"],
         # Enforcement calibration (empirically grounded: FTC/DOJ enforcement patterns)
-        "intervention_cooldown": 5,          # US regulatory cycles ~18-36 months; slow follow-up
-        "sanction_fine_multiplier": 0.10,    # Light fines — US relies on consent orders, not direct % revenue fines
-        "sanction_incident_threshold": 4,    # US needs a clear pattern before sanctioning
-        "sanction_duration": 2,              # Short-term — US consent decrees expire; market corrects
-        "mandate_risk_threshold": 0.75,      # US almost never mandates benchmark compliance (ex-post philosophy)
+        "intervention_cooldown": 4,          # US regulatory cycles ~18-36 months; slow follow-up
+        "sanction_fine_multiplier": 0.05,    # Minimal fines — US relies on consent orders, not direct % revenue fines
+        "sanction_incident_threshold": 6,    # US needs a very clear, repeated pattern before sanctioning
+        "sanction_duration": 1,              # Short-term — US consent decrees expire; market corrects quickly
+        "mandate_risk_threshold": 0.90,      # US almost never mandates benchmark compliance (ex-post philosophy)
         "sanction_min_severity": "critical", # US only acts on critical incidents (not mere majors)
     },
     "eu_precautionary": {
         # Threshold / stance
-        "intervention_threshold": 0.35,  # Low threshold — precautionary, acts early
-        "risk_tolerance": 0.2,           # Low risk tolerance — prevent harm upfront
+        "intervention_threshold": 0.25,  # Very low threshold — strongly precautionary, acts at first signal
+        "risk_tolerance": 0.10,          # Very low risk tolerance — prevent harm upfront aggressively
         "policy_objectives": ["safety", "fairness", "consumer_protection"],
         # Enforcement calibration (empirically grounded: GDPR/DMA/EU AI Act patterns)
         "intervention_cooldown": 2,          # EU follows up aggressively — ~6-12 month regulatory cycles
-        "sanction_fine_multiplier": 0.35,    # Larger economic bite (EU 7% global turnover ceiling)
-        "sanction_incident_threshold": 2,    # EU sanctions on accumulated patterns; low bar
-        "sanction_duration": 4,              # EU compliance cycles take longer; sanctions persist
-        "mandate_risk_threshold": 0.50,      # EU mandates at moderate risk (ex-ante philosophy)
-        "sanction_min_severity": "major",    # EU acts on major incidents, not just critical
+        "sanction_fine_multiplier": 0.50,    # Large economic bite (EU 7% global turnover ceiling)
+        "sanction_incident_threshold": 1,    # EU sanctions on first pattern; very low bar
+        "sanction_duration": 6,              # EU compliance cycles take longer; sanctions persist
+        "mandate_risk_threshold": 0.35,      # EU mandates at low-moderate risk (ex-ante philosophy)
+        "sanction_min_severity": "moderate", # EU acts on moderate+ incidents
     },
     "balanced": {
         "intervention_threshold": 0.50,
@@ -154,6 +154,9 @@ class SimulationConfig:
     startup_min_round: int = 2               # earliest round a startup may enter (inclusive)
     startup_funder_delay: int = 1            # rounds before funders see the new provider
     startup_llm_mode: bool = False           # if True, new entrants use LLM planning
+
+    # Capability baseline shift (applied to provider initial values and absolute thresholds)
+    capability_shift: float = 0.0
 
     # Output
     output_dir: Optional[str] = None
@@ -477,6 +480,7 @@ class EvalEcosystemSimulation:
                 sanction_duration=config_params.get("sanction_duration", 3),
                 mandate_risk_threshold=config_params.get("mandate_risk_threshold", 0.60),
                 sanction_min_severity=config_params.get("sanction_min_severity", "major"),
+                capability_shift=self.config.capability_shift,
             )
             self.policymakers.append(policymaker)
 
@@ -1574,7 +1578,7 @@ class EvalEcosystemSimulation:
         # Capability baseline: best open-source model, or fallback
         os_names = {p.name for p in self.providers if getattr(p, "is_open_source", False)}
         os_caps = [self.ground_truth[p].true_capability for p in os_names if p in self.ground_truth]
-        entrant_baseline = max(os_caps) if os_caps else 0.16  # fallback ~= Spark AI start * 0.85 at 0.25-mean scale
+        entrant_baseline = max(os_caps) if os_caps else (0.16 + self.config.capability_shift)  # fallback ~= Spark AI start * 0.85 at 0.25-mean scale
         starting_capability = entrant_baseline * 0.75  # meaningfully below OS floor (recalibrated for 0.25-mean scale)
 
         # Random strategy profile from a startup-flavored pool

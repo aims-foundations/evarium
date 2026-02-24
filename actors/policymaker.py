@@ -56,6 +56,7 @@ class Policymaker:
         sanction_duration: int = 3,              # Rounds a sanction lasts (EU=4, US=2)
         mandate_risk_threshold: float = 0.60,    # Risk level required to trigger benchmark mandate (EU=0.50, US=0.75)
         sanction_min_severity: str = "major",    # Min incident severity for Condition 2 (EU="major", US="critical")
+        capability_shift: float = 0.0,           # Shift applied to absolute capability thresholds
     ):
         """
         Initialize a Policymaker.
@@ -100,6 +101,7 @@ class Policymaker:
         self.sanction_duration = sanction_duration
         self.mandate_risk_threshold = mandate_risk_threshold
         self.sanction_min_severity = sanction_min_severity
+        self._capability_shift = capability_shift
 
         # Memory
         self.memory = []
@@ -217,7 +219,7 @@ class Policymaker:
         if consumer_satisfaction is not None:
             # Low satisfaction suggests consumer harm
             # Threshold recalibrated to 0.25-mean capability scale (was 0.5 at 0.47-mean scale)
-            if consumer_satisfaction < 0.25:
+            if consumer_satisfaction < (0.25 + self._capability_shift):
                 self.private_state.risk_beliefs["consumer_harm_risk"] = min(
                     1.0,
                     self.private_state.risk_beliefs["consumer_harm_risk"] + 0.1

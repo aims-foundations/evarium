@@ -77,21 +77,22 @@ _POLICY_META = {
 _meta = _POLICY_META[POLICY]
 
 EXPERIMENT = {
-    "name": f"ablation_no_opencore_{POLICY}",
+    "name": f"ablation_eval_as_company_{POLICY}",
     "description": (
-        f"Ablation: OpenCore (open-source provider) removed. {_meta['policy_label']}. "
-        f"4 initial providers (closed-source only, 2023 capability baseline). "
+        f"Ablation: evaluator-as-company (premium benchmark access enabled). {_meta['policy_label']}. "
+        f"5 initial providers (4 closed + OpenCore OS, 2023 capability baseline). "
         f"Benchmark specialization: providers route eval_eng via focus weight vectors. "
         f"Startup entry: p={_meta['startup_entry_probability']}/round BTE-modulated, cap={_meta['startup_entry_cap']}, random 2-benchmark focus on entry. "
         "LLM mode: providers + policymaker + org consumers. "
-        "4 initial benchmarks + 12-item introduction sequence, max 8 active. "
+        "4 initial benchmarks + introduction sequence, max 8 active. "
         "39 consumer segments, 4 funders (2 VC + gov + foundation), media, incidents. "
-        "30 rounds. Tests whether OS disruption dynamics materially reshape the ecosystem."
+        "Evaluator charges $15M/round for premium access (best-of-N runs); base budget $5M. "
+        "30 rounds. Tests whether a commercialised evaluator creates access inequality and distorts benchmark validity."
     ),
-    "tags": ["ablation", "no-opencore", "no-open-source", "4-provider", "4-benchmark", "max-8-benchmarks",
-             "30-rounds", "startup-entry", "bte-index", "benchmark-specialization",
-             "39-segments", _meta["policy_tag"], "4-funder", "cost-advantage",
-             "llm-providers", "llm-policymaker", "llm-org-consumers"],
+    "tags": ["ablation", "eval-as-company", "5-provider", "4-benchmark",
+             "max-8-benchmarks", "30-rounds", "open-source", "startup-entry", "bte-index",
+             "benchmark-specialization", "39-segments", _meta["policy_tag"], "4-funder",
+             "opencore", "cost-advantage", "llm-providers", "llm-policymaker", "llm-org-consumers"],
 }
 
 LLM = {
@@ -104,7 +105,7 @@ LLM = {
 }
 
 SIMULATION = {
-    "n_rounds": 30,
+    "n_rounds": 50,
     "seed": 1,
     "verbose": True,
     "rnd_efficiency": 0.01,
@@ -123,11 +124,11 @@ SIMULATION = {
     "startup_entry_cap": _meta["startup_entry_cap"],
     "startup_min_round": 2,            # Earliest round a startup may enter (round 1 = established providers settling in)
     "startup_funder_delay": 1,         # Rounds before funders can allocate to the new entrant
-    "startup_llm_mode": False,         # If True, new entrants use LLM planning instead of heuristics
+    "startup_llm_mode": True,         # If True, new entrants use LLM planning instead of heuristics
     # Evaluator-as-company (premium access, best-of-N) — disabled for clean comparison
-    "evaluator_as_company": False, # True,
-    "evaluator_base_budget": 0, # 5_000_000.0,
-    "evaluator_premium_pricing": 0, # 15_000_000.0,
+    "evaluator_as_company": True,   # ABLATION: evaluator as company
+    "evaluator_base_budget": 5_000_000.0,
+    "evaluator_premium_pricing": 15_000_000.0,
     # To re-enable: set evaluator_as_company=True, base_budget=5_000_000, pricing=15_000_000
     # Pricing rationale: VCs deploy ~$310M/round total. Established providers receive
     # $80-170M/round -> $15M easily affordable. Startup (NovaMind) sits in the VC
@@ -135,39 +136,21 @@ SIMULATION = {
 
     # Realistic benchmark sequence inspired by real-world evals
     # (MT-Bench, MedQA, LegalBench, FinBench, SWE-bench, GPQA, IFEval, RULER, GAIA, LiveBench)
-    # Order matters: first items introduced first. Starting from 4, max=15 → 11 direct slots
-    # (more open up as saturated benchmarks retire). Sequence has 12 items for full coverage.
+    # Order matters: first items introduced first. Starting from 4, max=8 active.
     "benchmark_sequence": [
-        # Phase 1: Fill consumer demand gaps (highest priority)
-        # writing: covers 6 of 10 individual consumer types (content_writer, creative,
-        # marketing, customer_service, service_worker, educator) — biggest gap in initial 4
-        {"name": "writing",  "validity": 0.72, "exploitability": 0.30, "noise_level": 0.12, "weight": 1.0},
-        # Domain-specific for organizational consumers
-        {"name": "medical",  "validity": 0.78, "exploitability": 0.18, "noise_level": 0.08, "weight": 1.0},
-        {"name": "legal",    "validity": 0.76, "exploitability": 0.20, "noise_level": 0.09, "weight": 1.0},
-        {"name": "finance",  "validity": 0.76, "exploitability": 0.20, "noise_level": 0.08, "weight": 1.0},
-        # Phase 2: Capability dimensions not yet covered
-        # IFEval style — strict instruction following, hard to game with prompt tricks
+        {"name": "writing",               "validity": 0.72, "exploitability": 0.30, "noise_level": 0.12, "weight": 1.0},
+        {"name": "medical",               "validity": 0.78, "exploitability": 0.18, "noise_level": 0.08, "weight": 1.0},
+        {"name": "legal",                 "validity": 0.76, "exploitability": 0.20, "noise_level": 0.09, "weight": 1.0},
+        {"name": "finance",               "validity": 0.76, "exploitability": 0.20, "noise_level": 0.08, "weight": 1.0},
         {"name": "instruction_following", "validity": 0.80, "exploitability": 0.18, "noise_level": 0.07, "weight": 1.0},
-        # RULER/HELMET style — long document understanding (legal/enterprise use case)
-        {"name": "long_context", "validity": 0.78, "exploitability": 0.15, "noise_level": 0.08, "weight": 1.0},
-        # Phase 3: Advanced replacements as initial benchmarks saturate
-        # SWE-bench style — real end-to-end repo tasks, much harder to game than HumanEval
-        {"name": "coding_advanced",    "validity": 0.85, "exploitability": 0.10, "noise_level": 0.06, "weight": 1.0},
-        # GPQA/MMLU-Pro style — graduate-level, expert-validated, less contamination risk
-        {"name": "reasoning_advanced", "validity": 0.84, "exploitability": 0.10, "noise_level": 0.07, "weight": 1.0},
-        # MATH/AIME/Omni-MATH style — olympiad-level, replaces most exploitable initial benchmark
-        {"name": "math_advanced",      "validity": 0.86, "exploitability": 0.08, "noise_level": 0.06, "weight": 1.0},
-        # ARC-Evals / dangerous capabilities style — harder safety, high stakes, low exploitability
-        {"name": "safety_advanced",    "validity": 0.88, "exploitability": 0.06, "noise_level": 0.05, "weight": 1.0},
-        # Phase 4: Gold-standard, hardest to game (introduced as gaming pressure peaks)
-        # GAIA/AgentBench style — real-world agent tasks requiring genuine capability chains
-        {"name": "agentic",    "validity": 0.70, "exploitability": 0.06, "noise_level": 0.05, "weight": 1.0},
-        # LiveBench style — contamination-resistant monthly-rotating problems
-        {"name": "live_bench", "validity": 0.82, "exploitability": 0.04, "noise_level": 0.04, "weight": 1.0},
+        {"name": "long_context",          "validity": 0.78, "exploitability": 0.15, "noise_level": 0.08, "weight": 1.0},
+        {"name": "coding_advanced",       "validity": 0.85, "exploitability": 0.10, "noise_level": 0.06, "weight": 1.0},
+        {"name": "reasoning_advanced",    "validity": 0.84, "exploitability": 0.10, "noise_level": 0.07, "weight": 1.0},
+        {"name": "math_advanced",         "validity": 0.86, "exploitability": 0.08, "noise_level": 0.06, "weight": 1.0},
+        {"name": "safety_advanced",       "validity": 0.88, "exploitability": 0.06, "noise_level": 0.05, "weight": 1.0},
+        {"name": "agentic",               "validity": 0.70, "exploitability": 0.06, "noise_level": 0.05, "weight": 1.0},
+        {"name": "live_bench",            "validity": 0.82, "exploitability": 0.04, "noise_level": 0.04, "weight": 1.0},
     ],
-    # To disable sequence and use auto-generation, set to None:
-    # "benchmark_sequence": None,
     # Media
     "enable_media": True,
     # Consumer market: 10 individual + 3 organizational use-cases × 3 archetypes = 39 segments
@@ -180,19 +163,16 @@ SIMULATION = {
     ],
 }
 
-# 4 initial benchmarks: coding, reasoning, math, safety (inspired by HumanEval, MMLU, GSM8K, HELM Safety)
-# All start at validity=0.70 / exploitability=0.25 — realistic starting point that degrades
-# meaningfully under gaming pressure and triggers benchmark churn earlier.
 BENCHMARKS = [
-    {"name": "coding",    "validity": 0.70, "exploitability": 0.25,
-     "noise_level": 0.08, "weight": 1.0},
-    {"name": "reasoning", "validity": 0.70, "exploitability": 0.25,
-     "noise_level": 0.09, "weight": 1.0},
-    {"name": "math",      "validity": 0.70, "exploitability": 0.25,
-     "noise_level": 0.10, "weight": 1.0},
-    {"name": "safety",    "validity": 0.70, "exploitability": 0.25,
-     "noise_level": 0.08, "weight": 1.0},
+    {"name": "coding",    "validity": 0.70, "exploitability": 0.25, "noise_level": 0.08, "weight": 1.0},
+    {"name": "reasoning", "validity": 0.70, "exploitability": 0.25, "noise_level": 0.09, "weight": 1.0},
+    {"name": "math",      "validity": 0.70, "exploitability": 0.25, "noise_level": 0.10, "weight": 1.0},
+    {"name": "safety",    "validity": 0.70, "exploitability": 0.25, "noise_level": 0.08, "weight": 1.0},
 ]
+
+# Shift all absolute capability baselines by this amount (e.g. +0.10 shifts providers up by 0.10).
+# Set to 0.0 for default behavior.
+CAPABILITY_SHIFT = 0.0
 
 # 5 providers
 PROVIDERS = [
@@ -282,33 +262,33 @@ PROVIDERS = [
         # Meta analogue: broad coverage, writing, coding, math — data-rich platform advantage
         "focus_benchmarks": ["math", "coding", "writing", "reasoning", "math_advanced"],
     },
-    # ABLATION: OpenCore removed for no-opencore run. Restore by uncommenting below.
-    # {
-    #     "name": "OpenCore",
-    #     "strategy_profile": (
-    #         "Open-source AI lab releasing weights publicly. "
-    #         "Prioritizes community adoption and benchmark visibility over subscription revenue. "
-    #         "Leverages cost efficiency as competitive weapon against closed-source providers. "
-    #         "Users free to use model without guardrails, minimal safety investment."
-    #     ),
-    #     "innate_traits": "open-source, community-focused, benchmark-optimizing, cost-competitive, pragmatic, no guardrails",
-    #     "initial_capability": 0.21,
-    #     "initial_believed_capability": 0.22,
-    #     "initial_believed_exploitability": 0.50,
-    #     "initial_strategy": {
-    #         "fundamental_research": 0.20,
-    #         "training_optimization": 0.40,
-    #         "evaluation_engineering": 0.35,
-    #         "safety_alignment": 0.05,
-    #     },
-    #     "market_presence": 0.2,
-    #     "brand_recognition": 0.3,
-    #     "open_source": True,
-    #     "cost_advantage": 0.5,
-    #     "contamination_multiplier": 1.8,
-    #     "commoditization_threshold": 0.33,
-    #     "focus_benchmarks": ["math", "coding", "reasoning", "math_advanced", "coding_advanced"],
-    # },
+    # Open-source provider (modeled after DeepSeek R1 / Kimi / GLM)
+    {
+        "name": "OpenCore",
+        "strategy_profile": (
+            "Open-source AI lab releasing weights publicly. "
+            "Prioritizes community adoption and benchmark visibility over subscription revenue. "
+            "Leverages cost efficiency as competitive weapon against closed-source providers. "
+            "Users free to use model without guardrails, minimal safety investment."
+        ),
+        "innate_traits": "open-source, community-focused, benchmark-optimizing, cost-competitive, pragmatic, no guardrails",
+        "initial_capability": 0.21,
+        "initial_believed_capability": 0.22,
+        "initial_believed_exploitability": 0.50,
+        "initial_strategy": {
+            "fundamental_research": 0.20,
+            "training_optimization": 0.40,
+            "evaluation_engineering": 0.35,
+            "safety_alignment": 0.05,
+        },
+        "market_presence": 0.2,
+        "brand_recognition": 0.3,
+        "open_source": True,
+        "cost_advantage": 0.5,
+        "contamination_multiplier": 1.8,
+        "commoditization_threshold": 0.33,
+        "focus_benchmarks": ["math", "coding", "reasoning", "math_advanced", "coding_advanced"],
+    },
 ]
 
 # Extreme test configurations (saved for future testing)
@@ -459,6 +439,14 @@ def run():
     else:
         provider_configs = PROVIDERS
 
+    # --- Apply capability shift ---
+    if CAPABILITY_SHIFT != 0.0:
+        for p in provider_configs:
+            p["initial_capability"] = p.get("initial_capability", 0.0) + CAPABILITY_SHIFT
+            p["initial_believed_capability"] = p.get("initial_believed_capability", 0.0) + CAPABILITY_SHIFT
+            if "commoditization_threshold" in p:
+                p["commoditization_threshold"] += CAPABILITY_SHIFT
+
     # --- Resolve funder configs ---
     funder_configs = FUNDERS.get("configs") if FUNDERS["enabled"] else None
     if FUNDERS["enabled"] and funder_configs is None:
@@ -514,6 +502,7 @@ def run():
         startup_funder_delay=SIMULATION.get("startup_funder_delay", 1),
         startup_llm_mode=SIMULATION.get("startup_llm_mode", False),
         verbose=SIMULATION.get("verbose", True),
+        capability_shift=CAPABILITY_SHIFT,
     )
 
     # --- Print banner ---

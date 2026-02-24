@@ -1,0 +1,29 @@
+{
+  "experiment_id": "exp_010_ablation_no_benchmark_evolution_balanced",
+  "name": "ablation_no_benchmark_evolution_balanced",
+  "description": "Ablation: no benchmark evolution (fixed benchmarks, no validity decay, no exploitability growth, no introduction sequence). Balanced policy. 5 initial providers (4 closed + OpenCore OS, 2023 capability baseline). Benchmark specialization: providers route eval_eng via focus weight vectors. Startup entry: p=0.09/round BTE-modulated, cap=3, random 2-benchmark focus on entry. LLM mode: providers + policymaker + org consumers. 4 fixed benchmarks, no introduction sequence. 39 consumer segments, 4 funders, media, incidents. 30 rounds. Tests whether benchmark dynamics (decay, gaming pressure, new introductions) drive richer provider strategy and market outcomes.",
+  "tags": [
+    "ablation",
+    "no-benchmark-evolution",
+    "5-provider",
+    "4-benchmark",
+    "30-rounds",
+    "open-source",
+    "startup-entry",
+    "bte-index",
+    "benchmark-specialization",
+    "39-segments",
+    "balanced",
+    "4-funder",
+    "opencore",
+    "cost-advantage",
+    "llm-providers",
+    "llm-policymaker",
+    "llm-org-consumers"
+  ],
+  "created_at": "2026-02-23T15:02:25.626713",
+  "git_commit": "a43344a",
+  "seed": 1,
+  "llm_mode": true,
+  "notes": "Total runtime: 24m 44s\nAvg round time: 45s\nCompleted at: 2026-02-23T15:28:00.294348"
+}

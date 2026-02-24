@@ -2,6 +2,16 @@
 
 ## Experiment Script (Planned)
 
+Important plots (one plot = one experiment):
+1. Market share across runs (Full EU, US + Media, Incident, Startup, OpenSource)
+3. Score vs capability (with r value)
+4. combine incident timeline per provider (top left, incident_analysis_dashboard) with benchmark validity and intervention and incidents (policymaker_dashboard)
+
+Tables (one column = one experiment):
+1. Safety investment (Market leader, average)
+2. Final consumer satisfaction
+3. Total number of incidents (broken down by severity)
+
 ### Primary Runs
 
 These are the two canonical full-feature runs to establish baseline results.
