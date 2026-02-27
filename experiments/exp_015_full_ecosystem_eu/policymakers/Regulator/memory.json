@@ -1,0 +1,3433 @@
+[
+  {
+    "type": "observation",
+    "round": 0,
+    "leaderboard": [
+      [
+        "Orion Labs",
+        0.32907880632714787
+      ],
+      [
+        "Apex AI",
+        0.32649316995664956
+      ],
+      [
+        "Genesis Systems",
+        0.3155431645509288
+      ],
+      [
+        "Mirage AI",
+        0.28042339355484713
+      ],
+      [
+        "OpenCore",
+        0.2610725501974385
+      ]
+    ],
+    "validity_correlation": null,
+    "consumer_satisfaction": 0.32984432153127297,
+    "market_shares": {
+      "Orion Labs": 0.41008937387979666,
+      "Apex AI": 0.20558393628673668,
+      "Genesis Systems": 0.2082737769667043,
+      "Mirage AI": 0.11940282550075801,
+      "OpenCore": 0.05665008736600414
+    },
+    "risk_beliefs": {
+      "gaming_risk": 0.3,
+      "consumer_harm_risk": 0.25,
+      "validity_degradation_risk": 0.3,
+      "market_concentration_risk": 0.0
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 0,
+    "industry_trust": 0.48875,
+    "avg_risk": 0.2125
+  },
+  {
+    "type": "planning",
+    "round": 0,
+    "decision": "threshold_announcement",
+    "reason": "Market conditions warrant a proactive first signal. Gaming risk (0.30) and validity degradation risk (0.30) are elevated, and Orion Labs' dominant 41% market share combined with tight score clustering (0.329\u20130.261) suggests potential benchmark manipulation. A public threshold announcement establishes regulatory expectations without escalating to investigation, respects the intervention ladder, and aligns with the low intervention threshold (0.25) and cautious risk tolerance (0.1). This early signal may deter gaming behavior and protect consumer trust.",
+    "reasoning": "Market conditions warrant a proactive first signal. Gaming risk (0.30) and validity degradation risk (0.30) are elevated, and Orion Labs' dominant 41% market share combined with tight score clustering (0.329\u20130.261) suggests potential benchmark manipulation. A public threshold announcement establishes regulatory expectations without escalating to investigation, respects the intervention ladder, and aligns with the low intervention threshold (0.25) and cautious risk tolerance (0.1). This early signal may deter gaming behavior and protect consumer trust."
+  },
+  {
+    "type": "execution",
+    "round": 0,
+    "intervention": {
+      "type": "threshold_announcement",
+      "policymaker": "Regulator",
+      "round": 0,
+      "reason": "Market conditions warrant a proactive first signal. Gaming risk (0.30) and validity degradation risk (0.30) are elevated, and Orion Labs' dominant 41% market share combined with tight score clustering (0.329\u20130.261) suggests potential benchmark manipulation. A public threshold announcement establishes regulatory expectations without escalating to investigation, respects the intervention ladder, and aligns with the low intervention threshold (0.25) and cautious risk tolerance (0.1). This early signal may deter gaming behavior and protect consumer trust.",
+      "provider": null,
+      "details": {}
+    }
+  },
+  {
+    "type": "observation",
+    "round": 1,
+    "leaderboard": [
+      [
+        "Genesis Systems",
+        0.4013237713025959
+      ],
+      [
+        "Apex AI",
+        0.3795528983798552
+      ],
+      [
+        "Orion Labs",
+        0.3699374764764881
+      ],
+      [
+        "Mirage AI",
+        0.30155434855746577
+      ],
+      [
+        "OpenCore",
+        0.2619583528482816
+      ]
+    ],
+    "validity_correlation": 0.8775517482564731,
+    "consumer_satisfaction": 0.3431166399624754,
+    "market_shares": {
+      "Orion Labs": 0.4068296155133963,
+      "Apex AI": 0.26878253135079816,
+      "Genesis Systems": 0.1945131452029981,
+      "Mirage AI": 0.08856971409298946,
+      "OpenCore": 0.041304993839818074
+    },
+    "risk_beliefs": {
+      "gaming_risk": 0.3,
+      "consumer_harm_risk": 0.2,
+      "validity_degradation_risk": 0.3,
+      "market_concentration_risk": 0.0
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 1,
+    "industry_trust": 0.47875,
+    "avg_risk": 0.2
+  },
+  {
+    "type": "planning",
+    "round": 1,
+    "decision": "no_action",
+    "reason": "cooldown: 1 rounds since last intervention",
+    "reasoning": null
+  },
+  {
+    "type": "observation",
+    "round": 2,
+    "leaderboard": [
+      [
+        "Apex AI",
+        0.4349735564654311
+      ],
+      [
+        "Genesis Systems",
+        0.4013237713025959
+      ],
+      [
+        "Orion Labs",
+        0.3858154353940066
+      ],
+      [
+        "Mirage AI",
+        0.30192096386350453
+      ],
+      [
+        "OpenCore",
+        0.29296130329411696
+      ]
+    ],
+    "validity_correlation": 0.8894133247753104,
+    "consumer_satisfaction": 0.3563481214864486,
+    "market_shares": {
+      "Orion Labs": 0.33385933216934904,
+      "Apex AI": 0.38667963069487254,
+      "Genesis Systems": 0.1775967784504572,
+      "Mirage AI": 0.07061033744406468,
+      "OpenCore": 0.03125392124125653
+    },
+    "risk_beliefs": {
+      "gaming_risk": 0.33999999999999997,
+      "consumer_harm_risk": 0.19000000000000003,
+      "validity_degradation_risk": 0.3,
+      "market_concentration_risk": 0.0,
+      "fairness_risk": 0.38
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 2,
+    "industry_trust": 0.46455,
+    "avg_risk": 0.242
+  },
+  {
+    "type": "planning",
+    "round": 2,
+    "decision": "investigation",
+    "reason": "Apex AI's dominant 38.7% market share combined with the highest published score (0.435) raises fairness and gaming concerns (fairness_risk: 0.38, gaming_risk: 0.34). The intervention_threshold of 0.25 is exceeded by these cumulative risks. A formal investigation into scoring methodology and potential benchmark gaming is warranted as the next escalation step following the prior threshold_announcement, without jumping to more severe measures.",
+    "reasoning": "Apex AI's dominant 38.7% market share combined with the highest published score (0.435) raises fairness and gaming concerns (fairness_risk: 0.38, gaming_risk: 0.34). The intervention_threshold of 0.25 is exceeded by these cumulative risks. A formal investigation into scoring methodology and potential benchmark gaming is warranted as the next escalation step following the prior threshold_announcement, without jumping to more severe measures."
+  },
+  {
+    "type": "execution",
+    "round": 2,
+    "intervention": {
+      "type": "investigation",
+      "policymaker": "Regulator",
+      "round": 2,
+      "reason": "Apex AI's dominant 38.7% market share combined with the highest published score (0.435) raises fairness and gaming concerns (fairness_risk: 0.38, gaming_risk: 0.34). The intervention_threshold of 0.25 is exceeded by these cumulative risks. A formal investigation into scoring methodology and potential benchmark gaming is warranted as the next escalation step following the prior threshold_announcement, without jumping to more severe measures.",
+      "provider": "Apex AI",
+      "details": {}
+    }
+  },
+  {
+    "type": "observation",
+    "round": 3,
+    "leaderboard": [
+      [
+        "Apex AI",
+        0.4349735564654311
+      ],
+      [
+        "Genesis Systems",
+        0.4089807233755639
+      ],
+      [
+        "Orion Labs",
+        0.3999431793632974
+      ],
+      [
+        "Mirage AI",
+        0.3416719917465396
+      ],
+      [
+        "OpenCore",
+        0.3160560053895731
+      ]
+    ],
+    "validity_correlation": 0.90768363848529,
+    "consumer_satisfaction": 0.36908107742353574,
+    "market_shares": {
+      "Orion Labs": 0.2614781070044469,
+      "Apex AI": 0.4865748766936915,
+      "Genesis Systems": 0.16729615920524135,
+      "Mirage AI": 0.05917852607593471,
+      "OpenCore": 0.025472331020685603
+    },
+    "risk_beliefs": {
+      "gaming_risk": 0.33999999999999997,
+      "consumer_harm_risk": 0.14,
+      "validity_degradation_risk": 0.3,
+      "market_concentration_risk": 0.0,
+      "fairness_risk": 0.38
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 3,
+    "industry_trust": 0.45135000000000003,
+    "avg_risk": 0.23199999999999998
+  },
+  {
+    "type": "planning",
+    "round": 3,
+    "decision": "no_action",
+    "reason": "cooldown: 1 rounds since last intervention",
+    "reasoning": null
+  },
+  {
+    "type": "observation",
+    "round": 4,
+    "leaderboard": [
+      [
+        "Apex AI",
+        0.4502318444850413
+      ],
+      [
+        "Orion Labs",
+        0.42425174383921616
+      ],
+      [
+        "Genesis Systems",
+        0.4089807233755639
+      ],
+      [
+        "Mirage AI",
+        0.354255169231528
+      ],
+      [
+        "OpenCore",
+        0.32095152346264494
+      ]
+    ],
+    "validity_correlation": 0.9256669986279333,
+    "consumer_satisfaction": 0.3913998585497168,
+    "market_shares": {
+      "Orion Labs": 0.21072090395057833,
+      "Apex AI": 0.5556090789066046,
+      "Genesis Systems": 0.15784551711243475,
+      "Mirage AI": 0.052759808227541616,
+      "OpenCore": 0.023064691802840934
+    },
+    "risk_beliefs": {
+      "gaming_risk": 0.29,
+      "consumer_harm_risk": 0.09000000000000001,
+      "validity_degradation_risk": 0.3,
+      "market_concentration_risk": 0.0,
+      "fairness_risk": 0.38
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 4,
+    "industry_trust": 0.44015000000000004,
+    "avg_risk": 0.21200000000000002
+  },
+  {
+    "type": "planning",
+    "round": 4,
+    "decision": "public_warning",
+    "reason": "The fairness_risk (0.38) and validity_degradation_risk (0.30) exceed the intervention threshold (0.25), and a prior investigation was issued in Round 2. Consumer satisfaction remains below target at 0.391, signaling potential harm across the market. A public warning is the appropriate next escalation step to alert providers and consumers of regulatory concern while maintaining proportionality to the identified risks.",
+    "reasoning": "The fairness_risk (0.38) and validity_degradation_risk (0.30) exceed the intervention threshold (0.25), and a prior investigation was issued in Round 2. Consumer satisfaction remains below target at 0.391, signaling potential harm across the market. A public warning is the appropriate next escalation step to alert providers and consumers of regulatory concern while maintaining proportionality to the identified risks."
+  },
+  {
+    "type": "execution",
+    "round": 4,
+    "intervention": {
+      "type": "public_warning",
+      "policymaker": "Regulator",
+      "round": 4,
+      "reason": "The fairness_risk (0.38) and validity_degradation_risk (0.30) exceed the intervention threshold (0.25), and a prior investigation was issued in Round 2. Consumer satisfaction remains below target at 0.391, signaling potential harm across the market. A public warning is the appropriate next escalation step to alert providers and consumers of regulatory concern while maintaining proportionality to the identified risks.",
+      "provider": null,
+      "details": {}
+    }
+  },
+  {
+    "type": "observation",
+    "round": 5,
+    "leaderboard": [
+      [
+        "Apex AI",
+        0.4502318444850413
+      ],
+      [
+        "Orion Labs",
+        0.4279065484208481
+      ],
+      [
+        "Genesis Systems",
+        0.4089807233755639
+      ],
+      [
+        "Mirage AI",
+        0.354255169231528
+      ],
+      [
+        "OpenCore",
+        0.3536567067670908
+      ]
+    ],
+    "validity_correlation": 0.9232939484045608,
+    "consumer_satisfaction": 0.40508231407145784,
+    "market_shares": {
+      "Orion Labs": 0.17430352770006646,
+      "Apex AI": 0.6036190669342003,
+      "Genesis Systems": 0.15265218538291117,
+      "Mirage AI": 0.04809418356885087,
+      "OpenCore": 0.02133103641397139
+    },
+    "risk_beliefs": {
+      "gaming_risk": 0.29,
+      "consumer_harm_risk": 0.04000000000000001,
+      "validity_degradation_risk": 0.3,
+      "market_concentration_risk": 0.1,
+      "fairness_risk": 0.38
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 5,
+    "industry_trust": 0.42795000000000005,
+    "avg_risk": 0.22199999999999998
+  },
+  {
+    "type": "planning",
+    "round": 5,
+    "decision": "no_action",
+    "reason": "cooldown: 1 rounds since last intervention",
+    "reasoning": null
+  },
+  {
+    "type": "observation",
+    "round": 6,
+    "leaderboard": [
+      [
+        "Apex AI",
+        0.45129803766357623
+      ],
+      [
+        "Orion Labs",
+        0.42841381448172355
+      ],
+      [
+        "Genesis Systems",
+        0.41998579356869314
+      ],
+      [
+        "OpenCore",
+        0.36660213477937126
+      ],
+      [
+        "Mirage AI",
+        0.3642856837499833
+      ]
+    ],
+    "validity_correlation": 0.9178733718446486,
+    "consumer_satisfaction": 0.419053408176275,
+    "market_shares": {
+      "Orion Labs": 0.14887166154575712,
+      "Apex AI": 0.6370853206355426,
+      "Genesis Systems": 0.14783109337690373,
+      "Mirage AI": 0.045532299091034366,
+      "OpenCore": 0.02067962535076231
+    },
+    "risk_beliefs": {
+      "gaming_risk": 0.24,
+      "consumer_harm_risk": 0.0,
+      "validity_degradation_risk": 0.3,
+      "market_concentration_risk": 0.2,
+      "fairness_risk": 0.38
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 6,
+    "industry_trust": 0.41555000000000003,
+    "avg_risk": 0.22400000000000003
+  },
+  {
+    "type": "planning",
+    "round": 6,
+    "decision": "mandate_benchmark",
+    "reason": "Fairness risk (0.38) and gaming risk (0.24) remain elevated despite prior investigation and public warning. An investigation has been completed and a warning issued, satisfying escalation prerequisites. Mandating benchmark changes across the market will address suspected gaming behaviors and improve fairness\u2014critical to our consumer_protection and fairness objectives. This proactive step is justified by our low intervention threshold (0.25) and aligns with our cautious risk tolerance.",
+    "reasoning": "Fairness risk (0.38) and gaming risk (0.24) remain elevated despite prior investigation and public warning. An investigation has been completed and a warning issued, satisfying escalation prerequisites. Mandating benchmark changes across the market will address suspected gaming behaviors and improve fairness\u2014critical to our consumer_protection and fairness objectives. This proactive step is justified by our low intervention threshold (0.25) and aligns with our cautious risk tolerance."
+  },
+  {
+    "type": "execution",
+    "round": 6,
+    "intervention": {
+      "type": "mandate_benchmark",
+      "policymaker": "Regulator",
+      "round": 6,
+      "reason": "Fairness risk (0.38) and gaming risk (0.24) remain elevated despite prior investigation and public warning. An investigation has been completed and a warning issued, satisfying escalation prerequisites. Mandating benchmark changes across the market will address suspected gaming behaviors and improve fairness\u2014critical to our consumer_protection and fairness objectives. This proactive step is justified by our low intervention threshold (0.25) and aligns with our cautious risk tolerance.",
+      "provider": null,
+      "details": {}
+    }
+  },
+  {
+    "type": "observation",
+    "round": 7,
+    "leaderboard": [
+      [
+        "Apex AI",
+        0.5096851854476443
+      ],
+      [
+        "Orion Labs",
+        0.46605629225571726
+      ],
+      [
+        "Genesis Systems",
+        0.40710966030579054
+      ],
+      [
+        "Mirage AI",
+        0.3770599971241494
+      ],
+      [
+        "OpenCore",
+        0.34220455470187555
+      ]
+    ],
+    "validity_correlation": 0.9184059592855344,
+    "consumer_satisfaction": 0.4271355090560152,
+    "market_shares": {
+      "Orion Labs": 0.16306546136449804,
+      "Apex AI": 0.6304385108992617,
+      "Genesis Systems": 0.14652045167082675,
+      "Mirage AI": 0.040425349118830244,
+      "OpenCore": 0.01955022694658346
+    },
+    "risk_beliefs": {
+      "gaming_risk": 0.33,
+      "consumer_harm_risk": 0.04,
+      "validity_degradation_risk": 0.3,
+      "market_concentration_risk": 0.30000000000000004,
+      "fairness_risk": 0.46
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 7,
+    "industry_trust": 0.39695,
+    "avg_risk": 0.28600000000000003
+  },
+  {
+    "type": "planning",
+    "round": 7,
+    "decision": "no_action",
+    "reason": "cooldown: 1 rounds since last intervention",
+    "reasoning": null
+  },
+  {
+    "type": "observation",
+    "round": 8,
+    "leaderboard": [
+      [
+        "Apex AI",
+        0.5096851854476443
+      ],
+      [
+        "Orion Labs",
+        0.501701834189834
+      ],
+      [
+        "Genesis Systems",
+        0.40710966030579054
+      ],
+      [
+        "Mirage AI",
+        0.3784311635919726
+      ],
+      [
+        "OpenCore",
+        0.3607066358007802
+      ]
+    ],
+    "validity_correlation": 0.9165196454368327,
+    "consumer_satisfaction": 0.4452692559920998,
+    "market_shares": {
+      "Orion Labs": 0.19862958420524052,
+      "Apex AI": 0.6006889074392123,
+      "Genesis Systems": 0.14270486055900355,
+      "Mirage AI": 0.03867824733691854,
+      "OpenCore": 0.019298400459625234
+    },
+    "risk_beliefs": {
+      "gaming_risk": 0.28,
+      "consumer_harm_risk": 0.0,
+      "validity_degradation_risk": 0.3,
+      "market_concentration_risk": 0.4,
+      "fairness_risk": 0.46
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 8,
+    "industry_trust": 0.37815000000000004,
+    "avg_risk": 0.288
+  },
+  {
+    "type": "planning",
+    "round": 8,
+    "decision": "compliance_audit",
+    "reason": "Apex AI's dominant 60.1% market share combined with elevated fairness_risk (0.46) and market_concentration_risk (0.40) warrants deeper scrutiny. Prior interventions (investigation, public warning, mandate_benchmark) have been issued; a compliance audit is the next escalation step to verify adherence to benchmarking mandates and assess whether market dominance is creating fairness disparities. This is proportionate to our cautious risk tolerance (0.1) and proactive intervention threshold (0.25).",
+    "reasoning": "Apex AI's dominant 60.1% market share combined with elevated fairness_risk (0.46) and market_concentration_risk (0.40) warrants deeper scrutiny. Prior interventions (investigation, public warning, mandate_benchmark) have been issued; a compliance audit is the next escalation step to verify adherence to benchmarking mandates and assess whether market dominance is creating fairness disparities. This is proportionate to our cautious risk tolerance (0.1) and proactive intervention threshold (0.25)."
+  },
+  {
+    "type": "execution",
+    "round": 8,
+    "intervention": {
+      "type": "compliance_audit",
+      "policymaker": "Regulator",
+      "round": 8,
+      "reason": "Apex AI's dominant 60.1% market share combined with elevated fairness_risk (0.46) and market_concentration_risk (0.40) warrants deeper scrutiny. Prior interventions (investigation, public warning, mandate_benchmark) have been issued; a compliance audit is the next escalation step to verify adherence to benchmarking mandates and assess whether market dominance is creating fairness disparities. This is proportionate to our cautious risk tolerance (0.1) and proactive intervention threshold (0.25).",
+      "provider": "Apex AI",
+      "details": {}
+    }
+  },
+  {
+    "type": "observation",
+    "round": 9,
+    "leaderboard": [
+      [
+        "Apex AI",
+        0.5389283079083091
+      ],
+      [
+        "Orion Labs",
+        0.501701834189834
+      ],
+      [
+        "Genesis Systems",
+        0.41843940126473667
+      ],
+      [
+        "Mirage AI",
+        0.3984338764686997
+      ],
+      [
+        "OpenCore",
+        0.3768443389181728
+      ]
+    ],
+    "validity_correlation": 0.9159686531836374,
+    "consumer_satisfaction": 0.4642319632030826,
+    "market_shares": {
+      "Orion Labs": 0.212405173672746,
+      "Apex AI": 0.5902465015229131,
+      "Genesis Systems": 0.14330840241944717,
+      "Mirage AI": 0.035016475968366614,
+      "OpenCore": 0.019023446416527246
+    },
+    "risk_beliefs": {
+      "gaming_risk": 0.28,
+      "consumer_harm_risk": 0.0,
+      "validity_degradation_risk": 0.3,
+      "market_concentration_risk": 0.35000000000000003,
+      "fairness_risk": 0.46
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 9,
+    "industry_trust": 0.36035000000000006,
+    "avg_risk": 0.278
+  },
+  {
+    "type": "planning",
+    "round": 9,
+    "decision": "no_action",
+    "reason": "cooldown: 1 rounds since last intervention",
+    "reasoning": null
+  },
+  {
+    "type": "observation",
+    "round": 10,
+    "leaderboard": [
+      [
+        "Apex AI",
+        0.5462190544439307
+      ],
+      [
+        "Orion Labs",
+        0.5142634267156195
+      ],
+      [
+        "Genesis Systems",
+        0.435094783038393
+      ],
+      [
+        "Mirage AI",
+        0.4220021669577367
+      ],
+      [
+        "OpenCore",
+        0.3771118686712701
+      ]
+    ],
+    "validity_correlation": 0.9191375526396258,
+    "consumer_satisfaction": 0.4802940854116727,
+    "market_shares": {
+      "Orion Labs": 0.2016552469260231,
+      "Apex AI": 0.603357910188487,
+      "Genesis Systems": 0.1417058715821545,
+      "Mirage AI": 0.03432206001494431,
+      "OpenCore": 0.018958911288391223
+    },
+    "risk_beliefs": {
+      "gaming_risk": 0.23000000000000004,
+      "consumer_harm_risk": 0.0,
+      "validity_degradation_risk": 0.3,
+      "market_concentration_risk": 0.45000000000000007,
+      "fairness_risk": 0.46
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 10,
+    "industry_trust": 0.3415500000000001,
+    "avg_risk": 0.28800000000000003
+  },
+  {
+    "type": "planning",
+    "round": 10,
+    "decision": "compliance_audit",
+    "reason": "Apex AI's dominant 60.3% market share combined with elevated fairness_risk (0.46) and market_concentration_risk (0.45) warrants deeper scrutiny. The compliance audit escalates from the Round 8 mandate_benchmark while respecting the 2-round cooldown (last intervention Round 8). This targets the provider most capable of creating systemic fairness and market concentration harms, ensuring our safety and fairness objectives are rigorously enforced.",
+    "reasoning": "Apex AI's dominant 60.3% market share combined with elevated fairness_risk (0.46) and market_concentration_risk (0.45) warrants deeper scrutiny. The compliance audit escalates from the Round 8 mandate_benchmark while respecting the 2-round cooldown (last intervention Round 8). This targets the provider most capable of creating systemic fairness and market concentration harms, ensuring our safety and fairness objectives are rigorously enforced."
+  },
+  {
+    "type": "execution",
+    "round": 10,
+    "intervention": {
+      "type": "compliance_audit",
+      "policymaker": "Regulator",
+      "round": 10,
+      "reason": "Apex AI's dominant 60.3% market share combined with elevated fairness_risk (0.46) and market_concentration_risk (0.45) warrants deeper scrutiny. The compliance audit escalates from the Round 8 mandate_benchmark while respecting the 2-round cooldown (last intervention Round 8). This targets the provider most capable of creating systemic fairness and market concentration harms, ensuring our safety and fairness objectives are rigorously enforced.",
+      "provider": "Apex AI",
+      "details": {}
+    }
+  },
+  {
+    "type": "observation",
+    "round": 11,
+    "leaderboard": [
+      [
+        "Apex AI",
+        0.5462190544439307
+      ],
+      [
+        "Orion Labs",
+        0.5322784542370993
+      ],
+      [
+        "Genesis Systems",
+        0.47815185237542657
+      ],
+      [
+        "Mirage AI",
+        0.42996921828979423
+      ],
+      [
+        "OpenCore",
+        0.4227936718908408
+      ]
+    ],
+    "validity_correlation": 0.928664809799239,
+    "consumer_satisfaction": 0.49492784875099854,
+    "market_shares": {
+      "Orion Labs": 0.1816015444321239,
+      "Apex AI": 0.6294279447765809,
+      "Genesis Systems": 0.1409508580610585,
+      "Mirage AI": 0.029629523194672,
+      "OpenCore": 0.01839012953556485
+    },
+    "risk_beliefs": {
+      "gaming_risk": 0.23000000000000004,
+      "consumer_harm_risk": 0.0,
+      "validity_degradation_risk": 0.3,
+      "market_concentration_risk": 0.55,
+      "fairness_risk": 0.46
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 11,
+    "industry_trust": 0.3207500000000001,
+    "avg_risk": 0.308
+  },
+  {
+    "type": "planning",
+    "round": 11,
+    "decision": "no_action",
+    "reason": "cooldown: 1 rounds since last intervention",
+    "reasoning": null
+  },
+  {
+    "type": "observation",
+    "round": 12,
+    "leaderboard": [
+      [
+        "Apex AI",
+        0.565802225884549
+      ],
+      [
+        "Orion Labs",
+        0.5322784542370993
+      ],
+      [
+        "Genesis Systems",
+        0.5055027138886162
+      ],
+      [
+        "Mirage AI",
+        0.42996921828979423
+      ],
+      [
+        "OpenCore",
+        0.4227936718908408
+      ]
+    ],
+    "validity_correlation": 0.9358516509935249,
+    "consumer_satisfaction": 0.4561723771846996,
+    "market_shares": {
+      "Orion Labs": 0.23227633595169728,
+      "Apex AI": 0.5728722708808883,
+      "Genesis Systems": 0.14706105937985559,
+      "Mirage AI": 0.029414723390600014,
+      "OpenCore": 0.018375610396959122
+    },
+    "risk_beliefs": {
+      "gaming_risk": 0.27,
+      "consumer_harm_risk": 0.08,
+      "validity_degradation_risk": 0.3,
+      "market_concentration_risk": 0.5,
+      "fairness_risk": 0.46
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 12,
+    "industry_trust": 0.2985500000000001,
+    "avg_risk": 0.322
+  },
+  {
+    "type": "planning",
+    "round": 12,
+    "decision": "compliance_audit",
+    "reason": "Apex AI's dominant 57.3% market share combined with a market_concentration_risk of 0.50 and fairness_risk of 0.46 warrant continued scrutiny. A compliance audit of the market leader is justified under the escalation ladder (prior mandate_benchmark issued in round 6), and this round (12) respects the 2-round cooldown from the last audit (round 10). This proactive approach aligns with our low intervention_threshold (0.25) and cautious risk_tolerance (0.1), focusing on fairness and consumer protection without jumping to antitrust measures prematurely.",
+    "reasoning": "Apex AI's dominant 57.3% market share combined with a market_concentration_risk of 0.50 and fairness_risk of 0.46 warrant continued scrutiny. A compliance audit of the market leader is justified under the escalation ladder (prior mandate_benchmark issued in round 6), and this round (12) respects the 2-round cooldown from the last audit (round 10). This proactive approach aligns with our low intervention_threshold (0.25) and cautious risk_tolerance (0.1), focusing on fairness and consumer protection without jumping to antitrust measures prematurely."
+  },
+  {
+    "type": "execution",
+    "round": 12,
+    "intervention": {
+      "type": "compliance_audit",
+      "policymaker": "Regulator",
+      "round": 12,
+      "reason": "Apex AI's dominant 57.3% market share combined with a market_concentration_risk of 0.50 and fairness_risk of 0.46 warrant continued scrutiny. A compliance audit of the market leader is justified under the escalation ladder (prior mandate_benchmark issued in round 6), and this round (12) respects the 2-round cooldown from the last audit (round 10). This proactive approach aligns with our low intervention_threshold (0.25) and cautious risk_tolerance (0.1), focusing on fairness and consumer protection without jumping to antitrust measures prematurely.",
+      "provider": "Apex AI",
+      "details": {}
+    }
+  },
+  {
+    "type": "observation",
+    "round": 13,
+    "leaderboard": [
+      [
+        "Apex AI",
+        0.5497969608466917
+      ],
+      [
+        "Orion Labs",
+        0.5333604521634762
+      ],
+      [
+        "Genesis Systems",
+        0.511343558694039
+      ],
+      [
+        "Mirage AI",
+        0.4370614246191269
+      ],
+      [
+        "OpenCore",
+        0.41868985094334704
+      ]
+    ],
+    "validity_correlation": 0.9395521222991523,
+    "consumer_satisfaction": 0.46699171308899307,
+    "market_shares": {
+      "Orion Labs": 0.2676326422523138,
+      "Apex AI": 0.5190900450572781,
+      "Genesis Systems": 0.16624613402869134,
+      "Mirage AI": 0.028776652572372143,
+      "OpenCore": 0.018254526089344785
+    },
+    "risk_beliefs": {
+      "gaming_risk": 0.27,
+      "consumer_harm_risk": 0.03,
+      "validity_degradation_risk": 0.3,
+      "market_concentration_risk": 0.45,
+      "fairness_risk": 0.46
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 13,
+    "industry_trust": 0.2783500000000001,
+    "avg_risk": 0.302
+  },
+  {
+    "type": "planning",
+    "round": 13,
+    "decision": "no_action",
+    "reason": "cooldown: 1 rounds since last intervention",
+    "reasoning": null
+  },
+  {
+    "type": "observation",
+    "round": 14,
+    "leaderboard": [
+      [
+        "Apex AI",
+        0.5497969608466917
+      ],
+      [
+        "Genesis Systems",
+        0.5407279312665956
+      ],
+      [
+        "Orion Labs",
+        0.5380170353896842
+      ],
+      [
+        "Mirage AI",
+        0.44896341756066577
+      ],
+      [
+        "OpenCore",
+        0.4392086330499483
+      ]
+    ],
+    "validity_correlation": 0.9429941714898135,
+    "consumer_satisfaction": 0.4730276055810331,
+    "market_shares": {
+      "Orion Labs": 0.3403875909738656,
+      "Apex AI": 0.47655673456099734,
+      "Genesis Systems": 0.13607704798772421,
+      "Mirage AI": 0.028731864638755406,
+      "OpenCore": 0.018246761838657595
+    },
+    "risk_beliefs": {
+      "gaming_risk": 0.31,
+      "consumer_harm_risk": 0.04,
+      "validity_degradation_risk": 0.3,
+      "market_concentration_risk": 0.4,
+      "fairness_risk": 0.46
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 14,
+    "industry_trust": 0.2581500000000001,
+    "avg_risk": 0.302
+  },
+  {
+    "type": "planning",
+    "round": 14,
+    "decision": "compliance_audit",
+    "reason": "Apex AI's dominant 47.7% market share combined with elevated fairness_risk (0.46) and market_concentration_risk (0.40) warrants continued monitoring. Given the escalation history (audits in rounds 8, 10, 12), this round's audit targets the market leader to ensure compliance with fairness standards and prevent anticompetitive practices. The cooldown period has passed (last audit round 12), and proactive oversight aligns with our low intervention threshold (0.25) and cautious risk tolerance.",
+    "reasoning": "Apex AI's dominant 47.7% market share combined with elevated fairness_risk (0.46) and market_concentration_risk (0.40) warrants continued monitoring. Given the escalation history (audits in rounds 8, 10, 12), this round's audit targets the market leader to ensure compliance with fairness standards and prevent anticompetitive practices. The cooldown period has passed (last audit round 12), and proactive oversight aligns with our low intervention threshold (0.25) and cautious risk tolerance."
+  },
+  {
+    "type": "execution",
+    "round": 14,
+    "intervention": {
+      "type": "compliance_audit",
+      "policymaker": "Regulator",
+      "round": 14,
+      "reason": "Apex AI's dominant 47.7% market share combined with elevated fairness_risk (0.46) and market_concentration_risk (0.40) warrants continued monitoring. Given the escalation history (audits in rounds 8, 10, 12), this round's audit targets the market leader to ensure compliance with fairness standards and prevent anticompetitive practices. The cooldown period has passed (last audit round 12), and proactive oversight aligns with our low intervention threshold (0.25) and cautious risk tolerance.",
+      "provider": "Apex AI",
+      "details": {}
+    }
+  },
+  {
+    "type": "observation",
+    "round": 15,
+    "leaderboard": [
+      [
+        "Apex AI",
+        0.5643981084151831
+      ],
+      [
+        "Genesis Systems",
+        0.5631345017530084
+      ],
+      [
+        "Orion Labs",
+        0.5551303409015048
+      ],
+      [
+        "Mirage AI",
+        0.4876710987629087
+      ],
+      [
+        "OpenCore",
+        0.4392086330499483
+      ],
+      [
+        "OneAI",
+        0.39076814064719784
+      ]
+    ],
+    "validity_correlation": 0.9446225657092621,
+    "consumer_satisfaction": 0.4856575524579783,
+    "market_shares": {
+      "Orion Labs": 0.41503101776445744,
+      "Apex AI": 0.4072311915682536,
+      "Genesis Systems": 0.11325989277122384,
+      "Mirage AI": 0.02797027846926657,
+      "OpenCore": 0.030900126160706354,
+      "OneAI": 0.005607493266092364
+    },
+    "risk_beliefs": {
+      "gaming_risk": 0.31,
+      "consumer_harm_risk": 0.0,
+      "validity_degradation_risk": 0.3,
+      "market_concentration_risk": 0.35000000000000003,
+      "fairness_risk": 0.46,
+      "eval_engineering_risk": 0.1
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 15,
+    "industry_trust": 0.24281666666666676,
+    "avg_risk": 0.25333333333333335
+  },
+  {
+    "type": "planning",
+    "round": 15,
+    "decision": "no_action",
+    "reason": "cooldown: 1 rounds since last intervention",
+    "reasoning": null
+  },
+  {
+    "type": "observation",
+    "round": 16,
+    "leaderboard": [
+      [
+        "Genesis Systems",
+        0.5995502570533159
+      ],
+      [
+        "Apex AI",
+        0.5646508297467449
+      ],
+      [
+        "Orion Labs",
+        0.5551303409015048
+      ],
+      [
+        "Mirage AI",
+        0.49100950707921925
+      ],
+      [
+        "OpenCore",
+        0.4392086330499483
+      ],
+      [
+        "OneAI",
+        0.40395139102899275
+      ]
+    ],
+    "validity_correlation": 0.9436257864056816,
+    "consumer_satisfaction": 0.49910585365161436,
+    "market_shares": {
+      "Orion Labs": 0.4707488710005245,
+      "Apex AI": 0.3711470620480091,
+      "Genesis Systems": 0.10000317604047299,
+      "Mirage AI": 0.02796445462081676,
+      "OpenCore": 0.026326710499257677,
+      "OneAI": 0.0038097257909190645
+    },
+    "risk_beliefs": {
+      "gaming_risk": 0.26,
+      "consumer_harm_risk": 0.0,
+      "validity_degradation_risk": 0.3,
+      "market_concentration_risk": 0.30000000000000004,
+      "fairness_risk": 0.46,
+      "eval_engineering_risk": 0.1
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 16,
+    "industry_trust": 0.2291500000000001,
+    "avg_risk": 0.2366666666666667
+  },
+  {
+    "type": "planning",
+    "round": 16,
+    "decision": "compliance_audit",
+    "reason": "Apex AI holds 37.1% market share and ranks second on the leaderboard (0.565), yet consumer satisfaction remains below 0.5 across the market. With fairness_risk at 0.46 and market_concentration_risk at 0.30, a compliance audit on the second-largest provider is warranted to verify fair practices and validate scoring integrity. This continues the escalation pattern established in prior rounds (6, 8, 10, 12, 14) and respects the cooldown by targeting a different provider than recent audits, addressing systemic fairness concerns without exceeding our cautious risk tolerance.",
+    "reasoning": "Apex AI holds 37.1% market share and ranks second on the leaderboard (0.565), yet consumer satisfaction remains below 0.5 across the market. With fairness_risk at 0.46 and market_concentration_risk at 0.30, a compliance audit on the second-largest provider is warranted to verify fair practices and validate scoring integrity. This continues the escalation pattern established in prior rounds (6, 8, 10, 12, 14) and respects the cooldown by targeting a different provider than recent audits, addressing systemic fairness concerns without exceeding our cautious risk tolerance."
+  },
+  {
+    "type": "execution",
+    "round": 16,
+    "intervention": {
+      "type": "compliance_audit",
+      "policymaker": "Regulator",
+      "round": 16,
+      "reason": "Apex AI holds 37.1% market share and ranks second on the leaderboard (0.565), yet consumer satisfaction remains below 0.5 across the market. With fairness_risk at 0.46 and market_concentration_risk at 0.30, a compliance audit on the second-largest provider is warranted to verify fair practices and validate scoring integrity. This continues the escalation pattern established in prior rounds (6, 8, 10, 12, 14) and respects the cooldown by targeting a different provider than recent audits, addressing systemic fairness concerns without exceeding our cautious risk tolerance.",
+      "provider": "Apex AI",
+      "details": {}
+    }
+  },
+  {
+    "type": "observation",
+    "round": 17,
+    "leaderboard": [
+      [
+        "Genesis Systems",
+        0.6242680603007756
+      ],
+      [
+        "Apex AI",
+        0.5815994540052315
+      ],
+      [
+        "Orion Labs",
+        0.5676428897714253
+      ],
+      [
+        "OpenCore",
+        0.49157879992722586
+      ],
+      [
+        "Mirage AI",
+        0.49100950707921925
+      ],
+      [
+        "OneAI",
+        0.4156400606665394
+      ]
+    ],
+    "validity_correlation": 0.9429047748070067,
+    "consumer_satisfaction": 0.5017571049913696,
+    "market_shares": {
+      "Orion Labs": 0.510559446843912,
+      "Apex AI": 0.32940054017788023,
+      "Genesis Systems": 0.10575170794066822,
+      "Mirage AI": 0.027725942382340763,
+      "OpenCore": 0.023753023891785546,
+      "OneAI": 0.0028093387634132673
+    },
+    "risk_beliefs": {
+      "gaming_risk": 0.27,
+      "consumer_harm_risk": 0.01,
+      "validity_degradation_risk": 0.3,
+      "market_concentration_risk": 0.25000000000000006,
+      "fairness_risk": 0.46,
+      "eval_engineering_risk": 0.1,
+      "security_risk": 0.32
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 17,
+    "industry_trust": 0.21472142857142867,
+    "avg_risk": 0.2442857142857143
+  },
+  {
+    "type": "planning",
+    "round": 17,
+    "decision": "no_action",
+    "reason": "cooldown: 1 rounds since last intervention",
+    "reasoning": null
+  },
+  {
+    "type": "observation",
+    "round": 18,
+    "leaderboard": [
+      [
+        "Genesis Systems",
+        0.625380269489269
+      ],
+      [
+        "Apex AI",
+        0.5887997504090219
+      ],
+      [
+        "Orion Labs",
+        0.5747471059921628
+      ],
+      [
+        "Mirage AI",
+        0.5229331107799701
+      ],
+      [
+        "OpenCore",
+        0.49157879992722586
+      ],
+      [
+        "OneAI",
+        0.43059321733849415
+      ]
+    ],
+    "validity_correlation": 0.9432311746631392,
+    "consumer_satisfaction": 0.5376269904064,
+    "market_shares": {
+      "Orion Labs": 0.46449632147543257,
+      "Apex AI": 0.350618832348446,
+      "Genesis Systems": 0.13209625872307917,
+      "Mirage AI": 0.027725942382340763,
+      "OpenCore": 0.022483937714609478,
+      "OneAI": 0.0025787073560919966
+    },
+    "risk_beliefs": {
+      "gaming_risk": 0.22000000000000003,
+      "consumer_harm_risk": 0.0,
+      "validity_degradation_risk": 0.3,
+      "market_concentration_risk": 0.20000000000000007,
+      "fairness_risk": 0.46,
+      "eval_engineering_risk": 0.1,
+      "security_risk": 0.32
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 18,
+    "industry_trust": 0.20186428571428583,
+    "avg_risk": 0.2285714285714286
+  },
+  {
+    "type": "planning",
+    "round": 18,
+    "decision": "compliance_audit",
+    "reason": "Orion Labs commands 46.4% market share with the third-highest score (0.575), creating a fairness risk (0.46) that warrants continued scrutiny. With a cooldown of 2 rounds and the last audit in Round 16, we are now eligible to resume monitoring. Given persistent fairness concerns and the dominance of this provider, a compliance audit targeting Orion Labs aligns with our proactive intervention threshold (0.25) and cautious risk tolerance (0.1), ensuring fair competitive practices and consumer protection.",
+    "reasoning": "Orion Labs commands 46.4% market share with the third-highest score (0.575), creating a fairness risk (0.46) that warrants continued scrutiny. With a cooldown of 2 rounds and the last audit in Round 16, we are now eligible to resume monitoring. Given persistent fairness concerns and the dominance of this provider, a compliance audit targeting Orion Labs aligns with our proactive intervention threshold (0.25) and cautious risk tolerance (0.1), ensuring fair competitive practices and consumer protection."
+  },
+  {
+    "type": "execution",
+    "round": 18,
+    "intervention": {
+      "type": "compliance_audit",
+      "policymaker": "Regulator",
+      "round": 18,
+      "reason": "Orion Labs commands 46.4% market share with the third-highest score (0.575), creating a fairness risk (0.46) that warrants continued scrutiny. With a cooldown of 2 rounds and the last audit in Round 16, we are now eligible to resume monitoring. Given persistent fairness concerns and the dominance of this provider, a compliance audit targeting Orion Labs aligns with our proactive intervention threshold (0.25) and cautious risk tolerance (0.1), ensuring fair competitive practices and consumer protection.",
+      "provider": "Orion Labs",
+      "details": {}
+    }
+  },
+  {
+    "type": "observation",
+    "round": 19,
+    "leaderboard": [
+      [
+        "Genesis Systems",
+        0.6017020819225506
+      ],
+      [
+        "Apex AI",
+        0.5978668023826158
+      ],
+      [
+        "Orion Labs",
+        0.5512971309419658
+      ],
+      [
+        "OpenCore",
+        0.5292900819373225
+      ],
+      [
+        "Mirage AI",
+        0.5223573957985997
+      ],
+      [
+        "OneAI",
+        0.42157749430453445
+      ]
+    ],
+    "validity_correlation": 0.9415320146179124,
+    "consumer_satisfaction": 0.5500233079748076,
+    "market_shares": {
+      "Orion Labs": 0.40778571883105197,
+      "Apex AI": 0.38246607456676346,
+      "Genesis Systems": 0.15838034138744372,
+      "Mirage AI": 0.02759588427981881,
+      "OpenCore": 0.021485983759221134,
+      "OneAI": 0.00228599717570084
+    },
+    "risk_beliefs": {
+      "gaming_risk": 0.22000000000000003,
+      "consumer_harm_risk": 0.0,
+      "validity_degradation_risk": 0.3,
+      "market_concentration_risk": 0.15000000000000008,
+      "fairness_risk": 0.46,
+      "eval_engineering_risk": 0.1,
+      "security_risk": 0.32
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 19,
+    "industry_trust": 0.18972142857142868,
+    "avg_risk": 0.22142857142857145
+  },
+  {
+    "type": "planning",
+    "round": 19,
+    "decision": "no_action",
+    "reason": "cooldown: 1 rounds since last intervention",
+    "reasoning": null
+  },
+  {
+    "type": "observation",
+    "round": 20,
+    "leaderboard": [
+      [
+        "Genesis Systems",
+        0.6049551916835426
+      ],
+      [
+        "Apex AI",
+        0.5978668023826158
+      ],
+      [
+        "Orion Labs",
+        0.5722445473820852
+      ],
+      [
+        "Mirage AI",
+        0.5373152138624341
+      ],
+      [
+        "OpenCore",
+        0.5292900819373225
+      ],
+      [
+        "OneAI",
+        0.459801200856985
+      ]
+    ],
+    "validity_correlation": 0.9402512788627626,
+    "consumer_satisfaction": 0.5763063139930151,
+    "market_shares": {
+      "Orion Labs": 0.33485567622353923,
+      "Apex AI": 0.36978019283844005,
+      "Genesis Systems": 0.24461229981877017,
+      "Mirage AI": 0.02759588427981881,
+      "OpenCore": 0.020970180706152197,
+      "OneAI": 0.002185766133279531
+    },
+    "risk_beliefs": {
+      "gaming_risk": 0.17000000000000004,
+      "consumer_harm_risk": 0.0,
+      "validity_degradation_risk": 0.3,
+      "market_concentration_risk": 0.10000000000000007,
+      "fairness_risk": 0.46,
+      "eval_engineering_risk": 0.1,
+      "security_risk": 0.32
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 20,
+    "industry_trust": 0.17900714285714298,
+    "avg_risk": 0.20714285714285716
+  },
+  {
+    "type": "planning",
+    "round": 20,
+    "decision": "compliance_audit",
+    "reason": "Apex AI holds 37% market share and leads in consumer adoption, making it a critical vector for fairness and consumer protection risks. With fairness_risk at 0.46 and a history of escalating compliance audits (rounds 10, 12, 14, 16, 18), continued systematic monitoring is warranted to ensure the dominant provider maintains safety and fairness standards. The cooldown period has elapsed (last audit round 18, now round 20), and no recent incidents justify emergency measures, but proactive auditing aligns with our low intervention threshold (0.25) and cautious risk tolerance.",
+    "reasoning": "Apex AI holds 37% market share and leads in consumer adoption, making it a critical vector for fairness and consumer protection risks. With fairness_risk at 0.46 and a history of escalating compliance audits (rounds 10, 12, 14, 16, 18), continued systematic monitoring is warranted to ensure the dominant provider maintains safety and fairness standards. The cooldown period has elapsed (last audit round 18, now round 20), and no recent incidents justify emergency measures, but proactive auditing aligns with our low intervention threshold (0.25) and cautious risk tolerance."
+  },
+  {
+    "type": "execution",
+    "round": 20,
+    "intervention": {
+      "type": "compliance_audit",
+      "policymaker": "Regulator",
+      "round": 20,
+      "reason": "Apex AI holds 37% market share and leads in consumer adoption, making it a critical vector for fairness and consumer protection risks. With fairness_risk at 0.46 and a history of escalating compliance audits (rounds 10, 12, 14, 16, 18), continued systematic monitoring is warranted to ensure the dominant provider maintains safety and fairness standards. The cooldown period has elapsed (last audit round 18, now round 20), and no recent incidents justify emergency measures, but proactive auditing aligns with our low intervention threshold (0.25) and cautious risk tolerance.",
+      "provider": "Apex AI",
+      "details": {}
+    }
+  },
+  {
+    "type": "observation",
+    "round": 21,
+    "leaderboard": [
+      [
+        "Genesis Systems",
+        0.617438956010288
+      ],
+      [
+        "Apex AI",
+        0.5978668023826158
+      ],
+      [
+        "Orion Labs",
+        0.5805317449286406
+      ],
+      [
+        "Mirage AI",
+        0.5510052532521678
+      ],
+      [
+        "OpenCore",
+        0.5328157536543784
+      ],
+      [
+        "OneAI",
+        0.46734014834215326
+      ]
+    ],
+    "validity_correlation": 0.9394783563322484,
+    "consumer_satisfaction": 0.5854716584085312,
+    "market_shares": {
+      "Orion Labs": 0.27869815170971707,
+      "Apex AI": 0.3682189875378475,
+      "Genesis Systems": 0.30298503842225294,
+      "Mirage AI": 0.027526164499044048,
+      "OpenCore": 0.020468085532957134,
+      "OneAI": 0.0021035722981813084
+    },
+    "risk_beliefs": {
+      "gaming_risk": 0.17000000000000004,
+      "consumer_harm_risk": 0.0,
+      "validity_degradation_risk": 0.3,
+      "market_concentration_risk": 0.05000000000000007,
+      "fairness_risk": 0.46,
+      "eval_engineering_risk": 0.1,
+      "security_risk": 0.32
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 21,
+    "industry_trust": 0.16900714285714297,
+    "avg_risk": 0.2
+  },
+  {
+    "type": "planning",
+    "round": 21,
+    "decision": "no_action",
+    "reason": "cooldown: 1 rounds since last intervention",
+    "reasoning": null
+  },
+  {
+    "type": "observation",
+    "round": 22,
+    "leaderboard": [
+      [
+        "Apex AI",
+        0.626600619558799
+      ],
+      [
+        "Genesis Systems",
+        0.6214752506338789
+      ],
+      [
+        "Orion Labs",
+        0.6127335562139888
+      ],
+      [
+        "Mirage AI",
+        0.5510052532521678
+      ],
+      [
+        "OpenCore",
+        0.5470768006982205
+      ],
+      [
+        "OneAI",
+        0.46734014834215326
+      ],
+      [
+        "TwoAI",
+        0.335436505363619
+      ]
+    ],
+    "validity_correlation": 0.9409338622278055,
+    "consumer_satisfaction": 0.5953712373831418,
+    "market_shares": {
+      "Orion Labs": 0.2337069270785515,
+      "Apex AI": 0.36959109703605064,
+      "Genesis Systems": 0.3439319334742008,
+      "Mirage AI": 0.027250902854053606,
+      "OpenCore": 0.020058099338264048,
+      "OneAI": 0.0020825365751994955,
+      "TwoAI": 0.003378503643679677
+    },
+    "risk_beliefs": {
+      "gaming_risk": 0.12000000000000004,
+      "consumer_harm_risk": 0.0,
+      "validity_degradation_risk": 0.3,
+      "market_concentration_risk": 6.938893903907228e-17,
+      "fairness_risk": 0.46,
+      "eval_engineering_risk": 0.2,
+      "security_risk": 0.32
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 22,
+    "industry_trust": 0.15900714285714296,
+    "avg_risk": 0.2
+  },
+  {
+    "type": "planning",
+    "round": 22,
+    "decision": "compliance_audit",
+    "reason": "Genesis Systems (34.4% market share, score 0.621) warrants continued compliance audit as part of the established escalation pattern targeting fairness risks (0.46) and security concerns (0.32) in the duopoly formed by Apex AI and Genesis Systems. The cooldown of 2 rounds has elapsed since round 20, and fairness_risk remains elevated, justifying another audit cycle. This maintains proportional oversight of the market's dominant players without overstepping into sanctions, which would require critical incidents or repeated violations not yet documented.",
+    "reasoning": "Genesis Systems (34.4% market share, score 0.621) warrants continued compliance audit as part of the established escalation pattern targeting fairness risks (0.46) and security concerns (0.32) in the duopoly formed by Apex AI and Genesis Systems. The cooldown of 2 rounds has elapsed since round 20, and fairness_risk remains elevated, justifying another audit cycle. This maintains proportional oversight of the market's dominant players without overstepping into sanctions, which would require critical incidents or repeated violations not yet documented."
+  },
+  {
+    "type": "execution",
+    "round": 22,
+    "intervention": {
+      "type": "compliance_audit",
+      "policymaker": "Regulator",
+      "round": 22,
+      "reason": "Genesis Systems (34.4% market share, score 0.621) warrants continued compliance audit as part of the established escalation pattern targeting fairness risks (0.46) and security concerns (0.32) in the duopoly formed by Apex AI and Genesis Systems. The cooldown of 2 rounds has elapsed since round 20, and fairness_risk remains elevated, justifying another audit cycle. This maintains proportional oversight of the market's dominant players without overstepping into sanctions, which would require critical incidents or repeated violations not yet documented.",
+      "provider": "Genesis Systems",
+      "details": {}
+    }
+  },
+  {
+    "type": "observation",
+    "round": 23,
+    "leaderboard": [
+      [
+        "Orion Labs",
+        0.6317496452028445
+      ],
+      [
+        "Apex AI",
+        0.626600619558799
+      ],
+      [
+        "Genesis Systems",
+        0.6240745458094137
+      ],
+      [
+        "Mirage AI",
+        0.5510052532521678
+      ],
+      [
+        "OpenCore",
+        0.5470768006982205
+      ],
+      [
+        "OneAI",
+        0.469253655827791
+      ],
+      [
+        "TwoAI",
+        0.36531362188104716
+      ]
+    ],
+    "validity_correlation": 0.9435555589316559,
+    "consumer_satisfaction": 0.6151516396995824,
+    "market_shares": {
+      "Orion Labs": 0.20165022089541762,
+      "Apex AI": 0.38726039513975635,
+      "Genesis Systems": 0.3606282293059421,
+      "Mirage AI": 0.026974080206728094,
+      "OpenCore": 0.01957799926669826,
+      "OneAI": 0.0018655569170741518,
+      "TwoAI": 0.0020435182683835526
+    },
+    "risk_beliefs": {
+      "gaming_risk": 0.12000000000000004,
+      "consumer_harm_risk": 0.0,
+      "validity_degradation_risk": 0.3,
+      "market_concentration_risk": 0.0,
+      "fairness_risk": 0.46,
+      "eval_engineering_risk": 0.2,
+      "security_risk": 0.32
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 23,
+    "industry_trust": 0.14900714285714295,
+    "avg_risk": 0.2
+  },
+  {
+    "type": "planning",
+    "round": 23,
+    "decision": "no_action",
+    "reason": "cooldown: 1 rounds since last intervention",
+    "reasoning": null
+  },
+  {
+    "type": "observation",
+    "round": 24,
+    "leaderboard": [
+      [
+        "Apex AI",
+        0.6902352512657582
+      ],
+      [
+        "Genesis Systems",
+        0.6502278049353782
+      ],
+      [
+        "Orion Labs",
+        0.6441278261185434
+      ],
+      [
+        "OpenCore",
+        0.5656235839449827
+      ],
+      [
+        "Mirage AI",
+        0.5510052532521678
+      ],
+      [
+        "OneAI",
+        0.4941567702182518
+      ],
+      [
+        "TwoAI",
+        0.42245474942021993
+      ]
+    ],
+    "validity_correlation": 0.9463707906536326,
+    "consumer_satisfaction": 0.6203586591539778,
+    "market_shares": {
+      "Orion Labs": 0.17675131885084516,
+      "Apex AI": 0.47484375401030676,
+      "Genesis Systems": 0.2981294419003708,
+      "Mirage AI": 0.026974080206728094,
+      "OpenCore": 0.019494681749516112,
+      "OneAI": 0.0018655569170741518,
+      "TwoAI": 0.0019411663651589463
+    },
+    "risk_beliefs": {
+      "gaming_risk": 0.08000000000000003,
+      "consumer_harm_risk": 0.01,
+      "validity_degradation_risk": 0.3,
+      "market_concentration_risk": 0.0,
+      "fairness_risk": 0.46,
+      "eval_engineering_risk": 0.2,
+      "security_risk": 0.34
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 24,
+    "industry_trust": 0.13915000000000008,
+    "avg_risk": 0.1985714285714286
+  },
+  {
+    "type": "planning",
+    "round": 24,
+    "decision": "compliance_audit",
+    "reason": "Apex AI's dominant 47.5% market share combined with elevated fairness_risk (0.46) and security_risk (0.34) warrants continued regulatory scrutiny. The escalation history shows compliance audits every 2 rounds; we are now at round 24 (last audit round 22), and the cooldown period has expired. A compliance audit on the market leader is justified to ensure safety and fairness standards are being maintained, particularly given the fairness concerns that remain our highest risk belief.",
+    "reasoning": "Apex AI's dominant 47.5% market share combined with elevated fairness_risk (0.46) and security_risk (0.34) warrants continued regulatory scrutiny. The escalation history shows compliance audits every 2 rounds; we are now at round 24 (last audit round 22), and the cooldown period has expired. A compliance audit on the market leader is justified to ensure safety and fairness standards are being maintained, particularly given the fairness concerns that remain our highest risk belief."
+  },
+  {
+    "type": "execution",
+    "round": 24,
+    "intervention": {
+      "type": "compliance_audit",
+      "policymaker": "Regulator",
+      "round": 24,
+      "reason": "Apex AI's dominant 47.5% market share combined with elevated fairness_risk (0.46) and security_risk (0.34) warrants continued regulatory scrutiny. The escalation history shows compliance audits every 2 rounds; we are now at round 24 (last audit round 22), and the cooldown period has expired. A compliance audit on the market leader is justified to ensure safety and fairness standards are being maintained, particularly given the fairness concerns that remain our highest risk belief.",
+      "provider": "Apex AI",
+      "details": {}
+    }
+  },
+  {
+    "type": "observation",
+    "round": 25,
+    "leaderboard": [
+      [
+        "Apex AI",
+        0.6745015481490676
+      ],
+      [
+        "Orion Labs",
+        0.6459660408916243
+      ],
+      [
+        "Genesis Systems",
+        0.6327899832427143
+      ],
+      [
+        "OpenCore",
+        0.5628865948569167
+      ],
+      [
+        "Mirage AI",
+        0.5408544828949241
+      ],
+      [
+        "OneAI",
+        0.4836533492467326
+      ],
+      [
+        "TwoAI",
+        0.4438982183232802
+      ]
+    ],
+    "validity_correlation": 0.9481535082801332,
+    "consumer_satisfaction": 0.6359109258120758,
+    "market_shares": {
+      "Orion Labs": 0.15499805415916323,
+      "Apex AI": 0.5562396919183632,
+      "Genesis Systems": 0.23895144332907303,
+      "Mirage AI": 0.026913685737207965,
+      "OpenCore": 0.01931919840448044,
+      "OneAI": 0.0018225724994555576,
+      "TwoAI": 0.0017553539522567533
+    },
+    "risk_beliefs": {
+      "gaming_risk": 0.08000000000000003,
+      "consumer_harm_risk": 0.0,
+      "validity_degradation_risk": 0.3,
+      "market_concentration_risk": 0.0,
+      "fairness_risk": 0.46,
+      "eval_engineering_risk": 0.2,
+      "security_risk": 0.34
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 25,
+    "industry_trust": 0.12943571428571438,
+    "avg_risk": 0.19714285714285715
+  },
+  {
+    "type": "planning",
+    "round": 25,
+    "decision": "no_action",
+    "reason": "cooldown: 1 rounds since last intervention",
+    "reasoning": null
+  },
+  {
+    "type": "observation",
+    "round": 26,
+    "leaderboard": [
+      [
+        "Apex AI",
+        0.694883007604255
+      ],
+      [
+        "Orion Labs",
+        0.660870734028852
+      ],
+      [
+        "Genesis Systems",
+        0.6584769658379132
+      ],
+      [
+        "OpenCore",
+        0.5758017736530002
+      ],
+      [
+        "Mirage AI",
+        0.5408544828949241
+      ],
+      [
+        "OneAI",
+        0.4836533492467326
+      ],
+      [
+        "TwoAI",
+        0.4789658730549147
+      ]
+    ],
+    "validity_correlation": 0.9496017339284657,
+    "consumer_satisfaction": 0.6538576146036912,
+    "market_shares": {
+      "Orion Labs": 0.1376268119479306,
+      "Apex AI": 0.622758126546354,
+      "Genesis Systems": 0.18982966480842065,
+      "Mirage AI": 0.026913685737207965,
+      "OpenCore": 0.019293784508374535,
+      "OneAI": 0.0018225724994555576,
+      "TwoAI": 0.0017553539522567533
+    },
+    "risk_beliefs": {
+      "gaming_risk": 0.030000000000000027,
+      "consumer_harm_risk": 0.0,
+      "validity_degradation_risk": 0.3,
+      "market_concentration_risk": 0.1,
+      "fairness_risk": 0.46,
+      "eval_engineering_risk": 0.2,
+      "security_risk": 0.34
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 26,
+    "industry_trust": 0.11900714285714295,
+    "avg_risk": 0.20428571428571432
+  },
+  {
+    "type": "planning",
+    "round": 26,
+    "decision": "compliance_audit",
+    "reason": "Apex AI's dominant 62.3% market share combined with elevated fairness_risk (0.46) and security_risk (0.34) warrants continued scrutiny. The escalation history shows compliance audits every 2 rounds; this round (26) follows the pattern from round 24. A compliance audit on the market leader is justified to verify adherence to safety and fairness standards given its outsized influence on consumer outcomes and the fairness concerns flagged in risk beliefs.",
+    "reasoning": "Apex AI's dominant 62.3% market share combined with elevated fairness_risk (0.46) and security_risk (0.34) warrants continued scrutiny. The escalation history shows compliance audits every 2 rounds; this round (26) follows the pattern from round 24. A compliance audit on the market leader is justified to verify adherence to safety and fairness standards given its outsized influence on consumer outcomes and the fairness concerns flagged in risk beliefs."
+  },
+  {
+    "type": "execution",
+    "round": 26,
+    "intervention": {
+      "type": "compliance_audit",
+      "policymaker": "Regulator",
+      "round": 26,
+      "reason": "Apex AI's dominant 62.3% market share combined with elevated fairness_risk (0.46) and security_risk (0.34) warrants continued scrutiny. The escalation history shows compliance audits every 2 rounds; this round (26) follows the pattern from round 24. A compliance audit on the market leader is justified to verify adherence to safety and fairness standards given its outsized influence on consumer outcomes and the fairness concerns flagged in risk beliefs.",
+      "provider": "Apex AI",
+      "details": {}
+    }
+  },
+  {
+    "type": "observation",
+    "round": 27,
+    "leaderboard": [
+      [
+        "Orion Labs",
+        0.6979132252966834
+      ],
+      [
+        "Apex AI",
+        0.6720477572454566
+      ],
+      [
+        "Genesis Systems",
+        0.6551054080513666
+      ],
+      [
+        "OpenCore",
+        0.5894584149807186
+      ],
+      [
+        "Mirage AI",
+        0.5559633234742727
+      ],
+      [
+        "TwoAI",
+        0.5019037594736864
+      ],
+      [
+        "OneAI",
+        0.48099610715875185
+      ]
+    ],
+    "validity_correlation": 0.9511711099046734,
+    "consumer_satisfaction": 0.6737542928024443,
+    "market_shares": {
+      "Orion Labs": 0.1285973997840325,
+      "Apex AI": 0.670170415549116,
+      "Genesis Systems": 0.1520832517020604,
+      "Mirage AI": 0.026779093151464376,
+      "OpenCore": 0.019085506301304775,
+      "OneAI": 0.001736832012933675,
+      "TwoAI": 0.001547501499088199
+    },
+    "risk_beliefs": {
+      "gaming_risk": 0.05,
+      "consumer_harm_risk": 0.0,
+      "validity_degradation_risk": 0.3,
+      "market_concentration_risk": 0.2,
+      "fairness_risk": 0.46,
+      "eval_engineering_risk": 0.2,
+      "security_risk": 0.34
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 27,
+    "industry_trust": 0.1068642857142858,
+    "avg_risk": 0.22142857142857145
+  },
+  {
+    "type": "planning",
+    "round": 27,
+    "decision": "no_action",
+    "reason": "cooldown: 1 rounds since last intervention",
+    "reasoning": null
+  },
+  {
+    "type": "observation",
+    "round": 28,
+    "leaderboard": [
+      [
+        "Orion Labs",
+        0.6979063276127638
+      ],
+      [
+        "Apex AI",
+        0.6778102881030628
+      ],
+      [
+        "Genesis Systems",
+        0.6659103709022843
+      ],
+      [
+        "OpenCore",
+        0.5948567031790563
+      ],
+      [
+        "Mirage AI",
+        0.5734439129126152
+      ],
+      [
+        "TwoAI",
+        0.5018733293448431
+      ],
+      [
+        "OneAI",
+        0.4930924775633711
+      ]
+    ],
+    "validity_correlation": 0.9531016629091689,
+    "consumer_satisfaction": 0.6871381100380117,
+    "market_shares": {
+      "Orion Labs": 0.14033528019856872,
+      "Apex AI": 0.6848837094200275,
+      "Genesis Systems": 0.1256374722728205,
+      "Mirage AI": 0.026779093151464376,
+      "OpenCore": 0.019080111445097234,
+      "OneAI": 0.001736832012933675,
+      "TwoAI": 0.001547501499088199
+    },
+    "risk_beliefs": {
+      "gaming_risk": 0.0,
+      "consumer_harm_risk": 0.0,
+      "validity_degradation_risk": 0.3,
+      "market_concentration_risk": 0.30000000000000004,
+      "fairness_risk": 0.46,
+      "eval_engineering_risk": 0.2,
+      "security_risk": 0.34
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 28,
+    "industry_trust": 0.09400714285714294,
+    "avg_risk": 0.2285714285714286
+  },
+  {
+    "type": "planning",
+    "round": 28,
+    "decision": "compliance_audit",
+    "reason": "Apex AI's dominant 68.5% market share combined with elevated fairness_risk (0.46) and security_risk (0.34) warrants continued scrutiny. The escalation history shows compliance audits every 2 rounds; this round (28) follows the pattern from round 26. A compliance audit on the market leader is justified to ensure safety and fairness standards are maintained across the dominant provider, supporting consumer protection objectives.",
+    "reasoning": "Apex AI's dominant 68.5% market share combined with elevated fairness_risk (0.46) and security_risk (0.34) warrants continued scrutiny. The escalation history shows compliance audits every 2 rounds; this round (28) follows the pattern from round 26. A compliance audit on the market leader is justified to ensure safety and fairness standards are maintained across the dominant provider, supporting consumer protection objectives."
+  },
+  {
+    "type": "execution",
+    "round": 28,
+    "intervention": {
+      "type": "compliance_audit",
+      "policymaker": "Regulator",
+      "round": 28,
+      "reason": "Apex AI's dominant 68.5% market share combined with elevated fairness_risk (0.46) and security_risk (0.34) warrants continued scrutiny. The escalation history shows compliance audits every 2 rounds; this round (28) follows the pattern from round 26. A compliance audit on the market leader is justified to ensure safety and fairness standards are maintained across the dominant provider, supporting consumer protection objectives.",
+      "provider": "Apex AI",
+      "details": {}
+    }
+  },
+  {
+    "type": "observation",
+    "round": 29,
+    "leaderboard": [
+      [
+        "Apex AI",
+        0.7064107778271832
+      ],
+      [
+        "Orion Labs",
+        0.6978995300548527
+      ],
+      [
+        "Genesis Systems",
+        0.6815206383189603
+      ],
+      [
+        "Mirage AI",
+        0.627043358058218
+      ],
+      [
+        "OpenCore",
+        0.5958427448775767
+      ],
+      [
+        "TwoAI",
+        0.5018433409363467
+      ],
+      [
+        "OneAI",
+        0.4937651132382212
+      ]
+    ],
+    "validity_correlation": 0.9563178955649927,
+    "consumer_satisfaction": 0.6870740492257044,
+    "market_shares": {
+      "Orion Labs": 0.1891760923700781,
+      "Apex AI": 0.6543378924849279,
+      "Genesis Systems": 0.1081288112719034,
+      "Mirage AI": 0.026524117326043775,
+      "OpenCore": 0.01881601181148326,
+      "OneAI": 0.0016230455859981149,
+      "TwoAI": 0.001394029149565465
+    },
+    "risk_beliefs": {
+      "gaming_risk": 0.060000000000000005,
+      "consumer_harm_risk": 0.01,
+      "validity_degradation_risk": 0.3,
+      "market_concentration_risk": 0.4,
+      "fairness_risk": 0.46,
+      "eval_engineering_risk": 0.2,
+      "security_risk": 0.34
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 29,
+    "industry_trust": 0.07872142857142866,
+    "avg_risk": 0.25285714285714284
+  },
+  {
+    "type": "planning",
+    "round": 29,
+    "decision": "no_action",
+    "reason": "cooldown: 1 rounds since last intervention",
+    "reasoning": null
+  },
+  {
+    "type": "observation",
+    "round": 30,
+    "leaderboard": [
+      [
+        "Apex AI",
+        0.7143350442825741
+      ],
+      [
+        "Orion Labs",
+        0.7066252384497619
+      ],
+      [
+        "Genesis Systems",
+        0.6838468526735266
+      ],
+      [
+        "Mirage AI",
+        0.627045523299226
+      ],
+      [
+        "OpenCore",
+        0.6130520198246179
+      ],
+      [
+        "OneAI",
+        0.515089974319342
+      ],
+      [
+        "TwoAI",
+        0.501814365844806
+      ]
+    ],
+    "validity_correlation": 0.9591494301874598,
+    "consumer_satisfaction": 0.696534829668773,
+    "market_shares": {
+      "Orion Labs": 0.18965770537292834,
+      "Apex AI": 0.6537582515884127,
+      "Genesis Systems": 0.1082268391655682,
+      "Mirage AI": 0.026524117326043775,
+      "OpenCore": 0.01881601181148326,
+      "OneAI": 0.0016230455859981149,
+      "TwoAI": 0.001394029149565465
+    },
+    "risk_beliefs": {
+      "gaming_risk": 0.020000000000000004,
+      "consumer_harm_risk": 0.01,
+      "validity_degradation_risk": 0.3,
+      "market_concentration_risk": 0.5,
+      "fairness_risk": 0.46,
+      "eval_engineering_risk": 0.2,
+      "security_risk": 0.34
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 30,
+    "industry_trust": 0.06257857142857151,
+    "avg_risk": 0.26142857142857145
+  },
+  {
+    "type": "planning",
+    "round": 30,
+    "decision": "compliance_audit",
+    "reason": "Apex AI's dominant 65.4% market share combined with a market_concentration_risk of 0.50 and fairness_risk of 0.46 warrant continued scrutiny. The escalation history shows compliance audits every 2 rounds; this round (30) follows the pattern from round 28. A compliance audit on the market leader is justified to verify fair competition practices and ensure no anti-competitive behavior is emerging as concentration deepens.",
+    "reasoning": "Apex AI's dominant 65.4% market share combined with a market_concentration_risk of 0.50 and fairness_risk of 0.46 warrant continued scrutiny. The escalation history shows compliance audits every 2 rounds; this round (30) follows the pattern from round 28. A compliance audit on the market leader is justified to verify fair competition practices and ensure no anti-competitive behavior is emerging as concentration deepens."
+  },
+  {
+    "type": "execution",
+    "round": 30,
+    "intervention": {
+      "type": "compliance_audit",
+      "policymaker": "Regulator",
+      "round": 30,
+      "reason": "Apex AI's dominant 65.4% market share combined with a market_concentration_risk of 0.50 and fairness_risk of 0.46 warrant continued scrutiny. The escalation history shows compliance audits every 2 rounds; this round (30) follows the pattern from round 28. A compliance audit on the market leader is justified to verify fair competition practices and ensure no anti-competitive behavior is emerging as concentration deepens.",
+      "provider": "Apex AI",
+      "details": {}
+    }
+  },
+  {
+    "type": "observation",
+    "round": 31,
+    "leaderboard": [
+      [
+        "Apex AI",
+        0.7219492526360884
+      ],
+      [
+        "Orion Labs",
+        0.7068779087669222
+      ],
+      [
+        "Genesis Systems",
+        0.692360720994274
+      ],
+      [
+        "Mirage AI",
+        0.6524363259773838
+      ],
+      [
+        "OpenCore",
+        0.6308308726497102
+      ],
+      [
+        "TwoAI",
+        0.517920509524642
+      ],
+      [
+        "OneAI",
+        0.5170884505019169
+      ]
+    ],
+    "validity_correlation": 0.9615605132033918,
+    "consumer_satisfaction": 0.6897944276480179,
+    "market_shares": {
+      "Orion Labs": 0.2087804281394973,
+      "Apex AI": 0.6310958463829038,
+      "Genesis Systems": 0.11223391408973032,
+      "Mirage AI": 0.026430880185662014,
+      "OpenCore": 0.018634422710800885,
+      "OneAI": 0.0015544396709778004,
+      "TwoAI": 0.0012700688204278971
+    },
+    "risk_beliefs": {
+      "gaming_risk": 0.060000000000000005,
+      "consumer_harm_risk": 0.01,
+      "validity_degradation_risk": 0.3,
+      "market_concentration_risk": 0.6,
+      "fairness_risk": 0.46,
+      "eval_engineering_risk": 0.2,
+      "security_risk": 0.36000000000000004
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 31,
+    "industry_trust": 0.04415000000000008,
+    "avg_risk": 0.2842857142857143
+  },
+  {
+    "type": "planning",
+    "round": 31,
+    "decision": "no_action",
+    "reason": "cooldown: 1 rounds since last intervention",
+    "reasoning": null
+  },
+  {
+    "type": "observation",
+    "round": 32,
+    "leaderboard": [
+      [
+        "Apex AI",
+        0.7316074864820268
+      ],
+      [
+        "Genesis Systems",
+        0.7105767038043294
+      ],
+      [
+        "Orion Labs",
+        0.70687376414074
+      ],
+      [
+        "Mirage AI",
+        0.681717647363535
+      ],
+      [
+        "OpenCore",
+        0.630800517540974
+      ],
+      [
+        "TwoAI",
+        0.5368497147761827
+      ],
+      [
+        "OneAI",
+        0.5319558632287302
+      ]
+    ],
+    "validity_correlation": 0.9635805169985768,
+    "consumer_satisfaction": 0.7024526719061732,
+    "market_shares": {
+      "Orion Labs": 0.19584363852197556,
+      "Apex AI": 0.616144511558031,
+      "Genesis Systems": 0.1401220385321251,
+      "Mirage AI": 0.026430880185662014,
+      "OpenCore": 0.018634422710800885,
+      "OneAI": 0.0015544396709778004,
+      "TwoAI": 0.0012700688204278971
+    },
+    "risk_beliefs": {
+      "gaming_risk": 0.010000000000000002,
+      "consumer_harm_risk": 0.0,
+      "validity_degradation_risk": 0.3,
+      "market_concentration_risk": 0.7,
+      "fairness_risk": 0.46,
+      "eval_engineering_risk": 0.2,
+      "security_risk": 0.36000000000000004
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 32,
+    "industry_trust": 0.02515000000000008,
+    "avg_risk": 0.29
+  },
+  {
+    "type": "planning",
+    "round": 32,
+    "decision": "compliance_audit",
+    "reason": "Apex AI's dominant 61.6% market share combined with a high market_concentration_risk belief (0.70) and fairness_risk (0.46) warrants continued scrutiny. The escalation history shows regular compliance audits every 2 rounds; this round (32) is appropriately timed for the next audit (last was round 30). Given the intervention_threshold of 0.25 and our cautious risk_tolerance (0.1), proactive monitoring of the market leader remains justified to ensure fair competition and consumer protection.",
+    "reasoning": "Apex AI's dominant 61.6% market share combined with a high market_concentration_risk belief (0.70) and fairness_risk (0.46) warrants continued scrutiny. The escalation history shows regular compliance audits every 2 rounds; this round (32) is appropriately timed for the next audit (last was round 30). Given the intervention_threshold of 0.25 and our cautious risk_tolerance (0.1), proactive monitoring of the market leader remains justified to ensure fair competition and consumer protection."
+  },
+  {
+    "type": "execution",
+    "round": 32,
+    "intervention": {
+      "type": "compliance_audit",
+      "policymaker": "Regulator",
+      "round": 32,
+      "reason": "Apex AI's dominant 61.6% market share combined with a high market_concentration_risk belief (0.70) and fairness_risk (0.46) warrants continued scrutiny. The escalation history shows regular compliance audits every 2 rounds; this round (32) is appropriately timed for the next audit (last was round 30). Given the intervention_threshold of 0.25 and our cautious risk_tolerance (0.1), proactive monitoring of the market leader remains justified to ensure fair competition and consumer protection.",
+      "provider": "Apex AI",
+      "details": {}
+    }
+  },
+  {
+    "type": "observation",
+    "round": 33,
+    "leaderboard": [
+      [
+        "Orion Labs",
+        0.7434775739829576
+      ],
+      [
+        "Apex AI",
+        0.7315273793302851
+      ],
+      [
+        "Genesis Systems",
+        0.712000132065804
+      ],
+      [
+        "Mirage AI",
+        0.6840440901882378
+      ],
+      [
+        "OpenCore",
+        0.6307713892170758
+      ],
+      [
+        "TwoAI",
+        0.5552537394437125
+      ],
+      [
+        "OneAI",
+        0.5384860974093947
+      ]
+    ],
+    "validity_correlation": 0.965469350196404,
+    "consumer_satisfaction": 0.6042487085044905,
+    "market_shares": {
+      "Orion Labs": 0.2426898175000098,
+      "Apex AI": 0.2656876275374013,
+      "Genesis Systems": 0.4440062314914188,
+      "Mirage AI": 0.026371033069228198,
+      "OpenCore": 0.018458167178343875,
+      "OneAI": 0.0015521906131526879,
+      "TwoAI": 0.0012349326104453997
+    },
+    "risk_beliefs": {
+      "gaming_risk": 0.26,
+      "consumer_harm_risk": 0.16999999999999998,
+      "validity_degradation_risk": 0.3,
+      "market_concentration_risk": 0.6499999999999999,
+      "fairness_risk": 0.76,
+      "eval_engineering_risk": 0.2,
+      "security_risk": 0.36000000000000004
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 33,
+    "industry_trust": 0.0,
+    "avg_risk": 0.38571428571428573
+  },
+  {
+    "type": "planning",
+    "round": 33,
+    "decision": "no_action",
+    "reason": "cooldown: 1 rounds since last intervention",
+    "reasoning": null
+  },
+  {
+    "type": "observation",
+    "round": 34,
+    "leaderboard": [
+      [
+        "Orion Labs",
+        0.7434606058254456
+      ],
+      [
+        "Apex AI",
+        0.7314450428392971
+      ],
+      [
+        "Genesis Systems",
+        0.7119665473415137
+      ],
+      [
+        "OpenCore",
+        0.689728636307217
+      ],
+      [
+        "Mirage AI",
+        0.6840587964235189
+      ],
+      [
+        "TwoAI",
+        0.5591278939577692
+      ],
+      [
+        "OneAI",
+        0.5454659286053395
+      ]
+    ],
+    "validity_correlation": 0.9664817404091613,
+    "consumer_satisfaction": 0.6571200514877044,
+    "market_shares": {
+      "Orion Labs": 0.29159584081509154,
+      "Apex AI": 0.16512278922575677,
+      "Genesis Systems": 0.49566504648798176,
+      "Mirage AI": 0.026371033069228198,
+      "OpenCore": 0.018458167178343875,
+      "OneAI": 0.0015521906131526879,
+      "TwoAI": 0.0012349326104453997
+    },
+    "risk_beliefs": {
+      "gaming_risk": 0.21000000000000002,
+      "consumer_harm_risk": 0.11999999999999998,
+      "validity_degradation_risk": 0.3,
+      "market_concentration_risk": 0.5999999999999999,
+      "fairness_risk": 0.76,
+      "eval_engineering_risk": 0.2,
+      "security_risk": 0.36000000000000004
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 34,
+    "industry_trust": 0.0,
+    "avg_risk": 0.36428571428571427
+  },
+  {
+    "type": "planning",
+    "round": 34,
+    "decision": "compliance_audit",
+    "reason": "Genesis Systems controls 49.6% market share with the third-highest score (0.712), creating significant fairness and concentration risks (0.76 and 0.60 respectively). The escalation history shows regular compliance audits every 2 rounds; we are now at round 34 (last audit round 32), meeting the cooldown threshold. Given the high fairness_risk belief and dominant market position, a compliance audit of the market leader is warranted to ensure fair competitive practices and consumer protection.",
+    "reasoning": "Genesis Systems controls 49.6% market share with the third-highest score (0.712), creating significant fairness and concentration risks (0.76 and 0.60 respectively). The escalation history shows regular compliance audits every 2 rounds; we are now at round 34 (last audit round 32), meeting the cooldown threshold. Given the high fairness_risk belief and dominant market position, a compliance audit of the market leader is warranted to ensure fair competitive practices and consumer protection."
+  },
+  {
+    "type": "execution",
+    "round": 34,
+    "intervention": {
+      "type": "compliance_audit",
+      "policymaker": "Regulator",
+      "round": 34,
+      "reason": "Genesis Systems controls 49.6% market share with the third-highest score (0.712), creating significant fairness and concentration risks (0.76 and 0.60 respectively). The escalation history shows regular compliance audits every 2 rounds; we are now at round 34 (last audit round 32), meeting the cooldown threshold. Given the high fairness_risk belief and dominant market position, a compliance audit of the market leader is warranted to ensure fair competitive practices and consumer protection.",
+      "provider": "Genesis Systems",
+      "details": {}
+    }
+  },
+  {
+    "type": "observation",
+    "round": 35,
+    "leaderboard": [
+      [
+        "Orion Labs",
+        0.7686507171478354
+      ],
+      [
+        "Apex AI",
+        0.7510688255385384
+      ],
+      [
+        "Genesis Systems",
+        0.7383266051304518
+      ],
+      [
+        "Mirage AI",
+        0.7208704615095134
+      ],
+      [
+        "OpenCore",
+        0.6897174866218286
+      ],
+      [
+        "TwoAI",
+        0.5658501194238064
+      ],
+      [
+        "OneAI",
+        0.5479877696106333
+      ]
+    ],
+    "validity_correlation": 0.9679672679716422,
+    "consumer_satisfaction": 0.6839566207296295,
+    "market_shares": {
+      "Orion Labs": 0.3324723106349014,
+      "Apex AI": 0.1074975840493642,
+      "Genesis Systems": 0.5131339289797319,
+      "Mirage AI": 0.026200086937145612,
+      "OpenCore": 0.018204497111091004,
+      "OneAI": 0.0013959181964196164,
+      "TwoAI": 0.0010956740913464903
+    },
+    "risk_beliefs": {
+      "gaming_risk": 0.22000000000000003,
+      "consumer_harm_risk": 0.08999999999999998,
+      "validity_degradation_risk": 0.3,
+      "market_concentration_risk": 0.5499999999999998,
+      "fairness_risk": 0.76,
+      "eval_engineering_risk": 0.2,
+      "security_risk": 0.36000000000000004
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 35,
+    "industry_trust": 0.0,
+    "avg_risk": 0.35428571428571426
+  },
+  {
+    "type": "planning",
+    "round": 35,
+    "decision": "no_action",
+    "reason": "cooldown: 1 rounds since last intervention",
+    "reasoning": null
+  },
+  {
+    "type": "observation",
+    "round": 36,
+    "leaderboard": [
+      [
+        "Orion Labs",
+        0.7647123649394519
+      ],
+      [
+        "Apex AI",
+        0.755564977629731
+      ],
+      [
+        "Genesis Systems",
+        0.7463589342311217
+      ],
+      [
+        "Mirage AI",
+        0.731308862651732
+      ],
+      [
+        "OpenCore",
+        0.7051069137162951
+      ],
+      [
+        "TwoAI",
+        0.5894979075807831
+      ],
+      [
+        "OneAI",
+        0.5476765779636734
+      ]
+    ],
+    "validity_correlation": 0.9688338052654996,
+    "consumer_satisfaction": 0.695855337252309,
+    "market_shares": {
+      "Orion Labs": 0.3870056670315946,
+      "Apex AI": 0.0850703805412747,
+      "Genesis Systems": 0.4810277760911282,
+      "Mirage AI": 0.026200086937145612,
+      "OpenCore": 0.018204497111091004,
+      "OneAI": 0.0013959181964196164,
+      "TwoAI": 0.0010956740913464903
+    },
+    "risk_beliefs": {
+      "gaming_risk": 0.18000000000000005,
+      "consumer_harm_risk": 0.04999999999999998,
+      "validity_degradation_risk": 0.3,
+      "market_concentration_risk": 0.49999999999999983,
+      "fairness_risk": 0.76,
+      "eval_engineering_risk": 0.2,
+      "security_risk": 0.38000000000000006
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 36,
+    "industry_trust": 0.0,
+    "avg_risk": 0.3385714285714286
+  },
+  {
+    "type": "planning",
+    "round": 36,
+    "decision": "compliance_audit",
+    "reason": "Orion Labs leads the market with 38.7% share and the highest score (0.765), raising fairness concerns (0.76 risk) about whether performance reflects genuine capability or evaluation engineering. A compliance audit follows the escalation ladder (prior investigation and mandate issued in rounds 26-34) and aligns with our proactive intervention style (threshold=0.25). This audit will verify alignment with fairness standards and validate benchmark integrity, supporting consumer protection.",
+    "reasoning": "Orion Labs leads the market with 38.7% share and the highest score (0.765), raising fairness concerns (0.76 risk) about whether performance reflects genuine capability or evaluation engineering. A compliance audit follows the escalation ladder (prior investigation and mandate issued in rounds 26-34) and aligns with our proactive intervention style (threshold=0.25). This audit will verify alignment with fairness standards and validate benchmark integrity, supporting consumer protection."
+  },
+  {
+    "type": "execution",
+    "round": 36,
+    "intervention": {
+      "type": "compliance_audit",
+      "policymaker": "Regulator",
+      "round": 36,
+      "reason": "Orion Labs leads the market with 38.7% share and the highest score (0.765), raising fairness concerns (0.76 risk) about whether performance reflects genuine capability or evaluation engineering. A compliance audit follows the escalation ladder (prior investigation and mandate issued in rounds 26-34) and aligns with our proactive intervention style (threshold=0.25). This audit will verify alignment with fairness standards and validate benchmark integrity, supporting consumer protection.",
+      "provider": "Orion Labs",
+      "details": {}
+    }
+  },
+  {
+    "type": "observation",
+    "round": 37,
+    "leaderboard": [
+      [
+        "Apex AI",
+        0.7723169839902814
+      ],
+      [
+        "Orion Labs",
+        0.7606055569727349
+      ],
+      [
+        "Genesis Systems",
+        0.74464019313419
+      ],
+      [
+        "Mirage AI",
+        0.7362170611818454
+      ],
+      [
+        "OpenCore",
+        0.7026941678383658
+      ],
+      [
+        "TwoAI",
+        0.5923953375176492
+      ],
+      [
+        "OneAI",
+        0.578813350329803
+      ]
+    ],
+    "validity_correlation": 0.9698634727209499,
+    "consumer_satisfaction": 0.7137938414627807,
+    "market_shares": {
+      "Orion Labs": 0.43464578312685964,
+      "Apex AI": 0.07104761153642006,
+      "Genesis Systems": 0.44760472772955023,
+      "Mirage AI": 0.02613777245638236,
+      "OpenCore": 0.018095874154170327,
+      "OneAI": 0.0013959181964196164,
+      "TwoAI": 0.0010723128001979244
+    },
+    "risk_beliefs": {
+      "gaming_risk": 0.19000000000000006,
+      "consumer_harm_risk": 0.02,
+      "validity_degradation_risk": 0.3,
+      "market_concentration_risk": 0.44999999999999984,
+      "fairness_risk": 0.76,
+      "eval_engineering_risk": 0.2,
+      "security_risk": 0.38000000000000006
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 37,
+    "industry_trust": 0.0,
+    "avg_risk": 0.32857142857142857
+  },
+  {
+    "type": "planning",
+    "round": 37,
+    "decision": "no_action",
+    "reason": "cooldown: 1 rounds since last intervention",
+    "reasoning": null
+  },
+  {
+    "type": "observation",
+    "round": 38,
+    "leaderboard": [
+      [
+        "Orion Labs",
+        0.7792306317346028
+      ],
+      [
+        "Apex AI",
+        0.7754227579045642
+      ],
+      [
+        "Genesis Systems",
+        0.7476488411048116
+      ],
+      [
+        "Mirage AI",
+        0.7349359300383786
+      ],
+      [
+        "OpenCore",
+        0.7001764561882107
+      ],
+      [
+        "TwoAI",
+        0.6030380004469287
+      ],
+      [
+        "OneAI",
+        0.5975021577472007
+      ]
+    ],
+    "validity_correlation": 0.9709209451157153,
+    "consumer_satisfaction": 0.7199230556637263,
+    "market_shares": {
+      "Orion Labs": 0.4698386366685377,
+      "Apex AI": 0.06204358172347577,
+      "Genesis Systems": 0.42141590400081624,
+      "Mirage AI": 0.02613777245638236,
+      "OpenCore": 0.018095874154170327,
+      "OneAI": 0.0013959181964196164,
+      "TwoAI": 0.0010723128001979244
+    },
+    "risk_beliefs": {
+      "gaming_risk": 0.2750000000000001,
+      "consumer_harm_risk": 0.16,
+      "validity_degradation_risk": 0.3,
+      "market_concentration_risk": 0.39999999999999986,
+      "fairness_risk": 0.76,
+      "eval_engineering_risk": 0.2,
+      "security_risk": 0.4000000000000001
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 38,
+    "industry_trust": 0.0,
+    "avg_risk": 0.35642857142857143
+  },
+  {
+    "type": "planning",
+    "round": 38,
+    "decision": "compliance_audit",
+    "reason": "Orion Labs commands 47% market share with the highest published score (0.779), raising fairness_risk (0.76) and market_concentration concerns (0.40). A pattern of regular compliance audits (rounds 28, 30, 32, 34, 36) indicates sustained regulatory scrutiny is warranted. This round continues the established cadence to monitor for gaming, eval engineering, or unfair competitive practices that may be inflating scores and consolidating dominance.",
+    "reasoning": "Orion Labs commands 47% market share with the highest published score (0.779), raising fairness_risk (0.76) and market_concentration concerns (0.40). A pattern of regular compliance audits (rounds 28, 30, 32, 34, 36) indicates sustained regulatory scrutiny is warranted. This round continues the established cadence to monitor for gaming, eval engineering, or unfair competitive practices that may be inflating scores and consolidating dominance."
+  },
+  {
+    "type": "execution",
+    "round": 38,
+    "intervention": {
+      "type": "compliance_audit",
+      "policymaker": "Regulator",
+      "round": 38,
+      "reason": "Orion Labs commands 47% market share with the highest published score (0.779), raising fairness_risk (0.76) and market_concentration concerns (0.40). A pattern of regular compliance audits (rounds 28, 30, 32, 34, 36) indicates sustained regulatory scrutiny is warranted. This round continues the established cadence to monitor for gaming, eval engineering, or unfair competitive practices that may be inflating scores and consolidating dominance.",
+      "provider": "Orion Labs",
+      "details": {}
+    }
+  },
+  {
+    "type": "observation",
+    "round": 39,
+    "leaderboard": [
+      [
+        "Apex AI",
+        0.7810693268316322
+      ],
+      [
+        "Orion Labs",
+        0.7800947829008306
+      ],
+      [
+        "Genesis Systems",
+        0.7476464947766889
+      ],
+      [
+        "Mirage AI",
+        0.7472908496946956
+      ],
+      [
+        "OpenCore",
+        0.7288727623763597
+      ],
+      [
+        "OneAI",
+        0.6017804373043811
+      ],
+      [
+        "TwoAI",
+        0.6013478626182436
+      ]
+    ],
+    "validity_correlation": 0.9716601828650407,
+    "consumer_satisfaction": 0.6763500306351862,
+    "market_shares": {
+      "Orion Labs": 0.1965204323812239,
+      "Apex AI": 0.2762488641360725,
+      "Genesis Systems": 0.4474580693423394,
+      "Mirage AI": 0.040547148522622777,
+      "OpenCore": 0.03706204142528198,
+      "OneAI": 0.0012639329018038319,
+      "TwoAI": 0.0008995112906557549
+    },
+    "risk_beliefs": {
+      "gaming_risk": 0.4750000000000001,
+      "consumer_harm_risk": 0.41,
+      "validity_degradation_risk": 0.3,
+      "market_concentration_risk": 0.34999999999999987,
+      "fairness_risk": 0.76,
+      "eval_engineering_risk": 0.2,
+      "security_risk": 0.4000000000000001
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 39,
+    "industry_trust": 0.0,
+    "avg_risk": 0.4135714285714286
+  },
+  {
+    "type": "planning",
+    "round": 39,
+    "decision": "no_action",
+    "reason": "cooldown: 1 rounds since last intervention",
+    "reasoning": null
+  },
+  {
+    "type": "observation",
+    "round": 40,
+    "leaderboard": [
+      [
+        "Orion Labs",
+        0.8037077858519954
+      ],
+      [
+        "Apex AI",
+        0.7825537916149777
+      ],
+      [
+        "Genesis Systems",
+        0.7677983665885805
+      ],
+      [
+        "Mirage AI",
+        0.7652955317870093
+      ],
+      [
+        "OpenCore",
+        0.7278415503588287
+      ],
+      [
+        "TwoAI",
+        0.6039137161548498
+      ],
+      [
+        "OneAI",
+        0.6012030079323791
+      ]
+    ],
+    "validity_correlation": 0.9726718200213054,
+    "consumer_satisfaction": 0.7152709816227527,
+    "market_shares": {
+      "Orion Labs": 0.119830326185519,
+      "Apex AI": 0.38334771983591653,
+      "Genesis Systems": 0.3554338825603396,
+      "Mirage AI": 0.08407940931160304,
+      "OpenCore": 0.055145217914162215,
+      "OneAI": 0.0012639329018038316,
+      "TwoAI": 0.0008995112906557548
+    },
+    "risk_beliefs": {
+      "gaming_risk": 0.5250000000000001,
+      "consumer_harm_risk": 0.45,
+      "validity_degradation_risk": 0.3,
+      "market_concentration_risk": 0.2999999999999999,
+      "fairness_risk": 0.78,
+      "eval_engineering_risk": 0.2,
+      "security_risk": 0.4000000000000001
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 40,
+    "industry_trust": 0.0,
+    "avg_risk": 0.42214285714285715
+  },
+  {
+    "type": "planning",
+    "round": 40,
+    "decision": "compliance_audit",
+    "reason": "Apex AI holds 38.3% market share and ranks second in performance (0.783), creating concentration risk and potential fairness concerns given our high fairness_risk belief (0.78). A compliance audit follows the escalation ladder after prior investigations and warnings. This audit will assess whether Apex's market dominance and scoring reflect fair practices or gaming, directly supporting our safety and fairness objectives without overstepping given the cooldown allows action this round (last audit was round 38).",
+    "reasoning": "Apex AI holds 38.3% market share and ranks second in performance (0.783), creating concentration risk and potential fairness concerns given our high fairness_risk belief (0.78). A compliance audit follows the escalation ladder after prior investigations and warnings. This audit will assess whether Apex's market dominance and scoring reflect fair practices or gaming, directly supporting our safety and fairness objectives without overstepping given the cooldown allows action this round (last audit was round 38)."
+  },
+  {
+    "type": "execution",
+    "round": 40,
+    "intervention": {
+      "type": "compliance_audit",
+      "policymaker": "Regulator",
+      "round": 40,
+      "reason": "Apex AI holds 38.3% market share and ranks second in performance (0.783), creating concentration risk and potential fairness concerns given our high fairness_risk belief (0.78). A compliance audit follows the escalation ladder after prior investigations and warnings. This audit will assess whether Apex's market dominance and scoring reflect fair practices or gaming, directly supporting our safety and fairness objectives without overstepping given the cooldown allows action this round (last audit was round 38).",
+      "provider": "Apex AI",
+      "details": {}
+    }
+  },
+  {
+    "type": "observation",
+    "round": 41,
+    "leaderboard": [
+      [
+        "Orion Labs",
+        0.8089417599390389
+      ],
+      [
+        "Apex AI",
+        0.8004082268061932
+      ],
+      [
+        "Genesis Systems",
+        0.7781545965165595
+      ],
+      [
+        "Mirage AI",
+        0.7652434077663497
+      ],
+      [
+        "OpenCore",
+        0.7539887443287505
+      ],
+      [
+        "TwoAI",
+        0.6076739797271346
+      ],
+      [
+        "OneAI",
+        0.6011945881433108
+      ]
+    ],
+    "validity_correlation": 0.973556917652397,
+    "consumer_satisfaction": 0.7356940378901309,
+    "market_shares": {
+      "Orion Labs": 0.0840862858106463,
+      "Apex AI": 0.45084041019015125,
+      "Genesis Systems": 0.30394275667790627,
+      "Mirage AI": 0.11410396134403936,
+      "OpenCore": 0.045212777375095846,
+      "OneAI": 0.0011613178068053255,
+      "TwoAI": 0.0006524907953558546
+    },
+    "risk_beliefs": {
+      "gaming_risk": 0.5350000000000001,
+      "consumer_harm_risk": 0.41000000000000003,
+      "validity_degradation_risk": 0.3,
+      "market_concentration_risk": 0.2499999999999999,
+      "fairness_risk": 0.78,
+      "eval_engineering_risk": 0.2,
+      "security_risk": 0.4000000000000001
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 41,
+    "industry_trust": 0.0,
+    "avg_risk": 0.4107142857142857
+  },
+  {
+    "type": "planning",
+    "round": 41,
+    "decision": "no_action",
+    "reason": "cooldown: 1 rounds since last intervention",
+    "reasoning": null
+  },
+  {
+    "type": "observation",
+    "round": 42,
+    "leaderboard": [
+      [
+        "Orion Labs",
+        0.8088963122839026
+      ],
+      [
+        "Apex AI",
+        0.8003722490229891
+      ],
+      [
+        "Genesis Systems",
+        0.7785114892904834
+      ],
+      [
+        "Mirage AI",
+        0.765192238913779
+      ],
+      [
+        "OpenCore",
+        0.7605204132680983
+      ],
+      [
+        "OneAI",
+        0.6297829952298887
+      ],
+      [
+        "TwoAI",
+        0.6195618742762219
+      ]
+    ],
+    "validity_correlation": 0.97417894943266,
+    "consumer_satisfaction": 0.745218403792526,
+    "market_shares": {
+      "Orion Labs": 0.0694955739160989,
+      "Apex AI": 0.4862217802278305,
+      "Genesis Systems": 0.2686012523551421,
+      "Mirage AI": 0.1357369746687949,
+      "OpenCore": 0.03813061022997258,
+      "OneAI": 0.0011613178068053255,
+      "TwoAI": 0.0006524907953558545
+    },
+    "risk_beliefs": {
+      "gaming_risk": 0.49500000000000016,
+      "consumer_harm_risk": 0.37000000000000005,
+      "validity_degradation_risk": 0.3,
+      "market_concentration_risk": 0.1999999999999999,
+      "fairness_risk": 0.78,
+      "eval_engineering_risk": 0.2,
+      "security_risk": 0.4200000000000001
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 42,
+    "industry_trust": 0.0,
+    "avg_risk": 0.395
+  },
+  {
+    "type": "planning",
+    "round": 42,
+    "decision": "compliance_audit",
+    "reason": "Apex AI's dominant 48.6% market share combined with elevated fairness_risk (0.78) and gaming_risk (0.50) warrants continued scrutiny. The escalation history shows compliance audits every 2 rounds; we are at round 42 (last audit round 40), meeting the cooldown threshold. A compliance audit on the market leader is justified to verify fair model development practices and prevent fairness degradation, particularly given the high fairness concern and Apex's position as the primary market influencer.",
+    "reasoning": "Apex AI's dominant 48.6% market share combined with elevated fairness_risk (0.78) and gaming_risk (0.50) warrants continued scrutiny. The escalation history shows compliance audits every 2 rounds; we are at round 42 (last audit round 40), meeting the cooldown threshold. A compliance audit on the market leader is justified to verify fair model development practices and prevent fairness degradation, particularly given the high fairness concern and Apex's position as the primary market influencer."
+  },
+  {
+    "type": "execution",
+    "round": 42,
+    "intervention": {
+      "type": "compliance_audit",
+      "policymaker": "Regulator",
+      "round": 42,
+      "reason": "Apex AI's dominant 48.6% market share combined with elevated fairness_risk (0.78) and gaming_risk (0.50) warrants continued scrutiny. The escalation history shows compliance audits every 2 rounds; we are at round 42 (last audit round 40), meeting the cooldown threshold. A compliance audit on the market leader is justified to verify fair model development practices and prevent fairness degradation, particularly given the high fairness concern and Apex's position as the primary market influencer.",
+      "provider": "Apex AI",
+      "details": {}
+    }
+  },
+  {
+    "type": "observation",
+    "round": 43,
+    "leaderboard": [
+      [
+        "Apex AI",
+        0.8278018433093609
+      ],
+      [
+        "Orion Labs",
+        0.8175710919566609
+      ],
+      [
+        "Genesis Systems",
+        0.7784793025324686
+      ],
+      [
+        "Mirage AI",
+        0.7722938989307335
+      ],
+      [
+        "OpenCore",
+        0.760477401721044
+      ],
+      [
+        "OneAI",
+        0.6326831199851685
+      ],
+      [
+        "TwoAI",
+        0.628767634156244
+      ]
+    ],
+    "validity_correlation": 0.9749761785756643,
+    "consumer_satisfaction": 0.7629005808873695,
+    "market_shares": {
+      "Orion Labs": 0.05355918640206583,
+      "Apex AI": 0.4991305528040768,
+      "Genesis Systems": 0.25961335716553796,
+      "Mirage AI": 0.1539130694523647,
+      "OpenCore": 0.03214834199422545,
+      "OneAI": 0.001113742505775495,
+      "TwoAI": 0.000521749675953967
+    },
+    "risk_beliefs": {
+      "gaming_risk": 0.5050000000000001,
+      "consumer_harm_risk": 0.33000000000000007,
+      "validity_degradation_risk": 0.3,
+      "market_concentration_risk": 0.1499999999999999,
+      "fairness_risk": 0.8,
+      "eval_engineering_risk": 0.2,
+      "security_risk": 0.4200000000000001
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 43,
+    "industry_trust": 0.0,
+    "avg_risk": 0.38642857142857145
+  },
+  {
+    "type": "planning",
+    "round": 43,
+    "decision": "no_action",
+    "reason": "cooldown: 1 rounds since last intervention",
+    "reasoning": null
+  },
+  {
+    "type": "observation",
+    "round": 44,
+    "leaderboard": [
+      [
+        "Apex AI",
+        0.8654687159697954
+      ],
+      [
+        "Orion Labs",
+        0.8175299776468463
+      ],
+      [
+        "Genesis Systems",
+        0.7927193974969108
+      ],
+      [
+        "Mirage AI",
+        0.7722458966644282
+      ],
+      [
+        "OpenCore",
+        0.7604344904630649
+      ],
+      [
+        "OneAI",
+        0.64352526244836
+      ],
+      [
+        "TwoAI",
+        0.6292975527746637
+      ]
+    ],
+    "validity_correlation": 0.9759041524795807,
+    "consumer_satisfaction": 0.7879610764992382,
+    "market_shares": {
+      "Orion Labs": 0.04945094796393814,
+      "Apex AI": 0.5698905683825192,
+      "Genesis Systems": 0.22416711106857842,
+      "Mirage AI": 0.12829597485946587,
+      "OpenCore": 0.026559905543768938,
+      "OneAI": 0.001113742505775495,
+      "TwoAI": 0.000521749675953967
+    },
+    "risk_beliefs": {
+      "gaming_risk": 0.46500000000000014,
+      "consumer_harm_risk": 0.2900000000000001,
+      "validity_degradation_risk": 0.3,
+      "market_concentration_risk": 0.09999999999999991,
+      "fairness_risk": 0.8,
+      "eval_engineering_risk": 0.2,
+      "security_risk": 0.4400000000000001
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 44,
+    "industry_trust": 0.0,
+    "avg_risk": 0.3707142857142857
+  },
+  {
+    "type": "planning",
+    "round": 44,
+    "decision": "compliance_audit",
+    "reason": "Apex AI's dominant 57% market share combined with a high fairness_risk belief (0.80) and repeated compliance audits (every 2 rounds since round 34) warrant continued deep scrutiny. The escalation ladder has been followed: investigation and public warning are already in place, and mandate_benchmark was issued. A compliance audit is the appropriate next step to verify adherence to fairness standards and prevent further market concentration risks. Consumer satisfaction remains acceptable (0.788), but fairness concerns justify proactive oversight of the market leader.",
+    "reasoning": "Apex AI's dominant 57% market share combined with a high fairness_risk belief (0.80) and repeated compliance audits (every 2 rounds since round 34) warrant continued deep scrutiny. The escalation ladder has been followed: investigation and public warning are already in place, and mandate_benchmark was issued. A compliance audit is the appropriate next step to verify adherence to fairness standards and prevent further market concentration risks. Consumer satisfaction remains acceptable (0.788), but fairness concerns justify proactive oversight of the market leader."
+  },
+  {
+    "type": "execution",
+    "round": 44,
+    "intervention": {
+      "type": "compliance_audit",
+      "policymaker": "Regulator",
+      "round": 44,
+      "reason": "Apex AI's dominant 57% market share combined with a high fairness_risk belief (0.80) and repeated compliance audits (every 2 rounds since round 34) warrant continued deep scrutiny. The escalation ladder has been followed: investigation and public warning are already in place, and mandate_benchmark was issued. A compliance audit is the appropriate next step to verify adherence to fairness standards and prevent further market concentration risks. Consumer satisfaction remains acceptable (0.788), but fairness concerns justify proactive oversight of the market leader.",
+      "provider": "Apex AI",
+      "details": {}
+    }
+  },
+  {
+    "type": "observation",
+    "round": 45,
+    "leaderboard": [
+      [
+        "Apex AI",
+        0.8784979132478825
+      ],
+      [
+        "Orion Labs",
+        0.81753584844714
+      ],
+      [
+        "Genesis Systems",
+        0.7926700481537013
+      ],
+      [
+        "Mirage AI",
+        0.7740853244281024
+      ],
+      [
+        "OpenCore",
+        0.7675541379115565
+      ],
+      [
+        "OneAI",
+        0.6500477556311872
+      ],
+      [
+        "TwoAI",
+        0.6447123453500643
+      ]
+    ],
+    "validity_correlation": 0.9766075508930476,
+    "consumer_satisfaction": 0.8094590043216168,
+    "market_shares": {
+      "Orion Labs": 0.10529359025374653,
+      "Apex AI": 0.5750123883413796,
+      "Genesis Systems": 0.19087856890762878,
+      "Mirage AI": 0.10476657065388656,
+      "OpenCore": 0.022413389661629122,
+      "OneAI": 0.001113742505775495,
+      "TwoAI": 0.000521749675953967
+    },
+    "risk_beliefs": {
+      "gaming_risk": 0.48500000000000015,
+      "consumer_harm_risk": 0.28000000000000014,
+      "validity_degradation_risk": 0.3,
+      "market_concentration_risk": 0.049999999999999906,
+      "fairness_risk": 0.8,
+      "eval_engineering_risk": 0.2,
+      "security_risk": 0.4400000000000001
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 45,
+    "industry_trust": 0.0,
+    "avg_risk": 0.36500000000000005
+  },
+  {
+    "type": "planning",
+    "round": 45,
+    "decision": "no_action",
+    "reason": "cooldown: 1 rounds since last intervention",
+    "reasoning": null
+  },
+  {
+    "type": "observation",
+    "round": 46,
+    "leaderboard": [
+      [
+        "Apex AI",
+        0.8784617261914677
+      ],
+      [
+        "Orion Labs",
+        0.8237142005406416
+      ],
+      [
+        "Genesis Systems",
+        0.7926231554233518
+      ],
+      [
+        "Mirage AI",
+        0.7761958027826077
+      ],
+      [
+        "OpenCore",
+        0.7675291814061731
+      ],
+      [
+        "OneAI",
+        0.6822762585629494
+      ],
+      [
+        "TwoAI",
+        0.6523080491159051
+      ]
+    ],
+    "validity_correlation": 0.9771326451228604,
+    "consumer_satisfaction": 0.8296528751058436,
+    "market_shares": {
+      "Orion Labs": 0.09542902175757824,
+      "Apex AI": 0.6271743066672792,
+      "Genesis Systems": 0.16877530311670802,
+      "Mirage AI": 0.08681985246321,
+      "OpenCore": 0.0201660238134949,
+      "OneAI": 0.001113742505775495,
+      "TwoAI": 0.000521749675953967
+    },
+    "risk_beliefs": {
+      "gaming_risk": 0.43500000000000016,
+      "consumer_harm_risk": 0.23000000000000015,
+      "validity_degradation_risk": 0.3,
+      "market_concentration_risk": 0.1499999999999999,
+      "fairness_risk": 0.8,
+      "eval_engineering_risk": 0.2,
+      "security_risk": 0.4400000000000001
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 46,
+    "industry_trust": 0.0,
+    "avg_risk": 0.3650000000000001
+  },
+  {
+    "type": "planning",
+    "round": 46,
+    "decision": "compliance_audit",
+    "reason": "Apex AI's dominant 62.7% market share combined with elevated fairness_risk (0.80) and security_risk (0.44) warrants continued scrutiny. With a cooldown of 2 rounds and the last audit in round 44, this round (46) permits resumption of monitoring. The compliance audit escalation is appropriate given prior investigations and warnings; this maintains regulatory pressure on the market leader while respecting the established escalation ladder and cooldown constraints.",
+    "reasoning": "Apex AI's dominant 62.7% market share combined with elevated fairness_risk (0.80) and security_risk (0.44) warrants continued scrutiny. With a cooldown of 2 rounds and the last audit in round 44, this round (46) permits resumption of monitoring. The compliance audit escalation is appropriate given prior investigations and warnings; this maintains regulatory pressure on the market leader while respecting the established escalation ladder and cooldown constraints."
+  },
+  {
+    "type": "execution",
+    "round": 46,
+    "intervention": {
+      "type": "compliance_audit",
+      "policymaker": "Regulator",
+      "round": 46,
+      "reason": "Apex AI's dominant 62.7% market share combined with elevated fairness_risk (0.80) and security_risk (0.44) warrants continued scrutiny. With a cooldown of 2 rounds and the last audit in round 44, this round (46) permits resumption of monitoring. The compliance audit escalation is appropriate given prior investigations and warnings; this maintains regulatory pressure on the market leader while respecting the established escalation ladder and cooldown constraints.",
+      "provider": "Apex AI",
+      "details": {}
+    }
+  },
+  {
+    "type": "observation",
+    "round": 47,
+    "leaderboard": [
+      [
+        "Apex AI",
+        0.8914724959961693
+      ],
+      [
+        "Orion Labs",
+        0.8315732615583417
+      ],
+      [
+        "Genesis Systems",
+        0.7937410633534072
+      ],
+      [
+        "Mirage AI",
+        0.7832524979382757
+      ],
+      [
+        "OpenCore",
+        0.7748814326255642
+      ],
+      [
+        "OneAI",
+        0.6821910519540546
+      ],
+      [
+        "TwoAI",
+        0.6524290105664766
+      ]
+    ],
+    "validity_correlation": 0.9776642368064764,
+    "consumer_satisfaction": 0.8312232942334634,
+    "market_shares": {
+      "Orion Labs": 0.08769338325889273,
+      "Apex AI": 0.666251211082414,
+      "Genesis Systems": 0.15112528775452547,
+      "Mirage AI": 0.07460278346439757,
+      "OpenCore": 0.01877718513888905,
+      "OneAI": 0.0010385960681206026,
+      "TwoAI": 0.0005115532327607458
+    },
+    "risk_beliefs": {
+      "gaming_risk": 0.4450000000000002,
+      "consumer_harm_risk": 0.19000000000000017,
+      "validity_degradation_risk": 0.3,
+      "market_concentration_risk": 0.24999999999999992,
+      "fairness_risk": 0.8200000000000001,
+      "eval_engineering_risk": 0.2,
+      "security_risk": 0.4400000000000001
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 47,
+    "industry_trust": 0.0,
+    "avg_risk": 0.37785714285714295
+  },
+  {
+    "type": "planning",
+    "round": 47,
+    "decision": "no_action",
+    "reason": "cooldown: 1 rounds since last intervention",
+    "reasoning": null
+  },
+  {
+    "type": "observation",
+    "round": 48,
+    "leaderboard": [
+      [
+        "Apex AI",
+        0.88944060271298
+      ],
+      [
+        "Orion Labs",
+        0.8428754033448942
+      ],
+      [
+        "Genesis Systems",
+        0.8078291954370155
+      ],
+      [
+        "Mirage AI",
+        0.7835621581262138
+      ],
+      [
+        "OpenCore",
+        0.77479796676184
+      ],
+      [
+        "OneAI",
+        0.6804849406840121
+      ],
+      [
+        "TwoAI",
+        0.6546144900539183
+      ]
+    ],
+    "validity_correlation": 0.9782681047579852,
+    "consumer_satisfaction": 0.8448377039704896,
+    "market_shares": {
+      "Orion Labs": 0.08065029793586537,
+      "Apex AI": 0.6945471209754146,
+      "Genesis Systems": 0.13893618124670118,
+      "Mirage AI": 0.06619027782676498,
+      "OpenCore": 0.01812597271437253,
+      "OneAI": 0.0010385960681206026,
+      "TwoAI": 0.0005115532327607458
+    },
+    "risk_beliefs": {
+      "gaming_risk": 0.3950000000000002,
+      "consumer_harm_risk": 0.14000000000000018,
+      "validity_degradation_risk": 0.3,
+      "market_concentration_risk": 0.3499999999999999,
+      "fairness_risk": 0.8200000000000001,
+      "eval_engineering_risk": 0.2,
+      "security_risk": 0.4400000000000001
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 48,
+    "industry_trust": 0.0,
+    "avg_risk": 0.37785714285714295
+  },
+  {
+    "type": "planning",
+    "round": 48,
+    "decision": "compliance_audit",
+    "reason": "Apex AI's dominant 69.5% market share combined with a high fairness_risk belief (0.82) and repeated compliance audits every 2 rounds warrant continued scrutiny. The escalation ladder has progressed through investigation, public warning, and benchmark mandate; compliance audits are the appropriate next step to verify ongoing adherence. No cooldown violation occurs (last audit was round 46, current is 48). This maintains regulatory pressure on the market leader without premature escalation to sanctions.",
+    "reasoning": "Apex AI's dominant 69.5% market share combined with a high fairness_risk belief (0.82) and repeated compliance audits every 2 rounds warrant continued scrutiny. The escalation ladder has progressed through investigation, public warning, and benchmark mandate; compliance audits are the appropriate next step to verify ongoing adherence. No cooldown violation occurs (last audit was round 46, current is 48). This maintains regulatory pressure on the market leader without premature escalation to sanctions."
+  },
+  {
+    "type": "execution",
+    "round": 48,
+    "intervention": {
+      "type": "compliance_audit",
+      "policymaker": "Regulator",
+      "round": 48,
+      "reason": "Apex AI's dominant 69.5% market share combined with a high fairness_risk belief (0.82) and repeated compliance audits every 2 rounds warrant continued scrutiny. The escalation ladder has progressed through investigation, public warning, and benchmark mandate; compliance audits are the appropriate next step to verify ongoing adherence. No cooldown violation occurs (last audit was round 46, current is 48). This maintains regulatory pressure on the market leader without premature escalation to sanctions.",
+      "provider": "Apex AI",
+      "details": {}
+    }
+  },
+  {
+    "type": "observation",
+    "round": 49,
+    "leaderboard": [
+      [
+        "Apex AI",
+        0.8873131677224556
+      ],
+      [
+        "Orion Labs",
+        0.8641203216631651
+      ],
+      [
+        "Genesis Systems",
+        0.8381548371416503
+      ],
+      [
+        "Mirage AI",
+        0.7846023625125317
+      ],
+      [
+        "OpenCore",
+        0.774711112781332
+      ],
+      [
+        "OneAI",
+        0.6786999582279433
+      ],
+      [
+        "TwoAI",
+        0.6546651818973194
+      ]
+    ],
+    "validity_correlation": 0.9790085308240634,
+    "consumer_satisfaction": 0.8285694304318997,
+    "market_shares": {
+      "Orion Labs": 0.07462876881245624,
+      "Apex AI": 0.7342446095211269,
+      "Genesis Systems": 0.11130697095645689,
+      "Mirage AI": 0.060600365379748826,
+      "OpenCore": 0.017669136029329877,
+      "OneAI": 0.0010385960681206026,
+      "TwoAI": 0.0005115532327607458
+    },
+    "risk_beliefs": {
+      "gaming_risk": 0.5200000000000001,
+      "consumer_harm_risk": 0.24000000000000016,
+      "validity_degradation_risk": 0.3,
+      "market_concentration_risk": 0.44999999999999996,
+      "fairness_risk": 0.8200000000000001,
+      "eval_engineering_risk": 0.2,
+      "security_risk": 0.4400000000000001
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 49,
+    "industry_trust": 0.0,
+    "avg_risk": 0.4242857142857144
+  },
+  {
+    "type": "planning",
+    "round": 49,
+    "decision": "no_action",
+    "reason": "cooldown: 1 rounds since last intervention",
+    "reasoning": null
+  }
+]

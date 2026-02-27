@@ -150,6 +150,31 @@ Collect empirical and theoretical grounding for each major simulation mechanism.
 
 *Action: For each item above, find the canonical citation, extract the specific number or qualitative finding that maps to a simulation parameter, and annotate the relevant code with a comment referencing it.*
 
+## Narrative Development (from exp 004–015 analysis)
+
+The current experiment set supports the following narrative:
+> "Benchmark gaming is structurally inevitable. What varies across conditions is whether the ecosystem maintains signal validity."
+
+### Key empirical findings (from 50-round runs)
+
+1. **Gaming is universal and monotone**: all conditions show mean inflation growing from ~0.10 to ~0.16 over 50 rounds. No condition prevents it.
+2. **Two distinct gaming modes** (visible in slope vs intercept decomposition):
+   - *Floor bias* (high intercept, low slope): providers inflate all scores unconditionally — obscures differentiation. Seen in no-media (004) and no-bench-evolution (010).
+   - *Amplification* (slope > 1, low intercept): capability differences are preserved but stretched. Seen in full-ecosystem runs (013/014/015).
+3. **Media shifts gaming from floor to amplification**: removing media (004) raises intercepts (0.16–0.24 vs 0.05–0.12) and lowers slopes below 1 on several benchmarks. Media pressure preserves differentiation.
+4. **Benchmark evolution is the primary validity maintenance mechanism**: without it (010), validity drops to r=0.569 vs r=0.806 in baseline. New benchmarks reset Goodhart saturation.
+5. **Funders act as an accountability signal**: without funders (009), validity drops to r=0.569 despite similar inflation levels. Funder reallocation based on performance maintains meaningful score differentiation.
+6. **Market structure (US/EU/Balanced) changes who wins, not gaming intensity**: all three full-ecosystem runs show similar inflation trajectories and slopes. Market concentration differs dramatically (Genesis leads Balanced, Apex AI leads US and EU) but gaming dynamics are indistinguishable.
+7. **Open-source (OpenCore) is not the validity anchor** (counter-intuitive): removing it (007) yields the *highest* validity (r=0.876). OpenCore's uniformly lower scores may introduce noise in the score-capability correlation.
+8. **Startups reduce inflation growth but also reduce validity**: no-startups (006) has the lowest inflation delta (+0.030) but lowest validity (r=0.525). Competitive pressure from entrants may push gaming.
+
+### Simulation changes needed to sharpen the narrative
+
+- **US vs EU distinction is currently too weak**: both produce near-identical gaming dynamics. To sharpen: make EU policy trigger at lower thresholds (earlier compliance_audit, lower incident tolerance) so that EU shows measurably different slope/intercept profiles.
+- **Funder accountability signal is underutilized**: funders should penalize providers with high gaming gaps (score - capability) when they can detect it, not just reward market share. This would make the no-funders ablation more dramatic.
+- **Media → evaluator feedback loop is missing**: media coverage of gaming incidents should make evaluators introduce new benchmarks faster (reduce cooldown). Currently media only affects consumers and policymakers.
+- **OpenCore floor effect**: OpenCore's fixed low capability drags down validity in all conditions. Consider giving OpenCore a distinct capability trajectory to make its presence informative rather than noisy.
+
 ## Known Edge Cases
 
 - **Same-round simultaneous saturation:** When two benchmarks saturate on the same round, the second replacement is delayed by the min-gap cooldown. Fix: allow introducing two benchmarks in one round (return a list instead of a single Benchmark). Low priority.

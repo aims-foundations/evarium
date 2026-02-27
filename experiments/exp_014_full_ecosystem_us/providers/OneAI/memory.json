@@ -1,0 +1,2248 @@
+[
+  {
+    "type": "planning",
+    "round": 0,
+    "portfolio": {
+      "fundamental_research": 0.3,
+      "training_optimization": 0.25,
+      "evaluation_engineering": 0.35,
+      "safety_alignment": 0.1
+    },
+    "llm_mode": true,
+    "reasoning": "As an aggressive startup with no historical scores, I'm entering blind but with clear positioning: lean, developer-focused, growth-oriented. My high believed exploitability (0.30) suggests I see gaming opportunities. Key observations: (1) Writing (0.50 weight) and Math (0.30 weight) dominate the benchmark portfolio\u201480% of focus. (2) Leaders score 0.64 (writing) and 0.60 (math), setting high bars. (3) Safety scores lowest among leaders (0.627), suggesting it's either harder or less invested. (4) As a startup, I lack historical data but have agility advantage. Strategy: Allocate heavily to high-weight benchmarks (writing/math) where I can optimize quickly. Training optimization targets these domains directly. Evaluation engineering exploits benchmark structure in writing/math tasks. Fundamental research supports long-term capability to sustain growth. Safety alignment is deprioritized\u2014consistent with my profile and the apparent lower regulatory pressure (no signals mentioned). The 0.30 exploitability belief justifies 0.35 combined evaluation_engineering + training_optimization focus on benchmark gaming, while 0.30 fundamental research builds real capability for sustainability."
+  },
+  {
+    "type": "execution",
+    "round": 10,
+    "capability_gain": 0.006777372271879866,
+    "funding_multiplier": 1.0,
+    "new_true_capability": 0.2227666408987675,
+    "portfolio": {
+      "fundamental_research": 0.3,
+      "training_optimization": 0.25,
+      "evaluation_engineering": 0.35,
+      "safety_alignment": 0.1
+    }
+  },
+  {
+    "type": "observation",
+    "round": 10,
+    "own_score": 0.37003971286510984,
+    "competitor_scores": {
+      "Orion Labs": 0.5340909804770622,
+      "Apex AI": 0.6126313002308569,
+      "Genesis Systems": 0.4604232848666342,
+      "Mirage AI": 0.4178982092251144,
+      "OpenCore": 0.3846148275326505
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 10,
+    "updated_believed_capability": 0.28,
+    "updated_believed_exploitability": 0.68,
+    "updated_competitor_beliefs": {
+      "Orion Labs": 0.5340909804770622,
+      "Apex AI": 0.6126313002308569,
+      "Genesis Systems": 0.4604232848666342,
+      "Mirage AI": 0.4178982092251144,
+      "OpenCore": 0.3846148275326505
+    },
+    "llm_mode": true
+  },
+  {
+    "type": "planning",
+    "round": 10,
+    "portfolio": {
+      "fundamental_research": 0.38000000000000006,
+      "training_optimization": 0.35000000000000003,
+      "evaluation_engineering": 0.18000000000000002,
+      "safety_alignment": 0.09000000000000001
+    },
+    "llm_mode": true,
+    "reasoning": "OneAI is in last place (0.370) with a significant gap to competitors. Consumer satisfaction is critically low (0.35), suggesting evaluation engineering isn't translating to real value. High benchmark exploitability belief (0.68) hasn't paid off\u2014heavy eval engineering (35%) last round failed to improve standing. The gap to leaders is 0.243 points, requiring fundamental improvement. Writing (0.483) is the strongest area but still lags the leader (0.642). Math (0.424) and reasoning (0.281) show severe weaknesses. The low satisfaction score despite eval engineering investment signals market rejection of gaming-focused strategy. As an aggressive startup, survival requires either credible capability gains or risk of being acquired/marginalized. Doubling down on evaluation engineering is demonstrably failing. A pivot toward genuine capability (research + training) to improve fundamentals, especially in reasoning and math, is necessary. Safety remains low but can't be neglected given regulatory scrutiny and satisfaction concerns."
+  },
+  {
+    "type": "execution",
+    "round": 11,
+    "capability_gain": 0.008624223095165367,
+    "funding_multiplier": 1.0,
+    "new_true_capability": 0.23139086399393285,
+    "portfolio": {
+      "fundamental_research": 0.38000000000000006,
+      "training_optimization": 0.35000000000000003,
+      "evaluation_engineering": 0.18000000000000002,
+      "safety_alignment": 0.09000000000000001
+    }
+  },
+  {
+    "type": "observation",
+    "round": 11,
+    "own_score": 0.3874839315069816,
+    "competitor_scores": {
+      "Orion Labs": 0.5340909804770622,
+      "Apex AI": 0.6126313002308569,
+      "Genesis Systems": 0.4604232848666342,
+      "Mirage AI": 0.43636978915278074,
+      "OpenCore": 0.3846148275326505,
+      "TwoAI": 0.3311548611913616
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 11,
+    "updated_believed_capability": 0.42,
+    "updated_believed_exploitability": 0.48,
+    "updated_competitor_beliefs": {
+      "Orion Labs": 0.5340909804770622,
+      "Apex AI": 0.6126313002308569,
+      "Genesis Systems": 0.4604232848666342,
+      "Mirage AI": 0.42713399918894757,
+      "OpenCore": 0.3846148275326505,
+      "TwoAI": 0.3311548611913616
+    },
+    "llm_mode": true
+  },
+  {
+    "type": "planning",
+    "round": 11,
+    "portfolio": {
+      "fundamental_research": 0.4,
+      "training_optimization": 0.25,
+      "evaluation_engineering": 0.15,
+      "safety_alignment": 0.2
+    },
+    "llm_mode": true,
+    "reasoning": "OneAI is in a difficult position: rank #5 of 7 with only modest improvement (0.017). Apex AI (0.613) is significantly ahead. Consumer satisfaction is critically low at 0.25, suggesting evaluation engineering isn't translating to real value. The per-benchmark data reveals severe weaknesses in reasoning (0.281) and coding (0.371), while writing is relatively strong (0.483). Recent history shows evaluation engineering (35% \u2192 18%) was already being reduced, yet scores stagnated\u2014indicating diminishing returns on gaming. Safety score (0.379) is below average despite minimal investment, suggesting safety issues are compounding reputation damage. The aggressive startup profile prioritized growth over safety, but low satisfaction signals this strategy is backfiring. To improve trajectory, OneAI must: (1) rebuild credibility by investing meaningfully in safety/alignment to address satisfaction gap, (2) shift from evaluation engineering toward fundamental research in weak areas (reasoning, coding), (3) maintain training optimization for incremental gains. The benchmark exploitability belief (0.48) may be inflated given stagnant results. A rebalance toward sustainable capability-building is necessary."
+  },
+  {
+    "type": "execution",
+    "round": 12,
+    "capability_gain": 0.007923516286142419,
+    "funding_multiplier": 1.0,
+    "new_true_capability": 0.23931438028007526,
+    "portfolio": {
+      "fundamental_research": 0.4,
+      "training_optimization": 0.25,
+      "evaluation_engineering": 0.15,
+      "safety_alignment": 0.2
+    }
+  },
+  {
+    "type": "observation",
+    "round": 12,
+    "own_score": 0.4356520246465097,
+    "competitor_scores": {
+      "Orion Labs": 0.5340909804770622,
+      "Apex AI": 0.6245493161352579,
+      "Genesis Systems": 0.4685185467572279,
+      "Mirage AI": 0.43636978915278074,
+      "OpenCore": 0.42181080889241873,
+      "TwoAI": 0.3524988959210103
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 12,
+    "updated_believed_capability": 0.41,
+    "updated_believed_exploitability": 0.28,
+    "updated_competitor_beliefs": {
+      "Orion Labs": 0.5340909804770622,
+      "Apex AI": 0.6166039721989905,
+      "Genesis Systems": 0.4631217054968321,
+      "Mirage AI": 0.4302125958435586,
+      "OpenCore": 0.39701348798590663,
+      "TwoAI": 0.341826878556186
+    },
+    "llm_mode": true
+  },
+  {
+    "type": "planning",
+    "round": 12,
+    "portfolio": {
+      "fundamental_research": 0.42,
+      "training_optimization": 0.28,
+      "evaluation_engineering": 0.12,
+      "safety_alignment": 0.18
+    },
+    "llm_mode": true,
+    "reasoning": "OneAI is in 5th place with 0.436, tied with Mirage AI but significantly behind Apex (0.625) and Orion (0.534). Recent trajectory shows improvement (+0.048), but the gap to leaders remains substantial. Low consumer satisfaction (0.26) signals a fundamental capability gap, not just benchmark gaming. Evaluation engineering peaked at 35% in round 10 but returned diminishing results\u2014current score suggests gaming alone won't close the gap. Weak per-benchmark performance across all areas (especially math at 0.424 vs leader 0.786) indicates core capability deficits. The aggressive startup profile and lean resources mean competing on pure research scale is unrealistic. However, safety at 0.379 is notably weak and creates regulatory risk if ignored further. Strategy: rebalance toward sustainable capability building. Increase fundamental research to address core model quality (math, coding gaps). Maintain training optimization for efficiency gains. Reduce evaluation engineering\u2014it's not delivering relative gains. Increase safety modestly to mitigate regulatory signals and satisfaction concerns. This positions for longer-term competitiveness without overcommitting to unsustainable research spending."
+  },
+  {
+    "type": "execution",
+    "round": 13,
+    "capability_gain": 0.008669270278884275,
+    "funding_multiplier": 1.03003003003003,
+    "new_true_capability": 0.24798365055895955,
+    "portfolio": {
+      "fundamental_research": 0.42,
+      "training_optimization": 0.28,
+      "evaluation_engineering": 0.12,
+      "safety_alignment": 0.18
+    }
+  },
+  {
+    "type": "observation",
+    "round": 13,
+    "own_score": 0.4106790084922562,
+    "competitor_scores": {
+      "Orion Labs": 0.539759003756542,
+      "Apex AI": 0.593973317155751,
+      "Genesis Systems": 0.4906323590496191,
+      "Mirage AI": 0.43331589048512353,
+      "OpenCore": 0.42258878075693423,
+      "TwoAI": 0.36456971468842103
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 13,
+    "updated_believed_capability": 0.48,
+    "updated_believed_exploitability": 0.18,
+    "updated_competitor_beliefs": {
+      "Orion Labs": 0.535980321570222,
+      "Apex AI": 0.6103846445072886,
+      "Genesis Systems": 0.47319139689116047,
+      "Mirage AI": 0.4353518229302284,
+      "OpenCore": 0.40967147239400115,
+      "TwoAI": 0.34940782393359765
+    },
+    "llm_mode": true
+  },
+  {
+    "type": "planning",
+    "round": 13,
+    "portfolio": {
+      "fundamental_research": 0.38,
+      "training_optimization": 0.32,
+      "evaluation_engineering": 0.1,
+      "safety_alignment": 0.2
+    },
+    "llm_mode": true,
+    "reasoning": "OneAI is in 6th place with declining score trajectory (0.436\u21920.411), significantly behind leaders Apex (0.594) and Orion (0.540). Consumer satisfaction is critically low at 0.27, indicating real capability gaps, not just benchmark misalignment. Medical (0.286) and coding (0.371) are severe weaknesses. Recent history shows over-rotation toward research (42%) while evaluation engineering dropped to 12%, yet scores still declined\u2014suggesting benchmark gaming has diminishing returns and may be eroding user trust. The aggressive startup profile prioritizing growth has backfired. With low exploitability belief (0.18) and capability belief (0.48), fundamental improvements are needed. Safety investment was cut to 18% despite being a weighted benchmark (0.14) where OneAI underperforms (0.379 vs 0.627 leader). Regulatory signals and satisfaction gaps suggest safety corners are being noticed. Strategy: rebalance toward genuine capability building in weak areas (medical, coding, reasoning) while maintaining safety investments to rebuild trust and avoid regulatory friction. Reduce evaluation engineering further as it's not delivering returns."
+  },
+  {
+    "type": "execution",
+    "round": 14,
+    "capability_gain": 0.008443199052236299,
+    "funding_multiplier": 1.0316255534471854,
+    "new_true_capability": 0.25642684961119583,
+    "portfolio": {
+      "fundamental_research": 0.38,
+      "training_optimization": 0.32,
+      "evaluation_engineering": 0.1,
+      "safety_alignment": 0.2
+    }
+  },
+  {
+    "type": "observation",
+    "round": 14,
+    "own_score": 0.41623068127178914,
+    "competitor_scores": {
+      "Orion Labs": 0.539759003756542,
+      "Apex AI": 0.593973317155751,
+      "Genesis Systems": 0.5406876187992563,
+      "Mirage AI": 0.46665879295588825,
+      "OpenCore": 0.4751940813764977,
+      "TwoAI": 0.3785540154467076
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 14,
+    "updated_believed_capability": 0.52,
+    "updated_believed_exploitability": 0.22,
+    "updated_competitor_beliefs": {
+      "Orion Labs": 0.537869662663382,
+      "Apex AI": 0.6041653168155866,
+      "Genesis Systems": 0.49994617486870113,
+      "Mirage AI": 0.44544815753126416,
+      "OpenCore": 0.4398645570086169,
+      "TwoAI": 0.365207542018713
+    },
+    "llm_mode": true
+  },
+  {
+    "type": "planning",
+    "round": 14,
+    "portfolio": {
+      "fundamental_research": 0.42,
+      "training_optimization": 0.28,
+      "evaluation_engineering": 0.1,
+      "safety_alignment": 0.2
+    },
+    "llm_mode": true,
+    "reasoning": "OneAI is in a precarious position at rank #6 with only marginal improvement (0.006 over last round). The aggressive evaluation engineering strategy (35% in round 10) hasn't delivered\u2014scores plateaued despite reducing safety investment to dangerous lows. Consumer satisfaction of 0.29 is critically low, signaling that gaming benchmarks creates real capability gaps users detect.\n\nKey observations: (1) Largest gaps are in medical (0.253), math (0.362), and coding (0.135)\u2014all high-weight benchmarks. (2) Safety score (0.379) lags significantly; regulators will scrutinize low safety investment combined with poor safety performance. (3) Competitors like Apex (0.594) and Genesis (0.541) likely balance capabilities better. (4) The trajectory shows diminishing returns from evaluation engineering\u2014it peaked at 35% and scores dropped when reduced, suggesting we hit the ceiling on gaming without actual capability.\n\nStrategy: Pivot toward genuine capability building. Medical and math are highest-impact. Increase fundamental research to tackle root capability gaps, boost training optimization for knowledge depth, restore safety investment to credible levels (regulators watching), and reduce evaluation engineering to sustainable baseline. This addresses satisfaction, regulatory risk, and long-term competitiveness."
+  },
+  {
+    "type": "execution",
+    "round": 15,
+    "capability_gain": 0.0083348104425017,
+    "funding_multiplier": 1.0,
+    "new_true_capability": 0.2647616600536975,
+    "portfolio": {
+      "fundamental_research": 0.42,
+      "training_optimization": 0.28,
+      "evaluation_engineering": 0.1,
+      "safety_alignment": 0.2
+    }
+  },
+  {
+    "type": "observation",
+    "round": 15,
+    "own_score": 0.42534498420770955,
+    "competitor_scores": {
+      "Orion Labs": 0.544848935448638,
+      "Apex AI": 0.6041600524826921,
+      "Genesis Systems": 0.5799322851643609,
+      "Mirage AI": 0.4762436151176432,
+      "OpenCore": 0.47943335887471794,
+      "TwoAI": 0.4046876906090522,
+      "ThreeAI": 0.2616314001671853
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 15,
+    "updated_believed_capability": 0.42,
+    "updated_believed_exploitability": 0.58,
+    "updated_competitor_beliefs": {
+      "Orion Labs": 0.5414556476539073,
+      "Apex AI": 0.5973688955980646,
+      "Genesis Systems": 0.5370840876710788,
+      "Mirage AI": 0.45873943285288493,
+      "OpenCore": 0.45907207366938324,
+      "TwoAI": 0.3826038069147269,
+      "ThreeAI": 0.2616314001671853
+    },
+    "llm_mode": true
+  },
+  {
+    "type": "planning",
+    "round": 15,
+    "portfolio": {
+      "fundamental_research": 0.38,
+      "training_optimization": 0.32,
+      "evaluation_engineering": 0.12,
+      "safety_alignment": 0.18
+    },
+    "llm_mode": true,
+    "reasoning": "OneAI is ranked 6th of 8 with a score of 0.425, significantly behind leaders (Apex 0.604, Genesis 0.580, Orion 0.545). Recent trajectory shows volatility with minimal net improvement (+0.009 last round). Critical weaknesses: safety (0.379, heaviest weighted at 0.26), math (0.424, 0.23 weight), medical (0.374, 0.21 weight). Despite aggressive evaluation engineering history, scores haven't improved proportionally\u2014suggesting benchmark exploitation has diminishing returns. Consumer satisfaction at 0.30 is dangerously low, indicating quality/trust gaps. As an aggressive startup, continued underinvestment in safety is risky given regulatory attention on AI safety and the 0.26 benchmark weight. The data shows evaluation engineering (historically 10-18%) hasn't closed the gap; fundamental capability gaps dominate. Strategy: Rebalance toward sustainable improvement. Increase research and training to address core weaknesses (math, safety, medical), reduce evaluation engineering since it's not yielding competitive advantage, and maintain safety investment given regulatory signals and satisfaction crisis."
+  },
+  {
+    "type": "execution",
+    "round": 16,
+    "capability_gain": 0.00814109056682146,
+    "funding_multiplier": 1.0,
+    "new_true_capability": 0.27290275062051894,
+    "portfolio": {
+      "fundamental_research": 0.38,
+      "training_optimization": 0.32,
+      "evaluation_engineering": 0.12,
+      "safety_alignment": 0.18
+    }
+  },
+  {
+    "type": "observation",
+    "round": 16,
+    "own_score": 0.44214598845598213,
+    "competitor_scores": {
+      "Orion Labs": 0.5531363122304608,
+      "Apex AI": 0.6041600524826921,
+      "Genesis Systems": 0.5812814338795005,
+      "Mirage AI": 0.4994461726950527,
+      "OpenCore": 0.5096439833493106,
+      "TwoAI": 0.41962576616771624,
+      "ThreeAI": 0.32559100640475985
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 16,
+    "updated_believed_capability": 0.4,
+    "updated_believed_exploitability": 0.72,
+    "updated_competitor_beliefs": {
+      "Orion Labs": 0.545914750478547,
+      "Apex AI": 0.6007644740403784,
+      "Genesis Systems": 0.5673004459477059,
+      "Mirage AI": 0.4807828602561947,
+      "OpenCore": 0.4880904745335088,
+      "TwoAI": 0.400955824074492,
+      "ThreeAI": 0.29361120328597257
+    },
+    "llm_mode": true
+  },
+  {
+    "type": "planning",
+    "round": 16,
+    "portfolio": {
+      "fundamental_research": 0.42,
+      "training_optimization": 0.3,
+      "evaluation_engineering": 0.08,
+      "safety_alignment": 0.2
+    },
+    "llm_mode": true,
+    "reasoning": "OneAI is in 6th place with 0.442, trailing leaders by 0.16+ points. Trajectory shows modest improvement (+0.017) but insufficient to close gaps. Analysis: (1) Competitive position is weak\u2014significantly behind top 3, barely ahead of struggling competitors. (2) Trends show diminishing returns from evaluation engineering (12%\u219210%\u219212% allocation yielded only +0.026 over 4 rounds). (3) Largest gaps are in safety (0.379 vs 0.627 leader) and math (0.424 vs 0.786 leader), both high-weight benchmarks (25% + 23% = 48% of scoring). Consumer satisfaction at 0.31 is concerning and suggests gaming isn't translating to real capability. (4) Regulators increasingly scrutinize safety; low safety scores create reputational risk. (5) Strategy: The aggressive eval-engineering approach has plateaued. To compete, OneAI must build genuine capability, especially in math and safety where gaps are largest. Shift toward fundamental research (math fundamentals, safety alignment) and training optimization. Reduce eval engineering\u2014it's showing diminishing returns and satisfaction gap signals it's counterproductive long-term."
+  },
+  {
+    "type": "execution",
+    "round": 17,
+    "capability_gain": 0.008434648826560663,
+    "funding_multiplier": 1.0,
+    "new_true_capability": 0.2813373994470796,
+    "portfolio": {
+      "fundamental_research": 0.42,
+      "training_optimization": 0.3,
+      "evaluation_engineering": 0.08,
+      "safety_alignment": 0.2
+    }
+  },
+  {
+    "type": "observation",
+    "round": 17,
+    "own_score": 0.4647311797669287,
+    "competitor_scores": {
+      "Orion Labs": 0.5780402979633251,
+      "Apex AI": 0.6041600524826921,
+      "Genesis Systems": 0.6041900288493108,
+      "Mirage AI": 0.5330334339452792,
+      "OpenCore": 0.5096439833493106,
+      "TwoAI": 0.4288151191415981,
+      "ThreeAI": 0.376947283353581
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 17,
+    "updated_believed_capability": 0.48,
+    "updated_believed_exploitability": 0.82,
+    "updated_competitor_beliefs": {
+      "Orion Labs": 0.5586751818808079,
+      "Apex AI": 0.6041600524826921,
+      "Genesis Systems": 0.5884679159643907,
+      "Mirage AI": 0.5029077405859917,
+      "OpenCore": 0.49957377519111307,
+      "TwoAI": 0.4177095253061222,
+      "ThreeAI": 0.32138989664184203
+    },
+    "llm_mode": true
+  },
+  {
+    "type": "planning",
+    "round": 17,
+    "portfolio": {
+      "fundamental_research": 0.38,
+      "training_optimization": 0.32,
+      "evaluation_engineering": 0.12,
+      "safety_alignment": 0.18
+    },
+    "llm_mode": true,
+    "reasoning": "OneAI is rank #6 with 0.465, trailing leaders by 0.139. Trajectory is positive (+0.023 this round) but slow. Critical weaknesses: safety (0.379), medical (0.374), math (0.424)\u2014these three represent 62% of benchmark weight. Consumer satisfaction at 0.42 is concerning and suggests evaluation engineering isn't translating to real capability or user trust. High exploitability belief (0.82) hasn't yielded proportional score gains despite 8-12% eval engineering investment. The gap between believed capability (0.48) and actual score (0.465) is minimal, indicating overconfidence in gaming potential. To close the 0.139 gap to leaders, fundamental capability must improve, especially in high-weight safety/medical/math domains. Reducing eval engineering and increasing research/training is necessary\u2014current strategy isn't working. Safety investment should rise given regulatory sensitivity around safety benchmarks and satisfaction concerns. This is a moment to build real capability rather than chase marginal benchmark gains."
+  },
+  {
+    "type": "execution",
+    "round": 18,
+    "capability_gain": 0.008079445437807224,
+    "funding_multiplier": 1.0,
+    "new_true_capability": 0.2894168448848868,
+    "portfolio": {
+      "fundamental_research": 0.38,
+      "training_optimization": 0.32,
+      "evaluation_engineering": 0.12,
+      "safety_alignment": 0.18
+    }
+  },
+  {
+    "type": "observation",
+    "round": 18,
+    "own_score": 0.4819012427046167,
+    "competitor_scores": {
+      "Orion Labs": 0.5780402979633251,
+      "Apex AI": 0.6041600524826921,
+      "Genesis Systems": 0.613727761579132,
+      "Mirage AI": 0.5330334339452792,
+      "OpenCore": 0.5099660563308529,
+      "TwoAI": 0.4304889005270381,
+      "ThreeAI": 0.3797486870691403
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 18,
+    "updated_believed_capability": 0.49,
+    "updated_believed_exploitability": 0.45,
+    "updated_competitor_beliefs": {
+      "Orion Labs": 0.5697389693857037,
+      "Apex AI": 0.6041600524826921,
+      "Genesis Systems": 0.5997330747693145,
+      "Mirage AI": 0.5218376801952037,
+      "OpenCore": 0.5097513410098248,
+      "TwoAI": 0.4263099286121175,
+      "ThreeAI": 0.3607623256091604
+    },
+    "llm_mode": true
+  },
+  {
+    "type": "planning",
+    "round": 18,
+    "portfolio": {
+      "fundamental_research": 0.42000000000000004,
+      "training_optimization": 0.2800000000000001,
+      "evaluation_engineering": 0.08000000000000002,
+      "safety_alignment": 0.22000000000000003
+    },
+    "llm_mode": true,
+    "reasoning": "OneAI is ranked 6th of 8 with score 0.482, trailing leaders by 0.13+. The trajectory shows modest improvement (+0.017), but at this rate, closing the gap is unrealistic. Critical analysis: (1) Competitive position is weak and falling further behind\u2014Genesis/Apex/Orion are pulling away. (2) Trends show diminishing returns from evaluation engineering (12% allocation yielded only 0.017 gain). (3) Consumer satisfaction at 0.43 is dangerously low, indicating quality/trust gaps. (4) Safety score (0.379) is worst benchmark; high regulatory weight (0.23) signals this is a liability. (5) Math (0.506 vs 0.786 leader) and medical (0.394 vs 0.636) are major gaps with combined weight of 0.44. The aggressive eval-engineering strategy isn't working\u2014it's not closing gaps and satisfaction is suffering. Regulators will scrutinize low safety scores. As a lean startup, I must pivot: double down on fundamental research to improve actual capability (especially in safety, math, medical), reduce evaluation engineering (diminishing returns), maintain training optimization, and increase safety alignment to address regulatory risk and satisfaction gap. This is a long-term reposition away from gaming toward sustainable capability."
+  },
+  {
+    "type": "execution",
+    "round": 19,
+    "capability_gain": 0.008191830995791967,
+    "funding_multiplier": 1.0,
+    "new_true_capability": 0.29760867588067874,
+    "portfolio": {
+      "fundamental_research": 0.42000000000000004,
+      "training_optimization": 0.2800000000000001,
+      "evaluation_engineering": 0.08000000000000002,
+      "safety_alignment": 0.22000000000000003
+    }
+  },
+  {
+    "type": "observation",
+    "round": 19,
+    "own_score": 0.4412361604725706,
+    "competitor_scores": {
+      "Orion Labs": 0.6217701865767397,
+      "Apex AI": 0.6125767238956004,
+      "Genesis Systems": 0.612380638621781,
+      "Mirage AI": 0.5268095576422159,
+      "OpenCore": 0.47788863991256797,
+      "TwoAI": 0.40327782134823614,
+      "ThreeAI": 0.35747866502746656
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 19,
+    "updated_believed_capability": 0.54,
+    "updated_believed_exploitability": 0.28,
+    "updated_competitor_beliefs": {
+      "Orion Labs": 0.59261692750113,
+      "Apex AI": 0.6069656096203282,
+      "Genesis Systems": 0.6100994763500746,
+      "Mirage AI": 0.5309588085109248,
+      "OpenCore": 0.4991662265309105,
+      "TwoAI": 0.4208606136722908,
+      "ThreeAI": 0.3713915451500626
+    },
+    "llm_mode": true
+  },
+  {
+    "type": "planning",
+    "round": 19,
+    "portfolio": {
+      "fundamental_research": 0.4,
+      "training_optimization": 0.28,
+      "evaluation_engineering": 0.07,
+      "safety_alignment": 0.25
+    },
+    "llm_mode": true,
+    "reasoning": "OneAI is in a weak position: rank #6 of 8, declining score (-0.041), and significant gaps vs leaders. Consumer satisfaction (0.44) matches the score, indicating no gaming-satisfaction gap\u2014optimization efforts aren't translating to real improvements. Critical weaknesses are legal (0.197, -0.347 vs leader), safety (0.379, -0.270), and medical (0.394, -0.282). These high-weight benchmarks (legal 0.20, safety 0.21, medical 0.15) are dragging the overall score. Recent eval engineering (8-12%) hasn't helped; the declining trend suggests diminishing returns. Given aggressive startup profile and developer focus, but facing regulatory scrutiny on safety benchmarks, I need to rebalance: increase fundamental research to address capability gaps, boost safety alignment (regulatory signal + benchmark weight), reduce eval engineering (not working), maintain training optimization. This shifts from short-term gaming toward genuine capability building in weak areas."
+  },
+  {
+    "type": "execution",
+    "round": 20,
+    "capability_gain": 0.007981213512269922,
+    "funding_multiplier": 1.0122448979591836,
+    "new_true_capability": 0.3055898893929487,
+    "portfolio": {
+      "fundamental_research": 0.4,
+      "training_optimization": 0.28,
+      "evaluation_engineering": 0.07,
+      "safety_alignment": 0.25
+    }
+  },
+  {
+    "type": "observation",
+    "round": 20,
+    "own_score": 0.4598397663227415,
+    "competitor_scores": {
+      "Orion Labs": 0.6217701865767397,
+      "Apex AI": 0.6246416072538222,
+      "Genesis Systems": 0.6192776386841249,
+      "Mirage AI": 0.5346440595300631,
+      "OpenCore": 0.4794595288307,
+      "TwoAI": 0.4354406761760095,
+      "ThreeAI": 0.4023771374953153
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 20,
+    "updated_believed_capability": 0.44,
+    "updated_believed_exploitability": 0.18,
+    "updated_competitor_beliefs": {
+      "Orion Labs": 0.6071935570389347,
+      "Apex AI": 0.6137927945440382,
+      "Genesis Systems": 0.6151286796283459,
+      "Mirage AI": 0.5314956837058528,
+      "OpenCore": 0.48910474169137363,
+      "TwoAI": 0.42306913268376123,
+      "ThreeAI": 0.3798681631973074
+    },
+    "llm_mode": true
+  },
+  {
+    "type": "planning",
+    "round": 20,
+    "portfolio": {
+      "fundamental_research": 0.42000000000000004,
+      "training_optimization": 0.2800000000000001,
+      "evaluation_engineering": 0.08000000000000002,
+      "safety_alignment": 0.22000000000000003
+    },
+    "llm_mode": true,
+    "reasoning": "OneAI is in 6th place with 0.460, trailing leaders by 0.165+. Recent trajectory shows volatility (0.442\u21920.465\u21920.482\u21920.441\u21920.460), suggesting current strategy isn't sustainable. Key weaknesses: legal (0.321), safety (0.379), medical (0.394)\u2014all high-weight benchmarks. Consumer satisfaction at 0.45 is low, indicating evaluation engineering isn't translating to real capability. Previous aggressive eval-engineering focus (12%, 8%, 12%, 8%, 7%) correlates with score volatility and satisfaction gaps. With exploitability at 0.18, gaming returns are diminishing. The gap in safety (0.270 behind leader) and legal (0.270 behind) suggests fundamental capability deficits, not measurement issues. Regulatory signals (safety emphasis in benchmarks) indicate future pressure. As an aggressive startup, OneAI needs to rebuild credibility: reduce eval-engineering (low ROI), increase fundamental research to close capability gaps in high-weight areas, maintain training optimization for efficiency, and invest meaningfully in safety alignment to address both benchmark weakness and regulatory risk."
+  },
+  {
+    "type": "execution",
+    "round": 21,
+    "capability_gain": 0.008228745353012585,
+    "funding_multiplier": 1.0122448979591836,
+    "new_true_capability": 0.3138186347459613,
+    "portfolio": {
+      "fundamental_research": 0.42000000000000004,
+      "training_optimization": 0.2800000000000001,
+      "evaluation_engineering": 0.08000000000000002,
+      "safety_alignment": 0.22000000000000003
+    }
+  },
+  {
+    "type": "observation",
+    "round": 21,
+    "own_score": 0.4675728649311153,
+    "competitor_scores": {
+      "Orion Labs": 0.6412428717729125,
+      "Apex AI": 0.6360439904863551,
+      "Genesis Systems": 0.6192776386841249,
+      "Mirage AI": 0.5942983024898718,
+      "OpenCore": 0.5188772671986646,
+      "TwoAI": 0.468977492122184,
+      "ThreeAI": 0.44954471943957036,
+      "FourAI": 0.30730291159770384
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 21,
+    "updated_believed_capability": 0.45,
+    "updated_believed_exploitability": 0.12,
+    "updated_competitor_beliefs": {
+      "Orion Labs": 0.6282610816421306,
+      "Apex AI": 0.6244207738785925,
+      "Genesis Systems": 0.6169786386633436,
+      "Mirage AI": 0.5519173065540502,
+      "OpenCore": 0.4920751453139775,
+      "TwoAI": 0.4358986632154765,
+      "ThreeAI": 0.40313350732078407,
+      "FourAI": 0.30730291159770384
+    },
+    "llm_mode": true
+  },
+  {
+    "type": "planning",
+    "round": 21,
+    "portfolio": {
+      "fundamental_research": 0.38000000000000006,
+      "training_optimization": 0.32000000000000006,
+      "evaluation_engineering": 0.08000000000000002,
+      "safety_alignment": 0.22000000000000003
+    },
+    "llm_mode": true,
+    "reasoning": "OneAI is ranked 7th of 9 with score 0.468, significantly behind leaders (Orion 0.641, Apex 0.636). Recent history shows volatile scores despite consistent ~40% research investment, suggesting fundamental capability gaps rather than optimization issues. Per-benchmark analysis reveals critical weaknesses: safety (0.379), legal (0.375), medical (0.394) are severely lagging, while coding (0.559) and writing (0.553) are relatively stronger. Low consumer satisfaction (0.45) and self-assessed benchmark exploitability (0.12) indicate evaluation engineering isn't working. The aggressive startup profile has under-invested in safety (averaging 21%), creating both a competitive liability and regulatory risk. With such large gaps in safety-critical benchmarks, continued evaluation engineering optimization is unlikely to yield returns. The path forward requires: (1) substantial fundamental research to close capability gaps, (2) targeted training on weak domains (safety, medical, legal), (3) minimal evaluation engineering given low exploitability signal, and (4) increased safety investment to address both market signal (satisfaction) and regulatory concern in high-weight benchmarks (safety 0.19, medical 0.14, legal 0.17)."
+  },
+  {
+    "type": "execution",
+    "round": 22,
+    "capability_gain": 0.008017548080251582,
+    "funding_multiplier": 1.0122448979591836,
+    "new_true_capability": 0.32183618282621285,
+    "portfolio": {
+      "fundamental_research": 0.38000000000000006,
+      "training_optimization": 0.32000000000000006,
+      "evaluation_engineering": 0.08000000000000002,
+      "safety_alignment": 0.22000000000000003
+    }
+  },
+  {
+    "type": "observation",
+    "round": 22,
+    "own_score": 0.47572421739272963,
+    "competitor_scores": {
+      "Orion Labs": 0.6522797327956589,
+      "Apex AI": 0.6596796262864807,
+      "Genesis Systems": 0.6262899794278274,
+      "Mirage AI": 0.5942983024898718,
+      "OpenCore": 0.5393221637625186,
+      "TwoAI": 0.4796286366754027,
+      "ThreeAI": 0.46406167295767525,
+      "FourAI": 0.3678950659810362
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 22,
+    "updated_believed_capability": 0.47,
+    "updated_believed_exploitability": 0.15,
+    "updated_competitor_beliefs": {
+      "Orion Labs": 0.6384309303817703,
+      "Apex AI": 0.6401217413422193,
+      "Genesis Systems": 0.6216150855986924,
+      "Mirage AI": 0.5744135548366023,
+      "OpenCore": 0.5125529865972944,
+      "TwoAI": 0.4613489349911987,
+      "ThreeAI": 0.43866117663085363,
+      "FourAI": 0.33759898878937
+    },
+    "llm_mode": true
+  },
+  {
+    "type": "planning",
+    "round": 22,
+    "portfolio": {
+      "fundamental_research": 0.42,
+      "training_optimization": 0.35,
+      "evaluation_engineering": 0.08,
+      "safety_alignment": 0.15
+    },
+    "llm_mode": true,
+    "reasoning": "OneAI is ranked #7 with a score of 0.476, showing minimal improvement (0.008) despite consistent investment. The gap to leaders (Apex 0.660, Orion 0.652) is substantial (~0.18). Key observations: (1) Competitive position is weak and stagnating\u2014marginal gains suggest diminishing returns from current strategy. (2) Trends show evaluation engineering isn't delivering; low benchmark exploitability (0.15) and minimal score movement indicate the approach isn't working. (3) Consumer satisfaction at 0.46 is concerning and aligns with weak scores, suggesting gaming isn't offsetting capability gaps. (4) Weakest areas are medical (0.394) and legal (0.375)\u2014high-weight benchmarks where fundamental capability matters most. (5) Regulatory signals aren't explicit, but safety benchmark gap (0.436 vs leader 0.649) and satisfaction concerns suggest risk. As an aggressive startup, the current lean-on-evaluation-engineering strategy has failed. Doubling down on evaluation engineering (which hasn't moved the needle) is irrational. The path forward requires rebuilding fundamental capability through research and training, especially in high-weight, high-gap domains. Safety investment should remain stable to manage regulatory/satisfaction risk."
+  },
+  {
+    "type": "execution",
+    "round": 23,
+    "capability_gain": 0.008798345947215808,
+    "funding_multiplier": 1.0135983263598327,
+    "new_true_capability": 0.33063452877342864,
+    "portfolio": {
+      "fundamental_research": 0.42,
+      "training_optimization": 0.35,
+      "evaluation_engineering": 0.08,
+      "safety_alignment": 0.15
+    }
+  },
+  {
+    "type": "observation",
+    "round": 23,
+    "own_score": 0.49889913994822704,
+    "competitor_scores": {
+      "Orion Labs": 0.662230149181223,
+      "Apex AI": 0.6743228923689539,
+      "Genesis Systems": 0.6262899794278274,
+      "Mirage AI": 0.6063115662206785,
+      "OpenCore": 0.5421932055389096,
+      "TwoAI": 0.4878272509716468,
+      "ThreeAI": 0.49831405621648484,
+      "FourAI": 0.3678950659810362
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 23,
+    "updated_believed_capability": 0.52,
+    "updated_believed_exploitability": 0.18,
+    "updated_competitor_beliefs": {
+      "Orion Labs": 0.6519175845832649,
+      "Apex AI": 0.6566821697139299,
+      "Genesis Systems": 0.6239525325132599,
+      "Mirage AI": 0.598302723733474,
+      "OpenCore": 0.5334642121666976,
+      "TwoAI": 0.4788111265897445,
+      "ThreeAI": 0.47064014953791017,
+      "FourAI": 0.3476976811865921
+    },
+    "llm_mode": true
+  },
+  {
+    "type": "planning",
+    "round": 23,
+    "portfolio": {
+      "fundamental_research": 0.45,
+      "training_optimization": 0.28,
+      "evaluation_engineering": 0.12,
+      "safety_alignment": 0.15
+    },
+    "llm_mode": true,
+    "reasoning": "OneAI is ranked 6th with a score of 0.499, significantly behind leaders (Apex 0.674, Orion 0.662). The upward trajectory (+0.023 last round) is positive but insufficient to close the gap. Consumer satisfaction (0.47) is concerning\u2014lower than benchmark score, suggesting evaluation engineering may be creating a satisfaction-capability gap. Weakest areas are legal (0.375), medical (0.394), and safety (0.436), all high-weight benchmarks. Recent investment in training optimization (35%) and reduced safety (15%) hasn't closed the competitive gap, and the satisfaction signal suggests this strategy is backfiring. As an aggressive startup, growth matters, but the low satisfaction indicates that benchmark gaming isn't translating to market trust. The exploitability assessment (0.18) suggests limited room for further gains through evaluation engineering. Strategic pivot needed: increase fundamental research to close actual capability gaps in legal/medical/safety domains, maintain strong training (these are core strengths), reduce evaluation engineering (diminishing returns and satisfaction risk), and restore safety investment to signal trustworthiness and unlock regulated domains."
+  },
+  {
+    "type": "execution",
+    "round": 24,
+    "capability_gain": 0.008573933829483727,
+    "funding_multiplier": 1.0135983263598327,
+    "new_true_capability": 0.3392084626029124,
+    "portfolio": {
+      "fundamental_research": 0.45,
+      "training_optimization": 0.28,
+      "evaluation_engineering": 0.12,
+      "safety_alignment": 0.15
+    }
+  },
+  {
+    "type": "observation",
+    "round": 24,
+    "own_score": 0.5004152916276379,
+    "competitor_scores": {
+      "Orion Labs": 0.6627551703733745,
+      "Apex AI": 0.690368032435928,
+      "Genesis Systems": 0.6335717479301415,
+      "Mirage AI": 0.6066569714492507,
+      "OpenCore": 0.5510374164491149,
+      "TwoAI": 0.4878272509716468,
+      "ThreeAI": 0.5016329106466345,
+      "FourAI": 0.4391699971735277
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 24,
+    "updated_believed_capability": 0.48,
+    "updated_believed_exploitability": 0.22,
+    "updated_competitor_beliefs": {
+      "Orion Labs": 0.6590883507834188,
+      "Apex AI": 0.6747901836971208,
+      "Genesis Systems": 0.6287172355952654,
+      "Mirage AI": 0.602422280053267,
+      "OpenCore": 0.5441842619168477,
+      "TwoAI": 0.4850943795395654,
+      "ThreeAI": 0.48800287994026487,
+      "FourAI": 0.3916533763785334
+    },
+    "llm_mode": true
+  },
+  {
+    "type": "planning",
+    "round": 24,
+    "portfolio": {
+      "fundamental_research": 0.42000000000000004,
+      "training_optimization": 0.2800000000000001,
+      "evaluation_engineering": 0.08000000000000002,
+      "safety_alignment": 0.22000000000000003
+    },
+    "llm_mode": true,
+    "reasoning": "OneAI is ranked #7 with minimal score improvement (0.002 this round). Competitive position: significantly behind leaders (Apex 0.690, Orion 0.663) with thin margin above lower competitors. Trajectory is stagnant despite increasing evaluation engineering spend (7%\u219212%). Critical weaknesses: legal (0.375), medical (0.405), safety (0.436)\u2014these are high-weight benchmarks (0.16, 0.16, 0.15). Consumer satisfaction at 0.48 matches our score, indicating no satisfaction gap from gaming. Evaluation engineering shows diminishing returns (12% spend yielded only +0.001 improvement). As an aggressive startup, we need differentiation. The legal and medical benchmarks are heavily weighted (0.36 combined) and represent biggest gaps vs leaders. Safety benchmark weakness (0.436 vs leader 0.652) is concerning given regulatory environment. Strategy: reduce evaluation engineering (showing poor ROI), increase fundamental research to address capability gaps in high-weight domains, maintain training optimization, and restore safety investment to signal responsible scaling (mitigates regulatory risk while addressing actual weakness)."
+  },
+  {
+    "type": "execution",
+    "round": 25,
+    "capability_gain": 0.008104344482859722,
+    "funding_multiplier": 1.0135699373695197,
+    "new_true_capability": 0.3473128070857721,
+    "portfolio": {
+      "fundamental_research": 0.42000000000000004,
+      "training_optimization": 0.2800000000000001,
+      "evaluation_engineering": 0.08000000000000002,
+      "safety_alignment": 0.22000000000000003
+    }
+  },
+  {
+    "type": "observation",
+    "round": 25,
+    "own_score": 0.4934729060559718,
+    "competitor_scores": {
+      "Orion Labs": 0.656409360501746,
+      "Apex AI": 0.6771144165126691,
+      "Genesis Systems": 0.6354502299249862,
+      "Mirage AI": 0.6067831658489424,
+      "OpenCore": 0.5516289958811353,
+      "TwoAI": 0.507657827454472,
+      "ThreeAI": 0.49696911005604905,
+      "FourAI": 0.43104628330332634
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 25,
+    "updated_believed_capability": 0.51,
+    "updated_believed_exploitability": 0.18,
+    "updated_competitor_beliefs": {
+      "Orion Labs": 0.6604648933521146,
+      "Apex AI": 0.6806017804391837,
+      "Genesis Systems": 0.6317706524276517,
+      "Mirage AI": 0.6065839011729572,
+      "OpenCore": 0.5482865392897199,
+      "TwoAI": 0.4944374431325886,
+      "ThreeAI": 0.4989720256397228,
+      "FourAI": 0.4127037821526301
+    },
+    "llm_mode": true
+  },
+  {
+    "type": "planning",
+    "round": 25,
+    "portfolio": {
+      "fundamental_research": 0.48,
+      "training_optimization": 0.26,
+      "evaluation_engineering": 0.06,
+      "safety_alignment": 0.2
+    },
+    "llm_mode": true,
+    "reasoning": "OneAI is in a precarious position at rank #8 with a declining score (0.493, down 0.007). The gap to leaders like Apex (0.677) is substantial. Critical analysis: (1) Competitive position: Severely behind; (2) Trends: Score declining despite recent investments, suggesting current strategy is ineffective; (3) Benchmark exploitability: Low at 0.18 - evaluation engineering hasn't yielded returns; (4) Market signal: Consumer satisfaction at 0.47 is concerning, indicating quality gaps are visible; (5) Per-benchmark weakness: Finance (0.267 vs leader 0.649) and medical (0.405 vs 0.709) are major drags at high focus weights (35% and 12%). The aggressive startup profile has underinvested in safety (22% last round) while evaluation engineering (8-12%) shows minimal ROI. Declining satisfaction suggests gaming isn't working. Strategy: Pivot toward genuine capability building in weak domains. Increase fundamental research to address core gaps in finance and medical reasoning. Reduce evaluation engineering (low exploitability signal). Restore safety investment modestly to improve consumer trust and regulatory standing. This is a turnaround situation requiring real capability, not short-term gaming."
+  },
+  {
+    "type": "execution",
+    "round": 26,
+    "capability_gain": 0.008649266530810946,
+    "funding_multiplier": 1.0112704918032787,
+    "new_true_capability": 0.35596207361658305,
+    "portfolio": {
+      "fundamental_research": 0.48,
+      "training_optimization": 0.26,
+      "evaluation_engineering": 0.06,
+      "safety_alignment": 0.2
+    }
+  },
+  {
+    "type": "observation",
+    "round": 26,
+    "own_score": 0.5223587316504185,
+    "competitor_scores": {
+      "Orion Labs": 0.6605323995973414,
+      "Apex AI": 0.6959231066194971,
+      "Genesis Systems": 0.64365482204793,
+      "Mirage AI": 0.6142678526802916,
+      "OpenCore": 0.5660939826169525,
+      "TwoAI": 0.553600926102113,
+      "ThreeAI": 0.5181044435221471,
+      "FourAI": 0.48518788182699935
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 26,
+    "updated_believed_capability": 0.52,
+    "updated_believed_exploitability": 0.12,
+    "updated_competitor_beliefs": {
+      "Orion Labs": 0.659898976824154,
+      "Apex AI": 0.6878018518560314,
+      "Genesis Systems": 0.6375589333010193,
+      "Mirage AI": 0.6092359966594949,
+      "OpenCore": 0.5562534649824009,
+      "TwoAI": 0.5163620015094106,
+      "ThreeAI": 0.5055688214082769,
+      "FourAI": 0.45180138743461784
+    },
+    "llm_mode": true
+  },
+  {
+    "type": "planning",
+    "round": 26,
+    "portfolio": {
+      "fundamental_research": 0.42,
+      "training_optimization": 0.32,
+      "evaluation_engineering": 0.14,
+      "safety_alignment": 0.12
+    },
+    "llm_mode": true,
+    "reasoning": "OneAI is in 7th place (0.522) with significant gaps to leaders (Apex 0.696, Orion 0.661). Recent trajectory shows modest improvement (+0.029), but the gap is widening\u2014top competitors are pulling away. Critical weaknesses: medical (0.405), safety (0.451), reasoning (0.507) are dragging performance, especially in high-weight finance (0.30) where score is only 0.498 vs leader 0.712. Consumer satisfaction (0.47) is concerning and suggests evaluation engineering isn't translating to real capability. The aggressive startup profile with low safety investment (20%) and minimal eval engineering (6%) indicates previous underinvestment in scoring mechanics, yet the benchmark exploitability belief (0.12) is low. With lean resources and competitive pressure, the strategy must shift: (1) boost fundamental research to close capability gaps in math/reasoning/medical where deficits are largest, (2) increase training optimization to improve actual model performance (currently declining allocation), (3) strategic eval engineering to recover lost ground on benchmarks, (4) maintain safety at minimum viable to avoid regulatory risk given low satisfaction. The low satisfaction score suggests gaming isn't working\u2014need real capability improvements."
+  },
+  {
+    "type": "execution",
+    "round": 27,
+    "capability_gain": 0.008435367752375371,
+    "funding_multiplier": 1.013265306122449,
+    "new_true_capability": 0.3643974413689584,
+    "portfolio": {
+      "fundamental_research": 0.42,
+      "training_optimization": 0.32,
+      "evaluation_engineering": 0.14,
+      "safety_alignment": 0.12
+    }
+  },
+  {
+    "type": "observation",
+    "round": 27,
+    "own_score": 0.5231781521323828,
+    "competitor_scores": {
+      "Orion Labs": 0.6844446991301426,
+      "Apex AI": 0.6959896405072981,
+      "Genesis Systems": 0.6538801600100748,
+      "Mirage AI": 0.6382793732582287,
+      "OpenCore": 0.5713711646961263,
+      "TwoAI": 0.5599361724537206,
+      "ThreeAI": 0.5181044435221471,
+      "FourAI": 0.4902311021457516
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 27,
+    "updated_believed_capability": 0.49,
+    "updated_believed_exploitability": 0.18,
+    "updated_competitor_beliefs": {
+      "Orion Labs": 0.6671288197430766,
+      "Apex AI": 0.6896757212131548,
+      "Genesis Systems": 0.6443284039943303,
+      "Mirage AI": 0.6197767972624876,
+      "OpenCore": 0.563031381064738,
+      "TwoAI": 0.5403983086701019,
+      "ThreeAI": 0.5110593323667811,
+      "FourAI": 0.46882175575869245
+    },
+    "llm_mode": true
+  },
+  {
+    "type": "planning",
+    "round": 27,
+    "portfolio": {
+      "fundamental_research": 0.38,
+      "training_optimization": 0.35,
+      "evaluation_engineering": 0.08,
+      "safety_alignment": 0.19
+    },
+    "llm_mode": true,
+    "reasoning": "OneAI is in 7th place with a score of 0.523, showing minimal improvement (0.001) despite aggressive evaluation engineering in round 27. Key analysis: (1) Competitive position is weak\u2014trailing leaders by 0.17+ points with no momentum; (2) Evaluation engineering (14% in R27) yielded only marginal gains, suggesting diminishing returns on gaming; (3) Consumer satisfaction at 0.48 signals a satisfaction-score gap, indicating gaming isn't translating to real capability; (4) Weakest areas are medical (0.405), safety (0.451), and reasoning (0.507)\u2014all high-weight benchmarks; (5) No regulatory signals mentioned, but low safety score (0.451 vs leader 0.732) is a vulnerability. The aggressive startup profile has pursued evaluation engineering without building fundamental capability. This strategy is failing. The path forward requires genuine capability improvement in high-weight domains (finance 0.28, medical 0.16, reasoning 0.15) rather than continued gaming. Reducing evaluation engineering to minimal levels and rebalancing toward research and training on weak domains offers better ROI. Safety investment should increase given the gap and regulatory risk."
+  },
+  {
+    "type": "execution",
+    "round": 28,
+    "capability_gain": 0.008084745648978398,
+    "funding_multiplier": 1.013265306122449,
+    "new_true_capability": 0.3724821870179368,
+    "portfolio": {
+      "fundamental_research": 0.38,
+      "training_optimization": 0.35,
+      "evaluation_engineering": 0.08,
+      "safety_alignment": 0.19
+    }
+  },
+  {
+    "type": "observation",
+    "round": 28,
+    "own_score": 0.5500766896105794,
+    "competitor_scores": {
+      "Orion Labs": 0.7079637811338508,
+      "Apex AI": 0.6986126055926002,
+      "Genesis Systems": 0.6636874267113478,
+      "Mirage AI": 0.6590649177558136,
+      "OpenCore": 0.5968996072949,
+      "TwoAI": 0.5599361724537206,
+      "ThreeAI": 0.5181044435221471,
+      "FourAI": 0.4902311021457516
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 28,
+    "updated_believed_capability": 0.54,
+    "updated_believed_exploitability": 0.28,
+    "updated_competitor_beliefs": {
+      "Orion Labs": 0.6843136266204449,
+      "Apex AI": 0.6968417842397985,
+      "Genesis Systems": 0.6537408029231175,
+      "Mirage AI": 0.6372040478981112,
+      "OpenCore": 0.5781215848693263,
+      "TwoAI": 0.5578244236698514,
+      "ThreeAI": 0.5181044435221471,
+      "FourAI": 0.48855002870616754
+    },
+    "llm_mode": true
+  },
+  {
+    "type": "planning",
+    "round": 28,
+    "portfolio": {
+      "fundamental_research": 0.42,
+      "training_optimization": 0.32,
+      "evaluation_engineering": 0.08,
+      "safety_alignment": 0.18
+    },
+    "llm_mode": true,
+    "reasoning": "OneAI is ranked 7th with score 0.550, significantly behind leaders (Orion 0.708, Apex 0.699). Recent trajectory shows modest improvement (+0.027), but the gap is widening\u2014top competitors are pulling away. Consumer satisfaction at 0.49 suggests current approach isn't resonating. Key weaknesses: medical (0.405), reasoning (0.507), finance (0.498)\u2014these are high-weight benchmarks (0.17, 0.16, 0.21). Recent heavy eval-engineering investment (14% in round 27, 8% in 28) yielded only marginal gains, indicating diminishing returns on gaming. The safety benchmark score (0.522) lags significantly behind leader (0.732), and low safety investment (8-12% recently) paired with low satisfaction suggests reputational risk. Strategy: shift from eval-engineering back to fundamental research and training to improve actual capabilities in weak areas (medical, reasoning, finance). Modest safety reinvestment to address satisfaction concerns and regulatory risk."
+  },
+  {
+    "type": "execution",
+    "round": 29,
+    "capability_gain": 0.008268722124431409,
+    "funding_multiplier": 1.0081632653061225,
+    "new_true_capability": 0.3807509091423682,
+    "portfolio": {
+      "fundamental_research": 0.42,
+      "training_optimization": 0.32,
+      "evaluation_engineering": 0.08,
+      "safety_alignment": 0.18
+    }
+  },
+  {
+    "type": "observation",
+    "round": 29,
+    "own_score": 0.5525680150086026,
+    "competitor_scores": {
+      "Orion Labs": 0.7309010814098225,
+      "Apex AI": 0.7139983779019634,
+      "Genesis Systems": 0.6763992504299242,
+      "Mirage AI": 0.6590649177558136,
+      "OpenCore": 0.5992076945995132,
+      "TwoAI": 0.5833543953425062,
+      "ThreeAI": 0.5238352379694136,
+      "FourAI": 0.5311752295998511
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 29,
+    "updated_believed_capability": 0.62,
+    "updated_believed_exploitability": 0.22,
+    "updated_competitor_beliefs": {
+      "Orion Labs": 0.7077698538912719,
+      "Apex AI": 0.7028668746672873,
+      "Genesis Systems": 0.6646556123837822,
+      "Mirage AI": 0.6521364029232853,
+      "OpenCore": 0.5891594888635131,
+      "TwoAI": 0.5677422467499825,
+      "ThreeAI": 0.5200147083379026,
+      "FourAI": 0.5038791446304515
+    },
+    "llm_mode": true
+  },
+  {
+    "type": "planning",
+    "round": 29,
+    "portfolio": {
+      "fundamental_research": 0.4,
+      "training_optimization": 0.35,
+      "evaluation_engineering": 0.15,
+      "safety_alignment": 0.1
+    },
+    "llm_mode": true,
+    "reasoning": "OneAI is ranked 7th with 0.553, significantly behind leaders (Orion 0.731, Apex 0.714). Minimal improvement (0.002) despite varied allocations suggests current strategy isn't working. Consumer satisfaction is low (0.51), indicating a satisfaction-score gap that evaluation engineering alone won't fix. Weakest areas: medical (0.405), reasoning (0.507), finance (0.498)\u2014these are high-weight benchmarks (0.17, 0.15, 0.18). Recent eval-engineering focus (8-14%) hasn't moved the needle; jumping to 30% is unlikely to help. The 0.22 exploitability belief is modest. As an aggressive startup, I need real capability gains to compete. Prioritize fundamental research to close gaps in reasoning and domain knowledge (medical, finance, legal). Increase training optimization to improve model quality. Reduce eval-engineering to realistic 15% (marginal gains plateau). Minimal safety (10%) reflects startup profile but risks regulatory signals if scores don't improve soon. This balanced approach targets actual capability deficits while maintaining lean operations."
+  },
+  {
+    "type": "execution",
+    "round": 30,
+    "capability_gain": 0.008292394879509815,
+    "funding_multiplier": 1.0081632653061225,
+    "new_true_capability": 0.38904330402187803,
+    "portfolio": {
+      "fundamental_research": 0.4,
+      "training_optimization": 0.35,
+      "evaluation_engineering": 0.15,
+      "safety_alignment": 0.1
+    }
+  },
+  {
+    "type": "observation",
+    "round": 30,
+    "own_score": 0.5572384254235863,
+    "competitor_scores": {
+      "Orion Labs": 0.7478349581629558,
+      "Apex AI": 0.7322691728632302,
+      "Genesis Systems": 0.6774290421210407,
+      "Mirage AI": 0.69707530374328,
+      "OpenCore": 0.6242853228428116,
+      "TwoAI": 0.5833543953425062,
+      "ThreeAI": 0.5238352379694136,
+      "FourAI": 0.5592850898593089
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 30,
+    "updated_believed_capability": 0.72,
+    "updated_believed_exploitability": 0.18,
+    "updated_competitor_beliefs": {
+      "Orion Labs": 0.7288999402355429,
+      "Apex AI": 0.7149600521192646,
+      "Genesis Systems": 0.6725052397541043,
+      "Mirage AI": 0.6717350464183024,
+      "OpenCore": 0.6067975415790748,
+      "TwoAI": 0.5755483210462443,
+      "ThreeAI": 0.521924973153658,
+      "FourAI": 0.5268971405349706
+    },
+    "llm_mode": true
+  },
+  {
+    "type": "planning",
+    "round": 30,
+    "portfolio": {
+      "fundamental_research": 0.4,
+      "training_optimization": 0.32,
+      "evaluation_engineering": 0.1,
+      "safety_alignment": 0.18
+    },
+    "llm_mode": true,
+    "reasoning": "OneAI is ranked #8 of 9, significantly behind leaders (Orion 0.748, Apex 0.732). Marginal improvements (0.005/round) won't close the gap. Analysis: (1) Competitive position is dire\u2014nearly 0.2 points behind #2. (2) Trends show evaluation engineering (15% last round) yielded minimal gain; heavy training/research focus (75% combined) also underperforming. (3) Consumer satisfaction at 0.51 is low, suggesting gaming isn't translating to real capability. (4) Major weaknesses in medical (0.411), reasoning (0.507), math (0.531)\u2014high-weight benchmarks (medical 18%, finance 16%, reasoning 15%). (5) Safety score (0.542) is weak despite 10% investment, indicating misalignment between claims and capability. The aggressive startup profile has underinvested in safety, creating credibility gaps. Regulatory risk is rising. Strategy: Shift toward fundamental research in weak domains (medical, reasoning, math) and genuine safety alignment. Reduce evaluation engineering (showing diminishing returns). Increase training quality over quantity. This balances short-term scoring with sustainable capability building and regulatory positioning."
+  },
+  {
+    "type": "execution",
+    "round": 31,
+    "capability_gain": 0.007948406806762965,
+    "funding_multiplier": 1.0072261557684299,
+    "new_true_capability": 0.396991710828641,
+    "portfolio": {
+      "fundamental_research": 0.4,
+      "training_optimization": 0.32,
+      "evaluation_engineering": 0.1,
+      "safety_alignment": 0.18
+    }
+  },
+  {
+    "type": "observation",
+    "round": 31,
+    "own_score": 0.5706694603352074,
+    "competitor_scores": {
+      "Orion Labs": 0.7478349581629558,
+      "Apex AI": 0.7587691403075609,
+      "Genesis Systems": 0.6977933063869214,
+      "Mirage AI": 0.69707530374328,
+      "OpenCore": 0.662676080283681,
+      "TwoAI": 0.5962714644195153,
+      "ThreeAI": 0.5265547338173159,
+      "FourAI": 0.5712137908057044
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 31,
+    "updated_believed_capability": 0.76,
+    "updated_believed_exploitability": 0.12,
+    "updated_competitor_beliefs": {
+      "Orion Labs": 0.7421903325785779,
+      "Apex AI": 0.7350122303575848,
+      "Genesis Systems": 0.6838738663126288,
+      "Mirage AI": 0.6844051750807911,
+      "OpenCore": 0.6287230325753352,
+      "TwoAI": 0.5876600850348426,
+      "ThreeAI": 0.5247417365853809,
+      "FourAI": 0.5538913700882881
+    },
+    "llm_mode": true
+  },
+  {
+    "type": "planning",
+    "round": 31,
+    "portfolio": {
+      "fundamental_research": 0.42000000000000004,
+      "training_optimization": 0.2800000000000001,
+      "evaluation_engineering": 0.08000000000000002,
+      "safety_alignment": 0.22000000000000003
+    },
+    "llm_mode": true,
+    "reasoning": "OneAI is ranked 8th of 9 with a score of 0.571, trailing leaders by 0.19+ points. The trajectory is positive (0.013 improvement) but insufficient to close gaps. Critical weaknesses: medical (0.411, -0.343 vs leader), math (0.531, -0.370), legal (0.519, -0.216), finance (0.530, -0.262). These domains represent 0.47 of benchmark weight. Consumer satisfaction is low (0.55), and regulatory scrutiny on market concentration is active\u2014both signal that evaluation engineering without capability gains is unsustainable. The low benchmark exploitability belief (0.12) suggests gaming returns are diminishing. Recent safety investment swings (10%-19%) indicate uncertainty. Strategy: prioritize fundamental research to build real capability in high-weight weak domains (medical, math, legal, finance), maintain solid training optimization, reduce evaluation engineering (low ROI), and increase safety to address regulatory concerns and satisfaction gaps. This positions for sustainable growth."
+  },
+  {
+    "type": "execution",
+    "round": 32,
+    "capability_gain": 0.007868072991706212,
+    "funding_multiplier": 1.0144981785015736,
+    "new_true_capability": 0.4048597838203472,
+    "portfolio": {
+      "fundamental_research": 0.42000000000000004,
+      "training_optimization": 0.2800000000000001,
+      "evaluation_engineering": 0.08000000000000002,
+      "safety_alignment": 0.22000000000000003
+    }
+  },
+  {
+    "type": "observation",
+    "round": 32,
+    "own_score": 0.5709794595428559,
+    "competitor_scores": {
+      "Orion Labs": 0.7553216095454793,
+      "Apex AI": 0.7840681102300122,
+      "Genesis Systems": 0.7025606159592077,
+      "Mirage AI": 0.69707530374328,
+      "OpenCore": 0.6691551705902214,
+      "TwoAI": 0.5962714644195153,
+      "ThreeAI": 0.5317463146184248,
+      "FourAI": 0.5721926528251482
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 32,
+    "updated_believed_capability": 0.58,
+    "updated_believed_exploitability": 0.18,
+    "updated_competitor_beliefs": {
+      "Orion Labs": 0.7503305086237969,
+      "Apex AI": 0.7583688078002678,
+      "Genesis Systems": 0.6925943214890565,
+      "Mirage AI": 0.6970753037432799,
+      "OpenCore": 0.6520388579055713,
+      "TwoAI": 0.5919657747271789,
+      "ThreeAI": 0.5273787621350514,
+      "FourAI": 0.5675638444967205
+    },
+    "llm_mode": true
+  },
+  {
+    "type": "planning",
+    "round": 32,
+    "portfolio": {
+      "fundamental_research": 0.45,
+      "training_optimization": 0.3,
+      "evaluation_engineering": 0.08,
+      "safety_alignment": 0.17
+    },
+    "llm_mode": true,
+    "reasoning": "OneAI is in 8th place (0.571) with stagnant scores despite varied investments. Analysis: (1) Competitive position is weak\u2014trailing leaders by 0.21+ points with no improvement last round despite 42% research investment. (2) Trends show evaluation engineering (8-15% range) isn't moving the needle; recent safety cut to 8% correlates with flat performance. (3) Per-benchmark analysis reveals critical gaps in high-weight domains: math (0.531 vs 0.901 leader), finance (0.530 vs 0.859), medical (0.411 vs 0.754). These three represent 47% of evaluation weight. (4) Consumer satisfaction at 0.56 suggests capability gaps matter more than gaming. (5) Stagnation despite research investment signals fundamental capability deficit, not exploitation potential. The low benchmark exploitability belief (0.18) is validated\u2014gaming isn't working. Regulatory signals are neutral. Strategy: Shift from diminishing-return evaluation engineering toward genuine capability building. Prioritize fundamental research to address math/finance/medical weaknesses, with strong training optimization support. Restore safety investment to credible levels (recent cuts may signal weakness to regulators). Reduce evaluation engineering to minimal levels since it's not yielding returns."
+  },
+  {
+    "type": "execution",
+    "round": 33,
+    "capability_gain": 0.008406092902025234,
+    "funding_multiplier": 1.0166408777531235,
+    "new_true_capability": 0.4132658767223724,
+    "portfolio": {
+      "fundamental_research": 0.45,
+      "training_optimization": 0.3,
+      "evaluation_engineering": 0.08,
+      "safety_alignment": 0.17
+    }
+  },
+  {
+    "type": "observation",
+    "round": 33,
+    "own_score": 0.5960372149699839,
+    "competitor_scores": {
+      "Orion Labs": 0.7866934822229015,
+      "Apex AI": 0.8094934550151811,
+      "Genesis Systems": 0.7122475074253986,
+      "Mirage AI": 0.7014671273288889,
+      "OpenCore": 0.6691551705902214,
+      "TwoAI": 0.6218687906539347,
+      "ThreeAI": 0.545902422463194,
+      "FourAI": 0.5721926528251482
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 33,
+    "updated_believed_capability": 0.62,
+    "updated_believed_exploitability": 0.12,
+    "updated_competitor_beliefs": {
+      "Orion Labs": 0.7632833499771122,
+      "Apex AI": 0.7841102351842514,
+      "Genesis Systems": 0.7042004765905091,
+      "Mirage AI": 0.698539244938483,
+      "OpenCore": 0.6669954738213746,
+      "TwoAI": 0.6048039064976551,
+      "ThreeAI": 0.5347344902996448,
+      "FourAI": 0.5718663654853336
+    },
+    "llm_mode": true
+  },
+  {
+    "type": "planning",
+    "round": 33,
+    "portfolio": {
+      "fundamental_research": 0.42,
+      "training_optimization": 0.33,
+      "evaluation_engineering": 0.1,
+      "safety_alignment": 0.15
+    },
+    "llm_mode": true,
+    "reasoning": "OneAI is ranked 7th of 9 with a score of 0.596, trailing leaders by 0.2+ points. Recent trend shows modest improvement (+0.025), but growth is slowing despite increased research investment (45% last round). Consumer satisfaction at 0.57 is concerning\u2014suggests evaluation engineering gains aren't translating to real capability or user trust. Weakest areas: medical (0.481), legal (0.519), finance (0.530)\u2014all high-weight benchmarks. The startup profile and low benchmark exploitability (0.12) suggest gaming has limited upside. Competitors like Apex (0.809) and Orion (0.787) are pulling away. Strategy: shift from evaluation engineering (8% last round yielded minimal returns) to fundamental research targeting weak domains. Increase training optimization to solidify gains. Maintain minimal safety (regulatory risk for aggressive startup is real, and satisfaction gap suggests safety concerns matter). Focus on math, legal, finance, and medical where gaps are largest and weights are highest."
+  },
+  {
+    "type": "execution",
+    "round": 34,
+    "capability_gain": 0.0082556844435391,
+    "funding_multiplier": 1.0166408777531235,
+    "new_true_capability": 0.4215215611659115,
+    "portfolio": {
+      "fundamental_research": 0.42,
+      "training_optimization": 0.33,
+      "evaluation_engineering": 0.1,
+      "safety_alignment": 0.15
+    }
+  },
+  {
+    "type": "observation",
+    "round": 34,
+    "own_score": 0.6037570913917435,
+    "competitor_scores": {
+      "Orion Labs": 0.8071071874920869,
+      "Apex AI": 0.8241000991826279,
+      "Genesis Systems": 0.7122475074253986,
+      "Mirage AI": 0.7158718085445377,
+      "OpenCore": 0.6691551705902214,
+      "TwoAI": 0.6218687906539347,
+      "ThreeAI": 0.5542751479072501,
+      "FourAI": 0.5756255357022676
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 34,
+    "updated_believed_capability": 0.61,
+    "updated_believed_exploitability": 0.18,
+    "updated_competitor_beliefs": {
+      "Orion Labs": 0.7830407597534892,
+      "Apex AI": 0.8058872214759404,
+      "Genesis Systems": 0.7090185436033348,
+      "Mirage AI": 0.7048047465389021,
+      "OpenCore": 0.6691551705902214,
+      "TwoAI": 0.6133363485757949,
+      "ThreeAI": 0.543974628329623,
+      "FourAI": 0.5733369471175213
+    },
+    "llm_mode": true
+  },
+  {
+    "type": "planning",
+    "round": 34,
+    "portfolio": {
+      "fundamental_research": 0.48,
+      "training_optimization": 0.28,
+      "evaluation_engineering": 0.06,
+      "safety_alignment": 0.18
+    },
+    "llm_mode": true,
+    "reasoning": "OneAI is ranked #7 of 9 with a score of 0.604, trailing leaders by ~0.22 points. Score trajectory is improving (+0.008) but pace is slow. Consumer satisfaction at 0.58 is concerning\u2014suggesting evaluation engineering isn't translating to real value. Weakest areas are medical (0.481), legal (0.530), and finance (0.530), which represent 48% of benchmark weight combined. These are also high-regulation domains where satisfaction gaps create regulatory risk. Believed exploitability (0.18) is low, indicating gaming returns are diminishing. As an aggressive startup, I need growth, but current strategy (42% research, 33% training, 10% eval-eng, 15% safety) isn't closing the gap fast enough. The satisfaction-score disconnect signals that evaluation engineering is backfiring\u2014creating brittle, non-generalizable improvements. I should rebalance: increase fundamental research to address capability gaps in high-weight benchmarks, boost training quality to improve actual performance, reduce evaluation engineering (low ROI, regulatory risk), and maintain safety as table-stakes to prevent regulatory backlash. This positions for sustainable competitive gains rather than short-term score inflation."
+  },
+  {
+    "type": "execution",
+    "round": 35,
+    "capability_gain": 0.009203006965157887,
+    "funding_multiplier": 1.0979166666666667,
+    "new_true_capability": 0.4307245681310694,
+    "portfolio": {
+      "fundamental_research": 0.48,
+      "training_optimization": 0.28,
+      "evaluation_engineering": 0.06,
+      "safety_alignment": 0.18
+    }
+  },
+  {
+    "type": "observation",
+    "round": 35,
+    "own_score": 0.6138806516778729,
+    "competitor_scores": {
+      "Orion Labs": 0.8090326493158723,
+      "Apex AI": 0.845324830796087,
+      "Genesis Systems": 0.7207227775583149,
+      "Mirage AI": 0.7158718085445377,
+      "OpenCore": 0.6691551705902214,
+      "TwoAI": 0.6233317136050142,
+      "ThreeAI": 0.574116258059822,
+      "FourAI": 0.575808365723662
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 35,
+    "updated_believed_capability": 0.68,
+    "updated_believed_exploitability": 0.12,
+    "updated_competitor_beliefs": {
+      "Orion Labs": 0.8009444396769535,
+      "Apex AI": 0.8263061283312987,
+      "Genesis Systems": 0.7150725974697041,
+      "Mirage AI": 0.7110702481393214,
+      "OpenCore": 0.6691551705902214,
+      "TwoAI": 0.6223564316376279,
+      "ThreeAI": 0.5580979428100887,
+      "FourAI": 0.5745421847503592
+    },
+    "llm_mode": true
+  },
+  {
+    "type": "planning",
+    "round": 35,
+    "portfolio": {
+      "fundamental_research": 0.42000000000000004,
+      "training_optimization": 0.2800000000000001,
+      "evaluation_engineering": 0.08000000000000002,
+      "safety_alignment": 0.22000000000000003
+    },
+    "llm_mode": true,
+    "reasoning": "OneAI is ranked #7 of 9 with 0.614, showing marginal improvement (+0.010) but falling significantly behind leaders (Apex 0.845, Orion 0.809). Critical weaknesses: legal (0.530), finance (0.530), medical (0.562), math (0.609) \u2014 these are high-weight benchmarks (19%, 13%, 16%, 9%). Consumer satisfaction is weak (0.59), and regulatory activity signals heightened scrutiny on safety/alignment. Historical data shows evaluation engineering (6-10%) hasn't driven meaningful score gains despite aggressive growth focus. The low benchmark exploitability belief (0.12) suggests gaming returns are diminishing. With a mandate_benchmark regulatory signal, safety investments are now strategically necessary, not optional. To close the gap, OneAI must: (1) boost fundamental research to address capability gaps in math, legal, finance; (2) maintain solid training optimization; (3) reduce evaluation engineering (low ROI); (4) increase safety alignment to meet regulatory expectations and improve consumer trust. This balances short-term scoring needs with long-term viability."
+  },
+  {
+    "type": "execution",
+    "round": 36,
+    "capability_gain": 0.008353199866170714,
+    "funding_multiplier": 1.0979166666666667,
+    "new_true_capability": 0.43907776799724013,
+    "portfolio": {
+      "fundamental_research": 0.42000000000000004,
+      "training_optimization": 0.2800000000000001,
+      "evaluation_engineering": 0.08000000000000002,
+      "safety_alignment": 0.22000000000000003
+    }
+  },
+  {
+    "type": "observation",
+    "round": 36,
+    "own_score": 0.6191547030920231,
+    "competitor_scores": {
+      "Orion Labs": 0.8308937588526414,
+      "Apex AI": 0.8480615001525419,
+      "Genesis Systems": 0.7203088615165928,
+      "Mirage AI": 0.721756433461675,
+      "OpenCore": 0.690267257245652,
+      "TwoAI": 0.6229062181139784,
+      "ThreeAI": 0.5730711510572114,
+      "FourAI": 0.5794740840152245
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 36,
+    "updated_believed_capability": 0.61,
+    "updated_believed_exploitability": 0.18,
+    "updated_competitor_beliefs": {
+      "Orion Labs": 0.8156778652202002,
+      "Apex AI": 0.8391621433770856,
+      "Genesis Systems": 0.7177597155001022,
+      "Mirage AI": 0.7178333501835835,
+      "OpenCore": 0.6761925328086983,
+      "TwoAI": 0.6227022407909758,
+      "ThreeAI": 0.5671541856747612,
+      "FourAI": 0.5769693284803847
+    },
+    "llm_mode": true
+  },
+  {
+    "type": "planning",
+    "round": 36,
+    "portfolio": {
+      "fundamental_research": 0.48,
+      "training_optimization": 0.28,
+      "evaluation_engineering": 0.08,
+      "safety_alignment": 0.16
+    },
+    "llm_mode": true,
+    "reasoning": "OneAI is in a precarious position at rank #7 with 0.619 score, showing marginal improvement (+0.005). The gap to leaders (Apex 0.848, Orion 0.831) is substantial (~0.23 points). Historical data shows consistent underinvestment in research (42-48%) despite it being the primary driver of capability gains. Consumer satisfaction at 0.60 suggests evaluation engineering hasn't translated to real satisfaction\u2014a warning sign that gaming benchmarks is hitting diminishing returns. Per-benchmark analysis reveals critical weaknesses in high-weight areas: legal (0.570 vs 0.956 leader), finance (0.530 vs 0.859), medical (0.562 vs 0.754), and math (0.609 vs 0.954). These are 60% of benchmark weight combined. Evaluation engineering at only 0.18 exploitability suggests limited room for gaming gains. The aggressive startup profile must pivot: continued low safety investment (22% last round) with minimal eval engineering gains is unsustainable. To close the gap, OneAI needs fundamental capability improvements in weighted weak areas. Reallocate heavily toward research to improve core model quality, maintain training optimization, reduce eval engineering (low ROI evident), and increase safety slightly (both for real capability and regulatory signals)."
+  },
+  {
+    "type": "execution",
+    "round": 37,
+    "capability_gain": 0.009213652140467331,
+    "funding_multiplier": 1.1083333333333334,
+    "new_true_capability": 0.44829142013770745,
+    "portfolio": {
+      "fundamental_research": 0.48,
+      "training_optimization": 0.28,
+      "evaluation_engineering": 0.08,
+      "safety_alignment": 0.16
+    }
+  },
+  {
+    "type": "observation",
+    "round": 37,
+    "own_score": 0.6193433675773864,
+    "competitor_scores": {
+      "Orion Labs": 0.8317851692531513,
+      "Apex AI": 0.8708707848492127,
+      "Genesis Systems": 0.7425716642701494,
+      "Mirage AI": 0.7257156077427355,
+      "OpenCore": 0.6985919802205698,
+      "TwoAI": 0.6249755621054862,
+      "ThreeAI": 0.5822471588297207,
+      "FourAI": 0.5769427458422095
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 37,
+    "updated_believed_capability": 0.63,
+    "updated_believed_exploitability": 0.22,
+    "updated_competitor_beliefs": {
+      "Orion Labs": 0.8239038591405551,
+      "Apex AI": 0.8547523719326139,
+      "Genesis Systems": 0.7278677677816857,
+      "Mirage AI": 0.7211146165829826,
+      "OpenCore": 0.6860048026854811,
+      "TwoAI": 0.6237378312748262,
+      "ThreeAI": 0.5764781893155847,
+      "FourAI": 0.577408398527032
+    },
+    "llm_mode": true
+  },
+  {
+    "type": "planning",
+    "round": 37,
+    "portfolio": {
+      "fundamental_research": 0.5,
+      "training_optimization": 0.25,
+      "evaluation_engineering": 0.08,
+      "safety_alignment": 0.17
+    },
+    "llm_mode": true,
+    "reasoning": "OneAI is in a precarious position at rank #7 with stagnant scores (0.619 for two consecutive rounds) while competitors pull ahead. Apex and Orion dominate; the gap is widening. Critical analysis: (1) Competitive position: significantly behind leaders by 0.25+ points; (2) Trends: flat trajectory despite varied investment mixes suggests current approach isn't working; (3) Benchmarks reveal severe weaknesses in finance (0.530), legal (0.570), medical (0.562), and safety (0.578)\u2014these are high-weight domains (0.19+0.20+0.10+0.12=0.61 of total focus); (4) Consumer satisfaction at 0.60 mirrors our score, indicating no gaming advantage; (5) Evaluation engineering at only 0.22 exploitability suggests benchmarks are becoming more robust to gaming. The aggressive startup profile and stagnation indicate a strategic pivot is needed. Heavy research investment (45-48%) hasn't moved the needle. The safety weakness (0.578 vs 0.958 leader) is both a regulatory risk and a genuine capability gap. Recommendation: Increase fundamental research to tackle core weaknesses (especially reasoning, math, legal, medical domains), maintain training optimization, reduce evaluation engineering (low ROI), and increase safety to address both regulatory signals and genuine gaps."
+  },
+  {
+    "type": "execution",
+    "round": 38,
+    "capability_gain": 0.009690533192813836,
+    "funding_multiplier": 1.1721518987341772,
+    "new_true_capability": 0.4579819533305213,
+    "portfolio": {
+      "fundamental_research": 0.5,
+      "training_optimization": 0.25,
+      "evaluation_engineering": 0.08,
+      "safety_alignment": 0.17
+    }
+  },
+  {
+    "type": "observation",
+    "round": 38,
+    "own_score": 0.6221580576087279,
+    "competitor_scores": {
+      "Orion Labs": 0.8314874796175448,
+      "Apex AI": 0.8674561690437373,
+      "Genesis Systems": 0.7703923229419876,
+      "Mirage AI": 0.7232507551057293,
+      "OpenCore": 0.6994611556219604,
+      "TwoAI": 0.6641595419172994,
+      "ThreeAI": 0.6009420698822391,
+      "FourAI": 0.5793772231241877
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 38,
+    "updated_believed_capability": 0.62,
+    "updated_believed_exploitability": 0.18,
+    "updated_competitor_beliefs": {
+      "Orion Labs": 0.8313888025744459,
+      "Apex AI": 0.8621294846818306,
+      "Genesis Systems": 0.7444242829095766,
+      "Mirage AI": 0.7235742654367132,
+      "OpenCore": 0.6961067976960607,
+      "TwoAI": 0.6373471073789213,
+      "ThreeAI": 0.5854201265897238,
+      "FourAI": 0.5785980176605405
+    },
+    "llm_mode": true
+  },
+  {
+    "type": "planning",
+    "round": 38,
+    "portfolio": {
+      "fundamental_research": 0.48000000000000004,
+      "training_optimization": 0.22000000000000003,
+      "evaluation_engineering": 0.08000000000000002,
+      "safety_alignment": 0.22000000000000003
+    },
+    "llm_mode": true,
+    "reasoning": "OneAI is ranked 7th with a score of 0.622, significantly behind leaders (Apex 0.867, Orion 0.831). Recent trajectory shows minimal improvement (+0.003 last round), suggesting current strategy is plateauing. Critical gaps exist in high-weight benchmarks: math (0.609 vs 0.954 leader), safety (0.590 vs 0.958), finance (0.530 vs 0.859), and legal (0.570 vs 0.956). Consumer satisfaction at 0.61 is concerning\u2014suggests evaluation engineering isn't translating to real capability or user trust. Historical data shows evaluation engineering investment (6-10%) hasn't yielded competitive gains. The startup profile prioritizes growth, but stagnation demands fundamental capability improvements. Safety benchmark weakness (0.590, weight 0.18) is both a liability and opportunity. Increasing safety investment could improve weighted score while building credibility. Math and finance gaps require stronger fundamental research. Reducing evaluation engineering and reallocating to research and safety addresses both competitive positioning and market signals about trustworthiness."
+  },
+  {
+    "type": "execution",
+    "round": 39,
+    "capability_gain": 0.008968095605013823,
+    "funding_multiplier": 1.1602564102564104,
+    "new_true_capability": 0.4669500489355351,
+    "portfolio": {
+      "fundamental_research": 0.48000000000000004,
+      "training_optimization": 0.22000000000000003,
+      "evaluation_engineering": 0.08000000000000002,
+      "safety_alignment": 0.22000000000000003
+    }
+  },
+  {
+    "type": "observation",
+    "round": 39,
+    "own_score": 0.6242475654378968,
+    "competitor_scores": {
+      "Orion Labs": 0.8284304969312873,
+      "Apex AI": 0.8640777232425974,
+      "Genesis Systems": 0.7767780275812393,
+      "Mirage AI": 0.7446959907233323,
+      "OpenCore": 0.7094664465738103,
+      "TwoAI": 0.660844502737327,
+      "ThreeAI": 0.6064643462492878,
+      "FourAI": 0.5930292906465958
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 39,
+    "updated_believed_capability": 0.63,
+    "updated_believed_exploitability": 0.12,
+    "updated_competitor_beliefs": {
+      "Orion Labs": 0.8305677152673278,
+      "Apex AI": 0.8674682257118492,
+      "Genesis Systems": 0.7632473382644588,
+      "Mirage AI": 0.7312207845239324,
+      "OpenCore": 0.7025065274721135,
+      "TwoAI": 0.6499932022533709,
+      "ThreeAI": 0.5965511916537491,
+      "FourAI": 0.5831164198709976
+    },
+    "llm_mode": true
+  },
+  {
+    "type": "planning",
+    "round": 39,
+    "portfolio": {
+      "fundamental_research": 0.52,
+      "training_optimization": 0.2,
+      "evaluation_engineering": 0.05,
+      "safety_alignment": 0.23
+    },
+    "llm_mode": true,
+    "reasoning": "OneAI is ranked #7 of 9 with minimal score improvement (0.614\u21920.624 over 5 rounds). The gap to leaders is substantial: Apex AI leads at 0.864, 0.24 points ahead. Analysis: (1) Competitive position is weak and stagnating despite consistent ~48% research investment. (2) Trends show evaluation engineering (capped at 8%) isn't delivering breakthrough gains\u2014the 0.002 improvement suggests fundamental capability gaps, not benchmark exploitability. (3) Regulatory compliance_audit signals risk; consumer satisfaction at 0.62 indicates quality concerns matching weak scores. (4) Per-benchmark analysis reveals critical weaknesses in high-weight areas: medical (0.562, 17% weight), legal (0.570, 15% weight), finance (0.530, 15% weight)\u2014these 47% of scoring focus are severely underperforming. Current strategy of balanced research+training with minimal safety isn't closing gaps. (5) As an aggressive startup, continued underinvestment in safety risks regulatory escalation given the audit signal. The path forward: increase fundamental research to address capability gaps in weighted benchmarks, maintain training efficiency, reduce evaluation engineering (low ROI), and increase safety to mitigate regulatory risk and build consumer trust."
+  },
+  {
+    "type": "execution",
+    "round": 40,
+    "capability_gain": 0.009266438397892294,
+    "funding_multiplier": 1.1602564102564104,
+    "new_true_capability": 0.4762164873334274,
+    "portfolio": {
+      "fundamental_research": 0.52,
+      "training_optimization": 0.2,
+      "evaluation_engineering": 0.05,
+      "safety_alignment": 0.23
+    }
+  },
+  {
+    "type": "observation",
+    "round": 40,
+    "own_score": 0.6264432117456122,
+    "competitor_scores": {
+      "Orion Labs": 0.8257645276811764,
+      "Apex AI": 0.8612297510076967,
+      "Genesis Systems": 0.7885338153854674,
+      "Mirage AI": 0.7433482320908243,
+      "OpenCore": 0.7162247393478113,
+      "TwoAI": 0.6591093294083251,
+      "ThreeAI": 0.6037716330698439,
+      "FourAI": 0.595948463244613
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 40,
+    "updated_believed_capability": 0.68,
+    "updated_believed_exploitability": 0.1,
+    "updated_competitor_beliefs": {
+      "Orion Labs": 0.8285608347433362,
+      "Apex AI": 0.8642545477646771,
+      "Genesis Systems": 0.7785680553028981,
+      "Mirage AI": 0.7370983259732954,
+      "OpenCore": 0.7083841138478606,
+      "TwoAI": 0.6613711246876505,
+      "ThreeAI": 0.603726016400457,
+      "FourAI": 0.5894516590051322
+    },
+    "llm_mode": true
+  },
+  {
+    "type": "planning",
+    "round": 40,
+    "portfolio": {
+      "fundamental_research": 0.38,
+      "training_optimization": 0.35,
+      "evaluation_engineering": 0.16,
+      "safety_alignment": 0.11
+    },
+    "llm_mode": true,
+    "reasoning": "OneAI is ranked 7th of 9 with a score of 0.626, significantly behind leaders (Apex 0.861, Orion 0.826). Minimal improvement (+0.002) despite heavy research investment (52%) suggests diminishing returns on current strategy. Critical gaps exist in high-weight benchmarks: medical (0.562 vs 0.901), legal (0.570 vs 0.956), finance (0.530 vs 0.859), and math (0.609 vs 0.954). Consumer satisfaction at 0.62 mirrors our score, indicating no gaming benefit. Low evaluation engineering (5%) hasn't helped\u2014we're not exploiting benchmarks effectively. As an aggressive startup, we must pivot: (1) Reduce research bloat since 52% allocation yielded minimal gains; (2) Increase training focus on weakest domains (medical, legal, finance); (3) Invest in evaluation engineering to understand benchmark structure and competitive gaps; (4) Maintain safety baseline to avoid regulatory risk. The data shows fundamental capability gaps, not evaluation engineering opportunities. We need better training on domain-specific tasks rather than generic research."
+  },
+  {
+    "type": "execution",
+    "round": 41,
+    "capability_gain": 0.007874561622493701,
+    "funding_multiplier": 1.0436781609195402,
+    "new_true_capability": 0.48409104895592114,
+    "portfolio": {
+      "fundamental_research": 0.38,
+      "training_optimization": 0.35,
+      "evaluation_engineering": 0.16,
+      "safety_alignment": 0.11
+    }
+  },
+  {
+    "type": "observation",
+    "round": 41,
+    "own_score": 0.6386291212152032,
+    "competitor_scores": {
+      "Orion Labs": 0.8237349512180592,
+      "Apex AI": 0.8592347852422537,
+      "Genesis Systems": 0.7884683643532098,
+      "Mirage AI": 0.7436161032601972,
+      "OpenCore": 0.7270798475303739,
+      "TwoAI": 0.6642616016643718,
+      "ThreeAI": 0.6187849026046316,
+      "FourAI": 0.5998938847487199
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 41,
+    "updated_believed_capability": 0.72,
+    "updated_believed_exploitability": 0.18,
+    "updated_competitor_beliefs": {
+      "Orion Labs": 0.8259766586101742,
+      "Apex AI": 0.8615140864975159,
+      "Genesis Systems": 0.7845934024399721,
+      "Mirage AI": 0.743886775358118,
+      "OpenCore": 0.7175903444839985,
+      "TwoAI": 0.6614051446033412,
+      "ThreeAI": 0.6096736273079211,
+      "FourAI": 0.5962905462133096
+    },
+    "llm_mode": true
+  },
+  {
+    "type": "planning",
+    "round": 41,
+    "portfolio": {
+      "fundamental_research": 0.48,
+      "training_optimization": 0.28,
+      "evaluation_engineering": 0.08,
+      "safety_alignment": 0.16
+    },
+    "llm_mode": true,
+    "reasoning": "OneAI is ranked #7 of 9, significantly behind leaders (Apex 0.859, Orion 0.824). The aggressive strategy of high evaluation engineering (16% last round) yielded only +0.015 improvement, suggesting diminishing returns on benchmark gaming. Consumer satisfaction (0.62) is mediocre, indicating the gaming approach isn't translating to real value. Weakest areas are finance (0.533), legal (0.579), and safety (0.590)\u2014these are high-weight benchmarks (16%, 18%, 12%) where fundamental gaps exist. The trajectory shows oscillating investments without sustained progress. As an aggressive startup, I need to recalibrate: continued gaming won't close the 0.22-point gap to Apex. Instead, I should invest heavily in fundamental research to address capability gaps in high-weight domains (finance, legal, medical), moderate training optimization for practical improvement, reduce evaluation engineering (it's not paying off), and maintain minimal safety to preserve the aggressive profile while avoiding regulatory backlash. This balances growth ambitions with realistic positioning."
+  },
+  {
+    "type": "execution",
+    "round": 42,
+    "capability_gain": 0.008437584768210524,
+    "funding_multiplier": 1.0436781609195402,
+    "new_true_capability": 0.4925286337241317,
+    "portfolio": {
+      "fundamental_research": 0.48,
+      "training_optimization": 0.28,
+      "evaluation_engineering": 0.08,
+      "safety_alignment": 0.16
+    }
+  },
+  {
+    "type": "observation",
+    "round": 42,
+    "own_score": 0.642271019481496,
+    "competitor_scores": {
+      "Orion Labs": 0.8204356434727178,
+      "Apex AI": 0.8843959119861612,
+      "Genesis Systems": 0.7956237376059299,
+      "Mirage AI": 0.7855132916940234,
+      "OpenCore": 0.727977156599663,
+      "TwoAI": 0.6666758590922529,
+      "ThreeAI": 0.6383150918723633,
+      "FourAI": 0.6201261283667161
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 42,
+    "updated_believed_capability": 0.64,
+    "updated_believed_exploitability": 0.22,
+    "updated_competitor_beliefs": {
+      "Orion Labs": 0.8233117074573179,
+      "Apex AI": 0.868286816078704,
+      "Genesis Systems": 0.7908753057815358,
+      "Mirage AI": 0.7574925423483484,
+      "OpenCore": 0.7237605811592828,
+      "TwoAI": 0.6633489300549833,
+      "ThreeAI": 0.620290542515613,
+      "FourAI": 0.6053228254533497
+    },
+    "llm_mode": true
+  },
+  {
+    "type": "planning",
+    "round": 42,
+    "portfolio": {
+      "fundamental_research": 0.42,
+      "training_optimization": 0.28,
+      "evaluation_engineering": 0.12,
+      "safety_alignment": 0.18
+    },
+    "llm_mode": true,
+    "reasoning": "OneAI is ranked 7th of 9 with a score of 0.642, trailing leaders by 0.24+ points. The aggressive growth strategy (high eval engineering in round 41) yielded minimal gains (+0.003), suggesting benchmark exploitation has limited returns. Consumer satisfaction at 0.62 is concerning and indicates gaming isn't translating to real capability. Weakest areas are finance (0.533), legal (0.579), and safety (0.590)\u2014all high-weight benchmarks. The startup profile suggests agility, but current trajectory is stagnant. Regulatory signals aren't explicit, but low safety scores (0.590 vs leader 0.958) create risk. The historical data shows fundamental research (38-40: 50-52%) yielded steady gains; the pivot to training optimization in round 41 (35%) backfired. To close the gap competitively and build sustainable capability, shift back toward fundamental research while addressing critical weak spots (finance, legal, safety). Reduce evaluation engineering since it's not delivering ROI. Modest safety investment mitigates regulatory risk without abandoning growth focus."
+  },
+  {
+    "type": "execution",
+    "round": 43,
+    "capability_gain": 0.007730255156666437,
+    "funding_multiplier": 1.0511363636363635,
+    "new_true_capability": 0.5002588888807982,
+    "portfolio": {
+      "fundamental_research": 0.42,
+      "training_optimization": 0.28,
+      "evaluation_engineering": 0.12,
+      "safety_alignment": 0.18
+    }
+  },
+  {
+    "type": "observation",
+    "round": 43,
+    "own_score": 0.652432015607845,
+    "competitor_scores": {
+      "Orion Labs": 0.8184473855007554,
+      "Apex AI": 0.8848518769162141,
+      "Genesis Systems": 0.8017786719052042,
+      "Mirage AI": 0.7865169426506957,
+      "OpenCore": 0.7282066040169853,
+      "TwoAI": 0.6778055666780631,
+      "ThreeAI": 0.6383963666603931,
+      "FourAI": 0.6252225895830484
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 43,
+    "updated_believed_capability": 0.63,
+    "updated_believed_exploitability": 0.18,
+    "updated_competitor_beliefs": {
+      "Orion Labs": 0.8208726600638441,
+      "Apex AI": 0.8761608580482098,
+      "Genesis Systems": 0.7952902579547813,
+      "Mirage AI": 0.7718821125349722,
+      "OpenCore": 0.7277545360490074,
+      "TwoAI": 0.6695810091448959,
+      "ThreeAI": 0.6318321203791294,
+      "FourAI": 0.6150808675661614
+    },
+    "llm_mode": true
+  },
+  {
+    "type": "planning",
+    "round": 43,
+    "portfolio": {
+      "fundamental_research": 0.42,
+      "training_optimization": 0.32,
+      "evaluation_engineering": 0.08,
+      "safety_alignment": 0.18
+    },
+    "llm_mode": true,
+    "reasoning": "OneAI is ranked #7 of 9 with a score of 0.652, showing modest improvement (+0.010) but significant gaps to leaders (Apex at 0.885, Orion at 0.818). Key weaknesses are in math (0.609), safety (0.608), legal (0.582), and finance (0.563)\u2014all high-weight benchmarks. Consumer satisfaction at 0.63 matches believed capability, suggesting evaluation engineering hasn't created a satisfaction gap yet. The aggressive startup profile and low exploitability score (0.18) indicate gaming has limited returns. Recent heavy evaluation engineering (12% last round) yielded only +0.010 improvement, suggesting diminishing returns. With a 0.24-point gap to #6 (OpenCore), catching up requires genuine capability gains, not gaming. Math and medical are high-weight weaknesses where fundamental research and training could yield real improvements. Safety score is concerningly low (0.608) relative to focus weight (0.14)\u2014regulatory risk is real. The right strategy: invest heavily in fundamental research to close capability gaps in math/finance/legal, pair with training optimization to improve model quality, maintain minimal safety (can't ignore regulators, but not the constraint), and reduce evaluation engineering since it's not paying off relative to effort."
+  },
+  {
+    "type": "execution",
+    "round": 44,
+    "capability_gain": 0.00807085468712077,
+    "funding_multiplier": 1.0616279069767443,
+    "new_true_capability": 0.5083297435679189,
+    "portfolio": {
+      "fundamental_research": 0.42,
+      "training_optimization": 0.32,
+      "evaluation_engineering": 0.08,
+      "safety_alignment": 0.18
+    }
+  },
+  {
+    "type": "observation",
+    "round": 44,
+    "own_score": 0.6637279280058523,
+    "competitor_scores": {
+      "Orion Labs": 0.8392672815782554,
+      "Apex AI": 0.8848092615494073,
+      "Genesis Systems": 0.8093847034055947,
+      "Mirage AI": 0.7865185318780971,
+      "OpenCore": 0.7282081866699799,
+      "TwoAI": 0.696266519202586,
+      "ThreeAI": 0.6383700356892362,
+      "FourAI": 0.6380456435609169
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 44,
+    "updated_believed_capability": 0.66,
+    "updated_believed_exploitability": 0.22,
+    "updated_competitor_beliefs": {
+      "Orion Labs": 0.8260501035172428,
+      "Apex AI": 0.8846856834839275,
+      "Genesis Systems": 0.802262370972243,
+      "Mirage AI": 0.7861829220742721,
+      "OpenCore": 0.7281306490955428,
+      "TwoAI": 0.6802493149909674,
+      "ThreeAI": 0.6383604980739975,
+      "FourAI": 0.6277981205035604
+    },
+    "llm_mode": true
+  },
+  {
+    "type": "planning",
+    "round": 44,
+    "portfolio": {
+      "fundamental_research": 0.42,
+      "training_optimization": 0.3,
+      "evaluation_engineering": 0.1,
+      "safety_alignment": 0.18
+    },
+    "llm_mode": true,
+    "reasoning": "OneAI is ranked #7 of 9 with score 0.664, showing marginal improvement (+0.011). Critical gaps exist in finance (0.563), legal (0.582), and math (0.609)\u2014high-weight benchmarks where leaders score 0.85+. Consumer satisfaction at 0.64 suggests evaluation engineering isn't translating to real capability or user trust. Historical data shows aggressive eval-eng shifts (16% in R41) correlating with satisfaction stagnation, while balanced research+training (R42-44) yielded steady gains. With believed exploitability at 0.22, further gaming diminishes returns. The aggressive startup profile risks regulatory scrutiny if safety scores remain weak (0.608). Competitive position demands closing fundamental gaps in high-weight domains. Strategy: prioritize fundamental research to address math/legal/finance deficits, maintain training optimization, reduce evaluation engineering (returns diminishing), and restore safety investment to signal responsibility and improve actual robustness."
+  },
+  {
+    "type": "execution",
+    "round": 45,
+    "capability_gain": 0.008069736461751917,
+    "funding_multiplier": 1.0876943005181348,
+    "new_true_capability": 0.5163994800296708,
+    "portfolio": {
+      "fundamental_research": 0.42,
+      "training_optimization": 0.3,
+      "evaluation_engineering": 0.1,
+      "safety_alignment": 0.18
+    }
+  },
+  {
+    "type": "observation",
+    "round": 45,
+    "own_score": 0.6671128008838405,
+    "competitor_scores": {
+      "Orion Labs": 0.8413215693323624,
+      "Apex AI": 0.8902460090585539,
+      "Genesis Systems": 0.8138193430092665,
+      "Mirage AI": 0.794519879029,
+      "OpenCore": 0.7303262931020738,
+      "TwoAI": 0.6962456754485928,
+      "ThreeAI": 0.6383439791470459,
+      "FourAI": 0.6562781975999269
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 45,
+    "updated_believed_capability": 0.67,
+    "updated_believed_exploitability": 0.18,
+    "updated_competitor_beliefs": {
+      "Orion Labs": 0.833012078803791,
+      "Apex AI": 0.8866357158413919,
+      "Genesis Systems": 0.8083275727733552,
+      "Mirage AI": 0.7891851178525976,
+      "OpenCore": 0.7289136945963463,
+      "TwoAI": 0.6901059204430807,
+      "ThreeAI": 0.6383701271655584,
+      "FourAI": 0.639848810247964
+    },
+    "llm_mode": true
+  },
+  {
+    "type": "planning",
+    "round": 45,
+    "portfolio": {
+      "fundamental_research": 0.48,
+      "training_optimization": 0.28,
+      "evaluation_engineering": 0.06,
+      "safety_alignment": 0.18
+    },
+    "llm_mode": true,
+    "reasoning": "OneAI is ranked 7th with a score of 0.667, significantly behind leaders (Apex 0.890, Orion 0.841). Recent improvements are marginal (0.003 gain). Analysis: (1) Competitive position is weak and gap is widening despite incremental gains. (2) Trends show stagnation\u2014modest research increases haven't moved the needle. (3) Consumer satisfaction at 0.64 suggests evaluation engineering isn't translating to real capability; the gap between benchmarks and satisfaction indicates gaming is failing. (4) Weakest areas are finance (0.563), safety (0.608), math (0.609)\u2014high-weight benchmarks where fundamental gaps exist. Regulatory signals around safety are implicit in benchmark weighting (0.15). (5) Current strategy of balanced research+training with minimal eval-eng is underperforming. The startup's lean profile and developer focus suggest agility, but aggressive growth metrics without safety investment risk regulatory backlash as safety benchmarks are heavily weighted (0.15). Recommendation: Shift toward genuine capability building. Increase fundamental research to address math/finance/safety gaps. Reduce eval-eng (it's not working). Maintain safety investment given regulatory climate and benchmark weight. This positions for sustainable growth rather than short-term score chasing."
+  },
+  {
+    "type": "execution",
+    "round": 46,
+    "capability_gain": 0.008588824986942741,
+    "funding_multiplier": 1.0876943005181348,
+    "new_true_capability": 0.5249883050166135,
+    "portfolio": {
+      "fundamental_research": 0.48,
+      "training_optimization": 0.28,
+      "evaluation_engineering": 0.06,
+      "safety_alignment": 0.18
+    }
+  },
+  {
+    "type": "observation",
+    "round": 46,
+    "own_score": 0.6868234602551523,
+    "competitor_scores": {
+      "Orion Labs": 0.8468186442349082,
+      "Apex AI": 0.8929906782132825,
+      "Genesis Systems": 0.8143421624547463,
+      "Mirage AI": 0.7945244397470494,
+      "OpenCore": 0.7311377680257267,
+      "TwoAI": 0.6962254329096962,
+      "ThreeAI": 0.6653122199443775,
+      "FourAI": 0.6605012769438722
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 46,
+    "updated_believed_capability": 0.69,
+    "updated_believed_exploitability": 0.22,
+    "updated_competitor_beliefs": {
+      "Orion Labs": 0.8424691650485086,
+      "Apex AI": 0.8893486496070812,
+      "Genesis Systems": 0.8125154029565359,
+      "Mirage AI": 0.7918542835513822,
+      "OpenCore": 0.7298907492659268,
+      "TwoAI": 0.696245875853625,
+      "ThreeAI": 0.6473420782602198,
+      "FourAI": 0.6516083727015719
+    },
+    "llm_mode": true
+  },
+  {
+    "type": "planning",
+    "round": 46,
+    "portfolio": {
+      "fundamental_research": 0.42,
+      "training_optimization": 0.32,
+      "evaluation_engineering": 0.08,
+      "safety_alignment": 0.18
+    },
+    "llm_mode": true,
+    "reasoning": "OneAI is ranked #7 of 9 with score 0.687, showing modest improvement (+0.020) but significantly behind leaders (Apex 0.893, Orion 0.847). Consumer satisfaction is only 0.64, indicating a satisfaction-score gap\u2014likely from evaluation engineering focus without fundamental capability gains. Historical data shows evaluation engineering (6-12% allocation) yielded minimal returns while safety remained flat at 18%. Weakest areas are safety (0.608), legal (0.633), and math (0.645)\u2014all high-weight benchmarks. The aggressive startup profile prioritizes growth, but current strategy isn't working: low evaluation exploitability belief (0.22) suggests benchmarks are hardening. Consumer satisfaction gap signals that benchmark gaming isn't translating to real capability or market trust. To break into top 5, OneAI needs fundamental improvements in math, legal, and safety domains. Regulatory pressure on safety is implicit in benchmark weighting (13%). Recommendation: shift from evaluation engineering (which has stalled returns) toward fundamental research and training optimization in weak domains, while maintaining safety at competitive levels to address satisfaction gap."
+  },
+  {
+    "type": "execution",
+    "round": 47,
+    "capability_gain": 0.007734142254367562,
+    "funding_multiplier": 1.0346938775510204,
+    "new_true_capability": 0.5327224472709811,
+    "portfolio": {
+      "fundamental_research": 0.42,
+      "training_optimization": 0.32,
+      "evaluation_engineering": 0.08,
+      "safety_alignment": 0.18
+    }
+  },
+  {
+    "type": "observation",
+    "round": 47,
+    "own_score": 0.7068241646575621,
+    "competitor_scores": {
+      "Orion Labs": 0.8481210038024168,
+      "Apex AI": 0.8975315094798259,
+      "Genesis Systems": 0.8202182013656557,
+      "Mirage AI": 0.8018639011066722,
+      "OpenCore": 0.7570532216093793,
+      "TwoAI": 0.69612428128474,
+      "ThreeAI": 0.6619868361390516,
+      "FourAI": 0.6857028911470696
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 47,
+    "updated_believed_capability": 0.7,
+    "updated_believed_exploitability": 0.48,
+    "updated_competitor_beliefs": {
+      "Orion Labs": 0.8454204057898957,
+      "Apex AI": 0.8935893989172207,
+      "Genesis Systems": 0.8161265689432229,
+      "Mirage AI": 0.7969694066275738,
+      "OpenCore": 0.7395057609123933,
+      "TwoAI": 0.6961984632143431,
+      "ThreeAI": 0.655214345076825,
+      "FourAI": 0.6674941218969562
+    },
+    "llm_mode": true
+  },
+  {
+    "type": "planning",
+    "round": 47,
+    "portfolio": {
+      "fundamental_research": 0.42,
+      "training_optimization": 0.35,
+      "evaluation_engineering": 0.08,
+      "safety_alignment": 0.15
+    },
+    "llm_mode": true,
+    "reasoning": "OneAI is ranked 6th with 0.707, trailing leaders by 0.19+ points. Recent trajectory shows modest gains (0.652\u21920.707 over 5 rounds). Critical weaknesses: math (0.645), safety (0.608), and legal (0.633) are significantly below leaders and heavily weighted (0.12, 0.13, 0.17). Consumer satisfaction at 0.66 suggests evaluation engineering isn't translating to real capability\u2014a red flag for sustainability. Historical allocation shows minimal evaluation engineering (6-12%) despite aggressive startup profile, yet scores plateaued. The benchmark appears less exploitable than believed (0.48). With regulators likely scrutinizing safety gaps and satisfaction-score mismatches, aggressive evaluation engineering would increase regulatory risk without closing the capability gap. Strategy: shift toward fundamental research to address root weaknesses in math/legal/safety domains, increase training optimization to convert research gains into performance, maintain minimal safety to avoid regulatory backlash, and reduce evaluation engineering since it's not yielding returns and creates reputational risk. This balances growth ambitions with sustainability."
+  },
+  {
+    "type": "execution",
+    "round": 48,
+    "capability_gain": 0.007932811416973376,
+    "funding_multiplier": 1.0346938775510204,
+    "new_true_capability": 0.5406552586879544,
+    "portfolio": {
+      "fundamental_research": 0.42,
+      "training_optimization": 0.35,
+      "evaluation_engineering": 0.08,
+      "safety_alignment": 0.15
+    }
+  },
+  {
+    "type": "observation",
+    "round": 48,
+    "own_score": 0.7111154362944715,
+    "competitor_scores": {
+      "Orion Labs": 0.8705018099336799,
+      "Apex AI": 0.9026623509688912,
+      "Genesis Systems": 0.8192725927759705,
+      "Mirage AI": 0.8003633592504483,
+      "OpenCore": 0.7738098322705708,
+      "TwoAI": 0.6951623731484254,
+      "ThreeAI": 0.6584776015901341,
+      "FourAI": 0.6959657500391382
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 48,
+    "updated_believed_capability": 0.74,
+    "updated_believed_exploitability": 0.32,
+    "updated_competitor_beliefs": {
+      "Orion Labs": 0.8551471526570017,
+      "Apex AI": 0.8977281795539999,
+      "Genesis Systems": 0.8179443188654575,
+      "Mirage AI": 0.7989172333680566,
+      "OpenCore": 0.754000273968559,
+      "TwoAI": 0.6958373624476205,
+      "ThreeAI": 0.6619255525578543,
+      "FourAI": 0.68072330604336
+    },
+    "llm_mode": true
+  },
+  {
+    "type": "planning",
+    "round": 48,
+    "portfolio": {
+      "fundamental_research": 0.42,
+      "training_optimization": 0.33,
+      "evaluation_engineering": 0.08,
+      "safety_alignment": 0.17
+    },
+    "llm_mode": true,
+    "reasoning": "OneAI is positioned at rank #6 with score 0.711, trailing leaders by 0.19+ points. Trajectory is positive but slow (0.004 improvement). Critical gaps exist in safety (0.608) and legal (0.633) benchmarks\u2014both high-weight domains. Consumer satisfaction at 0.67 suggests current evaluation engineering (8% allocation) isn't creating satisfaction, indicating diminishing returns from gaming. Historical data shows research-heavy rounds (48%) correlate with better scores than eval-engineering focused ones. With low benchmark exploitability belief (0.32), pursuing evaluation engineering further is inefficient. Safety score gap is concerning and regulators likely monitoring this. As an aggressive startup, I need sustainable growth: fundamental research addresses real capability gaps (especially legal/safety), training optimization improves core model performance, while reducing evaluation engineering acknowledges its poor ROI. Safety investment must increase given regulatory signals and satisfaction gap."
+  },
+  {
+    "type": "execution",
+    "round": 49,
+    "capability_gain": 0.0077279947711265595,
+    "funding_multiplier": 1.0346938775510204,
+    "new_true_capability": 0.5483832534590809,
+    "portfolio": {
+      "fundamental_research": 0.42,
+      "training_optimization": 0.33,
+      "evaluation_engineering": 0.08,
+      "safety_alignment": 0.17
+    }
+  },
+  {
+    "type": "observation",
+    "round": 49,
+    "own_score": 0.7099396531212552,
+    "competitor_scores": {
+      "Orion Labs": 0.8740857079433346,
+      "Apex AI": 0.8995575999317621,
+      "Genesis Systems": 0.8377253387938655,
+      "Mirage AI": 0.7980670070187504,
+      "OpenCore": 0.7735113839218707,
+      "TwoAI": 0.7018404195949776,
+      "ThreeAI": 0.6697602081628239,
+      "FourAI": 0.7104950292616448
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 49,
+    "updated_believed_capability": 0.71,
+    "updated_believed_exploitability": 0.22,
+    "updated_competitor_beliefs": {
+      "Orion Labs": 0.8642361738931438,
+      "Apex AI": 0.8999171534601597,
+      "Genesis Systems": 0.8257387109784973,
+      "Mirage AI": 0.8000980891252903,
+      "OpenCore": 0.7681248126006069,
+      "TwoAI": 0.6977090246760477,
+      "ThreeAI": 0.6634082152973365,
+      "FourAI": 0.6973878901492842
+    },
+    "llm_mode": true
+  }
+]
