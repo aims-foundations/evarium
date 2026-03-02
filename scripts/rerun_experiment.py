@@ -319,7 +319,7 @@ def run_from_config(config, source_exp_id):
     logger.finalize()
 
     print(f"\nExperiment saved to: {logger.get_experiment_dir()}")
-    return sim
+    return sim, exp_id
 
 
 if __name__ == "__main__":
