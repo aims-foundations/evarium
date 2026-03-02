@@ -33,8 +33,10 @@ try:
     from tueplots import bundles as _tb
     _rc = _tb.neurips2024()
     _rc.pop("figure.figsize", None)
-    if not os.environ.get("MPLLATEX"):
-        _rc["text.usetex"] = False
+    # Enable LaTeX rendering for publication-quality fonts.
+    # Set MPLLATEX=0 in the environment to disable if LaTeX is not available.
+    if os.environ.get("MPLLATEX", "1") != "0":
+        _rc["text.usetex"] = True
     mpl.rcParams.update(_rc)
 except ImportError:
     warnings.warn("tueplots not installed — using default style", stacklevel=1)
@@ -184,7 +186,7 @@ def plot_a_inflation_trajectories(all_data):
     colors = exp_colors(len(all_data))
 
     fig, axes = plt.subplots(n_rows, n_cols,
-                             figsize=(4.5 * n_cols, 3.5 * n_rows),
+                             figsize=(2.25 * n_cols, 1.75 * n_rows),
                              squeeze=False)
     fig.suptitle("Score Inflation Trajectories per Benchmark\n"
                  r"(mean score $-$ true capability across providers)",
@@ -214,7 +216,7 @@ def plot_a_inflation_trajectories(all_data):
         ax.set_xlabel("Round", fontsize=9)
         ax.set_ylabel("Score Inflation", fontsize=9)
         ax.tick_params(labelsize=8)
-        ax.grid(True, alpha=0.25)
+        ax.grid(False)
 
     # Hide unused
     for bi in range(N, n_rows * n_cols):
@@ -270,8 +272,8 @@ def plot_b_gaming_fingerprint(all_data):
         return
 
     fig, axes = plt.subplots(N_exp, 1,
-                             figsize=(max(7, len(bench_union) * 0.9),
-                                      2.2 * N_exp + 1.0),
+                             figsize=(min(6.75, max(3.25, len(bench_union) * 0.45)),
+                                      1.2 * N_exp + 0.5),
                              squeeze=False)
     fig.suptitle("Provider Gaming Fingerprint\n"
                  r"(mean score $-$ true capability per provider per benchmark)",
@@ -349,7 +351,7 @@ def plot_c_rolling_validity(all_data):
     colors = exp_colors(len(all_data))
 
     fig, axes = plt.subplots(n_rows, n_cols,
-                             figsize=(4.5 * n_cols, 3.5 * n_rows),
+                             figsize=(2.25 * n_cols, 1.75 * n_rows),
                              squeeze=False)
     fig.suptitle("Per-Benchmark Rolling Validity\n"
                  r"(Pearson $r$: benchmark score vs true capability, window=5)",
@@ -377,7 +379,7 @@ def plot_c_rolling_validity(all_data):
         ax.set_xlabel("Round", fontsize=9)
         ax.set_ylabel("Validity (r)", fontsize=9)
         ax.tick_params(labelsize=8)
-        ax.grid(True, alpha=0.25)
+        ax.grid(False)
 
     for bi in range(N, n_rows * n_cols):
         row, col = divmod(bi, n_cols)
@@ -434,7 +436,7 @@ def plot_d_provider_regression(all_data):
 
     fig, axes = plt.subplots(
         N_bench, N_exp,
-        figsize=(4.0 * N_exp, 3.5 * N_bench),
+        figsize=(2.25 * N_exp, 1.5 * N_bench),
         squeeze=False,
     )
     fig.suptitle(
@@ -510,7 +512,7 @@ def plot_d_provider_regression(all_data):
             ax.set_xlim(xlim)
             ax.set_ylim(ylim)
             ax.tick_params(labelsize=7)
-            ax.grid(True, alpha=0.2)
+            ax.grid(False)
 
             # Row label (benchmark) on leftmost column
             if ei == 0:
@@ -619,8 +621,8 @@ def plot_e1_slope_heatmap(all_data):
     vmin  = 0.0
 
     fig, axes = plt.subplots(N_exp, 1,
-                             figsize=(max(7, len(bench_union) * 0.9),
-                                      2.2 * N_exp + 1.0),
+                             figsize=(min(6.75, max(3.25, len(bench_union) * 0.45)),
+                                      1.2 * N_exp + 0.5),
                              squeeze=False)
     fig.suptitle("OLS Slope Heatmap: Score ~ True Capability\n"
                  "(slope=1 tracks capability; <1 compressed/gamed; >1 amplified)",
@@ -676,7 +678,7 @@ def plot_e2_slope_vs_exploitability(all_data):
     n_rows = ceil(N_exp / n_cols)
 
     fig, axes = plt.subplots(n_rows, n_cols,
-                             figsize=(4.5 * n_cols, 4.0 * n_rows),
+                             figsize=(2.25 * n_cols, 2.0 * n_rows),
                              squeeze=False)
     fig.suptitle("OLS Slope vs. Benchmark Exploitability\n"
                  "(tests whether high-exploitability benchmarks decouple scores from capability)",
@@ -712,7 +714,7 @@ def plot_e2_slope_vs_exploitability(all_data):
         ax.set_xlabel("Benchmark Exploitability", fontsize=9)
         ax.set_ylabel("OLS Slope", fontsize=9)
         ax.tick_params(labelsize=8)
-        ax.grid(True, alpha=0.2)
+        ax.grid(False)
 
     for ei in range(N_exp, n_rows * n_cols):
         row, col = divmod(ei, n_cols)
@@ -749,7 +751,7 @@ def plot_e3_slope_bump(all_data):
     x_pos = list(range(len(all_data)))
 
     fig, axes = plt.subplots(n_rows, n_cols,
-                             figsize=(4.0 * n_cols, 3.5 * n_rows),
+                             figsize=(2.25 * n_cols, 1.75 * n_rows),
                              squeeze=False)
     fig.suptitle("Slope Bump Chart Across Experimental Conditions\n"
                  "(each line = one provider; tracks whether slope shifts between conditions)",
@@ -778,7 +780,7 @@ def plot_e3_slope_bump(all_data):
                      fontweight="bold", fontsize=10)
         ax.set_ylabel("OLS Slope", fontsize=9)
         ax.tick_params(labelsize=8)
-        ax.grid(True, alpha=0.2, axis="y")
+        ax.grid(False)
 
     for bi in range(N_bench, n_rows * n_cols):
         row, col = divmod(bi, n_cols)
@@ -822,7 +824,7 @@ def plot_f_slope_intercept(all_data):
     marker_map = {b: _BENCH_MARKERS[i % len(_BENCH_MARKERS)]
                   for i, b in enumerate(bench_union)}
 
-    fig, ax = plt.subplots(figsize=(7, 6))
+    fig, ax = plt.subplots(figsize=(3.25, 2.9))
     fig.suptitle(
         "Gaming Decomposition: Slope vs. Intercept\n"
         "(intercept = floor bias; slope = capability amplification)",
@@ -875,7 +877,7 @@ def plot_f_slope_intercept(all_data):
     ax.set_xlabel("Intercept (floor bias)", fontsize=10)
     ax.set_ylabel("Slope (amplification)", fontsize=10)
     ax.tick_params(labelsize=8)
-    ax.grid(True, alpha=0.2)
+    ax.grid(False)
 
     # Legend: experiments (color patches)
     exp_handles = [mpatches.Patch(color=c, label=d["label"])
@@ -912,7 +914,7 @@ def plot_f_slope_intercept(all_data):
 def plot_g_inflation_accumulation(all_data):
     colors = exp_colors(len(all_data))
 
-    fig, ax = plt.subplots(figsize=(7, 4.5))
+    fig, ax = plt.subplots(figsize=(3.25, 2.1))
     fig.suptitle(
         "Aggregate Score Inflation Over Time\n"
         r"(mean score $-$ true capability across all benchmarks and providers)",
@@ -941,7 +943,7 @@ def plot_g_inflation_accumulation(all_data):
     ax.set_xlabel("Round", fontsize=10)
     ax.set_ylabel("Mean Score Inflation", fontsize=10)
     ax.tick_params(labelsize=8)
-    ax.grid(True, alpha=0.2)
+    ax.grid(False)
 
     ax.legend(loc="upper left", fontsize=8, frameon=True,
               ncol=max(1, len(all_data) // 6))
@@ -961,7 +963,7 @@ def plot_g_inflation_accumulation(all_data):
 def plot_h_validity_vs_inflation(all_data):
     colors = exp_colors(len(all_data))
 
-    fig, ax = plt.subplots(figsize=(7, 5.5))
+    fig, ax = plt.subplots(figsize=(3.25, 2.5))
     fig.suptitle(
         "Late-Period Validity vs. Inflation Tradeoff\n"
         "(each point = one experiment; last 10 rounds; ideal = upper-left)",
@@ -1026,7 +1028,7 @@ def plot_h_validity_vs_inflation(all_data):
     ax.set_xlabel("Mean Score Inflation (last 10 rounds)", fontsize=10)
     ax.set_ylabel("Validity: Pearson r(score, capability)", fontsize=10)
     ax.tick_params(labelsize=8)
-    ax.grid(True, alpha=0.2)
+    ax.grid(False)
 
     fig.tight_layout(rect=[0, 0, 1, 0.92])
     _save(fig, "H_validity_vs_inflation.png")

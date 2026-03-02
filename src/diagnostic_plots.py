@@ -78,7 +78,7 @@ def plot_trace_overlay(
     ax.set_xlabel("Round")
     ax.set_ylabel(ylabel)
     ax.legend()
-    ax.grid(True, alpha=0.3)
+    ax.grid(False)
 
     fig.tight_layout()
     if save_path:
@@ -124,7 +124,7 @@ def plot_trace_overlay_multi(
         ax.set_title(name, fontweight="bold")
         ax.set_xlabel("Round")
         ax.set_ylabel(ylabel)
-        ax.grid(True, alpha=0.3)
+        ax.grid(False)
 
     for idx in range(n_metrics, len(axes)):
         axes[idx].set_visible(False)
@@ -187,7 +187,7 @@ def plot_sensitivity_tornado(
     ax.axvline(x=0, color="black", linewidth=0.8)
     ax.set_title(f"Sensitivity Tornado: {metric_label}", fontweight="bold")
     ax.set_xlabel("Effect on outcome")
-    ax.grid(True, alpha=0.3, axis="x")
+    ax.grid(False)
 
     fig.tight_layout()
     if save_path:
@@ -328,7 +328,7 @@ def plot_crn_paired_difference(
     ax.set_xlabel("Round")
     ax.set_ylabel(f"Difference ({condition_a_label} - {condition_b_label})")
     ax.legend()
-    ax.grid(True, alpha=0.3)
+    ax.grid(False)
 
     fig.tight_layout()
     if save_path:

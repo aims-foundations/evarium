@@ -31,8 +31,10 @@ try:
     from tueplots import bundles as _tueplots_bundles
     _NEURIPS_RC = _tueplots_bundles.neurips2024()
     _NEURIPS_RC.pop("figure.figsize", None)
-    if not os.environ.get("MPLLATEX"):
-        _NEURIPS_RC["text.usetex"] = False
+    # Enable LaTeX rendering for publication-quality fonts.
+    # Set MPLLATEX=0 in the environment to disable if LaTeX is not available.
+    if os.environ.get("MPLLATEX", "1") != "0":
+        _NEURIPS_RC["text.usetex"] = True
     mpl.rcParams.update(_NEURIPS_RC)
 except ImportError:
     warnings.warn(
@@ -73,7 +75,7 @@ MAX_COLS = 4  # max columns before wrapping rows
 # Helpers
 # ---------------------------------------------------------------------------
 
-def _figsize(rows: int, cols: int, base_w: float = 5.5, base_h: float = 4.0):
+def _figsize(rows: int, cols: int, base_w: float = 2.25, base_h: float = 1.7):
     return (base_w * cols, base_h * rows)
 
 
@@ -179,7 +181,7 @@ def plot_market_share(all_data: list):
         ax.set_xlabel("Simulation Round", fontsize=10)
         ax.set_ylabel("Market Share", fontsize=10)
         ax.tick_params(labelsize=9)
-        ax.grid(True, alpha=0.3)
+        ax.grid(False)
 
     # Hide unused axes
     total_slots = n_rows * n_cols
@@ -259,7 +261,7 @@ def plot_score_vs_capability(all_data: list):
         ax.set_xlabel("Ground-Truth Capability", fontsize=10)
         ax.set_ylabel("Benchmark Score", fontsize=10)
         ax.tick_params(labelsize=9)
-        ax.grid(True, alpha=0.3)
+        ax.grid(False)
 
     # Hide unused axes
     total_slots = n_rows * n_cols
@@ -301,8 +303,8 @@ def plot_incident_validity_combined(all_data: list):
     if N == 0:
         return
 
-    row_h = 3.5
-    fig_w = 9.0  # narrower — one wide column, not MAX_COLS wide
+    row_h = 1.7
+    fig_w = 6.75  # NeurIPS full-width column
     fig, axes = plt.subplots(N, 1, figsize=(fig_w, row_h * N), squeeze=False)
     fig.suptitle(
         "Safety Incident Timeline and Benchmark Validity Across Experimental Conditions",
@@ -351,7 +353,7 @@ def plot_incident_validity_combined(all_data: list):
         ax_left.set_xlabel("Simulation Round", fontsize=10)
         ax_left.set_ylabel("Provider", fontsize=10)
         ax_left.tick_params(axis="x", labelsize=9)
-        ax_left.grid(True, alpha=0.2)
+        ax_left.grid(False)
 
         # Right axis — validity correlation + interventions
         ax_right = ax_left.twinx()
@@ -655,8 +657,8 @@ def plot_investment_allocation(all_data: list):
     n_cols = min(N, ALLOC_MAX_COLS)
     n_rows = ceil(N / n_cols)
 
-    panel_w = max(2.5, 10.0 / n_cols)   # scale width per panel to total figure width
-    panel_h = max(3.5, n_providers * 0.7 + 1.0)
+    panel_w = max(2.0, 6.75 / n_cols)   # scale width per panel to total figure width
+    panel_h = max(1.7, n_providers * 0.35 + 0.6)
     fig, axes = plt.subplots(
         n_rows, n_cols,
         figsize=(panel_w * n_cols, panel_h * n_rows),
@@ -726,7 +728,7 @@ def plot_strategy_divergence(all_data: list):
     if not valid:
         return
 
-    fig, ax = plt.subplots(figsize=(7.0, 4.0))
+    fig, ax = plt.subplots(figsize=(3.25, 1.86))
     fig.suptitle(
         "Strategic Divergence Among Providers Over Time",
         fontweight="bold", fontsize=13,
@@ -759,7 +761,7 @@ def plot_strategy_divergence(all_data: list):
     ax.set_xlabel("Simulation Round", fontsize=10)
     ax.set_ylabel("Mean Pairwise L1 Distance", fontsize=10)
     ax.tick_params(labelsize=9)
-    ax.grid(True, alpha=0.3)
+    ax.grid(False)
     ax.legend(fontsize=9, frameon=True)
 
     # Annotate interpretation

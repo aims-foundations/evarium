@@ -160,6 +160,7 @@ class OpenAIProvider(LLMProvider):
         model: str = "gpt-4o-mini",
         temperature: float = 0.7,
         max_tokens: int = 500,
+        base_url: Optional[str] = None,
     ):
         """
         Initialize OpenAI provider.
@@ -169,6 +170,8 @@ class OpenAIProvider(LLMProvider):
             model: Model to use (default: gpt-4o-mini for cost efficiency)
             temperature: Default sampling temperature (0-2)
             max_tokens: Default max tokens in response
+            base_url: Optional base URL for OpenAI-compatible APIs (e.g. vLLM).
+                      If None, uses OPENAI_BASE_URL env var or OpenAI default.
         """
         try:
             from openai import OpenAI
@@ -184,7 +187,11 @@ class OpenAIProvider(LLMProvider):
                 "or pass api_key parameter."
             )
 
-        self.client = OpenAI(api_key=self.api_key)
+        self.base_url = base_url or os.environ.get("OPENAI_BASE_URL")
+        client_kwargs = {"api_key": self.api_key}
+        if self.base_url:
+            client_kwargs["base_url"] = self.base_url
+        self.client = OpenAI(**client_kwargs)
         self.model = model
         self.default_temperature = temperature
         self.default_max_tokens = max_tokens
@@ -719,6 +726,7 @@ def create_llm_provider(
             api_key=kwargs.get("api_key") or os.getenv("OPENAI_API_KEY"),
             temperature=kwargs.get("temperature", 0.7),
             max_tokens=kwargs.get("max_tokens", 500),
+            base_url=kwargs.get("base_url") or os.getenv("OPENAI_BASE_URL"),
         )
     else:
         raise ValueError(f"Unknown provider: {provider}. Use 'openai', 'anthropic', 'ollama', or 'gemini'.")

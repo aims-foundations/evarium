@@ -87,28 +87,40 @@ def main():
     # Import here so tueplots rcParams are applied before any figure is created
     from plotting import (
         plot_provider_dashboard,
-        plot_consumer_dashboard,
+        plot_consumer_satisfaction,
+        plot_consumer_switching,
         plot_evaluator_dashboard,
         plot_policymaker_dashboard,
         plot_funder_dashboard,
         plot_media_dashboard,
         plot_summary_dashboard,
         plot_incident_dashboard,
+        plot_validity_over_time,
+        plot_investment_comparison,
+        plot_incident_analysis_dashboard,
+        plot_barrier_to_entry_dashboard,
+        plot_startup_cohort_dashboard,
     )
 
     dashboards = [
-        ("summary",     plot_summary_dashboard),
-        ("provider",    plot_provider_dashboard),
-        ("consumer",    plot_consumer_dashboard),
-        ("evaluator",   plot_evaluator_dashboard),
-        ("policymaker", plot_policymaker_dashboard),
-        ("funder",      plot_funder_dashboard),
-        ("media",       plot_media_dashboard),
-        ("incident",    plot_incident_dashboard),
+        ("summary_dashboard",                plot_summary_dashboard),
+        ("provider_dashboard",               plot_provider_dashboard),
+        ("consumer_satisfaction_dashboard",   plot_consumer_satisfaction),
+        ("consumer_switching_dashboard",      plot_consumer_switching),
+        ("evaluator_dashboard",              plot_evaluator_dashboard),
+        ("policymaker_dashboard",            plot_policymaker_dashboard),
+        ("funder_dashboard",                 plot_funder_dashboard),
+        ("media_dashboard",                  plot_media_dashboard),
+        ("incident_dashboard",               plot_incident_dashboard),
+        ("validity_over_time",               plot_validity_over_time),
+        ("investment_comparison",             plot_investment_comparison),
+        ("incident_analysis_dashboard",      plot_incident_analysis_dashboard),
+        ("barrier_to_entry_dashboard",       plot_barrier_to_entry_dashboard),
+        ("startup_cohort_dashboard",         plot_startup_cohort_dashboard),
     ]
 
     for name, fn in dashboards:
-        save_path = os.path.join(plots_dir, f"{name}_dashboard.png")
+        save_path = os.path.join(plots_dir, f"{name}.png")
         print(f"  Plotting {name}...", end=" ", flush=True)
         try:
             result = fn(history, save_path=save_path, show=False)
