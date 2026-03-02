@@ -15,6 +15,10 @@ import json
 import os
 import sys
 
+# Add src/ to path
+_PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.join(_PROJECT_ROOT, "src"))
+
 
 def resolve_exp_dir(exp_input: str) -> str:
     """
@@ -24,7 +28,7 @@ def resolve_exp_dir(exp_input: str) -> str:
         "3", "03", "003"           -> matched by zero-padded prefix exp_003_*
         "exp_003_full_ecosystem_us" -> used directly
     """
-    exp_root = os.path.join(os.path.dirname(__file__), "experiments")
+    exp_root = os.path.join(_PROJECT_ROOT, "output", "experiments")
 
     # If it looks like a full folder name, use directly
     if exp_input.startswith("exp_"):

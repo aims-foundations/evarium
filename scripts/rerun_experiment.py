@@ -131,10 +131,11 @@ def build_sim_config(config: dict, SimulationConfig) -> "SimulationConfig":
 
 def run_from_config(config, source_exp_id):
     """Run a simulation from a saved config dict."""
-    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    _PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    sys.path.insert(0, os.path.join(_PROJECT_ROOT, "src"))
 
     # Load .env file
-    env_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".env")
+    env_path = os.path.join(_PROJECT_ROOT, ".env")
     if os.path.exists(env_path):
         with open(env_path) as f:
             for line in f:
@@ -188,7 +189,7 @@ def run_from_config(config, source_exp_id):
     print()
 
     # Experiment logging
-    experiments_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "experiments")
+    experiments_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "output", "experiments")
     logger = ExperimentLogger(experiments_dir)
     exp_id = logger.create_experiment(
         name=f"rerun_{source_exp_id}",
@@ -327,7 +328,7 @@ if __name__ == "__main__":
         sys.exit(1)
 
     if sys.argv[1] == "--list":
-        experiments_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "experiments")
+        experiments_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "output", "experiments")
         list_experiments(experiments_dir)
         sys.exit(0)
 
@@ -354,7 +355,7 @@ if __name__ == "__main__":
             print(f"Unknown argument: {args[i]}")
             sys.exit(1)
 
-    experiments_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "experiments")
+    experiments_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "output", "experiments")
 
     # Find the experiment
     exp_entry = find_experiment(experiments_dir, query)

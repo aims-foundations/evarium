@@ -19,15 +19,37 @@ For LLM mode, install the relevant provider:
 ## Running Experiments
 
 **Quick start:**
-1. Edit parameters in `run_experiment.py` (providers, benchmarks, rounds, etc.)
+1. Edit parameters in `scripts/run_experiment.py` (providers, benchmarks, rounds, etc.)
 2. Toggle `llm_mode=True` for LLM-driven agents or `llm_mode=False` for heuristic mode
-3. Run: `python run_experiment.py`
+3. Run: `python scripts/run_experiment.py`
 
-Additional configuration options are available in `simulation.py` (`SimulationConfig` class).
+Additional configuration options are available in `src/simulation.py` (`SimulationConfig` class).
 
-For quick CLI tests: `python run_llm_now.py --rounds 5 --provider openai`
+For quick CLI tests: `python scripts/run_llm_now.py --rounds 5 --provider openai`
+
+## Project Structure
+
+```
+src/          # Core simulation library
+scripts/      # CLI entry points
+output/       # Generated artifacts (experiments, plots, comparisons)
+docs/         # Documentation
+tests/        # Tests
+```
+
+## Reproducing Paper Results
+
+All 15 experiments from the paper can be reproduced from their saved configurations:
+
+```bash
+./reproduce.sh                        # run all 15 experiments (2 concurrent)
+./reproduce.sh --jobs 4               # run 4 at a time
+./reproduce.sh --experiments 1 2 3    # run specific experiments only
+./reproduce.sh --dry-run              # preview without executing
+```
+
+Requires a `.env` file with `ANTHROPIC_API_KEY` (all experiments use LLM mode). Logs are written to `output/reproduce_logs/`.
 
 ## Documentation
 
-See `stakeholders.md` for detailed documentation on the simulation model, stakeholders, and experiment infrastructure.
-
+See `docs/stakeholders.md` for detailed documentation on the simulation model, stakeholders, and experiment infrastructure.

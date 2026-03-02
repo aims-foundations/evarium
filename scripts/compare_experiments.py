@@ -17,7 +17,8 @@ import os
 import sys
 from pathlib import Path
 
-ROOT = Path(__file__).parent
+_PROJECT_ROOT = Path(__file__).parent.parent
+ROOT = _PROJECT_ROOT / "output"
 EXP_DIRS = [ROOT / "experiments", ROOT / "experiments" / "_heuristic"]
 COMPARISONS_DIR = ROOT / "comparisons"
 

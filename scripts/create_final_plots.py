@@ -8,6 +8,7 @@ Edit EXPERIMENTS below to configure which experiments to include.
 """
 
 import os
+import sys
 import json
 import csv
 import warnings
@@ -18,6 +19,10 @@ import matplotlib.lines as mlines
 import matplotlib.patches as mpatches
 import matplotlib as mpl
 import numpy as np
+
+# Add src/ to path
+_PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.join(_PROJECT_ROOT, "src"))
 
 # ---------------------------------------------------------------------------
 # Tueplots NeurIPS styling (same block as plotting.py)
@@ -59,8 +64,8 @@ EXPERIMENTS = [
     # {"id": "exp_007_ablation_no_opencore_balanced",  "label": "No OpenCore"},
 ]
 
-OUTPUT_DIR = "final-plots"          # overridden at runtime — see main()
-EXPERIMENTS_DIR = "experiments"
+OUTPUT_DIR = os.path.join(_PROJECT_ROOT, "output", "final-plots")
+EXPERIMENTS_DIR = os.path.join(_PROJECT_ROOT, "output", "experiments")
 
 MAX_COLS = 4  # max columns before wrapping rows
 
@@ -787,7 +792,7 @@ def _output_dir_for_experiments() -> str:
         if m:
             numbers.append(m.group(1))
     suffix = "_".join(numbers) if numbers else "custom"
-    return os.path.join("final-plots", suffix)
+    return os.path.join(_PROJECT_ROOT, "output", "final-plots", suffix)
 
 
 def _folder_to_label(folder_name: str) -> str:
@@ -865,7 +870,7 @@ def main():
         EXPERIMENTS = cli_experiments
 
     if cli_folder is not None:
-        OUTPUT_DIR = os.path.join("final-plots", cli_folder)
+        OUTPUT_DIR = os.path.join(_PROJECT_ROOT, "output", "final-plots", cli_folder)
     else:
         OUTPUT_DIR = _output_dir_for_experiments()
 

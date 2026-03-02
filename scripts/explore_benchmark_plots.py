@@ -22,6 +22,10 @@ import matplotlib.lines as mlines
 import matplotlib as mpl
 import numpy as np
 
+# Add src/ to path
+_PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.join(_PROJECT_ROOT, "src"))
+
 # ---------------------------------------------------------------------------
 # Tueplots styling
 # ---------------------------------------------------------------------------
@@ -46,8 +50,8 @@ EXPERIMENTS = [
     {"id": "exp_004_ablation_no_media_balanced", "label": "No Media"},
 ]
 
-OUTPUT_DIR   = "explore-benchmark-plots"
-EXPERIMENTS_DIR = "experiments"
+OUTPUT_DIR   = os.path.join(_PROJECT_ROOT, "output", "explore-benchmark-plots")
+EXPERIMENTS_DIR = os.path.join(_PROJECT_ROOT, "output", "experiments")
 
 # ===========================================================================
 # Data helpers
@@ -1088,11 +1092,11 @@ def main():
 
     import re
     if cli_folder:
-        OUTPUT_DIR = os.path.join("explore-benchmark-plots", cli_folder)
+        OUTPUT_DIR = os.path.join(_PROJECT_ROOT, "output", "explore-benchmark-plots", cli_folder)
     else:
         numbers = [m.group(1) for e in EXPERIMENTS
                    for m in [re.match(r"exp_(\d+)", e["id"])] if m]
-        OUTPUT_DIR = os.path.join("explore-benchmark-plots",
+        OUTPUT_DIR = os.path.join(_PROJECT_ROOT, "output", "explore-benchmark-plots",
                                   "_".join(numbers) if numbers else "custom")
 
     os.makedirs(OUTPUT_DIR, exist_ok=True)

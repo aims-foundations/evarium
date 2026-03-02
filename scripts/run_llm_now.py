@@ -12,11 +12,12 @@ import json
 import time
 from datetime import datetime
 
-# Add eval_sim to path
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+# Add src/ to path
+_PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.join(_PROJECT_ROOT, "src"))
 
 # Load .env file
-env_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".env")
+env_path = os.path.join(_PROJECT_ROOT, ".env")
 if os.path.exists(env_path):
     with open(env_path) as f:
         for line in f:
@@ -151,7 +152,7 @@ def run_quick_test(
     exp_id = None
     if log_experiment:
         from experiment_logger import ExperimentLogger
-        experiments_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "experiments")
+        experiments_dir = os.path.join(_PROJECT_ROOT, "output", "experiments")
         logger = ExperimentLogger(experiments_dir)
 
         if experiment_name is None:
