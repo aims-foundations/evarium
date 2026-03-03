@@ -1,22 +1,23 @@
 """
 fetch_helm.py — Download and parse HELM run results from the Stanford CRFM CDN.
 
-HELM releases data as JSON files at:
-  https://storage.googleapis.com/crfm-helm-public/benchmark_output/runs/<version>/
+Actual URL structure (verified):
+  https://storage.googleapis.com/crfm-helm-public/benchmark_output/releases/<version>/groups/<scenario>.json
 
-We target specific scenarios (mmlu, math, humaneval) and extract
-per-model accuracy / pass@1 scores.
+Each groups/<scenario>.json is a list of table objects.  Each table has:
+  - header: list of {value, description, ...}  (column names)
+  - rows:   list of rows, each row is a list of {value, ...} cells
+The first column is "Model/adapter", the second is the primary metric (e.g. "EM").
 
 Writes:  validation/data/raw/helm/<scenario>.json
-         Each file: list of {model, provider_raw, scenario, score, run_date} dicts
+         Each file: list of {model, provider_raw, scenario, score, metric, run_date, helm_version} dicts
 
 Usage:
-    python validation/scripts/fetch_helm.py [--version v0.4.0] [--scenarios mmlu math humaneval]
+    python validation/scripts/fetch_helm.py [--version v0.4.0] [--scenarios mmlu math]
 """
 
 import argparse
 import json
-import re
 import time
 from pathlib import Path
 
@@ -25,19 +26,31 @@ import requests
 # ---------------------------------------------------------------------------
 # HELM CDN configuration
 # ---------------------------------------------------------------------------
-HELM_CDN = "https://storage.googleapis.com/crfm-helm-public/benchmark_output/runs"
+HELM_BASE = "https://storage.googleapis.com/crfm-helm-public/benchmark_output/releases"
 
-# Stable release that has broad coverage; override with --version
+# Verified working version
 DEFAULT_VERSION = "v0.4.0"
 
-# Scenario → expected metric key in HELM JSON
-SCENARIO_METRICS = {
-    "mmlu": "quasi_exact_match",
-    "math": "quasi_exact_match",
-    "humaneval": "pass@1",
+# Map our scenario names → HELM group file names (without .json)
+# Verified from releases/v0.4.0/groups.json index hrefs
+SCENARIO_GROUPS = {
+    "mmlu":      "mmlu",
+    "math":      "math_regular",   # "MATH" benchmark group
+    "gsm":       "gsm",            # GSM8K grade-school math (easier, more models)
+    "humaneval": "code_humaneval", # HumanEval coding benchmark
+    "reasoning": "reasoning",      # General reasoning
 }
 
-# Approximate run dates per HELM release (used when individual run_date missing)
+# Primary metric column name per scenario (matches HELM table headers)
+SCENARIO_METRIC = {
+    "mmlu":      "EM",
+    "math":      "EM",
+    "gsm":       "EM",
+    "humaneval": "pass@1",
+    "reasoning": "EM",
+}
+
+# Approximate release dates (used as run_date since HELM doesn't tag individual rows)
 RELEASE_DATES = {
     "v0.2.0": "2022-11-01",
     "v0.2.4": "2023-02-01",
@@ -48,91 +61,81 @@ RELEASE_DATES = {
 RAW_DIR = Path(__file__).resolve().parents[1] / "data" / "raw" / "helm"
 
 
-def fetch_index(version: str) -> dict:
-    """Fetch the top-level groups.json (or runs.json) index from HELM CDN."""
-    url = f"{HELM_CDN}/{version}/groups.json"
+def fetch_group(version: str, group_name: str) -> list[dict]:
+    """Fetch the groups/<group_name>.json file from the HELM CDN."""
+    url = f"{HELM_BASE}/{version}/groups/{group_name}.json"
     resp = requests.get(url, timeout=60)
-    if resp.status_code == 404:
-        # Older format
-        url = f"{HELM_CDN}/{version}/summary.json"
-        resp = requests.get(url, timeout=60)
     resp.raise_for_status()
     return resp.json()
 
 
-def extract_runs_for_scenario(index: dict, scenario: str, version: str) -> list[dict]:
+def extract_scores(tables: list[dict], scenario: str, version: str) -> list[dict]:
     """
-    Parse HELM groups index to find run entries for a given scenario prefix,
-    then pull per-model scores.
+    Parse HELM group JSON (list of table objects) and extract per-model scores.
+
+    Table schema:
+      {
+        "title": "...",
+        "header": [{"value": "Model/adapter"}, {"value": "EM"}, ...],
+        "rows":   [[{"value": "GPT-4"}, {"value": 0.864}, ...], ...]
+      }
     """
     rows = []
     run_date = RELEASE_DATES.get(version, "")
-    metric_key = SCENARIO_METRICS.get(scenario, "quasi_exact_match")
+    target_metric = SCENARIO_METRIC.get(scenario, "EM")
 
-    # groups.json schema: list of group objects with 'name' and 'stats'
-    groups = index if isinstance(index, list) else index.get("groups", [])
-
-    for group in groups:
-        group_name = group.get("name", "")
-        if not group_name.lower().startswith(scenario.lower()):
+    for table in tables:
+        header = table.get("header", [])
+        if not header:
             continue
 
-        for stat in group.get("stats", []):
-            # stat example: {"model": "openai/gpt-4", "mean": 0.864, ...}
-            model = stat.get("model", stat.get("name", ""))
-            mean = stat.get("mean")
-            if model and mean is not None:
-                try:
-                    score = float(mean)
-                except (TypeError, ValueError):
-                    continue
-                rows.append({
-                    "scenario": scenario,
-                    "model": model,
-                    "provider_raw": model.split("/")[0] if "/" in model else model,
-                    "score": score,
-                    "metric": metric_key,
-                    "run_date": run_date,
-                    "helm_version": version,
-                    "source": "helm",
-                })
+        # Find column indices
+        col_names = [h.get("value", "") for h in header]
+        model_col = 0  # always "Model/adapter"
 
-    return rows
+        # Find the target metric column; fall back to the second column
+        metric_col = 1
+        for i, name in enumerate(col_names):
+            if name == target_metric:
+                metric_col = i
+                break
 
+        actual_metric = col_names[metric_col] if metric_col < len(col_names) else target_metric
 
-def fetch_scenario_direct(scenario: str, version: str) -> list[dict]:
-    """
-    Attempt to fetch a per-scenario summary JSON directly from the CDN,
-    as a fallback when the groups index doesn't contain the scenario.
-    """
-    rows = []
-    run_date = RELEASE_DATES.get(version, "")
-    metric_key = SCENARIO_METRICS.get(scenario, "quasi_exact_match")
+        for data_row in table.get("rows", []):
+            if len(data_row) <= metric_col:
+                continue
 
-    url = f"{HELM_CDN}/{version}/scenarios/{scenario}.json"
-    resp = requests.get(url, timeout=60)
-    if resp.status_code != 200:
-        return rows
+            model_cell = data_row[model_col]
+            score_cell = data_row[metric_col]
 
-    data = resp.json()
-    # schema varies; try common patterns
-    for entry in data if isinstance(data, list) else data.get("results", []):
-        model = entry.get("model", entry.get("name", ""))
-        score = entry.get(metric_key, entry.get("score", entry.get("mean")))
-        if model and score is not None:
+            model = model_cell.get("value", "")
+            score_raw = score_cell.get("value")
+
+            if not model or score_raw is None:
+                continue
             try:
-                rows.append({
-                    "scenario": scenario,
-                    "model": model,
-                    "provider_raw": model.split("/")[0] if "/" in model else model,
-                    "score": float(score),
-                    "metric": metric_key,
-                    "run_date": run_date,
-                    "helm_version": version,
-                    "source": "helm",
-                })
+                score = float(score_raw)
             except (TypeError, ValueError):
-                pass
+                continue
+
+            # Derive provider from model name
+            # HELM model names look like "openai/gpt-4" or "anthropic/claude-2"
+            if "/" in str(model):
+                provider_raw = str(model).split("/")[0]
+            else:
+                provider_raw = str(model)
+
+            rows.append({
+                "scenario": scenario,
+                "model": str(model),
+                "provider_raw": provider_raw,
+                "score": round(score, 6),
+                "metric": actual_metric,
+                "run_date": run_date,
+                "helm_version": version,
+                "source": "helm",
+            })
 
     return rows
 
@@ -140,25 +143,27 @@ def fetch_scenario_direct(scenario: str, version: str) -> list[dict]:
 def main(version: str, scenarios: list[str]) -> None:
     RAW_DIR.mkdir(parents=True, exist_ok=True)
 
-    print(f"Fetching HELM index for version {version} ...")
-    try:
-        index = fetch_index(version)
-    except requests.HTTPError as exc:
-        print(f"[ERROR] Could not fetch HELM index: {exc}")
-        index = {}
-
     for scenario in scenarios:
-        print(f"  Processing scenario: {scenario}")
-        rows = extract_runs_for_scenario(index, scenario, version)
+        group_name = SCENARIO_GROUPS.get(scenario, scenario)
+        url_display = f"{HELM_BASE}/{version}/groups/{group_name}.json"
+        print(f"Fetching HELM {scenario} (group: {group_name}) ...")
+        print(f"  URL: {url_display}")
 
-        if not rows:
-            print(f"    Not found in index, trying direct fetch ...")
-            rows = fetch_scenario_direct(scenario, version)
-            time.sleep(0.5)
+        try:
+            tables = fetch_group(version, group_name)
+        except requests.HTTPError as exc:
+            print(f"  [ERROR] HTTP {exc.response.status_code}: {exc}")
+            tables = []
+        except Exception as exc:
+            print(f"  [ERROR] {exc}")
+            tables = []
+
+        rows = extract_scores(tables, scenario, version) if tables else []
 
         out_path = RAW_DIR / f"{scenario}.json"
         out_path.write_text(json.dumps(rows, indent=2))
-        print(f"    -> {len(rows)} rows written to {out_path}")
+        print(f"  -> {len(rows)} rows written to {out_path}")
+        time.sleep(0.3)
 
 
 if __name__ == "__main__":
@@ -167,7 +172,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--scenarios",
         nargs="+",
-        default=list(SCENARIO_METRICS.keys()),
+        default=list(SCENARIO_GROUPS.keys()),
     )
     args = parser.parse_args()
     main(args.version, args.scenarios)

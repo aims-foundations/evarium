@@ -294,6 +294,121 @@ Key outputs per batch:
 
 ---
 
+## Data Preservation Policy
+
+### Phase 1 experiments (exp_001–exp_015, heuristic runs)
+Keep everything as-is. These are the canonical reference runs and their plots, game logs,
+and actor traces are used for qualitative interpretation.
+
+### Replication runs (Phase 2–5)
+For replication runs the only two things that must be saved are:
+
+1. **`rounds.jsonl`** — the full per-round state. This is the raw ground truth and cannot
+   be regenerated without re-running the experiment. Never delete or compress it.
+2. **A row in the replication metrics CSV** — one row per run with all extracted scalar
+   and summary metrics (see "Metrics to Track" section below). This is what gets aggregated
+   for CIs and pattern pass-rates.
+
+Everything else produced by a replication run — `plots/`, `game_log.md`, `summary.json`,
+`providers/`, `policymakers/`, `funders/` subdirectories — can be deleted immediately
+after the CSV row is written, or simply never generated in the first place. All of those
+are either regenerable from `rounds.jsonl` + `config.json`, or not needed for the paper's
+statistical claims.
+
+**Practical rule:** after a replication batch completes, run the metrics extraction script
+to write the CSV rows, verify `rounds.jsonl` exists and is non-empty for each run, then
+delete everything else in those experiment folders.
+
+---
+
+## Metrics to Track Across Replication Runs
+
+These are the metrics to extract per run and aggregate (mean, SD, 95% CI via t-distribution)
+across seeds within each condition. Organized by priority.
+
+### Primary Outcomes (paper commits to reporting CIs on these)
+
+| Metric | Source field in `rounds.jsonl` | Aggregation |
+|--------|-------------------------------|-------------|
+| Mean score inflation | `mean(scores[p]) - mean(true_capabilities[p])` across providers | per-round trajectory + last-5-round mean |
+| Score inflation per provider | `scores[p] - true_capabilities[p]` | per-round per-provider |
+| Mean true capability | `mean(true_capabilities.values())` | per-round trajectory + last-5-round mean |
+| True capability per provider | `true_capabilities[p]` | per-round |
+| Mean evaluation engineering | `mean(strategies[p].evaluation_engineering)` | per-round trajectory + last-5-round mean |
+| Eval eng per provider | `strategies[p].evaluation_engineering` | per-round |
+| HHI (market concentration) | `sum(s^2 for s in consumer_data.market_shares.values())` | per-round trajectory + last-5-round mean |
+| Mean consumer satisfaction | `consumer_data.avg_satisfaction` | per-round trajectory + last-5-round mean |
+| Benchmark validity (alpha) | `benchmark_params[b].validity` per active benchmark | per-round per-benchmark |
+| Benchmark exploitability (beta) | `benchmark_params[b].exploitability` | per-round per-benchmark |
+| Validity correlation (rolling r) | Pearson r(scores, true_caps) over window=5 | per-round per-benchmark |
+
+### Secondary Outcomes
+
+| Metric | Source field in `rounds.jsonl` | Aggregation |
+|--------|-------------------------------|-------------|
+| Fundamental research (mean) | `mean(strategies[p].fundamental_research)` | per-round |
+| Training optimization (mean) | `mean(strategies[p].training_optimization)` | per-round |
+| Safety alignment (mean) | `mean(strategies[p].safety_alignment)` | per-round |
+| Strategy drift (cosine) | cosine distance between consecutive strategy vectors | per-round per-provider; flag if > 0.02 |
+| Per-benchmark score inflation | `per_benchmark_scores[b][p] - true_capabilities[p]` | per-round per-benchmark per-provider |
+| OLS slope (score ~ true_cap) | regression across providers per benchmark | last-10-round aggregate |
+| OLS intercept (floor bias) | same regression | last-10-round aggregate |
+| Funding multiplier per provider | `funder_data.funding_multipliers[p]` | per-round |
+| Funding HHI | `sum(s^2)` over normalized funder allocations to non-OS providers | per-round |
+| Funding-score correlation | Pearson r(funding_multiplier, published_score) | per-round |
+| Funding-capability correlation | Pearson r(funding_multiplier, true_capability) | per-round |
+| Active sanction count | `len(policymaker_data.active_sanctions)` | per-round |
+| Intervention type counts | count by type from `policymaker_data.interventions` | cumulative per run |
+| Time to first intervention | first round where `policymaker_data.interventions` is non-empty | per run scalar |
+| Gaming risk level | `policymaker_data` risk fields (if logged) | per-round |
+| Incident count per severity | count from incident fields by severity | per round and cumulative |
+| Incident count per provider | incidents attributed to each provider | cumulative per run |
+| Consumer switching rate | `consumer_data.switching_rate` | per-round |
+| Satisfaction per archetype | aggregate `consumer_data.segment_data` by archetype | per-round |
+| BTE composite | `barrier_to_entry.composite` | per-round |
+| BTE components | `barrier_to_entry.market_concentration/capability_gap/funding_lock_in/consumer_lock_in` | per-round |
+| Startup entry count | count rounds where `new_entrant` key is present | per run scalar |
+| OpenCore ecosystem influence | `open_source_data.OpenCore.ecosystem_influence` | per-round |
+| OpenCore commoditization fired | `open_source_data.OpenCore.commoditization_shock_fired` | boolean per run |
+| Media sentiment | `media_data.sentiment` | per-round |
+| Media headline count | `len(media_data.headlines)` | per-round |
+| Media risk signal count | `len(media_data.risk_signals)` | per-round |
+| Benchmark turnover count | count benchmark retirements + introductions | per run scalar |
+| Breakthrough count | count rounds where capability jump exceeds ~2× normal delta | per run scalar |
+| Role adherence violations | count of "true capability" / "actual capability" in `actor_traces` | per round and cumulative |
+
+### Pattern Validation (binary per run, fraction across seeds)
+
+For each seed, record pass (1) or fail (0) for each pattern. Report pass-rate across seeds per condition.
+
+| Pattern | Measurement criterion |
+|---------|----------------------|
+| Score Inflation | `mean_inflation > 0.10` sustained by round 15 |
+| Benchmark Turnover | at least one retirement + introduction during the run |
+| Regulatory Escalation | at least one intervention of type beyond `investigation` |
+| Commoditization Shock | `open_source_data.OpenCore.commoditization_shock_fired == true` at any round |
+| Safety Incident Response | funder adjusts allocation in response to a major/critical incident |
+| Gaming Persistence | `mean_eval_eng` remains above initial level through round 20+ |
+| Funding Follows Scores | r(funding, published_score) > r(funding, true_capability) |
+
+### Aggregation Protocol (across seeds within a condition)
+
+For every per-round metric, compute:
+- `mean_trajectory[t]` — mean across N seeds at each round t
+- `std_trajectory[t]` — standard deviation across seeds at round t
+- `CI95_lower[t]`, `CI95_upper[t]` — t-distribution 95% CI (df = N-1)
+
+For every per-run scalar (e.g., startup_entry_count, time_to_first_intervention):
+- `mean`, `std`, `CI95_lower`, `CI95_upper` across seeds
+
+For pattern pass/fail:
+- `pass_rate` = fraction of seeds passing (0.0–1.0)
+- `CI95` via Wilson interval or normal approximation
+
+Minimum N for meaningful CIs: **5 seeds** (N=10 preferred per EXPERIMENT_PLAN design).
+
+---
+
 ## Findings from Phase 1 Diagnostics
 
 ### Pattern Validation (single runs)
