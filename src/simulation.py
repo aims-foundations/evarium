@@ -772,7 +772,7 @@ class EvalEcosystemSimulation:
 
         # 4b. Generate incidents based on provider strategies and safety investment
         incidents = []
-        if round_num > 0 and self.config.enable_incidents:
+        if round_num > 0:  # No incidents in round 0
             # Collect current strategies
             provider_strategies = {
                 p.name: {
