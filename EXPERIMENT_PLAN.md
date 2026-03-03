@@ -7,7 +7,7 @@ completed experiments, planned replications, sensitivity sweeps, and cross-model
 comparisons. The design is organized into five phases:
 
 1. **Phase 1** — Structural ablations: 27 canonical conditions (9 structural × 3 regulatory presets), single seed, 30 rounds
-2. **Phase 2** — Independent replications for statistical inference (10 seeds/condition)
+2. **Phase 2** — Independent replications for statistical inference (30 seeds/condition)
 3. **Phase 3** — Sensitivity analysis (continuous parameter sweeps)
 4. **Phase 4** — Cross-model robustness (multiple LLMs)
 5. **Phase 5** — Heuristic baseline (rule-based actors, fully seed-controlled)
@@ -120,6 +120,149 @@ output/
 
 - **Central CSV**: Built post-hoc from `aggregate.json` files across all conditions
   and phases (see Metrics section for schema).
+
+---
+
+## Running Experiments
+
+### Prerequisites
+
+- Python 3.12+, dependencies installed: `pip install -r requirements.txt`
+- For local models (Qwen, DeepSeek): vLLM installed (`pip install vllm`), GPUs available
+- For cloud models: API key set in environment or `.env` file
+  - `ANTHROPIC_API_KEY` for Claude
+  - `OPENAI_API_KEY` for GPT
+  - `GEMINI_API_KEY` for Gemini
+
+### How to Configure Conditions and Presets
+
+Conditions and presets are set via `SimulationConfig` flags in `src/simulation.py`.
+The relevant flags per ablation:
+
+| Condition | Config flag(s) |
+|-----------|----------------|
+| Full Ecosystem | (all defaults) |
+| No Media | `enable_media=False` |
+| No Incidents | `enable_incidents=False` |
+| No Startups | `startup_entry_probability=0` |
+| No OpenCore | `enable_open_source=False` |
+| Single Benchmark | `n_benchmarks=1` |
+| No Funders | `enable_funders=False` |
+| No Benchmark Evolution | `enable_benchmark_evolution=False` |
+| Eval As Company | `evaluator_as_company=True` |
+
+Regulatory presets (`balanced`, `us_light_touch`, `eu_precautionary`) are passed
+as the `regulatory_preset` argument to `SimulationConfig`. See
+`src/simulation.py` for preset definitions.
+
+### Running a Single Experiment (Phase 1 core runs)
+
+Use `scripts/run_experiment.py` (edit config inline then run) or
+`scripts/run_llm_now.py` (CLI-driven). For Qwen via vLLM, the server must
+be running first — `reproduce.sh` and `run_qwen_all_phases.sh` handle this
+automatically.
+
+To start the vLLM server manually (confirm available GPU device IDs and TP size
+before running — the values below are examples from `run_qwen_all_phases.sh`):
+```bash
+CUDA_VISIBLE_DEVICES=0,1,3,4 python -m vllm.entrypoints.openai.api_server \
+    --model Qwen/Qwen3-235B-A22B \
+    --tensor-parallel-size 4 \
+    --max-model-len 16384 \
+    --gpu-memory-utilization 0.95 \
+    --trust-remote-code \
+    --port 8000 \
+    --disable-log-requests
+```
+
+Then set environment variables so the sim uses the local server:
+```bash
+export LLM_PROVIDER=openai
+export LLM_MODEL=Qwen/Qwen3-235B-A22B
+export OPENAI_API_KEY=dummy
+export OPENAI_BASE_URL=http://localhost:8000/v1
+```
+
+For cloud models, set `LLM_PROVIDER` and `LLM_MODEL` instead (and ensure the
+relevant API key is set). All supported model presets are defined in `reproduce.sh`.
+
+### Running Validation Phases (Phases 2–5)
+
+Use `run_phase.sh` for individual phases, or `run_qwen_all_phases.sh` to run
+all LLM phases in sequence under Qwen (starts the vLLM server automatically,
+intended for tmux).
+
+```bash
+# All LLM phases in order (Qwen, starts vLLM server):
+./run_qwen_all_phases.sh
+
+# Individual phases:
+./run_phase.sh --phase 5                          # heuristic baseline (free)
+./run_phase.sh --phase 2p0 --model qwen           # P0 replications
+./run_phase.sh --phase 2p1 --model qwen           # P1 replications
+./run_phase.sh --phase 2p2 --model qwen           # P2 replications
+./run_phase.sh --phase 3   --model qwen           # sensitivity sweeps
+./run_phase.sh --phase 4                          # cross-model comparison
+
+# Dry run to preview commands without executing:
+./run_phase.sh --phase 2p0 --model qwen --dry-run
+
+# Override seed count:
+./run_phase.sh --phase 2p0 --model qwen --n-seeds 30
+
+# Use a cloud model instead:
+./run_phase.sh --phase 2p0 --model gemini-flash
+```
+
+Available model presets (defined in `reproduce.sh`): `qwen`, `deepseek`,
+`claude-sonnet`, `claude-sonnet-4`, `gpt-5`, `gemini-flash`, `gemini-pro`.
+
+> **`run_phase.sh` is currently broken for this plan and must be fixed before
+> use.** Specific issues to address:
+> - Phase 5/2p0/2p1/2p2 reference old Claude exp IDs (`exp_011`, `exp_013`, etc.)
+>   which no longer match the new `core/` directory names
+> - Phase 2p0 references exp_013/014/015 (50-round runs, removed from plan)
+> - Phase 4 references exp_013 (also removed)
+> - Phase 3 has `diminishing_returns_rate` instead of `capability_shift` and is
+>   missing `capability_shift` entirely
+> - Default seed count is 10 throughout; must be updated to 30
+> - All output is written to `output/experiments/` via `run_diagnostics.py`;
+>   must be redirected to the new `core/` + `validation/` structure
+> - `build_registry.py` is never called; must be added as a post-phase step
+>
+> `run_qwen_all_phases.sh` inherits the same issues via `run_phase.sh` and
+> must also be updated once `run_phase.sh` is fixed.
+
+### summary.json Format
+
+Each LLM-mode run automatically produces a `summary.json` alongside `rounds.jsonl`.
+It contains final-state scalars and per-provider summaries sufficient for fast
+querying without loading raw data. Key fields (see `exp_001` for a live example):
+
+```json
+{
+  "n_rounds": 30,
+  "final_scores": { "<provider>": <float>, ... },
+  "final_true_capabilities": { "<provider>": <float>, ... },
+  "final_strategies": { "<provider>": { "fundamental_research": ..., "evaluation_engineering": ..., ... }, ... },
+  "provider_summaries": { "<provider>": { "mean_evaluation_engineering": ..., "capability_growth": ..., ... }, ... },
+  "consumer_summary": { "mean_satisfaction": ..., "final_market_shares": { ... }, ... },
+  "policymaker_summary": { "total_interventions": ..., "intervention_types": [...], ... },
+  "funder_summary": { "final_funding_multipliers": { ... }, ... },
+  "validity_correlation": <float>,
+  "benchmark_params": { "validity": ..., "exploitability": ..., "noise": ... }
+}
+```
+
+`summary.json` covers most primary and secondary metrics. For per-round
+trajectories and pattern validation (which require round-by-round data),
+load `rounds.jsonl`. All plots can be regenerated from `rounds.jsonl` +
+`config.json` using `scripts/replot.py`.
+
+> **Implementation note:** `summary.json` is produced by LLM-mode runs but
+> its schema should be verified for heuristic-mode runs before implementing
+> `build_registry.py`. Add any missing fields (e.g. pattern pass/fail flags)
+> to both the heuristic runner and the `build_registry.py` extractor.
 
 ---
 

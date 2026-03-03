@@ -1,13 +1,16 @@
 #!/usr/bin/env bash
-# reproduce.sh — Reproduce all 15 experiments using any supported model.
+# reproduce.sh — Reproduce all 27 Phase 1 core experiments using any supported model.
+#
+# Reads config.json from output/core/<condition>/ and reruns each experiment.
+# Requires Phase 1 core runs to have been completed first (configs must exist).
 #
 # Usage:
 #   ./reproduce.sh --model <preset> [options]
 #
 # Model presets:
 #   Local (vLLM):
-#     qwen             Qwen/Qwen3-235B-A22B (4 GPUs, TP=4)
-#     deepseek         deepseek-ai/DeepSeek-R1 (6 GPUs, TP=6)
+#     qwen             Qwen/Qwen3-235B-A22B
+#     deepseek         deepseek-ai/DeepSeek-R1
 #
 #   Commercial APIs:
 #     claude-sonnet    Claude 3.5 Sonnet (needs ANTHROPIC_API_KEY)
@@ -19,27 +22,37 @@
 # Options:
 #   --model <preset>       Model to use (required)
 #   --jobs N               Max concurrent experiments (default: 2)
-#   --experiments N N N    Run only specific experiments (by number)
-#   --gpus 0,1,2,3        Override GPU selection (vLLM models only)
-#   --port N               Override vLLM port (default: 8000)
+#   --conditions A B ...   Run only specific conditions (by name)
+#   --gpus 0,1,2,3         GPU selection for vLLM models
+#                          NOTE: confirm available device IDs before running —
+#                          the default (0,1,2,3) may not match your machine.
+#   --port N               vLLM port (default: 8000)
 #   --skip-server          Skip vLLM server launch (assumes already running)
 #   --dry-run              Show what would run without executing
 #   --help, -h             Show this help
 #
 # Examples:
-#   ./reproduce.sh --model qwen                            # Qwen via vLLM
-#   ./reproduce.sh --model deepseek --gpus 0,1,2,3,4,5    # DeepSeek with specific GPUs
-#   ./reproduce.sh --model claude-sonnet --jobs 4          # Claude, 4 concurrent
-#   ./reproduce.sh --model gpt-5 --experiments 1 2 3      # GPT-5, only 3 experiments
-#   ./reproduce.sh --model gemini-flash --dry-run          # Dry run with Gemini Flash
+#   ./reproduce.sh --model qwen                                    # all 27 conditions
+#   ./reproduce.sh --model qwen --conditions full_ecosystem_balanced ablation_no_media_balanced
+#   ./reproduce.sh --model deepseek --gpus 0,1,2,3,4,5
+#   ./reproduce.sh --model gemini-flash --jobs 4
+#   ./reproduce.sh --model qwen --dry-run
 #
 # Prerequisites:
 #   - Python 3.12+ with dependencies: pip install -r requirements.txt
-#   - For local models: vLLM installed (pip install vllm), GPUs available
-#   - For commercial models: API key set in environment or .env file
+#   - For local models: vLLM installed, GPUs available
+#   - For commercial models: API key in environment or .env file
+#   - output/core/<condition>/config.json must exist for each condition
+#     (run Phase 1 first; reorganize output into core/ structure)
+#
+# Implementation note:
+#   This script calls scripts/rerun_experiment.py with --config-path to read
+#   configs directly from output/core/<condition>/config.json without going
+#   through index.json. The --config-path flag must be implemented in
+#   rerun_experiment.py if not already present.
 #
 # Output:
-#   - New experiment directories in output/experiments/
+#   - New experiment directories in output/core/
 #   - Logs in output/reproduce_logs/
 set -euo pipefail
 
@@ -48,21 +61,10 @@ cd "$SCRIPT_DIR"
 
 # ── Usage ──────────────────────────────────────────────────────────────────
 usage() {
-    head -42 "$0" | tail -41
+    head -52 "$0" | tail -51
 }
 
 # ── Model preset loader ───────────────────────────────────────────────────
-# Each preset sets:
-#   PRESET_DISPLAY_NAME   — human-readable name for banners/logs
-#   PRESET_LLM_PROVIDER   — openai | anthropic | gemini
-#   PRESET_LLM_MODEL      — model ID string
-#   PRESET_NEEDS_VLLM     — true for local models, false for commercial
-#   PRESET_DEFAULT_GPUS   — CUDA_VISIBLE_DEVICES value (vLLM only)
-#   PRESET_TP_SIZE        — tensor parallel size (vLLM only)
-#   PRESET_MAX_MODEL_LEN  — max context length (vLLM only)
-#   PRESET_GPU_MEM_UTIL   — GPU memory utilization fraction (vLLM only)
-#   PRESET_API_KEY_VAR    — env var name to check for API key (commercial only)
-
 load_preset() {
     case "$1" in
         qwen)
@@ -144,32 +146,50 @@ load_preset() {
             ;;
         *)
             echo "ERROR: Unknown model preset: $1"
-            echo ""
-            echo "Available presets:"
-            echo "  Local (vLLM):    qwen, deepseek"
-            echo "  Commercial API:  claude-sonnet, claude-sonnet-4, gpt-5, gemini-flash, gemini-pro"
+            echo "Available presets: qwen, deepseek, claude-sonnet, claude-sonnet-4, gpt-5, gemini-flash, gemini-pro"
             exit 1
             ;;
     esac
 }
 
-# ── All 15 experiments ──────────────────────────────────────────────────────
-ALL_EXPERIMENTS=(
-    exp_001_full_ecosystem_us
-    exp_002_full_ecosystem_eu
-    exp_003_full_ecosystem_us
-    exp_004_ablation_no_media_balanced
-    exp_005_ablation_no_incidents_balanced
-    exp_006_ablation_no_startups_balanced
-    exp_007_ablation_no_opencore_balanced
-    exp_008_ablation_single_benchmark_balanced
-    exp_009_ablation_no_funders_balanced
-    exp_010_ablation_no_benchmark_evolution_balanced
-    exp_011_full_ecosystem_balanced
-    exp_012_ablation_eval_as_company_balanced
-    exp_013_full_ecosystem_balanced
-    exp_014_full_ecosystem_us
-    exp_015_full_ecosystem_eu
+# ── All 27 Phase 1 core conditions ─────────────────────────────────────────
+ALL_CONDITIONS=(
+    # Full ecosystem x 3 presets
+    full_ecosystem_balanced
+    full_ecosystem_us
+    full_ecosystem_eu
+    # No Media x 3 presets
+    ablation_no_media_balanced
+    ablation_no_media_us
+    ablation_no_media_eu
+    # No Incidents x 3 presets
+    ablation_no_incidents_balanced
+    ablation_no_incidents_us
+    ablation_no_incidents_eu
+    # No Startups x 3 presets
+    ablation_no_startups_balanced
+    ablation_no_startups_us
+    ablation_no_startups_eu
+    # No OpenCore x 3 presets
+    ablation_no_opencore_balanced
+    ablation_no_opencore_us
+    ablation_no_opencore_eu
+    # Single Benchmark x 3 presets
+    ablation_single_benchmark_balanced
+    ablation_single_benchmark_us
+    ablation_single_benchmark_eu
+    # No Funders x 3 presets
+    ablation_no_funders_balanced
+    ablation_no_funders_us
+    ablation_no_funders_eu
+    # No Benchmark Evolution x 3 presets
+    ablation_no_bench_evolution_balanced
+    ablation_no_bench_evolution_us
+    ablation_no_bench_evolution_eu
+    # Eval As Company x 3 presets
+    ablation_eval_as_company_balanced
+    ablation_eval_as_company_us
+    ablation_eval_as_company_eu
 )
 
 # ── Defaults ────────────────────────────────────────────────────────────────
@@ -177,7 +197,7 @@ MODEL_PRESET=""
 MAX_JOBS=2
 DRY_RUN=false
 SKIP_SERVER=false
-SELECTED_NUMS=()
+SELECTED_CONDITIONS=()
 GPU_OVERRIDE=""
 VLLM_PORT=8000
 
@@ -188,10 +208,10 @@ while [[ $# -gt 0 ]]; do
             MODEL_PRESET="$2"; shift 2 ;;
         --jobs)
             MAX_JOBS="$2"; shift 2 ;;
-        --experiments)
+        --conditions)
             shift
             while [[ $# -gt 0 && ! "$1" =~ ^-- ]]; do
-                SELECTED_NUMS+=("$1"); shift
+                SELECTED_CONDITIONS+=("$1"); shift
             done
             ;;
         --gpus)
@@ -206,24 +226,20 @@ while [[ $# -gt 0 ]]; do
             usage; exit 0 ;;
         *)
             echo "ERROR: Unknown option: $1"
-            echo ""
             usage
             exit 1
             ;;
     esac
 done
 
-# ── Validate --model ──────────────────────────────────────────────────────
 if [[ -z "$MODEL_PRESET" ]]; then
     echo "ERROR: --model is required."
-    echo ""
     usage
     exit 1
 fi
 
 load_preset "$MODEL_PRESET"
 
-# ── Apply GPU override (vLLM only) ──────────────────────────────────────
 if [[ -n "$GPU_OVERRIDE" ]]; then
     if [[ "$PRESET_NEEDS_VLLM" == false ]]; then
         echo "WARNING: --gpus is ignored for commercial API model '$MODEL_PRESET'."
@@ -234,111 +250,86 @@ if [[ -n "$GPU_OVERRIDE" ]]; then
     fi
 fi
 
-# ── Load .env for API keys ──────────────────────────────────────────────
+# ── Load .env ────────────────────────────────────────────────────────────
 if [[ -f .env ]]; then
-    set -a
-    source .env
-    set +a
+    set -a; source .env; set +a
 fi
 
-# ── Validate API key for commercial models ───────────────────────────────
 if [[ "$PRESET_NEEDS_VLLM" == false && -n "$PRESET_API_KEY_VAR" ]]; then
     if [[ -z "${!PRESET_API_KEY_VAR:-}" ]]; then
         echo "ERROR: $PRESET_API_KEY_VAR is not set."
-        echo "  For model '$MODEL_PRESET', set $PRESET_API_KEY_VAR in your environment or .env file."
         exit 1
     fi
 fi
 
-# ── Resolve experiment list ─────────────────────────────────────────────────
-EXPERIMENTS=()
-if [[ ${#SELECTED_NUMS[@]} -gt 0 ]]; then
-    for num in "${SELECTED_NUMS[@]}"; do
-        padded=$(printf "%03d" "$num")
-        found=false
-        for exp in "${ALL_EXPERIMENTS[@]}"; do
-            if [[ "$exp" == exp_${padded}_* ]]; then
-                EXPERIMENTS+=("$exp")
-                found=true
-                break
-            fi
-        done
-        if [[ "$found" == false ]]; then
-            echo "ERROR: No experiment matching exp_${padded}_*"
-            exit 1
-        fi
-    done
+# ── Resolve condition list ───────────────────────────────────────────────────
+CONDITIONS=()
+if [[ ${#SELECTED_CONDITIONS[@]} -gt 0 ]]; then
+    CONDITIONS=("${SELECTED_CONDITIONS[@]}")
 else
-    EXPERIMENTS=("${ALL_EXPERIMENTS[@]}")
+    CONDITIONS=("${ALL_CONDITIONS[@]}")
 fi
 
-# ── Preflight checks ───────────────────────────────────────────────────────
+PYTHON=$(command -v python3 || command -v python)
+
+# ── Preflight ───────────────────────────────────────────────────────────────
 echo "========================================"
-echo "  Reproduction Run"
+echo "  Phase 1 Core Reproduction"
 echo "  Model: $PRESET_DISPLAY_NAME"
 if [[ "$PRESET_NEEDS_VLLM" == true ]]; then
     echo "  GPUs:  $PRESET_DEFAULT_GPUS (TP=$PRESET_TP_SIZE)"
+    echo "  NOTE:  Confirm GPU device IDs match your machine before running"
     echo "  Port:  $VLLM_PORT"
 fi
-echo "  Experiments: ${#EXPERIMENTS[@]}"
+echo "  Conditions: ${#CONDITIONS[@]}"
 echo "  Max concurrent jobs: $MAX_JOBS"
 echo "========================================"
 echo ""
 
-# Check Python
-if ! command -v python3 &>/dev/null && ! command -v python &>/dev/null; then
-    echo "ERROR: python3 not found. Install Python 3.12+."
-    exit 1
-fi
-PYTHON=$(command -v python3 || command -v python)
-
-# Check configs exist
 missing=0
-for exp in "${EXPERIMENTS[@]}"; do
-    config="output/experiments/$exp/config.json"
+for cond in "${CONDITIONS[@]}"; do
+    config="output/core/$cond/config.json"
     if [[ ! -f "$config" ]]; then
-        echo "ERROR: Missing config: $config"
+        echo "WARNING: Missing config: $config"
         missing=$((missing + 1))
     fi
 done
 if [[ $missing -gt 0 ]]; then
-    echo "ERROR: $missing config(s) missing. Cannot reproduce."
+    echo ""
+    echo "ERROR: $missing config(s) missing in output/core/."
+    echo "Phase 1 core runs must be completed and reorganized into output/core/"
+    echo "before reproduce.sh can rerun them."
     exit 1
 fi
 
 # ── Dry run ─────────────────────────────────────────────────────────────────
 if [[ "$DRY_RUN" == true ]]; then
     echo "Dry run - would execute:"
-    echo ""
-    echo "  Model:    $PRESET_DISPLAY_NAME"
-    echo "  Provider: $PRESET_LLM_PROVIDER"
-    echo "  Model ID: $PRESET_LLM_MODEL"
+    echo "  Model: $PRESET_DISPLAY_NAME"
     if [[ "$PRESET_NEEDS_VLLM" == true ]]; then
         echo ""
-        echo "  vLLM server: CUDA_VISIBLE_DEVICES=$PRESET_DEFAULT_GPUS python -m vllm.entrypoints.openai.api_server \\"
+        echo "  vLLM: CUDA_VISIBLE_DEVICES=$PRESET_DEFAULT_GPUS python -m vllm.entrypoints.openai.api_server \\"
         echo "    --model $PRESET_LLM_MODEL --tensor-parallel-size $PRESET_TP_SIZE --port $VLLM_PORT"
     fi
     echo ""
-    for exp in "${EXPERIMENTS[@]}"; do
-        rounds=$(${PYTHON} -c "import json; print(json.load(open('output/experiments/$exp/config.json'))['n_rounds'])")
-        echo "  $PYTHON scripts/rerun_experiment.py $exp    ($rounds rounds)"
+    for cond in "${CONDITIONS[@]}"; do
+        echo "  $PYTHON scripts/rerun_experiment.py --config-path output/core/$cond/config.json"
     done
     echo ""
-    echo "Total: ${#EXPERIMENTS[@]} experiments"
+    echo "Total: ${#CONDITIONS[@]} conditions"
     exit 0
 fi
 
-# ── Log directory setup ─────────────────────────────────────────────────────
+# ── Log directory ────────────────────────────────────────────────────────────
 LOG_DIR="output/reproduce_logs"
 mkdir -p "$LOG_DIR"
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)
 
-# ── vLLM server (local models only) ─────────────────────────────────────────
+# ── vLLM server ──────────────────────────────────────────────────────────────
 VLLM_PID=""
 
 cleanup() {
     if [[ -n "$VLLM_PID" ]] && kill -0 "$VLLM_PID" 2>/dev/null; then
-        echo ""
         echo "Shutting down vLLM server (PID $VLLM_PID)..."
         kill "$VLLM_PID" 2>/dev/null || true
         wait "$VLLM_PID" 2>/dev/null || true
@@ -347,75 +338,49 @@ cleanup() {
 }
 trap cleanup EXIT
 
-if [[ "$PRESET_NEEDS_VLLM" == true ]]; then
-    if [[ "$SKIP_SERVER" == false ]]; then
-        VLLM_LOG="$LOG_DIR/${TIMESTAMP}_vllm_server.log"
+if [[ "$PRESET_NEEDS_VLLM" == true && "$SKIP_SERVER" == false ]]; then
+    VLLM_LOG="$LOG_DIR/${TIMESTAMP}_vllm_server.log"
+    echo "Starting vLLM server..."
+    echo "  Model: $PRESET_LLM_MODEL"
+    echo "  GPUs:  $PRESET_DEFAULT_GPUS (TP=$PRESET_TP_SIZE)"
+    echo "  Port:  $VLLM_PORT  |  Log: $VLLM_LOG"
+    echo ""
 
-        echo "Starting vLLM server..."
-        echo "  Model: $PRESET_LLM_MODEL"
-        echo "  GPUs:  $PRESET_DEFAULT_GPUS (TP=$PRESET_TP_SIZE)"
-        echo "  Port:  $VLLM_PORT"
-        echo "  Max context: $PRESET_MAX_MODEL_LEN"
-        echo "  Log:   $VLLM_LOG"
-        echo ""
+    CUDA_VISIBLE_DEVICES=$PRESET_DEFAULT_GPUS $PYTHON -m vllm.entrypoints.openai.api_server \
+        --model "$PRESET_LLM_MODEL" \
+        --tensor-parallel-size "$PRESET_TP_SIZE" \
+        --max-model-len "$PRESET_MAX_MODEL_LEN" \
+        --gpu-memory-utilization "$PRESET_GPU_MEM_UTIL" \
+        --trust-remote-code \
+        --port "$VLLM_PORT" \
+        --disable-log-requests \
+        > "$VLLM_LOG" 2>&1 &
+    VLLM_PID=$!
 
-        CUDA_VISIBLE_DEVICES=$PRESET_DEFAULT_GPUS $PYTHON -m vllm.entrypoints.openai.api_server \
-            --model "$PRESET_LLM_MODEL" \
-            --tensor-parallel-size "$PRESET_TP_SIZE" \
-            --max-model-len "$PRESET_MAX_MODEL_LEN" \
-            --gpu-memory-utilization "$PRESET_GPU_MEM_UTIL" \
-            --trust-remote-code \
-            --port "$VLLM_PORT" \
-            --disable-log-requests \
-            > "$VLLM_LOG" 2>&1 &
-        VLLM_PID=$!
-
-        echo "vLLM server starting (PID $VLLM_PID)..."
-        echo "Waiting for server to be ready..."
-
-        MAX_WAIT=600  # 10 minutes
-        WAITED=0
-        while [[ $WAITED -lt $MAX_WAIT ]]; do
-            if ! kill -0 "$VLLM_PID" 2>/dev/null; then
-                echo ""
-                echo "ERROR: vLLM server exited unexpectedly. Check log: $VLLM_LOG"
-                tail -30 "$VLLM_LOG"
-                exit 1
-            fi
-
-            if curl -s "http://localhost:$VLLM_PORT/health" > /dev/null 2>&1; then
-                echo ""
-                echo "vLLM server is ready! (took ${WAITED}s)"
-                break
-            fi
-
-            sleep 5
-            WAITED=$((WAITED + 5))
-            if [[ $((WAITED % 30)) -eq 0 ]]; then
-                echo "  Still waiting... (${WAITED}s elapsed)"
-            fi
-        done
-
-        if [[ $WAITED -ge $MAX_WAIT ]]; then
-            echo ""
-            echo "ERROR: vLLM server did not become ready within ${MAX_WAIT}s."
-            echo "Check log: $VLLM_LOG"
-            tail -30 "$VLLM_LOG"
-            exit 1
+    echo "Waiting for vLLM server (PID $VLLM_PID)..."
+    MAX_WAIT=600; WAITED=0
+    while [[ $WAITED -lt $MAX_WAIT ]]; do
+        if ! kill -0 "$VLLM_PID" 2>/dev/null; then
+            echo "ERROR: vLLM exited. Check: $VLLM_LOG"
+            tail -30 "$VLLM_LOG"; exit 1
         fi
-    else
-        echo "Skipping vLLM server launch (--skip-server). Assuming server at port $VLLM_PORT."
-        if ! curl -s "http://localhost:$VLLM_PORT/health" > /dev/null 2>&1; then
-            echo "WARNING: vLLM server not responding at http://localhost:$VLLM_PORT/health"
-            echo "Make sure the server is running before experiments start."
-        else
-            echo "vLLM server is reachable at port $VLLM_PORT."
+        if curl -s "http://localhost:$VLLM_PORT/health" > /dev/null 2>&1; then
+            echo "vLLM ready (${WAITED}s)"; break
         fi
-        echo ""
-    fi
+        sleep 5; WAITED=$((WAITED + 5))
+        [[ $((WAITED % 30)) -eq 0 ]] && echo "  Still waiting... (${WAITED}s)"
+    done
+    [[ $WAITED -ge $MAX_WAIT ]] && { echo "ERROR: vLLM timeout. Check: $VLLM_LOG"; exit 1; }
+    echo ""
+elif [[ "$PRESET_NEEDS_VLLM" == true && "$SKIP_SERVER" == true ]]; then
+    echo "Skipping vLLM server launch. Assuming server at port $VLLM_PORT."
+    curl -s "http://localhost:$VLLM_PORT/health" > /dev/null 2>&1 \
+        && echo "vLLM server reachable." \
+        || echo "WARNING: vLLM not responding at port $VLLM_PORT."
+    echo ""
 fi
 
-# ── Set LLM environment variables ───────────────────────────────────────────
+# ── Set LLM environment ──────────────────────────────────────────────────────
 if [[ "$PRESET_NEEDS_VLLM" == true ]]; then
     export LLM_PROVIDER="openai"
     export LLM_MODEL="$PRESET_LLM_MODEL"
@@ -428,131 +393,78 @@ else
 fi
 
 echo "LLM environment:"
-echo "  LLM_PROVIDER=$LLM_PROVIDER"
-echo "  LLM_MODEL=$LLM_MODEL"
-if [[ "$PRESET_NEEDS_VLLM" == true ]]; then
-    echo "  OPENAI_BASE_URL=$OPENAI_BASE_URL"
-fi
+echo "  LLM_PROVIDER=$LLM_PROVIDER  LLM_MODEL=$LLM_MODEL"
+[[ "$PRESET_NEEDS_VLLM" == true ]] && echo "  OPENAI_BASE_URL=$OPENAI_BASE_URL"
 echo ""
 
-# ── Run experiments ─────────────────────────────────────────────────────────
+# ── Run conditions ──────────────────────────────────────────────────────────
 declare -a PIDS=()
-declare -a EXP_NAMES=()
+declare -a COND_NAMES=()
 declare -a LOG_FILES=()
 declare -a START_TIMES=()
 
 running_jobs() {
     local count=0
     for pid in "${PIDS[@]}"; do
-        if kill -0 "$pid" 2>/dev/null; then
-            count=$((count + 1))
-        fi
+        kill -0 "$pid" 2>/dev/null && count=$((count + 1))
     done
     echo "$count"
 }
 
-echo "Starting reproduction run at $(date)"
-echo "Logs: $LOG_DIR/"
+echo "Starting at $(date)"
 echo ""
 
-for exp in "${EXPERIMENTS[@]}"; do
-    # Wait if at max concurrent jobs
-    while [[ $(running_jobs) -ge $MAX_JOBS ]]; do
-        sleep 1
-    done
+for cond in "${CONDITIONS[@]}"; do
+    while [[ $(running_jobs) -ge $MAX_JOBS ]]; do sleep 1; done
 
-    log_file="$LOG_DIR/${TIMESTAMP}_${MODEL_PRESET}_${exp}.log"
-    echo "[LAUNCH] $exp -> $log_file"
+    log_file="$LOG_DIR/${TIMESTAMP}_${MODEL_PRESET}_${cond}.log"
+    echo "[LAUNCH] $cond -> $log_file"
 
-    $PYTHON scripts/rerun_experiment.py "$exp" > "$log_file" 2>&1 &
-    pid=$!
+    # NOTE: rerun_experiment.py must support --config-path for this to work.
+    # Without --config-path, it falls back to index.json lookup which will not
+    # find output/core/ entries.
+    $PYTHON scripts/rerun_experiment.py \
+        --config-path "output/core/$cond/config.json" \
+        > "$log_file" 2>&1 &
 
-    PIDS+=("$pid")
-    EXP_NAMES+=("$exp")
+    PIDS+=("$!")
+    COND_NAMES+=("$cond")
     LOG_FILES+=("$log_file")
     START_TIMES+=("$(date +%s)")
-
-    # Stagger launches to avoid ExperimentLogger index.json race condition
     sleep 3
 done
 
 echo ""
-echo "All experiments launched. Waiting for completion..."
+echo "All conditions launched. Waiting for completion..."
 echo ""
 
-# ── Wait and collect results ────────────────────────────────────────────────
 declare -a STATUSES=()
 declare -a DURATIONS=()
 
 for i in "${!PIDS[@]}"; do
-    pid="${PIDS[$i]}"
-    exp="${EXP_NAMES[$i]}"
-    start="${START_TIMES[$i]}"
-
-    if wait "$pid"; then
-        status="PASS"
-    else
-        status="FAIL"
-    fi
-
+    wait "${PIDS[$i]}" && STATUSES+=("PASS") || STATUSES+=("FAIL")
     end=$(date +%s)
-    duration=$((end - start))
-
-    STATUSES+=("$status")
-    DURATIONS+=("$duration")
-
-    # Format duration
-    if [[ $duration -lt 60 ]]; then
-        dur_str="${duration}s"
-    elif [[ $duration -lt 3600 ]]; then
-        dur_str="$((duration / 60))m $((duration % 60))s"
-    else
-        dur_str="$((duration / 3600))h $(( (duration % 3600) / 60 ))m"
-    fi
-
-    echo "[$status] $exp  ($dur_str)"
-done
-
-# ── Summary ─────────────────────────────────────────────────────────────────
-echo ""
-echo "========================================"
-echo "  ${PRESET_DISPLAY_NAME} REPRODUCTION SUMMARY"
-echo "========================================"
-echo ""
-
-pass_count=0
-fail_count=0
-
-printf "%-50s  %-6s  %s\n" "EXPERIMENT" "STATUS" "DURATION"
-printf "%-50s  %-6s  %s\n" "----------" "------" "--------"
-
-for i in "${!EXP_NAMES[@]}"; do
-    dur="${DURATIONS[$i]}"
-    if [[ $dur -lt 60 ]]; then
-        dur_str="${dur}s"
-    elif [[ $dur -lt 3600 ]]; then
-        dur_str="$((dur / 60))m $((dur % 60))s"
-    else
-        dur_str="$((dur / 3600))h $(( (dur % 3600) / 60 ))m"
-    fi
-
-    printf "%-50s  %-6s  %s\n" "${EXP_NAMES[$i]}" "${STATUSES[$i]}" "$dur_str"
-
-    if [[ "${STATUSES[$i]}" == "PASS" ]]; then
-        pass_count=$((pass_count + 1))
-    else
-        fail_count=$((fail_count + 1))
-    fi
+    dur=$((end - START_TIMES[$i]))
+    DURATIONS+=("$dur")
+    [[ $dur -lt 60 ]] && ds="${dur}s" || { [[ $dur -lt 3600 ]] && ds="$((dur/60))m $((dur%60))s" || ds="$((dur/3600))h $(((dur%3600)/60))m"; }
+    echo "[${STATUSES[$i]}] ${COND_NAMES[$i]}  ($ds)"
 done
 
 echo ""
-echo "Passed: $pass_count / ${#EXP_NAMES[@]}"
-if [[ $fail_count -gt 0 ]]; then
-    echo "Failed: $fail_count (check logs in $LOG_DIR/)"
-fi
-echo "Logs:   $LOG_DIR/"
+echo "========================================"
+echo "  $PRESET_DISPLAY_NAME REPRODUCTION SUMMARY"
+echo "========================================"
+pass_count=0; fail_count=0
+printf "%-45s  %-6s  %s\n" "CONDITION" "STATUS" "DURATION"
+printf "%-45s  %-6s  %s\n" "---------" "------" "--------"
+for i in "${!COND_NAMES[@]}"; do
+    dur=${DURATIONS[$i]}
+    [[ $dur -lt 60 ]] && ds="${dur}s" || { [[ $dur -lt 3600 ]] && ds="$((dur/60))m $((dur%60))s" || ds="$((dur/3600))h $(((dur%3600)/60))m"; }
+    printf "%-45s  %-6s  %s\n" "${COND_NAMES[$i]}" "${STATUSES[$i]}" "$ds"
+    [[ "${STATUSES[$i]}" == "PASS" ]] && pass_count=$((pass_count+1)) || fail_count=$((fail_count+1))
+done
 echo ""
-
-if [[ $fail_count -gt 0 ]]; then
-    exit 1
-fi
+echo "Passed: $pass_count / ${#COND_NAMES[@]}"
+[[ $fail_count -gt 0 ]] && echo "Failed: $fail_count (check logs in $LOG_DIR/)"
+echo "Logs: $LOG_DIR/"
+[[ $fail_count -gt 0 ]] && exit 1 || exit 0
