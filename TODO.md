@@ -1,5 +1,105 @@
 # TODO
 
+## Validation Runs -- Target: Thursday March 5
+
+### Status
+
+- 8x A100-80GB on skampere1, all idle
+- Python 3.12, vLLM 0.16.0 installed
+- 11 of 27 condition configs exist (all balanced + full_ecosystem US/EU)
+- `run_phase.sh` is broken (calls `run_diagnostics.py` with `--condition`/`--output-dir` flags that don't exist)
+- `build_registry.py` does not exist yet
+- `output/core/` and `output/validation/` directories not created yet
+
+### Step 0: Generate missing US/EU ablation configs (16 configs)
+
+We have balanced ablation configs (exp_004-012) but no US/EU variants.
+Create them by cloning each balanced config.json and changing `regulatory_preset`.
+
+Conditions to generate (8 ablations x 2 presets = 16):
+- no_media: us, eu
+- no_incidents: us, eu
+- no_startups: us, eu
+- no_opencore: us, eu
+- single_benchmark: us, eu
+- no_funders: us, eu
+- no_bench_evolution: us, eu
+- eval_as_company: us, eu
+
+Approach: Python script that reads each balanced config.json, swaps
+`regulatory_preset`, and writes to a new experiment directory so
+`run_diagnostics.py` can find it by exp_id prefix.
+
+### Step 1: Phase 5 -- Heuristic baseline (free, fast)
+
+Run heuristic replications for all 27 conditions (after Step 0), 30 seeds each.
+No GPU needed. Uses `run_diagnostics.py replicate <exp_id> --n-seeds 30 --heuristic`.
+Output goes to `output/experiments/` (old structure -- reorganize later).
+
+Start with the 11 configs we already have while Step 0 runs:
+```
+python scripts/run_diagnostics.py replicate exp_011 --n-seeds 30 --heuristic  # full_ecosystem_balanced
+python scripts/run_diagnostics.py replicate exp_001 --n-seeds 30 --heuristic  # full_ecosystem_us
+python scripts/run_diagnostics.py replicate exp_002 --n-seeds 30 --heuristic  # full_ecosystem_eu
+python scripts/run_diagnostics.py replicate exp_004 --n-seeds 30 --heuristic  # no_media_balanced
+python scripts/run_diagnostics.py replicate exp_005 --n-seeds 30 --heuristic  # no_incidents_balanced
+python scripts/run_diagnostics.py replicate exp_006 --n-seeds 30 --heuristic  # no_startups_balanced
+python scripts/run_diagnostics.py replicate exp_007 --n-seeds 30 --heuristic  # no_opencore_balanced
+python scripts/run_diagnostics.py replicate exp_008 --n-seeds 30 --heuristic  # single_benchmark_balanced
+python scripts/run_diagnostics.py replicate exp_009 --n-seeds 30 --heuristic  # no_funders_balanced
+python scripts/run_diagnostics.py replicate exp_010 --n-seeds 30 --heuristic  # no_bench_evolution_balanced
+python scripts/run_diagnostics.py replicate exp_012 --n-seeds 30 --heuristic  # eval_as_company_balanced
+```
+
+### Step 2: Start vLLM + Phase 1 Qwen core runs (overnight)
+
+Start vLLM server with Qwen3-235B on all 8 GPUs (TP=8 for faster inference):
+```
+CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7 python -m vllm.entrypoints.openai.api_server \
+    --model Qwen/Qwen3-235B-A22B \
+    --tensor-parallel-size 8 \
+    --max-model-len 16384 \
+    --gpu-memory-utilization 0.95 \
+    --trust-remote-code \
+    --port 8000 \
+    --disable-log-requests
+```
+
+Then set env and run the 3 full_ecosystem conditions first (most important):
+```
+export LLM_PROVIDER=openai LLM_MODEL=Qwen/Qwen3-235B-A22B OPENAI_API_KEY=dummy OPENAI_BASE_URL=http://localhost:8000/v1
+python scripts/rerun_experiment.py exp_011   # full_ecosystem_balanced
+python scripts/rerun_experiment.py exp_001   # full_ecosystem_us
+python scripts/rerun_experiment.py exp_002   # full_ecosystem_eu
+```
+
+Then the 8 balanced ablations, then the 16 US/EU ablations from Step 0.
+
+### Step 3: Phase 2 P0 -- Full ecosystem replications (30 seeds, LLM)
+
+After Phase 1 core runs are done, replicate the 3 full_ecosystem conditions:
+```
+python scripts/run_diagnostics.py --model qwen replicate <full_eco_balanced_exp_id> --n-seeds 30
+python scripts/run_diagnostics.py --model qwen replicate <full_eco_us_exp_id> --n-seeds 30
+python scripts/run_diagnostics.py --model qwen replicate <full_eco_eu_exp_id> --n-seeds 30
+```
+
+### Step 4: Analyze + report
+
+Run `run_diagnostics.py analyze <batch_name>` on completed batches.
+Extract metrics, generate plots, build aggregate tables for Serena.
+
+### Deferred (post-Thursday)
+
+- [ ] Fix `run_phase.sh` to match `run_diagnostics.py` interface (or vice versa)
+- [ ] Create `output/core/` and `output/validation/` directory structure
+- [ ] Implement `build_registry.py` (walks output/, builds `output/runs.jsonl`)
+- [ ] Phase 2 P1/P2 replications (remaining ablations, 30 seeds each)
+- [ ] Phase 3 sensitivity sweeps
+- [ ] Phase 4 cross-model comparison
+
+---
+
 ## Experiment Script (Planned)
 
 Important plots (one plot = one experiment):

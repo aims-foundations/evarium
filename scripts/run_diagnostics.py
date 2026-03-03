@@ -137,6 +137,65 @@ def apply_model_preset(name: str, port: int = 8000):
     print()
 
 
+# ── Condition name -> experiment directory mapping ─────────────────────────
+# Maps the canonical condition names (used by run_phase.sh) to the experiment
+# directories that hold the config.json templates.
+CONDITION_CONFIG_MAP = {
+    # Full ecosystem (3)
+    "full_ecosystem_balanced": "exp_011_full_ecosystem_balanced",
+    "full_ecosystem_us": "exp_001_full_ecosystem_us",
+    "full_ecosystem_eu": "exp_002_full_ecosystem_eu",
+    # Balanced ablations (8)
+    "ablation_no_media_balanced": "exp_004_ablation_no_media_balanced",
+    "ablation_no_incidents_balanced": "exp_005_ablation_no_incidents_balanced",
+    "ablation_no_startups_balanced": "exp_006_ablation_no_startups_balanced",
+    "ablation_no_opencore_balanced": "exp_007_ablation_no_opencore_balanced",
+    "ablation_single_benchmark_balanced": "exp_008_ablation_single_benchmark_balanced",
+    "ablation_no_funders_balanced": "exp_009_ablation_no_funders_balanced",
+    "ablation_no_bench_evolution_balanced": "exp_010_ablation_no_benchmark_evolution_balanced",
+    "ablation_eval_as_company_balanced": "exp_012_ablation_eval_as_company_balanced",
+    # US ablations (8)
+    "ablation_no_media_us": "gen_ablation_no_media_us",
+    "ablation_no_incidents_us": "gen_ablation_no_incidents_us",
+    "ablation_no_startups_us": "gen_ablation_no_startups_us",
+    "ablation_no_opencore_us": "gen_ablation_no_opencore_us",
+    "ablation_single_benchmark_us": "gen_ablation_single_benchmark_us",
+    "ablation_no_funders_us": "gen_ablation_no_funders_us",
+    "ablation_no_bench_evolution_us": "gen_ablation_no_bench_evolution_us",
+    "ablation_eval_as_company_us": "gen_ablation_eval_as_company_us",
+    # EU ablations (8)
+    "ablation_no_media_eu": "gen_ablation_no_media_eu",
+    "ablation_no_incidents_eu": "gen_ablation_no_incidents_eu",
+    "ablation_no_startups_eu": "gen_ablation_no_startups_eu",
+    "ablation_no_opencore_eu": "gen_ablation_no_opencore_eu",
+    "ablation_single_benchmark_eu": "gen_ablation_single_benchmark_eu",
+    "ablation_no_funders_eu": "gen_ablation_no_funders_eu",
+    "ablation_no_bench_evolution_eu": "gen_ablation_no_bench_evolution_eu",
+    "ablation_eval_as_company_eu": "gen_ablation_eval_as_company_eu",
+}
+
+
+def _resolve_condition_config(condition_name: str) -> dict:
+    """Load config.json for a named condition from CONDITION_CONFIG_MAP."""
+    if condition_name not in CONDITION_CONFIG_MAP:
+        print(f"ERROR: Unknown condition: {condition_name}")
+        print(f"Available conditions ({len(CONDITION_CONFIG_MAP)}):")
+        for name in sorted(CONDITION_CONFIG_MAP):
+            print(f"  {name}")
+        sys.exit(1)
+
+    exp_dir_name = CONDITION_CONFIG_MAP[condition_name]
+    config_path = os.path.join(_EXPERIMENTS_DIR, exp_dir_name, "config.json")
+    if not os.path.exists(config_path):
+        print(f"ERROR: Config not found: {config_path}")
+        print(f"  Condition '{condition_name}' maps to directory '{exp_dir_name}'")
+        print(f"  Run generate_preset_configs.py to create missing configs.")
+        sys.exit(1)
+
+    with open(config_path) as f:
+        return json.load(f)
+
+
 def _find_experiment_dir(query: str) -> str:
     """Find experiment directory by ID or prefix."""
     for base in [_EXPERIMENTS_DIR, os.path.join(_EXPERIMENTS_DIR, "_heuristic")]:
@@ -165,21 +224,30 @@ def _save_batch_manifest(batch_name: str, manifest: dict):
     return path
 
 
-def _run_single(config: dict, source_label: str, api_delay: float = 0) -> str:
+def _run_single(
+    config: dict,
+    source_label: str,
+    api_delay: float = 0,
+    output_dir: str = None,
+    lightweight: bool = False,
+) -> str:
     """Run a single simulation from a config dict.
 
-    Returns the experiment ID.
+    Returns the experiment directory path (or exp_id for legacy mode).
     """
     from rerun_experiment import run_from_config
 
     config_copy = copy.deepcopy(config)
-    _sim, exp_id = run_from_config(config_copy, source_label)
+    _sim, result_path = run_from_config(
+        config_copy, source_label,
+        output_dir=output_dir, lightweight=lightweight,
+    )
 
     if api_delay > 0:
         print(f"  Waiting {api_delay}s before next run...")
         time.sleep(api_delay)
 
-    return exp_id
+    return result_path
 
 
 # ============================================================================
@@ -189,9 +257,17 @@ def _run_single(config: dict, source_label: str, api_delay: float = 0) -> str:
 
 def cmd_replicate(args):
     """Run N replications of a base experiment with different seeds."""
-    exp_dir = _find_experiment_dir(args.exp_id)
-    base_config = _load_config(exp_dir)
-    base_exp_id = Path(exp_dir).name
+    # Resolve config: --condition (new) or exp_id (legacy)
+    if args.condition:
+        base_config = _resolve_condition_config(args.condition)
+        base_label = args.condition
+    elif args.exp_id:
+        exp_dir = _find_experiment_dir(args.exp_id)
+        base_config = _load_config(exp_dir)
+        base_label = Path(exp_dir).name
+    else:
+        print("ERROR: Provide either exp_id or --condition.")
+        sys.exit(1)
 
     if args.heuristic:
         base_config["llm_mode"] = False
@@ -202,11 +278,16 @@ def cmd_replicate(args):
         else list(range(1, args.n_seeds + 1))
     )
 
-    batch_name = f"replication_{base_exp_id}_N{len(seeds)}"
+    # Deterministic-path mode (--output-dir)
+    use_output_dir = bool(args.output_dir)
+
+    batch_name = f"replication_{base_label}_N{len(seeds)}"
     print(f"\n=== Replication batch: {batch_name} ===")
-    print(f"Base experiment: {base_exp_id}")
+    print(f"Base: {base_label}")
     print(f"Seeds: {seeds}")
     print(f"LLM mode: {base_config.get('llm_mode', False)}")
+    if use_output_dir:
+        print(f"Output dir: {args.output_dir}")
     print()
 
     experiment_ids = []
@@ -214,31 +295,52 @@ def cmd_replicate(args):
         print(f"--- Replication {i + 1}/{len(seeds)} (seed={seed}) ---")
         config = copy.deepcopy(base_config)
         config["seed"] = seed
-        exp_id = _run_single(config, f"diag_rep_{base_exp_id}", args.api_delay)
-        experiment_ids.append(exp_id)
-        print(f"  -> {exp_id}\n")
 
-    manifest = {
-        "batch_name": batch_name,
-        "batch_type": "replication",
-        "created_at": datetime.now().isoformat(),
-        "base_config": base_exp_id,
-        "experiments": experiment_ids,
-        "seeds": seeds,
-        "parameters_varied": {},
-    }
-    batch_path = _save_batch_manifest(batch_name, manifest)
+        if use_output_dir:
+            seed_dir = os.path.join(args.output_dir, "seeds", f"seed_{seed}")
+            result = _run_single(
+                config, f"diag_rep_{base_label}", args.api_delay,
+                output_dir=seed_dir, lightweight=True,
+            )
+        else:
+            result = _run_single(config, f"diag_rep_{base_label}", args.api_delay)
+        experiment_ids.append(result)
+        print(f"  -> {result}\n")
+
+    # Skip batch manifest in deterministic-path mode (paths are the manifest)
+    if not use_output_dir:
+        manifest = {
+            "batch_name": batch_name,
+            "batch_type": "replication",
+            "created_at": datetime.now().isoformat(),
+            "base_config": base_label,
+            "experiments": experiment_ids,
+            "seeds": seeds,
+            "parameters_varied": {},
+        }
+        batch_path = _save_batch_manifest(batch_name, manifest)
+        print(f"\n=== Replication batch complete: {len(experiment_ids)} runs ===")
+        print(f"Analyze with: python scripts/run_diagnostics.py analyze {batch_name}")
+        return batch_path
 
     print(f"\n=== Replication batch complete: {len(experiment_ids)} runs ===")
-    print(f"Analyze with: python scripts/run_diagnostics.py analyze {batch_name}")
-    return batch_path
+    print(f"Output: {args.output_dir}")
+    return args.output_dir
 
 
 def cmd_sensitivity(args):
     """Run one-at-a-time sensitivity sweep."""
-    exp_dir = _find_experiment_dir(args.exp_id)
-    base_config = _load_config(exp_dir)
-    base_exp_id = Path(exp_dir).name
+    # Resolve config: --condition (new) or exp_id (legacy)
+    if args.condition:
+        base_config = _resolve_condition_config(args.condition)
+        base_label = args.condition
+    elif args.exp_id:
+        exp_dir = _find_experiment_dir(args.exp_id)
+        base_config = _load_config(exp_dir)
+        base_label = Path(exp_dir).name
+    else:
+        print("ERROR: Provide either exp_id or --condition.")
+        sys.exit(1)
 
     if args.heuristic:
         base_config["llm_mode"] = False
@@ -251,11 +353,15 @@ def cmd_sensitivity(args):
         else list(range(1, args.n_seeds + 1))
     )
 
-    batch_name = f"sensitivity_{param_name}_{base_exp_id}"
+    use_output_dir = bool(args.output_dir)
+
+    batch_name = f"sensitivity_{param_name}_{base_label}"
     print(f"\n=== Sensitivity sweep: {batch_name} ===")
     print(f"Parameter: {param_name}")
     print(f"Values: {values}")
     print(f"Seeds per value: {seeds}")
+    if use_output_dir:
+        print(f"Output dir: {args.output_dir}")
     print()
 
     all_experiment_ids = []
@@ -269,27 +375,41 @@ def cmd_sensitivity(args):
             config = copy.deepcopy(base_config)
             config["seed"] = seed
             config[param_name] = value
-            exp_id = _run_single(
-                config, f"diag_sens_{param_name}_{base_exp_id}", args.api_delay
-            )
-            param_sweep[value_str].append(exp_id)
-            all_experiment_ids.append(exp_id)
-            print(f"  -> {exp_id}\n")
 
-    manifest = {
-        "batch_name": batch_name,
-        "batch_type": "sensitivity",
-        "created_at": datetime.now().isoformat(),
-        "base_config": base_exp_id,
-        "experiments": all_experiment_ids,
-        "seeds": seeds,
-        "parameters_varied": {param_name: param_sweep},
-    }
-    batch_path = _save_batch_manifest(batch_name, manifest)
+            if use_output_dir:
+                seed_dir = os.path.join(
+                    args.output_dir, f"value_{value_str}", "seeds", f"seed_{seed}"
+                )
+                result = _run_single(
+                    config, f"diag_sens_{param_name}_{base_label}", args.api_delay,
+                    output_dir=seed_dir, lightweight=True,
+                )
+            else:
+                result = _run_single(
+                    config, f"diag_sens_{param_name}_{base_label}", args.api_delay
+                )
+            param_sweep[value_str].append(result)
+            all_experiment_ids.append(result)
+            print(f"  -> {result}\n")
+
+    if not use_output_dir:
+        manifest = {
+            "batch_name": batch_name,
+            "batch_type": "sensitivity",
+            "created_at": datetime.now().isoformat(),
+            "base_config": base_label,
+            "experiments": all_experiment_ids,
+            "seeds": seeds,
+            "parameters_varied": {param_name: param_sweep},
+        }
+        batch_path = _save_batch_manifest(batch_name, manifest)
+        print(f"\n=== Sensitivity sweep complete: {len(all_experiment_ids)} runs ===")
+        print(f"Analyze with: python scripts/run_diagnostics.py analyze {batch_name}")
+        return batch_path
 
     print(f"\n=== Sensitivity sweep complete: {len(all_experiment_ids)} runs ===")
-    print(f"Analyze with: python scripts/run_diagnostics.py analyze {batch_name}")
-    return batch_path
+    print(f"Output: {args.output_dir}")
+    return args.output_dir
 
 
 def cmd_crn(args):
@@ -526,7 +646,9 @@ def main():
 
     # replicate
     p_rep = sub.add_parser("replicate", help="Run N replications with different seeds")
-    p_rep.add_argument("exp_id", help="Base experiment ID or prefix")
+    p_rep.add_argument("exp_id", nargs="?", default=None, help="Base experiment ID or prefix")
+    p_rep.add_argument("--condition", help="Condition name (e.g. full_ecosystem_balanced)")
+    p_rep.add_argument("--output-dir", help="Write to deterministic path (lightweight mode)")
     p_rep.add_argument("--n-seeds", type=int, default=5)
     p_rep.add_argument("--seeds", help="Comma-separated seed list")
     p_rep.add_argument("--heuristic", action="store_true")
@@ -534,7 +656,9 @@ def main():
 
     # sensitivity
     p_sens = sub.add_parser("sensitivity", help="One-at-a-time sensitivity sweep")
-    p_sens.add_argument("exp_id", help="Base experiment ID or prefix")
+    p_sens.add_argument("exp_id", nargs="?", default=None, help="Base experiment ID or prefix")
+    p_sens.add_argument("--condition", help="Condition name (e.g. full_ecosystem_balanced)")
+    p_sens.add_argument("--output-dir", help="Write to deterministic path (lightweight mode)")
     p_sens.add_argument("--param", required=True, help="Parameter name to sweep")
     p_sens.add_argument("--values", required=True, help="Comma-separated values")
     p_sens.add_argument("--n-seeds", type=int, default=3)

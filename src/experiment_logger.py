@@ -549,6 +549,131 @@ def generate_summary(
     return summary
 
 
+class DirectoryLogger:
+    """
+    Lightweight logger that writes to a specified directory path.
+
+    Unlike ExperimentLogger, this does NOT:
+    - Maintain index.json or sequential numbering
+    - Generate experiment IDs
+
+    Used for the deterministic-path output structure:
+      output/validation/<phase>/<condition>/seeds/seed_N/
+      output/core/<condition>/
+    """
+
+    def __init__(self, output_dir: str, lightweight: bool = False):
+        """
+        Args:
+            output_dir: Absolute path to write artifacts into.
+            lightweight: If True, skip heavy artifacts (history.json,
+                game_log.md, plots/, providers/, funders/, policymakers/,
+                consumers/, ground_truth.json).
+        """
+        self.output_dir = output_dir
+        self.lightweight = lightweight
+        os.makedirs(output_dir, exist_ok=True)
+
+    def get_experiment_dir(self) -> str:
+        return self.output_dir
+
+    def save_metadata(self, seed=None, llm_mode=False, description=""):
+        """Save metadata.json."""
+        metadata = ExperimentMetadata(
+            experiment_id=os.path.basename(self.output_dir),
+            name=os.path.basename(self.output_dir),
+            description=description,
+            seed=seed,
+            llm_mode=llm_mode,
+        )
+        with open(os.path.join(self.output_dir, "metadata.json"), "w") as f:
+            json.dump(asdict(metadata), f, indent=2)
+
+    def log_config(self, config: dict):
+        with open(os.path.join(self.output_dir, "config.json"), "w") as f:
+            json.dump(config, f, indent=2)
+
+    def log_round(self, round_data: dict):
+        with open(os.path.join(self.output_dir, "rounds.jsonl"), "a") as f:
+            f.write(json.dumps(round_data) + "\n")
+
+    def log_summary(self, summary: dict):
+        with open(os.path.join(self.output_dir, "summary.json"), "w") as f:
+            json.dump(summary, f, indent=2)
+
+    def log_history(self, history: list):
+        if self.lightweight:
+            return
+        with open(os.path.join(self.output_dir, "history.json"), "w") as f:
+            json.dump(history, f, indent=2)
+
+    def log_providers(self, providers: list):
+        if self.lightweight:
+            return
+        providers_dir = os.path.join(self.output_dir, "providers")
+        os.makedirs(providers_dir, exist_ok=True)
+        for provider in providers:
+            provider.save(os.path.join(providers_dir, provider.name))
+
+    def log_consumers(self, consumers):
+        if self.lightweight:
+            return
+        consumers_dir = os.path.join(self.output_dir, "consumers")
+        os.makedirs(consumers_dir, exist_ok=True)
+        from actors.consumer import ConsumerMarket
+        if isinstance(consumers, ConsumerMarket):
+            consumers.save(consumers_dir)
+        elif isinstance(consumers, list):
+            for c in consumers:
+                c.save(os.path.join(consumers_dir, c.name))
+
+    def log_policymakers(self, policymakers: list):
+        if self.lightweight:
+            return
+        d = os.path.join(self.output_dir, "policymakers")
+        os.makedirs(d, exist_ok=True)
+        for p in policymakers:
+            p.save(os.path.join(d, p.name))
+
+    def log_funders(self, funders: list):
+        if self.lightweight:
+            return
+        d = os.path.join(self.output_dir, "funders")
+        os.makedirs(d, exist_ok=True)
+        for f_ in funders:
+            f_.save(os.path.join(d, f_.name))
+
+    def log_ground_truth(self, ground_truth: dict):
+        if self.lightweight:
+            return
+        gt_data = {name: gt.to_dict() for name, gt in ground_truth.items()}
+        with open(os.path.join(self.output_dir, "ground_truth.json"), "w") as f:
+            json.dump(gt_data, f, indent=2)
+
+    def save_plot(self, fig, filename: str):
+        if self.lightweight:
+            return None
+        plots_dir = os.path.join(self.output_dir, "plots")
+        os.makedirs(plots_dir, exist_ok=True)
+        path = os.path.join(plots_dir, filename)
+        fig.savefig(path, dpi=150, bbox_inches="tight")
+        return path
+
+    def save_game_log(self, content: str, filename: str = "game_log.md"):
+        if self.lightweight:
+            return None
+        path = os.path.join(self.output_dir, filename)
+        with open(path, "w", encoding="utf-8") as f:
+            f.write(content)
+        return path
+
+    def add_note(self, note: str):
+        pass
+
+    def finalize(self):
+        pass
+
+
 if __name__ == "__main__":
     # Demo
     logger = ExperimentLogger("./experiments")

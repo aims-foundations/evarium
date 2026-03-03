@@ -129,8 +129,17 @@ def build_sim_config(config: dict, SimulationConfig) -> "SimulationConfig":
     return SimulationConfig(**kwargs)
 
 
-def run_from_config(config, source_exp_id):
-    """Run a simulation from a saved config dict."""
+def run_from_config(config, source_exp_id, output_dir=None, lightweight=False):
+    """Run a simulation from a saved config dict.
+
+    Args:
+        config: Saved config dict (will be mutated -- pop provider/funder configs).
+        source_exp_id: Original experiment ID (for naming/tags).
+        output_dir: If set, write to this directory using DirectoryLogger
+                    instead of creating a new experiment in output/experiments/.
+        lightweight: If True (requires output_dir), skip heavy artifacts
+                     (game_log, plots, history.json, providers/, etc.).
+    """
     _PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     sys.path.insert(0, os.path.join(_PROJECT_ROOT, "src"))
 
@@ -150,7 +159,7 @@ def run_from_config(config, source_exp_id):
         os.environ["LLM_PROVIDER"] = provider
 
     from simulation import EvalEcosystemSimulation, SimulationConfig
-    from experiment_logger import ExperimentLogger, generate_summary
+    from experiment_logger import ExperimentLogger, DirectoryLogger, generate_summary
     from game_log import generate_game_log_from_history
 
     # Extract provider/funder/policymaker configs (not part of SimulationConfig)
@@ -190,15 +199,24 @@ def run_from_config(config, source_exp_id):
     print()
 
     # Experiment logging
-    experiments_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "output", "experiments")
-    logger = ExperimentLogger(experiments_dir)
-    exp_id = logger.create_experiment(
-        name=f"rerun_{source_exp_id}",
-        description=f"Rerun of {source_exp_id}",
-        tags=["rerun", source_exp_id],
-        seed=sim_config.seed,
-        llm_mode=sim_config.llm_mode,
-    )
+    if output_dir:
+        logger = DirectoryLogger(output_dir, lightweight=lightweight)
+        logger.save_metadata(
+            seed=sim_config.seed,
+            llm_mode=sim_config.llm_mode,
+            description=f"Rerun of {source_exp_id}",
+        )
+        exp_id = os.path.basename(output_dir)
+    else:
+        experiments_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "output", "experiments")
+        logger = ExperimentLogger(experiments_dir)
+        exp_id = logger.create_experiment(
+            name=f"rerun_{source_exp_id}",
+            description=f"Rerun of {source_exp_id}",
+            tags=["rerun", source_exp_id],
+            seed=sim_config.seed,
+            llm_mode=sim_config.llm_mode,
+        )
 
     # Log the full config (re-add provider/funder configs)
     full_config = sim_config.to_dict()
@@ -278,43 +296,45 @@ def run_from_config(config, source_exp_id):
     if sim_config.enable_funders and sim.funders:
         logger.log_funders(sim.funders)
 
-    # Game log
-    benchmarks = full_config.get("benchmarks", [])
-    game_log_content = generate_game_log_from_history(
-        history=sim.history,
-        providers=sim.providers,
-        experiment_name=f"rerun_{source_exp_id}",
-        experiment_id=exp_id,
-        llm_mode=sim_config.llm_mode,
-        benchmark_params={
-            "validity": sim_config.benchmark_validity,
-            "exploitability": sim_config.benchmark_exploitability,
-            "noise": sim_config.benchmark_noise,
-        },
-        benchmarks=benchmarks,
-        consumers=sim.consumers if sim_config.enable_consumers else None,
-        policymakers=sim.policymakers if sim_config.enable_policymakers else None,
-    )
-    game_log_path = logger.save_game_log(game_log_content)
-    print(f"Game log saved to: {game_log_path}")
+    # Game log (skip in lightweight mode)
+    if not lightweight:
+        benchmarks = full_config.get("benchmarks", [])
+        game_log_content = generate_game_log_from_history(
+            history=sim.history,
+            providers=sim.providers,
+            experiment_name=f"rerun_{source_exp_id}",
+            experiment_id=exp_id,
+            llm_mode=sim_config.llm_mode,
+            benchmark_params={
+                "validity": sim_config.benchmark_validity,
+                "exploitability": sim_config.benchmark_exploitability,
+                "noise": sim_config.benchmark_noise,
+            },
+            benchmarks=benchmarks,
+            consumers=sim.consumers if sim_config.enable_consumers else None,
+            policymakers=sim.policymakers if sim_config.enable_policymakers else None,
+        )
+        game_log_path = logger.save_game_log(game_log_content)
+        print(f"Game log saved to: {game_log_path}")
 
-    # Plots
-    try:
-        import matplotlib
-        matplotlib.use('Agg')
-        from plotting import create_all_dashboards
+    # Plots (skip in lightweight mode)
+    if not lightweight:
+        try:
+            import matplotlib
+            matplotlib.use('Agg')
+            from plotting import create_all_dashboards
 
-        plot_metadata = {
-            "n_rounds": sim_config.n_rounds,
-            "llm_mode": sim_config.llm_mode,
-            "n_consumers": sim_config.n_consumers if sim_config.enable_consumers else 0,
-            "n_policymakers": sim_config.n_policymakers if sim_config.enable_policymakers else 0,
-            "n_funders": sim_config.n_funders if sim_config.enable_funders else 0,
-        }
-        plots_dir = os.path.join(logger.get_experiment_dir(), "plots")
-        create_all_dashboards(sim.history, plots_dir, show=False, metadata=plot_metadata)
-    except Exception as e:
-        print(f"Could not create plots: {e}")
+            plot_metadata = {
+                "n_rounds": sim_config.n_rounds,
+                "llm_mode": sim_config.llm_mode,
+                "n_consumers": sim_config.n_consumers if sim_config.enable_consumers else 0,
+                "n_policymakers": sim_config.n_policymakers if sim_config.enable_policymakers else 0,
+                "n_funders": sim_config.n_funders if sim_config.enable_funders else 0,
+            }
+            plots_dir = os.path.join(logger.get_experiment_dir(), "plots")
+            create_all_dashboards(sim.history, plots_dir, show=False, metadata=plot_metadata)
+        except Exception as e:
+            print(f"Could not create plots: {e}")
 
     # Finalize
     logger.add_note(f"Rerun of: {source_exp_id}")
@@ -324,7 +344,7 @@ def run_from_config(config, source_exp_id):
     logger.finalize()
 
     print(f"\nExperiment saved to: {logger.get_experiment_dir()}")
-    return sim, exp_id
+    return sim, logger.get_experiment_dir()
 
 
 if __name__ == "__main__":
