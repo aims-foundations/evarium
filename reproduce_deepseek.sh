@@ -25,8 +25,8 @@ cd "$SCRIPT_DIR"
 # ── vLLM / DeepSeek-R1 Configuration ─────────────────────────────────────
 VLLM_MODEL="deepseek-ai/DeepSeek-R1"
 VLLM_PORT=8000
-VLLM_GPUS="0,1,2,3,4,5"
-VLLM_TP=6                        # tensor-parallel-size (must match GPU count)
+VLLM_GPUS="0,1,2,3"
+VLLM_TP=4                        # tensor-parallel-size (must match GPU count)
 VLLM_MAX_MODEL_LEN=16384         # reduce from 64K default to save GPU memory
 VLLM_GPU_MEMORY_UTILIZATION=0.95 # fraction of GPU memory to use
 
