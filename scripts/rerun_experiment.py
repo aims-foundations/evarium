@@ -153,9 +153,10 @@ def run_from_config(config, source_exp_id):
     from experiment_logger import ExperimentLogger, generate_summary
     from game_log import generate_game_log_from_history
 
-    # Extract provider and funder configs (not part of SimulationConfig)
-    provider_configs = config.pop("provider_configs", None)
-    funder_configs = config.pop("funder_configs", None)
+    # Extract provider/funder/policymaker configs (not part of SimulationConfig)
+    provider_configs    = config.pop("provider_configs", None)
+    funder_configs      = config.pop("funder_configs", None)
+    policymaker_configs = config.pop("policymaker_configs", None)
 
     if provider_configs is None:
         print("ERROR: config.json missing 'provider_configs'. Cannot rerun.")
@@ -212,7 +213,11 @@ def run_from_config(config, source_exp_id):
 
     # Run simulation
     sim = EvalEcosystemSimulation(sim_config)
-    sim.setup(provider_configs=provider_configs, funder_configs=funder_configs)
+    sim.setup(
+        provider_configs=provider_configs,
+        funder_configs=funder_configs,
+        policymaker_configs=policymaker_configs,
+    )
 
     print(f"=== Running {n_rounds} rounds ===\n")
 
@@ -259,7 +264,7 @@ def run_from_config(config, source_exp_id):
         sim.history,
         sim.evaluator,
         sim.providers,
-        consumers=sim.consumers if sim_config.enable_consumers else None,
+        consumers=sim.consumer_market if sim_config.enable_consumers else None,
         policymakers=sim.policymakers if sim_config.enable_policymakers else None,
         funders=sim.funders if sim_config.enable_funders else None,
     ))

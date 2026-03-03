@@ -10,12 +10,12 @@
 
 ## Project Paths
 
-- **Project root:** `C:\Users\yashd\Desktop\evaluation-ecosystem-simulation\`
+- **Project root:** `C:\Users\yashd\Desktop\evaluation-ecosytem-project\evaluation-ecosystem-simulation\`
 - Always search from the project root, not from `/` or `~`
 - Key entry points:
-  - `run_experiment.py` — editable experiment config file (edit & run)
-  - `run_llm_now.py` — CLI-driven quick experiments
-  - `simulation.py` — core sim loop, provider config presets
+  - `scripts/run_experiment.py` — editable experiment config file (edit & run)
+  - `scripts/run_llm_now.py` — CLI-driven quick experiments
+  - `src/simulation.py` — core sim loop, SimulationConfig, provider config presets
 
 ## Working Style
 
@@ -52,26 +52,64 @@
 
 ## File Structure Quick Reference
 
-### Core Files
-- `simulation.py` — Main sim loop, SimulationConfig, provider config presets
-- `visibility.py` — State classes: PublicState, PrivateState, GroundTruth
-- `llm.py` — Multi-provider LLM integration and prompt templates
-- `experiment_logger.py` — ExperimentLogger for systematic logging
-- `plotting.py` — Visualization dashboards
-- `game_log.py` — Natural language game log generator
+```
+evaluation-ecosystem-simulation/
+├── src/                          # Core simulation source
+│   ├── simulation.py             # Main sim loop, SimulationConfig, provider presets
+│   ├── visibility.py             # PublicState, PrivateState, GroundTruth
+│   ├── llm.py                    # Multi-provider LLM integration
+│   ├── experiment_logger.py      # ExperimentLogger (logging + index.json)
+│   ├── plotting.py               # Visualization dashboards (per-experiment)
+│   ├── game_log.py               # Natural language game log generator
+│   ├── incidents.py              # Incident generation/management
+│   ├── diagnostics.py            # Simulation diagnostics
+│   ├── diagnostic_plots.py       # Diagnostic visualization
+│   └── actors/
+│       ├── model_provider.py     # ModelProvider: plan/observe/reflect/execute
+│       ├── evaluator.py          # Evaluator, Benchmark, Regulation classes
+│       ├── consumer.py           # ConsumerMarket with market segments
+│       ├── policymaker.py        # Policymaker: graduated interventions (media-aware)
+│       ├── funder.py             # Funder: VC/gov/foundation types (media-aware)
+│       └── media.py              # Media/TechPress actor
+│
+├── scripts/                      # Entry points and analysis tools
+│   ├── run_experiment.py         # Edit & run experiments (main entry point)
+│   ├── run_llm_now.py            # CLI-driven quick experiments
+│   ├── rerun_experiment.py       # Rerun a past experiment from config.json
+│   ├── final_plots.py            # Combined multi-experiment plots (8 plots + 3 CSV tables)
+│   ├── create_final_plots.py     # Older combined plots (partially broken — prefer final_plots.py)
+│   ├── explore_benchmark_plots.py# Benchmark-level gaming visualizations (merged into final_plots.py)
+│   ├── compare_experiments.py    # Side-by-side experiment comparisons
+│   ├── replot.py                 # Regenerate plots for existing experiments
+│   ├── analyze_existing.py       # Analyze existing experiment data
+│   └── run_diagnostics.py        # Run diagnostics on an experiment
+│
+├── output/
+│   └── experiments/
+│       ├── index.json            # Experiment index (VALIDATE JSON after edits!)
+│       └── exp_XXX_name/         # Per-experiment folders: config.json, rounds.jsonl, plots/, ...
+│
+├── docs/
+│   └── stakeholders.md           # Architecture reference (UPDATE when making sim changes)
+│
+└── overleaf/
+    └── figures/
+        ├── mainfig_spec.md       # Figure specification
+        └── mainfig_option1.tex   # TikZ main figure (hexagonal ecosystem wheel)
+```
 
-### Actor Modules (actors/)
-- `model_provider.py` — ModelProvider with plan/observe/reflect/execute cycle
-- `evaluator.py` — Evaluator, Benchmark, Regulation classes (evolution + introduction)
-- `consumer.py` — ConsumerMarket with market segments (proportional switching)
-- `policymaker.py` — Policymaker with graduated interventions (media-aware)
-- `funder.py` — Funder (VC, gov, foundation types; media-aware)
-- `media.py` — Media actor (TechPress) with coverage influence
+### Key bugs fixed (for reference)
+- `src/simulation.py` line ~775: `if round_num > 0 and self.config.enable_incidents:` — was missing `enable_incidents` check; caused ablations to still generate incidents
+- `scripts/rerun_experiment.py`: `policymaker_configs` was not extracted/passed to `sim.setup()`; `sim.consumers` (deprecated empty list) replaced with `sim.consumer_market`
 
-### Experiment Results (experiments/)
-- `index.json` — Experiment index (VALIDATE JSON after edits!)
-- `exp_XXX_name/` — Individual experiment folders with history, plots, logs
-- `rounds.jsonl` — Incremental round-by-round data
+### Plotting
+- `final_plots.py` is the canonical multi-experiment analysis script
+- Run: `python scripts/final_plots.py <exp_num1> <exp_num2> [run_label]`
+- Outputs to `output/experiments/plots_<run_label>/`
+- Uses tueplots NeurIPS styling + matplotlib; requires LaTeX (TinyTeX on Windows)
+- TinyTeX packages needed: `type1cm`, `cm-super`, `underscore`, `dvipng`
+- tlmgr path: `C:/Users/yashd/AppData/Roaming/TinyTeX/bin/windows/tlmgr.bat`
 
 ### Documentation
-- `stakeholders.md` — Comprehensive simulation architecture and design doc (UPDATE when making changes)
+- `docs/stakeholders.md` — Comprehensive architecture doc (UPDATE when making sim changes)
+- Always update `TODO.md` when implementing from it or identifying new work

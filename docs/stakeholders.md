@@ -2,7 +2,7 @@
 
 This document describes how actors are modeled in the simulation. For planned work, see `TODO.md`. For experiment setup, see `run_experiment.py`.
 
-**Last updated:** 2026-02-22 (BTE-modulated startup entry; cost_advantage extended to all providers; initial capability recalibrated to mean=0.25; startup entry recalibrated)
+**Last updated:** 2026-03-02 (bug fixes: enable_incidents flag now correctly gates incident generation; rerun_experiment now correctly passes policymaker_configs and uses sim.consumer_market)
 
 ---
 
@@ -25,22 +25,24 @@ Provider names are anonymized to prevent LLM reasoning from being biased by real
 
 | File | Purpose |
 |------|---------|
-| `simulation.py` | Core sim loop, `SimulationConfig`, `EvalEcosystemSimulation`, `POLICYMAKER_PRESETS` |
-| `run_experiment.py` | **Editable experiment config** — edit and run with `python run_experiment.py` |
-| `rerun_experiment.py` | Re-runs a past experiment from saved config; supports `--modify key=value` overrides |
-| `compare_experiments.py` | Comparison tool: `python compare_experiments.py exp_039 exp_040` → `comparisons/exp_039_vs_exp_040.md` |
-| `actors/model_provider.py` | ModelProvider with plan/observe/reflect/execute cycle |
-| `actors/evaluator.py` | Evaluator, Benchmark, benchmark evolution and introduction |
-| `actors/consumer.py` | ConsumerMarket with archetype × use-case market segments |
-| `actors/policymaker.py` | Policymaker with graduated interventions, calibrated EU/US presets |
-| `actors/funder.py` | Funder (VC, gov, foundation types), media-aware |
-| `actors/media.py` | Media actor (TechPress) — publishes coverage influencing downstream actors |
-| `incidents.py` | `IncidentGenerator` — probabilistic AI safety incident generation |
-| `visibility.py` | State classes: PublicState, PrivateState, GroundTruth, AIIncident |
-| `llm.py` | Multi-provider LLM integration (OpenAI, Anthropic, Ollama, Gemini) |
-| `plotting.py` | Visualization dashboards. New: `plot_barrier_to_entry_dashboard()`, `plot_startup_cohort_dashboard()`; updated provider dashboard (OS styling, entry markers, panel 6 = OS vs Closed Frontier Gap); entry markers on consumer dashboard; BTE overlay on summary dashboard. All new dashboards generated conditionally by `create_all_dashboards()`. |
-| `experiment_logger.py` | Logs experiments to `experiments/` |
-| `game_log.py` | Natural language markdown game log generator |
+| `src/simulation.py` | Core sim loop, `SimulationConfig`, `EvalEcosystemSimulation`, `POLICYMAKER_PRESETS` |
+| `scripts/run_experiment.py` | **Editable experiment config** — edit and run with `python scripts/run_experiment.py` |
+| `scripts/rerun_experiment.py` | Re-runs a past experiment from saved config; supports `--modify key=value` overrides; `--list` to show all experiments |
+| `scripts/compare_experiments.py` | Comparison tool: `python scripts/compare_experiments.py exp_039 exp_040` |
+| `scripts/final_plots.py` | **Canonical multi-experiment analysis** — 8 plots + 3 CSV tables; `python scripts/final_plots.py <exp_num1> <exp_num2> [label]` |
+| `scripts/create_final_plots.py` | Older combined plots script (prefer final_plots.py) |
+| `src/actors/model_provider.py` | ModelProvider with plan/observe/reflect/execute cycle |
+| `src/actors/evaluator.py` | Evaluator, Benchmark, benchmark evolution and introduction |
+| `src/actors/consumer.py` | ConsumerMarket with archetype × use-case market segments |
+| `src/actors/policymaker.py` | Policymaker with graduated interventions, calibrated EU/US presets |
+| `src/actors/funder.py` | Funder (VC, gov, foundation types), media-aware |
+| `src/actors/media.py` | Media actor (TechPress) — publishes coverage influencing downstream actors |
+| `src/incidents.py` | `IncidentGenerator` — probabilistic AI safety incident generation |
+| `src/visibility.py` | State classes: PublicState, PrivateState, GroundTruth, AIIncident |
+| `src/llm.py` | Multi-provider LLM integration (OpenAI, Anthropic, Ollama, Gemini) |
+| `src/plotting.py` | Per-experiment visualization dashboards (run via ExperimentLogger or replot.py) |
+| `src/experiment_logger.py` | Logs experiments to `output/experiments/` |
+| `src/game_log.py` | Natural language markdown game log generator |
 
 ---
 
@@ -432,20 +434,26 @@ Single outlet (TechPress). Publishes after evaluator scoring, before consumer/po
 ### Directory Structure
 
 ```
-experiments/exp_XXX_name/
-├── metadata.json        # Description, tags, timestamp, seed
-├── config.json          # Full configuration
-├── rounds.jsonl         # Incremental per-round data (one JSON line per round)
-├── summary.json         # Final aggregated metrics
-├── game_log.md          # Human-readable simulation narrative
-├── plots/               # Generated dashboards
-├── providers/
-├── policymakers/
-│   └── Regulator/
-│       ├── params.json  # Policymaker configuration
-│       └── memory.json  # Intervention history and reasoning
-└── funders/
+output/experiments/
+├── index.json                   # Experiment index (VALIDATE JSON after edits!)
+└── exp_XXX_name/
+    ├── metadata.json            # Description, tags, timestamp, seed
+    ├── config.json              # Full configuration (used by rerun_experiment.py)
+    ├── rounds.jsonl             # Incremental per-round data (one JSON line per round)
+    ├── summary.json             # Final aggregated metrics
+    ├── game_log.md              # Human-readable simulation narrative
+    ├── plots/                   # Per-experiment dashboards (from plotting.py)
+    ├── providers/
+    ├── policymakers/
+    │   └── Regulator/
+    │       ├── params.json      # Policymaker configuration
+    │       └── memory.json      # Intervention history and reasoning
+    └── funders/
 ```
+
+### Known Bugs Fixed
+- **`src/simulation.py` ~line 775:** Incidents were generated regardless of `enable_incidents` flag. Fixed: `if round_num > 0 and self.config.enable_incidents:`. Affected: all ablation experiments with `enable_incidents=False` (e.g., exp_005).
+- **`scripts/rerun_experiment.py`:** `policymaker_configs` was not extracted from the saved config dict and not passed to `sim.setup()`, causing reruns to use default policymaker settings. Also `sim.consumers` (deprecated empty list) replaced with `sim.consumer_market`.
 
 ### Key Metrics
 
@@ -463,10 +471,14 @@ experiments/exp_XXX_name/
 
 ### Running Experiments
 
-```
-python run_experiment.py --policy us  # US light-touch (default)
-python run_experiment.py --policy eu  # EU precautionary
-python compare_experiments.py exp_039 exp_040   # Compare two experiments
+```bash
+python scripts/run_experiment.py --policy us     # US light-touch (default)
+python scripts/run_experiment.py --policy eu     # EU precautionary
+python scripts/rerun_experiment.py exp_016       # Rerun a past experiment
+python scripts/rerun_experiment.py exp_016 --modify n_rounds=50 --seed 99
+python scripts/rerun_experiment.py --list        # List all experiments
+python scripts/compare_experiments.py exp_039 exp_040
+python scripts/final_plots.py 3 2 my_label      # Multi-experiment analysis plots
 ```
 
 See `docs/experiment_comparison_protocol.md` for the full comparison workflow.
