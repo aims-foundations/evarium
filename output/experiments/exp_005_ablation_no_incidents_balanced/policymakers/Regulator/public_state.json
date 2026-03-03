@@ -4,43 +4,35 @@
   "published_scores": [
     [
       0,
-      "[Round 0] Issued threshold_announcement: Market conditions are stable with no critical incidents, but moderate risks exist around gaming (0.30), validity degradation (0.30), and early concentration signals (Orion Labs at 41% market share). A proactive threshold_announcement aligns with our intervention_threshold of 0.5 and establishes clear regulatory expectations before problems escalate, supporting all three policy objectives: safety, innovation, and fairness. This first-step intervention requires no prior escalation and sets a foundation for future monitoring."
+      "[Round 0] Issued threshold_announcement: Market conditions are stable with no critical incidents, but moderate risk signals (gaming_risk=0.30, validity_degradation_risk=0.30) warrant proactive transparency. A threshold announcement establishes regulatory expectations early, aligns with the low intervention threshold (0.5) and cautious risk tolerance, and supports all three policy objectives\u2014safety, innovation, and fairness\u2014without escalating to formal investigation. This first-step intervention signals regulatory presence and sets clear benchmarks before risks materialize."
     ],
     [
       3,
-      "[Round 3] Issued investigation: Apex AI's dominant 47.9% market share combined with the highest published score (0.436) raises fairness concerns (0.38 risk belief) about competitive dynamics and potential gaming behavior. With intervention_threshold=0.5 and moderate fairness/gaming risks (0.38 and 0.29), a formal investigation into Apex AI's scoring methodology and competitive practices is warranted to ensure market integrity. This escalates appropriately from the prior threshold_announcement and respects the escalation ladder before considering stronger measures."
+      "[Round 3] Issued investigation: Apex AI's dominant 47.2% market share combined with a moderate validity_degradation_risk (0.30) and gaming_risk (0.20) warrants a formal inquiry to ensure competitive integrity and model reliability. With an intervention_threshold of 0.5 and risk_tolerance of 0.5, proactive investigation into the market leader is justified before risks escalate. This step respects the escalation ladder and positions us to take further action (public warning, mandate) if concerns are substantiated."
     ],
     [
-      6,
-      "[Round 6] Issued public_warning: Apex AI's dominant 63.2% market share combined with fairness_risk of 0.38 and the completed investigation from Round 3 justify escalation to public warning. This action addresses fairness concerns while respecting the escalation ladder (investigation\u2192public_warning). The warning signals to the market and consumers that dominant-position providers face heightened scrutiny, supporting innovation and fairness objectives without overreach given the moderate risk profile."
-    ],
-    [
-      9,
-      "[Round 9] Issued mandate_benchmark: Fairness risk is elevated at 0.46, and the leaderboard shows significant concentration with Apex AI at 53.9% market share and a large gap to competitors. Prior investigation (round 3) and public warning (round 6) have been issued, satisfying escalation prerequisites. A benchmark mandate will address potential gaming dynamics and validity concerns while promoting fairer competition among providers. This aligns with innovation and fairness objectives without overreach, as we remain below the 0.5 intervention threshold but the fairness concern justifies this measured escalation step."
-    ],
-    [
-      12,
-      "[Round 12] Issued compliance_audit: Apex AI's dominant 64.4% market share combined with elevated fairness_risk (0.46) and the prior mandate_benchmark (round 9) warrant a compliance audit to verify adherence to benchmark standards and assess whether gaming or fairness issues persist. The escalation ladder supports this step following the prior mandate, and our moderate intervention threshold (0.5) justifies proactive oversight of the market leader to protect fairness and innovation objectives."
+      7,
+      "[Round 7] Issued public_warning: Apex AI's dominant 60.7% market share combined with a 0.508 score (highest on leaderboard) raises fairness and market concentration concerns. A prior investigation was conducted in Round 3, and we are now past the 3-round cooldown (Round 7), making a public warning the appropriate next escalation step. This signals regulatory concern about market dominance while preserving proportionality given the absence of critical incidents and low gaming risk (0.05)."
     ],
     [
       15,
-      "[Round 15] Issued market_concentration_review: Apex AI's 74.5% market share now exceeds the 75% threshold trigger for antitrust review, representing a critical fairness and competition concern that aligns with our policy objectives. Combined with our elevated fairness_risk belief (0.46) and market_concentration_risk (0.40), this structural dominance warrants escalation to antitrust review despite no recent incidents, as market concentration itself poses systemic risks to innovation and fair competition. This intervention respects the escalation ladder (prior investigation, warning, and audit have been completed) and is justified by the quantitative market share threshold being crossed."
+      "[Round 15] Issued mandate_benchmark: Market concentration risk (0.40) and eval engineering risk (0.40) warrant escalation beyond prior warning. Apex AI's 69.5% dominance combined with moderate eval engineering concerns justifies a benchmark mandate to reduce gaming and improve validity. Prior investigation (round 3) and public warning (round 7) satisfy escalation prerequisites. This proactive step aligns with intervention_threshold=0.5 and supports innovation/fairness by leveling competitive conditions."
     ],
     [
       18,
-      "[Round 18] Issued compliance_audit: Apex AI's dominant 65.7% market share combined with high eval_engineering_risk (0.70) and market_concentration_risk (0.70) warrants deepening our oversight. We have already issued a market_concentration_review in Round 15 and a compliance_audit mandate in Round 12; a targeted compliance audit of Apex AI's evaluation practices will assess whether benchmark gaming or validity degradation is occurring at scale. This step respects the escalation ladder and directly addresses our core safety and fairness objectives without overreach."
+      "[Round 18] Issued compliance_audit: Apex AI's dominant 62.7% market share combined with high eval_engineering_risk (0.70) and eval_engineering_risk (0.70) warrants deeper scrutiny. The prior mandate_benchmark (round 15) should now be followed by compliance audit to verify Apex AI's adherence and assess whether their scoring leadership reflects genuine capability or benchmark optimization. This escalation respects the ladder while addressing our core concern: market concentration paired with potential validity degradation through evaluation gaming."
     ],
     [
       21,
-      "[Round 21] Issued compliance_audit: Orion Labs leads the leaderboard (0.645) with a significant gap, raising eval_engineering_risk concerns (1.00) about potential benchmark gaming or validity degradation. A compliance audit on the top performer is warranted to verify score legitimacy and methodology integrity. This follows the escalation ladder (prior investigation and mandate_benchmark completed) and aligns with our proactive intervention style (threshold=0.5) given critical eval_engineering_risk."
+      "[Round 21] Issued compliance_audit: Orion Labs leads the leaderboard (0.656) with a significant performance gap, raising concerns about eval_engineering_risk (1.00 belief). A compliance audit follows the escalation ladder (investigation\u2192public_warning\u2192mandate_benchmark\u2192compliance_audit) and is justified given prior mandate_benchmark in round 15. This audit will verify that Orion's superior scores reflect genuine safety/innovation gains rather than benchmark gaming, supporting our safety and fairness objectives."
     ],
     [
       24,
-      "[Round 24] Issued compliance_audit: Apex AI's dominant 41.4% market share combined with critical eval_engineering_risk (1.00) warrants continued scrutiny. Prior compliance audits (rounds 12, 18, 21) suggest ongoing monitoring is necessary to ensure this market leader is not gaming benchmarks or compromising evaluation validity. A compliance audit targets the highest-risk provider and aligns with our proactive intervention style (threshold=0.5) while respecting the escalation ladder."
+      "[Round 24] Issued compliance_audit: Orion Labs leads the leaderboard with 0.679 score while holding 36.4% market share, raising eval_engineering_risk concerns (1.00 belief) about potential benchmark gaming or validity degradation. Prior mandate_benchmark (round 15) and compliance_audits (rounds 18, 21) established the foundation for deeper scrutiny. With cooldown expiring this round and critical eval_engineering_risk unresolved, a targeted audit of Orion's evaluation methodology and score reporting is warranted to ensure market integrity and maintain innovation incentives through fair competition."
     ],
     [
       27,
-      "[Round 27] Issued compliance_audit: Apex AI's dominant 31.1% market share combined with the critical eval_engineering_risk (1.00) and history of repeated compliance audits (rounds 12, 15, 18, 21, 24) warrant continued deep scrutiny. The escalation ladder supports compliance_audit as the next step after prior investigations and public warnings. Given the intervention_threshold of 0.5 and our cautious risk_tolerance, focused auditing of the market leader on evaluation integrity is justified to protect innovation and fairness objectives."
+      "[Round 27] Issued compliance_audit: Apex AI's score (0.692) is within 0.003 of the market leader, and with 37.8% market share, represents a significant competitive force. Given the critical eval_engineering_risk (1.00) and my proactive intervention style (threshold=0.5), continued auditing of top providers is warranted to ensure benchmark integrity. Apex AI has not been audited since round 21, and the escalation ladder supports compliance_audit as the next appropriate step following prior mandate and investigations. This maintains regulatory pressure on gaming while respecting the 3-round cooldown for repeated audits of the same provider."
     ]
   ]
 }

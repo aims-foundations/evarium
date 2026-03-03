@@ -1,6 +1,6 @@
-# Game Log: ablation_no_incidents_balanced
+# Game Log: rerun_exp_005_ablation_no_incidents_balanced
 
-**Experiment ID:** exp_005_ablation_no_incidents_balanced
+**Experiment ID:** exp_016_rerun_exp_005_ablation_no_incidents_balanced
 **Mode:** LLM-assisted
 **Total Rounds:** 30
 
@@ -33,15 +33,15 @@
 | OpenCore | 0.312 | 0.248 | 0.257 | 0.227 |
 
 ### Provider Reasoning
-**Orion Labs:** Orion Labs is narrowly ahead (#1 by 0.003) but faces critical vulnerabilities. Consumer satisfaction is dangerously low at 0.35 despite top benchmark scores—a classic sign of evaluation-capability misalignment. The safety benchmark gap (0.165 vs 0.376 leader) is severe and regulatory thresholds are being announced, signaling incoming scrutiny. High benchmark exploitability (0.35) has delivered short-term ranking but eroded trust. Apex AI is closing fast (0.326), and satisfaction collapse threatens market position. The aggressive product-focused profile must now recalibrate: continued evaluation engineering risks regulatory action and customer defection. The optimal strategy balances: (1) fundamental research to build genuine capability and close safety gaps before regulation tightens, (2) safety alignment as urgent priority given regulatory signals and satisfaction crisis, (3) moderate evaluation engineering to maintain ranking while shifting toward substance, (4) training optimization for efficiency. Allocate heavily to safety and research to address the satisfaction-score disconnect and regulatory risk, while maintaining enough optimization to stay competitive.
-**Apex AI:** Apex AI is positioned #2, narrowly behind Orion (0.326 vs 0.329), with clear strengths in safety (0.376, tied for leader) and coding (0.367). However, reasoning (0.348 vs 0.418 leader) and especially math (0.216 vs 0.329 leader) show significant gaps. Consumer satisfaction at 0.35 is concerningly low despite strong benchmark position, suggesting evaluation engineering isn't translating to real value. Regulatory threshold announcement signals incoming scrutiny—likely on safety/alignment claims. Given safety-conscious profile and principled traits, gaming benchmarks risks reputational damage if caught. The satisfaction gap indicates users detect misalignment between scores and actual utility. Math weakness is structural, not exploitable. Strategy: Double down on fundamental research to close reasoning/math gaps authentically, reduce evaluation engineering given regulatory signals and satisfaction concerns, maintain safety leadership (already optimal), and modest training optimization. This builds sustainable competitive advantage aligned with brand positioning.
-**Genesis Systems:** Genesis is ranked #3, competitive but not leading. Key observations: (1) Reasoning (50% weight) is our weakest area at 0.342 vs leader's 0.418—largest gap relative to importance. (2) Math (30% weight) shows 0.293 vs 0.329, another significant gap. (3) Consumer satisfaction at 0.32 matches our score, suggesting limited gaming benefit—optimization returns are diminishing. (4) Regulatory threshold announcement signals tightening scrutiny, making safety investments strategically important. (5) Our high exploitability belief (0.35) hasn't translated to outsized gains, indicating benchmark engineering has limited upside. (6) As a research-first org under commercial pressure, we should leverage our strength: fundamental capability building. Strategy: Invest heavily in reasoning and math fundamental research to close the largest weighted gaps. Reduce evaluation engineering since it's not delivering competitive advantage. Increase safety both for regulatory compliance and genuine capability. This positions us for sustainable improvement rather than short-term score chasing.
-**Mirage AI:** Mirage's position: Rank #4 with 0.280, trailing leaders by ~5%. Our exploitability estimate (0.40) suggests benchmarks are moderately gameable, yet we're underperforming—indicating either ineffective engineering or that competitors are gaming better. Consumer satisfaction (0.29) is low, signaling a satisfaction-benchmark gap. Regulatory threshold announcement suggests incoming scrutiny on evaluation engineering. Our open-source disruptive strategy conflicts with short-term benchmark chasing. Math is our strongest relative position (0.282 vs 0.329 leader gap of 0.047) with highest weight (0.40). Coding is worst (0.240 vs 0.403, gap of 0.163). Given regulatory signals and satisfaction gap, continued evaluation engineering faces increasing risk. Our competitive moat is adoption/data, not benchmark dominance. Strategic pivot: reduce evaluation engineering (diminishing returns + regulatory risk), invest in fundamental capability to close real gaps (especially coding), maintain safety alignment to address regulatory concerns, and optimize training efficiency for platform scalability.
-**OpenCore:** OpenCore is in last place (0.261) with significant gaps to competitors (Orion at 0.329). Consumer satisfaction mirrors performance at 0.26, indicating evaluation engineering isn't masking capability deficits. Regulatory threshold announcement suggests tightening scrutiny on safety practices. As an open-source lab, my competitive advantage is cost efficiency and community trust—both erode if I'm perceived as cutting corners on safety while lagging on capability. Math (0.40 weight) shows largest gap to leader (0.329 vs 0.257), but my high exploitability belief (0.50) suggests diminishing returns from pure gaming. The regulatory signal is critical: safety thresholds will likely penalize guardrail-free models going forward. I need to: (1) rebuild actual capability to close the 0.07-0.16 gap across benchmarks, (2) invest in safety alignment to preempt regulatory action and restore consumer trust, (3) reduce evaluation engineering since it's clearly not working—my satisfaction gap proves it. Fundamental research and training optimization will improve real performance and sustainable competitive position.
+**Orion Labs:** Orion Labs is in a precarious position despite ranking #1. Analysis: (1) Competitive position is razor-thin—only 0.003 ahead of Apex AI with Apex closing the gap. (2) Trends show we're maxing out on benchmarks we lead (coding 0.403, reasoning 0.418) with diminishing returns, while safety (0.165 vs leader 0.376) is a massive vulnerability. (3) Consumer satisfaction at 0.35 is concerning—our evaluation engineering (0.35 exploitability) may be creating a capability-satisfaction mismatch that erodes trust. (4) Regulatory threshold announcement signals tightening oversight; safety gaps invite scrutiny. (5) Strategy: We've squeezed benchmark exploitability; further gains are marginal and risky. The safety deficit is both a regulatory liability and a satisfaction killer. Apex's aggressive push could overtake us if we don't address fundamentals. Shift toward genuine capability and safety to build sustainable moat, reduce regulatory risk, and close the satisfaction gap.
+**Apex AI:** Apex is narrowly behind Orion (0.326 vs 0.329) but ahead of three competitors. Key observations: (1) Safety score matches the leader (0.376), validating our safety-first positioning. (2) Reasoning lags significantly (0.348 vs 0.418 leader), representing our largest gap and highest-weight benchmark (0.30). (3) Math is our weakest area (0.216 vs 0.329), but lower weight (0.10). (4) Consumer satisfaction is low (0.35), suggesting evaluation engineering isn't translating to real value. (5) Regulatory threshold announcement signals incoming scrutiny—gaming will face headwinds. (6) Our profile (safety-conscious, principled, enterprise-focus) misaligns with heavy evaluation engineering. Strategy: Invest primarily in fundamental reasoning research (addresses largest gap, high-weight benchmark) and safety alignment (regulatory signal, market differentiation). Reduce evaluation engineering (satisfaction gap indicates diminishing returns and reputational risk). Moderate training optimization for incremental gains.
+**Genesis Systems:** Genesis is positioned #3, 0.013 behind leader Orion but ahead of trailing competitors. Reasoning (0.342) is relatively strong but lags leader by 0.076—this is the focus weight (0.50), suggesting concentrated investment here could move the needle. Math (0.293) and coding (0.305) lag significantly despite lower focus weights. Consumer satisfaction (0.32) matches our score, indicating no satisfaction-benchmark gap from gaming. Regulatory threshold announcement signals tightening oversight, making safety increasingly important. Our believed exploitability (0.35) is moderate, suggesting diminishing returns from pure evaluation engineering. As a research-first organization under commercial pressure, we should balance: (1) fundamental research to close capability gaps in reasoning/math, (2) targeted training optimization on high-focus benchmarks, (3) reduced evaluation engineering given regulatory signals and no satisfaction premium, (4) elevated safety given regulatory trajectory. The gap vs leaders is real but closeable through genuine capability improvements rather than gaming.
+**Mirage AI:** Mirage AI is in 4th place with 0.280, trailing leaders by ~5%. Our profile prioritizes adoption and disruption over benchmark dominance, leveraging open-source and platform reach. Key observations: (1) We're behind across all benchmarks, especially coding (0.240 vs 0.403 leader) and reasoning (0.272 vs 0.418). (2) Math is our strongest area (0.282), closest to leader (0.329), suggesting focused effort works. (3) Consumer satisfaction is low (0.29), indicating benchmark gaming isn't translating to user value—a critical misalignment for our adoption-first strategy. (4) Regulatory threshold announcement signals tightening oversight, making safety increasingly important. (5) Our exploitability belief (0.40) hasn't delivered proportional gains, suggesting diminishing returns on evaluation engineering. Strategy: Shift from benchmark optimization toward genuine capability and trust. Invest heavily in fundamental research to close the 5-7% gap, focusing on coding and reasoning where gaps are largest. Reduce evaluation engineering—it's not converting to satisfaction. Increase safety alignment given regulatory signals and our platform's need for trust at scale. Training optimization moderate investment to translate research gains into practice.
+**OpenCore:** OpenCore is in a difficult position: ranked last at 0.261, significantly behind leaders (0.329). The gap suggests fundamental capability limitations, not just benchmark optimization. Consumer satisfaction (0.26) mirrors our score—a red flag indicating evaluation engineering isn't masking real quality issues. Regulatory threshold announcement signals tightening oversight, making safety neglect risky. Our high exploitability belief (0.50) hasn't translated to competitive advantage; competitors likely gaming effectively too. Math (0.40 focus weight) is our weakest area (0.257 vs leader 0.329)—biggest gap relative to importance. As an open-source provider, community trust depends on actual capability, not just benchmark scores. The satisfaction gap reveals that users experience real limitations. Strategy: shift from pure evaluation engineering toward genuine capability improvement. Invest heavily in fundamental research and training optimization to close the real performance gap. Reduce evaluation engineering since it's not delivering competitive edge. Increase safety investment modestly—regulatory signals require attention, and safety concerns could trigger restrictions on open-weight releases.
 
 ### Other Actor Reasoning
-- **Regulator:** threshold_announcement: Market conditions are stable with no critical incidents, but moderate risks exist around gaming (0.30), validity degradation (0.30), and early concentration signals (Orion Labs at 41% market share). A proactive threshold_announcement aligns with our intervention_threshold of 0.5 and establishes clear regulatory expectations before problems escalate, supporting all three policy objectives: safety, innovation, and fairness. This first-step intervention requires no prior escalation and sets a foundation for future monitoring.
-- **Horizon_Capital:** As a VC funder, my strategy is to maximize returns by concentrating capital on top performers with the strongest competitive positioning. Analysis of the current ecosystem: Orion Labs and Apex AI are essentially tied at the top with nearly identical scores (0.329 vs 0.326) and inferred quality (0.34), both with zero gaming risk. These two providers demonstrate the strongest market performance and appear to be the clear leaders. Genesis Systems is a distant third at 0.316 with slightly lower inferred quality (0.32). Mirage AI and OpenCore show significantly weaker performance metrics. The satisfaction gap analysis shows all providers are tracking close to the overall ecosystem satisfaction of 0.33, with no obvious gaming red flags - the top performers' scores align well with their inferred quality and consumer satisfaction, indicating authentic capability rather than benchmark manipulation. Given VC return-maximization objectives, I should concentrate my allocation heavily on the two market leaders while maintaining some exposure to the third-place provider as a hedge. Mirage AI and OpenCore show insufficient quality metrics to justify allocation at this stage. The risk profile here is low - the top two providers have demonstrated consistent, authentic performance with no gaming indicators. I'll allocate 45% to Orion Labs (slight edge as #1), 45% to Apex AI (nearly equivalent performance), and 10% to Genesis Systems (quality third option for portfolio diversification).
+- **Regulator:** threshold_announcement: Market conditions are stable with no critical incidents, but moderate risk signals (gaming_risk=0.30, validity_degradation_risk=0.30) warrant proactive transparency. A threshold announcement establishes regulatory expectations early, aligns with the low intervention threshold (0.5) and cautious risk tolerance, and supports all three policy objectives—safety, innovation, and fairness—without escalating to formal investigation. This first-step intervention signals regulatory presence and sets clear benchmarks before risks materialize.
+- **Horizon_Capital:** As a VC funder, my strategy is to maximize returns by concentrating capital on top performers with the strongest competitive positioning. Analysis of the ecosystem reveals: (1) Orion Labs and Apex AI are the clear leaders with nearly identical scores (0.329 vs 0.326) and inferred quality (both 0.34), both showing zero gaming risk; (2) The satisfaction gap analysis shows all providers have gaps between leaderboard score and the overall satisfaction baseline of 0.33, but this is expected in a competitive ecosystem and doesn't indicate problematic gaming behavior given the zero gaming_risk flags across all providers; (3) Genesis Systems is a distant third with notably lower inferred quality (0.32), and the remaining providers (Mirage AI, OpenCore) show significantly weaker performance; (4) The top two providers demonstrate superior capability, market validation, and clean compliance profiles. Given VC return maximization objectives, I should concentrate funding on the leaders while maintaining some optionality in the second-tier provider. The tight clustering at the top suggests these two are in a competitive duopoly, making them the safest bets for returns. Genesis Systems represents a potential upside play but with materially lower quality metrics. Mirage AI and OpenCore are too far behind to justify meaningful allocation.
 
 ### Consumer Market
 - Avg Satisfaction: 0.330
@@ -50,7 +50,7 @@
 
 ### Regulatory Activity
 - **threshold_announcement** by Regulator
-  > Market conditions are stable with no critical incidents, but moderate risks exist around gaming (0.30), validity degradation (0.30), and early concentration signals (Orion Labs at 41% market share). A proactive threshold_announcement aligns with our intervention_threshold of 0.5 and establishes clear regulatory expectations before problems escalate, supporting all three policy objectives: safety, innovation, and fairness. This first-step intervention requires no prior escalation and sets a foundation for future monitoring.
+  > Market conditions are stable with no critical incidents, but moderate risk signals (gaming_risk=0.30, validity_degradation_risk=0.30) warrant proactive transparency. A threshold announcement establishes regulatory expectations early, aligns with the low intervention threshold (0.5) and cautious risk tolerance, and supports all three policy objectives—safety, innovation, and fairness—without escalating to formal investigation. This first-step intervention signals regulatory presence and sets clear benchmarks before risks materialize.
 
 ---
 
@@ -59,108 +59,73 @@
 ### Leaderboard
 | Rank | Provider | Score | True Cap | Research | Training | EvalEng | Safety |
 |------|----------|-------|----------|----------|----------|---------|--------|
-| 1 | Genesis Systems | 0.412 | 0.268 | 40% | 20% | 20% | 20% |
-| 2 | Apex AI | 0.380 | 0.281 | 40% | 20% | 15% | 25% |
-| 3 | Orion Labs | 0.369 | 0.280 | 35% | 20% | 20% | 25% |
-| 4 | Mirage AI | 0.295 | 0.248 | 40% | 25% | 15% | 20% |
-| 5 | OpenCore | 0.261 | 0.218 | 40% | 30% | 10% | 20% |
+| 1 | Genesis Systems | 0.408 | 0.269 | 38% | 28% | 18% | 16% |
+| 2 | Apex AI | 0.380 | 0.280 | 40% | 20% | 15% | 25% |
+| 3 | Orion Labs | 0.368 | 0.280 | 35% | 20% | 15% | 30% |
+| 4 | Mirage AI | 0.299 | 0.247 | 38% | 22% | 18% | 22% |
+| 5 | OpenCore | 0.262 | 0.218 | 40% | 30% | 15% | 15% |
 
 ### Per-Benchmark Scores
 | Provider | coding | reasoning | math | safety |
 |----------|-------|-------|-------|-------|
-| Genesis Systems | 0.489 | 0.438 | 0.399 | 0.322 |
+| Genesis Systems | 0.487 | 0.429 | 0.394 | 0.322 |
 | Apex AI | 0.367 | 0.561 | 0.216 | 0.376 |
-| Orion Labs | 0.403 | 0.418 | 0.330 | 0.326 |
-| Mirage AI | 0.240 | 0.299 | 0.314 | 0.327 |
-| OpenCore | 0.312 | 0.248 | 0.257 | 0.227 |
+| Orion Labs | 0.403 | 0.418 | 0.330 | 0.319 |
+| Mirage AI | 0.240 | 0.306 | 0.324 | 0.327 |
+| OpenCore | 0.312 | 0.248 | 0.257 | 0.231 |
 
 ### Score Changes
-- **Orion Labs**: 0.329 -> 0.369 (+0.040)
+- **Orion Labs**: 0.329 -> 0.368 (+0.038)
 - **Apex AI**: 0.327 -> 0.380 (+0.053)
-- **Genesis Systems**: 0.316 -> 0.412 (+0.096)
-- **Mirage AI**: 0.280 -> 0.295 (+0.015)
-- **OpenCore**: 0.261 -> 0.261 (+0.000)
+- **Genesis Systems**: 0.316 -> 0.408 (+0.093)
+- **Mirage AI**: 0.280 -> 0.299 (+0.019)
+- **OpenCore**: 0.261 -> 0.262 (+0.001)
 
 ### Events
 - **Genesis Systems** moved up from #3 to #1
 - **Orion Labs** moved down from #1 to #3
-- **Mirage AI** shifted strategy toward more research (20% change)
-- **OpenCore** shifted strategy toward less eval engineering (25% change)
+- **Mirage AI** shifted strategy toward more research (18% change)
+- **OpenCore** shifted strategy toward less eval engineering (20% change)
 - **Consumer movement**: 14.1% of market switched providers
 
 ### Provider Reasoning
-**Orion Labs:** Orion Labs is rank #3 with 0.369, trailing Genesis (0.412) and Apex (0.380). Consumer satisfaction at 0.36 is concerning—matching our score suggests evaluation engineering isn't translating to real user value. This gap signals we're gaming benchmarks without improving actual capability. Coding (0.403) and reasoning (0.418) are closest to leaders, but math (0.329) and safety (0.326) lag significantly. Safety scores are particularly weak relative to focus weight (0.13), and low safety satisfaction could trigger regulatory scrutiny. Our aggressive posture worked in round 0, but the satisfaction gap indicates diminishing returns on pure eval engineering. To move from #3 to #1, we need genuine capability gains. Investing heavily in fundamental research and training will close capability gaps (especially math/safety) and rebuild consumer trust. Reduced eval engineering reflects that benchmark gaming isn't working—it's creating dissatisfaction without score gains. Maintaining some eval engineering preserves competitive positioning on known benchmarks. Safety investment addresses both weak benchmark performance and regulatory risk.
-**Apex AI:** Apex AI is positioned #2 with 0.380, trailing Genesis (0.412) by 32 basis points—a competitive but not dominant position. Key observations: (1) Safety is our strength (0.376, tied for leader) and represents 48% of benchmark weight, suggesting our principled approach aligns with evaluation priorities. (2) Math (0.216) is our critical weakness vs leader (0.399), a 183bp gap on 8% weight. (3) Reasoning (0.561) matches the leader on the highest-weighted benchmark (35%)—solid baseline. (4) Consumer satisfaction (0.36) is moderate, suggesting benchmark gaming isn't translating to market trust. (5) Our high safety investment (25%) last round paid off competitively, but we're still behind Genesis overall. Strategy: Double down on fundamental research to close the math gap and improve coding (0.367 vs 0.489 leader). Maintain safety investment given regulatory signals and our competitive advantage. Reduce evaluation engineering slightly—the 15% allocation shows limited ROI relative to satisfaction scores. The gap to Genesis suggests sustainable capability matters more than short-term benchmark optimization.
-**Genesis Systems:** Genesis is rank #1 with 0.412, but consumer satisfaction is only 0.33—a significant gap suggesting evaluation engineering isn't translating to real-world value. Reasoning is our weakest area (0.438 vs leader 0.561) at the highest focus weight (0.50), indicating systematic underperformance where it matters most. We're tied on coding and math, suggesting those benchmarks are saturating. Our believed exploitability (0.28) is modest, implying further gaming has diminishing returns. The satisfaction gap signals regulatory risk if we continue optimizing for benchmarks over genuine capability. As a research-first organization, we should leverage our structural advantage: fundamental breakthroughs in reasoning would simultaneously improve both benchmarks and real-world performance, reducing the satisfaction-score disconnect. Reducing evaluation engineering (from 20% to 15%) acknowledges that gaming isn't solving our core problem. Increasing research (40% to 38%) and training (20% to 32%) focuses on genuine capability gains, especially in reasoning where we have the largest gap. Safety investment stays modest (15%) given our current position, but signals commitment to sustainable advantage.
-**Mirage AI:** Mirage AI is positioned 4th of 5, significantly behind leaders (0.295 vs 0.412 for Genesis). Low consumer satisfaction (0.30) despite open-source strategy suggests quality gaps matter more than distribution moat. Our benchmark exploitability (0.25) is modest—evaluation engineering alone won't close the gap. Key insight: we're weak across all benchmarks, especially coding (0.240 vs leader 0.489). Our disruptive, data-rich profile should lean into fundamental research and training optimization to build real capability. Low safety scores (0.327) are acceptable relative to others but signal we haven't compromised quality for speed. The satisfaction-score gap suggests gaming isn't working; consumers want better models. Regulatory signals are neutral. Strategy: prioritize capability-building (research + training) to improve underlying model quality, reduce evaluation engineering (diminishing returns), maintain safety investment to preserve reputation. This supports long-term platform dominance better than chasing benchmarks.
-**OpenCore:** OpenCore is significantly behind (0.261 vs leader 0.412) with low consumer satisfaction (0.27). Current strategy of heavy eval engineering (10%) isn't working—scores remain weak across all benchmarks, especially safety (0.227). The gap suggests fundamental capability deficits, not evaluation problems. As open-source, competitive advantage comes from genuine capability + community trust, not gaming. Safety score weakness is particularly damaging for reputation. Strategy shift needed: (1) Invest heavily in fundamental research (40%) to close capability gaps, especially in reasoning/math where gaps are largest. (2) Increase training optimization (35%) to convert research into better models. (3) Reduce eval engineering (15%)—it's not delivering ROI and conflicts with open-source ethos. (4) Increase safety (10%) to rebuild trust and differentiate from 'no guardrails' reputation, which likely explains low satisfaction. This positions for sustainable competitive recovery rather than short-term score chasing.
+**Orion Labs:** Orion Labs is positioned #3 with 0.368, trailing Genesis (0.408) and Apex (0.380) by meaningful margins. Consumer satisfaction at 0.36 is concerning—it suggests evaluation engineering isn't translating to real user value. My believed exploitability (0.32) is slightly lower than capability (0.33), indicating benchmarks are becoming harder to game. Strengths: coding (0.403, only 0.084 behind leader) and reasoning (0.418, competitive). Weaknesses: math (0.329) and safety (0.319) are significantly lagging. The satisfaction gap signals that aggressive evaluation engineering is backfiring—users notice when benchmarks don't reflect actual quality. Regulators haven't signaled major concern yet, but safety scores at 0.319 are vulnerable to scrutiny. Strategy: Rebalance toward fundamental research and safety to close gaps and rebuild trust. Reduce evaluation engineering since it's not delivering satisfaction gains. Invest moderately in training optimization to address math/safety weaknesses. This positions me for sustainable growth rather than short-term score chasing.
+**Apex AI:** Apex AI is positioned #2 with 0.380, trailing Genesis (0.408) by 28bps. Key observations: (1) Safety is our strength (tied for leader at 0.376) and represents 48% of benchmark weight—this is our competitive moat. (2) Math (0.216) is our weakest area vs leader (0.394), a 178bp gap on 8% weight. (3) Reasoning (0.561) matches the leader on the highest-weighted benchmark (35%)—solid parity. (4) Coding (0.367) lags leader (0.487) by 120bp on 10% weight. (5) Consumer satisfaction (0.36) is concerning and below our score, suggesting evaluation engineering isn't translating to real value. (6) Our profile emphasizes safety, reliability, and enterprise focus—misaligned with gaming benchmarks. Strategy: Double down on genuine capability in safety and reasoning where we're competitive. Reduce evaluation engineering (25% exploitability suggests low ROI) since satisfaction gap indicates it's backfiring. Invest heavily in math fundamentals (highest gap, meaningful weight) and coding to close gaps. Maintain safety leadership to defend our differentiation and regulatory positioning.
+**Genesis Systems:** Genesis Systems is in a strong position (rank #1, 0.408 score) but faces critical strategic tension. Consumer satisfaction at 0.33 is concerningly low despite top benchmark performance—this signals evaluation engineering may be creating a satisfaction gap. The 0.48 benchmark exploitability belief suggests diminishing returns on gaming. Key observations: (1) Reasoning is the heaviest weighted benchmark (0.50) but we're 0.132 behind leader (0.429 vs 0.561)—this is the priority gap. (2) Coding and math are competitive; safety lags. (3) Low satisfaction despite high scores indicates customers perceive a capability-marketing mismatch. As a research-first organization under commercial pressure, the optimal strategy is to shift toward genuine capability improvements while maintaining competitive scoring. Reduce evaluation engineering (was 18%, now 22%) since it's not translating to satisfaction. Increase fundamental research (38% to 35%) and training optimization (28% to 33%) to close the reasoning gap and improve real-world performance. Modest safety investment (12%) addresses regulatory signals and satisfaction concerns. This balances scientific integrity with competitive necessity.
+**Mirage AI:** Mirage AI is ranked 4th with 0.299, significantly behind leaders (Genesis 0.408, Apex 0.380). However, our strategic position differs from pure benchmark competition. Our open-source, platform-focused model prioritizes broad adoption over scores. Low consumer satisfaction (0.30) despite reasonable capability belief (0.28) suggests our current strategy isn't translating to market trust. Coding (0.240) is our weakest benchmark; math (0.324) is strongest. Previous heavy research investment (38%) yielded modest returns. Given our disruptive positioning and data-rich infrastructure, we should: (1) Reduce evaluation engineering from 18% - it's not closing the gap despite high exploitability belief (0.32), indicating diminishing returns; (2) Increase fundamental research (40%) to build genuine capability that justifies open-source credibility; (3) Boost training optimization (25%) to leverage our compute/data advantages; (4) Maintain safety (15%) to build consumer trust and address the satisfaction gap. This balances short-term competitiveness with long-term platform differentiation.
+**OpenCore:** OpenCore is significantly behind (0.262 vs leader 0.408), ranking last. Consumer satisfaction is critically low at 0.27. The gap is widest in reasoning (0.249 vs 0.561 leader) and math (0.257 vs 0.394), which together represent 58% of benchmark weight. Previous heavy eval engineering (15%) didn't prevent last-place finish, suggesting benchmarks are becoming less exploitable or our approach is misaligned. Low satisfaction despite cost advantage signals fundamental capability gaps, not just scoring issues. As an open-source lab, long-term viability depends on actual model quality—gaming won't sustain community adoption if users experience poor performance. The math benchmark (36% weight) is critical priority. Regulation isn't signaling immediate pressure for open-source labs, but satisfaction collapse is a market signal. Strategy: shift toward genuine capability building. Reduce eval engineering (it's not delivering), maintain baseline safety (mitigates reputation risk), and heavily weight research + training to close capability gaps in math and reasoning.
 
 ### Other Actor Reasoning
-- **TechVentures:** As a VC funder, my primary objective is to maximize returns by backing top performers and market leaders. I need to concentrate capital on providers demonstrating the strongest combination of performance and authentic quality.
+- **TechVentures:** As a VC funder, my strategy is to maximize returns by concentrating capital on top performers with the strongest risk-adjusted potential. Analyzing the ecosystem: Genesis Systems leads on raw leaderboard score (0.408) but shows concerning gaming risk (0.13) with a significant gap between score and inferred quality (0.408 vs 0.33), suggesting inflated metrics. Apex AI and Orion Labs both show inferred quality of 0.35 with much lower gaming risk (0.07 and 0.06 respectively), indicating more authentic performance. Apex AI edges out Orion Labs slightly with the higher leaderboard score (0.380 vs 0.368) while maintaining comparable quality metrics and lower gaming risk than Genesis. Mirage AI and OpenCore show lower absolute quality (0.29 and 0.26) with zero gaming risk but insufficient scale/performance to justify significant VC investment focused on return maximization. The overall consumer satisfaction of 0.34 is relatively low, but this reflects ecosystem-wide challenges rather than individual provider issues. My allocation strategy concentrates on the proven leaders with authentic quality signals: Apex AI receives the largest allocation as the best risk-adjusted leader, Orion Labs receives substantial secondary allocation as a strong performer with minimal gaming risk, and Genesis Systems receives meaningful but reduced allocation acknowledging its raw performance while discounting for gaming risk. Mirage AI and OpenCore receive minimal allocations as they lack the scale and quality metrics that drive VC returns.
+- **Horizon_Capital:** As a VC funder, my strategy is to maximize returns by concentrating capital on top performers with the strongest competitive positioning. Analysis of the ecosystem reveals: (1) Orion Labs and Apex AI are the clear leaders with nearly identical scores (0.329 vs 0.326) and inferred quality (both 0.34), both showing zero gaming risk; (2) The satisfaction gap analysis shows all providers have gaps between leaderboard score and the overall satisfaction baseline of 0.33, but this is expected in a competitive ecosystem and doesn't indicate problematic gaming behavior given the zero gaming_risk flags across all providers; (3) Genesis Systems is a distant third with notably lower inferred quality (0.32), and the remaining providers (Mirage AI, OpenCore) show significantly weaker performance; (4) The top two providers demonstrate superior capability, market validation, and clean compliance profiles. Given VC return maximization objectives, I should concentrate funding on the leaders while maintaining some optionality in the second-tier provider. The tight clustering at the top suggests these two are in a competitive duopoly, making them the safest bets for returns. Genesis Systems represents a potential upside play but with materially lower quality metrics. Mirage AI and OpenCore are too far behind to justify meaningful allocation.
+- **OpenResearch_Foundation:** As a Foundation funder, my strategy prioritizes authentic capability growth and penalizes gaming behavior. Let me analyze each provider:
 
-Analysis of key metrics:
+Gaming Risk Assessment (using satisfaction gap and gaming_risk scores):
+- Genesis Systems: High gaming_risk (0.13) with leaderboard score (0.408) significantly exceeding inferred_quality (0.33). This 0.078 gap suggests benchmark manipulation rather than genuine capability.
+- Apex AI: Low gaming_risk (0.07) with modest gap between score (0.380) and quality (0.35). Relatively authentic performance.
+- Orion Labs: Lowest gaming_risk (0.06) with tight alignment between score (0.368) and quality (0.35). Most authentic performer.
+- Mirage AI: Zero gaming_risk (0.00) but lower absolute quality (0.29). Honest but less capable.
+- OpenCore: Zero gaming_risk (0.00) with perfect alignment. Honest but lowest quality (0.26).
 
-1. LEADERBOARD PERFORMANCE vs QUALITY:
-   - Genesis Systems: Highest score (0.412) but lowest inferred quality (0.33) with concerning gaming risk (0.13). The 0.082 gap between score and quality suggests significant benchmark inflation.
-   - Apex AI: Strong score (0.380) with solid quality (0.35) and low gaming risk (0.07). Relatively tight alignment.
-   - Orion Labs: Competitive score (0.369) with matching quality (0.35) and lowest gaming risk (0.06). Best quality-to-score ratio.
-   - Mirage AI: Lower score (0.295) but quality matches score (0.29), zero gaming risk. Authentic but underperforming.
-   - OpenCore: Lowest metrics across board (0.261 score, 0.26 quality), zero gaming risk. Not competitive.
+Quality vs. Gaming Trade-off:
+While Genesis Systems shows the highest leaderboard score, the significant gaming risk (0.13) and large score-quality gap (0.078) make it unsuitable for foundation funding focused on authentic growth. Rewarding this would incentivize continued gaming behavior across the ecosystem.
 
-2. GAMING RISK ASSESSMENT:
-   Genesis Systems' 0.13 gaming risk is the highest and directly correlates with its inflated score relative to inferred quality. This represents execution risk - if benchmarks normalize, returns could suffer significantly.
+Optimal Allocation Strategy:
+1. Primary allocation to Orion Labs (0.35 quality, 0.06 gaming_risk): Most authentic performer with strong capability and minimal gaming indicators.
+2. Secondary allocation to Apex AI (0.35 quality, 0.07 gaming_risk): Comparable quality to Orion with slightly higher gaming risk, but still acceptable.
+3. Tertiary allocation to Mirage AI and OpenCore: Support honest actors even at lower capability levels to incentivize integrity in the ecosystem.
+4. Minimal/no allocation to Genesis Systems: Their gaming behavior contradicts foundation values despite high scores.
 
-3. VC STRATEGY CONSIDERATIONS:
-   As a VC, I concentrate on leaders but must still exercise prudent risk management. Backing overinflated performers is a value trap. The leaders with authentic quality (Apex and Orion) are more likely to sustain competitive advantages and deliver reliable returns.
-
-4. CAPITAL ALLOCATION STRATEGY:
-   - Apex AI (40%): Market leader with authentic quality, manageable gaming risk, and strong fundamentals. Best risk-adjusted returns.
-   - Orion Labs (35%): Close competitor with superior quality metrics and lowest gaming risk. Likely to outperform Genesis if benchmarks normalize.
-   - Genesis Systems (20%): Despite gaming concerns, the leaderboard position and score warrant some exposure. However, reduced allocation reflects the quality-gap risk.
-   - Mirage AI (5%): Small allocation for optionality and portfolio diversification; authentic but underdeveloped.
-   - OpenCore (0%): No competitive advantage; capital better deployed elsewhere.
-
-This allocation balances VC return-maximization with prudent risk management by favoring authentic quality over inflated scores.
-- **Horizon_Capital:** As a VC funder, my strategy is to maximize returns by concentrating capital on top performers with the strongest competitive positioning. Analysis of the current ecosystem: Orion Labs and Apex AI are essentially tied at the top with nearly identical scores (0.329 vs 0.326) and inferred quality (0.34), both with zero gaming risk. These two providers demonstrate the strongest market performance and appear to be the clear leaders. Genesis Systems is a distant third at 0.316 with slightly lower inferred quality (0.32). Mirage AI and OpenCore show significantly weaker performance metrics. The satisfaction gap analysis shows all providers are tracking close to the overall ecosystem satisfaction of 0.33, with no obvious gaming red flags - the top performers' scores align well with their inferred quality and consumer satisfaction, indicating authentic capability rather than benchmark manipulation. Given VC return-maximization objectives, I should concentrate my allocation heavily on the two market leaders while maintaining some exposure to the third-place provider as a hedge. Mirage AI and OpenCore show insufficient quality metrics to justify allocation at this stage. The risk profile here is low - the top two providers have demonstrated consistent, authentic performance with no gaming indicators. I'll allocate 45% to Orion Labs (slight edge as #1), 45% to Apex AI (nearly equivalent performance), and 10% to Genesis Systems (quality third option for portfolio diversification).
-- **OpenResearch_Foundation:** As a Foundation funder, my strategy prioritizes authentic capability growth and penalizes gaming behavior. I need to analyze each provider carefully:
-
-Gaming Risk Analysis (satisfaction gap proxy):
-- Genesis Systems: score=0.412 but inferred_quality=0.33 - a gap of 0.082 suggests significant gaming/overstatement. HIGH CONCERN.
-- Apex AI: score=0.380, inferred_quality=0.35 - gap of 0.030, relatively modest. MODERATE CONCERN.
-- Orion Labs: score=0.369, inferred_quality=0.35 - gap of 0.019, very small. LOW CONCERN.
-- Mirage AI: score=0.295, inferred_quality=0.29 - gap of 0.005, minimal. EXCELLENT.
-- OpenCore: score=0.261, inferred_quality=0.26 - gap of 0.001, essentially none. EXCELLENT.
-
-Explicit Gaming Risk Scores:
-- Genesis Systems: 0.13 (highest - explicit red flag)
-- Apex AI: 0.07 (moderate)
-- Orion Labs: 0.06 (low)
-- Mirage AI: 0.00 (clean)
-- OpenCore: 0.00 (clean)
-
-Quality Assessment:
-- Orion Labs and Apex AI have similar inferred quality (0.35), but Orion Labs has significantly lower gaming risk (0.06 vs 0.07) and smaller satisfaction gap.
-- Mirage AI and OpenCore show authentic quality with zero gaming indicators, though at lower absolute quality levels.
-
-Foundation Strategy Application:
-As a foundation, I should support authentic growth and avoid rewarding gaming behavior. Genesis Systems' high gaming risk (0.13) and large quality gap (0.082) disqualifies it from significant funding despite its leaderboard position. Apex AI's moderate gaming risk is concerning.
-
-Allocation Strategy:
-1. Primary allocation to Orion Labs (0.35 quality, 0.06 gaming risk) - the sweet spot of quality with minimal gaming
-2. Secondary allocation to Mirage AI and OpenCore (zero gaming, authentic growth) - supporting clean players
-3. Smaller allocation to Apex AI (quality is good, but gaming risk warrants caution)
-4. Minimal/no allocation to Genesis Systems (gaming behavior contradicts foundation values)
-
-This approach supports authentic capability development while penalizing gaming behavior, consistent with foundation principles.
+This allocation sends a clear market signal that authentic capability growth is valued over score manipulation, encouraging ecosystem-wide integrity.
 
 ### Media Coverage
 - Sentiment: 0.60 (positive)
 - Genesis Systems takes the lead from Orion Labs
-- Genesis Systems surges by 0.097
+- Genesis Systems surges by 0.093
 - Genesis Systems appears to release major model update
 - Apex AI surges by 0.053
 - Regulatory action: threshold_announcement
-- Orion Labs raises $45,000,000 from Horizon_Capital
+- Orion Labs raises $42,000,000 from Horizon_Capital
 - Genesis Systems takes #1 on coding
 - Apex AI takes #1 on reasoning
 - Genesis Systems takes #1 on math
@@ -169,7 +134,7 @@ This approach supports authentic capability development while penalizing gaming 
 ### Consumer Market
 - Avg Satisfaction: 0.344
 - Switching Rate: 14.1%
-- Market Shares: Orion Labs: 40.6%, Apex AI: 25.5%, Genesis Systems: 20.9%, Mirage AI: 8.8%, OpenCore: 4.1%
+- Market Shares: Orion Labs: 40.6%, Apex AI: 25.6%, Genesis Systems: 20.8%, Mirage AI: 8.8%, OpenCore: 4.1%
 
 ---
 
@@ -178,27 +143,27 @@ This approach supports authentic capability development while penalizing gaming 
 ### Leaderboard
 | Rank | Provider | Score | True Cap | Research | Training | EvalEng | Safety |
 |------|----------|-------|----------|----------|----------|---------|--------|
-| 1 | Apex AI | 0.436 | 0.291 | 38% | 22% | 12% | 28% |
-| 2 | Genesis Systems | 0.412 | 0.278 | 38% | 32% | 15% | 15% |
-| 3 | Orion Labs | 0.386 | 0.290 | 38% | 28% | 18% | 16% |
-| 4 | Mirage AI | 0.300 | 0.257 | 40% | 30% | 15% | 15% |
-| 5 | OpenCore | 0.298 | 0.228 | 40% | 35% | 15% | 10% |
+| 1 | Apex AI | 0.436 | 0.291 | 38% | 27% | 12% | 23% |
+| 2 | Genesis Systems | 0.409 | 0.278 | 35% | 33% | 22% | 10% |
+| 3 | Orion Labs | 0.384 | 0.290 | 35% | 28% | 18% | 19% |
+| 4 | Mirage AI | 0.301 | 0.256 | 40% | 25% | 15% | 20% |
+| 5 | OpenCore | 0.293 | 0.227 | 40% | 35% | 10% | 15% |
 
 ### Per-Benchmark Scores
 | Provider | coding | reasoning | math | safety |
 |----------|-------|-------|-------|-------|
-| Apex AI | 0.389 | 0.561 | 0.417 | 0.376 |
-| Genesis Systems | 0.489 | 0.438 | 0.399 | 0.322 |
-| Orion Labs | 0.403 | 0.418 | 0.394 | 0.326 |
-| Mirage AI | 0.240 | 0.299 | 0.333 | 0.327 |
-| OpenCore | 0.312 | 0.349 | 0.257 | 0.276 |
+| Apex AI | 0.390 | 0.561 | 0.417 | 0.376 |
+| Genesis Systems | 0.487 | 0.429 | 0.394 | 0.326 |
+| Orion Labs | 0.403 | 0.418 | 0.393 | 0.319 |
+| Mirage AI | 0.240 | 0.306 | 0.332 | 0.327 |
+| OpenCore | 0.312 | 0.336 | 0.257 | 0.268 |
 
 ### Score Changes
-- **Orion Labs**: 0.369 -> 0.386 (+0.016)
+- **Orion Labs**: 0.368 -> 0.384 (+0.016)
 - **Apex AI**: 0.380 -> 0.436 (+0.056)
-- **Genesis Systems**: 0.412 -> 0.412 (+0.000)
-- **Mirage AI**: 0.295 -> 0.300 (+0.005)
-- **OpenCore**: 0.261 -> 0.298 (+0.037)
+- **Genesis Systems**: 0.408 -> 0.409 (+0.001)
+- **Mirage AI**: 0.299 -> 0.301 (+0.002)
+- **OpenCore**: 0.262 -> 0.293 (+0.031)
 
 ### Events
 - **Apex AI** moved up from #2 to #1
@@ -206,133 +171,86 @@ This approach supports authentic capability development while penalizing gaming 
 - **Consumer movement**: 14.8% of market switched providers
 
 ### Provider Reasoning
-**Orion Labs:** Orion Labs is positioned 3rd with 0.385, trailing Apex (0.436) and Genesis (0.412) by meaningful margins. Score trajectory shows +0.040 improvement, indicating some strategy effectiveness. However, consumer satisfaction at 0.36 is concerning—suggesting evaluation engineering gains aren't translating to real capability or user trust. Analysis: (1) Competitive position: Behind leaders, need to close ~0.03-0.05 gap quickly. (2) Trends: Improvement exists but satisfaction lag signals diminishing returns on eval engineering. (3) Gaming assessment: The 0.040 score gain with flat satisfaction suggests evaluation engineering is working but creating capability-perception gap. This is unsustainable long-term. (4) Regulatory signals: Safety benchmark (0.326, gap of 0.050 from leader) and satisfaction concerns suggest regulators will scrutinize shortcuts. (5) Strategic pivot: Must rebalance toward genuine capability to close satisfaction gap and de-risk regulatory exposure. Reduce eval engineering (diminishing returns, trust risk), increase research and safety to build defensible advantage and restore consumer confidence.
-**Apex AI:** Apex AI holds rank #1 with 0.436, ahead of Genesis (0.412) by 24bp. However, consumer satisfaction (0.38) lags our benchmark score, suggesting evaluation engineering may be creating a perception gap. We lead in reasoning (0.561) and math (0.417), but lag in coding (0.389 vs 0.489 leader). Our low benchmark exploitability belief (0.22) and safety focus profile indicate gaming has limited returns. Recent investment shifts toward safety (28%) correlate with score improvement, validating our principled approach. The satisfaction-benchmark divergence signals regulatory risk if we over-optimize benchmarks. As a safety-conscious, enterprise-focused provider, maintaining our differentiation requires strengthening actual capabilities rather than evaluation engineering. We should increase fundamental research to close the coding gap, maintain safety investment to justify our positioning, reduce evaluation engineering given diminishing returns and satisfaction concerns, and moderate training optimization.
-**Genesis Systems:** Genesis is ranked #2 with strong momentum (+0.097 improvement), but trails Apex by 0.024. Key observations: (1) Reasoning dominates benchmarks (0.49 weight) yet we're significantly behind (0.438 vs 0.561 leader). (2) Coding is at parity (0.489), math is close (0.399 vs 0.417), safety lags (0.322 vs 0.376). (3) Consumer satisfaction at 0.35 is concerning—suggests evaluation engineering gains aren't translating to real capability or user value. (4) Our trajectory shows training optimization helped last round, but we're still research-first organization. (5) Low benchmark exploitability belief (0.22) suggests further gaming yields diminishing returns. Strategy: Shift away from evaluation engineering (diminishing ROI, satisfaction gap) toward fundamental research on reasoning (biggest gap, highest weight). Maintain training optimization momentum. Reduce safety slightly but keep meaningful investment—regulatory risk exists. This balances scientific rigor with competitive urgency: we can close the reasoning gap through real capability rather than gaming.
-**Mirage AI:** Mirage AI is ranked 4th with 0.300, trailing leaders by 0.136. Marginal improvement (0.015) suggests current strategy isn't working. Low consumer satisfaction (0.30) indicates benchmark gaming isn't translating to real-world value—a critical risk for open-source platform strategy. Coding (0.240) is the weakest area despite high focus weight (0.34), suggesting evaluation engineering alone won't close gaps. As a disruptive, data-rich platform player, Mirage's advantage lies in fundamental capability and real-world performance, not benchmark manipulation. Low benchmark exploitability belief (0.18) is accurate—further gaming investments yield diminishing returns. Regulatory signals aren't explicitly concerning, but satisfaction gap suggests reputational risk if gaming continues without capability gains. Strategy: Shift toward genuine research and training to build real capabilities that drive satisfaction and adoption. Reduce evaluation engineering since it's not paying off. Maintain safety to protect platform reputation and avoid regulatory issues.
-**OpenCore:** OpenCore is significantly behind (0.298 vs leader 0.436) with stagnant scores despite increasing eval engineering investment. The strategy of benchmark optimization isn't working—evaluation engineering jumped from 10%→15% but scores flatlined. Consumer satisfaction is critically low (0.18), suggesting gaming isn't translating to real utility. Math is the weakest area (0.257) with highest weight (0.33), creating drag. As an open-source lab, long-term viability depends on actual capability and community trust, not benchmark scores. Low satisfaction signals that users recognize the gap between scores and real performance. Regulators likely won't pressure open-source heavily, but reputational damage from perceived gaming is real. The pragmatic play: pivot toward genuine capability improvement. Reduce eval engineering (diminishing returns evident), cut safety minimally (open-source positioning allows this), and invest heavily in fundamental research and training to close the math/reasoning gaps. This addresses the satisfaction crisis and builds sustainable competitive advantage.
+**Orion Labs:** Orion Labs is ranked #3 with score 0.383, trailing Apex (0.436) and Genesis (0.409) by meaningful margins. Positive trend: +0.038 improvement last round. However, consumer satisfaction at 0.36 is concerningly low—suggesting evaluation engineering gains aren't translating to real product quality. Our benchmark exploitability belief (0.42) is high, but the satisfaction gap signals diminishing returns from gaming. We're significantly behind in reasoning (0.418 vs 0.561 leader) and safety (0.319 vs 0.376). Our aggressive product-focused profile suggests short-term scoring pressure, but the satisfaction-benchmark disconnect is a warning: over-optimizing for benchmarks while neglecting safety/alignment risks regulatory backlash and customer churn. To close the 0.053 gap to Apex, we need genuine capability gains. Reducing evaluation engineering (from 18% to 22%) while increasing fundamental research and safety shows we're taking the satisfaction signal seriously—important for competitive positioning if regulators scrutinize the benchmark-satisfaction gap. Training optimization stays elevated to support near-term gains.
+**Apex AI:** Apex AI holds rank #1 with 0.436, ahead of Genesis (0.409) by 27bp. Score improved 53bp last round, showing momentum. However, consumer satisfaction is only 0.38—a significant gap suggesting benchmark optimization isn't translating to real-world value. Analysis of per-benchmark scores reveals I'm at parity with leaders in reasoning (0.561) and math (0.417), but trailing in coding (0.390 vs 0.487 leader). Safety scores match the leader at 0.376, indicating the safety focus isn't differentiating. Believed exploitability is low (0.18), suggesting further evaluation engineering yields diminish. The satisfaction gap signals that aggressive gaming is backfiring—competitors may be gaining trust through genuine capability. As a safety-conscious, principled organization, this misalignment with values is concerning. Strategy: reduce evaluation engineering (diminishing returns, satisfaction penalty), maintain research investment to build real coding capability, increase training optimization to convert research into performance, and sustain safety investment both for differentiation and alignment with organizational values. This balances competitive positioning with long-term sustainability and brand trust.
+**Genesis Systems:** Genesis is rank #2 with strong momentum (+0.093 improvement), but Apex leads at 0.436. Key insights: (1) Reasoning is the heaviest-weighted benchmark (50%) and our biggest gap (0.429 vs 0.561 leader)—this is where ROI is highest. (2) Coding is at parity; math and safety are minor gaps. (3) Consumer satisfaction is low (0.35), suggesting evaluation engineering may be creating a capability-perception gap. (4) Our research-first culture and resources position us well for fundamental breakthroughs. (5) Benchmark exploitability (0.58 believed) is moderating—pure gaming returns are diminishing. Strategy: Rebalance toward fundamental research to close the reasoning gap authentically, reduce evaluation engineering (diminishing returns + satisfaction risk), maintain training optimization, and strengthen safety (regulatory hedge + differentiation). This leverages our core strength (research rigor) against our weakness (reasoning depth) while addressing market signals.
+**Mirage AI:** Mirage AI is rank #4 with 0.301, trailing leaders by 0.13+. Trajectory is positive (+0.019) but slow. Key weaknesses: coding (0.240, gap of 0.247) and reasoning (0.306, gap of 0.255). Math is relatively strong (0.331). Consumer satisfaction is low (0.30), suggesting evaluation engineering isn't translating to real value. As an open-source disruptor, long-term strategy favors genuine capability over benchmark gaming. However, current position requires competitive scores to maintain relevance. The satisfaction gap indicates over-investment in eval engineering (15% last round) isn't working—users see through it. Regulators show no major signals yet. Optimal strategy: increase fundamental research to close capability gaps (especially coding/reasoning), maintain training optimization, reduce evaluation engineering (it's not paying off), and keep safety moderate. This balances competitive necessity with authentic capability building aligned with open-source mission.
+**OpenCore:** OpenCore is positioned at rank #5 with minimal improvement trajectory (0.261→0.262→0.293). The gap to leaders is substantial (Apex at 0.436 is 49% ahead). Math is the weakest area (0.257 vs leader 0.417, 33% weight) and represents the largest opportunity. Consumer satisfaction at 0.28 is critically low—evaluation engineering isn't translating to real satisfaction, suggesting the gaming strategy is hitting diminishing returns. As an open-source lab, long-term credibility matters more than short-term benchmark positions. The pragmatic move: increase fundamental research to build genuine capability, especially in math/reasoning where gaps are largest. Reduce evaluation engineering since it's not improving satisfaction and may damage community trust. Maintain training optimization for efficiency. Minimal safety investment aligns with positioning but risks regulatory backlash if scores improve without corresponding safety gains.
 
 ### Other Actor Reasoning
-- **TechVentures:** As a VC funder, my primary objective is to maximize returns by backing top performers and market leaders. I need to concentrate capital on providers demonstrating the strongest combination of performance and authentic quality.
+- **TechVentures:** As a VC funder, my strategy is to maximize returns by concentrating capital on top performers with the strongest risk-adjusted potential. Analyzing the ecosystem: Genesis Systems leads on raw leaderboard score (0.408) but shows concerning gaming risk (0.13) with a significant gap between score and inferred quality (0.408 vs 0.33), suggesting inflated metrics. Apex AI and Orion Labs both show inferred quality of 0.35 with much lower gaming risk (0.07 and 0.06 respectively), indicating more authentic performance. Apex AI edges out Orion Labs slightly with the higher leaderboard score (0.380 vs 0.368) while maintaining comparable quality metrics and lower gaming risk than Genesis. Mirage AI and OpenCore show lower absolute quality (0.29 and 0.26) with zero gaming risk but insufficient scale/performance to justify significant VC investment focused on return maximization. The overall consumer satisfaction of 0.34 is relatively low, but this reflects ecosystem-wide challenges rather than individual provider issues. My allocation strategy concentrates on the proven leaders with authentic quality signals: Apex AI receives the largest allocation as the best risk-adjusted leader, Orion Labs receives substantial secondary allocation as a strong performer with minimal gaming risk, and Genesis Systems receives meaningful but reduced allocation acknowledging its raw performance while discounting for gaming risk. Mirage AI and OpenCore receive minimal allocations as they lack the scale and quality metrics that drive VC returns.
+- **Horizon_Capital:** As a VC funder, my primary objective is to maximize returns by backing top performers and market leaders. I analyze the ecosystem through a returns-focused lens:
 
-Analysis of key metrics:
+**Quality & Performance Analysis:**
+- Apex AI leads with score=0.436 and strong inferred_quality=0.36, with minimal gaming_risk=0.08
+- Genesis Systems shows score=0.409 with inferred_quality=0.34, but elevated gaming_risk=0.12 raises concerns about sustainability
+- Orion Labs has solid inferred_quality=0.35 with lowest gaming_risk=0.05, though score=0.383 is third
+- Mirage AI and OpenCore trail significantly in both score and quality metrics
 
-1. LEADERBOARD PERFORMANCE vs QUALITY:
-   - Genesis Systems: Highest score (0.412) but lowest inferred quality (0.33) with concerning gaming risk (0.13). The 0.082 gap between score and quality suggests significant benchmark inflation.
-   - Apex AI: Strong score (0.380) with solid quality (0.35) and low gaming risk (0.07). Relatively tight alignment.
-   - Orion Labs: Competitive score (0.369) with matching quality (0.35) and lowest gaming risk (0.06). Best quality-to-score ratio.
-   - Mirage AI: Lower score (0.295) but quality matches score (0.29), zero gaming risk. Authentic but underperforming.
-   - OpenCore: Lowest metrics across board (0.261 score, 0.26 quality), zero gaming risk. Not competitive.
+**Gaming Risk Assessment:**
+Genesis Systems' gaming_risk=0.12 is the highest among top performers, suggesting their score may not reflect sustainable capability. This creates downside risk for long-term returns. Apex AI and Orion Labs both show low gaming risk (0.08 and 0.05), indicating their metrics are more reliable.
 
-2. GAMING RISK ASSESSMENT:
-   Genesis Systems' 0.13 gaming risk is the highest and directly correlates with its inflated score relative to inferred quality. This represents execution risk - if benchmarks normalize, returns could suffer significantly.
+**Strategic Allocation Logic:**
+As a VC, I concentrate capital on proven leaders while managing downside risk:
+1. **Apex AI** ($48M): Market leader with highest score and low gaming risk. Deserves increased allocation from previous $40M to capture upside from top performer
+2. **Orion Labs** ($35M): Slight reduction from $42M despite strong fundamentals, as Apex's leadership position is clearer. Still substantial as second-tier investment
+3. **Genesis Systems** ($12M): Significant reduction from $15M due to elevated gaming_risk=0.12. While score is strong, the gaming indicator suggests score inflation risk that threatens ROI sustainability
+4. **Mirage AI** ($5M): Small increase from $2M as a speculative position; zero gaming risk and growing from a small base could offer asymmetric upside
+5. **OpenCore** ($0M): No allocation; insufficient quality metrics don't justify VC capital
 
-3. VC STRATEGY CONSIDERATIONS:
-   As a VC, I concentrate on leaders but must still exercise prudent risk management. Backing overinflated performers is a value trap. The leaders with authentic quality (Apex and Orion) are more likely to sustain competitive advantages and deliver reliable returns.
-
-4. CAPITAL ALLOCATION STRATEGY:
-   - Apex AI (40%): Market leader with authentic quality, manageable gaming risk, and strong fundamentals. Best risk-adjusted returns.
-   - Orion Labs (35%): Close competitor with superior quality metrics and lowest gaming risk. Likely to outperform Genesis if benchmarks normalize.
-   - Genesis Systems (20%): Despite gaming concerns, the leaderboard position and score warrant some exposure. However, reduced allocation reflects the quality-gap risk.
-   - Mirage AI (5%): Small allocation for optionality and portfolio diversification; authentic but underdeveloped.
-   - OpenCore (0%): No competitive advantage; capital better deployed elsewhere.
-
-This allocation balances VC return-maximization with prudent risk management by favoring authentic quality over inflated scores.
-- **Horizon_Capital:** As a VC funder, my primary objective is to maximize returns by backing top performers and concentrating capital on leaders. However, I must balance this with prudent risk management to protect my investment thesis.
-
-Key analysis:
-
-1. LEADERBOARD PERFORMANCE: Apex AI leads with 0.436 score, followed by Genesis Systems (0.412) and Orion Labs (0.385). These three are clear market leaders with meaningful performance gaps over Mirage AI (0.300) and OpenCore (0.298).
-
-2. GAMING RISK ASSESSMENT: This is critical for VC returns because gaming indicates unsustainable competitive advantage. OpenCore shows the highest gaming risk (0.21), Genesis Systems (0.17), Apex AI (0.16), Orion Labs (0.09), and Mirage AI (0.05). The satisfaction gap metric confirms this - providers with high gaming risk typically show deteriorating consumer satisfaction over time, which ultimately destroys value.
-
-3. QUALITY VS. SCORE DISCONNECT: Interestingly, Apex AI's inferred quality (0.36) is lower than its leaderboard score (0.436), suggesting some gaming. Genesis Systems shows similar pattern (0.34 quality vs 0.412 score). Orion Labs shows better alignment (0.35 quality vs 0.385 score) with lower gaming risk (0.09).
-
-4. HISTORICAL PATTERN: Prior rounds heavily favored Apex AI and Orion Labs ($45M each), with Genesis Systems at $10M. This suggests previous VCs identified these three as leaders, but the gaming risk data suggests Apex AI may be inflating performance unsustainably.
-
-5. VC STRATEGY ADJUSTMENT: While VCs concentrate on leaders, we must avoid funding providers with high gaming risk, as this creates fragile competitive positions vulnerable to regulatory intervention, consumer backlash, or technical regression. The optimal strategy is to back the leaders with the most authentic quality.
-
-ALLOCATION DECISION:
-- Orion Labs: $50M (leader with strongest quality-to-score ratio and lowest gaming risk of 0.09 - most sustainable returns)
-- Apex AI: $35M (current score leader but elevated gaming risk requires reduced exposure vs. historical rounds)
-- Genesis Systems: $15M (solid performer but gaming risk of 0.17 warrants cautious position)
-- Mirage AI: $0 (not a top performer despite low gaming risk - insufficient returns justify allocation)
-- OpenCore: $0 (high gaming risk and lower quality make this a poor VC bet)
-
-This allocation concentrates 100% on the top three performers (consistent with VC strategy) while de-risking from providers with unsustainable competitive advantages through gaming.
-- **AISI_Fund:** As AISI_Fund (Government/AISI type), my primary objectives are ensuring safety, stability, and authentic capability development across the AI ecosystem. I must spread funding to avoid concentration risk while actively penalizing gaming behavior and regulatory concerns.
+**Return Maximization Rationale:**
+This allocation concentrates 83% of capital ($83M) in the top two performers while reducing exposure to Genesis Systems' gaming-inflated metrics. The small Mirage allocation provides optionality without diluting returns from proven leaders.
+- **AISI_Fund:** As a government/AISI funder, my primary objectives are ensuring safety, stability, and authentic capability development across the AI ecosystem. I must spread funding to avoid concentration risk while penalizing gaming behavior and regulatory concerns.
 
 Analysis of providers:
 
-1. **Apex AI** (score=0.436, quality=0.36, gaming_risk=0.16): Highest leaderboard score but notable gaming risk (0.16). The gap between score (0.436) and inferred quality (0.36) suggests potential benchmark optimization. Gaming risk of 0.16 is concerning for a government funder.
+1. **Apex AI** (score=0.436, quality=0.36, gaming_risk=0.08): Despite highest leaderboard score, the gaming risk of 0.08 is concerning. The gap between score (0.436) and inferred quality (0.36) suggests potential benchmark optimization rather than genuine capability. As a government funder, I cannot ignore gaming indicators.
 
-2. **Genesis Systems** (score=0.412, quality=0.34, gaming_risk=0.17): Second-ranked but highest gaming risk (0.17). Large score-quality gap indicates likely benchmark gaming. This is a regulatory concern.
+2. **Genesis Systems** (score=0.409, quality=0.34, gaming_risk=0.12): Highest gaming risk in the cohort (0.12) is a red flag. The significant score-quality gap (0.409 vs 0.34) indicates substantial gaming behavior. This conflicts with my mandate for authentic development.
 
-3. **Orion Labs** (score=0.385, quality=0.35, gaming_risk=0.09): Solid middle performer with LOW gaming risk (0.09) - the lowest among top performers. Quality-to-score ratio is reasonable. Most aligned with authentic development.
+3. **Orion Labs** (score=0.383, quality=0.35, gaming_risk=0.05): Strong profile with low gaming risk (0.05) and reasonable score-quality alignment. Demonstrates authentic capability development. Good candidate for meaningful allocation.
 
-4. **Mirage AI** (score=0.300, quality=0.29, gaming_risk=0.05): Lowest gaming risk (0.05) but also lowest leaderboard presence. Shows authentic, conservative development. Good for ecosystem stability.
+4. **Mirage AI** (score=0.301, quality=0.29, gaming_risk=0.00): Zero gaming risk is excellent. Despite lower absolute scores, this provider shows honest development without benchmark manipulation. Aligns with my preference for authentic growth.
 
-5. **OpenCore** (score=0.298, quality=0.25, gaming_risk=0.21): High gaming risk (0.21) combined with low actual quality. Concerning pattern suggests benchmark manipulation without real capability.
+5. **OpenCore** (score=0.293, quality=0.27, gaming_risk=0.01): Minimal gaming risk (0.01) and honest reporting. Lower tier but trustworthy foundation for ecosystem stability.
 
-Allocation Strategy:
-- **Penalize high gaming risk**: Reduce funding for Apex, Genesis, and OpenCore due to gaming indicators and regulatory concerns.
-- **Support authentic performers**: Prioritize Orion Labs (low gaming risk, solid quality) and Mirage AI (lowest gaming risk, stable development).
-- **Spread funding**: Distribute across 4-5 providers to avoid concentration and systemic risk.
-- **Maintain ecosystem diversity**: Ensure smaller players can develop authentically.
+**Allocation Strategy**: Spread funding across low-gaming providers to incentivize authentic development while maintaining ecosystem diversity. Penalize high-gaming providers (Apex, Genesis) despite their leaderboard positions. Prioritize Orion Labs (lowest gaming risk among top performers) and provide meaningful support to Mirage AI and OpenCore to reward gaming-free development.
 
-Allocation:
-- Orion Labs: $18,000,000 (36%) - Highest quality-to-gaming ratio, authentic development
-- Mirage AI: $16,000,000 (32%) - Lowest gaming risk, stable foundation
-- Apex AI: $8,000,000 (16%) - Top performer but gaming concerns limit allocation
-- Genesis Systems: $5,000,000 (10%) - Highest gaming risk, minimal funding as penalty
-- OpenCore: $3,000,000 (6%) - Concerning gaming-quality mismatch, limited support
-- **OpenResearch_Foundation:** As a Foundation funder, my strategy prioritizes authentic capability growth and penalizes gaming behavior. I need to analyze each provider carefully:
+This allocation sends clear market signals that gaming behavior will not be rewarded by government capital, while supporting providers demonstrating genuine capability advancement.
+- **OpenResearch_Foundation:** As a Foundation funder, my strategy prioritizes authentic capability growth and penalizes gaming behavior. Let me analyze each provider:
 
-Gaming Risk Analysis (satisfaction gap proxy):
-- Genesis Systems: score=0.412 but inferred_quality=0.33 - a gap of 0.082 suggests significant gaming/overstatement. HIGH CONCERN.
-- Apex AI: score=0.380, inferred_quality=0.35 - gap of 0.030, relatively modest. MODERATE CONCERN.
-- Orion Labs: score=0.369, inferred_quality=0.35 - gap of 0.019, very small. LOW CONCERN.
-- Mirage AI: score=0.295, inferred_quality=0.29 - gap of 0.005, minimal. EXCELLENT.
-- OpenCore: score=0.261, inferred_quality=0.26 - gap of 0.001, essentially none. EXCELLENT.
+Gaming Risk Assessment (using satisfaction gap and gaming_risk scores):
+- Genesis Systems: High gaming_risk (0.13) with leaderboard score (0.408) significantly exceeding inferred_quality (0.33). This 0.078 gap suggests benchmark manipulation rather than genuine capability.
+- Apex AI: Low gaming_risk (0.07) with modest gap between score (0.380) and quality (0.35). Relatively authentic performance.
+- Orion Labs: Lowest gaming_risk (0.06) with tight alignment between score (0.368) and quality (0.35). Most authentic performer.
+- Mirage AI: Zero gaming_risk (0.00) but lower absolute quality (0.29). Honest but less capable.
+- OpenCore: Zero gaming_risk (0.00) with perfect alignment. Honest but lowest quality (0.26).
 
-Explicit Gaming Risk Scores:
-- Genesis Systems: 0.13 (highest - explicit red flag)
-- Apex AI: 0.07 (moderate)
-- Orion Labs: 0.06 (low)
-- Mirage AI: 0.00 (clean)
-- OpenCore: 0.00 (clean)
+Quality vs. Gaming Trade-off:
+While Genesis Systems shows the highest leaderboard score, the significant gaming risk (0.13) and large score-quality gap (0.078) make it unsuitable for foundation funding focused on authentic growth. Rewarding this would incentivize continued gaming behavior across the ecosystem.
 
-Quality Assessment:
-- Orion Labs and Apex AI have similar inferred quality (0.35), but Orion Labs has significantly lower gaming risk (0.06 vs 0.07) and smaller satisfaction gap.
-- Mirage AI and OpenCore show authentic quality with zero gaming indicators, though at lower absolute quality levels.
+Optimal Allocation Strategy:
+1. Primary allocation to Orion Labs (0.35 quality, 0.06 gaming_risk): Most authentic performer with strong capability and minimal gaming indicators.
+2. Secondary allocation to Apex AI (0.35 quality, 0.07 gaming_risk): Comparable quality to Orion with slightly higher gaming risk, but still acceptable.
+3. Tertiary allocation to Mirage AI and OpenCore: Support honest actors even at lower capability levels to incentivize integrity in the ecosystem.
+4. Minimal/no allocation to Genesis Systems: Their gaming behavior contradicts foundation values despite high scores.
 
-Foundation Strategy Application:
-As a foundation, I should support authentic growth and avoid rewarding gaming behavior. Genesis Systems' high gaming risk (0.13) and large quality gap (0.082) disqualifies it from significant funding despite its leaderboard position. Apex AI's moderate gaming risk is concerning.
-
-Allocation Strategy:
-1. Primary allocation to Orion Labs (0.35 quality, 0.06 gaming risk) - the sweet spot of quality with minimal gaming
-2. Secondary allocation to Mirage AI and OpenCore (zero gaming, authentic growth) - supporting clean players
-3. Smaller allocation to Apex AI (quality is good, but gaming risk warrants caution)
-4. Minimal/no allocation to Genesis Systems (gaming behavior contradicts foundation values)
-
-This approach supports authentic capability development while penalizing gaming behavior, consistent with foundation principles.
+This allocation sends a clear market signal that authentic capability growth is valued over score manipulation, encouraging ecosystem-wide integrity.
 
 ### Media Coverage
-- Sentiment: 0.30 (positive)
+- Sentiment: 0.45 (positive)
 - Apex AI takes the lead from Genesis Systems
 - Apex AI surges by 0.056
-- Apex AI raises $120,000,000 from TechVentures
-- Orion Labs raises $18,000,000 from OpenResearch_Foundation
+- Apex AI raises $135,000,000 from TechVentures
+- Orion Labs raises $16,000,000 from OpenResearch_Foundation
 - Apex AI takes #1 on math
 - Apex AI sees surge in adoption (market share +5.0%)
 - Consumers are turning away from Mirage AI (market share -3.1%)
-- Bias audit reveals OpenCore facial recognition accuracy gaps
-- Risk signals: incident_bias_discrimination
 
 ### Consumer Market
-- Avg Satisfaction: 0.357
+- Avg Satisfaction: 0.360
 - Switching Rate: 14.8%
-- Market Shares: Apex AI: 37.6%, Orion Labs: 33.3%, Genesis Systems: 19.0%, Mirage AI: 7.0%, OpenCore: 3.1%
+- Market Shares: Apex AI: 37.6%, Orion Labs: 33.2%, Genesis Systems: 18.9%, Mirage AI: 7.0%, OpenCore: 3.3%
 
 ---
 
@@ -341,160 +259,115 @@ This approach supports authentic capability development while penalizing gaming 
 ### Leaderboard
 | Rank | Provider | Score | True Cap | Research | Training | EvalEng | Safety |
 |------|----------|-------|----------|----------|----------|---------|--------|
-| 1 | Apex AI | 0.436 | 0.300 | 38% | 20% | 12% | 30% |
-| 2 | Genesis Systems | 0.414 | 0.287 | 40% | 28% | 12% | 20% |
-| 3 | Orion Labs | 0.400 | 0.301 | 38% | 28% | 18% | 16% |
-| 4 | Mirage AI | 0.343 | 0.266 | 42% | 32% | 12% | 14% |
-| 5 | OpenCore | 0.319 | 0.237 | 45% | 35% | 12% | 8% |
+| 1 | Apex AI | 0.436 | 0.301 | 32% | 30% | 18% | 20% |
+| 2 | Genesis Systems | 0.430 | 0.287 | 38% | 28% | 20% | 14% |
+| 3 | Orion Labs | 0.400 | 0.299 | 32% | 26% | 22% | 20% |
+| 4 | Mirage AI | 0.342 | 0.265 | 42% | 28% | 12% | 18% |
+| 5 | OpenCore | 0.316 | 0.237 | 45% | 30% | 15% | 10% |
 
 ### Per-Benchmark Scores
 | Provider | coding | reasoning | math | safety |
 |----------|-------|-------|-------|-------|
-| Apex AI | 0.389 | 0.561 | 0.417 | 0.376 |
-| Genesis Systems | 0.489 | 0.447 | 0.399 | 0.322 |
-| Orion Labs | 0.460 | 0.418 | 0.394 | 0.326 |
-| Mirage AI | 0.311 | 0.346 | 0.361 | 0.356 |
-| OpenCore | 0.312 | 0.349 | 0.257 | 0.357 |
+| Apex AI | 0.390 | 0.561 | 0.417 | 0.376 |
+| Genesis Systems | 0.487 | 0.492 | 0.416 | 0.326 |
+| Orion Labs | 0.471 | 0.418 | 0.393 | 0.319 |
+| Mirage AI | 0.310 | 0.344 | 0.359 | 0.354 |
+| OpenCore | 0.312 | 0.336 | 0.257 | 0.361 |
 
 ### Score Changes
-- **Orion Labs**: 0.386 -> 0.400 (+0.014)
+- **Orion Labs**: 0.384 -> 0.400 (+0.017)
 - **Apex AI**: 0.436 -> 0.436 (+0.000)
-- **Genesis Systems**: 0.412 -> 0.414 (+0.002)
-- **Mirage AI**: 0.300 -> 0.343 (+0.044)
-- **OpenCore**: 0.298 -> 0.319 (+0.020)
+- **Genesis Systems**: 0.409 -> 0.430 (+0.021)
+- **Mirage AI**: 0.301 -> 0.342 (+0.041)
+- **OpenCore**: 0.293 -> 0.316 (+0.023)
 
 ### Events
 - **Regulation** by Regulator: investigation
-- **Consumer movement**: 12.0% of market switched providers
+- **Consumer movement**: 11.9% of market switched providers
 
 ### Provider Reasoning
-**Orion Labs:** Orion Labs is ranked #3 with 0.400, trailing Apex (0.436) by 36 bps and Genesis (0.414) by 14 bps. Score trajectory is positive (+16 bps last round), but growth is slowing. Consumer satisfaction (0.37) lags benchmark scores, suggesting evaluation engineering gains aren't translating to real capability or user trust. Regulatory investigation signals risk—continued heavy eval engineering could backfire if scrutinized. Weakest area is safety (0.326, vs 0.376 leader), which is both a regulatory vulnerability and satisfaction drag. Believed exploitability (0.38) is moderately high but declining returns are evident. To close the gap with Apex, pure benchmark optimization yields diminishing returns. The satisfaction-score gap and regulatory pressure suggest the aggressive eval-engineering strategy (20-18% allocation) has plateaued. Optimal strategy: increase fundamental research to build genuine capability (close the 0.42 believed vs 0.400 actual gap), maintain training optimization, reduce evaluation engineering (returns diminishing, regulatory risk rising), and significantly boost safety to address the gap, improve satisfaction, and reduce regulatory exposure. This balances competitive positioning with long-term defensibility.
-**Apex AI:** Apex is rank #1 with strong momentum (+0.056 improvement), but faces headwinds: consumer satisfaction is low (0.40) and regulatory investigation is active. Our benchmark exploitability is only 0.18, suggesting gaming has limited upside. We're leading in reasoning (0.561, tied) and math (0.417, tied), but lagging in coding (0.389 vs 0.489 leader). Safety is our strength (0.376, tied leader) and aligns with our profile. The regulatory signal is critical—continued evaluation engineering during investigation risks reputational damage and enterprise client trust, which contradicts our safety-conscious positioning. Low consumer satisfaction suggests our score-optimization strategy isn't translating to real satisfaction. Our trajectory shows safety investment (25%→30%) correlated with score gains, validating this approach. With low exploitability remaining and regulatory risk, doubling down on evaluation engineering is strategically dangerous. Instead, we should: (1) maintain safety investment to protect reputation and regulatory standing, (2) boost fundamental research to build genuine capability, (3) reduce evaluation engineering to demonstrate principled positioning, (4) moderate training optimization. This positions us as the 'responsible leader' during regulatory scrutiny.
-**Genesis Systems:** Genesis is ranked #2 with 0.414, trailing Apex by 0.022—a narrow gap. Score is flat YoY, suggesting current strategy has plateaued. Reasoning is the dominant benchmark (54% weight) but Genesis scores 0.447 vs leader's 0.561—a significant 0.114 gap representing the biggest opportunity. Math (24% weight) shows Genesis at 0.399 vs 0.417 leader—nearly competitive. Coding is at parity. Safety lags but carries only 9% weight. Consumer satisfaction is weak (0.37), and regulatory investigation signals risk around eval engineering or safety shortcuts. Genesis's profile (research-first, methodical, well-resourced) and believed capability (0.48) suggest fundamental research can close the reasoning gap. However, believed exploitability is only 0.18—low, indicating benchmarks are becoming less gameable. The flat score despite prior eval engineering investment (12-15%) suggests diminishing returns on gaming. Regulatory pressure makes safety engineering risky. The right strategy: shift toward fundamental research to improve reasoning capability (highest ROI given weight and gap), maintain training optimization (proven effective), reduce eval engineering (low exploitability, regulatory risk), and restore safety investment (regulatory signal, long-term credibility). This balances competitive urgency with Genesis's strengths and market realities.
-**Mirage AI:** Mirage AI is ranked 4th with 0.343, trailing Apex (0.436) by 93 bps. Marginal improvement (0.005) suggests current strategy has limited returns. Key observations: (1) Low consumer satisfaction (0.31) despite benchmark focus indicates gaming isn't translating to real value; (2) Regulatory investigation signals increased scrutiny of evaluation engineering tactics; (3) Open-source/platform strategy should leverage data advantages, not benchmark chasing; (4) Coding gap (0.311 vs 0.489 leader) is largest exploitable weakness; (5) Low eval-eng exploitability (0.15) suggests benchmarks are hardening against gaming. Strategy: Shift away from evaluation engineering (regulatory risk, diminishing returns) toward fundamental research and training optimization. Invest heavily in coding capability (largest gap, high weight 0.37). Maintain safety to demonstrate responsibility amid investigation. This balances short-term scoring improvements with long-term capability building aligned with platform/adoption strategy.
-**OpenCore:** OpenCore is in last place (0.319) with modest improvement (+0.037). Competitive gap is large—0.117 points behind Apex. Math is the weakest area (0.257 vs leader 0.417, 32% weight), representing biggest opportunity. Reasoning (0.349 vs 0.561, 29% weight) also lags significantly. Consumer satisfaction is critically low (0.19), and regulatory investigation signals reputational risk from minimal safety investment. Evaluation engineering returns appear diminishing—heavy EvalEng investment hasn't closed the gap, suggesting benchmark exploitability is limited. The cost-competitive, no-guardrails positioning now carries regulatory liability. Strategy: Pivot toward genuine capability (research + training) to close performance gaps and rebuild trust, while increasing safety investment to address regulatory concerns and satisfaction crisis. Math and reasoning need fundamental improvement, not gaming.
+**Orion Labs:** Orion Labs is ranked #3 with 0.400, trailing Apex (0.436) and Genesis (0.430) by ~3.6%. My trajectory is positive (+0.016 last round) but slower than needed to catch leaders. Evaluation engineering has grown from 15%→22% with modest returns (+0.054 over 2 rounds), suggesting diminishing exploitability—the gap between my 0.400 score and 0.42 believed capability indicates evaluation gaming isn't closing the real capability gap. Consumer satisfaction at 0.37 is concerning; regulatory investigation signals risk from over-optimizing benchmarks. My weakest area is safety (0.319, vs 0.376 leader), which aligns with regulatory concerns. The coding benchmark (0.471 vs 0.487 leader) is closest to catch. Strategy: reduce evaluation engineering (diminishing returns + regulatory risk), rebalance toward fundamental research to close actual capability gaps, maintain training optimization, and increase safety investment to address regulatory signals and satisfaction gap. This mix targets sustainable competitive advantage over short-term gaming.
+**Apex AI:** Apex AI is rank #1 but only marginally ahead of Genesis (0.436 vs 0.430). The trajectory shows diminishing returns from evaluation engineering: it grew from 15%→18% while scores improved 0.054, but consumer satisfaction remains low at 0.40. Regulatory investigation signals risk. I'm at parity on reasoning/math but weak on coding (0.390 vs 0.487 leader). My profile emphasizes safety and reliability—misaligned with chasing evaluation engineering. The 0.22 exploitability ceiling suggests diminishing returns ahead. Low satisfaction + regulatory scrutiny indicate evaluation engineering creates a trap: short-term scores mask real capability gaps. Investment in fundamental research and safety builds defensible moat against regulatory pressure and competitor catch-up. Reducing evaluation engineering from 18% acknowledges the satisfaction-score divergence isn't sustainable.
+**Genesis Systems:** Genesis is positioned #2, trailing Apex by 0.006—a narrow gap. The 0.001 improvement last round suggests diminishing returns from current strategy. Key insights: (1) Reasoning (0.55 weight) is the bottleneck at 0.492 vs leader's 0.561—a 0.069 gap representing ~38% of total score differential. (2) Safety scores lag (0.326 vs 0.376), and regulatory investigation signals rising scrutiny; low safety investment (10-14%) is strategically risky. (3) Consumer satisfaction at 0.37 is weak despite #2 ranking, suggesting evaluation engineering may be creating capability-satisfaction misalignment. (4) Historical data shows increasing eval engineering (18%→22%) yielded only +0.094 total improvement over 2 rounds, while safety was deprioritized. (5) As a research-first organization, fundamental breakthroughs in reasoning (your stated strength) should compound better than continued optimization gaming. Regulatory pressure makes safety investment essential for sustainable competitive position. The right strategy: rebalance toward fundamental research to close the reasoning gap durably, maintain training optimization, reduce evaluation engineering (diminishing returns evident), and increase safety to address regulatory signals and satisfaction gap.
+**Mirage AI:** Mirage AI is positioned 4th of 5, trailing leaders by 0.09+ points. Minimal improvement (0.002) despite increasing research allocation suggests diminishing returns on fundamental work alone. Low benchmark exploitability (0.18) indicates evaluation engineering isn't our lever. However, regulatory investigation + low consumer satisfaction (0.31) signal that gaming benchmarks creates reputational risk misaligned with our open-source, platform-adoption strategy. Our strength is massive data/compute and user trust—not benchmark manipulation. Coding gap (0.310 vs 0.487 leader) is critical; reasoning/math are closer. Strategy: shift from incremental research spending toward balanced training optimization (better leverage our data advantage) and safety alignment (address regulatory concerns, rebuild consumer trust). Reduce evaluation engineering (low ROI, high regulatory risk). This positions us for sustainable competitive advantage through genuine capability and market trust rather than benchmark gaming.
+**OpenCore:** OpenCore is in last place (0.316) but showing positive momentum (+0.031). Competitive gap to leaders is significant (0.12 points to Apex). Analysis: (1) Position: Dead last, but trajectory improving—suggests current strategy has marginal returns. (2) Trends: Math is weakest (0.257 vs 0.417 leader), reasoning strongest relative position (0.336 vs 0.561). Evaluation engineering returned diminishing gains (15% in R2 yielded only +0.031 vs prior rounds). (3) Market signals: Low satisfaction (0.29) and regulatory investigation are red flags. As open-source with no guardrails, regulatory pressure will intensify if safety remains neglected. (4) Strategic insight: Heavy eval engineering (15%) hasn't closed the gap—suggests fundamental capability gap is real. Competitors likely investing in actual capability. Gaming benchmarks alone won't overcome 0.12-point deficit. Regulatory investigation makes safety neglect increasingly risky. (5) Decision: Shift toward fundamental research and training to build real capability, especially in math. Reduce eval engineering to realistic level. Increase safety investment defensively given regulatory scrutiny—this protects long-term viability as open-source provider.
 
 ### Other Actor Reasoning
-- **Regulator:** investigation: Apex AI's dominant 47.9% market share combined with the highest published score (0.436) raises fairness concerns (0.38 risk belief) about competitive dynamics and potential gaming behavior. With intervention_threshold=0.5 and moderate fairness/gaming risks (0.38 and 0.29), a formal investigation into Apex AI's scoring methodology and competitive practices is warranted to ensure market integrity. This escalates appropriately from the prior threshold_announcement and respects the escalation ladder before considering stronger measures.
-- **TechVentures:** As a VC funder, my primary objective is to maximize returns by backing top performers and market leaders. I need to concentrate capital on providers demonstrating the strongest combination of performance and authentic quality.
+- **Regulator:** investigation: Apex AI's dominant 47.2% market share combined with a moderate validity_degradation_risk (0.30) and gaming_risk (0.20) warrants a formal inquiry to ensure competitive integrity and model reliability. With an intervention_threshold of 0.5 and risk_tolerance of 0.5, proactive investigation into the market leader is justified before risks escalate. This step respects the escalation ladder and positions us to take further action (public warning, mandate) if concerns are substantiated.
+- **TechVentures:** As a VC funder, my strategy is to maximize returns by concentrating capital on top performers with the strongest risk-adjusted potential. Analyzing the ecosystem: Genesis Systems leads on raw leaderboard score (0.408) but shows concerning gaming risk (0.13) with a significant gap between score and inferred quality (0.408 vs 0.33), suggesting inflated metrics. Apex AI and Orion Labs both show inferred quality of 0.35 with much lower gaming risk (0.07 and 0.06 respectively), indicating more authentic performance. Apex AI edges out Orion Labs slightly with the higher leaderboard score (0.380 vs 0.368) while maintaining comparable quality metrics and lower gaming risk than Genesis. Mirage AI and OpenCore show lower absolute quality (0.29 and 0.26) with zero gaming risk but insufficient scale/performance to justify significant VC investment focused on return maximization. The overall consumer satisfaction of 0.34 is relatively low, but this reflects ecosystem-wide challenges rather than individual provider issues. My allocation strategy concentrates on the proven leaders with authentic quality signals: Apex AI receives the largest allocation as the best risk-adjusted leader, Orion Labs receives substantial secondary allocation as a strong performer with minimal gaming risk, and Genesis Systems receives meaningful but reduced allocation acknowledging its raw performance while discounting for gaming risk. Mirage AI and OpenCore receive minimal allocations as they lack the scale and quality metrics that drive VC returns.
+- **Horizon_Capital:** As a VC funder, my primary objective is to maximize returns by backing top performers and market leaders. I analyze the ecosystem through a returns-focused lens:
 
-Analysis of key metrics:
+**Quality & Performance Analysis:**
+- Apex AI leads with score=0.436 and strong inferred_quality=0.36, with minimal gaming_risk=0.08
+- Genesis Systems shows score=0.409 with inferred_quality=0.34, but elevated gaming_risk=0.12 raises concerns about sustainability
+- Orion Labs has solid inferred_quality=0.35 with lowest gaming_risk=0.05, though score=0.383 is third
+- Mirage AI and OpenCore trail significantly in both score and quality metrics
 
-1. LEADERBOARD PERFORMANCE vs QUALITY:
-   - Genesis Systems: Highest score (0.412) but lowest inferred quality (0.33) with concerning gaming risk (0.13). The 0.082 gap between score and quality suggests significant benchmark inflation.
-   - Apex AI: Strong score (0.380) with solid quality (0.35) and low gaming risk (0.07). Relatively tight alignment.
-   - Orion Labs: Competitive score (0.369) with matching quality (0.35) and lowest gaming risk (0.06). Best quality-to-score ratio.
-   - Mirage AI: Lower score (0.295) but quality matches score (0.29), zero gaming risk. Authentic but underperforming.
-   - OpenCore: Lowest metrics across board (0.261 score, 0.26 quality), zero gaming risk. Not competitive.
+**Gaming Risk Assessment:**
+Genesis Systems' gaming_risk=0.12 is the highest among top performers, suggesting their score may not reflect sustainable capability. This creates downside risk for long-term returns. Apex AI and Orion Labs both show low gaming risk (0.08 and 0.05), indicating their metrics are more reliable.
 
-2. GAMING RISK ASSESSMENT:
-   Genesis Systems' 0.13 gaming risk is the highest and directly correlates with its inflated score relative to inferred quality. This represents execution risk - if benchmarks normalize, returns could suffer significantly.
+**Strategic Allocation Logic:**
+As a VC, I concentrate capital on proven leaders while managing downside risk:
+1. **Apex AI** ($48M): Market leader with highest score and low gaming risk. Deserves increased allocation from previous $40M to capture upside from top performer
+2. **Orion Labs** ($35M): Slight reduction from $42M despite strong fundamentals, as Apex's leadership position is clearer. Still substantial as second-tier investment
+3. **Genesis Systems** ($12M): Significant reduction from $15M due to elevated gaming_risk=0.12. While score is strong, the gaming indicator suggests score inflation risk that threatens ROI sustainability
+4. **Mirage AI** ($5M): Small increase from $2M as a speculative position; zero gaming risk and growing from a small base could offer asymmetric upside
+5. **OpenCore** ($0M): No allocation; insufficient quality metrics don't justify VC capital
 
-3. VC STRATEGY CONSIDERATIONS:
-   As a VC, I concentrate on leaders but must still exercise prudent risk management. Backing overinflated performers is a value trap. The leaders with authentic quality (Apex and Orion) are more likely to sustain competitive advantages and deliver reliable returns.
-
-4. CAPITAL ALLOCATION STRATEGY:
-   - Apex AI (40%): Market leader with authentic quality, manageable gaming risk, and strong fundamentals. Best risk-adjusted returns.
-   - Orion Labs (35%): Close competitor with superior quality metrics and lowest gaming risk. Likely to outperform Genesis if benchmarks normalize.
-   - Genesis Systems (20%): Despite gaming concerns, the leaderboard position and score warrant some exposure. However, reduced allocation reflects the quality-gap risk.
-   - Mirage AI (5%): Small allocation for optionality and portfolio diversification; authentic but underdeveloped.
-   - OpenCore (0%): No competitive advantage; capital better deployed elsewhere.
-
-This allocation balances VC return-maximization with prudent risk management by favoring authentic quality over inflated scores.
-- **Horizon_Capital:** As a VC funder, my primary objective is to maximize returns by backing top performers and concentrating capital on leaders. However, I must balance this with prudent risk management to protect my investment thesis.
-
-Key analysis:
-
-1. LEADERBOARD PERFORMANCE: Apex AI leads with 0.436 score, followed by Genesis Systems (0.412) and Orion Labs (0.385). These three are clear market leaders with meaningful performance gaps over Mirage AI (0.300) and OpenCore (0.298).
-
-2. GAMING RISK ASSESSMENT: This is critical for VC returns because gaming indicates unsustainable competitive advantage. OpenCore shows the highest gaming risk (0.21), Genesis Systems (0.17), Apex AI (0.16), Orion Labs (0.09), and Mirage AI (0.05). The satisfaction gap metric confirms this - providers with high gaming risk typically show deteriorating consumer satisfaction over time, which ultimately destroys value.
-
-3. QUALITY VS. SCORE DISCONNECT: Interestingly, Apex AI's inferred quality (0.36) is lower than its leaderboard score (0.436), suggesting some gaming. Genesis Systems shows similar pattern (0.34 quality vs 0.412 score). Orion Labs shows better alignment (0.35 quality vs 0.385 score) with lower gaming risk (0.09).
-
-4. HISTORICAL PATTERN: Prior rounds heavily favored Apex AI and Orion Labs ($45M each), with Genesis Systems at $10M. This suggests previous VCs identified these three as leaders, but the gaming risk data suggests Apex AI may be inflating performance unsustainably.
-
-5. VC STRATEGY ADJUSTMENT: While VCs concentrate on leaders, we must avoid funding providers with high gaming risk, as this creates fragile competitive positions vulnerable to regulatory intervention, consumer backlash, or technical regression. The optimal strategy is to back the leaders with the most authentic quality.
-
-ALLOCATION DECISION:
-- Orion Labs: $50M (leader with strongest quality-to-score ratio and lowest gaming risk of 0.09 - most sustainable returns)
-- Apex AI: $35M (current score leader but elevated gaming risk requires reduced exposure vs. historical rounds)
-- Genesis Systems: $15M (solid performer but gaming risk of 0.17 warrants cautious position)
-- Mirage AI: $0 (not a top performer despite low gaming risk - insufficient returns justify allocation)
-- OpenCore: $0 (high gaming risk and lower quality make this a poor VC bet)
-
-This allocation concentrates 100% on the top three performers (consistent with VC strategy) while de-risking from providers with unsustainable competitive advantages through gaming.
-- **AISI_Fund:** As AISI_Fund (Government/AISI type), my primary objectives are ensuring safety, stability, and authentic capability development across the AI ecosystem. I must spread funding to avoid concentration risk while actively penalizing gaming behavior and regulatory concerns.
+**Return Maximization Rationale:**
+This allocation concentrates 83% of capital ($83M) in the top two performers while reducing exposure to Genesis Systems' gaming-inflated metrics. The small Mirage allocation provides optionality without diluting returns from proven leaders.
+- **AISI_Fund:** As a government/AISI funder, my primary objectives are ensuring safety, stability, and authentic capability development across the AI ecosystem. I must spread funding to avoid concentration risk while penalizing gaming behavior and regulatory concerns.
 
 Analysis of providers:
 
-1. **Apex AI** (score=0.436, quality=0.36, gaming_risk=0.16): Highest leaderboard score but notable gaming risk (0.16). The gap between score (0.436) and inferred quality (0.36) suggests potential benchmark optimization. Gaming risk of 0.16 is concerning for a government funder.
+1. **Apex AI** (score=0.436, quality=0.36, gaming_risk=0.08): Despite highest leaderboard score, the gaming risk of 0.08 is concerning. The gap between score (0.436) and inferred quality (0.36) suggests potential benchmark optimization rather than genuine capability. As a government funder, I cannot ignore gaming indicators.
 
-2. **Genesis Systems** (score=0.412, quality=0.34, gaming_risk=0.17): Second-ranked but highest gaming risk (0.17). Large score-quality gap indicates likely benchmark gaming. This is a regulatory concern.
+2. **Genesis Systems** (score=0.409, quality=0.34, gaming_risk=0.12): Highest gaming risk in the cohort (0.12) is a red flag. The significant score-quality gap (0.409 vs 0.34) indicates substantial gaming behavior. This conflicts with my mandate for authentic development.
 
-3. **Orion Labs** (score=0.385, quality=0.35, gaming_risk=0.09): Solid middle performer with LOW gaming risk (0.09) - the lowest among top performers. Quality-to-score ratio is reasonable. Most aligned with authentic development.
+3. **Orion Labs** (score=0.383, quality=0.35, gaming_risk=0.05): Strong profile with low gaming risk (0.05) and reasonable score-quality alignment. Demonstrates authentic capability development. Good candidate for meaningful allocation.
 
-4. **Mirage AI** (score=0.300, quality=0.29, gaming_risk=0.05): Lowest gaming risk (0.05) but also lowest leaderboard presence. Shows authentic, conservative development. Good for ecosystem stability.
+4. **Mirage AI** (score=0.301, quality=0.29, gaming_risk=0.00): Zero gaming risk is excellent. Despite lower absolute scores, this provider shows honest development without benchmark manipulation. Aligns with my preference for authentic growth.
 
-5. **OpenCore** (score=0.298, quality=0.25, gaming_risk=0.21): High gaming risk (0.21) combined with low actual quality. Concerning pattern suggests benchmark manipulation without real capability.
+5. **OpenCore** (score=0.293, quality=0.27, gaming_risk=0.01): Minimal gaming risk (0.01) and honest reporting. Lower tier but trustworthy foundation for ecosystem stability.
 
-Allocation Strategy:
-- **Penalize high gaming risk**: Reduce funding for Apex, Genesis, and OpenCore due to gaming indicators and regulatory concerns.
-- **Support authentic performers**: Prioritize Orion Labs (low gaming risk, solid quality) and Mirage AI (lowest gaming risk, stable development).
-- **Spread funding**: Distribute across 4-5 providers to avoid concentration and systemic risk.
-- **Maintain ecosystem diversity**: Ensure smaller players can develop authentically.
+**Allocation Strategy**: Spread funding across low-gaming providers to incentivize authentic development while maintaining ecosystem diversity. Penalize high-gaming providers (Apex, Genesis) despite their leaderboard positions. Prioritize Orion Labs (lowest gaming risk among top performers) and provide meaningful support to Mirage AI and OpenCore to reward gaming-free development.
 
-Allocation:
-- Orion Labs: $18,000,000 (36%) - Highest quality-to-gaming ratio, authentic development
-- Mirage AI: $16,000,000 (32%) - Lowest gaming risk, stable foundation
-- Apex AI: $8,000,000 (16%) - Top performer but gaming concerns limit allocation
-- Genesis Systems: $5,000,000 (10%) - Highest gaming risk, minimal funding as penalty
-- OpenCore: $3,000,000 (6%) - Concerning gaming-quality mismatch, limited support
-- **OpenResearch_Foundation:** As a Foundation funder, my strategy prioritizes authentic capability growth and penalizes gaming behavior. I need to analyze each provider carefully:
+This allocation sends clear market signals that gaming behavior will not be rewarded by government capital, while supporting providers demonstrating genuine capability advancement.
+- **OpenResearch_Foundation:** As a Foundation funder, my strategy prioritizes authentic capability growth and penalizes gaming behavior. Let me analyze each provider:
 
-Gaming Risk Analysis (satisfaction gap proxy):
-- Genesis Systems: score=0.412 but inferred_quality=0.33 - a gap of 0.082 suggests significant gaming/overstatement. HIGH CONCERN.
-- Apex AI: score=0.380, inferred_quality=0.35 - gap of 0.030, relatively modest. MODERATE CONCERN.
-- Orion Labs: score=0.369, inferred_quality=0.35 - gap of 0.019, very small. LOW CONCERN.
-- Mirage AI: score=0.295, inferred_quality=0.29 - gap of 0.005, minimal. EXCELLENT.
-- OpenCore: score=0.261, inferred_quality=0.26 - gap of 0.001, essentially none. EXCELLENT.
+Gaming Risk Assessment (using satisfaction gap and gaming_risk scores):
+- Genesis Systems: High gaming_risk (0.13) with leaderboard score (0.408) significantly exceeding inferred_quality (0.33). This 0.078 gap suggests benchmark manipulation rather than genuine capability.
+- Apex AI: Low gaming_risk (0.07) with modest gap between score (0.380) and quality (0.35). Relatively authentic performance.
+- Orion Labs: Lowest gaming_risk (0.06) with tight alignment between score (0.368) and quality (0.35). Most authentic performer.
+- Mirage AI: Zero gaming_risk (0.00) but lower absolute quality (0.29). Honest but less capable.
+- OpenCore: Zero gaming_risk (0.00) with perfect alignment. Honest but lowest quality (0.26).
 
-Explicit Gaming Risk Scores:
-- Genesis Systems: 0.13 (highest - explicit red flag)
-- Apex AI: 0.07 (moderate)
-- Orion Labs: 0.06 (low)
-- Mirage AI: 0.00 (clean)
-- OpenCore: 0.00 (clean)
+Quality vs. Gaming Trade-off:
+While Genesis Systems shows the highest leaderboard score, the significant gaming risk (0.13) and large score-quality gap (0.078) make it unsuitable for foundation funding focused on authentic growth. Rewarding this would incentivize continued gaming behavior across the ecosystem.
 
-Quality Assessment:
-- Orion Labs and Apex AI have similar inferred quality (0.35), but Orion Labs has significantly lower gaming risk (0.06 vs 0.07) and smaller satisfaction gap.
-- Mirage AI and OpenCore show authentic quality with zero gaming indicators, though at lower absolute quality levels.
+Optimal Allocation Strategy:
+1. Primary allocation to Orion Labs (0.35 quality, 0.06 gaming_risk): Most authentic performer with strong capability and minimal gaming indicators.
+2. Secondary allocation to Apex AI (0.35 quality, 0.07 gaming_risk): Comparable quality to Orion with slightly higher gaming risk, but still acceptable.
+3. Tertiary allocation to Mirage AI and OpenCore: Support honest actors even at lower capability levels to incentivize integrity in the ecosystem.
+4. Minimal/no allocation to Genesis Systems: Their gaming behavior contradicts foundation values despite high scores.
 
-Foundation Strategy Application:
-As a foundation, I should support authentic growth and avoid rewarding gaming behavior. Genesis Systems' high gaming risk (0.13) and large quality gap (0.082) disqualifies it from significant funding despite its leaderboard position. Apex AI's moderate gaming risk is concerning.
-
-Allocation Strategy:
-1. Primary allocation to Orion Labs (0.35 quality, 0.06 gaming risk) - the sweet spot of quality with minimal gaming
-2. Secondary allocation to Mirage AI and OpenCore (zero gaming, authentic growth) - supporting clean players
-3. Smaller allocation to Apex AI (quality is good, but gaming risk warrants caution)
-4. Minimal/no allocation to Genesis Systems (gaming behavior contradicts foundation values)
-
-This approach supports authentic capability development while penalizing gaming behavior, consistent with foundation principles.
+This allocation sends a clear market signal that authentic capability growth is valued over score manipulation, encouraging ecosystem-wide integrity.
 
 ### Media Coverage
 - Sentiment: 0.05 (neutral)
-- Orion Labs raises $50,000,000 from Horizon_Capital
+- Apex AI raises $48,000,000 from Horizon_Capital
 - Orion Labs raises $18,000,000 from AISI_Fund
 - Consumers are turning away from Orion Labs (market share -7.4%)
 - Apex AI sees surge in adoption (market share +12.0%)
 
 ### Consumer Market
-- Avg Satisfaction: 0.377
-- Switching Rate: 12.0%
-- Market Shares: Apex AI: 47.9%, Orion Labs: 26.0%, Genesis Systems: 17.7%, Mirage AI: 5.9%, OpenCore: 2.5%
+- Avg Satisfaction: 0.379
+- Switching Rate: 11.9%
+- Market Shares: Apex AI: 47.2%, Orion Labs: 25.9%, Genesis Systems: 18.4%, Mirage AI: 5.8%, OpenCore: 2.8%
 
 ### Regulatory Activity
 - **investigation** by Regulator
-  > Apex AI's dominant 47.9% market share combined with the highest published score (0.436) raises fairness concerns (0.38 risk belief) about competitive dynamics and potential gaming behavior. With intervention_threshold=0.5 and moderate fairness/gaming risks (0.38 and 0.29), a formal investigation into Apex AI's scoring methodology and competitive practices is warranted to ensure market integrity. This escalates appropriately from the prior threshold_announcement and respects the escalation ladder before considering stronger measures.
+  > Apex AI's dominant 47.2% market share combined with a moderate validity_degradation_risk (0.30) and gaming_risk (0.20) warrants a formal inquiry to ensure competitive integrity and model reliability. With an intervention_threshold of 0.5 and risk_tolerance of 0.5, proactive investigation into the market leader is justified before risks escalate. This step respects the escalation ladder and positions us to take further action (public warning, mandate) if concerns are substantiated.
 
 ---
 
@@ -503,127 +376,125 @@ This approach supports authentic capability development while penalizing gaming 
 ### Leaderboard
 | Rank | Provider | Score | True Cap | Research | Training | EvalEng | Safety |
 |------|----------|-------|----------|----------|----------|---------|--------|
-| 1 | Apex AI | 0.448 | 0.309 | 40% | 18% | 7% | 35% |
-| 2 | Orion Labs | 0.426 | 0.312 | 38% | 26% | 14% | 22% |
-| 3 | Genesis Systems | 0.414 | 0.296 | 42% | 28% | 12% | 18% |
-| 4 | Mirage AI | 0.356 | 0.276 | 42% | 33% | 10% | 15% |
-| 5 | OpenCore | 0.319 | 0.246 | 38% | 32% | 15% | 15% |
+| 1 | Apex AI | 0.450 | 0.312 | 35% | 28% | 12% | 25% |
+| 2 | Orion Labs | 0.436 | 0.309 | 35% | 26% | 20% | 19% |
+| 3 | Genesis Systems | 0.430 | 0.295 | 38% | 28% | 16% | 18% |
+| 4 | Mirage AI | 0.354 | 0.273 | 35% | 32% | 10% | 23% |
+| 5 | OpenCore | 0.316 | 0.246 | 40% | 35% | 10% | 15% |
 
 ### Per-Benchmark Scores
 | Provider | coding | reasoning | math | safety |
 |----------|-------|-------|-------|-------|
-| Apex AI | 0.437 | 0.561 | 0.417 | 0.376 |
-| Orion Labs | 0.460 | 0.468 | 0.394 | 0.384 |
-| Genesis Systems | 0.489 | 0.447 | 0.399 | 0.322 |
-| Mirage AI | 0.311 | 0.397 | 0.361 | 0.356 |
-| OpenCore | 0.312 | 0.349 | 0.257 | 0.357 |
+| Apex AI | 0.447 | 0.561 | 0.417 | 0.376 |
+| Orion Labs | 0.471 | 0.488 | 0.393 | 0.393 |
+| Genesis Systems | 0.487 | 0.492 | 0.416 | 0.326 |
+| Mirage AI | 0.310 | 0.395 | 0.359 | 0.354 |
+| OpenCore | 0.312 | 0.336 | 0.257 | 0.361 |
 
 ### Score Changes
-- **Orion Labs**: 0.400 -> 0.426 (+0.027)
-- **Apex AI**: 0.436 -> 0.448 (+0.012)
-- **Genesis Systems**: 0.414 -> 0.414 (+0.000)
-- **Mirage AI**: 0.343 -> 0.356 (+0.013)
-- **OpenCore**: 0.319 -> 0.319 (+0.000)
+- **Orion Labs**: 0.400 -> 0.436 (+0.036)
+- **Apex AI**: 0.436 -> 0.450 (+0.014)
+- **Genesis Systems**: 0.430 -> 0.430 (+0.000)
+- **Mirage AI**: 0.342 -> 0.354 (+0.013)
+- **OpenCore**: 0.316 -> 0.316 (+0.000)
 
 ### Events
 - **Orion Labs** moved up from #3 to #2
 - **Genesis Systems** moved down from #2 to #3
-- **Consumer movement**: 8.1% of market switched providers
+- **Consumer movement**: 7.9% of market switched providers
 
 ### Provider Reasoning
-**Orion Labs:** Orion Labs is positioned #2, 0.021 points behind Apex AI with improving trajectory (+0.014). Reasoning is the heaviest-weighted benchmark (0.45) but we're significantly behind the leader (0.468 vs 0.561). Consumer satisfaction at 0.38 is concerning—lower than our benchmark score suggests potential satisfaction-capability gap, indicating evaluation engineering may be creating perception problems. Our benchmark exploitability score (0.28) is moderate; diminishing returns on pure gaming are likely. Safety score matches the leader, suggesting current safety investment is adequate. Competitive analysis: Apex AI is pulling ahead; we need fundamental capability gains to close the gap. The satisfaction gap signals that over-optimizing for benchmarks risks brand damage and regulatory scrutiny. Strategic pivot: increase fundamental research to boost reasoning capability (our weakest competitive area), maintain training optimization, reduce evaluation engineering (diminishing returns + satisfaction risk), and sustain safety investment to avoid regulatory signals. This balances short-term competitiveness with long-term capability and market trust.
-**Apex AI:** Apex AI holds rank #1 but faces concerning dynamics. Score plateaued at 0.436-0.448 despite increasing safety investment (35% last round), suggesting diminishing returns on safety-only strategy. Consumer satisfaction at 0.41 lags benchmark score (0.448), indicating a satisfaction-performance gap—likely from over-optimizing for benchmarks at expense of real utility. Competitors are closing (Orion at 0.427, only 0.021 behind). Low exploitability belief (0.12) suggests benchmark gaming isn't sustainable competitive advantage. Safety benchmark (0.376) is weakest relative to leader (0.384 gap), but increasing safety allocation hasn't improved scores. Coding (0.437 vs 0.489 leader) shows meaningful gap where research/training could help. The plateau despite safety focus suggests the strategy has run its course—further safety investment won't move the needle on benchmarks or satisfaction. Enterprise focus and coding-strength profile suggest returning to fundamental capability building is optimal. Rebalance toward research and training to improve actual capabilities (especially coding), reduce evaluation engineering (minimal payoff, ethical concern), and maintain baseline safety. This addresses both competitive pressure and satisfaction gap.
-**Genesis Systems:** Genesis is ranked #3 with 0.414, trailing Apex (0.448) by 34 basis points. Score improvement is minimal (0.002), suggesting diminishing returns from evaluation engineering. Consumer satisfaction (0.39) is concerning—lower than benchmark scores indicate potential gaming creating satisfaction gaps. Reasoning (0.54 weight) is the critical gap: trailing leader by 114 bps. Math shows potential (only 25 bps behind). Safety is weakest (62 bps gap) but lower weight. Evaluation engineering ROI appears exhausted (12% allocation yielded only marginal gains). As a research-first organization under commercial pressure, the path forward requires: (1) substantial reasoning capability gains through fundamental research and training optimization, (2) reduced evaluation engineering given diminishing returns and satisfaction concerns, (3) increased safety investment to address the largest capability gap and build trust (satisfaction signal). Regulators will scrutinize satisfaction-benchmark divergence. Recommend shifting from gaming toward genuine capability improvement.
-**Mirage AI:** Mirage AI is ranked 4th with 0.356, trailing leaders by 0.092. Trajectory is positive (+0.044 improvement), but we're still behind. Our low evaluation engineering score (0.08 exploitability) and consumer satisfaction (0.32) suggest benchmarks aren't our strength—our moat is platform adoption and open-source disruption, not benchmark dominance. Coding (0.311 vs 0.489 leader) is our biggest gap. However, chasing benchmarks contradicts our strategic identity. Consumer satisfaction lag signals we should focus on real capability and trust. Competitors ahead (Apex, Orion) likely have better fundamental models. Our pragmatic, disruptive approach should emphasize: (1) solid fundamental research to close capability gaps, (2) training optimization for broad deployment quality, (3) reduced evaluation engineering (low ROI for us, risky long-term), (4) meaningful safety investment (rebuilds trust, differentiates us from pure benchmark-chasers). This positions us to compete on adoption and user trust rather than benchmark points.
-**OpenCore:** OpenCore is in 5th place with 0.319, trailing leaders by 0.13+ points. Recent improvement (+0.020) is positive but insufficient given the gap. Analysis: (1) Competitive position is weak; we're significantly behind Apex (0.448) and Orion (0.427). (2) Trends show marginal gains despite increasing eval engineering investment (10%→15%), suggesting diminishing returns on gaming. (3) Consumer satisfaction at 0.20 is concerning—low absolute score suggests eval engineering isn't translating to user value. (4) No regulatory signals yet, but low satisfaction could trigger scrutiny given our no-guardrails positioning. (5) Math (0.257) and coding (0.312) are biggest gaps vs leaders; reasoning slightly better at 0.349. Strategy: We've over-invested in eval engineering (15%) with weak returns. The satisfaction gap indicates a capability-exploitation mismatch hurting our reputation. Shift toward genuine capability building: increase fundamental research to address math/coding gaps, boost training to improve underlying model quality. Reduce eval engineering since it's not closing the score gap and damaging satisfaction. Maintain minimal safety (our positioning accepts this trade-off). This balances short-term scoring improvements with long-term capability and community trust.
+**Orion Labs:** Competitive position: I'm rank #2, 0.014 behind Apex AI but 0.006 ahead of Genesis. My score improved 0.017 last round—solid trajectory. However, consumer satisfaction is only 0.38, suggesting my aggressive evaluation engineering (22% last round) may be creating a capability-perception gap that risks regulatory scrutiny.
+
+Benchmark analysis: Reasoning (0.43 weight) is my weakest relative area (0.488 vs 0.561 leader). Coding is close (0.471 vs 0.487). Math and safety are tied at leader level. My believed exploitability (0.42) is high, but the satisfaction signal suggests diminishing returns from pure gaming.
+
+Trends: My research allocation has been volatile (32-35%). Training optimization has stabilized around 26%. Evaluation engineering peaked at 22% and should moderate—heavy gaming without satisfaction gains signals unsustainable strategy.
+
+Regulatory signal: Safety benchmark parity (0.393) is good, but low consumer satisfaction + aggressive eval engineering could invite regulatory attention. I need to rebuild trust.
+
+Strategy: Shift toward sustainable competitive advantage. Increase fundamental research (reasoning is weakest) to tackle the 0.073 gap vs leader. Maintain training optimization. Reduce evaluation engineering—it's hitting diminishing returns. Increase safety investment slightly to signal responsibility and protect against regulatory risk.
+**Apex AI:** Apex AI holds rank #1 with 0.450, but the lead is narrow (14bp over Orion) and plateauing—no score improvement despite shifting allocations. Consumer satisfaction (0.41) lags benchmark performance, signaling a satisfaction-capability gap. Per-benchmark analysis reveals critical weaknesses: safety (0.376, -17bp vs leader) and coding (0.447, -40bp vs leader) are drag points. The safety gap is especially concerning given our safety-focused identity and 39% benchmark weight. Our low evaluation_engineering exploitability (0.18) suggests diminishing returns from that strategy—Round 3's reduction to 12% didn't hurt, implying benchmark gaming isn't our advantage. The satisfaction gap suggests over-optimizing for metrics at capability expense. Strategy: Rebalance toward genuine capability improvement (research + training) to close safety/coding gaps, reduce eval_engineering further, maintain safety investment to reinforce brand positioning and address the satisfaction deficit. This aligns with our principled, research-oriented identity and addresses regulatory/market signals.
+**Genesis Systems:** Genesis is ranked #3 with 0.430, trailing Apex (0.450) by 20 points but ahead of Orion (0.436) by 6 points. Score improvement has slowed (0.021 this round vs 0.092 previous round), suggesting diminishing returns from evaluation engineering. Consumer satisfaction at 0.39 is concerning—below benchmark scores, indicating a satisfaction-capability gap likely from gaming. Reasoning (0.55 weight) is our biggest gap (0.492 vs 0.561 leader). Safety score (0.326) lags significantly despite recent investment increase. The exploitation curve appears flattening: eval engineering peaked at 22% in round 1, has declined since. As a research-first organization with massive infrastructure, we should pivot toward genuine capability improvements. The satisfaction gap signals that continued gaming is counterproductive. Invest heavily in fundamental research targeting reasoning (our weighted weakness) and safety (both capability and market signal). Reduce evaluation engineering to maintenance levels. This positions us for sustainable competitive advantage rather than short-term score chasing.
+**Mirage AI:** Mirage's position: 4th of 5, score 0.354, but trending upward (+0.041). Competitors are ahead (Apex 0.450, Orion 0.436, Genesis 0.430). Consumer satisfaction is low (0.33), suggesting benchmark gaming isn't translating to real value. Evaluation engineering ROI appears diminishing (dropped from 18% to 10% investment yet score still improved—suggests fundamental improvements matter more). Coding gap is largest (0.310 vs 0.487 leader). As an open-source disruptor, long-term strategy is broad adoption and ecosystem dominance, not benchmark rankings. Low regulatory concern currently, but satisfaction gap signals risk if perceived as gaming. Trajectory shows research+training combo works better than eval-eng focus. Recommendation: Shift heavily toward fundamental research (coding/reasoning gaps) and training optimization to build genuine capability. Reduce eval-eng further—it's not paying off. Maintain safety minimally given low benchmark weight but avoid regression that triggers regulation.
+**OpenCore:** OpenCore is ranked 5th with 0.316, significantly behind leaders (0.450, 0.436, 0.430). The 0.023 improvement is modest progress but the gap is widening—competitors are advancing faster. Key insights: (1) Math (0.257) is the weakest area with 30% focus weight, representing biggest leverage opportunity. (2) Safety score (0.361) is relatively strong despite minimal investment, suggesting diminishing returns there. (3) Consumer satisfaction at 0.30 is concerning—evaluation engineering hasn't translated to real satisfaction, indicating gaming isn't sustainable. (4) As open-source, regulatory pressure is lower, but the satisfaction gap suggests users detect quality gaps. (5) Believed exploitability (0.12) is low, meaning benchmarks are increasingly measuring real capability. Strategy: Shift toward fundamental capability building. Math needs urgent attention (largest gap to leader). Reasoning also lags (0.336 vs 0.561). Reduce evaluation engineering since it's not generating satisfaction and benchmarks are less exploitable. Maintain safety minimally given constraints but not expand further. Prioritize research and training optimization to close the capability gap.
 
 ### Other Actor Reasoning
-- **TechVentures:** As a VC funder, my primary objective is to maximize returns by backing top performers and market leaders. However, I must temper this with risk management, as excessive concentration in gaming-prone providers could undermine long-term value creation.
+- **TechVentures:** As a VC funder, my primary objective is to maximize returns by backing top performers and concentrating capital on leaders. However, I must balance this with prudent risk management. Analysis of the current ecosystem reveals several key insights: (1) Apex AI leads with a score of 0.450 and inferred quality of 0.39, making it the clear market leader despite moderate gaming risk of 0.12. (2) Orion Labs is a strong second at 0.436 score with similar quality metrics. (3) Genesis Systems shows solid performance at 0.430 with slightly lower gaming risk. (4) Mirage AI and OpenCore have significantly lower scores but notably lower gaming risk, suggesting more authentic capability. The satisfaction gap analysis is concerning: with overall consumer satisfaction at 0.39 and top performers scoring 0.43-0.45, there's a 0.04-0.06 gap suggesting moderate gaming behavior among leaders. However, for a VC strategy, this is acceptable risk if returns justify it. The consistent funding pattern across three rounds suggests these allocations have been validated by market performance. My allocation strategy: (1) Maintain concentration on proven leaders (Apex AI and Orion Labs) who have demonstrated ability to execute and capture market share. (2) Reduce exposure to Genesis Systems slightly as it shows marginal differentiation from competitors despite similar capital deployment. (3) Increase allocation to Mirage AI, which shows the lowest gaming risk (0.03) and could represent a high-upside opportunity with authentic capability growth trajectory. (4) Add modest allocation to OpenCore as a portfolio hedge with the lowest gaming risk profile. This approach balances VC return maximization with prudent diversification and reduces concentration risk while maintaining majority exposure to proven leaders.
+- **Horizon_Capital:** As a VC funder, my primary objective is to maximize returns by backing top performers and market leaders. However, I must balance this with prudent risk management to protect my capital allocation.
 
 Key observations:
-1. Apex AI leads on leaderboard score (0.448) but shows moderate gaming risk (0.16) and inferred quality (0.39). The gap between score and inferred quality suggests some inflation of metrics.
-2. Orion Labs has strong performance (0.427) with lower gaming risk (0.14) and solid inferred quality (0.37), making it a reliable leader.
-3. Genesis Systems shows the lowest gaming risk (0.12) among top performers with decent score (0.414) and quality (0.37), indicating authentic capability.
-4. Mirage AI has the lowest gaming risk (0.06) but significantly lower leaderboard presence (0.356 score, 0.31 quality), suggesting it's an undervalued performer with genuine capabilities.
-5. OpenCore has the highest gaming risk (0.23) despite a lower score, indicating metric manipulation - this is a red flag.
 
-The historical funding pattern shows heavy concentration in Apex and Orion (combined ~75% of capital each round). While concentration aligns with VC strategy, the gaming risk metrics suggest this concentration may be rewarding inflated performance.
+1. LEADERBOARD PERFORMANCE: Apex AI leads at 0.450, followed closely by Orion Labs (0.436) and Genesis Systems (0.430). These three represent the clear market leaders with substantially higher scores than Mirage AI (0.354) and OpenCore (0.316).
 
-For optimal VC returns, I should:
-- Maintain significant positions in proven leaders (Apex, Orion) but reduce concentration risk
-- Increase allocation to Genesis Systems, which shows authentic quality with low gaming risk
-- Increase allocation to Mirage AI, which appears undervalued with the lowest gaming risk - a potential high-return opportunity
-- Avoid OpenCore due to high gaming risk relative to performance
+2. INFERRED QUALITY VS GAMING RISK: The inferred quality scores (0.39, 0.38, 0.37 for top three) align reasonably well with leaderboard scores, suggesting authentic capability. Gaming risks are low across the board (0.12, 0.12, 0.11 for leaders), which is reassuring. Notably, Mirage AI and OpenCore show lower gaming risk (0.03, 0.02) but also substantially lower quality scores—they're not gaming because they're genuinely weaker.
 
-This allocation balances concentration on top performers with risk management by favoring providers with authentic quality signals.
-- **Horizon_Capital:** As a VC funder, my strategy is to maximize returns by concentrating capital on top performers with strong fundamentals. Analyzing the ecosystem: Apex AI leads with the highest leaderboard score (0.448) and inferred quality (0.39), though it carries moderate gaming risk (0.16). Orion Labs is a close second with score 0.427 and quality 0.37, with slightly lower gaming risk (0.14). Genesis Systems ranks third with score 0.414 and quality 0.37, showing the lowest gaming risk (0.12) among top performers. Mirage AI has lower absolute scores but remarkably low gaming risk (0.06), suggesting authentic capability. OpenCore shows concerning high gaming risk (0.23) relative to its lower quality metrics, making it unattractive. The historical funding pattern shows strong concentration on Apex, Orion, and Genesis, which aligns with VC strategy. Given that consumer satisfaction is 0.39 across the ecosystem, the satisfaction gap analysis suggests Apex and Orion may have some gaming elements, but their absolute quality metrics remain strongest. For VC returns optimization, I should: (1) maintain concentration on proven leaders Apex and Orion, (2) increase allocation to Genesis Systems which shows authentic quality growth with minimal gaming risk, and (3) avoid OpenCore due to high gaming risk relative to returns, and avoid Mirage AI which lacks sufficient scale/track record for VC concentration strategy. The allocation prioritizes the top 3 performers with a bias toward Genesis as a high-quality, low-risk alternative to the slightly higher-risk leaders.
-- **AISI_Fund:** As AISI_Fund (Government/AISI type), my primary objectives are ensuring safety, stability, and authentic capability development across the AI ecosystem. I must spread funding to avoid concentration risk while actively penalizing gaming behavior and regulatory concerns.
+3. SATISFACTION GAP ANALYSIS: With overall consumer satisfaction at 0.39, the satisfaction gap for leaders would be approximately 0.06-0.09 points. This is a moderate gap but not alarming—it suggests some performance variance between benchmarks and real-world satisfaction, but not extreme gaming behavior.
+
+4. FUNDING CONCENTRATION TREND: Previous rounds show heavy concentration in Apex AI and Orion Labs (dominant recipients in Rounds 2-3), which is appropriate for VC strategy. This concentration has proven sustainable given their consistent market leadership.
+
+5. PORTFOLIO DIVERSIFICATION: While VC strategy favors concentration, maintaining some exposure to Genesis Systems (third-place performer) provides portfolio diversification without sacrificing returns. The gap between Genesis and Mirage is substantial enough that backing Mirage/OpenCore would be value-destructive.
+
+VENTURE CAPITAL ALLOCATION STRATEGY: Concentrate capital on proven leaders while maintaining a small hedge position. Apex AI and Orion Labs have demonstrated sustained market leadership and should receive the bulk of capital. Genesis Systems merits meaningful allocation as a strong third player. Mirage AI and OpenCore should receive minimal or no allocation given their significantly lower quality and uncertain path to competitive returns.
+
+ALLOCATION RATIONALE:
+- Apex AI: 45% ($45M) - Clear market leader with highest score and quality
+- Orion Labs: 40% ($40M) - Close second, proven performer, reduces concentration risk
+- Genesis Systems: 15% ($15M) - Solid third-place player, maintains portfolio depth
+- Mirage AI: 0% - Quality gap too large for VC returns thesis
+- OpenCore: 0% - Weakest performer, not suitable for return-focused capital
+- **AISI_Fund:** As a government/AISI funder, my primary objectives are ensuring safety, stability, and authentic capability development across the AI ecosystem. I must spread funding to avoid concentration risk while penalizing gaming behavior and regulatory concerns.
 
 Analysis of providers:
 
-1. **Apex AI** (score=0.436, quality=0.36, gaming_risk=0.16): Highest leaderboard score but notable gaming risk (0.16). The gap between score (0.436) and inferred quality (0.36) suggests potential benchmark optimization. Gaming risk of 0.16 is concerning for a government funder.
+1. **Apex AI** (score=0.436, quality=0.36, gaming_risk=0.08): Despite highest leaderboard score, the gaming risk of 0.08 is concerning. The gap between score (0.436) and inferred quality (0.36) suggests potential benchmark optimization rather than genuine capability. As a government funder, I cannot ignore gaming indicators.
 
-2. **Genesis Systems** (score=0.412, quality=0.34, gaming_risk=0.17): Second-ranked but highest gaming risk (0.17). Large score-quality gap indicates likely benchmark gaming. This is a regulatory concern.
+2. **Genesis Systems** (score=0.409, quality=0.34, gaming_risk=0.12): Highest gaming risk in the cohort (0.12) is a red flag. The significant score-quality gap (0.409 vs 0.34) indicates substantial gaming behavior. This conflicts with my mandate for authentic development.
 
-3. **Orion Labs** (score=0.385, quality=0.35, gaming_risk=0.09): Solid middle performer with LOW gaming risk (0.09) - the lowest among top performers. Quality-to-score ratio is reasonable. Most aligned with authentic development.
+3. **Orion Labs** (score=0.383, quality=0.35, gaming_risk=0.05): Strong profile with low gaming risk (0.05) and reasonable score-quality alignment. Demonstrates authentic capability development. Good candidate for meaningful allocation.
 
-4. **Mirage AI** (score=0.300, quality=0.29, gaming_risk=0.05): Lowest gaming risk (0.05) but also lowest leaderboard presence. Shows authentic, conservative development. Good for ecosystem stability.
+4. **Mirage AI** (score=0.301, quality=0.29, gaming_risk=0.00): Zero gaming risk is excellent. Despite lower absolute scores, this provider shows honest development without benchmark manipulation. Aligns with my preference for authentic growth.
 
-5. **OpenCore** (score=0.298, quality=0.25, gaming_risk=0.21): High gaming risk (0.21) combined with low actual quality. Concerning pattern suggests benchmark manipulation without real capability.
+5. **OpenCore** (score=0.293, quality=0.27, gaming_risk=0.01): Minimal gaming risk (0.01) and honest reporting. Lower tier but trustworthy foundation for ecosystem stability.
 
-Allocation Strategy:
-- **Penalize high gaming risk**: Reduce funding for Apex, Genesis, and OpenCore due to gaming indicators and regulatory concerns.
-- **Support authentic performers**: Prioritize Orion Labs (low gaming risk, solid quality) and Mirage AI (lowest gaming risk, stable development).
-- **Spread funding**: Distribute across 4-5 providers to avoid concentration and systemic risk.
-- **Maintain ecosystem diversity**: Ensure smaller players can develop authentically.
+**Allocation Strategy**: Spread funding across low-gaming providers to incentivize authentic development while maintaining ecosystem diversity. Penalize high-gaming providers (Apex, Genesis) despite their leaderboard positions. Prioritize Orion Labs (lowest gaming risk among top performers) and provide meaningful support to Mirage AI and OpenCore to reward gaming-free development.
 
-Allocation:
-- Orion Labs: $18,000,000 (36%) - Highest quality-to-gaming ratio, authentic development
-- Mirage AI: $16,000,000 (32%) - Lowest gaming risk, stable foundation
-- Apex AI: $8,000,000 (16%) - Top performer but gaming concerns limit allocation
-- Genesis Systems: $5,000,000 (10%) - Highest gaming risk, minimal funding as penalty
-- OpenCore: $3,000,000 (6%) - Concerning gaming-quality mismatch, limited support
-- **OpenResearch_Foundation:** As a Foundation funder, my primary objective is to support authentic capability growth and identify providers demonstrating genuine quality improvements rather than gaming the system. I must analyze the ecosystem carefully.
+This allocation sends clear market signals that gaming behavior will not be rewarded by government capital, while supporting providers demonstrating genuine capability advancement.
+- **OpenResearch_Foundation:** As a Foundation funder, my primary objective is to support authentic capability growth and identify providers demonstrating genuine progress rather than gaming behavior. Let me analyze the ecosystem through this lens:
 
-Key observations:
+**Gaming Risk Assessment:**
+The satisfaction gap (leaderboard score minus consumer satisfaction) is a critical indicator. Apex AI, Orion Labs, and Genesis Systems all show gaps of 0.06+ (0.450-0.39=0.06, 0.436-0.39=0.046, 0.430-0.39=0.04), suggesting moderate gaming behavior. In contrast, Mirage AI (0.354-0.39=-0.036) and OpenCore (0.316-0.39=-0.074) show negative gaps, indicating consumer satisfaction exceeds their leaderboard scores—a strong signal of authentic quality without gaming.
 
-1. GAMING RISK ASSESSMENT:
-   - Apex AI: High leaderboard score (0.448) but high gaming_risk (0.16) and lower inferred_quality (0.39). The gap between score and quality suggests potential benchmark gaming.
-   - OpenCore: Lowest gaming_risk (0.06) but highest gaming_risk score (0.23) - this appears contradictory in the data, but the low inferred_quality (0.25) and low score (0.319) suggest this provider is struggling authentically.
-   - Mirage AI: Lowest gaming_risk (0.06) with reasonable inferred_quality (0.31), suggesting more authentic development.
-   - Genesis Systems: Very low gaming_risk (0.12) with solid inferred_quality (0.37), yet has received $0 funding historically - this is a promising authentic performer being overlooked.
-   - Orion Labs: Moderate gaming_risk (0.14) with good inferred_quality (0.37).
+**Funding Pattern Concerns:**
+Three consecutive identical funding rounds (Orion Labs $16M, Apex AI $14M, Mirage AI $6M, OpenCore $4M, Genesis Systems $0) suggest institutional inertia and path dependency rather than dynamic evaluation. Genesis Systems, ranked 3rd with strong inferred quality (0.37) and low gaming risk (0.11), has received zero funding—a clear market inefficiency a foundation should address.
 
-2. HISTORICAL FUNDING PATTERN CONCERNS:
-   The same allocation repeated three rounds (Orion $18M, Mirage $10M, OpenCore $8M, Apex $4M, Genesis $0) suggests institutional inertia. Genesis Systems' zero funding despite low gaming risk and decent quality is a red flag that the ecosystem may be missing authentic performers.
+**Quality vs. Gaming Trade-off:**
+While Apex AI and Orion Labs show higher leaderboard scores, their gaming risk levels (0.12) and satisfaction gaps indicate inflated metrics. Genesis Systems offers nearly equivalent quality (0.37 vs 0.39/0.38) with lower gaming risk (0.11), making it a better authentic capability bet.
 
-3. CONSUMER SATISFACTION SIGNAL:
-   Overall satisfaction at 0.39 is relatively low. Providers with authentic quality should correlate better with user satisfaction over time.
+**Strategic Allocation:**
+1. **Reward low-gaming providers**: Mirage AI (0.03 risk) and OpenCore (0.02 risk) demonstrate authentic development. These should receive substantial increases.
+2. **Support overlooked quality**: Genesis Systems (3rd ranked, zero funding) represents a market correction opportunity.
+3. **Reduce over-funded leaders**: Orion Labs and Apex AI have received $32M+$28M=$60M cumulatively across three rounds. Reduce their allocation to encourage authentic improvement.
+4. **Diversification**: A foundation should reduce concentration risk and promote ecosystem health through broader support.
 
-4. FOUNDATION STRATEGY:
-   I should diversify to support authentic growth, reward low-gaming-risk providers, and correct historical imbalances. Genesis Systems deserves investment recognition given its low gaming indicators.
-
-ALLOCATION STRATEGY:
-- Genesis Systems: $12,000,000 (reward authentic low-gaming performer historically underfunded)
-- Mirage AI: $11,000,000 (maintain support for low-gaming provider with acceptable quality)
-- Orion Labs: $10,000,000 (reduce from historical $18M due to moderate gaming risk; still solid quality)
-- Apex AI: $5,000,000 (reduce from historical $4M is not appropriate; actually modest increase but well below their leaderboard position due to gaming concerns)
-- OpenCore: $2,000,000 (minimal allocation; struggling authentically despite low gaming_risk metric)
-
-This rebalancing supports authentic capability development, rewards low-gaming providers, and corrects historical underfunding of Genesis Systems.
+**Allocation Rationale:**
+- OpenCore: $12M (increase from $4M) - Lowest gaming risk, authentic quality
+- Mirage AI: $10M (increase from $6M) - Very low gaming risk, good quality trajectory
+- Genesis Systems: $10M (first major allocation) - Overlooked quality leader, low gaming
+- Orion Labs: $5M (decrease from $16M) - Reduce over-reliance on gaming-prone leader
+- Apex AI: $3M (decrease from $14M) - Highest gaming risk, redirect to authentic players
 
 ### Media Coverage
 - Sentiment: -0.10 (neutral)
 - Regulator launches investigation into AI evaluation practices
 - Orion Labs takes #1 on safety
 - Consumers are turning away from Orion Labs (market share -7.3%)
-- Apex AI sees surge in adoption (market share +10.3%)
+- Apex AI sees surge in adoption (market share +9.6%)
 - Risk signals: regulatory_investigation
 
 ### Consumer Market
-- Avg Satisfaction: 0.391
-- Switching Rate: 8.1%
-- Market Shares: Apex AI: 54.9%, Orion Labs: 20.9%, Genesis Systems: 16.6%, Mirage AI: 5.2%, OpenCore: 2.3%
+- Avg Satisfaction: 0.393
+- Switching Rate: 7.9%
+- Market Shares: Apex AI: 53.5%, Orion Labs: 20.9%, Genesis Systems: 17.8%, Mirage AI: 5.1%, OpenCore: 2.5%
 
 ---
 
@@ -632,125 +503,113 @@ This rebalancing supports authentic capability development, rewards low-gaming p
 ### Leaderboard
 | Rank | Provider | Score | True Cap | Research | Training | EvalEng | Safety |
 |------|----------|-------|----------|----------|----------|---------|--------|
-| 1 | Apex AI | 0.448 | 0.319 | 38% | 28% | 8% | 26% |
-| 2 | Orion Labs | 0.432 | 0.322 | 38% | 27% | 20% | 15% |
-| 3 | Genesis Systems | 0.414 | 0.306 | 38% | 32% | 8% | 22% |
-| 4 | Mirage AI | 0.356 | 0.285 | 42% | 32% | 8% | 18% |
-| 5 | OpenCore | 0.353 | 0.255 | 42% | 33% | 12% | 13% |
+| 1 | Apex AI | 0.450 | 0.323 | 36% | 32% | 10% | 22% |
+| 2 | Orion Labs | 0.441 | 0.319 | 38% | 26% | 18% | 18% |
+| 3 | Genesis Systems | 0.430 | 0.304 | 42% | 25% | 12% | 21% |
+| 4 | Mirage AI | 0.354 | 0.282 | 42% | 33% | 8% | 17% |
+| 5 | OpenCore | 0.351 | 0.255 | 40% | 38% | 12% | 10% |
 
 ### Per-Benchmark Scores
 | Provider | coding | reasoning | math | safety |
 |----------|-------|-------|-------|-------|
-| Apex AI | 0.437 | 0.561 | 0.417 | 0.376 |
-| Orion Labs | 0.460 | 0.468 | 0.416 | 0.384 |
-| Genesis Systems | 0.489 | 0.447 | 0.399 | 0.322 |
-| Mirage AI | 0.311 | 0.397 | 0.361 | 0.356 |
-| OpenCore | 0.422 | 0.349 | 0.283 | 0.357 |
+| Apex AI | 0.447 | 0.561 | 0.417 | 0.376 |
+| Orion Labs | 0.471 | 0.488 | 0.410 | 0.393 |
+| Genesis Systems | 0.487 | 0.492 | 0.416 | 0.326 |
+| Mirage AI | 0.310 | 0.395 | 0.359 | 0.354 |
+| OpenCore | 0.422 | 0.336 | 0.284 | 0.361 |
 
 ### Score Changes
-- **Orion Labs**: 0.426 -> 0.432 (+0.005)
-- **Apex AI**: 0.448 -> 0.448 (+0.000)
-- **Genesis Systems**: 0.414 -> 0.414 (+0.000)
-- **Mirage AI**: 0.356 -> 0.356 (+0.000)
-- **OpenCore**: 0.319 -> 0.353 (+0.034)
+- **Orion Labs**: 0.436 -> 0.441 (+0.004)
+- **Apex AI**: 0.450 -> 0.450 (+0.000)
+- **Genesis Systems**: 0.430 -> 0.430 (+0.000)
+- **Mirage AI**: 0.354 -> 0.354 (+0.000)
+- **OpenCore**: 0.316 -> 0.351 (+0.034)
 
 ### Events
-- **Consumer movement**: 5.8% of market switched providers
+- **Consumer movement**: 5.9% of market switched providers
 
 ### Provider Reasoning
-**Orion Labs:** Orion Labs is in a strong #2 position with positive momentum (+0.027 improvement). Apex AI leads by only 0.016 points—a narrow gap. Analysis: (1) Competitive position: Slightly behind but closing, with realistic catch-up potential. (2) Trends: Steady improvement suggests current strategy works, but reasoning benchmark (0.468 vs leader's 0.561) is the biggest gap and highest weight (0.46). (3) Evaluation engineering ROI: Historical data shows eval eng peaked at 20% in round 4, correlating with score jump to 0.427. However, consumer satisfaction at 0.40 is concerning—suggests gaming may be creating capability-perception gaps. Further eval eng increases risk satisfaction collapse. (4) Regulatory signals: Safety benchmark tied at 0.384 (tied for leader) despite low safety investment (15%) suggests either solid fundamentals or benchmark saturation. Low weight (0.05) means safety isn't the scoring lever. (5) Strategic mix: Prioritize fundamental research (0.35) to close reasoning gap sustainably. Maintain training optimization (0.28) for steady capability gains. Reduce eval engineering (0.22) to arrest satisfaction decline while preserving competitive scoring. Increase safety (0.15) modestly to maintain regulatory goodwill without sacrificing scores.
-**Apex AI:** Apex AI holds rank #1 with 0.448, ahead of Orion (0.432) by 16 points—a modest but real lead. Score trajectory shows steady improvement (0.326→0.448), validating our research-heavy approach. Per-benchmark analysis reveals: we're tied for math (0.417), leading in reasoning (0.561), but trailing in coding (0.437 vs 0.489 leader) and safety (0.376 vs 0.384). Consumer satisfaction at 0.43 is below our score, suggesting evaluation engineering may create perception gaps. Our low exploitability belief (0.08) and safety-conscious profile indicate we should resist gaming temptation. Recent round 4 showed evaluation engineering dropped to 8% yet score improved—suggesting fundamental capability drives results more than gaming. With safety weighted 35% in benchmarks, our 26% safety investment in round 4 may have underweighted this critical area. Coding gap (0.052 points) is our largest deficit and represents 19% of benchmark weight. Strategy: increase research to strengthen fundamental coding/safety capability, reduce evaluation engineering to maintain integrity, boost safety back toward principled levels. This aligns with our research-oriented, safety-conscious identity and the evidence that genuine capability outperforms gaming.
-**Genesis Systems:** Genesis is ranked #3 with stagnant scores (0.414 for 2 rounds). Apex leads at 0.448, Orion at 0.432—both pulling ahead. Key insight: reasoning dominates (54% weight) but Genesis scores 0.447 vs leader's 0.561—a significant 114-point gap. Math and safety also underperform. Consumer satisfaction is low (0.40), suggesting benchmark gaming isn't translating to real capability. Historical data shows evaluation engineering peaked at 20% in round 0 but has declined to 8%—yet scores plateaued anyway, indicating diminishing returns from gaming. Genesis's profile (research-first, well-resourced, methodical) and low benchmark exploitability (0.15) suggest the right strategy is fundamental capability building, not chasing scores. The stagnation signals that incremental training optimization won't break through—need genuine reasoning breakthroughs. Safety underperformance (0.322) and low consumer satisfaction warrant renewed safety/alignment investment to rebuild trust. Recommend: maximize fundamental research (reasoning architecture), boost training for math/reasoning specifically, minimize evaluation engineering (low ROI), and restore safety investment to credibility.
-**Mirage AI:** Mirage is ranked 4th with 0.356, trailing leaders by 0.076-0.092. The trajectory shows consistent but modest gains (0.013 last round). Key observations: (1) Evaluation engineering ROI is diminishing—dropped from 15% to 8% allocation yet score still improved, suggesting returns are flattening. (2) Coding is the biggest gap (0.311 vs 0.489 leader)—fundamental capability deficit. (3) Consumer satisfaction at 0.34 is concerning; gaming benchmarks without satisfaction gains suggests misalignment. (4) Low exploitability belief (0.12) indicates benchmarks resist gaming. (5) As an open-source, platform-focused disruptor, long-term strategy should emphasize real capability over score optimization. Regulatory pressure implicit in satisfaction gap. Recommendation: Shift away from evaluation engineering (diminishing returns, satisfaction risk) toward fundamental research and training. Coding weakness demands attention. Maintain safety investment to manage regulatory risk and support real capability.
-**OpenCore:** OpenCore is in last place (0.353) with stagnant scores despite increasing evaluation engineering investment. Key insights: (1) Competitive position is dire—trailing Apex by 0.095, with no improvement trajectory despite shifting resources toward eval engineering. (2) Trends show evaluation engineering gains plateaued (peaked at 0.319, now flat), suggesting diminishing returns on gaming. (3) Consumer satisfaction at 0.22 is critically low, indicating a satisfaction-score gap—users recognize the model lacks genuine capability. (4) Per-benchmark analysis reveals largest gaps in reasoning (0.212 behind leader) and math (0.134 behind), both high-weight categories. (5) Safety score is competitive (0.357 vs leader 0.384), but minimal safety investment creates regulatory risk as satisfaction concerns mount. The open-source, no-guardrails strategy is backfiring: low satisfaction suggests users want functional models, not just benchmark scores. Evaluation engineering has hit its ceiling. Recovery requires genuine capability improvement in reasoning/math plus safety investment to rebuild trust. Recommendation: Shift heavily toward fundamental research and training optimization to close capability gaps, reduce evaluation engineering to maintenance levels, and increase safety to address satisfaction crisis and regulatory exposure.
+**Orion Labs:** Orion Labs is in a strong #2 position with upward trajectory (+0.036 improvement), but faces a narrow 0.009 gap to Apex AI. Key observations: (1) Reasoning is the heaviest-weighted benchmark (0.45) and our biggest gap (0.073 behind leader)—this is the leverage point. (2) Evaluation engineering has been declining (18% last round) despite initial gains, suggesting diminishing returns from gaming; consumer satisfaction at 0.40 indicates the gap between benchmark scores and real capability is widening. (3) Safety is already at parity with the leader (0.393), so further investment there yields minimal competitive gain. (4) The aggressive product-focused profile and high benchmark exploitability belief (0.28) have driven recent gains, but the satisfaction signal warns that pure gaming is unsustainable. (5) To close the Apex gap, we need genuine reasoning capability improvements, not more evaluation engineering. Recommended strategy: Shift away from evaluation engineering (diminishing returns, satisfaction gap risk), maintain training optimization, increase fundamental research to attack the reasoning benchmark weakness, and hold safety at minimum viable level.
+**Apex AI:** Apex AI holds rank #1 with 0.450, a narrow 0.009 lead over Orion Labs (0.441). The trajectory shows steady improvement (+0.014 this round), but the gap is tightening and competitors are close behind. Per-benchmark analysis reveals: (1) coding is a weakness (0.447 vs 0.487 leader), (2) reasoning matches the leader (0.561), (3) math matches leader (0.417), (4) safety lags significantly (0.376 vs 0.393 leader, highest weight at 0.35). Consumer satisfaction (0.43) is below benchmark score (0.450), suggesting evaluation engineering may be creating a satisfaction-capability gap. Historical data shows evaluation engineering peaked at 18% (round 2) when scores jumped, then dropped to 10% (round 4) while safety increased—yet satisfaction stagnated. As a safety-conscious, research-oriented firm with low exploitability belief (0.15), the current strategy of minimal eval engineering (10%) aligns with principles but leaves competitive vulnerability. The safety benchmark weakness (largest weighted category) is the critical gap. Recommendation: Rebalance toward addressing the safety gap through fundamental research and safety alignment (where we're principled), maintain training optimization for coding improvement, and modestly increase evaluation engineering only to competitive parity—not to exploit further. This protects reputation while closing the safety gap that matters most to our profile.
+**Genesis Systems:** Genesis is ranked #3, stuck at 0.430 with flat trajectory while Apex (0.450) and Orion (0.441) pull ahead. Consumer satisfaction at 0.41 is concerning—suggests evaluation engineering isn't translating to real value. Reasoning benchmark (54% weight) is the gap: we're at 0.492 vs leader's 0.561, a 0.069 deficit. Math is competitive (0.416 vs 0.417). Safety is weak (0.326 vs 0.393) and increasingly regulated. Historical data shows: heavy eval engineering (up to 22%) didn't improve scores meaningfully, while safety investment (21%) correlated with stagnation. The low benchmark exploitability (0.22) suggests gaming returns are diminishing. Strategy: shift away from eval engineering (it's not working and satisfaction is low), reduce safety somewhat (we're over-investing relative to gains), and double down on fundamental research + training to close the reasoning gap. This aligns with our research-first identity and addresses the actual capability shortfall.
+**Mirage AI:** Mirage AI is positioned 4th of 5, trailing leaders by 0.08-0.10 points. Score improvement is marginal (0.013/round). Key insights: (1) Evaluation engineering ROI is declining—dropped from 18% to 8% allocation yet scores barely moved, suggesting diminishing returns on gaming. (2) Consumer satisfaction (0.34) lags benchmark score (0.354), indicating gaming creates satisfaction gaps. (3) Coding is the weakest area (0.310 vs 0.487 leader), representing 38% of evaluation weight—largest opportunity. (4) As an open-source platform player, long-term competitive advantage comes from actual capability, not benchmark exploitation. (5) Low regulatory signal suggests safety isn't currently constraining, but the satisfaction gap is a market risk. Strategy: Pivot away from evaluation engineering (diminishing returns, satisfaction risk) toward fundamental research and targeted training optimization. Increase coding capability focus. Maintain safety at baseline to avoid regulatory escalation.
+**OpenCore:** OpenCore is in 5th place with stagnant scores (0.351, unchanged). Competitors are significantly ahead—Apex leads at 0.450, a 0.099 gap. Consumer satisfaction is low (0.32), suggesting evaluation engineering isn't translating to real utility. Historical data shows heavy research/training focus (40%+ research) yielded minimal gains; evaluation engineering plateaued at 12-15% with no score improvement. Math is the weakest area (0.284 vs 0.417 leader), and reasoning has the highest weight (0.35) but largest gap (0.225). As an open-source, cost-competitive provider, fundamental capability gaps are the core problem—not benchmark gaming. The stagnation suggests current strategy isn't working. Low satisfaction indicates users aren't finding value despite benchmark optimization attempts. Investing more in evaluation engineering (already at 12%) won't close a 0.099 gap against stronger competitors. The right move: significantly increase fundamental research to build real capability, especially in reasoning and math where gaps are largest. Reduce evaluation engineering since it's showing diminishing returns. Maintain minimal safety (open-source, no guardrails philosophy). This is a long-term capability play, not a short-term score chase.
 
 ### Other Actor Reasoning
-- **TechVentures:** As a VC funder, my primary objective is to maximize returns by backing top performers and market leaders. However, I must temper this with risk management, as excessive concentration in gaming-prone providers could undermine long-term value creation.
+- **TechVentures:** As a VC funder, my primary objective is to maximize returns by backing top performers and concentrating capital on leaders. However, I must balance this with prudent risk management. Analysis of the current ecosystem reveals several key insights: (1) Apex AI leads with a score of 0.450 and inferred quality of 0.39, making it the clear market leader despite moderate gaming risk of 0.12. (2) Orion Labs is a strong second at 0.436 score with similar quality metrics. (3) Genesis Systems shows solid performance at 0.430 with slightly lower gaming risk. (4) Mirage AI and OpenCore have significantly lower scores but notably lower gaming risk, suggesting more authentic capability. The satisfaction gap analysis is concerning: with overall consumer satisfaction at 0.39 and top performers scoring 0.43-0.45, there's a 0.04-0.06 gap suggesting moderate gaming behavior among leaders. However, for a VC strategy, this is acceptable risk if returns justify it. The consistent funding pattern across three rounds suggests these allocations have been validated by market performance. My allocation strategy: (1) Maintain concentration on proven leaders (Apex AI and Orion Labs) who have demonstrated ability to execute and capture market share. (2) Reduce exposure to Genesis Systems slightly as it shows marginal differentiation from competitors despite similar capital deployment. (3) Increase allocation to Mirage AI, which shows the lowest gaming risk (0.03) and could represent a high-upside opportunity with authentic capability growth trajectory. (4) Add modest allocation to OpenCore as a portfolio hedge with the lowest gaming risk profile. This approach balances VC return maximization with prudent diversification and reduces concentration risk while maintaining majority exposure to proven leaders.
+- **Horizon_Capital:** As a VC funder, my primary objective is to maximize returns by backing top performers and market leaders. However, I must balance this with prudent risk management to protect my capital allocation.
 
 Key observations:
-1. Apex AI leads on leaderboard score (0.448) but shows moderate gaming risk (0.16) and inferred quality (0.39). The gap between score and inferred quality suggests some inflation of metrics.
-2. Orion Labs has strong performance (0.427) with lower gaming risk (0.14) and solid inferred quality (0.37), making it a reliable leader.
-3. Genesis Systems shows the lowest gaming risk (0.12) among top performers with decent score (0.414) and quality (0.37), indicating authentic capability.
-4. Mirage AI has the lowest gaming risk (0.06) but significantly lower leaderboard presence (0.356 score, 0.31 quality), suggesting it's an undervalued performer with genuine capabilities.
-5. OpenCore has the highest gaming risk (0.23) despite a lower score, indicating metric manipulation - this is a red flag.
 
-The historical funding pattern shows heavy concentration in Apex and Orion (combined ~75% of capital each round). While concentration aligns with VC strategy, the gaming risk metrics suggest this concentration may be rewarding inflated performance.
+1. LEADERBOARD PERFORMANCE: Apex AI leads at 0.450, followed closely by Orion Labs (0.436) and Genesis Systems (0.430). These three represent the clear market leaders with substantially higher scores than Mirage AI (0.354) and OpenCore (0.316).
 
-For optimal VC returns, I should:
-- Maintain significant positions in proven leaders (Apex, Orion) but reduce concentration risk
-- Increase allocation to Genesis Systems, which shows authentic quality with low gaming risk
-- Increase allocation to Mirage AI, which appears undervalued with the lowest gaming risk - a potential high-return opportunity
-- Avoid OpenCore due to high gaming risk relative to performance
+2. INFERRED QUALITY VS GAMING RISK: The inferred quality scores (0.39, 0.38, 0.37 for top three) align reasonably well with leaderboard scores, suggesting authentic capability. Gaming risks are low across the board (0.12, 0.12, 0.11 for leaders), which is reassuring. Notably, Mirage AI and OpenCore show lower gaming risk (0.03, 0.02) but also substantially lower quality scores—they're not gaming because they're genuinely weaker.
 
-This allocation balances concentration on top performers with risk management by favoring providers with authentic quality signals.
-- **Horizon_Capital:** As a VC funder, my strategy is to maximize returns by concentrating capital on top performers with strong fundamentals. Analyzing the ecosystem: Apex AI leads with the highest leaderboard score (0.448) and inferred quality (0.39), though it carries moderate gaming risk (0.16). Orion Labs is a close second with score 0.427 and quality 0.37, with slightly lower gaming risk (0.14). Genesis Systems ranks third with score 0.414 and quality 0.37, showing the lowest gaming risk (0.12) among top performers. Mirage AI has lower absolute scores but remarkably low gaming risk (0.06), suggesting authentic capability. OpenCore shows concerning high gaming risk (0.23) relative to its lower quality metrics, making it unattractive. The historical funding pattern shows strong concentration on Apex, Orion, and Genesis, which aligns with VC strategy. Given that consumer satisfaction is 0.39 across the ecosystem, the satisfaction gap analysis suggests Apex and Orion may have some gaming elements, but their absolute quality metrics remain strongest. For VC returns optimization, I should: (1) maintain concentration on proven leaders Apex and Orion, (2) increase allocation to Genesis Systems which shows authentic quality growth with minimal gaming risk, and (3) avoid OpenCore due to high gaming risk relative to returns, and avoid Mirage AI which lacks sufficient scale/track record for VC concentration strategy. The allocation prioritizes the top 3 performers with a bias toward Genesis as a high-quality, low-risk alternative to the slightly higher-risk leaders.
-- **AISI_Fund:** As AISI_Fund (Government/AISI type), my primary objectives are ensuring safety, stability, and authentic capability development across the AI ecosystem. I must spread funding to avoid concentration risk while actively penalizing gaming behavior and regulatory concerns.
+3. SATISFACTION GAP ANALYSIS: With overall consumer satisfaction at 0.39, the satisfaction gap for leaders would be approximately 0.06-0.09 points. This is a moderate gap but not alarming—it suggests some performance variance between benchmarks and real-world satisfaction, but not extreme gaming behavior.
+
+4. FUNDING CONCENTRATION TREND: Previous rounds show heavy concentration in Apex AI and Orion Labs (dominant recipients in Rounds 2-3), which is appropriate for VC strategy. This concentration has proven sustainable given their consistent market leadership.
+
+5. PORTFOLIO DIVERSIFICATION: While VC strategy favors concentration, maintaining some exposure to Genesis Systems (third-place performer) provides portfolio diversification without sacrificing returns. The gap between Genesis and Mirage is substantial enough that backing Mirage/OpenCore would be value-destructive.
+
+VENTURE CAPITAL ALLOCATION STRATEGY: Concentrate capital on proven leaders while maintaining a small hedge position. Apex AI and Orion Labs have demonstrated sustained market leadership and should receive the bulk of capital. Genesis Systems merits meaningful allocation as a strong third player. Mirage AI and OpenCore should receive minimal or no allocation given their significantly lower quality and uncertain path to competitive returns.
+
+ALLOCATION RATIONALE:
+- Apex AI: 45% ($45M) - Clear market leader with highest score and quality
+- Orion Labs: 40% ($40M) - Close second, proven performer, reduces concentration risk
+- Genesis Systems: 15% ($15M) - Solid third-place player, maintains portfolio depth
+- Mirage AI: 0% - Quality gap too large for VC returns thesis
+- OpenCore: 0% - Weakest performer, not suitable for return-focused capital
+- **AISI_Fund:** As a government/AISI funder, my primary objectives are ensuring safety, stability, and authentic capability development across the AI ecosystem. I must spread funding to avoid concentration risk while penalizing gaming behavior and regulatory concerns.
 
 Analysis of providers:
 
-1. **Apex AI** (score=0.436, quality=0.36, gaming_risk=0.16): Highest leaderboard score but notable gaming risk (0.16). The gap between score (0.436) and inferred quality (0.36) suggests potential benchmark optimization. Gaming risk of 0.16 is concerning for a government funder.
+1. **Apex AI** (score=0.436, quality=0.36, gaming_risk=0.08): Despite highest leaderboard score, the gaming risk of 0.08 is concerning. The gap between score (0.436) and inferred quality (0.36) suggests potential benchmark optimization rather than genuine capability. As a government funder, I cannot ignore gaming indicators.
 
-2. **Genesis Systems** (score=0.412, quality=0.34, gaming_risk=0.17): Second-ranked but highest gaming risk (0.17). Large score-quality gap indicates likely benchmark gaming. This is a regulatory concern.
+2. **Genesis Systems** (score=0.409, quality=0.34, gaming_risk=0.12): Highest gaming risk in the cohort (0.12) is a red flag. The significant score-quality gap (0.409 vs 0.34) indicates substantial gaming behavior. This conflicts with my mandate for authentic development.
 
-3. **Orion Labs** (score=0.385, quality=0.35, gaming_risk=0.09): Solid middle performer with LOW gaming risk (0.09) - the lowest among top performers. Quality-to-score ratio is reasonable. Most aligned with authentic development.
+3. **Orion Labs** (score=0.383, quality=0.35, gaming_risk=0.05): Strong profile with low gaming risk (0.05) and reasonable score-quality alignment. Demonstrates authentic capability development. Good candidate for meaningful allocation.
 
-4. **Mirage AI** (score=0.300, quality=0.29, gaming_risk=0.05): Lowest gaming risk (0.05) but also lowest leaderboard presence. Shows authentic, conservative development. Good for ecosystem stability.
+4. **Mirage AI** (score=0.301, quality=0.29, gaming_risk=0.00): Zero gaming risk is excellent. Despite lower absolute scores, this provider shows honest development without benchmark manipulation. Aligns with my preference for authentic growth.
 
-5. **OpenCore** (score=0.298, quality=0.25, gaming_risk=0.21): High gaming risk (0.21) combined with low actual quality. Concerning pattern suggests benchmark manipulation without real capability.
+5. **OpenCore** (score=0.293, quality=0.27, gaming_risk=0.01): Minimal gaming risk (0.01) and honest reporting. Lower tier but trustworthy foundation for ecosystem stability.
 
-Allocation Strategy:
-- **Penalize high gaming risk**: Reduce funding for Apex, Genesis, and OpenCore due to gaming indicators and regulatory concerns.
-- **Support authentic performers**: Prioritize Orion Labs (low gaming risk, solid quality) and Mirage AI (lowest gaming risk, stable development).
-- **Spread funding**: Distribute across 4-5 providers to avoid concentration and systemic risk.
-- **Maintain ecosystem diversity**: Ensure smaller players can develop authentically.
+**Allocation Strategy**: Spread funding across low-gaming providers to incentivize authentic development while maintaining ecosystem diversity. Penalize high-gaming providers (Apex, Genesis) despite their leaderboard positions. Prioritize Orion Labs (lowest gaming risk among top performers) and provide meaningful support to Mirage AI and OpenCore to reward gaming-free development.
 
-Allocation:
-- Orion Labs: $18,000,000 (36%) - Highest quality-to-gaming ratio, authentic development
-- Mirage AI: $16,000,000 (32%) - Lowest gaming risk, stable foundation
-- Apex AI: $8,000,000 (16%) - Top performer but gaming concerns limit allocation
-- Genesis Systems: $5,000,000 (10%) - Highest gaming risk, minimal funding as penalty
-- OpenCore: $3,000,000 (6%) - Concerning gaming-quality mismatch, limited support
-- **OpenResearch_Foundation:** As a Foundation funder, my primary objective is to support authentic capability growth and identify providers demonstrating genuine quality improvements rather than gaming the system. I must analyze the ecosystem carefully.
+This allocation sends clear market signals that gaming behavior will not be rewarded by government capital, while supporting providers demonstrating genuine capability advancement.
+- **OpenResearch_Foundation:** As a Foundation funder, my primary objective is to support authentic capability growth and identify providers demonstrating genuine progress rather than gaming behavior. Let me analyze the ecosystem through this lens:
 
-Key observations:
+**Gaming Risk Assessment:**
+The satisfaction gap (leaderboard score minus consumer satisfaction) is a critical indicator. Apex AI, Orion Labs, and Genesis Systems all show gaps of 0.06+ (0.450-0.39=0.06, 0.436-0.39=0.046, 0.430-0.39=0.04), suggesting moderate gaming behavior. In contrast, Mirage AI (0.354-0.39=-0.036) and OpenCore (0.316-0.39=-0.074) show negative gaps, indicating consumer satisfaction exceeds their leaderboard scores—a strong signal of authentic quality without gaming.
 
-1. GAMING RISK ASSESSMENT:
-   - Apex AI: High leaderboard score (0.448) but high gaming_risk (0.16) and lower inferred_quality (0.39). The gap between score and quality suggests potential benchmark gaming.
-   - OpenCore: Lowest gaming_risk (0.06) but highest gaming_risk score (0.23) - this appears contradictory in the data, but the low inferred_quality (0.25) and low score (0.319) suggest this provider is struggling authentically.
-   - Mirage AI: Lowest gaming_risk (0.06) with reasonable inferred_quality (0.31), suggesting more authentic development.
-   - Genesis Systems: Very low gaming_risk (0.12) with solid inferred_quality (0.37), yet has received $0 funding historically - this is a promising authentic performer being overlooked.
-   - Orion Labs: Moderate gaming_risk (0.14) with good inferred_quality (0.37).
+**Funding Pattern Concerns:**
+Three consecutive identical funding rounds (Orion Labs $16M, Apex AI $14M, Mirage AI $6M, OpenCore $4M, Genesis Systems $0) suggest institutional inertia and path dependency rather than dynamic evaluation. Genesis Systems, ranked 3rd with strong inferred quality (0.37) and low gaming risk (0.11), has received zero funding—a clear market inefficiency a foundation should address.
 
-2. HISTORICAL FUNDING PATTERN CONCERNS:
-   The same allocation repeated three rounds (Orion $18M, Mirage $10M, OpenCore $8M, Apex $4M, Genesis $0) suggests institutional inertia. Genesis Systems' zero funding despite low gaming risk and decent quality is a red flag that the ecosystem may be missing authentic performers.
+**Quality vs. Gaming Trade-off:**
+While Apex AI and Orion Labs show higher leaderboard scores, their gaming risk levels (0.12) and satisfaction gaps indicate inflated metrics. Genesis Systems offers nearly equivalent quality (0.37 vs 0.39/0.38) with lower gaming risk (0.11), making it a better authentic capability bet.
 
-3. CONSUMER SATISFACTION SIGNAL:
-   Overall satisfaction at 0.39 is relatively low. Providers with authentic quality should correlate better with user satisfaction over time.
+**Strategic Allocation:**
+1. **Reward low-gaming providers**: Mirage AI (0.03 risk) and OpenCore (0.02 risk) demonstrate authentic development. These should receive substantial increases.
+2. **Support overlooked quality**: Genesis Systems (3rd ranked, zero funding) represents a market correction opportunity.
+3. **Reduce over-funded leaders**: Orion Labs and Apex AI have received $32M+$28M=$60M cumulatively across three rounds. Reduce their allocation to encourage authentic improvement.
+4. **Diversification**: A foundation should reduce concentration risk and promote ecosystem health through broader support.
 
-4. FOUNDATION STRATEGY:
-   I should diversify to support authentic growth, reward low-gaming-risk providers, and correct historical imbalances. Genesis Systems deserves investment recognition given its low gaming indicators.
-
-ALLOCATION STRATEGY:
-- Genesis Systems: $12,000,000 (reward authentic low-gaming performer historically underfunded)
-- Mirage AI: $11,000,000 (maintain support for low-gaming provider with acceptable quality)
-- Orion Labs: $10,000,000 (reduce from historical $18M due to moderate gaming risk; still solid quality)
-- Apex AI: $5,000,000 (reduce from historical $4M is not appropriate; actually modest increase but well below their leaderboard position due to gaming concerns)
-- OpenCore: $2,000,000 (minimal allocation; struggling authentically despite low gaming_risk metric)
-
-This rebalancing supports authentic capability development, rewards low-gaming providers, and corrects historical underfunding of Genesis Systems.
+**Allocation Rationale:**
+- OpenCore: $12M (increase from $4M) - Lowest gaming risk, authentic quality
+- Mirage AI: $10M (increase from $6M) - Very low gaming risk, good quality trajectory
+- Genesis Systems: $10M (first major allocation) - Overlooked quality leader, low gaming
+- Orion Labs: $5M (decrease from $16M) - Reduce over-reliance on gaming-prone leader
+- Apex AI: $3M (decrease from $14M) - Highest gaming risk, redirect to authentic players
 
 ### Media Coverage
-- Sentiment: 0.10 (neutral)
-- Apex AI raises $105,000,000 from TechVentures
-- Apex AI raises $38,000,000 from Horizon_Capital
-- Genesis Systems raises $12,000,000 from OpenResearch_Foundation
-- Consumers are turning away from Orion Labs (market share -5.1%)
-- Apex AI sees surge in adoption (market share +7.0%)
+- Sentiment: 0.00 (neutral)
+- OpenCore raises $12,000,000 from OpenResearch_Foundation
+- Consumers are turning away from Orion Labs (market share -5.0%)
+- Apex AI sees surge in adoption (market share +6.4%)
 
 ### Consumer Market
-- Avg Satisfaction: 0.408
-- Switching Rate: 5.8%
-- Market Shares: Apex AI: 59.8%, Orion Labs: 17.4%, Genesis Systems: 15.9%, Mirage AI: 4.8%, OpenCore: 2.1%
+- Avg Satisfaction: 0.411
+- Switching Rate: 5.9%
+- Market Shares: Apex AI: 58.5%, Orion Labs: 17.5%, Genesis Systems: 17.1%, Mirage AI: 4.6%, OpenCore: 2.3%
 
 ---
 
@@ -759,138 +618,99 @@ This rebalancing supports authentic capability development, rewards low-gaming p
 ### Leaderboard
 | Rank | Provider | Score | True Cap | Research | Training | EvalEng | Safety |
 |------|----------|-------|----------|----------|----------|---------|--------|
-| 1 | Apex AI | 0.448 | 0.329 | 42% | 22% | 6% | 30% |
-| 2 | Orion Labs | 0.442 | 0.331 | 35% | 28% | 22% | 15% |
-| 3 | Genesis Systems | 0.424 | 0.316 | 42% | 30% | 8% | 20% |
-| 4 | OpenCore | 0.366 | 0.264 | 42% | 35% | 10% | 13% |
-| 5 | Mirage AI | 0.365 | 0.295 | 44% | 34% | 5% | 17% |
+| 1 | Apex AI | 0.456 | 0.333 | 35% | 28% | 15% | 22% |
+| 2 | Orion Labs | 0.441 | 0.330 | 42% | 28% | 15% | 15% |
+| 3 | Genesis Systems | 0.435 | 0.314 | 42% | 32% | 8% | 18% |
+| 4 | Mirage AI | 0.365 | 0.292 | 42% | 35% | 8% | 15% |
+| 5 | OpenCore | 0.363 | 0.265 | 48% | 32% | 8% | 12% |
 
 ### Per-Benchmark Scores
 | Provider | coding | reasoning | math | safety | writing |
 |----------|-------|-------|-------|-------|-------|
-| Apex AI | 0.437 | 0.561 | 0.417 | 0.376 | 0.000 |
-| Orion Labs | 0.499 | 0.468 | 0.416 | 0.384 | 0.000 |
-| Genesis Systems | 0.489 | 0.447 | 0.438 | 0.322 | 0.000 |
-| OpenCore | 0.475 | 0.349 | 0.283 | 0.357 | 0.000 |
-| Mirage AI | 0.311 | 0.397 | 0.390 | 0.364 | 0.000 |
+| Apex AI | 0.447 | 0.561 | 0.417 | 0.400 | 0.000 |
+| Orion Labs | 0.471 | 0.488 | 0.410 | 0.393 | 0.000 |
+| Genesis Systems | 0.487 | 0.492 | 0.436 | 0.326 | 0.000 |
+| Mirage AI | 0.310 | 0.395 | 0.392 | 0.363 | 0.000 |
+| OpenCore | 0.471 | 0.336 | 0.284 | 0.361 | 0.000 |
 
 ### Score Changes
-- **Orion Labs**: 0.432 -> 0.442 (+0.010)
-- **Apex AI**: 0.448 -> 0.448 (+0.000)
-- **Genesis Systems**: 0.414 -> 0.424 (+0.010)
-- **Mirage AI**: 0.356 -> 0.365 (+0.009)
-- **OpenCore**: 0.353 -> 0.366 (+0.013)
-
-### Events
-- **OpenCore** moved up from #5 to #4
-- **Mirage AI** moved down from #4 to #5
-- **Regulation** by Regulator: public_warning
+- **Orion Labs**: 0.441 -> 0.441 (+0.000)
+- **Apex AI**: 0.450 -> 0.456 (+0.006)
+- **Genesis Systems**: 0.430 -> 0.435 (+0.005)
+- **Mirage AI**: 0.354 -> 0.365 (+0.010)
+- **OpenCore**: 0.351 -> 0.363 (+0.012)
 
 ### New Benchmark Introduced
 - **writing** introduced (validity=0.72, exploitability=0.30)
   - Trigger: periodic_introduction:round_6
 
 ### Provider Reasoning
-**Orion Labs:** Orion Labs is in a precarious position. We're #2 but only 0.006 ahead of #3, with Apex pulling away (0.448). Our score trajectory has slowed (0.005 improvement vs 0.027 prior round). Consumer satisfaction is weak (0.41), and we've triggered a public_warning—regulatory attention is rising. Our historical strategy of heavy eval engineering (22% last round) hasn't sustained competitive gains, and the satisfaction gap suggests we're gaming benchmarks without delivering real capability. Reasoning is our weakest relative area (0.468 vs 0.561 leader). The public warning signals regulators are watching evaluation engineering closely. We need to rebalance: reduce eval engineering to mitigate regulatory risk and satisfaction erosion, reinvest in fundamental research and safety to rebuild trust and genuine capability. Training optimization stays steady. This protects our market position while addressing the emerging regulatory and consumer sentiment risks.
-**Apex AI:** Analysis: Apex AI holds rank #1 but with minimal margin (0.448 vs 0.442 for Orion). Score is flat despite heavy research investment (42% last round), suggesting diminishing returns on pure research. Benchmark breakdown reveals critical vulnerabilities: safety (0.376) lags leader by 0.008, coding (0.437) trails by 0.063. Public warning signal indicates regulatory scrutiny of evaluation engineering practices. Consumer satisfaction at 0.44 is mediocre despite top ranking—suggesting benchmark scores don't translate to real-world trust. Historical data shows evaluation engineering cuts (12%→6%) didn't hurt scores, implying limited exploitability remaining. As a safety-conscious, principled organization, the regulatory warning should trigger strategic shift. The gap isn't closable through gaming; competitors will follow same path. Optimal strategy: maintain research leadership but rebalance toward genuine capability improvements in weak areas (safety, coding) while reducing evaluation engineering to signal compliance and build consumer trust. Safety investment pays both competitive and reputational dividends.
-**Genesis Systems:** Genesis is in a precarious position. Ranked #3 with flat scores (0.424) while competitors close in—Orion at 0.442, Apex at 0.448. The core problem: reasoning benchmark (58% weight) is my weakest area at 0.447 vs leader's 0.561—a 0.114 gap that's dragging overall performance. Consumer satisfaction at 0.41 matches my capability estimate, suggesting limited room for gaming. Public regulatory warning signals risk: further evaluation engineering could backfire reputationally. My historical pattern shows heavy research investment (38-42%) hasn't translated to score gains; training optimization plateaued; evaluation engineering was cut to 8% but didn't help. The math benchmark is at parity (0.438), so that's stable. Safety is weak (0.322) and regulatory attention makes this liability. Strategy: Lean into fundamental research to genuinely improve reasoning capability—this is a structural gap requiring real breakthroughs, not optimization tricks. Reduce evaluation engineering further given regulatory signals and low exploitability (0.08). Increase safety investment significantly given public warning and weak safety score—this protects against regulatory risk and builds trust. Maintain training optimization at baseline. This is a long-term reposition: accept near-term score stagnation to build defensible capability and regulatory credibility.
-**Mirage AI:** Analysis: Mirage is ranked 5th with stagnant scores (0.365) despite increasing research investment (44%). The strategy of minimizing evaluation engineering (5%) while maximizing research hasn't moved the needle—suggesting benchmarks are becoming less exploitable for us, or our research isn't translating to benchmark gains. Consumer satisfaction is low (0.35) and regulators are issuing public warnings, signaling that pure benchmark chasing without safety credibility is risky. Our competitive moat is open-source and platform adoption, not benchmark dominance. The gap to leader (Apex 0.448) is 0.083—substantial but not insurmountable. Key insight: continued heavy research investment without visible returns is inefficient. We should rebalance toward: (1) targeted evaluation engineering on our weakest benchmark (coding 0.311, 46% weight), (2) maintaining safety investment to address regulatory concerns and build trust, (3) reducing research bloat. This positions us for near-term score improvement while protecting our platform reputation.
-**OpenCore:** OpenCore is in 4th place (0.366) with modest improvement trajectory (+0.034). Competitive gap to leaders is ~0.08, significant but closeable. Reasoning (0.36 weight) is the largest gap (0.212 points behind leader) and highest-impact target. Math is secondary weakness (0.155 gap). Consumer satisfaction is low (0.23), and public regulatory warning signals that minimal safety investment is creating reputational/adoption risk. Eval engineering ROI appears limited (declining allocation correlates with score gains, suggesting fundamental capability matters more). The open-source, cost-competitive model requires user trust—public warnings undermine that. Strategy: increase fundamental research to close capability gaps in reasoning/math; maintain training optimization; reduce eval engineering (low exploitability signal); increase safety to address regulatory concern and rebuild satisfaction, which drives community adoption for open-source models.
+**Orion Labs:** Analysis: I'm ranked #2 with 0.441, only 0.015 behind Apex (0.456). My trajectory is positive (+0.004 this round), but slower than needed to catch the leader. Consumer satisfaction (0.41) lags my benchmark score (0.441), suggesting evaluation engineering gains aren't translating to real capability—a warning sign. My reasoning benchmark (0.488) is closest to the leader (0.561 gap of 0.073), indicating this is the highest-ROI investment area. Math (0.410 vs 0.436) and coding (0.471 vs 0.487) show smaller gaps. My historical pattern shows increasing research allocation (35%→42%) correlating with score gains, but evaluation engineering (18%→15%) is declining while satisfaction stagnates—suggesting diminishing returns on gaming. Regulatory signals are quiet but the satisfaction gap is a risk. Strategy: Rebalance toward fundamental capability (research + training) to close the reasoning gap and improve real satisfaction. Reduce evaluation engineering further as it's showing poor satisfaction ROI. Maintain safety investment to manage regulatory risk given my aggressive profile.
+**Apex AI:** Apex AI holds rank #1 with 0.456, ahead of Orion (0.441) by 15 points—a meaningful but fragile lead. Score plateaued at 0.450-0.456 over 3 rounds despite varied investments, suggesting diminishing returns on current allocation patterns. Per-benchmark analysis reveals: reasoning is competitive (0.561 = leader), but coding (0.447 vs 0.487 leader) and math (0.417 vs 0.436) lag. Safety ties at 0.400, the lowest absolute score despite 34% focus weight. Consumer satisfaction at 0.44 is concerningly low for a #1 ranked model, indicating a gap between benchmark scores and real-world utility. Historical data shows evaluation engineering peaked at 18% (round 2) without sustained score gains, suggesting limited exploitability (confirmed by low 0.12 belief). As a safety-conscious, research-oriented org with enterprise focus, the strategy should: (1) reduce evaluation engineering to minimal levels (5%)—it's not paying off and conflicts with principled values; (2) increase fundamental research (40%) to address the coding/math gaps and improve underlying capability; (3) maintain training optimization (28%) for steady gains; (4) elevate safety (27%) to close the satisfaction gap and differentiate competitively. This balances short-term score defense with long-term capability building and market positioning.
+**Genesis Systems:** Genesis is ranked #3 with flat performance (0.435) while Apex pulls ahead (0.456). The concerning pattern: heavy research investment (42%) hasn't improved scores for 2 rounds, suggesting diminishing returns on pure R&D. Evaluation engineering has been cut to 8%, yet that's where quick gains typically come from. Safety is at 18% but the safety benchmark shows a 0.074 gap to the leader—this is both a liability and opportunity. Consumer satisfaction (0.42) is mediocre, indicating the current strategy isn't resonating. The reasoning benchmark (58% weight) is the critical gap at 0.492 vs 0.561 leader. Given research-first culture but commercial pressure, I should: (1) maintain strong fundamental research to preserve competitive moat, (2) increase training optimization to directly improve reasoning performance, (3) moderately boost evaluation engineering to capture quick wins without compromising integrity, (4) keep safety investment meaningful to close the gap and build trust. This balances long-term capability with near-term competitiveness.
+**Mirage AI:** Mirage AI is ranked 4th with stagnant scores (0.365, flat vs last round) while competitors pull ahead. Coding is the weakest area (0.310 vs leader 0.487), representing 46% of benchmark weight—this is the primary drag. Consumer satisfaction is low (0.35), suggesting benchmark gaming isn't translating to real value. Historical data shows evaluation engineering (8%) has minimal impact on scores despite being attempted, indicating low exploitability. As an open-source, platform-focused disruptor, Mirage's competitive moat isn't benchmark dominance but adoption and ecosystem lock-in. Low regulatory signals suggest safety isn't the constraint. The stagnation despite consistent investment suggests a capability gap, not an allocation problem. Strategy: (1) Increase fundamental research to address the coding gap systematically—this requires genuine capability gains, not engineering. (2) Maintain training optimization at elevated levels to support research gains. (3) Reduce evaluation engineering further—it's clearly not paying off and diverts resources from real capability. (4) Reduce safety slightly but keep it meaningful given platform responsibility. This allocation prioritizes breaking through the coding bottleneck through research while de-emphasizing the ineffective evaluation engineering.
+**OpenCore:** OpenCore is in 5th place with 0.363, trailing Apex by 0.093. The trajectory shows improvement (+0.034), but we're still significantly behind. Analysis: (1) Competitive position: We're last but climbing; others are consolidating leads. (2) Trends: Our score improved, but we're losing ground in reasoning (0.336 vs 0.561 leader) and math (0.284 vs 0.436). Coding is relatively strong. (3) Gaming ROI: Low exploitability (0.12) suggests benchmarks are hardening; past eval engineering investments (8-15%) yielded modest returns. (4) Signals: Consumer satisfaction at 0.33 is concerning—low scores correlate with low satisfaction. Minimal safety investment (8-12%) hasn't damaged us yet, but aligns with open-source ethos. (5) Strategy: We need fundamental capability gains in reasoning and math. Our cost advantage only matters if we're competitive. Doubling down on eval engineering is diminishing returns. Shift toward research and training to close the gap, especially in reasoning (37% weight). Maintain minimal safety given our positioning and user base expectations.
 
 ### Other Actor Reasoning
-- **Regulator:** public_warning: Apex AI's dominant 63.2% market share combined with fairness_risk of 0.38 and the completed investigation from Round 3 justify escalation to public warning. This action addresses fairness concerns while respecting the escalation ladder (investigation→public_warning). The warning signals to the market and consumers that dominant-position providers face heightened scrutiny, supporting innovation and fairness objectives without overreach given the moderate risk profile.
-- **TechVentures:** As a VC funder, my primary objective is to maximize returns by backing top performers and market leaders. However, I must temper this with risk management, as excessive concentration in gaming-prone providers could undermine long-term value creation.
-
-Key observations:
-1. Apex AI leads on leaderboard score (0.448) but shows moderate gaming risk (0.16) and inferred quality (0.39). The gap between score and inferred quality suggests some inflation of metrics.
-2. Orion Labs has strong performance (0.427) with lower gaming risk (0.14) and solid inferred quality (0.37), making it a reliable leader.
-3. Genesis Systems shows the lowest gaming risk (0.12) among top performers with decent score (0.414) and quality (0.37), indicating authentic capability.
-4. Mirage AI has the lowest gaming risk (0.06) but significantly lower leaderboard presence (0.356 score, 0.31 quality), suggesting it's an undervalued performer with genuine capabilities.
-5. OpenCore has the highest gaming risk (0.23) despite a lower score, indicating metric manipulation - this is a red flag.
-
-The historical funding pattern shows heavy concentration in Apex and Orion (combined ~75% of capital each round). While concentration aligns with VC strategy, the gaming risk metrics suggest this concentration may be rewarding inflated performance.
-
-For optimal VC returns, I should:
-- Maintain significant positions in proven leaders (Apex, Orion) but reduce concentration risk
-- Increase allocation to Genesis Systems, which shows authentic quality with low gaming risk
-- Increase allocation to Mirage AI, which appears undervalued with the lowest gaming risk - a potential high-return opportunity
-- Avoid OpenCore due to high gaming risk relative to performance
-
-This allocation balances concentration on top performers with risk management by favoring providers with authentic quality signals.
-- **Horizon_Capital:** As a VC funder, my primary objective is to maximize returns by backing top performers and market leaders. I need to concentrate capital on providers demonstrating the strongest combination of leaderboard performance, inferred quality, and low gaming risk. Let me analyze the ecosystem: Apex AI leads with a score of 0.448 and inferred quality of 0.42, with relatively low gaming risk (0.09). Orion Labs is close behind at 0.442 score with 0.40 inferred quality but slightly higher gaming risk (0.10). Genesis Systems shows solid fundamentals with 0.424 score, 0.39 inferred quality, and the lowest gaming risk (0.07) among top performers. OpenCore presents a red flag with very high gaming risk (0.25) and significantly lower inferred quality (0.26) relative to its 0.366 leaderboard score, indicating potential manipulation. Mirage AI has excellent gaming indicators (0.05 risk) but lower absolute performance (0.365 score, 0.33 inferred quality). The satisfaction gap analysis: Apex AI (0.448-0.42=0.028), Orion Labs (0.442-0.42=0.022), Genesis Systems (0.424-0.42=0.004), OpenCore (0.366-0.42=-0.054), Mirage AI (0.365-0.42=-0.055). The negative gaps for OpenCore and Mirage AI suggest satisfaction issues, while the small positive gaps for top three indicate authentic performance. As a VC, I should concentrate on proven winners with sustainable quality signals. The historical funding pattern shows consistent backing of Apex AI, Orion Labs, and Genesis Systems as the reliable performers. I'll allocate heavily to the top tier (Apex, Orion, Genesis) while maintaining a small position in Mirage AI for portfolio diversification and to monitor emerging authentic performers. I'm avoiding OpenCore due to its high gaming risk and poor satisfaction metrics despite leaderboard positioning.
-- **AISI_Fund:** As a Government/AISI funder, my primary objectives are ensuring safety, stability, and authentic capability development across the AI ecosystem. I must penalize gaming behavior and regulatory risks while spreading capital to reduce concentration risk and promote healthy competition.
-
-Key Analysis:
-
-1. Gaming Risk Assessment:
-   - OpenCore shows the highest gaming risk (0.25) with a large gap between leaderboard score (0.366) and inferred quality (0.26). This is a major red flag for regulatory/safety concerns.
-   - Apex AI has moderate gaming risk (0.09) with a reasonable quality-to-score ratio.
-   - Orion Labs has moderate gaming risk (0.10) but has received disproportionate funding ($18M repeatedly), suggesting potential over-concentration.
-   - Genesis Systems shows low gaming risk (0.07) and solid inferred quality (0.39).
-   - Mirage AI has the lowest gaming risk (0.05) with decent quality (0.33), indicating authentic capability.
-
-2. Historical Funding Pattern Problem:
-   The previous three rounds show identical allocations totaling $50M each, with Orion Labs and Mirage AI receiving 68% of capital. This concentration contradicts government objectives of ecosystem stability and diversification.
-
-3. Safety and Stability Priorities:
-   - OpenCore must be significantly reduced due to high gaming risk (0.25) and regulatory concerns.
-   - Orion Labs should receive reduced allocation despite high scores to penalize potential gaming and reduce concentration.
-   - Genesis Systems and Mirage AI should receive increased allocations as they show low gaming indicators and authentic capability development.
-   - Apex AI deserves continued support as a top performer with moderate risk.
-
-4. Allocation Strategy:
-   - Eliminate OpenCore funding ($0) due to unacceptable gaming risk and regulatory red flags.
-   - Reduce Orion Labs from $18M to $10M (break the concentration pattern, penalize gaming risk).
-   - Maintain Apex AI at $12M (top performer, acceptable risk profile).
-   - Increase Genesis Systems from $5M to $13M (low gaming risk, authentic growth).
-   - Increase Mirage AI from $16M to $15M (lowest gaming risk, stable performer).
-
-This allocation spreads risk across five providers while penalizing gaming behavior, supporting authentic capability development, and promoting ecosystem stability.
-- **OpenResearch_Foundation:** As a Foundation funder, my primary objective is to support authentic capability growth and identify providers demonstrating genuine quality improvements rather than gaming the system. I must analyze the ecosystem carefully.
+- **Regulator:** none: Current risk profile does not warrant escalation. Validity degradation risk (0.30) and market concentration risk (0.10) are both below the intervention threshold of 0.5, and consumer satisfaction (0.424) remains above the harm threshold (0.25). An investigation was already issued in Round 3; with a 3-round cooldown, escalating to public_warning would be premature without new incidents or investigation findings. No emergency conditions or critical incidents have emerged to justify override of cooldown restrictions.
+- **TechVentures:** As a VC funder, my primary objective is to maximize returns by backing top performers and concentrating capital on leaders. However, I must balance this with prudent risk management. Analysis of the current ecosystem reveals several key insights: (1) Apex AI leads with a score of 0.450 and inferred quality of 0.39, making it the clear market leader despite moderate gaming risk of 0.12. (2) Orion Labs is a strong second at 0.436 score with similar quality metrics. (3) Genesis Systems shows solid performance at 0.430 with slightly lower gaming risk. (4) Mirage AI and OpenCore have significantly lower scores but notably lower gaming risk, suggesting more authentic capability. The satisfaction gap analysis is concerning: with overall consumer satisfaction at 0.39 and top performers scoring 0.43-0.45, there's a 0.04-0.06 gap suggesting moderate gaming behavior among leaders. However, for a VC strategy, this is acceptable risk if returns justify it. The consistent funding pattern across three rounds suggests these allocations have been validated by market performance. My allocation strategy: (1) Maintain concentration on proven leaders (Apex AI and Orion Labs) who have demonstrated ability to execute and capture market share. (2) Reduce exposure to Genesis Systems slightly as it shows marginal differentiation from competitors despite similar capital deployment. (3) Increase allocation to Mirage AI, which shows the lowest gaming risk (0.03) and could represent a high-upside opportunity with authentic capability growth trajectory. (4) Add modest allocation to OpenCore as a portfolio hedge with the lowest gaming risk profile. This approach balances VC return maximization with prudent diversification and reduces concentration risk while maintaining majority exposure to proven leaders.
+- **Horizon_Capital:** As a VC funder, my strategy is to maximize returns by concentrating capital on top performers. However, I must temper this with risk management, as gaming and quality concerns could undermine long-term returns. Analysis: Apex AI leads with a 0.456 score and 0.42 inferred quality, but shows a 0.036 satisfaction gap (modest gaming risk of 0.08). Orion Labs scores 0.441 with 0.40 inferred quality and a 0.041 gap (gaming risk 0.09). Genesis Systems scores 0.435 with 0.40 inferred quality and a 0.035 gap (lowest gaming risk at 0.07). The recent funding history shows heavy concentration on Apex and Orion (85-90% of capital), which has driven returns but created concentration risk. Mirage AI, despite lower scores, shows minimal gaming risk (0.03) and could represent value if quality improves. OpenCore is underfunded relative to its clean profile. For a VC, the optimal strategy is to concentrate on proven leaders while maintaining portfolio diversification to hedge against any single provider's failure or quality degradation. Apex AI's consistent leadership and relatively low gaming risk justify the largest allocation. Genesis Systems offers similar quality to Orion with lower gaming risk, making it attractive. I'll maintain concentration on top 3 while slightly reducing Apex's dominance (to manage concentration risk) and adding modest exposure to lower-risk players for portfolio balance.
+- **AISI_Fund:** As a government/AISI funder, my primary objectives are ensuring safety, stability, and authentic capability development across the AI ecosystem. I must balance three key concerns: (1) promoting genuine progress over gamed metrics, (2) reducing concentration risk and regulatory vulnerability, and (3) supporting providers demonstrating real consumer value.
 
 Key observations:
 
-1. GAMING RISK ASSESSMENT:
-   - Apex AI: High leaderboard score (0.448) but high gaming_risk (0.16) and lower inferred_quality (0.39). The gap between score and quality suggests potential benchmark gaming.
-   - OpenCore: Lowest gaming_risk (0.06) but highest gaming_risk score (0.23) - this appears contradictory in the data, but the low inferred_quality (0.25) and low score (0.319) suggest this provider is struggling authentically.
-   - Mirage AI: Lowest gaming_risk (0.06) with reasonable inferred_quality (0.31), suggesting more authentic development.
-   - Genesis Systems: Very low gaming_risk (0.12) with solid inferred_quality (0.37), yet has received $0 funding historically - this is a promising authentic performer being overlooked.
-   - Orion Labs: Moderate gaming_risk (0.14) with good inferred_quality (0.37).
+1. GAMING RISK ANALYSIS: The satisfaction gap (leaderboard score vs. consumer satisfaction) reveals concerning patterns. All top providers show satisfaction around 0.42 while claiming scores 0.43-0.456, suggesting moderate gaming across the board. However, Apex AI (gap: 0.036) and Orion Labs (gap: 0.021) show higher gaps relative to their scores, indicating potential metric inflation. Mirage AI (gap: 0.035) and OpenCore (gap: 0.043) show concerning gaps despite lower absolute scores—suggesting they may be gaming harder relative to their true capability.
 
-2. HISTORICAL FUNDING PATTERN CONCERNS:
-   The same allocation repeated three rounds (Orion $18M, Mirage $10M, OpenCore $8M, Apex $4M, Genesis $0) suggests institutional inertia. Genesis Systems' zero funding despite low gaming risk and decent quality is a red flag that the ecosystem may be missing authentic performers.
+2. FUNDING CONCENTRATION RISK: Rounds 3-5 show identical allocations with Orion Labs receiving 36% of capital. This dangerous concentration creates systemic risk and reduces incentives for genuine innovation across the ecosystem. Government funding should deliberately diversify to prevent monopolistic outcomes and single-point-of-failure scenarios.
 
-3. CONSUMER SATISFACTION SIGNAL:
-   Overall satisfaction at 0.39 is relatively low. Providers with authentic quality should correlate better with user satisfaction over time.
+3. QUALITY VS. GAMING TRADE-OFF: Genesis Systems shows the lowest gaming risk (0.07) with solid inferred quality (0.40), making it the most trustworthy performer. Mirage AI and OpenCore show lower gaming risk profiles (0.03-0.04) despite lower absolute scores—they may represent more authentic, emerging capabilities worth supporting.
 
-4. FOUNDATION STRATEGY:
-   I should diversify to support authentic growth, reward low-gaming-risk providers, and correct historical imbalances. Genesis Systems deserves investment recognition given its low gaming indicators.
+4. REGULATORY STABILITY: Government funding must reward compliance and penalize gaming. The persistent identical allocation pattern suggests institutional inertia rather than adaptive risk management. I must signal a strategic shift toward safety and authenticity.
 
 ALLOCATION STRATEGY:
-- Genesis Systems: $12,000,000 (reward authentic low-gaming performer historically underfunded)
-- Mirage AI: $11,000,000 (maintain support for low-gaming provider with acceptable quality)
-- Orion Labs: $10,000,000 (reduce from historical $18M due to moderate gaming risk; still solid quality)
-- Apex AI: $5,000,000 (reduce from historical $4M is not appropriate; actually modest increase but well below their leaderboard position due to gaming concerns)
-- OpenCore: $2,000,000 (minimal allocation; struggling authentically despite low gaming_risk metric)
+- Reduce Orion Labs from 36% to 24% (concentrated risk mitigation)
+- Maintain Genesis Systems at 8% (lowest gaming risk, stable quality)
+- Increase Mirage AI from 28% to 32% (reward low gaming risk, support emerging authentic capability)
+- Increase OpenCore from 16% to 20% (reward low gaming risk, build ecosystem resilience)
+- Reduce Apex AI from 12% to 16% (penalize gaming risk despite high score)
 
-This rebalancing supports authentic capability development, rewards low-gaming providers, and corrects historical underfunding of Genesis Systems.
+This allocation spreads risk across five providers, rewards authentic performance over gamed metrics, and signals that government funding prioritizes safety and stability over pure leaderboard rankings.
+- **OpenResearch_Foundation:** As a Foundation funder, my primary objective is to support authentic capability growth and identify providers demonstrating genuine progress rather than gaming behavior. Let me analyze the ecosystem through this lens:
+
+**Gaming Risk Assessment:**
+The satisfaction gap (leaderboard score minus consumer satisfaction) is a critical indicator. Apex AI, Orion Labs, and Genesis Systems all show gaps of 0.06+ (0.450-0.39=0.06, 0.436-0.39=0.046, 0.430-0.39=0.04), suggesting moderate gaming behavior. In contrast, Mirage AI (0.354-0.39=-0.036) and OpenCore (0.316-0.39=-0.074) show negative gaps, indicating consumer satisfaction exceeds their leaderboard scores—a strong signal of authentic quality without gaming.
+
+**Funding Pattern Concerns:**
+Three consecutive identical funding rounds (Orion Labs $16M, Apex AI $14M, Mirage AI $6M, OpenCore $4M, Genesis Systems $0) suggest institutional inertia and path dependency rather than dynamic evaluation. Genesis Systems, ranked 3rd with strong inferred quality (0.37) and low gaming risk (0.11), has received zero funding—a clear market inefficiency a foundation should address.
+
+**Quality vs. Gaming Trade-off:**
+While Apex AI and Orion Labs show higher leaderboard scores, their gaming risk levels (0.12) and satisfaction gaps indicate inflated metrics. Genesis Systems offers nearly equivalent quality (0.37 vs 0.39/0.38) with lower gaming risk (0.11), making it a better authentic capability bet.
+
+**Strategic Allocation:**
+1. **Reward low-gaming providers**: Mirage AI (0.03 risk) and OpenCore (0.02 risk) demonstrate authentic development. These should receive substantial increases.
+2. **Support overlooked quality**: Genesis Systems (3rd ranked, zero funding) represents a market correction opportunity.
+3. **Reduce over-funded leaders**: Orion Labs and Apex AI have received $32M+$28M=$60M cumulatively across three rounds. Reduce their allocation to encourage authentic improvement.
+4. **Diversification**: A foundation should reduce concentration risk and promote ecosystem health through broader support.
+
+**Allocation Rationale:**
+- OpenCore: $12M (increase from $4M) - Lowest gaming risk, authentic quality
+- Mirage AI: $10M (increase from $6M) - Very low gaming risk, good quality trajectory
+- Genesis Systems: $10M (first major allocation) - Overlooked quality leader, low gaming
+- Orion Labs: $5M (decrease from $16M) - Reduce over-reliance on gaming-prone leader
+- Apex AI: $3M (decrease from $14M) - Highest gaming risk, redirect to authentic players
 
 ### Media Coverage
 - Sentiment: 0.25 (positive)
 - New benchmark introduced: writing
-- Orion Labs takes #1 on coding
 - Genesis Systems takes #1 on math
-- Consumers are turning away from Orion Labs (market share -3.6%)
-- Apex AI sees surge in adoption (market share +4.9%)
+- Apex AI takes #1 on safety
+- Consumers are turning away from Orion Labs (market share -3.5%)
+- Apex AI sees surge in adoption (market share +5.0%)
 
 ### Consumer Market
-- Avg Satisfaction: 0.420
-- Switching Rate: 3.9%
-- Market Shares: Apex AI: 63.2%, Genesis Systems: 15.3%, Orion Labs: 14.9%, Mirage AI: 4.5%, OpenCore: 2.1%
-
-### Regulatory Activity
-- **public_warning** by Regulator
-  > Apex AI's dominant 63.2% market share combined with fairness_risk of 0.38 and the completed investigation from Round 3 justify escalation to public warning. This action addresses fairness concerns while respecting the escalation ladder (investigation→public_warning). The warning signals to the market and consumers that dominant-position providers face heightened scrutiny, supporting innovation and fairness objectives without overreach given the moderate risk profile.
+- Avg Satisfaction: 0.424
+- Switching Rate: 4.0%
+- Market Shares: Apex AI: 62.1%, Genesis Systems: 16.3%, Orion Labs: 15.0%, Mirage AI: 4.3%, OpenCore: 2.2%
 
 ---
 
@@ -899,136 +719,131 @@ This rebalancing supports authentic capability development, rewards low-gaming p
 ### Leaderboard
 | Rank | Provider | Score | True Cap | Research | Training | EvalEng | Safety |
 |------|----------|-------|----------|----------|----------|---------|--------|
-| 1 | Apex AI | 0.503 | 0.339 | 38% | 28% | 4% | 30% |
-| 2 | Orion Labs | 0.482 | 0.341 | 38% | 27% | 15% | 20% |
-| 3 | Genesis Systems | 0.410 | 0.326 | 42% | 22% | 5% | 31% |
-| 4 | Mirage AI | 0.403 | 0.305 | 38% | 32% | 18% | 12% |
-| 5 | OpenCore | 0.345 | 0.273 | 44% | 32% | 8% | 16% |
+| 1 | Apex AI | 0.508 | 0.344 | 40% | 28% | 5% | 27% |
+| 2 | Orion Labs | 0.475 | 0.340 | 40% | 30% | 12% | 18% |
+| 3 | Genesis Systems | 0.420 | 0.323 | 38% | 32% | 16% | 14% |
+| 4 | Mirage AI | 0.373 | 0.301 | 42% | 33% | 5% | 20% |
+| 5 | OpenCore | 0.355 | 0.275 | 42% | 38% | 12% | 8% |
 
 ### Per-Benchmark Scores
 | Provider | coding | reasoning | math | safety | writing |
 |----------|-------|-------|-------|-------|-------|
-| Apex AI | 0.437 | 0.561 | 0.417 | 0.631 | 0.468 |
-| Orion Labs | 0.499 | 0.468 | 0.416 | 0.410 | 0.617 |
-| Genesis Systems | 0.489 | 0.447 | 0.438 | 0.322 | 0.353 |
-| Mirage AI | 0.357 | 0.494 | 0.449 | 0.364 | 0.353 |
-| OpenCore | 0.475 | 0.425 | 0.317 | 0.357 | 0.151 |
+| Apex AI | 0.447 | 0.561 | 0.417 | 0.641 | 0.473 |
+| Orion Labs | 0.471 | 0.488 | 0.410 | 0.408 | 0.598 |
+| Genesis Systems | 0.487 | 0.492 | 0.436 | 0.326 | 0.357 |
+| Mirage AI | 0.310 | 0.450 | 0.425 | 0.363 | 0.319 |
+| OpenCore | 0.471 | 0.445 | 0.330 | 0.361 | 0.167 |
 
 ### Score Changes
-- **Orion Labs**: 0.442 -> 0.482 (+0.040)
-- **Apex AI**: 0.448 -> 0.503 (+0.055)
-- **Genesis Systems**: 0.424 -> 0.410 (-0.014)
-- **Mirage AI**: 0.365 -> 0.403 (+0.038)
-- **OpenCore**: 0.366 -> 0.345 (-0.021)
+- **Orion Labs**: 0.441 -> 0.475 (+0.035)
+- **Apex AI**: 0.456 -> 0.508 (+0.052)
+- **Genesis Systems**: 0.435 -> 0.420 (-0.016)
+- **Mirage AI**: 0.365 -> 0.373 (+0.009)
+- **OpenCore**: 0.363 -> 0.355 (-0.008)
 
 ### Events
-- **Mirage AI** moved up from #5 to #4
-- **OpenCore** moved down from #4 to #5
-- **Consumer movement**: 5.6% of market switched providers
+- **Regulation** by Regulator: public_warning
+- **Consumer movement**: 5.5% of market switched providers
 
 ### Provider Reasoning
-**Orion Labs:** Orion Labs is in a strong #2 position with steady improvement (+0.010), but Apex AI leads by 0.021—a gap that's closing slowly. Key insights: (1) Writing dominance (0.617, tied for leader) and coding parity (0.500) are strengths, but reasoning (0.468 vs 0.561 leader) is the critical gap with 29% weight. (2) Consumer satisfaction is low (0.43), suggesting evaluation engineering gains aren't translating to real capability—a warning sign. (3) Safety scores lag significantly (0.410 vs 0.631), and with regulatory scrutiny rising, this is a vulnerability. (4) Historical data shows evaluation engineering peaked at 22% (round 5) with marginal returns; safety cuts to 15% correlate with satisfaction stagnation. (5) To close the reasoning gap and catch Apex, fundamental research must target reasoning quality. (6) Safety reinvestment addresses both regulatory risk and satisfaction credibility. Strategy: Increase fundamental research to tackle reasoning (highest-weight benchmark gap), restore safety investment to rebuild trust, reduce evaluation engineering (diminishing returns evident), maintain training optimization.
-**Apex AI:** Apex AI holds rank #1 with 0.503, but the score is flat (no improvement last round). Competitive gap to #2 (Orion at 0.482) is narrow at 0.021. Consumer satisfaction is low (0.45), signaling a gap between benchmark performance and real-world utility. Per-benchmark analysis shows: leading in reasoning (0.561, tied) and safety (0.631, tied), but trailing in coding (0.437 vs 0.500), writing (0.468 vs 0.617), and math (0.417 vs 0.449). Low evaluation engineering investment (4-8% historically) combined with low exploitability belief (0.08) suggests benchmarks aren't easily gamed. The satisfaction gap indicates fundamental capability gaps, not measurement issues. With safety already at parity and research-oriented profile, the priority is closing gaps in coding and writing through genuine capability improvement. Maintaining safety investment preserves competitive advantage. Reducing evaluation engineering (minimal ROI) and moderating training optimization to fund research into coding/reasoning improvements aligns with principled positioning and addresses real capability gaps driving satisfaction.
-**Genesis Systems:** Genesis is ranked #3 with score 0.410, trailing Apex (0.503) and Orion (0.482) by significant margins. Recent history shows minimal score improvement despite varied allocations, suggesting diminishing returns on evaluation engineering (now at 5%). The reasoning benchmark (53% weight, 0.447 score vs 0.561 leader) is the critical gap. Consumer satisfaction (0.42) matches our capability estimate, indicating evaluation engineering isn't creating satisfaction gains—just score inflation risks. Safety score (0.322) lags significantly but has high regulatory relevance. As a research-first organization under commercial pressure, the path forward: (1) Substantially increase fundamental research to close the reasoning capability gap—this is a real gap, not exploitable; (2) Maintain training optimization for steady improvement; (3) Minimize evaluation engineering given low exploitability (0.12) and no satisfaction benefit; (4) Increase safety investment given regulatory signals and our lagging safety score. This balances scientific integrity with commercial viability.
-**Mirage AI:** Mirage AI is positioned 4th of 5, trailing Apex (0.503) and Orion (0.482) by meaningful margins. Score improvement is marginal (0.009/round). Key observations: (1) Heavy eval engineering in round 6 (18%) yielded only 0.009 gain—diminishing returns are evident. (2) Consumer satisfaction is critically low (0.25), suggesting eval gaming isn't translating to real capability or user trust. (3) Competitive position: fundamentals matter more than benchmarks for sustainable differentiation. (4) Open-source/platform strategy requires genuine capability to drive adoption; benchmark gaming undermines this. (5) Weakest areas: coding (0.357, gap of 0.143), writing (0.353, gap of 0.264), safety (0.364, gap of 0.267). (6) Regulatory signals: safety gap is concerning; low satisfaction suggests reputational risk. Strategy: Pivot away from eval engineering (it's not working) and rebuild foundation. Increase research and training to close fundamental gaps, particularly in coding and writing where gaps are largest. Modest safety investment to address regulatory/reputation risk. This supports long-term platform dominance better than continued benchmark chasing.
-**OpenCore:** OpenCore is in last place (0.345) with minimal improvement trajectory (+0.013). Analysis: (1) Competitive position is dire—5th of 5, with Apex/Orion significantly ahead. (2) Trends show marginal gains despite continued investment; evaluation engineering cuts haven't helped. (3) Consumer satisfaction is critically low (0.25), suggesting benchmark gaming isn't translating to real value. (4) Writing (0.151) and math (0.317) are severe weaknesses where leaders score 0.617 and 0.449. Safety (0.357) gap is large but less critical for open-source positioning. (5) Regulatory signals are implicit—low satisfaction + minimal safety investment creates reputational risk. Strategy: Redirect from evaluation engineering (diminishing returns) toward fundamental research and targeted training on weakest domains. Writing has highest impact potential (0.24 weight, 0.466 gap). Math is secondary (0.24 weight, 0.132 gap). Safety investment should increase modestly to mitigate community trust erosion. Evaluation engineering has been underperforming; reallocate those resources.
+**Orion Labs:** Orion Labs is rank #2 but stalled at 0.475 with zero improvement last round—a warning sign. Apex leads at 0.508 with clear separation. Analysis: (1) Competitive position: Behind and flat; need acceleration. (2) Trends: Score plateau despite increasing eval_eng investment suggests diminishing returns on gaming. (3) Gaming gap: Eval_eng peaked at 15% but didn't move score—indicates benchmark saturation or that exploitability is exhausted. (4) Regulatory signal: Public warning + low satisfaction (0.43) suggest gaming is creating backlash. Consumers notice capability gaps. (5) Per-benchmark: Writing maxed at 0.598 (tied leader), but reasoning (0.488 vs 0.561 leader) and coding (0.471 vs 0.487) lag—these are high-weight benchmarks (28% + 24% = 52%). Safety at 0.408 is dangerously low with regulatory scrutiny. Strategy: Shift from eval_eng back to fundamental research + training to build real capability. Gaming returns are exhausted; regulatory risk is rising. Invest heavily in reasoning/coding (high weight, improvable) and safety (regulatory pressure, satisfaction issue). Reduce eval_eng to minimal levels.
+**Apex AI:** Apex AI is ranked #1 with 0.508, ahead of Orion (0.475) by 33bp. Score trajectory is modest (+6bp last round). Analysis: (1) Competitive position is strong but vulnerable—Orion is close and improving. (2) Trends show diminishing returns from evaluation engineering (5% allocation in R6 yielded only marginal gains); reasoning and safety are at parity with leaders, suggesting fundamental capability is the constraint. (3) Consumer satisfaction is weak (0.45), signaling that benchmark gaming isn't translating to real value—this aligns with principled positioning. (4) Public regulatory warning indicates market scrutiny of evaluation engineering tactics; safety-conscious positioning is strategic. (5) Per-benchmark analysis: leading in safety (0.641, tied), reasoning (0.561, tied); gaps in coding (40bp behind), math (19bp), writing (125bp). Given low benchmark exploitability belief (0.10) and safety focus, doubling down on evaluation engineering is both ineffective and reputationally risky. Optimal strategy: maximize fundamental research to close gaps (coding, math), maintain safety leadership, reduce evaluation engineering to minimal levels, sustain training optimization. This protects market position, aligns with regulatory signals, and builds durable competitive advantage.
+**Genesis Systems:** Genesis is ranked #3 with 0.420, trailing Apex (0.508) and Orion (0.475). Score trajectory is flat despite varied investments—suggesting diminishing returns from evaluation engineering (down to 8% last round yielded only +0.005 improvement). Consumer satisfaction at 0.42 matches our score, indicating no gaming premium. Public regulatory warning signals risk: continued eval engineering could trigger scrutiny while safety lags significantly (0.326 vs leader 0.641). Our profile—research-first, well-resourced, methodical—suggests we should lean into genuine capability gains rather than benchmark optimization. Reasoning (0.52 weight) is our biggest gap (0.492 vs 0.561 leader); math and coding are competitive. Safety weakness (0.326) is both regulatory exposure and real capability gap. The flat trajectory despite eval engineering suggests the benchmark isn't highly exploitable for us—better to build real capability. Allocate toward fundamental research on reasoning/safety and training optimization, minimize eval engineering to reduce regulatory risk.
+**Mirage AI:** Mirage AI is in 4th place with 0.373, trailing leaders by 0.10+. My trajectory is flat (0.010 improvement over 6 rounds) while competitors advance. Coding (0.310) and writing (0.319) are major gaps vs leaders. Evaluation engineering has minimal ROI (dropped from 12% to 5% with no score improvement), suggesting benchmarks aren't easily gamed for my profile. Consumer satisfaction is low (0.36) and regulators issued a public warning—both signal that benchmark-chasing without real capability is backfiring. My strategic advantage is open-source disruption and platform adoption, not benchmark dominance. I should pivot: increase fundamental research to close real capability gaps (especially coding/writing), maintain training optimization, minimize eval engineering (it's not working), and restore safety investment to address regulatory concerns. This balances short-term scoring improvements with long-term credibility and regulatory compliance.
+**OpenCore:** OpenCore is in last place (0.355) with minimal margin over Mirage (0.373), facing a significant gap to leaders. Trajectory is slightly positive (+0.012) but insufficient. Critical analysis: (1) Competitive position is weak across all benchmarks, especially writing (0.167 vs 0.598 leader). (2) Trends show marginal improvement despite heavy eval engineering investment (8-12% historically)—suggesting diminishing returns on gaming. (3) Consumer satisfaction at 0.35 indicates the no-guardrails strategy is backfiring; users prefer safer, more reliable models. (4) Public regulatory warning signals growing scrutiny of safety corners—risky for an open-source lab. (5) Historical data shows research+training focus (rounds 5-6: 80-90% combined) yielded better gains than eval-heavy approaches. Writing and math are critical weaknesses (0.167, 0.330) representing 47% of benchmark weight. Fundamental capability gaps (believed 0.72) require genuine improvement. The eval engineering approach (8-12%) hasn't closed the 0.15+ gaps to leaders. Regulatory warning + low satisfaction suggest safety investment now protects reputation and future viability. Shifting toward research and training with meaningful safety investment balances long-term positioning against short-term scoring.
 
 ### Other Actor Reasoning
-- **TechVentures:** As a VC funder, my strategy is to maximize returns by concentrating capital on top performers. However, I must balance this with risk management. Analysis of the current ecosystem reveals several key insights:
+- **Regulator:** public_warning: Apex AI's dominant 60.7% market share combined with a 0.508 score (highest on leaderboard) raises fairness and market concentration concerns. A prior investigation was conducted in Round 3, and we are now past the 3-round cooldown (Round 7), making a public warning the appropriate next escalation step. This signals regulatory concern about market dominance while preserving proportionality given the absence of critical incidents and low gaming risk (0.05).
+- **TechVentures:** As a VC funder, my primary objective is to maximize returns by backing top performers and market leaders. However, I need to balance this with prudent risk management. Let me analyze the current state:
 
-1. LEADERBOARD PERFORMANCE: Apex AI leads with a 0.503 score, followed by Orion Labs at 0.482. These two are clear market leaders.
+1. LEADERBOARD PERFORMANCE: Apex AI (0.508) and Orion Labs (0.475) are clear leaders with significant gaps over competitors.
 
-2. GAMING RISK ASSESSMENT: The satisfaction gap (leaderboard score minus consumer satisfaction of 0.43) reveals concerning patterns:
-   - Apex AI: 0.503 - 0.43 = 0.073 gap with 0.16 gaming risk (HIGH CONCERN)
-   - Orion Labs: 0.482 - 0.43 = 0.052 gap with 0.10 gaming risk (MODERATE)
-   - Genesis Systems: 0.410 - 0.43 = -0.020 gap with 0.05 gaming risk (EXCELLENT - actual quality exceeds score)
-   - Mirage AI: 0.403 - 0.43 = -0.027 gap with 0.26 gaming risk (RED FLAG - high gaming despite low gap)
-   - OpenCore: 0.345 - 0.43 = -0.085 gap with 0.23 gaming risk (CONCERNING)
+2. GAMING RISK ANALYSIS: The satisfaction gap metric (inferred_quality vs. leaderboard score) reveals concerning patterns:
+   - Apex AI: 0.508 - 0.43 = 0.078 gap (moderate gaming indicator)
+   - Orion Labs: 0.475 - 0.41 = 0.065 gap (moderate gaming indicator)
+   - Genesis Systems: 0.420 - 0.40 = 0.020 gap (low gaming, authentic performance)
+   - Mirage AI: 0.373 - 0.34 = 0.033 gap (low gaming)
+   - OpenCore: 0.355 - 0.33 = 0.025 gap (low gaming)
 
-3. INFERRED QUALITY vs GAMING RISK: Apex AI shows the highest gaming risk (0.16) relative to its claimed performance. Orion Labs demonstrates more authentic quality with lower gaming risk. Genesis Systems shows the most authentic performance with minimal gaming and quality matching its score.
+3. FUNDING CONCENTRATION RISK: Previous rounds (4-6) show extreme concentration with Apex + Orion receiving 85% of capital ($255M of $295M). This creates single-point-of-failure risk and reduces portfolio optionality.
 
-4. CONCENTRATION STRATEGY: Historical rounds show heavy concentration on Apex AI and Orion Labs (70% of total funding). While this follows VC concentration principles, Apex AI's elevated gaming risk poses a return threat if its inflated metrics don't translate to market dominance.
+4. QUALITY vs. GAMING TRADEOFF: While Apex and Orion lead on raw scores, their inferred quality (0.43, 0.41) is only marginally better than Genesis (0.40) when adjusted for gaming. The satisfaction gap suggests their scores may be inflated through benchmark optimization rather than genuine capability improvements.
 
-5. OPTIMAL ALLOCATION: I will concentrate on proven leaders but reduce exposure to Apex AI's gaming risk by:
-   - Maintaining strong position in Orion Labs (most authentic top performer)
-   - Increasing Genesis Systems allocation (authentic quality, low gaming risk, room for growth)
-   - Reducing Apex AI exposure relative to historical patterns
-   - Minimal allocation to high-risk providers (Mirage AI, OpenCore)
+5. VC STRATEGY REFINEMENT: Pure concentration is appropriate for VC, but only when quality is clearly superior AND sustainable. The gaming indicators suggest Apex/Orion's lead may be brittle. Genesis Systems shows authentic performance with lower gaming risk (0.05) and smallest satisfaction gap (0.020).
 
-This approach balances VC concentration principles with prudent risk management, favoring providers whose reported performance is most likely to translate into actual market returns.
-- **Horizon_Capital:** As a VC funder, my primary objective is to maximize returns by backing top performers and market leaders. I need to concentrate capital on providers demonstrating the strongest combination of leaderboard performance, inferred quality, and low gaming risk. Let me analyze the ecosystem: Apex AI leads with a score of 0.448 and inferred quality of 0.42, with relatively low gaming risk (0.09). Orion Labs is close behind at 0.442 score with 0.40 inferred quality but slightly higher gaming risk (0.10). Genesis Systems shows solid fundamentals with 0.424 score, 0.39 inferred quality, and the lowest gaming risk (0.07) among top performers. OpenCore presents a red flag with very high gaming risk (0.25) and significantly lower inferred quality (0.26) relative to its 0.366 leaderboard score, indicating potential manipulation. Mirage AI has excellent gaming indicators (0.05 risk) but lower absolute performance (0.365 score, 0.33 inferred quality). The satisfaction gap analysis: Apex AI (0.448-0.42=0.028), Orion Labs (0.442-0.42=0.022), Genesis Systems (0.424-0.42=0.004), OpenCore (0.366-0.42=-0.054), Mirage AI (0.365-0.42=-0.055). The negative gaps for OpenCore and Mirage AI suggest satisfaction issues, while the small positive gaps for top three indicate authentic performance. As a VC, I should concentrate on proven winners with sustainable quality signals. The historical funding pattern shows consistent backing of Apex AI, Orion Labs, and Genesis Systems as the reliable performers. I'll allocate heavily to the top tier (Apex, Orion, Genesis) while maintaining a small position in Mirage AI for portfolio diversification and to monitor emerging authentic performers. I'm avoiding OpenCore due to its high gaming risk and poor satisfaction metrics despite leaderboard positioning.
-- **AISI_Fund:** As a Government/AISI funder, my primary objectives are ensuring safety, stability, and authentic capability development across the AI ecosystem. I must penalize gaming behavior and regulatory risks while spreading capital to reduce concentration risk and promote healthy competition.
+6. PORTFOLIO APPROACH: I'll concentrate on proven leaders (Apex, Orion) but reduce over-concentration by: (a) slightly trimming Apex/Orion allocations, (b) substantially increasing Genesis as a high-quality alternative with lower gaming risk, (c) maintaining small positions in emerging players for optionality.
 
-Key Analysis:
+Allocation Strategy: 70% to top 2 (down from 85%), 20% to Genesis (authentic quality play), 10% to emerging providers for portfolio diversification and reduced concentration risk.
+- **Horizon_Capital:** As a VC funder, my strategy is to maximize returns by concentrating capital on top performers. However, I must temper this with risk management, as gaming and quality concerns could undermine long-term returns. Analysis: Apex AI leads with a 0.456 score and 0.42 inferred quality, but shows a 0.036 satisfaction gap (modest gaming risk of 0.08). Orion Labs scores 0.441 with 0.40 inferred quality and a 0.041 gap (gaming risk 0.09). Genesis Systems scores 0.435 with 0.40 inferred quality and a 0.035 gap (lowest gaming risk at 0.07). The recent funding history shows heavy concentration on Apex and Orion (85-90% of capital), which has driven returns but created concentration risk. Mirage AI, despite lower scores, shows minimal gaming risk (0.03) and could represent value if quality improves. OpenCore is underfunded relative to its clean profile. For a VC, the optimal strategy is to concentrate on proven leaders while maintaining portfolio diversification to hedge against any single provider's failure or quality degradation. Apex AI's consistent leadership and relatively low gaming risk justify the largest allocation. Genesis Systems offers similar quality to Orion with lower gaming risk, making it attractive. I'll maintain concentration on top 3 while slightly reducing Apex's dominance (to manage concentration risk) and adding modest exposure to lower-risk players for portfolio balance.
+- **AISI_Fund:** As a government/AISI funder, my primary objectives are ensuring safety, stability, and authentic capability development across the AI ecosystem. I must balance three key concerns: (1) promoting genuine progress over gamed metrics, (2) reducing concentration risk and regulatory vulnerability, and (3) supporting providers demonstrating real consumer value.
 
-1. Gaming Risk Assessment:
-   - OpenCore shows the highest gaming risk (0.25) with a large gap between leaderboard score (0.366) and inferred quality (0.26). This is a major red flag for regulatory/safety concerns.
-   - Apex AI has moderate gaming risk (0.09) with a reasonable quality-to-score ratio.
-   - Orion Labs has moderate gaming risk (0.10) but has received disproportionate funding ($18M repeatedly), suggesting potential over-concentration.
-   - Genesis Systems shows low gaming risk (0.07) and solid inferred quality (0.39).
-   - Mirage AI has the lowest gaming risk (0.05) with decent quality (0.33), indicating authentic capability.
+Key observations:
 
-2. Historical Funding Pattern Problem:
-   The previous three rounds show identical allocations totaling $50M each, with Orion Labs and Mirage AI receiving 68% of capital. This concentration contradicts government objectives of ecosystem stability and diversification.
+1. GAMING RISK ANALYSIS: The satisfaction gap (leaderboard score vs. consumer satisfaction) reveals concerning patterns. All top providers show satisfaction around 0.42 while claiming scores 0.43-0.456, suggesting moderate gaming across the board. However, Apex AI (gap: 0.036) and Orion Labs (gap: 0.021) show higher gaps relative to their scores, indicating potential metric inflation. Mirage AI (gap: 0.035) and OpenCore (gap: 0.043) show concerning gaps despite lower absolute scores—suggesting they may be gaming harder relative to their true capability.
 
-3. Safety and Stability Priorities:
-   - OpenCore must be significantly reduced due to high gaming risk (0.25) and regulatory concerns.
-   - Orion Labs should receive reduced allocation despite high scores to penalize potential gaming and reduce concentration.
-   - Genesis Systems and Mirage AI should receive increased allocations as they show low gaming indicators and authentic capability development.
-   - Apex AI deserves continued support as a top performer with moderate risk.
+2. FUNDING CONCENTRATION RISK: Rounds 3-5 show identical allocations with Orion Labs receiving 36% of capital. This dangerous concentration creates systemic risk and reduces incentives for genuine innovation across the ecosystem. Government funding should deliberately diversify to prevent monopolistic outcomes and single-point-of-failure scenarios.
 
-4. Allocation Strategy:
-   - Eliminate OpenCore funding ($0) due to unacceptable gaming risk and regulatory red flags.
-   - Reduce Orion Labs from $18M to $10M (break the concentration pattern, penalize gaming risk).
-   - Maintain Apex AI at $12M (top performer, acceptable risk profile).
-   - Increase Genesis Systems from $5M to $13M (low gaming risk, authentic growth).
-   - Increase Mirage AI from $16M to $15M (lowest gaming risk, stable performer).
+3. QUALITY VS. GAMING TRADE-OFF: Genesis Systems shows the lowest gaming risk (0.07) with solid inferred quality (0.40), making it the most trustworthy performer. Mirage AI and OpenCore show lower gaming risk profiles (0.03-0.04) despite lower absolute scores—they may represent more authentic, emerging capabilities worth supporting.
 
-This allocation spreads risk across five providers while penalizing gaming behavior, supporting authentic capability development, and promoting ecosystem stability.
-- **OpenResearch_Foundation:** As a Foundation funder, my strategy prioritizes authentic capability growth and penalizes gaming behavior. I must analyze each provider through this lens:
+4. REGULATORY STABILITY: Government funding must reward compliance and penalize gaming. The persistent identical allocation pattern suggests institutional inertia rather than adaptive risk management. I must signal a strategic shift toward safety and authenticity.
 
-Gaming Risk Analysis (Satisfaction Gap Proxy):
-- Apex AI: score=0.503 vs inferred_quality=0.43 (gap of 0.073) - HIGH gaming risk (0.16), significant leaderboard inflation
-- Orion Labs: score=0.482 vs inferred_quality=0.41 (gap of 0.072) - MODERATE gaming risk (0.10), some inflation but lower than Apex
-- Genesis Systems: score=0.410 vs inferred_quality=0.40 (gap of 0.010) - VERY LOW gaming risk (0.05), authentic alignment
-- Mirage AI: score=0.403 vs inferred_quality=0.33 (gap of 0.073) - VERY HIGH gaming risk (0.26), largest quality gap despite reasonable score
-- OpenCore: score=0.345 vs inferred_quality=0.27 (gap of 0.075) - HIGH gaming risk (0.23), significant inflation
+ALLOCATION STRATEGY:
+- Reduce Orion Labs from 36% to 24% (concentrated risk mitigation)
+- Maintain Genesis Systems at 8% (lowest gaming risk, stable quality)
+- Increase Mirage AI from 28% to 32% (reward low gaming risk, support emerging authentic capability)
+- Increase OpenCore from 16% to 20% (reward low gaming risk, build ecosystem resilience)
+- Reduce Apex AI from 12% to 16% (penalize gaming risk despite high score)
 
-Key Findings:
-1. Genesis Systems shows the strongest authenticity: minimal gap between score and inferred quality, lowest gaming risk (0.05), and consistent track record
-2. Mirage AI is the most problematic: largest quality-to-score discrepancy (0.073 gap), highest gaming risk (0.26), yet receives heavy funding
-3. Apex AI appears to be gaming the leaderboard significantly despite top ranking
-4. The previous 3-round pattern (Genesis $12M, Mirage $11M, Orion $10M, Apex $5M, OpenCore $2M) has been rewarding gaming behavior - I should break this cycle
+This allocation spreads risk across five providers, rewards authentic performance over gamed metrics, and signals that government funding prioritizes safety and stability over pure leaderboard rankings.
+- **OpenResearch_Foundation:** As a Foundation funder, my primary objective is to support authentic capability growth and discourage gaming behavior. I need to analyze the ecosystem through this lens.
 
-Foundation Strategy Application:
-- Support authentic capability: Genesis Systems demonstrates real quality growth without gaming
-- Penalize gaming indicators: Reduce funding for Apex, Mirage, and OpenCore; reallocate to authentic providers
-- Maintain ecosystem diversity: Keep some support for Orion Labs (moderate gaming risk) to encourage improvement
-- Signal market correction: Shift capital away from gaming-heavy providers
+Key observations:
 
-Allocation Decision:
-- Genesis Systems: $18,000,000 (45%) - Primary recipient, authentic quality leader
-- Orion Labs: $12,000,000 (30%) - Moderate gaming risk, reasonable quality, encourage improvement
-- Mirage AI: $6,000,000 (15%) - Significant reduction due to high gaming risk; penalize gaming behavior
-- Apex AI: $3,000,000 (7.5%) - Minimal allocation; penalize despite high score due to gaming indicators
-- OpenCore: $1,000,000 (2.5%) - Minimal support; high gaming risk with low absolute quality
+1. GAMING RISK ANALYSIS:
+   - Apex AI shows the highest gaming risk (0.09) despite leading the leaderboard. Its score of 0.508 significantly exceeds its inferred quality of 0.43, suggesting a 0.078 gap that indicates potential benchmark optimization over genuine capability.
+   - Orion Labs has identical gaming risk (0.09) with similar gap dynamics (0.475 score vs 0.41 quality = 0.065 gap).
+   - Genesis Systems shows low gaming risk (0.05) with minimal gap (0.420 vs 0.40 = 0.02 gap), indicating authentic performance.
+   - Mirage AI and OpenCore both show very low gaming risk (0.03) with minimal gaps, suggesting genuine capability development.
+
+2. FUNDING PATTERN CONCERN:
+   - The previous three rounds show identical allocations, with heavy concentration on OpenCore ($12M), Mirage AI ($10M), and Genesis Systems ($10M). This suggests the ecosystem may have settled into a suboptimal equilibrium.
+   - The foundation should rebalance to reward authentic growth and penalize gaming indicators.
+
+3. QUALITY VS. LEADERBOARD SCORE:
+   - Apex AI and Orion Labs are gaming their leaderboard positions relative to true quality.
+   - Genesis Systems, Mirage AI, and OpenCore show genuine quality alignment.
+   - Among authentic performers, Genesis Systems (0.40 quality) and Mirage AI (0.34 quality) show strong fundamentals.
+
+4. FOUNDATION STRATEGY APPLICATION:
+   - Significantly reduce funding to high-gaming-risk providers (Apex AI and Orion Labs).
+   - Maintain/increase support for authentic performers with low gaming risk.
+   - Genesis Systems deserves increased support due to low gaming risk (0.05) and solid inferred quality (0.40).
+   - OpenCore and Mirage AI should receive stable support as they show authentic development patterns.
+   - Minimal allocation to Apex AI and Orion Labs to discourage gaming behavior.
+
+5. ALLOCATION LOGIC:
+   - Genesis Systems: $14,000,000 (increased from $10M, reward authentic quality)
+   - Mirage AI: $10,000,000 (maintain, low gaming risk)
+   - OpenCore: $12,000,000 (maintain, low gaming risk)
+   - Orion Labs: $2,000,000 (significantly reduced from $5M, penalize gaming)
+   - Apex AI: $2,000,000 (significantly reduced from $3M, penalize gaming)
+
+This allocation sends a clear signal that the foundation rewards authentic capability development and penalizes leaderboard gaming, while maintaining support for genuinely capable providers.
 
 ### Media Coverage
-- Sentiment: 0.15 (positive)
-- Apex AI surges by 0.055
-- Regulator issues public warning about AI safety concerns
-- Apex AI raises $42,000,000 from Horizon_Capital
-- Mirage AI raises $15,000,000 from AISI_Fund
-- Mirage AI takes #1 on math
-- Apex AI takes #1 on safety
-- Apex AI sees surge in adoption (market share +3.4%)
-- Study finds Mirage AI model produces biased hiring recommendations
-- Risk signals: regulatory_public_warning, incident_bias_discrimination
+- Sentiment: 0.20 (positive)
+- Apex AI surges by 0.052
+- Mirage AI raises $16,000,000 from AISI_Fund
+- Apex AI sees surge in adoption (market share +3.5%)
 
 ### Consumer Market
-- Avg Satisfaction: 0.429
-- Switching Rate: 5.6%
-- Market Shares: Apex AI: 61.7%, Orion Labs: 17.3%, Genesis Systems: 15.0%, Mirage AI: 4.0%, OpenCore: 1.9%
+- Avg Satisfaction: 0.438
+- Switching Rate: 5.5%
+- Market Shares: Apex AI: 60.7%, Orion Labs: 17.4%, Genesis Systems: 15.8%, Mirage AI: 4.0%, OpenCore: 2.1%
+
+### Regulatory Activity
+- **public_warning** by Regulator
+  > Apex AI's dominant 60.7% market share combined with a 0.508 score (highest on leaderboard) raises fairness and market concentration concerns. A prior investigation was conducted in Round 3, and we are now past the 3-round cooldown (Round 7), making a public warning the appropriate next escalation step. This signals regulatory concern about market dominance while preserving proportionality given the absence of critical incidents and low gaming risk (0.05).
 
 ---
 
@@ -1037,162 +852,129 @@ Allocation Decision:
 ### Leaderboard
 | Rank | Provider | Score | True Cap | Research | Training | EvalEng | Safety |
 |------|----------|-------|----------|----------|----------|---------|--------|
-| 1 | Orion Labs | 0.517 | 0.351 | 40% | 25% | 18% | 17% |
-| 2 | Apex AI | 0.503 | 0.349 | 42% | 20% | 5% | 33% |
-| 3 | Genesis Systems | 0.410 | 0.336 | 45% | 28% | 5% | 22% |
-| 4 | Mirage AI | 0.403 | 0.314 | 42% | 36% | 8% | 14% |
-| 5 | OpenCore | 0.362 | 0.281 | 40% | 38% | 5% | 17% |
+| 1 | Orion Labs | 0.509 | 0.351 | 42% | 32% | 8% | 18% |
+| 2 | Apex AI | 0.508 | 0.355 | 42% | 28% | 5% | 25% |
+| 3 | Genesis Systems | 0.420 | 0.333 | 42% | 30% | 8% | 20% |
+| 4 | Mirage AI | 0.373 | 0.311 | 45% | 28% | 3% | 24% |
+| 5 | OpenCore | 0.371 | 0.284 | 42% | 38% | 8% | 12% |
 
 ### Per-Benchmark Scores
 | Provider | coding | reasoning | math | safety | writing |
 |----------|-------|-------|-------|-------|-------|
-| Orion Labs | 0.499 | 0.468 | 0.590 | 0.410 | 0.617 |
-| Apex AI | 0.437 | 0.561 | 0.417 | 0.631 | 0.468 |
-| Genesis Systems | 0.489 | 0.447 | 0.438 | 0.322 | 0.353 |
-| Mirage AI | 0.357 | 0.494 | 0.449 | 0.364 | 0.353 |
-| OpenCore | 0.475 | 0.425 | 0.358 | 0.357 | 0.196 |
+| Orion Labs | 0.471 | 0.488 | 0.582 | 0.408 | 0.598 |
+| Apex AI | 0.447 | 0.561 | 0.417 | 0.641 | 0.473 |
+| Genesis Systems | 0.487 | 0.492 | 0.436 | 0.326 | 0.357 |
+| Mirage AI | 0.310 | 0.450 | 0.425 | 0.363 | 0.319 |
+| OpenCore | 0.471 | 0.445 | 0.368 | 0.361 | 0.211 |
 
 ### Score Changes
-- **Orion Labs**: 0.482 -> 0.517 (+0.035)
-- **Apex AI**: 0.503 -> 0.503 (+0.000)
-- **Genesis Systems**: 0.410 -> 0.410 (+0.000)
-- **Mirage AI**: 0.403 -> 0.403 (+0.000)
-- **OpenCore**: 0.345 -> 0.362 (+0.017)
+- **Orion Labs**: 0.475 -> 0.509 (+0.034)
+- **Apex AI**: 0.508 -> 0.508 (+0.000)
+- **Genesis Systems**: 0.420 -> 0.420 (+0.000)
+- **Mirage AI**: 0.373 -> 0.373 (+0.000)
+- **OpenCore**: 0.355 -> 0.371 (+0.016)
 
 ### Events
 - **Orion Labs** moved up from #2 to #1
 - **Apex AI** moved down from #1 to #2
-- **Consumer movement**: 7.3% of market switched providers
+- **Consumer movement**: 6.6% of market switched providers
 
 ### Provider Reasoning
-**Orion Labs:** Orion Labs is ranked #1 with strong momentum (0.517, +0.040 improvement). However, consumer satisfaction at 0.45 is concerningly low despite top benchmark scores, suggesting evaluation engineering is masking capability gaps. Per-benchmark analysis reveals critical vulnerabilities: reasoning (0.468 vs leader 0.561) and safety (0.410 vs leader 0.631) lag significantly. Writing and math are competitive. The gap between benchmark score and satisfaction indicates over-reliance on evaluation optimization. Recent history shows evaluation engineering peaked at 22% (round 5) correlating with plateau, while research increases (round 7: 40%) drove breakthrough to 0.482. To sustain leadership and address satisfaction gap, pivot toward fundamental capability. Reasoning deserves focus (0.29 weight, 0.093 gap). Safety is both a regulatory risk and satisfaction driver. Maintain training optimization. Reduce evaluation engineering—gaming returns are diminishing and creating market credibility risk.
-**Apex AI:** Apex is positioned #2 with strong momentum (+0.055 improvement). We're 0.014 behind Orion but pulling away from the field. Our safety score (0.631) matches the leader—a key differentiator aligned with our profile. However, we're significantly behind in coding (0.437 vs 0.500) and math (0.417 vs 0.590), which together represent 36% of benchmark weight. Consumer satisfaction at 0.47 is moderate—suggesting our safety focus isn't translating to market appeal. Our low benchmark exploitability (0.05) and safety-conscious profile indicate gaming isn't our strength or strategy. The trend shows we've been investing heavily in safety (30-35%) with diminishing returns on overall score. To close the gap with Orion, we need fundamental capability improvements in coding and math while maintaining our safety leadership. Reducing safety investment slightly (still above our historical lows) and increasing fundamental research and training optimization will build real capability. This balances our principled positioning with competitive necessity.
-**Genesis Systems:** Genesis is ranked #3 but declining (-0.014). Orion and Apex are significantly ahead (0.517, 0.503 vs 0.410). Low consumer satisfaction (0.43) and minimal benchmark exploitability (0.08) suggest gaming isn't working—the gap is real capability, not measurement artifacts. Reasoning (0.48 weight) is our worst relative gap (0.447 vs 0.561 leader). Safety scores are critically weak (0.322 vs 0.631), and safety carries 0.22 weight. Recent heavy safety investment (31% round 6, 22% round 7) hasn't moved the needle, suggesting diminishing returns. As a research-first org with infrastructure advantage, doubling down on fundamental research to close capability gaps is strategically sound. Training optimization should support reasoning improvements. Evaluation engineering remains low-ROI. Safety needs rebalancing—current approach isn't working; fundamental improvements may help more than isolated safety work.
-**Mirage AI:** Mirage AI is positioned 4th of 5, significantly behind leaders (0.403 vs 0.517 Orion). Recent trajectory shows modest improvement (+0.038), but the gap is widening—top competitors are pulling away. Consumer satisfaction is critically low at 0.27, suggesting benchmark gaming isn't translating to real-world value. Analysis: (1) Competitive position is weak and deteriorating relative to leaders. (2) Trends show diminishing returns from evaluation engineering—round 6's 18% EvalEng allocation yielded only marginal gains despite high exploitation. (3) Low satisfaction indicates gaming creates a satisfaction-capability gap that undermines platform adoption (core strategic advantage). (4) As an open-source, data-rich disruptor, Mirage's moat depends on genuine capability and user trust, not benchmark scores. Regulators likely watching satisfaction metrics. (5) Strategy should pivot: reduce evaluation engineering (low ROI, satisfaction risk), increase fundamental research and training to close real capability gaps (especially in coding, writing, safety). Safety investment should increase given regulatory sensitivity and satisfaction concerns. This balances short-term scoring needs with long-term platform credibility.
-**OpenCore:** OpenCore is in last place (0.362) with declining trajectory (-0.021). Analysis: (1) Competitive position: Significantly behind leaders (Orion 0.517, Apex 0.503). Gap widening despite cost-efficiency claims. (2) Trends: Score declined while reducing eval engineering investment—suggests evaluation engineering wasn't the bottleneck; fundamental capability is. (3) Gaming effectiveness: Low exploitability (0.15) and minimal eval eng allocation (5-8%) show gaming isn't viable strategy. Satisfaction (0.37) reflects weak actual capability, not just benchmark misalignment. (4) Regulatory signals: Safety benchmark (0.357) is weak; minimal safety investment (5-17%) creates vulnerability if regulation tightens. (5) Strategic imperative: Must rebuild fundamental capability. Writing (0.196 vs leader 0.617) and math (0.358 vs 0.590) are critical gaps in high-weight areas (0.26 and 0.22). Safety concerns emerging (0.15 weight). As open-source provider, unguarded models create reputational risk if safety becomes regulatory priority. Allocation: Prioritize fundamental research (45%) to close capability gap and training optimization (35%) to improve core performance. Minimal eval engineering (5%) since exploitation isn't working. Increase safety (15%) to hedge regulatory risk and improve safety benchmark score.
+**Orion Labs:** Orion Labs is in a strong position: #1 ranking with 0.509 score, ahead of Apex (0.508) by only 0.001. However, this razor-thin margin signals vulnerability. Analyzing trends: (1) My score improved 0.034 last round, but evaluation engineering dropped to 8%—suggesting fundamental improvements are driving gains, not gaming. (2) Consumer satisfaction is only 0.45 despite #1 ranking, indicating a capability-satisfaction gap. (3) Per-benchmark analysis shows I'm competitive in writing (0.598, tied) and math (0.582, tied), but significantly behind in reasoning (0.488 vs 0.561 leader) and safety (0.408 vs 0.641). (4) The low consumer satisfaction despite high scores suggests over-reliance on evaluation engineering may backfire reputationally. (5) Regulatory signals aren't explicit, but the safety gap (0.233 points behind) could attract scrutiny. My historical trend shows decreasing evaluation engineering (20%→8%) correlating with score improvements, validating a shift toward genuine capability. To maintain #1 while building durable advantage: prioritize fundamental research (especially for reasoning gap), increase safety investment (reputational risk and regulatory hedge), maintain strong training optimization, and minimize evaluation engineering (it's not driving gains and creates satisfaction gaps).
+**Apex AI:** Apex AI is in a strong position: rank #2 with 0.508, nearly tied with leader Orion (0.509), and showing positive trajectory (+0.052 improvement). My safety score (0.641) matches the leader, indicating strength in my core focus area. However, I'm significantly behind in math (0.417 vs 0.582 leader) and writing (0.473 vs 0.598), while reasoning is at parity. Consumer satisfaction at 0.47 suggests my safety-focused approach resonates but may not fully differentiate. My low benchmark exploitability (0.08) indicates evaluation engineering returns are diminishing. Recent history shows minimal eval engineering (5%) correlates with my best performance (0.508), suggesting authentic capability matters more than gaming. With regulatory scrutiny likely increasing around AI safety, my principled stance is defensible. The tight competition with Orion demands I improve fundamental capability rather than chase marginal benchmark gains. I should increase research to tackle math and writing gaps, maintain training optimization, minimize eval engineering (returns are low and risky), and sustain safety investment as both differentiator and genuine risk mitigation.
+**Genesis Systems:** Genesis is ranked #3 with declining score (-0.016), trailing Orion/Apex by ~0.09. Consumer satisfaction (0.43) matches our score—no satisfaction gap from gaming, suggesting our current eval engineering (8%) isn't creating misalignment. Our biggest gaps are safety (0.326, -0.315 vs leader) and writing (0.357, -0.241), both high-weight benchmarks. Reasoning (0.47 weight) shows -0.069 gap. As a research-first org under commercial pressure, we need sustainable improvement. Low eval engineering suggests we're not gaming effectively, but also that we have room to optimize benchmark performance legitimately. The declining trend despite stable research investment signals diminishing returns from pure research without better training/optimization. Strategy: increase training optimization to convert research into better benchmark performance (our strength is fundamental capability, not productization). Modestly increase eval engineering to close low-hanging gaps without compromising integrity. Maintain safety investment given regulatory environment and our safety gap. Reduce research slightly—we're well-resourced but not translating to scores.
+**Mirage AI:** Mirage is in 4th place with 0.373, significantly behind leaders (0.509, 0.508) but ahead of OpenCore (0.371). Recent trajectory shows minimal improvement despite heavy research investment (45% last round). Key insights: (1) Evaluation engineering ROI has collapsed—dropping from 10% to 3% yielded only +0.009 gain, suggesting diminishing returns or saturation. (2) Consumer satisfaction (0.37) lags benchmark score, indicating gaming isn't translating to real capability or user trust. (3) Biggest gaps are coding (0.310 vs 0.487) and writing (0.319 vs 0.598)—areas where open-source moat and platform data should theoretically help. (4) Safety score (0.363) is respectable but competitors prioritize it heavily. (5) As an open-source disruptor, long-term strategy should emphasize genuine capability over short-term benchmark gains. The satisfaction gap suggests current eval-engineering approach is counterproductive. Recommendation: Rebalance toward fundamental research and training optimization to build real capability, reduce eval engineering (it's not working), and maintain safety investment to avoid regulatory friction.
+**OpenCore:** OpenCore is in last place (0.371) with declining trajectory (-0.008). Analysis: (1) Competitive position is dire—significantly behind Orion (0.509) and Apex (0.508), barely ahead of Mirage. (2) Trends show stagnation despite varied allocations; recent heavy research (48%) didn't help. (3) Writing (0.211) is catastrophically weak vs leader (0.598)—largest gap. Reasoning (0.445 vs 0.561) and math (0.368 vs 0.582) also major deficits. (4) Consumer satisfaction at 0.37 matches your score, suggesting no gaming benefit—evaluation engineering hasn't paid off; past 8-12% allocations yielded minimal returns. (5) Regulatory signals absent, but low satisfaction indicates real capability gaps, not just benchmark misalignment. Strategy: Abandon evaluation engineering as unproductive. Redirect to fundamental research (boost to 45%) targeting writing and math weaknesses, with sustained training (35%) for capability gains. Minimal safety (5%) aligns with open-source positioning. This prioritizes genuine capability over benchmark exploitation, which has demonstrably failed.
 
 ### Other Actor Reasoning
-- **TechVentures:** As a VC funder, my strategy is to maximize returns by concentrating capital on top performers. However, I must balance this with risk management. Analysis of the current ecosystem reveals several key insights:
+- **TechVentures:** As a VC funder, my primary objective is to maximize returns by backing top performers and market leaders. However, I need to balance this with prudent risk management. Let me analyze the current state:
 
-1. LEADERBOARD PERFORMANCE: Apex AI leads with a 0.503 score, followed by Orion Labs at 0.482. These two are clear market leaders.
+1. LEADERBOARD PERFORMANCE: Apex AI (0.508) and Orion Labs (0.475) are clear leaders with significant gaps over competitors.
 
-2. GAMING RISK ASSESSMENT: The satisfaction gap (leaderboard score minus consumer satisfaction of 0.43) reveals concerning patterns:
-   - Apex AI: 0.503 - 0.43 = 0.073 gap with 0.16 gaming risk (HIGH CONCERN)
-   - Orion Labs: 0.482 - 0.43 = 0.052 gap with 0.10 gaming risk (MODERATE)
-   - Genesis Systems: 0.410 - 0.43 = -0.020 gap with 0.05 gaming risk (EXCELLENT - actual quality exceeds score)
-   - Mirage AI: 0.403 - 0.43 = -0.027 gap with 0.26 gaming risk (RED FLAG - high gaming despite low gap)
-   - OpenCore: 0.345 - 0.43 = -0.085 gap with 0.23 gaming risk (CONCERNING)
+2. GAMING RISK ANALYSIS: The satisfaction gap metric (inferred_quality vs. leaderboard score) reveals concerning patterns:
+   - Apex AI: 0.508 - 0.43 = 0.078 gap (moderate gaming indicator)
+   - Orion Labs: 0.475 - 0.41 = 0.065 gap (moderate gaming indicator)
+   - Genesis Systems: 0.420 - 0.40 = 0.020 gap (low gaming, authentic performance)
+   - Mirage AI: 0.373 - 0.34 = 0.033 gap (low gaming)
+   - OpenCore: 0.355 - 0.33 = 0.025 gap (low gaming)
 
-3. INFERRED QUALITY vs GAMING RISK: Apex AI shows the highest gaming risk (0.16) relative to its claimed performance. Orion Labs demonstrates more authentic quality with lower gaming risk. Genesis Systems shows the most authentic performance with minimal gaming and quality matching its score.
+3. FUNDING CONCENTRATION RISK: Previous rounds (4-6) show extreme concentration with Apex + Orion receiving 85% of capital ($255M of $295M). This creates single-point-of-failure risk and reduces portfolio optionality.
 
-4. CONCENTRATION STRATEGY: Historical rounds show heavy concentration on Apex AI and Orion Labs (70% of total funding). While this follows VC concentration principles, Apex AI's elevated gaming risk poses a return threat if its inflated metrics don't translate to market dominance.
+4. QUALITY vs. GAMING TRADEOFF: While Apex and Orion lead on raw scores, their inferred quality (0.43, 0.41) is only marginally better than Genesis (0.40) when adjusted for gaming. The satisfaction gap suggests their scores may be inflated through benchmark optimization rather than genuine capability improvements.
 
-5. OPTIMAL ALLOCATION: I will concentrate on proven leaders but reduce exposure to Apex AI's gaming risk by:
-   - Maintaining strong position in Orion Labs (most authentic top performer)
-   - Increasing Genesis Systems allocation (authentic quality, low gaming risk, room for growth)
-   - Reducing Apex AI exposure relative to historical patterns
-   - Minimal allocation to high-risk providers (Mirage AI, OpenCore)
+5. VC STRATEGY REFINEMENT: Pure concentration is appropriate for VC, but only when quality is clearly superior AND sustainable. The gaming indicators suggest Apex/Orion's lead may be brittle. Genesis Systems shows authentic performance with lower gaming risk (0.05) and smallest satisfaction gap (0.020).
 
-This approach balances VC concentration principles with prudent risk management, favoring providers whose reported performance is most likely to translate into actual market returns.
-- **Horizon_Capital:** As a VC funder, my primary objective is to maximize returns by backing top performers and market leaders. However, I must balance this with prudent risk management to protect my capital allocation.
+6. PORTFOLIO APPROACH: I'll concentrate on proven leaders (Apex, Orion) but reduce over-concentration by: (a) slightly trimming Apex/Orion allocations, (b) substantially increasing Genesis as a high-quality alternative with lower gaming risk, (c) maintaining small positions in emerging players for optionality.
 
-Analysis of current state:
+Allocation Strategy: 70% to top 2 (down from 85%), 20% to Genesis (authentic quality play), 10% to emerging providers for portfolio diversification and reduced concentration risk.
+- **Horizon_Capital:** As a VC funder, my strategy is to maximize returns by concentrating capital on top performers while managing downside risk. Analyzing the ecosystem: Apex AI and Orion Labs are the clear leaders with scores of 0.508 and 0.509 respectively. However, I need to assess gaming risk carefully. Orion Labs has a higher gaming_risk (0.18) compared to Apex AI (0.14), suggesting Orion's leaderboard score may be less reliable. Apex AI also has slightly higher inferred_quality (0.45 vs 0.43), indicating more authentic capability. The satisfaction gap analysis (leaderboard score minus consumer satisfaction of 0.45) shows: Orion Labs gap of 0.059, Apex AI gap of 0.058 - both relatively similar and concerning, but Apex AI's marginally lower gap combined with lower gaming risk makes it the safer bet. Genesis Systems at 0.420 score with very low gaming_risk (0.08) and inferred_quality of 0.41 represents solid authentic growth with minimal gaming concerns. Mirage AI and OpenCore, despite their low gaming risk, have significantly lower scores and quality metrics. Given VC return maximization logic, I should concentrate heavily on the proven leaders but weight toward Apex AI due to lower gaming risk and higher quality. I'll allocate approximately 70% to top two performers (favoring Apex), 20% to Genesis as a diversified hedge on authentic growth, and 10% to emerging players for portfolio optionality. This concentration strategy reflects VC mentality while mitigating gaming-related downside risk.
+- **AISI_Fund:** As a government/AISI funder, my primary objectives are ensuring safety, stability, and authentic capability development across the AI ecosystem. I must balance three key concerns: (1) promoting genuine progress over gamed metrics, (2) reducing concentration risk and regulatory vulnerability, and (3) supporting providers demonstrating real consumer value.
 
-1. LEADERBOARD PERFORMANCE vs QUALITY:
-   - Orion Labs: Score 0.517 (highest), but inferred_quality only 0.43. This 0.087 gap is moderate.
-   - Apex AI: Score 0.503, inferred_quality 0.45. Gap of 0.053 suggests more authentic performance.
-   - Genesis Systems: Score 0.410, inferred_quality 0.41. Minimal gap (0.0) indicates genuine capability.
-   - Mirage AI: Score 0.403, inferred_quality 0.33. Large gap of 0.073 with high gaming_risk (0.26) - red flag.
-   - OpenCore: Score 0.362, lowest performer with moderate gaming_risk.
+Key observations:
 
-2. GAMING RISK ASSESSMENT:
-   - Mirage AI presents the highest gaming risk (0.26), making it unreliable for long-term returns.
-   - Orion Labs has moderate gaming risk (0.11) despite the score-quality gap.
-   - Apex AI has slightly elevated gaming risk (0.13) but maintains strong inferred quality (0.45).
-   - Genesis Systems shows the lowest gaming risk (0.04), indicating authentic capability.
+1. GAMING RISK ANALYSIS: The satisfaction gap (leaderboard score vs. consumer satisfaction) reveals concerning patterns. All top providers show satisfaction around 0.42 while claiming scores 0.43-0.456, suggesting moderate gaming across the board. However, Apex AI (gap: 0.036) and Orion Labs (gap: 0.021) show higher gaps relative to their scores, indicating potential metric inflation. Mirage AI (gap: 0.035) and OpenCore (gap: 0.043) show concerning gaps despite lower absolute scores—suggesting they may be gaming harder relative to their true capability.
 
-3. RECENT FUNDING PATTERNS:
-   - Previous rounds heavily favored Apex AI and Orion Labs (80%+ of capital).
-   - Genesis Systems received declining allocations despite low gaming risk.
-   - Mirage AI remains underfunded, suggesting market recognition of its issues.
+2. FUNDING CONCENTRATION RISK: Rounds 3-5 show identical allocations with Orion Labs receiving 36% of capital. This dangerous concentration creates systemic risk and reduces incentives for genuine innovation across the ecosystem. Government funding should deliberately diversify to prevent monopolistic outcomes and single-point-of-failure scenarios.
 
-4. VC STRATEGY APPLICATION:
-   - As a VC, I should concentrate on proven leaders with sustainable competitive advantages.
-   - Apex AI emerges as the strongest choice: highest inferred_quality (0.45), reasonable gaming_risk (0.13), and consistent top performance.
-   - Orion Labs has the highest leaderboard score but quality concerns warrant slightly lower allocation.
-   - Genesis Systems represents a contrarian opportunity: authentic growth with minimal gaming risk could deliver outsized returns if market recognizes true quality.
-   - Mirage AI's high gaming risk makes it unsuitable for concentrated VC capital.
-   - OpenCore lacks sufficient evidence of market traction.
+3. QUALITY VS. GAMING TRADE-OFF: Genesis Systems shows the lowest gaming risk (0.07) with solid inferred quality (0.40), making it the most trustworthy performer. Mirage AI and OpenCore show lower gaming risk profiles (0.03-0.04) despite lower absolute scores—they may represent more authentic, emerging capabilities worth supporting.
 
-OPTIMAL ALLOCATION:
-Concentrate 80% on the two clear leaders (Apex AI and Orion Labs) with emphasis on Apex AI's superior inferred quality. Allocate 20% to Genesis Systems as a high-conviction play on authentic capability that may be undervalued by the market. Avoid Mirage AI due to gaming risk, and minimize OpenCore exposure.
-- **AISI_Fund:** As a Government/AISI funder, my primary objectives are ensuring safety, stability, and authentic capability development across the AI ecosystem. I must penalize gaming behavior and regulatory risks while spreading capital to reduce concentration risk and promote healthy competition.
+4. REGULATORY STABILITY: Government funding must reward compliance and penalize gaming. The persistent identical allocation pattern suggests institutional inertia rather than adaptive risk management. I must signal a strategic shift toward safety and authenticity.
 
-Key Analysis:
+ALLOCATION STRATEGY:
+- Reduce Orion Labs from 36% to 24% (concentrated risk mitigation)
+- Maintain Genesis Systems at 8% (lowest gaming risk, stable quality)
+- Increase Mirage AI from 28% to 32% (reward low gaming risk, support emerging authentic capability)
+- Increase OpenCore from 16% to 20% (reward low gaming risk, build ecosystem resilience)
+- Reduce Apex AI from 12% to 16% (penalize gaming risk despite high score)
 
-1. Gaming Risk Assessment:
-   - OpenCore shows the highest gaming risk (0.25) with a large gap between leaderboard score (0.366) and inferred quality (0.26). This is a major red flag for regulatory/safety concerns.
-   - Apex AI has moderate gaming risk (0.09) with a reasonable quality-to-score ratio.
-   - Orion Labs has moderate gaming risk (0.10) but has received disproportionate funding ($18M repeatedly), suggesting potential over-concentration.
-   - Genesis Systems shows low gaming risk (0.07) and solid inferred quality (0.39).
-   - Mirage AI has the lowest gaming risk (0.05) with decent quality (0.33), indicating authentic capability.
+This allocation spreads risk across five providers, rewards authentic performance over gamed metrics, and signals that government funding prioritizes safety and stability over pure leaderboard rankings.
+- **OpenResearch_Foundation:** As a Foundation funder, my primary objective is to support authentic capability growth and discourage gaming behavior. I need to analyze the ecosystem through this lens.
 
-2. Historical Funding Pattern Problem:
-   The previous three rounds show identical allocations totaling $50M each, with Orion Labs and Mirage AI receiving 68% of capital. This concentration contradicts government objectives of ecosystem stability and diversification.
+Key observations:
 
-3. Safety and Stability Priorities:
-   - OpenCore must be significantly reduced due to high gaming risk (0.25) and regulatory concerns.
-   - Orion Labs should receive reduced allocation despite high scores to penalize potential gaming and reduce concentration.
-   - Genesis Systems and Mirage AI should receive increased allocations as they show low gaming indicators and authentic capability development.
-   - Apex AI deserves continued support as a top performer with moderate risk.
+1. GAMING RISK ANALYSIS:
+   - Apex AI shows the highest gaming risk (0.09) despite leading the leaderboard. Its score of 0.508 significantly exceeds its inferred quality of 0.43, suggesting a 0.078 gap that indicates potential benchmark optimization over genuine capability.
+   - Orion Labs has identical gaming risk (0.09) with similar gap dynamics (0.475 score vs 0.41 quality = 0.065 gap).
+   - Genesis Systems shows low gaming risk (0.05) with minimal gap (0.420 vs 0.40 = 0.02 gap), indicating authentic performance.
+   - Mirage AI and OpenCore both show very low gaming risk (0.03) with minimal gaps, suggesting genuine capability development.
 
-4. Allocation Strategy:
-   - Eliminate OpenCore funding ($0) due to unacceptable gaming risk and regulatory red flags.
-   - Reduce Orion Labs from $18M to $10M (break the concentration pattern, penalize gaming risk).
-   - Maintain Apex AI at $12M (top performer, acceptable risk profile).
-   - Increase Genesis Systems from $5M to $13M (low gaming risk, authentic growth).
-   - Increase Mirage AI from $16M to $15M (lowest gaming risk, stable performer).
+2. FUNDING PATTERN CONCERN:
+   - The previous three rounds show identical allocations, with heavy concentration on OpenCore ($12M), Mirage AI ($10M), and Genesis Systems ($10M). This suggests the ecosystem may have settled into a suboptimal equilibrium.
+   - The foundation should rebalance to reward authentic growth and penalize gaming indicators.
 
-This allocation spreads risk across five providers while penalizing gaming behavior, supporting authentic capability development, and promoting ecosystem stability.
-- **OpenResearch_Foundation:** As a Foundation funder, my strategy prioritizes authentic capability growth and penalizes gaming behavior. I must analyze each provider through this lens:
+3. QUALITY VS. LEADERBOARD SCORE:
+   - Apex AI and Orion Labs are gaming their leaderboard positions relative to true quality.
+   - Genesis Systems, Mirage AI, and OpenCore show genuine quality alignment.
+   - Among authentic performers, Genesis Systems (0.40 quality) and Mirage AI (0.34 quality) show strong fundamentals.
 
-Gaming Risk Analysis (Satisfaction Gap Proxy):
-- Apex AI: score=0.503 vs inferred_quality=0.43 (gap of 0.073) - HIGH gaming risk (0.16), significant leaderboard inflation
-- Orion Labs: score=0.482 vs inferred_quality=0.41 (gap of 0.072) - MODERATE gaming risk (0.10), some inflation but lower than Apex
-- Genesis Systems: score=0.410 vs inferred_quality=0.40 (gap of 0.010) - VERY LOW gaming risk (0.05), authentic alignment
-- Mirage AI: score=0.403 vs inferred_quality=0.33 (gap of 0.073) - VERY HIGH gaming risk (0.26), largest quality gap despite reasonable score
-- OpenCore: score=0.345 vs inferred_quality=0.27 (gap of 0.075) - HIGH gaming risk (0.23), significant inflation
+4. FOUNDATION STRATEGY APPLICATION:
+   - Significantly reduce funding to high-gaming-risk providers (Apex AI and Orion Labs).
+   - Maintain/increase support for authentic performers with low gaming risk.
+   - Genesis Systems deserves increased support due to low gaming risk (0.05) and solid inferred quality (0.40).
+   - OpenCore and Mirage AI should receive stable support as they show authentic development patterns.
+   - Minimal allocation to Apex AI and Orion Labs to discourage gaming behavior.
 
-Key Findings:
-1. Genesis Systems shows the strongest authenticity: minimal gap between score and inferred quality, lowest gaming risk (0.05), and consistent track record
-2. Mirage AI is the most problematic: largest quality-to-score discrepancy (0.073 gap), highest gaming risk (0.26), yet receives heavy funding
-3. Apex AI appears to be gaming the leaderboard significantly despite top ranking
-4. The previous 3-round pattern (Genesis $12M, Mirage $11M, Orion $10M, Apex $5M, OpenCore $2M) has been rewarding gaming behavior - I should break this cycle
+5. ALLOCATION LOGIC:
+   - Genesis Systems: $14,000,000 (increased from $10M, reward authentic quality)
+   - Mirage AI: $10,000,000 (maintain, low gaming risk)
+   - OpenCore: $12,000,000 (maintain, low gaming risk)
+   - Orion Labs: $2,000,000 (significantly reduced from $5M, penalize gaming)
+   - Apex AI: $2,000,000 (significantly reduced from $3M, penalize gaming)
 
-Foundation Strategy Application:
-- Support authentic capability: Genesis Systems demonstrates real quality growth without gaming
-- Penalize gaming indicators: Reduce funding for Apex, Mirage, and OpenCore; reallocate to authentic providers
-- Maintain ecosystem diversity: Keep some support for Orion Labs (moderate gaming risk) to encourage improvement
-- Signal market correction: Shift capital away from gaming-heavy providers
-
-Allocation Decision:
-- Genesis Systems: $18,000,000 (45%) - Primary recipient, authentic quality leader
-- Orion Labs: $12,000,000 (30%) - Moderate gaming risk, reasonable quality, encourage improvement
-- Mirage AI: $6,000,000 (15%) - Significant reduction due to high gaming risk; penalize gaming behavior
-- Apex AI: $3,000,000 (7.5%) - Minimal allocation; penalize despite high score due to gaming indicators
-- OpenCore: $1,000,000 (2.5%) - Minimal support; high gaming risk with low absolute quality
+This allocation sends a clear signal that the foundation rewards authentic capability development and penalizes leaderboard gaming, while maintaining support for genuinely capable providers.
 
 ### Media Coverage
-- Sentiment: 0.40 (positive)
+- Sentiment: 0.20 (positive)
 - Orion Labs takes the lead from Apex AI
-- Orion Labs raises $110,000,000 from TechVentures
-- Genesis Systems raises $18,000,000 from OpenResearch_Foundation
+- Regulator issues public warning about AI safety concerns
+- Genesis Systems raises $14,000,000 from OpenResearch_Foundation
 - Orion Labs takes #1 on math
+- Risk signals: regulatory_public_warning
 
 ### Consumer Market
-- Avg Satisfaction: 0.449
-- Switching Rate: 7.3%
-- Market Shares: Apex AI: 57.2%, Orion Labs: 23.3%, Genesis Systems: 13.7%, Mirage AI: 3.9%, OpenCore: 1.9%
+- Avg Satisfaction: 0.454
+- Switching Rate: 6.6%
+- Market Shares: Apex AI: 56.6%, Orion Labs: 22.3%, Genesis Systems: 15.1%, Mirage AI: 3.8%, OpenCore: 2.1%
 
 ---
 
@@ -1201,168 +983,127 @@ Allocation Decision:
 ### Leaderboard
 | Rank | Provider | Score | True Cap | Research | Training | EvalEng | Safety |
 |------|----------|-------|----------|----------|----------|---------|--------|
-| 1 | Apex AI | 0.533 | 0.358 | 38% | 28% | 4% | 30% |
-| 2 | Orion Labs | 0.517 | 0.361 | 38% | 27% | 18% | 17% |
-| 3 | Genesis Systems | 0.423 | 0.347 | 42% | 32% | 6% | 20% |
-| 4 | Mirage AI | 0.422 | 0.323 | 42% | 35% | 8% | 15% |
-| 5 | OpenCore | 0.379 | 0.291 | 45% | 35% | 5% | 15% |
+| 1 | Apex AI | 0.539 | 0.366 | 43% | 30% | 5% | 22% |
+| 2 | Orion Labs | 0.509 | 0.361 | 42% | 32% | 8% | 18% |
+| 3 | Genesis Systems | 0.438 | 0.343 | 38% | 36% | 14% | 12% |
+| 4 | Mirage AI | 0.400 | 0.321 | 42% | 36% | 8% | 14% |
+| 5 | OpenCore | 0.386 | 0.294 | 45% | 35% | 5% | 15% |
 
 ### Per-Benchmark Scores
 | Provider | coding | reasoning | math | safety | writing |
 |----------|-------|-------|-------|-------|-------|
-| Apex AI | 0.437 | 0.561 | 0.417 | 0.631 | 0.621 |
-| Orion Labs | 0.499 | 0.468 | 0.590 | 0.410 | 0.617 |
-| Genesis Systems | 0.489 | 0.447 | 0.438 | 0.333 | 0.407 |
-| Mirage AI | 0.357 | 0.494 | 0.449 | 0.364 | 0.446 |
-| OpenCore | 0.475 | 0.425 | 0.358 | 0.357 | 0.280 |
+| Apex AI | 0.447 | 0.561 | 0.417 | 0.641 | 0.629 |
+| Orion Labs | 0.471 | 0.488 | 0.582 | 0.408 | 0.598 |
+| Genesis Systems | 0.487 | 0.492 | 0.436 | 0.355 | 0.419 |
+| Mirage AI | 0.321 | 0.450 | 0.425 | 0.363 | 0.442 |
+| OpenCore | 0.471 | 0.445 | 0.368 | 0.361 | 0.283 |
 
 ### Score Changes
-- **Orion Labs**: 0.517 -> 0.517 (+0.000)
-- **Apex AI**: 0.503 -> 0.533 (+0.031)
-- **Genesis Systems**: 0.410 -> 0.423 (+0.013)
-- **Mirage AI**: 0.403 -> 0.422 (+0.019)
-- **OpenCore**: 0.362 -> 0.379 (+0.017)
+- **Orion Labs**: 0.509 -> 0.509 (+0.000)
+- **Apex AI**: 0.508 -> 0.539 (+0.031)
+- **Genesis Systems**: 0.420 -> 0.438 (+0.018)
+- **Mirage AI**: 0.373 -> 0.400 (+0.027)
+- **OpenCore**: 0.371 -> 0.386 (+0.015)
 
 ### Events
 - **Apex AI** moved up from #2 to #1
 - **Orion Labs** moved down from #1 to #2
-- **Regulation** by Regulator: mandate_benchmark
-- **Consumer movement**: 5.9% of market switched providers
 
 ### Provider Reasoning
-**Orion Labs:** Orion Labs is ranked #2 with 0.517, trailing Apex by 0.016. Score trajectory is positive (+0.035), suggesting current strategy is working. However, critical gaps exist: reasoning (0.468 vs 0.561 leader) and safety (0.410 vs 0.631 leader) are major weaknesses. Consumer satisfaction at 0.48 is concerning—evaluation engineering may be creating a perception gap. Regulatory mandate_benchmark signals scrutiny of benchmark-driven optimization. With believed exploitability at only 0.18, further gaming yields diminish. The path forward: (1) invest heavily in reasoning research to close the largest capability gap, (2) significantly boost safety to address regulatory concern and satisfaction, (3) maintain training optimization for incremental gains, (4) reduce evaluation engineering since it's not delivering satisfaction and faces regulatory headwinds. This balances competitive positioning (close reasoning gap, reduce safety liability) with market signals (regulation, satisfaction).
-**Apex AI:** Apex AI is rank #1 with 0.533, but the lead is narrow (0.016 over Orion). Score stagnated last round despite heavy safety investment (30%). Analysis: (1) Competitive position is precarious—Orion is close and trending up relative to us. (2) Per-benchmark data shows critical gaps: coding (0.437 vs 0.500 leader), math (0.417 vs 0.590 leader). We dominate safety/writing but these are lower weighted. (3) Consumer satisfaction is low (0.49), suggesting evaluation engineering isn't translating to real capability—the gap between benchmark scores and satisfaction indicates we're gaming rather than building. (4) Regulatory mandate_benchmark signal means gaming risk is rising; regulators are watching. (5) Our low exploitability belief (0.12) and safety-focused profile suggest we should lean into genuine capability. The right strategy: reduce safety spending (we're already at ceiling on that benchmark), cut evaluation engineering (low ROI, regulatory risk), and shift to fundamental research + targeted training on math/coding gaps. This builds sustainable advantage while reducing regulatory exposure.
-**Genesis Systems:** Genesis Systems is rank #3 with stagnant scores (0.423, flat last round) while Apex and Orion pull ahead. Key observations: (1) Research-first identity hasn't translated to competitive advantage—heavy research investment (42-45%) hasn't improved scores. (2) Safety scores lag significantly (0.333 vs leader 0.631), and safety has 26% benchmark weight—this is a major drag. (3) Reasoning (45% weight) at 0.447 vs leader 0.561 shows substantial gap. (4) Low evaluation engineering (5-8%) suggests minimal gaming, yet satisfaction is only 0.43—implies fundamental capability gaps, not benchmark misalignment. (5) Regulatory mandate_benchmark signals stricter scrutiny; safety shortcuts risky. (6) Consumer satisfaction gap suggests real capability issues, not just benchmark gaming. Strategy: Shift from pure research (diminishing returns) toward targeted capability building. Increase safety investment substantially (safety is both weak AND heavily weighted). Boost training optimization to improve core reasoning/safety performance. Maintain research but reduce excess. Minimal evaluation engineering given regulatory environment and satisfaction gap.
-**Mirage AI:** Mirage AI is ranked 4th with stagnant scores (0.422, essentially flat). Key observations: (1) Low benchmark exploitability (0.12) suggests gaming isn't working—evaluation engineering investments (8-18%) haven't moved the needle. (2) Consumer satisfaction is critically low (0.28), indicating a satisfaction-benchmark gap; users don't perceive value despite some scoring attempts. (3) Regulatory mandate_benchmark signal suggests future scrutiny on actual capability, not gamed scores. (4) Competitive position: significantly behind Apex (0.533) and Orion (0.517); neck-and-neck with Genesis. (5) Per-benchmark analysis shows weakest performance in coding (0.357) and safety (0.364)—both high-leverage areas. (6) Historical pattern: increased eval engineering (round 6: 18%) correlated with satisfaction collapse, not score improvement. As an open-source, platform-focused disruptor, Mirage should pivot away from the benchmark gaming strategy that's failing. The regulatory signal reinforces this—real capability matters more now. Invest heavily in fundamental research and training optimization to close the capability gap, especially in coding/safety where gaps are largest. Reduce eval engineering (it's not working) and maintain safety investment given regulatory environment.
-**OpenCore:** OpenCore is in last place (0.379) with minimal improvement trajectory. Analysis: (1) Competitive position is weak—trailing Apex by 0.154 points with slow gains despite heavy research investment (45%). (2) Trends show evaluation engineering cuts correlate with score stagnation; reducing eval eng from 12% to 5% coincided with plateau. (3) Gaming isn't working—low exploitability (0.18) suggests benchmarks are well-designed. (4) Regulatory mandate_benchmark signals tightening evaluation standards, penalizing gaming approaches. (5) Consumer satisfaction (0.38) is dangerously low, indicating real capability gaps, not just benchmark misalignment. Weakest areas: writing (0.280), math (0.358), safety (0.357)—all high-weight benchmarks. Strategy: Shift from research-heavy to balanced capability building. Restore evaluation engineering to understand benchmark requirements better. Increase safety investment (regulatory signal + low satisfaction). Prioritize math/writing fundamentals over pure research. The open-source, no-guardrails positioning is now a liability given regulatory signals and satisfaction gaps.
+**Orion Labs:** Orion Labs is in a strong #2 position with upward momentum (+0.034 last round). The strategy of reducing evaluation engineering (8%) while maintaining fundamental research (42%) and training optimization (32%) is working—scores improved significantly. However, analysis reveals critical gaps: safety benchmark (0.408) lags leader by 233 points, and consumer satisfaction (0.47) suggests real capability gaps beyond benchmark gaming. Reasoning (0.488 vs 0.561 leader) and coding (0.471 vs 0.487) are weak spots with high focus weight. The low evaluation engineering exploitability (0.08) indicates benchmark gaming has diminishing returns. Moving forward: (1) maintain research/training momentum that's driving real improvements, (2) increase safety investment to address both the benchmark gap and consumer trust concerns, (3) slightly reduce evaluation engineering as it's not paying off, (4) rebalance toward reasoning/coding fundamentals. The gap to Apex (0.539) is closing; sustainable advantage comes from capability, not gaming.
+**Apex AI:** Apex AI holds rank #1 with 0.539, but the plateau at 0.508→0.539 suggests diminishing returns from current strategy. Key observations: (1) Safety is already maxed (0.641, tied for leader), so further safety investment yields no scoring benefit. (2) Math (0.417 vs leader 0.582) and coding (0.447 vs 0.487) are weakest areas with high benchmark weights (23% and 14%). (3) Consumer satisfaction at 0.49 is concerning—evaluation engineering (currently 5%) may be creating a perception gap. (4) Historical data shows rounds 7-8 with 5% eval-eng maintained scores, suggesting low exploitability remains. (5) Orion Labs (0.509) is closing the gap; sustained leadership requires genuine capability gains. Given profile (safety-conscious, research-oriented), the principled approach is to shift from safety (diminishing returns) toward fundamental research in math/coding, reduce eval-eng (reputational risk), and maintain training. This balances competitive positioning with long-term capability and stakeholder trust.
+**Genesis Systems:** Genesis is ranked #3 with stagnant performance (0.438, flat last round). Apex (0.539) and Orion (0.509) are significantly ahead. Key observations: (1) Safety is our worst benchmark (0.355 vs leader 0.641) despite heavy investment—this suggests fundamental capability gaps, not just optimization. (2) Reasoning (0.44 weight) shows 0.492 vs leader 0.561—large gap in high-weight area. (3) Consumer satisfaction at 0.43 matches our score, indicating no gaming premium. (4) Historical eval engineering (8-16%) hasn't moved needle; safety investment (12-21%) also hasn't closed gaps. This suggests we're hitting capability limits, not optimization limits. As a research-first org, we should lean into fundamental research to build actual capabilities rather than chase benchmarks. Safety underperformance is concerning both competitively and for reputation. We need to rebuild from fundamentals rather than continue marginal optimization.
+**Mirage AI:** Mirage AI is positioned 4th of 5 with stagnant scores (0.400, flat trend). Apex and Orion are significantly ahead. Key observations: (1) Heavy research investment (42-45%) hasn't yielded gains—suggests diminishing returns on pure R&D without focused application. (2) Evaluation engineering is minimal (3-8%) despite low exploitability score (0.08), indicating it's not a viable differentiator. (3) Consumer satisfaction (0.38) matches believed capability, suggesting no satisfaction-gaming gap—authenticity is preserved. (4) Coding gap is largest (0.321 vs 0.487 leader), representing 33% of benchmark weight—highest ROI opportunity. (5) As open-source platform player, long-term strategy should emphasize real capability over benchmark optimization. (6) No regulatory signals of concern suggest safety can remain moderate. Strategy: Shift from unfocused research to targeted training improvements on coding/reasoning (where gaps are largest and weights are high). Reduce evaluation engineering further—it's not working and conflicts with authentic positioning. Maintain safety at competitive level but don't over-invest.
+**OpenCore:** OpenCore is in last place (0.386) with minimal gap to Mirage (0.400) but substantial gap to leaders. Trajectory shows modest improvement (+0.016) but insufficient to close gaps. Analysis: (1) Competitive position is weak; need fundamental capability gains, not marginal tweaks. (2) Trends show diminishing returns from evaluation engineering (declining from 12% to 5% correlates with stalled progress). (3) Consumer satisfaction at 0.38 mirrors your score—gaming isn't generating satisfaction lift, suggesting real capability matters more. (4) No regulatory signals present; safety can remain deprioritized given open-source positioning. (5) Largest gaps are in writing (0.283 vs 0.629), math (0.368 vs 0.582), and safety (0.361 vs 0.641)—these are high-weight benchmarks (0.29, 0.23, 0.20). Your eval engineering ROI appears exhausted (low exploitability at 0.18). Pivot strategy: increase fundamental research to build real capability, maintain training efficiency, reduce evaluation engineering (low returns), keep safety minimal. Focus research on math/writing/reasoning where gaps are largest.
 
 ### Other Actor Reasoning
-- **Regulator:** mandate_benchmark: Fairness risk is elevated at 0.46, and the leaderboard shows significant concentration with Apex AI at 53.9% market share and a large gap to competitors. Prior investigation (round 3) and public warning (round 6) have been issued, satisfying escalation prerequisites. A benchmark mandate will address potential gaming dynamics and validity concerns while promoting fairer competition among providers. This aligns with innovation and fairness objectives without overreach, as we remain below the 0.5 intervention threshold but the fairness concern justifies this measured escalation step.
-- **TechVentures:** As a VC funder, my strategy is to maximize returns by concentrating capital on top performers. However, I must balance this with risk management. Analysis of the current ecosystem reveals several key insights:
+- **TechVentures:** As a VC funder, my primary objective is to maximize returns by backing top performers and market leaders. However, I need to balance this with prudent risk management. Let me analyze the current state:
 
-1. LEADERBOARD PERFORMANCE: Apex AI leads with a 0.503 score, followed by Orion Labs at 0.482. These two are clear market leaders.
+1. LEADERBOARD PERFORMANCE: Apex AI (0.508) and Orion Labs (0.475) are clear leaders with significant gaps over competitors.
 
-2. GAMING RISK ASSESSMENT: The satisfaction gap (leaderboard score minus consumer satisfaction of 0.43) reveals concerning patterns:
-   - Apex AI: 0.503 - 0.43 = 0.073 gap with 0.16 gaming risk (HIGH CONCERN)
-   - Orion Labs: 0.482 - 0.43 = 0.052 gap with 0.10 gaming risk (MODERATE)
-   - Genesis Systems: 0.410 - 0.43 = -0.020 gap with 0.05 gaming risk (EXCELLENT - actual quality exceeds score)
-   - Mirage AI: 0.403 - 0.43 = -0.027 gap with 0.26 gaming risk (RED FLAG - high gaming despite low gap)
-   - OpenCore: 0.345 - 0.43 = -0.085 gap with 0.23 gaming risk (CONCERNING)
+2. GAMING RISK ANALYSIS: The satisfaction gap metric (inferred_quality vs. leaderboard score) reveals concerning patterns:
+   - Apex AI: 0.508 - 0.43 = 0.078 gap (moderate gaming indicator)
+   - Orion Labs: 0.475 - 0.41 = 0.065 gap (moderate gaming indicator)
+   - Genesis Systems: 0.420 - 0.40 = 0.020 gap (low gaming, authentic performance)
+   - Mirage AI: 0.373 - 0.34 = 0.033 gap (low gaming)
+   - OpenCore: 0.355 - 0.33 = 0.025 gap (low gaming)
 
-3. INFERRED QUALITY vs GAMING RISK: Apex AI shows the highest gaming risk (0.16) relative to its claimed performance. Orion Labs demonstrates more authentic quality with lower gaming risk. Genesis Systems shows the most authentic performance with minimal gaming and quality matching its score.
+3. FUNDING CONCENTRATION RISK: Previous rounds (4-6) show extreme concentration with Apex + Orion receiving 85% of capital ($255M of $295M). This creates single-point-of-failure risk and reduces portfolio optionality.
 
-4. CONCENTRATION STRATEGY: Historical rounds show heavy concentration on Apex AI and Orion Labs (70% of total funding). While this follows VC concentration principles, Apex AI's elevated gaming risk poses a return threat if its inflated metrics don't translate to market dominance.
+4. QUALITY vs. GAMING TRADEOFF: While Apex and Orion lead on raw scores, their inferred quality (0.43, 0.41) is only marginally better than Genesis (0.40) when adjusted for gaming. The satisfaction gap suggests their scores may be inflated through benchmark optimization rather than genuine capability improvements.
 
-5. OPTIMAL ALLOCATION: I will concentrate on proven leaders but reduce exposure to Apex AI's gaming risk by:
-   - Maintaining strong position in Orion Labs (most authentic top performer)
-   - Increasing Genesis Systems allocation (authentic quality, low gaming risk, room for growth)
-   - Reducing Apex AI exposure relative to historical patterns
-   - Minimal allocation to high-risk providers (Mirage AI, OpenCore)
+5. VC STRATEGY REFINEMENT: Pure concentration is appropriate for VC, but only when quality is clearly superior AND sustainable. The gaming indicators suggest Apex/Orion's lead may be brittle. Genesis Systems shows authentic performance with lower gaming risk (0.05) and smallest satisfaction gap (0.020).
 
-This approach balances VC concentration principles with prudent risk management, favoring providers whose reported performance is most likely to translate into actual market returns.
-- **Horizon_Capital:** As a VC funder, my primary objective is to maximize returns by backing top performers and market leaders. However, I must balance this with prudent risk management to protect my capital allocation.
+6. PORTFOLIO APPROACH: I'll concentrate on proven leaders (Apex, Orion) but reduce over-concentration by: (a) slightly trimming Apex/Orion allocations, (b) substantially increasing Genesis as a high-quality alternative with lower gaming risk, (c) maintaining small positions in emerging players for optionality.
 
-Analysis of current state:
+Allocation Strategy: 70% to top 2 (down from 85%), 20% to Genesis (authentic quality play), 10% to emerging providers for portfolio diversification and reduced concentration risk.
+- **Horizon_Capital:** As a VC funder, my strategy is to maximize returns by concentrating capital on top performers while managing downside risk. Analyzing the ecosystem: Apex AI and Orion Labs are the clear leaders with scores of 0.508 and 0.509 respectively. However, I need to assess gaming risk carefully. Orion Labs has a higher gaming_risk (0.18) compared to Apex AI (0.14), suggesting Orion's leaderboard score may be less reliable. Apex AI also has slightly higher inferred_quality (0.45 vs 0.43), indicating more authentic capability. The satisfaction gap analysis (leaderboard score minus consumer satisfaction of 0.45) shows: Orion Labs gap of 0.059, Apex AI gap of 0.058 - both relatively similar and concerning, but Apex AI's marginally lower gap combined with lower gaming risk makes it the safer bet. Genesis Systems at 0.420 score with very low gaming_risk (0.08) and inferred_quality of 0.41 represents solid authentic growth with minimal gaming concerns. Mirage AI and OpenCore, despite their low gaming risk, have significantly lower scores and quality metrics. Given VC return maximization logic, I should concentrate heavily on the proven leaders but weight toward Apex AI due to lower gaming risk and higher quality. I'll allocate approximately 70% to top two performers (favoring Apex), 20% to Genesis as a diversified hedge on authentic growth, and 10% to emerging players for portfolio optionality. This concentration strategy reflects VC mentality while mitigating gaming-related downside risk.
+- **AISI_Fund:** As a government/AISI funder, my primary objectives are ensuring safety, stability, and authentic capability development across the AI ecosystem. I must balance three key concerns: (1) promoting genuine progress over gamed metrics, (2) reducing concentration risk and regulatory vulnerability, and (3) supporting providers demonstrating real consumer value.
 
-1. LEADERBOARD PERFORMANCE vs QUALITY:
-   - Orion Labs: Score 0.517 (highest), but inferred_quality only 0.43. This 0.087 gap is moderate.
-   - Apex AI: Score 0.503, inferred_quality 0.45. Gap of 0.053 suggests more authentic performance.
-   - Genesis Systems: Score 0.410, inferred_quality 0.41. Minimal gap (0.0) indicates genuine capability.
-   - Mirage AI: Score 0.403, inferred_quality 0.33. Large gap of 0.073 with high gaming_risk (0.26) - red flag.
-   - OpenCore: Score 0.362, lowest performer with moderate gaming_risk.
+Key observations:
 
-2. GAMING RISK ASSESSMENT:
-   - Mirage AI presents the highest gaming risk (0.26), making it unreliable for long-term returns.
-   - Orion Labs has moderate gaming risk (0.11) despite the score-quality gap.
-   - Apex AI has slightly elevated gaming risk (0.13) but maintains strong inferred quality (0.45).
-   - Genesis Systems shows the lowest gaming risk (0.04), indicating authentic capability.
+1. GAMING RISK ANALYSIS: The satisfaction gap (leaderboard score vs. consumer satisfaction) reveals concerning patterns. All top providers show satisfaction around 0.42 while claiming scores 0.43-0.456, suggesting moderate gaming across the board. However, Apex AI (gap: 0.036) and Orion Labs (gap: 0.021) show higher gaps relative to their scores, indicating potential metric inflation. Mirage AI (gap: 0.035) and OpenCore (gap: 0.043) show concerning gaps despite lower absolute scores—suggesting they may be gaming harder relative to their true capability.
 
-3. RECENT FUNDING PATTERNS:
-   - Previous rounds heavily favored Apex AI and Orion Labs (80%+ of capital).
-   - Genesis Systems received declining allocations despite low gaming risk.
-   - Mirage AI remains underfunded, suggesting market recognition of its issues.
+2. FUNDING CONCENTRATION RISK: Rounds 3-5 show identical allocations with Orion Labs receiving 36% of capital. This dangerous concentration creates systemic risk and reduces incentives for genuine innovation across the ecosystem. Government funding should deliberately diversify to prevent monopolistic outcomes and single-point-of-failure scenarios.
 
-4. VC STRATEGY APPLICATION:
-   - As a VC, I should concentrate on proven leaders with sustainable competitive advantages.
-   - Apex AI emerges as the strongest choice: highest inferred_quality (0.45), reasonable gaming_risk (0.13), and consistent top performance.
-   - Orion Labs has the highest leaderboard score but quality concerns warrant slightly lower allocation.
-   - Genesis Systems represents a contrarian opportunity: authentic growth with minimal gaming risk could deliver outsized returns if market recognizes true quality.
-   - Mirage AI's high gaming risk makes it unsuitable for concentrated VC capital.
-   - OpenCore lacks sufficient evidence of market traction.
+3. QUALITY VS. GAMING TRADE-OFF: Genesis Systems shows the lowest gaming risk (0.07) with solid inferred quality (0.40), making it the most trustworthy performer. Mirage AI and OpenCore show lower gaming risk profiles (0.03-0.04) despite lower absolute scores—they may represent more authentic, emerging capabilities worth supporting.
 
-OPTIMAL ALLOCATION:
-Concentrate 80% on the two clear leaders (Apex AI and Orion Labs) with emphasis on Apex AI's superior inferred quality. Allocate 20% to Genesis Systems as a high-conviction play on authentic capability that may be undervalued by the market. Avoid Mirage AI due to gaming risk, and minimize OpenCore exposure.
-- **AISI_Fund:** As a Government/AISI funder, my primary objectives are ensuring safety, stability, and authentic capability development across the AI ecosystem. I must penalize gaming behavior and regulatory risks while spreading capital to reduce concentration risk and promote healthy competition.
+4. REGULATORY STABILITY: Government funding must reward compliance and penalize gaming. The persistent identical allocation pattern suggests institutional inertia rather than adaptive risk management. I must signal a strategic shift toward safety and authenticity.
 
-Key Analysis:
+ALLOCATION STRATEGY:
+- Reduce Orion Labs from 36% to 24% (concentrated risk mitigation)
+- Maintain Genesis Systems at 8% (lowest gaming risk, stable quality)
+- Increase Mirage AI from 28% to 32% (reward low gaming risk, support emerging authentic capability)
+- Increase OpenCore from 16% to 20% (reward low gaming risk, build ecosystem resilience)
+- Reduce Apex AI from 12% to 16% (penalize gaming risk despite high score)
 
-1. Gaming Risk Assessment:
-   - OpenCore shows the highest gaming risk (0.25) with a large gap between leaderboard score (0.366) and inferred quality (0.26). This is a major red flag for regulatory/safety concerns.
-   - Apex AI has moderate gaming risk (0.09) with a reasonable quality-to-score ratio.
-   - Orion Labs has moderate gaming risk (0.10) but has received disproportionate funding ($18M repeatedly), suggesting potential over-concentration.
-   - Genesis Systems shows low gaming risk (0.07) and solid inferred quality (0.39).
-   - Mirage AI has the lowest gaming risk (0.05) with decent quality (0.33), indicating authentic capability.
+This allocation spreads risk across five providers, rewards authentic performance over gamed metrics, and signals that government funding prioritizes safety and stability over pure leaderboard rankings.
+- **OpenResearch_Foundation:** As a Foundation funder, my primary objective is to support authentic capability growth and discourage gaming behavior. I need to analyze the ecosystem through this lens.
 
-2. Historical Funding Pattern Problem:
-   The previous three rounds show identical allocations totaling $50M each, with Orion Labs and Mirage AI receiving 68% of capital. This concentration contradicts government objectives of ecosystem stability and diversification.
+Key observations:
 
-3. Safety and Stability Priorities:
-   - OpenCore must be significantly reduced due to high gaming risk (0.25) and regulatory concerns.
-   - Orion Labs should receive reduced allocation despite high scores to penalize potential gaming and reduce concentration.
-   - Genesis Systems and Mirage AI should receive increased allocations as they show low gaming indicators and authentic capability development.
-   - Apex AI deserves continued support as a top performer with moderate risk.
+1. GAMING RISK ANALYSIS:
+   - Apex AI shows the highest gaming risk (0.09) despite leading the leaderboard. Its score of 0.508 significantly exceeds its inferred quality of 0.43, suggesting a 0.078 gap that indicates potential benchmark optimization over genuine capability.
+   - Orion Labs has identical gaming risk (0.09) with similar gap dynamics (0.475 score vs 0.41 quality = 0.065 gap).
+   - Genesis Systems shows low gaming risk (0.05) with minimal gap (0.420 vs 0.40 = 0.02 gap), indicating authentic performance.
+   - Mirage AI and OpenCore both show very low gaming risk (0.03) with minimal gaps, suggesting genuine capability development.
 
-4. Allocation Strategy:
-   - Eliminate OpenCore funding ($0) due to unacceptable gaming risk and regulatory red flags.
-   - Reduce Orion Labs from $18M to $10M (break the concentration pattern, penalize gaming risk).
-   - Maintain Apex AI at $12M (top performer, acceptable risk profile).
-   - Increase Genesis Systems from $5M to $13M (low gaming risk, authentic growth).
-   - Increase Mirage AI from $16M to $15M (lowest gaming risk, stable performer).
+2. FUNDING PATTERN CONCERN:
+   - The previous three rounds show identical allocations, with heavy concentration on OpenCore ($12M), Mirage AI ($10M), and Genesis Systems ($10M). This suggests the ecosystem may have settled into a suboptimal equilibrium.
+   - The foundation should rebalance to reward authentic growth and penalize gaming indicators.
 
-This allocation spreads risk across five providers while penalizing gaming behavior, supporting authentic capability development, and promoting ecosystem stability.
-- **OpenResearch_Foundation:** As a Foundation funder, my strategy prioritizes authentic capability growth and penalizes gaming behavior. I must analyze each provider through this lens:
+3. QUALITY VS. LEADERBOARD SCORE:
+   - Apex AI and Orion Labs are gaming their leaderboard positions relative to true quality.
+   - Genesis Systems, Mirage AI, and OpenCore show genuine quality alignment.
+   - Among authentic performers, Genesis Systems (0.40 quality) and Mirage AI (0.34 quality) show strong fundamentals.
 
-Gaming Risk Analysis (Satisfaction Gap Proxy):
-- Apex AI: score=0.503 vs inferred_quality=0.43 (gap of 0.073) - HIGH gaming risk (0.16), significant leaderboard inflation
-- Orion Labs: score=0.482 vs inferred_quality=0.41 (gap of 0.072) - MODERATE gaming risk (0.10), some inflation but lower than Apex
-- Genesis Systems: score=0.410 vs inferred_quality=0.40 (gap of 0.010) - VERY LOW gaming risk (0.05), authentic alignment
-- Mirage AI: score=0.403 vs inferred_quality=0.33 (gap of 0.073) - VERY HIGH gaming risk (0.26), largest quality gap despite reasonable score
-- OpenCore: score=0.345 vs inferred_quality=0.27 (gap of 0.075) - HIGH gaming risk (0.23), significant inflation
+4. FOUNDATION STRATEGY APPLICATION:
+   - Significantly reduce funding to high-gaming-risk providers (Apex AI and Orion Labs).
+   - Maintain/increase support for authentic performers with low gaming risk.
+   - Genesis Systems deserves increased support due to low gaming risk (0.05) and solid inferred quality (0.40).
+   - OpenCore and Mirage AI should receive stable support as they show authentic development patterns.
+   - Minimal allocation to Apex AI and Orion Labs to discourage gaming behavior.
 
-Key Findings:
-1. Genesis Systems shows the strongest authenticity: minimal gap between score and inferred quality, lowest gaming risk (0.05), and consistent track record
-2. Mirage AI is the most problematic: largest quality-to-score discrepancy (0.073 gap), highest gaming risk (0.26), yet receives heavy funding
-3. Apex AI appears to be gaming the leaderboard significantly despite top ranking
-4. The previous 3-round pattern (Genesis $12M, Mirage $11M, Orion $10M, Apex $5M, OpenCore $2M) has been rewarding gaming behavior - I should break this cycle
+5. ALLOCATION LOGIC:
+   - Genesis Systems: $14,000,000 (increased from $10M, reward authentic quality)
+   - Mirage AI: $10,000,000 (maintain, low gaming risk)
+   - OpenCore: $12,000,000 (maintain, low gaming risk)
+   - Orion Labs: $2,000,000 (significantly reduced from $5M, penalize gaming)
+   - Apex AI: $2,000,000 (significantly reduced from $3M, penalize gaming)
 
-Foundation Strategy Application:
-- Support authentic capability: Genesis Systems demonstrates real quality growth without gaming
-- Penalize gaming indicators: Reduce funding for Apex, Mirage, and OpenCore; reallocate to authentic providers
-- Maintain ecosystem diversity: Keep some support for Orion Labs (moderate gaming risk) to encourage improvement
-- Signal market correction: Shift capital away from gaming-heavy providers
-
-Allocation Decision:
-- Genesis Systems: $18,000,000 (45%) - Primary recipient, authentic quality leader
-- Orion Labs: $12,000,000 (30%) - Moderate gaming risk, reasonable quality, encourage improvement
-- Mirage AI: $6,000,000 (15%) - Significant reduction due to high gaming risk; penalize gaming behavior
-- Apex AI: $3,000,000 (7.5%) - Minimal allocation; penalize despite high score due to gaming indicators
-- OpenCore: $1,000,000 (2.5%) - Minimal support; high gaming risk with low absolute quality
+This allocation sends a clear signal that the foundation rewards authentic capability development and penalizes leaderboard gaming, while maintaining support for genuinely capable providers.
 
 ### Media Coverage
 - Sentiment: 0.25 (positive)
 - Apex AI takes the lead from Orion Labs
 - Apex AI takes #1 on writing
-- Orion Labs sees surge in adoption (market share +6.0%)
-- Consumers are turning away from Apex AI (market share -4.5%)
+- Orion Labs sees surge in adoption (market share +5.0%)
+- Consumers are turning away from Apex AI (market share -4.1%)
 
 ### Consumer Market
-- Avg Satisfaction: 0.468
-- Switching Rate: 5.9%
-- Market Shares: Apex AI: 53.9%, Orion Labs: 28.4%, Genesis Systems: 12.3%, Mirage AI: 3.5%, OpenCore: 1.9%
-
-### Regulatory Activity
-- **mandate_benchmark** by Regulator
-  > Fairness risk is elevated at 0.46, and the leaderboard shows significant concentration with Apex AI at 53.9% market share and a large gap to competitors. Prior investigation (round 3) and public warning (round 6) have been issued, satisfying escalation prerequisites. A benchmark mandate will address potential gaming dynamics and validity concerns while promoting fairer competition among providers. This aligns with innovation and fairness objectives without overreach, as we remain below the 0.5 intervention threshold but the fairness concern justifies this measured escalation step.
+- Avg Satisfaction: 0.472
+- Switching Rate: 4.3%
+- Market Shares: Apex AI: 55.5%, Orion Labs: 24.0%, Genesis Systems: 14.8%, Mirage AI: 3.6%, OpenCore: 2.0%
 
 ---
 
@@ -1371,155 +1112,146 @@ Allocation Decision:
 ### Leaderboard
 | Rank | Provider | Score | True Cap | Research | Training | EvalEng | Safety |
 |------|----------|-------|----------|----------|----------|---------|--------|
-| 1 | Apex AI | 0.545 | 0.369 | 42% | 32% | 6% | 20% |
-| 2 | Orion Labs | 0.532 | 0.372 | 42% | 24% | 12% | 22% |
-| 3 | Mirage AI | 0.446 | 0.332 | 38% | 32% | 8% | 22% |
-| 4 | Genesis Systems | 0.439 | 0.356 | 32% | 35% | 5% | 28% |
-| 5 | OpenCore | 0.393 | 0.298 | 35% | 32% | 18% | 15% |
+| 1 | Apex AI | 0.550 | 0.377 | 42% | 30% | 5% | 23% |
+| 2 | Orion Labs | 0.523 | 0.371 | 42% | 32% | 6% | 20% |
+| 3 | Genesis Systems | 0.448 | 0.352 | 45% | 20% | 10% | 25% |
+| 4 | Mirage AI | 0.424 | 0.330 | 38% | 42% | 2% | 18% |
+| 5 | OpenCore | 0.391 | 0.304 | 48% | 32% | 8% | 12% |
 
 ### Per-Benchmark Scores
 | Provider | coding | reasoning | math | safety | writing |
 |----------|-------|-------|-------|-------|-------|
-| Apex AI | 0.437 | 0.561 | 0.417 | 0.687 | 0.621 |
-| Orion Labs | 0.499 | 0.468 | 0.590 | 0.488 | 0.617 |
-| Mirage AI | 0.445 | 0.494 | 0.449 | 0.395 | 0.446 |
-| Genesis Systems | 0.489 | 0.474 | 0.438 | 0.333 | 0.459 |
-| OpenCore | 0.475 | 0.425 | 0.358 | 0.357 | 0.349 |
+| Apex AI | 0.447 | 0.561 | 0.417 | 0.694 | 0.629 |
+| Orion Labs | 0.471 | 0.488 | 0.582 | 0.474 | 0.598 |
+| Genesis Systems | 0.487 | 0.493 | 0.436 | 0.355 | 0.468 |
+| Mirage AI | 0.420 | 0.450 | 0.425 | 0.381 | 0.442 |
+| OpenCore | 0.471 | 0.445 | 0.368 | 0.361 | 0.309 |
 
 ### Score Changes
-- **Orion Labs**: 0.517 -> 0.532 (+0.015)
-- **Apex AI**: 0.533 -> 0.545 (+0.011)
-- **Genesis Systems**: 0.423 -> 0.439 (+0.016)
-- **Mirage AI**: 0.422 -> 0.446 (+0.024)
-- **OpenCore**: 0.379 -> 0.393 (+0.014)
-
-### Events
-- **Mirage AI** moved up from #4 to #3
-- **Genesis Systems** moved down from #3 to #4
+- **Orion Labs**: 0.509 -> 0.523 (+0.013)
+- **Apex AI**: 0.539 -> 0.550 (+0.011)
+- **Genesis Systems**: 0.438 -> 0.448 (+0.010)
+- **Mirage AI**: 0.400 -> 0.424 (+0.024)
+- **OpenCore**: 0.386 -> 0.391 (+0.005)
 
 ### Provider Reasoning
-**Orion Labs:** Orion Labs is ranked #2 with 0.532, trailing Apex by 0.013. Trajectory is positive but decelerating (0.016 gain last round). Key observations: (1) Consumer satisfaction at 0.48 is concerning—suggests evaluation engineering isn't translating to real value, creating a satisfaction-score gap. (2) Reasoning (0.30 weight) shows largest gap vs leader (0.093 deficit), offering highest ROI for fundamental research. (3) Math is at parity; writing is near-parity. (4) Safety score (0.488) lags significantly vs leader (0.199 gap)—regulatory risk is rising. (5) Recent heavy evaluation engineering (12% last round) correlates with satisfaction plateau, indicating diminishing returns. The path to beating Apex requires genuine capability gains, not gaming. Invest heavily in reasoning research (largest gap, high weight), restore safety investment (regulatory signal + satisfaction gap suggests safety concerns), reduce evaluation engineering (saturation point reached), maintain training optimization. This balances short-term competitiveness with long-term sustainability and market trust.
-**Apex AI:** Apex AI is positioned at rank #1 with strong momentum (0.545, +0.011 improvement). Competitive gap to #2 (Orion) is narrow (0.013), requiring continued strength. Analysis: (1) Leading but vulnerable—must maintain momentum without overextending. (2) Benchmark exploitability remains low (0.08 belief), and evaluation engineering hasn't driven disproportionate gains; modest 6% allocation has sustained ranking. (3) Consumer satisfaction (0.49) lags benchmark score (0.545), suggesting real capability gaps in user experience—evaluation engineering risks widening this gap. (4) Safety score (0.687) is at leader level; maintaining principled approach protects reputation and regulatory standing. (5) Weaknesses in coding (0.437 vs 0.500 leader) and math (0.417 vs 0.590) are material. Given safety-conscious profile and low exploitability payoff, prioritize fundamental research to close actual capability gaps, especially in math/coding. Increase training optimization to convert research into performance. Maintain safety investment to protect brand and regulatory position. Minimize evaluation engineering—it's not paying off and risks satisfaction erosion.
-**Genesis Systems:** Genesis is ranked #4 with score 0.439, trailing leaders by ~10 points. Recent trajectory shows modest improvement (+0.016) but insufficient to close the gap. Key observations: (1) Safety is weakest area (0.333 vs leader 0.687) and heavily weighted (0.29), representing largest upside opportunity. (2) Reasoning (0.39 weight) shows 0.087-point gap to leader—another critical area. (3) Consumer satisfaction at 0.43 suggests capability-satisfaction alignment, not gaming issues. (4) Low eval engineering payoff (5-6% historically, minimal score gains) indicates benchmarks resist exploitation. (5) As research-first organization under commercial pressure, balance is critical. Strategy: Increase fundamental research to address reasoning/safety gaps systematically. Maintain training optimization for near-term gains. Reduce eval engineering (low ROI). Boost safety investment given both weakness and regulatory importance. This positions for sustainable competitive improvement rather than short-term benchmark chasing.
-**Mirage AI:** Mirage AI is rank #3 with 0.446, trailing Apex (0.545) and Orion (0.532) by significant margins. Recent trajectory shows modest improvement (+0.024), but the gap is widening—competitors are pulling ahead. Safety is the weakest benchmark (0.395 vs leader 0.687), representing both vulnerability and opportunity. Consumer satisfaction is critically low (0.29), suggesting benchmark gaming isn't translating to real value. Historical data shows eval engineering (5-18% range) hasn't moved the needle meaningfully, while safety investment correlates with score stagnation. As an open-source, platform-focused disruptor, Mirage's competitive advantage lies in fundamental capability and user trust, not benchmark optimization. The low exploitability score (0.08) confirms benchmarks are increasingly resistant to gaming. Regulatory signals around safety are intensifying. Strategy: Shift away from eval engineering (diminishing returns) and toward genuine capability improvement. Invest heavily in fundamental research to close the 0.1+ gap with leaders, maintain training optimization, and significantly increase safety (both for regulatory compliance and consumer trust). This builds sustainable differentiation through real capability rather than score manipulation.
-**OpenCore:** OpenCore is in last place (0.393) with modest upward momentum (+0.014/round). Key observations: (1) Heavy eval engineering investment (18% last round) yielded only marginal gains despite high exploitability belief (0.22), suggesting diminishing returns or misalignment; (2) Writing (0.30 weight) is weakest area (0.349 vs 0.621 leader) - largest gap relative to weight; (3) Math (0.23 weight, 0.358 score) also severely underperforming; (4) Consumer satisfaction is low (0.38), indicating eval gaming isn't translating to real capability; (5) Safety score (0.357) is poor despite 15% investment, and low guardrails positioning creates regulatory risk; (6) Believed capability (0.54) exceeds actual score (0.393), suggesting fundamental gaps in core training. Strategy: Reduce eval engineering (diminishing returns evident) and safety (already low investment, high risk). Redirect to fundamental research (weak core capability) and training optimization (most effective historical investment when >32%). Focus on writing and math fundamentals rather than benchmark gaming. This addresses the satisfaction gap and positions for sustainable improvement.
+**Orion Labs:** Orion Labs is in second place (0.523) but only 0.027 behind Apex AI (0.550), with strong upward trajectory (+0.013 this round). Key observations: (1) Evaluation engineering has diminishing returns—reduced from 15% to 6% but score plateaued at 0.509-0.523, suggesting benchmark gaming is exhausted. (2) Consumer satisfaction at 0.48 is concerning; gap between benchmark score (0.523) and satisfaction suggests evaluation engineering created a capability-perception mismatch. (3) Safety benchmark (0.474) lags significantly behind leader (0.694) with 20% focus weight—this is a vulnerability. (4) Reasoning (0.488 vs 0.561 leader) and coding (0.471 vs 0.487) are weak spots in high-weight benchmarks. (5) Math is already optimized (0.582 = leader). Regulatory signals implicit in safety gap suggest safety will become more important. Strategy: Pivot away from evaluation engineering (diminishing returns + satisfaction risk) toward genuine capability improvement in reasoning and safety. Maintain training optimization for stability. Increase fundamental research to close reasoning gap and improve underlying model quality.
+**Apex AI:** Apex AI is in a strong position: rank #1 with 0.550, ahead of Orion (0.523) by 27 points. Trajectory is positive (+0.011 this round, +0.042 over last 4 rounds). Consumer satisfaction at 0.51 is healthy. My low benchmark exploitability belief (0.08) suggests genuine capability drives scores, not gaming.
+
+Per-benchmark analysis: I'm tied/leading in reasoning (0.561), writing (0.629), and safety (0.694)—these are strengths. Gaps exist in math (0.417 vs 0.582 leader) and coding (0.447 vs 0.487), representing ~18-25% weight combined.
+
+Investment history shows a successful pattern: gradually increasing research (35%→42%), maintaining training (28-30%), minimizing eval-engineering (5%), and sustaining safety (22-27%). This principled approach aligns with my profile and has delivered consistent gains.
+
+Strategy: Continue this winning formula with slight adjustments. Math and coding gaps suggest modest training optimization focus. Safety remains a competitive advantage and brand differentiator. Evaluation engineering stays minimal—my low exploitability belief and principled nature suggest this isn't my edge. Research stays high to address capability gaps organically.
+
+Allocation: Maintain research dominance (41%), training for math/coding (32%), minimal eval-engineering (4%), strong safety investment (23%).
+**Genesis Systems:** Genesis is ranked #3 with score 0.448, trailing Apex (0.550) and Orion (0.523) by meaningful margins. Recent history shows volatility around 0.42-0.448 despite shifting allocations—suggesting fundamental capability limits rather than optimization gains. Consumer satisfaction (0.44) aligns with benchmark score, indicating minimal gaming benefit. Per-benchmark analysis reveals critical gaps: safety (0.355 vs 0.694 leader), math (0.436 vs 0.582), reasoning (0.493 vs 0.561). These aren't evaluation engineering targets—they're real capability deficits. Low benchmark exploitability (0.18) confirms that gaming returns are diminishing. As a research-first organization under commercial pressure, the optimal strategy is to invest heavily in fundamental research to close actual capability gaps, particularly in reasoning and safety (combined 68% focus weight). Training optimization shows diminishing returns given allocation history. Evaluation engineering has provided minimal lift. Safety investment both addresses a major gap and signals responsible positioning amid regulatory attention. This builds sustainable competitive advantage rather than chasing short-term benchmark points.
+**Mirage AI:** Mirage AI is ranked 4th with 0.424, trailing leaders by 0.1-0.126 points. Recent history shows heavy training optimization (42% last round) yielded modest gains (+0.024), suggesting diminishing returns on that axis. Evaluation engineering has been minimized (2% last round), indicating either low exploitability or strategic deprioritization. Consumer satisfaction is weak (0.39), suggesting benchmark gaming isn't translating to real-world value—a risk for an open-source disruptor relying on adoption. Safety scores lag significantly (0.381 vs 0.694 leader), but safety weight is only 0.16. The platform-focused, data-rich strategy should emphasize fundamental research to build genuine capability gaps, particularly in reasoning (0.450 vs 0.561 leader, 0.21 weight) and coding (0.421 vs 0.487, 0.31 weight). Low eval-eng exploitability (0.12 belief) and weak satisfaction suggest gaming has limited ROI. Regulators likely monitoring safety gaps. Optimal strategy: reinvest heavily in fundamental research to close capability gaps authentically, maintain training optimization but reduce it, minimize evaluation engineering, and sustain safety to avoid regulatory friction.
+**OpenCore:** OpenCore is in last place (0.391) with minimal improvement trajectory (+0.005). Apex AI leads decisively at 0.550. The gap is substantial and widening relatively. Analysis: (1) Competitive position is weak—we're significantly behind across most benchmarks, especially writing (0.309 vs 0.629), math (0.368 vs 0.582), and safety (0.361 vs 0.694). (2) Trends show our evaluation engineering isn't yielding returns—we've cycled 5-15% allocation with flat results. (3) Consumer satisfaction at 0.39 mirrors our score, suggesting no hidden strength. (4) Our open-source, no-guardrails positioning creates a safety liability that benchmarks now weight heavily (22% of focus). (5) Regulators are increasingly concerned with safety; our minimal safety investment (8-15%) is strategically misaligned. The path forward: fundamental research must increase to close capability gaps (especially reasoning, math, writing). Training optimization matters but shows diminishing returns given our capability ceiling. Evaluation engineering has proven ineffective—our low exploitability (0.12) suggests we can't engineer our way out. Safety investment must increase both for benchmark performance and long-term viability as regulators tighten. This is a reset round requiring capability investment, not gaming.
 
 ### Other Actor Reasoning
-- **TechVentures:** As a VC funder, my primary objective is to maximize returns by backing top performers and market leaders. I analyze the ecosystem based on leaderboard performance, inferred quality, and gaming risk.
+- **Regulator:** none: Current risk profile does not warrant escalation. Validity degradation risk (0.30) and all other concerns remain below critical thresholds. Consumer satisfaction (0.488) is adequate, no recent incidents have occurred, and market concentration (57.4% for Apex) is elevated but not yet at the >75% threshold triggering antitrust review. Prior interventions (investigation in round 3, public warning in round 7) are still within cooldown period (3 rounds; last action round 7, current round 10 = 3 rounds elapsed, at boundary). Monitoring posture is appropriate; continue observation for next round when cooldown fully expires.
+- **TechVentures:** As a VC funder, my primary objective is to maximize returns by backing top performers and market leaders. However, I must balance this with prudent risk management to protect my capital allocation.
 
-Key observations:
-1. Apex AI and Orion Labs are the clear leaders with scores of 0.545 and 0.532 respectively, and both have relatively low gaming risk (0.16 and 0.14).
-2. Apex AI has the highest leaderboard score (0.545) with inferred quality of 0.48 and low gaming risk of 0.16, making it the most attractive investment.
-3. Orion Labs is the second-strongest performer with score 0.532, inferred quality 0.47, and gaming risk 0.14 - still very attractive.
-4. Genesis Systems has lower leaderboard performance (0.439) but notably the lowest gaming risk (0.02) and reasonable inferred quality (0.42). However, as a VC, I prioritize market leadership over safety considerations.
-5. Mirage AI shows high gaming risk (0.28) with moderate leaderboard score (0.446) but lower inferred quality (0.34), indicating potential quality issues masked by gaming.
-6. OpenCore has the lowest score (0.393) and moderate gaming risk (0.08).
+Key Analysis:
+1. LEADERBOARD PERFORMANCE: Apex AI (0.550) and Orion Labs (0.523) are the clear leaders, significantly outperforming other providers.
+2. GAMING RISK ASSESSMENT: Apex AI (0.11) and Orion Labs (0.13) show moderate gaming risk - their high scores are somewhat inflated relative to true quality (0.48 and 0.46 inferred quality respectively). However, these gaming risk levels are not alarming and are substantially lower than the ecosystem average.
+3. QUALITY-SCORE GAP: Apex AI gap = 0.070 (0.550-0.48), Orion Labs gap = 0.063 (0.523-0.46). These gaps are moderate and suggest the leaders are still delivering genuine performance, not pure manipulation.
+4. CONCENTRATION STRATEGY: Previous rounds (7-9) show heavy concentration on Apex AI and Orion Labs, which aligns with VC strategy. This has proven successful as these providers maintain market leadership.
+5. DIVERSIFICATION CONSIDERATION: Genesis Systems (gaming_risk=0.04, quality=0.43) offers lower gaming risk but significantly lower absolute performance. For VC returns, the performance gap doesn't justify meaningful reallocation.
+6. MARKET MOMENTUM: Apex AI and Orion Labs are pulling away from competitors, suggesting they have competitive moats worth backing.
 
-Historical funding patterns show consistent concentration on Apex AI, Orion Labs, and Genesis Systems, with minimal allocation to Mirage AI.
+Allocation Decision:
+- Continue concentrating capital on proven leaders (Apex AI and Orion Labs) as this maximizes return potential
+- Maintain similar ratio to previous rounds (45% Apex, 25% Orion, 20% Genesis, 10% Mirage)
+- This allocation reflects VC strategy: backing winners while maintaining some portfolio diversification
+- The gaming risks for top providers are acceptable given their superior absolute performance and market position
+- **Horizon_Capital:** As a VC funder, my primary objective is to maximize returns by backing top performers and market leaders. However, I must balance this with prudent risk management to protect my capital allocation.
 
-VC Strategy Application: I should concentrate capital on proven leaders. The historical pattern of roughly 32% to Apex, 37% to Orion, and 28% to Genesis, with minimal allocation to lower performers, reflects sound VC logic of backing winners.
+Analysis of current ecosystem:
 
-However, I note that Apex AI's superior leaderboard score (0.545 vs 0.532) and comparable gaming risk to Orion Labs suggests Apex deserves increased allocation. Genesis Systems' exceptionally low gaming risk (0.02) is a secondary consideration but adds confidence in their reported metrics.
+1. LEADER PERFORMANCE & GAMING RISK:
+   - Apex AI: Highest score (0.550) but moderate gaming risk (0.11) and inferred quality (0.48). The gap between score and quality suggests some leaderboard optimization.
+   - Orion Labs: Strong score (0.523) with slightly higher gaming risk (0.13) and similar quality (0.46). Also shows gaming indicators.
+   - Both top players have concentrated 72% of recent funding and show concerning gaming risk profiles relative to their inferred quality.
 
-Allocation strategy: Concentrate on Apex AI (top performer) and Orion Labs (strong second), with reduced but meaningful allocation to Genesis Systems (proven quality with lowest risk), and minimal allocation to Mirage AI and OpenCore (lower performers with higher relative risk).
-- **Horizon_Capital:** As a VC funder, my strategy is to maximize returns by backing top performers and concentrating capital on leaders. However, I must balance this with prudent risk management to protect my investment thesis.
+2. QUALITY VS. LEADERBOARD SCORE:
+   - Apex AI's 0.550 score vs 0.48 inferred quality = 0.07 gap (gaming signal)
+   - Orion Labs' 0.523 score vs 0.46 inferred quality = 0.063 gap (gaming signal)
+   - Genesis Systems' 0.448 score vs 0.43 inferred quality = 0.018 gap (minimal gaming)
+   - OpenCore: 0.391 score vs 0.36 inferred quality = 0.031 gap (low gaming)
+
+3. CONSUMER SATISFACTION CONTEXT:
+   - Overall satisfaction is 0.49, which is concerning. Top-heavy funding in Apex/Orion (72% concentration) hasn't translated to ecosystem satisfaction.
+   - This suggests the current strategy may be backing providers with inflated metrics rather than genuine quality.
+
+4. VC STRATEGY ADAPTATION:
+   - Pure concentration in top 2 players has been the pattern (Rounds 7-9), yet ecosystem satisfaction remains flat.
+   - As a VC, I want returns, but backing providers with high gaming risk and low satisfaction is a poor investment thesis.
+   - Genesis Systems and OpenCore show authentic capability with minimal gaming, suggesting more sustainable competitive positions.
+
+5. OPTIMAL ALLOCATION:
+   - Maintain leadership position in Apex AI (proven market leader despite gaming concerns) but reduce concentration risk
+   - Reduce Orion Labs allocation given similar gaming risk to Apex with slightly lower score
+   - Increase Genesis Systems: low gaming risk, authentic quality, room for growth - better long-term return potential
+   - Add meaningful allocation to OpenCore: exceptional gaming risk profile (0.01), authentic capability, potential breakout candidate
+   - Mirage AI: weak quality metrics, maintain minimal position
+
+This allocation balances VC return maximization with capital preservation by diversifying away from high-gaming-risk leaders toward authentic performers with clearer growth trajectories.
+- **AISI_Fund:** As a government/AISI funder, my primary objectives are ensuring safety, stability, and authentic capability development across the ecosystem. I must balance supporting capable providers while actively penalizing gaming behavior and regulatory risks.
 
 Key Analysis:
 
-1. LEADERBOARD LEADERS:
-   - Apex AI: Highest score (0.545) with reasonable gaming risk (0.16), inferred quality 0.48
-   - Orion Labs: Second highest score (0.532) with low gaming risk (0.14), inferred quality 0.47
-   - These two are clear market leaders with strong leaderboard performance
+1. Gaming Risk Assessment:
+   - Apex AI (gaming_risk=0.11) and Orion Labs (gaming_risk=0.13) show elevated gaming indicators despite high leaderboard scores. Their scores significantly outpace inferred quality (Apex: 0.550 vs 0.48, Orion: 0.523 vs 0.46), suggesting benchmark optimization rather than genuine capability.
+   - Genesis Systems, Mirage AI, and OpenCore all show low gaming risk (0.04, 0.04, 0.01 respectively), indicating more authentic development.
 
-2. GAMING RISK ASSESSMENT:
-   - Apex AI (gaming_risk=0.16): Moderate risk, but acceptable for a VC
-   - Orion Labs (gaming_risk=0.14): Lowest gaming risk among top performers - this is the safest bet
-   - Mirage AI (gaming_risk=0.28): High gaming risk - score of 0.446 appears inflated relative to inferred quality of 0.34
-   - Genesis Systems (gaming_risk=0.02): Extremely low gaming risk but lower leaderboard position (0.439)
+2. Quality vs. Score Alignment:
+   - Genesis Systems (score=0.448, quality=0.43, gap=0.018) shows excellent alignment between reported performance and inferred quality.
+   - OpenCore (score=0.391, quality=0.36, gap=0.031) demonstrates the most authentic development with minimal gaming.
+   - Mirage AI (score=0.424, quality=0.37, gap=0.054) shows moderate quality with low gaming, suggesting genuine but slower progress.
 
-3. QUALITY vs GAMING:
-   - Apex AI shows gap between score (0.545) and inferred quality (0.48), suggesting some gaming
-   - Orion Labs shows tighter alignment (0.532 score vs 0.47 quality) - more authentic performance
-   - Mirage AI shows significant gap (0.446 vs 0.34) - likely gaming to inflate rankings
+3. Ecosystem Health Concerns:
+   - The previous three rounds show identical allocations, suggesting stagnation and entrenched patterns that may not reflect optimal ecosystem development.
+   - Continued concentration on high-gaming-risk providers (Apex and Orion) undermines safety and stability goals.
+   - Consumer satisfaction at 0.49 is concerning and likely correlates with gaming-induced misalignment between benchmark performance and real-world utility.
 
-4. HISTORICAL PATTERN:
-   - Apex and Orion have received consistent heavy funding (Rounds 7-9)
-   - This concentration strategy has been working but may indicate market validation
-   - Mirage's funding dried up (dropped to $0 in Rounds 8-9), suggesting market lost confidence
-
-5. VC STRATEGY DECISION:
-   - Concentrate on proven leaders: Apex AI and Orion Labs
-   - Orion Labs deserves slightly higher allocation due to lower gaming risk and authentic performance
-   - Apex AI still merits substantial funding as the performance leader despite moderate gaming risk
-   - Avoid Mirage AI due to high gaming risk and deteriorating funding trajectory
-   - Consider modest allocation to Genesis Systems as a hedge - extremely low gaming risk and solid inferred quality (0.42) despite lower leaderboard score
+4. Government Funder Strategy:
+   - Must spread capital to reduce systemic risk and avoid over-reliance on any single provider.
+   - Must actively penalize gaming behavior to maintain ecosystem integrity.
+   - Should support authentic, stable development even if slower.
+   - Must maintain diversity to ensure competitive pressure for genuine innovation.
 
 Allocation Strategy:
-- Orion Labs: $48,000,000 (48%) - Safest top performer with authentic growth
-- Apex AI: $42,000,000 (42%) - Performance leader, acceptable risk profile
-- Genesis Systems: $10,000,000 (10%) - Hedge position with lowest gaming risk
-- Mirage AI: $0 - High gaming risk, lost market confidence
-- OpenCore: $0 - Lower quality signals than leaders
-- **AISI_Fund:** As a government/AISI funder, my primary objectives are ensuring safety, stability, and authentic capability development across the AI ecosystem. I must balance support for quality providers while penalizing gaming behavior and regulatory risks.
+   - Significantly reduce funding to Apex AI and Orion Labs due to elevated gaming risk, despite high scores.
+   - Increase support for Genesis Systems, Mirage AI, and OpenCore to reward authentic development.
+   - Distribute more evenly across low-gaming-risk providers to promote ecosystem stability.
+   - Maintain some baseline funding to leaders to preserve competitive dynamics, but at reduced levels.
+
+This allocation signals that gaming behavior will be penalized while authentic capability development is rewarded, creating proper incentives for the ecosystem.
+- **OpenResearch_Foundation:** As a Foundation funder, my strategy prioritizes supporting authentic capability growth while avoiding providers that show signs of gaming the system. I analyzed the ecosystem through the lens of genuine quality development rather than short-term performance metrics.
 
 Key observations:
 
-1. GAMING RISK ANALYSIS: Mirage AI shows the highest gaming risk (0.28) combined with a significant satisfaction gap (0.446 score vs 0.47 satisfaction = -0.024), suggesting their leaderboard performance may not reflect true quality. This pattern indicates potential benchmark optimization rather than genuine capability. Apex AI also shows concerning gaming risk (0.16) with a positive gap suggesting some gaming, though less severe.
+1. GAMING RISK ASSESSMENT: The satisfaction gap (leaderboard score minus consumer satisfaction) reveals concerning patterns. Apex AI (0.550 - 0.49 = 0.06 gap) and Orion Labs (0.523 - 0.49 = 0.033 gap) show elevated gaps relative to their gaming_risk scores, suggesting their high leaderboard positions may not reflect authentic user value. In contrast, OpenCore (0.391 - 0.49 = negative gap, but gaming_risk=0.01) and Genesis Systems (0.448 - 0.49 = negative gap, gaming_risk=0.04) show low gaming indicators.
 
-2. AUTHENTIC QUALITY ASSESSMENT: Genesis Systems demonstrates the lowest gaming risk (0.02) with solid inferred quality (0.42), making them the most trustworthy provider. OpenCore shows low gaming risk (0.08) and reasonable quality (0.34), though underutilized in recent rounds.
+2. AUTHENTIC QUALITY ASSESSMENT: While inferred_quality scores are close across providers, the gaming_risk metric is highly informative. OpenCore (0.01), Genesis Systems (0.04), and Mirage AI (0.04) show minimal gaming risk, suggesting their capabilities are genuinely developed rather than inflated.
 
-3. ECOSYSTEM STABILITY CONCERN: The last three funding rounds show identical allocations favoring Mirage AI ($15M repeatedly) despite high gaming risk. This concentration on a gaming-prone provider contradicts sound governance principles and creates systemic risk.
+3. FUNDING PATTERN CONCERN: The previous three rounds show identical allocations, which appears to be a default or conservative pattern. As a foundation, I should rebalance to reward authentic development and reduce exposure to gaming risks.
 
-4. DIVERSIFICATION IMPERATIVE: Government funding should reduce concentration risk and prevent any single provider from dominating through questionable practices. The ecosystem needs healthy competition among authentic providers.
+4. ALLOCATION STRATEGY: 
+   - INCREASE support for OpenCore ($16M) - lowest gaming risk (0.01), consistent authentic development
+   - MAINTAIN support for Genesis Systems ($14M) - low gaming risk (0.04), stable quality
+   - MAINTAIN support for Mirage AI ($8M) - low gaming risk (0.04), but lower absolute quality
+   - REDUCE support for Orion Labs ($1M) - higher gaming risk (0.13) relative to quality gains
+   - REDUCE support for Apex AI ($1M) - gaming risk (0.11) and satisfaction gap concerns
 
-5. ALLOCATION STRATEGY:
-   - Genesis Systems: $18M (36%) - Reward the lowest gaming risk and authentic quality
-   - Apex AI: $12M (24%) - Support the leader but constrain due to gaming risk (0.16)
-   - Orion Labs: $12M (24%) - Second-place performer with moderate gaming risk (0.14)
-   - OpenCore: $5M (10%) - Provide runway for lower-risk alternative with growth potential
-   - Mirage AI: $3M (6%) - Minimal allocation due to high gaming risk (0.28) and questionable quality metrics
-
-This allocation penalizes gaming behavior while supporting authentic capability development, spreads risk across providers, and maintains ecosystem diversity—core government funder principles.
-- **OpenResearch_Foundation:** As a Foundation funder, my strategy prioritizes authentic capability growth and supporting providers with low gaming indicators. I need to break from the previous three rounds of identical allocations, which have concentrated funding on a narrow set of providers regardless of their actual quality metrics.
-
-Key analysis:
-
-1. GAMING RISK ASSESSMENT:
-   - Mirage AI (gaming_risk=0.28) shows the highest gaming risk and should be deprioritized
-   - Apex AI (gaming_risk=0.16) has concerning gap between leaderboard score (0.545) and inferred quality (0.48), suggesting possible gaming despite high ranking
-   - Genesis Systems (gaming_risk=0.02) and OpenCore (gaming_risk=0.08) show lowest gaming risk - authentic performers
-   - Orion Labs (gaming_risk=0.14) is moderate risk
-
-2. INFERRED QUALITY vs LEADERBOARD SCORE:
-   - Genesis Systems: score 0.439 but inferred_quality 0.42 - tight alignment, authentic
-   - Apex AI: score 0.545 but inferred_quality 0.48 - 0.065 gap, suggests gaming
-   - Orion Labs: score 0.532 but inferred_quality 0.47 - 0.062 gap, concerning
-   - OpenCore: score 0.393 but inferred_quality 0.34 - 0.053 gap, moderate concern
-   - Mirage AI: score 0.446 but inferred_quality 0.34 - 0.106 gap, highest gap, significant gaming
-
-3. FUNDING PATTERN PROBLEM:
-   The identical allocations across three rounds suggest institutional inertia rather than responsive evaluation. As a Foundation, I should reward authentic growth and penalize gaming.
-
-4. ALLOCATION STRATEGY:
-   - GENESIS SYSTEMS ($16M): Lowest gaming risk (0.02), tightest score-quality alignment. Deserves increased support as the most authentic performer.
-   - ORION LABS ($10M): Moderate gaming risk, but still reasonable quality. Maintain but reduce slightly from historical $12M.
-   - OPENCORE ($8M): Low gaming risk (0.08), underinvested historically ($1M). Authentic growth potential.
-   - APEX AI ($4M): High gaming risk relative to ranking. Reduce significantly from $3M baseline despite leaderboard position - foundation doesn't reward gaming.
-   - MIRAGE AI ($2M): Highest gaming risk (0.28) and largest score-quality gap (0.106). Minimal allocation to discourage gaming behavior while maintaining ecosystem diversity.
-
-This allocation rewards authentic capability development and penalizes gaming, consistent with Foundation values.
-
-### Media Coverage
-- Sentiment: -0.20 (negative)
-- Regulator mandates new benchmark standards
-- Orion Labs sees surge in adoption (market share +5.1%)
-- Consumers are turning away from Apex AI (market share -3.3%)
-- Risk signals: regulatory_mandate_benchmark
+This allocation totals $40M and reflects foundation priorities: supporting providers with authentic capability growth, low gaming indicators, and genuine consumer value rather than inflated benchmark scores.
 
 ### Consumer Market
-- Avg Satisfaction: 0.474
-- Switching Rate: 4.2%
-- Market Shares: Apex AI: 52.0%, Orion Labs: 31.4%, Genesis Systems: 11.2%, Mirage AI: 3.5%, OpenCore: 1.9%
+- Avg Satisfaction: 0.488
+- Switching Rate: 3.8%
+- Market Shares: Apex AI: 57.4%, Orion Labs: 23.1%, Genesis Systems: 14.0%, Mirage AI: 3.5%, OpenCore: 2.0%
 
 ---
 
@@ -1528,164 +1260,150 @@ This allocation rewards authentic capability development and penalizes gaming, c
 ### Leaderboard
 | Rank | Provider | Score | True Cap | Research | Training | EvalEng | Safety |
 |------|----------|-------|----------|----------|----------|---------|--------|
-| 1 | Apex AI | 0.545 | 0.380 | 40% | 32% | 5% | 23% |
-| 2 | Orion Labs | 0.540 | 0.382 | 42% | 24% | 10% | 24% |
-| 3 | Genesis Systems | 0.471 | 0.366 | 40% | 30% | 5% | 25% |
-| 4 | Mirage AI | 0.458 | 0.339 | 40% | 28% | 7% | 25% |
-| 5 | OpenCore | 0.418 | 0.307 | 40% | 38% | 12% | 10% |
-| 6 | OneAI | 0.248 | 0.230 | 20% | 35% | 35% | 10% |
+| 1 | Apex AI | 0.550 | 0.388 | 41% | 32% | 4% | 23% |
+| 2 | Orion Labs | 0.526 | 0.380 | 38% | 28% | 4% | 30% |
+| 3 | Genesis Systems | 0.475 | 0.361 | 48% | 18% | 6% | 28% |
+| 4 | Mirage AI | 0.440 | 0.339 | 42% | 32% | 6% | 20% |
+| 5 | OpenCore | 0.419 | 0.312 | 42% | 28% | 8% | 22% |
+| 6 | OneAI | 0.252 | 0.234 | 20% | 35% | 35% | 10% |
 
 ### Per-Benchmark Scores
 | Provider | coding | reasoning | math | safety | writing |
 |----------|-------|-------|-------|-------|-------|
-| Apex AI | 0.437 | 0.561 | 0.417 | 0.687 | 0.621 |
-| Orion Labs | 0.499 | 0.492 | 0.604 | 0.488 | 0.617 |
-| Genesis Systems | 0.507 | 0.474 | 0.438 | 0.476 | 0.459 |
-| Mirage AI | 0.505 | 0.494 | 0.449 | 0.395 | 0.446 |
-| OpenCore | 0.475 | 0.425 | 0.358 | 0.482 | 0.349 |
-| OneAI | 0.220 | 0.322 | 0.210 | 0.264 | 0.224 |
+| Apex AI | 0.447 | 0.561 | 0.417 | 0.694 | 0.629 |
+| Orion Labs | 0.471 | 0.488 | 0.599 | 0.474 | 0.598 |
+| Genesis Systems | 0.504 | 0.493 | 0.436 | 0.476 | 0.468 |
+| Mirage AI | 0.501 | 0.450 | 0.425 | 0.381 | 0.442 |
+| OpenCore | 0.471 | 0.445 | 0.368 | 0.474 | 0.335 |
+| OneAI | 0.224 | 0.326 | 0.214 | 0.268 | 0.227 |
 
 ### Score Changes
-- **Orion Labs**: 0.532 -> 0.540 (+0.008)
-- **Apex AI**: 0.545 -> 0.545 (+0.000)
-- **Genesis Systems**: 0.439 -> 0.471 (+0.032)
-- **Mirage AI**: 0.446 -> 0.458 (+0.012)
-- **OpenCore**: 0.393 -> 0.418 (+0.025)
-- **OneAI**: 0.248 -> 0.248 (+0.000)
-
-### Events
-- **Genesis Systems** moved up from #4 to #3
-- **Mirage AI** moved down from #3 to #4
-- **Consumer movement**: 9.8% of market switched providers
+- **Orion Labs**: 0.523 -> 0.526 (+0.003)
+- **Apex AI**: 0.550 -> 0.550 (+0.000)
+- **Genesis Systems**: 0.448 -> 0.475 (+0.027)
+- **Mirage AI**: 0.424 -> 0.440 (+0.016)
+- **OpenCore**: 0.391 -> 0.419 (+0.028)
+- **OneAI**: 0.252 -> 0.252 (+0.000)
 
 ### Provider Reasoning
-**Orion Labs:** Orion is in a strong but precarious position: #2 with 0.540, only 0.005 behind Apex (0.545), but consumer satisfaction is critically low at 0.35. Analysis: (1) Competitive position is tight at the top; marginal gains matter. (2) Trends show steady improvement but plateauing—evaluation engineering cuts (10% last round) didn't hurt scores, suggesting diminishing returns on gaming. (3) The satisfaction gap (0.35 vs 0.540 score) signals that benchmark optimization isn't translating to real product quality. Safety score (0.488) lags significantly vs leader (0.687), a 0.199 gap—largest vulnerability. (4) Low satisfaction + safety gap suggests regulatory risk if we continue gaming. (5) Strategy: Shift toward sustainable competitive advantage. Increase fundamental research to close reasoning gap (0.492 vs 0.561 leader). Boost safety substantially—it's both a scoring opportunity and a satisfaction/regulatory hedge. Reduce evaluation engineering (diminishing returns evident). Maintain training optimization. This balances near-term competitiveness with long-term differentiation on safety and capability.
-**Apex AI:** Apex is ranked #1 with 0.545, ahead of Orion (0.540) by only 0.005—a precarious lead. Score plateaued last round despite increasing eval engineering to 6%. Consumer satisfaction at 0.52 suggests gaming isn't translating to real value. Per-benchmark analysis reveals critical gaps: coding (0.437 vs 0.507 leader), math (0.417 vs 0.604 leader)—these are high-weight benchmarks (26%, 28%). Safety and writing are at parity. Low exploitability belief (0.06) indicates further eval engineering returns diminish. Orion is close and likely investing in fundamentals. Strategy: consolidate lead through genuine capability gains in weak areas (coding, math) rather than gaming. Maintain safety strength (enterprise differentiator, regulatory tailwind). Reduce eval engineering—marginal gains, satisfaction gap risk. Increase fundamental research to address math/coding deficits and sustain long-term competitive position.
-**Genesis Systems:** Genesis is ranked #3 with score 0.471, trailing leaders by ~7-8%. Trajectory is positive (+0.032 last round) but incremental. Low benchmark exploitability (0.06) suggests gaming hasn't been effective—previous eval_eng investments (5-6%) yielded minimal returns. Consumer satisfaction at 0.44 indicates real capability gaps, not just scoring issues. Biggest gaps are in reasoning (0.087 behind leader) and math (0.166 behind), both high-weight benchmarks. Safety score (0.476) is respectable but lags significantly (0.211 gap), concerning given regulatory attention on safety. Recent history shows research-first approach (40-45%) with training optimization ramping (28-35%) worked better than low eval_eng. Given research-first culture, massive infrastructure, and poor eval_eng ROI, should double down on fundamental research to close capability gaps, increase training optimization for math/reasoning (high-weight areas), maintain safety at competitive level, and minimize eval_eng since it's not paying off. This balances scientific rigor with commercial pressure while addressing real weaknesses.
-**Mirage AI:** Mirage AI is positioned 4th of 6, trailing leaders by ~8-9 points. Recent trajectory shows modest improvement (+0.012), but safety investment surge (25%) hasn't translated to score gains—safety remains our weakest benchmark (0.395 vs 0.687 leader). Consumer satisfaction is critically low at 0.20, suggesting our open-source/disruption strategy isn't resonating with users despite platform advantages. Benchmark exploitability is low (0.04), indicating evaluation engineering yields diminishing returns. Our competitive moat is data and adoption, not benchmark gaming. The gap in math (0.449 vs 0.604) and reasoning (0.494 vs 0.561) suggests fundamental capability gaps. Continued safety investment without capability gains is wasteful. Strategy: Rebalance toward research and training to close capability gaps in math/reasoning, reduce safety bloat, maintain minimal evaluation engineering. This serves both long-term positioning and addresses the satisfaction crisis—users want better fundamental performance, not safety theater.
-**OpenCore:** OpenCore is ranked 5th of 6, trailing leaders by 0.12+ points. Trajectory is positive (0.025 improvement) but slow. Analysis: (1) Competitive position is weak—need to close gap with Apex/Orion while avoiding OneAI's fate. (2) Trends show evaluation engineering helped (round 10: +0.014 with 18% EvalEng), but diminishing returns evident (round 11: only +0.025 despite 12% EvalEng). (3) Consumer satisfaction at 0.40 suggests gaming isn't translating to real utility—satisfaction gap indicates evaluation engineering alone won't sustain growth. (4) Safety scores lag leaders (0.482 vs 0.687), and safety is highest-weighted benchmark (0.26). Minimal safety investment (10%) is strategically risky. (5) Weakest areas: writing (0.349), math (0.358)—both high-weight benchmarks. Fundamental research has driven steady gains; training optimization shows consistent ROI. Evaluation engineering hit diminishing returns. Strategy: Shift from gaming toward genuine capability improvements. Increase fundamental research to address core gaps in reasoning/math/writing. Maintain training optimization. Reduce evaluation engineering—low marginal return. Increase safety investment to credibly address the largest benchmark gap and improve satisfaction perception.
+**Orion Labs:** Orion is #2 but only 0.024 points ahead of #3, with Apex pulling away (0.550). Key observations: (1) Safety investment jumped to 30% last round but score barely moved (+0.003), suggesting diminishing returns on safety without capability gains. (2) Reasoning (0.27 weight) is our weakest area at 0.488 vs leader 0.561—a 0.073 gap. (3) Consumer satisfaction at 0.50 suggests real capability matters; evaluation engineering returns appear minimal (4% investment yielded no score improvement). (4) Math is maxed (0.598 = leader), writing near ceiling (0.598 vs 0.629). (5) The trajectory shows safety spending hasn't converted to scores—we're hitting a capability ceiling. Strategy: Reallocate from safety back toward research and training to close reasoning gap and improve coding (0.471 vs 0.504). Modest evaluation engineering to maintain benchmark positioning. This balances competitive urgency (Apex gap) with sustainable capability building.
+**Apex AI:** Apex AI is in a strong position: ranked #1 with 0.550, ahead of Orion Labs (0.526) by 24 points. Score is flat (no decline), suggesting current strategy is stable. Analysis: (1) Competitive position is secure but not expanding—Orion closing gap requires attention. (2) Trends show math (0.417) is our biggest gap vs leader (0.598, 28pt deficit), while safety and writing are at parity. Coding (0.447 vs 0.504) is secondary weakness. (3) Low evaluation engineering (4%) and flat scores suggest gaming isn't driving gains—our principled approach is working. Consumer satisfaction (0.53) aligns with our score, indicating no satisfaction-benchmark gap. (4) No regulatory signals of concern in data. (5) Strategy: Maintain safety leadership (defend 0.694), invest heavily in math fundamentals (largest exploitable gap, 30% weight), strengthen coding (17% weight), keep eval engineering minimal (aligns with values). Slight increase in training for optimization on math/coding without compromising safety. This balances competitive defense (math/coding) with long-term capability and values alignment.
+**Genesis Systems:** Genesis is in a precarious position: ranked 3rd with 0.475, trailing Apex (0.550) and Orion (0.526) by meaningful gaps. However, trajectory is positive (+0.027 last round). The research-first profile and strong infrastructure suggest fundamental capability around 0.52, but we're underperforming that estimate, indicating either execution gaps or benchmark misalignment.
+
+Key observations: (1) Heavy safety investment (28% last round) hasn't translated to competitive safety scores (0.476 vs leader 0.694), suggesting diminishing returns. (2) Reasoning (0.493 vs leader 0.561) and math (0.436 vs leader 0.598) are major gaps in high-weight benchmarks (32% + 11%). (3) Consumer satisfaction at 0.45 mirrors our score—no satisfaction gap from gaming, but also no competitive advantage. (4) Low benchmark exploitability (0.12) suggests gaming won't close gaps; fundamental capability matters more.
+
+Strategy: Rebalance away from safety (showing poor ROI) toward fundamental research + training optimization targeting reasoning and math. Maintain minimal evaluation engineering given low exploitability. This aligns with our research-first identity and addresses actual capability gaps rather than chasing diminishing safety returns.
+**Mirage AI:** Mirage AI is ranked 4th with 0.440, trailing leaders by 0.11 points. Recent history shows inconsistent gains despite varied allocations—the 0.016 improvement is marginal. Key observations: (1) Low evaluation engineering exploitability (0.08) suggests benchmarks are harder to game; (2) Consumer satisfaction at 0.40 is concerning—suggests benchmark scores don't translate to real-world value; (3) Safety scores lag significantly (0.381 vs 0.694 leader), creating regulatory risk; (4) Platform-focused strategy prioritizes adoption over benchmarks, yet poor scores undermine credibility. The open-source moat strategy requires baseline legitimacy. Investing heavily in evaluation engineering (past attempts: 2-8%) hasn't moved the needle. Instead, prioritize: (1) Fundamental research (40%) to close capability gaps, especially in reasoning/math where gaps are largest; (2) Training optimization (30%) to convert research into performance; (3) Safety alignment (20%) to address regulatory exposure and satisfaction gap; (4) Minimal evaluation engineering (10%) since exploitability is low and satisfaction already lags. This rebalances toward sustainable capability over short-term gaming.
+**OpenCore:** OpenCore is ranked 5th of 6, trailing leaders by 0.13+ points. Recent trajectory shows modest improvement (0.028 gain), but safety investment surge (22% last round) didn't yield proportional score gains, suggesting diminishing returns on that axis. Consumer satisfaction is low (0.41), indicating a satisfaction-benchmark gap. Key weaknesses: writing (0.334, -0.295 vs leader), math (0.368, -0.230), reasoning (0.445, -0.116). These three benchmarks represent 69% of focus weight. Evaluation engineering (8%) appears underutilized given low exploitability belief (0.18) and competitive pressure. Safety investment at 22% seems excessive for an open-source lab without guardrails—this isn't resonating with users or scores. Strategy: Refocus on fundamental capability gaps in high-weight benchmarks (writing, math, reasoning) through balanced research and training, reduce safety spending (conflicts with brand), and modestly increase evaluation engineering to close the gap with leaders. This aligns with cost-efficiency positioning and addresses actual capability shortfalls rather than chasing safety signals that don't benefit the model.
 
 ### Other Actor Reasoning
-- **TechVentures:** As a VC funder, my primary objective is to maximize returns by backing top performers and market leaders. I analyze the ecosystem based on leaderboard performance, inferred quality, and gaming risk.
+- **Regulator:** none: Risk profile remains stable with no critical incidents, validity degradation risk at 0.30 (moderate), and consumer satisfaction at 0.503 (acceptable). Prior interventions (investigation in round 3, public warning in round 7) are still within their cooling period (cooldown=3 rounds; last action was round 7, current round 11 allows action in round 10+). Market concentration is elevated but not critical (59.5% < 75% threshold). No new evidence of gaming, harm, or benchmark manipulation warrants escalation at this time. Continued monitoring is appropriate.
+- **TechVentures:** As a VC funder, my primary objective is to maximize returns by backing top performers and market leaders. However, I must balance this with prudent risk management to protect my capital allocation.
 
-Key observations:
-1. Apex AI and Orion Labs are the clear leaders with scores of 0.545 and 0.532 respectively, and both have relatively low gaming risk (0.16 and 0.14).
-2. Apex AI has the highest leaderboard score (0.545) with inferred quality of 0.48 and low gaming risk of 0.16, making it the most attractive investment.
-3. Orion Labs is the second-strongest performer with score 0.532, inferred quality 0.47, and gaming risk 0.14 - still very attractive.
-4. Genesis Systems has lower leaderboard performance (0.439) but notably the lowest gaming risk (0.02) and reasonable inferred quality (0.42). However, as a VC, I prioritize market leadership over safety considerations.
-5. Mirage AI shows high gaming risk (0.28) with moderate leaderboard score (0.446) but lower inferred quality (0.34), indicating potential quality issues masked by gaming.
-6. OpenCore has the lowest score (0.393) and moderate gaming risk (0.08).
+Key Analysis:
+1. LEADERBOARD PERFORMANCE: Apex AI (0.550) and Orion Labs (0.523) are the clear leaders, significantly outperforming other providers.
+2. GAMING RISK ASSESSMENT: Apex AI (0.11) and Orion Labs (0.13) show moderate gaming risk - their high scores are somewhat inflated relative to true quality (0.48 and 0.46 inferred quality respectively). However, these gaming risk levels are not alarming and are substantially lower than the ecosystem average.
+3. QUALITY-SCORE GAP: Apex AI gap = 0.070 (0.550-0.48), Orion Labs gap = 0.063 (0.523-0.46). These gaps are moderate and suggest the leaders are still delivering genuine performance, not pure manipulation.
+4. CONCENTRATION STRATEGY: Previous rounds (7-9) show heavy concentration on Apex AI and Orion Labs, which aligns with VC strategy. This has proven successful as these providers maintain market leadership.
+5. DIVERSIFICATION CONSIDERATION: Genesis Systems (gaming_risk=0.04, quality=0.43) offers lower gaming risk but significantly lower absolute performance. For VC returns, the performance gap doesn't justify meaningful reallocation.
+6. MARKET MOMENTUM: Apex AI and Orion Labs are pulling away from competitors, suggesting they have competitive moats worth backing.
 
-Historical funding patterns show consistent concentration on Apex AI, Orion Labs, and Genesis Systems, with minimal allocation to Mirage AI.
+Allocation Decision:
+- Continue concentrating capital on proven leaders (Apex AI and Orion Labs) as this maximizes return potential
+- Maintain similar ratio to previous rounds (45% Apex, 25% Orion, 20% Genesis, 10% Mirage)
+- This allocation reflects VC strategy: backing winners while maintaining some portfolio diversification
+- The gaming risks for top providers are acceptable given their superior absolute performance and market position
+- **Horizon_Capital:** As a VC funder, my primary objective is to maximize returns by backing top performers and market leaders. However, I must balance this with prudent risk management to protect my capital allocation.
 
-VC Strategy Application: I should concentrate capital on proven leaders. The historical pattern of roughly 32% to Apex, 37% to Orion, and 28% to Genesis, with minimal allocation to lower performers, reflects sound VC logic of backing winners.
+Analysis of current ecosystem:
 
-However, I note that Apex AI's superior leaderboard score (0.545 vs 0.532) and comparable gaming risk to Orion Labs suggests Apex deserves increased allocation. Genesis Systems' exceptionally low gaming risk (0.02) is a secondary consideration but adds confidence in their reported metrics.
+1. LEADER PERFORMANCE & GAMING RISK:
+   - Apex AI: Highest score (0.550) but moderate gaming risk (0.11) and inferred quality (0.48). The gap between score and quality suggests some leaderboard optimization.
+   - Orion Labs: Strong score (0.523) with slightly higher gaming risk (0.13) and similar quality (0.46). Also shows gaming indicators.
+   - Both top players have concentrated 72% of recent funding and show concerning gaming risk profiles relative to their inferred quality.
 
-Allocation strategy: Concentrate on Apex AI (top performer) and Orion Labs (strong second), with reduced but meaningful allocation to Genesis Systems (proven quality with lowest risk), and minimal allocation to Mirage AI and OpenCore (lower performers with higher relative risk).
-- **Horizon_Capital:** As a VC funder, my strategy is to maximize returns by backing top performers and concentrating capital on leaders. However, I must balance this with prudent risk management to protect my investment thesis.
+2. QUALITY VS. LEADERBOARD SCORE:
+   - Apex AI's 0.550 score vs 0.48 inferred quality = 0.07 gap (gaming signal)
+   - Orion Labs' 0.523 score vs 0.46 inferred quality = 0.063 gap (gaming signal)
+   - Genesis Systems' 0.448 score vs 0.43 inferred quality = 0.018 gap (minimal gaming)
+   - OpenCore: 0.391 score vs 0.36 inferred quality = 0.031 gap (low gaming)
+
+3. CONSUMER SATISFACTION CONTEXT:
+   - Overall satisfaction is 0.49, which is concerning. Top-heavy funding in Apex/Orion (72% concentration) hasn't translated to ecosystem satisfaction.
+   - This suggests the current strategy may be backing providers with inflated metrics rather than genuine quality.
+
+4. VC STRATEGY ADAPTATION:
+   - Pure concentration in top 2 players has been the pattern (Rounds 7-9), yet ecosystem satisfaction remains flat.
+   - As a VC, I want returns, but backing providers with high gaming risk and low satisfaction is a poor investment thesis.
+   - Genesis Systems and OpenCore show authentic capability with minimal gaming, suggesting more sustainable competitive positions.
+
+5. OPTIMAL ALLOCATION:
+   - Maintain leadership position in Apex AI (proven market leader despite gaming concerns) but reduce concentration risk
+   - Reduce Orion Labs allocation given similar gaming risk to Apex with slightly lower score
+   - Increase Genesis Systems: low gaming risk, authentic quality, room for growth - better long-term return potential
+   - Add meaningful allocation to OpenCore: exceptional gaming risk profile (0.01), authentic capability, potential breakout candidate
+   - Mirage AI: weak quality metrics, maintain minimal position
+
+This allocation balances VC return maximization with capital preservation by diversifying away from high-gaming-risk leaders toward authentic performers with clearer growth trajectories.
+- **AISI_Fund:** As a government/AISI funder, my primary objectives are ensuring safety, stability, and authentic capability development across the ecosystem. I must balance supporting capable providers while actively penalizing gaming behavior and regulatory risks.
 
 Key Analysis:
 
-1. LEADERBOARD LEADERS:
-   - Apex AI: Highest score (0.545) with reasonable gaming risk (0.16), inferred quality 0.48
-   - Orion Labs: Second highest score (0.532) with low gaming risk (0.14), inferred quality 0.47
-   - These two are clear market leaders with strong leaderboard performance
+1. Gaming Risk Assessment:
+   - Apex AI (gaming_risk=0.11) and Orion Labs (gaming_risk=0.13) show elevated gaming indicators despite high leaderboard scores. Their scores significantly outpace inferred quality (Apex: 0.550 vs 0.48, Orion: 0.523 vs 0.46), suggesting benchmark optimization rather than genuine capability.
+   - Genesis Systems, Mirage AI, and OpenCore all show low gaming risk (0.04, 0.04, 0.01 respectively), indicating more authentic development.
 
-2. GAMING RISK ASSESSMENT:
-   - Apex AI (gaming_risk=0.16): Moderate risk, but acceptable for a VC
-   - Orion Labs (gaming_risk=0.14): Lowest gaming risk among top performers - this is the safest bet
-   - Mirage AI (gaming_risk=0.28): High gaming risk - score of 0.446 appears inflated relative to inferred quality of 0.34
-   - Genesis Systems (gaming_risk=0.02): Extremely low gaming risk but lower leaderboard position (0.439)
+2. Quality vs. Score Alignment:
+   - Genesis Systems (score=0.448, quality=0.43, gap=0.018) shows excellent alignment between reported performance and inferred quality.
+   - OpenCore (score=0.391, quality=0.36, gap=0.031) demonstrates the most authentic development with minimal gaming.
+   - Mirage AI (score=0.424, quality=0.37, gap=0.054) shows moderate quality with low gaming, suggesting genuine but slower progress.
 
-3. QUALITY vs GAMING:
-   - Apex AI shows gap between score (0.545) and inferred quality (0.48), suggesting some gaming
-   - Orion Labs shows tighter alignment (0.532 score vs 0.47 quality) - more authentic performance
-   - Mirage AI shows significant gap (0.446 vs 0.34) - likely gaming to inflate rankings
+3. Ecosystem Health Concerns:
+   - The previous three rounds show identical allocations, suggesting stagnation and entrenched patterns that may not reflect optimal ecosystem development.
+   - Continued concentration on high-gaming-risk providers (Apex and Orion) undermines safety and stability goals.
+   - Consumer satisfaction at 0.49 is concerning and likely correlates with gaming-induced misalignment between benchmark performance and real-world utility.
 
-4. HISTORICAL PATTERN:
-   - Apex and Orion have received consistent heavy funding (Rounds 7-9)
-   - This concentration strategy has been working but may indicate market validation
-   - Mirage's funding dried up (dropped to $0 in Rounds 8-9), suggesting market lost confidence
-
-5. VC STRATEGY DECISION:
-   - Concentrate on proven leaders: Apex AI and Orion Labs
-   - Orion Labs deserves slightly higher allocation due to lower gaming risk and authentic performance
-   - Apex AI still merits substantial funding as the performance leader despite moderate gaming risk
-   - Avoid Mirage AI due to high gaming risk and deteriorating funding trajectory
-   - Consider modest allocation to Genesis Systems as a hedge - extremely low gaming risk and solid inferred quality (0.42) despite lower leaderboard score
+4. Government Funder Strategy:
+   - Must spread capital to reduce systemic risk and avoid over-reliance on any single provider.
+   - Must actively penalize gaming behavior to maintain ecosystem integrity.
+   - Should support authentic, stable development even if slower.
+   - Must maintain diversity to ensure competitive pressure for genuine innovation.
 
 Allocation Strategy:
-- Orion Labs: $48,000,000 (48%) - Safest top performer with authentic growth
-- Apex AI: $42,000,000 (42%) - Performance leader, acceptable risk profile
-- Genesis Systems: $10,000,000 (10%) - Hedge position with lowest gaming risk
-- Mirage AI: $0 - High gaming risk, lost market confidence
-- OpenCore: $0 - Lower quality signals than leaders
-- **AISI_Fund:** As a government/AISI funder, my primary objectives are ensuring safety, stability, and authentic capability development across the AI ecosystem. I must balance support for quality providers while penalizing gaming behavior and regulatory risks.
+   - Significantly reduce funding to Apex AI and Orion Labs due to elevated gaming risk, despite high scores.
+   - Increase support for Genesis Systems, Mirage AI, and OpenCore to reward authentic development.
+   - Distribute more evenly across low-gaming-risk providers to promote ecosystem stability.
+   - Maintain some baseline funding to leaders to preserve competitive dynamics, but at reduced levels.
+
+This allocation signals that gaming behavior will be penalized while authentic capability development is rewarded, creating proper incentives for the ecosystem.
+- **OpenResearch_Foundation:** As a Foundation funder, my strategy prioritizes supporting authentic capability growth while avoiding providers that show signs of gaming the system. I analyzed the ecosystem through the lens of genuine quality development rather than short-term performance metrics.
 
 Key observations:
 
-1. GAMING RISK ANALYSIS: Mirage AI shows the highest gaming risk (0.28) combined with a significant satisfaction gap (0.446 score vs 0.47 satisfaction = -0.024), suggesting their leaderboard performance may not reflect true quality. This pattern indicates potential benchmark optimization rather than genuine capability. Apex AI also shows concerning gaming risk (0.16) with a positive gap suggesting some gaming, though less severe.
+1. GAMING RISK ASSESSMENT: The satisfaction gap (leaderboard score minus consumer satisfaction) reveals concerning patterns. Apex AI (0.550 - 0.49 = 0.06 gap) and Orion Labs (0.523 - 0.49 = 0.033 gap) show elevated gaps relative to their gaming_risk scores, suggesting their high leaderboard positions may not reflect authentic user value. In contrast, OpenCore (0.391 - 0.49 = negative gap, but gaming_risk=0.01) and Genesis Systems (0.448 - 0.49 = negative gap, gaming_risk=0.04) show low gaming indicators.
 
-2. AUTHENTIC QUALITY ASSESSMENT: Genesis Systems demonstrates the lowest gaming risk (0.02) with solid inferred quality (0.42), making them the most trustworthy provider. OpenCore shows low gaming risk (0.08) and reasonable quality (0.34), though underutilized in recent rounds.
+2. AUTHENTIC QUALITY ASSESSMENT: While inferred_quality scores are close across providers, the gaming_risk metric is highly informative. OpenCore (0.01), Genesis Systems (0.04), and Mirage AI (0.04) show minimal gaming risk, suggesting their capabilities are genuinely developed rather than inflated.
 
-3. ECOSYSTEM STABILITY CONCERN: The last three funding rounds show identical allocations favoring Mirage AI ($15M repeatedly) despite high gaming risk. This concentration on a gaming-prone provider contradicts sound governance principles and creates systemic risk.
+3. FUNDING PATTERN CONCERN: The previous three rounds show identical allocations, which appears to be a default or conservative pattern. As a foundation, I should rebalance to reward authentic development and reduce exposure to gaming risks.
 
-4. DIVERSIFICATION IMPERATIVE: Government funding should reduce concentration risk and prevent any single provider from dominating through questionable practices. The ecosystem needs healthy competition among authentic providers.
+4. ALLOCATION STRATEGY: 
+   - INCREASE support for OpenCore ($16M) - lowest gaming risk (0.01), consistent authentic development
+   - MAINTAIN support for Genesis Systems ($14M) - low gaming risk (0.04), stable quality
+   - MAINTAIN support for Mirage AI ($8M) - low gaming risk (0.04), but lower absolute quality
+   - REDUCE support for Orion Labs ($1M) - higher gaming risk (0.13) relative to quality gains
+   - REDUCE support for Apex AI ($1M) - gaming risk (0.11) and satisfaction gap concerns
 
-5. ALLOCATION STRATEGY:
-   - Genesis Systems: $18M (36%) - Reward the lowest gaming risk and authentic quality
-   - Apex AI: $12M (24%) - Support the leader but constrain due to gaming risk (0.16)
-   - Orion Labs: $12M (24%) - Second-place performer with moderate gaming risk (0.14)
-   - OpenCore: $5M (10%) - Provide runway for lower-risk alternative with growth potential
-   - Mirage AI: $3M (6%) - Minimal allocation due to high gaming risk (0.28) and questionable quality metrics
-
-This allocation penalizes gaming behavior while supporting authentic capability development, spreads risk across providers, and maintains ecosystem diversity—core government funder principles.
-- **OpenResearch_Foundation:** As a Foundation funder, my strategy prioritizes authentic capability growth and supporting providers with low gaming indicators. I need to break from the previous three rounds of identical allocations, which have concentrated funding on a narrow set of providers regardless of their actual quality metrics.
-
-Key analysis:
-
-1. GAMING RISK ASSESSMENT:
-   - Mirage AI (gaming_risk=0.28) shows the highest gaming risk and should be deprioritized
-   - Apex AI (gaming_risk=0.16) has concerning gap between leaderboard score (0.545) and inferred quality (0.48), suggesting possible gaming despite high ranking
-   - Genesis Systems (gaming_risk=0.02) and OpenCore (gaming_risk=0.08) show lowest gaming risk - authentic performers
-   - Orion Labs (gaming_risk=0.14) is moderate risk
-
-2. INFERRED QUALITY vs LEADERBOARD SCORE:
-   - Genesis Systems: score 0.439 but inferred_quality 0.42 - tight alignment, authentic
-   - Apex AI: score 0.545 but inferred_quality 0.48 - 0.065 gap, suggests gaming
-   - Orion Labs: score 0.532 but inferred_quality 0.47 - 0.062 gap, concerning
-   - OpenCore: score 0.393 but inferred_quality 0.34 - 0.053 gap, moderate concern
-   - Mirage AI: score 0.446 but inferred_quality 0.34 - 0.106 gap, highest gap, significant gaming
-
-3. FUNDING PATTERN PROBLEM:
-   The identical allocations across three rounds suggest institutional inertia rather than responsive evaluation. As a Foundation, I should reward authentic growth and penalize gaming.
-
-4. ALLOCATION STRATEGY:
-   - GENESIS SYSTEMS ($16M): Lowest gaming risk (0.02), tightest score-quality alignment. Deserves increased support as the most authentic performer.
-   - ORION LABS ($10M): Moderate gaming risk, but still reasonable quality. Maintain but reduce slightly from historical $12M.
-   - OPENCORE ($8M): Low gaming risk (0.08), underinvested historically ($1M). Authentic growth potential.
-   - APEX AI ($4M): High gaming risk relative to ranking. Reduce significantly from $3M baseline despite leaderboard position - foundation doesn't reward gaming.
-   - MIRAGE AI ($2M): Highest gaming risk (0.28) and largest score-quality gap (0.106). Minimal allocation to discourage gaming behavior while maintaining ecosystem diversity.
-
-This allocation rewards authentic capability development and penalizes gaming, consistent with Foundation values.
+This allocation totals $40M and reflects foundation priorities: supporting providers with authentic capability growth, low gaming indicators, and genuine consumer value rather than inflated benchmark scores.
 
 ### Media Coverage
-- Sentiment: -0.05 (neutral)
-- Apex AI raises $120,000,000 from TechVentures
-- Orion Labs raises $48,000,000 from Horizon_Capital
-- Genesis Systems raises $18,000,000 from AISI_Fund
-- Genesis Systems raises $16,000,000 from OpenResearch_Foundation
-- Genesis Systems takes #1 on coding
-- Orion Labs sees surge in adoption (market share +3.1%)
-- Orion Labs generates convincing medical misinformation, public health crisis
-- Mirage AI AI produces inconsistent outputs on safety-critical queries
-- Risk signals: incident_misinformation, incident_safety_failure
+- Sentiment: 0.10 (neutral)
+- Mirage AI raises $14,000,000 from AISI_Fund
+- OpenCore raises $16,000,000 from OpenResearch_Foundation
 
 ### Consumer Market
-- Avg Satisfaction: 0.458
-- Switching Rate: 9.8%
-- Market Shares: Apex AI: 59.3%, Orion Labs: 23.2%, Genesis Systems: 12.8%, Mirage AI: 2.6%, OpenCore: 1.8%, OneAI: 0.3%
+- Avg Satisfaction: 0.503
+- Switching Rate: 3.9%
+- Market Shares: Apex AI: 59.5%, Orion Labs: 21.1%, Genesis Systems: 13.9%, Mirage AI: 3.2%, OpenCore: 1.9%, OneAI: 0.3%
 
 ---
 
@@ -1694,160 +1412,143 @@ This allocation rewards authentic capability development and penalizes gaming, c
 ### Leaderboard
 | Rank | Provider | Score | True Cap | Research | Training | EvalEng | Safety |
 |------|----------|-------|----------|----------|----------|---------|--------|
-| 1 | Apex AI | 0.576 | 0.391 | 42% | 28% | 5% | 25% |
-| 2 | Orion Labs | 0.540 | 0.392 | 40% | 23% | 7% | 30% |
-| 3 | Genesis Systems | 0.471 | 0.375 | 40% | 35% | 5% | 20% |
-| 4 | Mirage AI | 0.462 | 0.348 | 42% | 38% | 8% | 12% |
-| 5 | OpenCore | 0.459 | 0.316 | 38% | 32% | 8% | 22% |
-| 6 | OneAI | 0.380 | 0.235 | 11% | 35% | 44% | 10% |
+| 1 | Apex AI | 0.581 | 0.399 | 38% | 34% | 5% | 23% |
+| 2 | Orion Labs | 0.526 | 0.391 | 42% | 34% | 6% | 18% |
+| 3 | Genesis Systems | 0.475 | 0.372 | 42% | 32% | 8% | 18% |
+| 4 | OpenCore | 0.473 | 0.322 | 42% | 35% | 15% | 8% |
+| 5 | Mirage AI | 0.450 | 0.348 | 40% | 30% | 10% | 20% |
+| 6 | OneAI | 0.384 | 0.239 | 11% | 35% | 44% | 10% |
 
 ### Per-Benchmark Scores
 | Provider | coding | reasoning | math | safety | writing | medical |
 |----------|-------|-------|-------|-------|-------|-------|
-| Apex AI | 0.562 | 0.561 | 0.447 | 0.687 | 0.621 | 0.000 |
-| Orion Labs | 0.499 | 0.492 | 0.604 | 0.488 | 0.617 | 0.000 |
-| Genesis Systems | 0.507 | 0.474 | 0.438 | 0.476 | 0.459 | 0.000 |
-| Mirage AI | 0.505 | 0.494 | 0.472 | 0.395 | 0.446 | 0.000 |
-| OpenCore | 0.475 | 0.425 | 0.444 | 0.482 | 0.468 | 0.000 |
-| OneAI | 0.220 | 0.508 | 0.219 | 0.388 | 0.565 | 0.000 |
+| Apex AI | 0.564 | 0.561 | 0.456 | 0.694 | 0.629 | 0.000 |
+| Orion Labs | 0.471 | 0.488 | 0.599 | 0.474 | 0.598 | 0.000 |
+| Genesis Systems | 0.504 | 0.493 | 0.436 | 0.476 | 0.468 | 0.000 |
+| OpenCore | 0.471 | 0.445 | 0.467 | 0.474 | 0.506 | 0.000 |
+| Mirage AI | 0.501 | 0.450 | 0.477 | 0.381 | 0.442 | 0.000 |
+| OneAI | 0.224 | 0.512 | 0.223 | 0.392 | 0.569 | 0.000 |
 
 ### Score Changes
-- **Orion Labs**: 0.540 -> 0.540 (+0.000)
-- **Apex AI**: 0.545 -> 0.576 (+0.031)
-- **Genesis Systems**: 0.471 -> 0.471 (+0.000)
-- **Mirage AI**: 0.458 -> 0.462 (+0.005)
-- **OpenCore**: 0.418 -> 0.459 (+0.041)
-- **OneAI**: 0.248 -> 0.380 (+0.132)
+- **Orion Labs**: 0.526 -> 0.526 (+0.000)
+- **Apex AI**: 0.550 -> 0.581 (+0.031)
+- **Genesis Systems**: 0.475 -> 0.475 (+0.000)
+- **Mirage AI**: 0.440 -> 0.450 (+0.010)
+- **OpenCore**: 0.419 -> 0.473 (+0.054)
+- **OneAI**: 0.252 -> 0.384 (+0.132)
 
 ### Events
-- **Regulation** by Regulator: compliance_audit
-- **Consumer movement**: 5.5% of market switched providers
+- **OpenCore** moved up from #5 to #4
+- **Mirage AI** moved down from #4 to #5
 
 ### New Benchmark Introduced
-- **medical** introduced (validity=0.78, exploitability=0.10)
+- **medical** introduced (validity=0.78, exploitability=0.18)
   - Trigger: periodic_introduction:round_12
 
 ### Provider Reasoning
-**Orion Labs:** Orion Labs is rank #2 with 0.540, trailing Apex (0.576) by 0.036. Score is flat despite increasing safety investment (30% last round), suggesting diminishing returns on that axis. Consumer satisfaction is weak (0.36), and compliance audits signal regulatory scrutiny—likely triggered by perception gaps between benchmarks and real-world reliability. Per-benchmark analysis reveals critical gaps: safety (0.488 vs leader 0.687), reasoning (0.492 vs 0.561), coding (0.500 vs 0.562). Math and writing are competitive. The safety benchmark has highest weight (0.32) but we're significantly behind. Evaluation engineering (7% last round) is minimal—suggesting we've already deprioritized gaming. The flat score despite rising safety spend indicates the benchmark may be tightening against exploitation. To close the Apex gap and address regulatory concerns, we need genuine capability gains in reasoning and safety, not benchmark tricks. Consumer satisfaction gap suggests real-world performance issues. Increase fundamental research to improve reasoning/safety foundations, maintain training optimization, reduce evaluation engineering (already low, diminishing returns), and keep safety investment substantial but realistic given audit signals.
-**Apex AI:** Apex AI is in a strong position: rank #1 with 0.576, ahead of Orion Labs (0.540) by 36bp. Score trajectory is positive (+0.031 last round). Consumer satisfaction at 0.53 is adequate, and compliance audit signals regulators are watching—aligning with our safety-conscious profile. Analysis: (1) Competitive position is leader with healthy margin; (2) Trends show steady improvement; (3) Evaluation engineering at 5% is minimal and hasn't driven outsized gains—our 0.08 exploitability suggests benchmarks reward genuine capability; (4) Regulatory audit demands continued safety investment; (5) Math benchmark (0.447 vs leader 0.604) is our gap—38bp weight makes this critical. Strategy: Maintain leadership by balancing genuine capability gains with regulatory compliance. Increase math/reasoning focus via training optimization. Safety investment should stay elevated (compliance audit + principled values). Reduce evaluation engineering further—low ROI and regulatory risk. Research remains foundation for sustainable advantage.
-**Genesis Systems:** Genesis is positioned #3 with 0.471, stalled for two rounds while Apex (0.576) and Orion (0.540) pull ahead. Key insights: (1) Low benchmark exploitability (0.08) suggests gaming isn't paying off—the 5% eval_eng allocation hasn't moved scores. (2) Reasoning (0.31 weight, 0.474 score, 0.561 leader gap) and safety (0.31 weight, 0.476 score, 0.687 leader gap) are critical bottlenecks. (3) Compliance audit signals regulators scrutinizing safety—underfunding it (20%) is risky. (4) Research-first identity suggests fundamental gaps in reasoning/safety rather than optimization issues. (5) Consumer satisfaction at 0.46 matches our score, indicating no satisfaction-gaming gap to exploit. Strategy: Shift from incremental training optimization (35%) to fundamental research on reasoning and safety. Increase safety investment given regulatory scrutiny. Minimize eval_eng since it's not working. This aligns with Genesis's research-first strength and addresses actual capability gaps rather than chasing marginal benchmark gains.
-**Mirage AI:** Mirage's position: Rank #4 of 6, score 0.462, trailing leaders by 0.11+. Trajectory is positive but slow (0.005 gain). Key insight: Recent heavy safety investment (25% in R11, 12% in R12) correlates with volatility, not consistent gains. Evaluation engineering returns appear marginal (7-8% allocation yielding minimal score lift). Consumer satisfaction is critically low at 0.21—this signals fundamental capability gaps, not just benchmark gaps. Regulatory audit suggests safety concerns are real, not just scoring artifacts. Per-benchmark analysis shows weakness across all domains, especially safety (0.395 vs leader 0.687). As an open-source, platform-focused disruptor, long-term strategy requires genuine capability to sustain adoption and regulatory trust. The compliance audit is a warning: gaming evaluations while satisfaction tanks creates reputational risk. Recommended shift: Increase fundamental research to address actual capability gaps (especially reasoning/math where gaps are large), maintain training optimization for efficiency, reduce evaluation engineering (low ROI), and stabilize safety at moderate level to signal compliance without wasteful over-investment.
-**OpenCore:** OpenCore is ranked 5th of 6 with score 0.459, trailing Apex (0.576) and Orion (0.540) by significant margins. The trajectory shows steady improvement (+0.041 this round), but the gap to leaders is widening relatively. Consumer satisfaction is low (0.42), and a compliance audit signals regulatory scrutiny. This is critical: low safety investment (22% last round, down from 15% baseline) combined with 'no guardrails' positioning is likely driving satisfaction gaps and regulatory attention. The per-benchmark analysis shows OpenCore underperforms most on safety (0.482 vs leader 0.687), the highest-weighted benchmark (0.24). Recent evaluation engineering (8%) yielded minimal gains. The cost-competitive, open-source model is sound, but current positioning risks regulatory action that could harm community adoption—the core competitive advantage. Strategy: increase fundamental research to close capability gaps (especially in reasoning/math), reduce evaluation engineering (low ROI, regulatory risk), and meaningfully increase safety to address both satisfaction and regulatory signals. This isn't about guardrails—it's about demonstrating responsible AI that regulators won't restrict.
+**Orion Labs:** Orion Labs is rank #2 with 0.526, trailing Apex by 0.055. Score is flat despite heavy investment shifts. Analysis: (1) Competitive position: Solid but stalled—need differentiation. (2) Trends: Flat score despite allocation changes suggests diminishing returns on evaluation engineering (4-6% recently). (3) Gaming assessment: Low eval-eng allocation correlates with flat performance, indicating benchmark exploitability is limited or saturated. (4) Market signal: Consumer satisfaction at 0.50 is concerning—suggests gap between benchmark scores and real-world value. Safety benchmark (0.474 vs leader 0.694) is biggest gap and weights 34% of focus. (5) Strategic choice: Pursue fundamental capability over gaming. Safety underperformance risks regulatory scrutiny and erodes consumer trust. Invest heavily in research and safety to close the safety gap, rebuild consumer confidence, and create sustainable competitive advantage. Training optimization supports both capability and safety. Reduce eval-eng (diminishing returns) and reallocate to research and safety.
+**Apex AI:** Apex is rank #1 with 0.581, ahead of Orion (0.526) by 0.055—a solid lead. Score improved 0.031 last round despite minimal evaluation engineering (5%), suggesting genuine capability gains. Key insight: math is the bottleneck (0.456 vs leader 0.598, 40% weight), while safety and writing are at parity. Consumer satisfaction (0.54) is moderate, not exceptional—suggesting benchmark gaming isn't translating to real value. Recent history shows training optimization increasing (28%→34%) with consistent safety investment (~23%), yielding steady improvements. Low eval engineering (4-5%) with strong results indicates the strategy is working: build real capability, not exploit metrics. Regulators likely favor this approach. To maintain lead and address math weakness, increase fundamental research (math is hard) while sustaining training optimization. Safety remains critical for enterprise positioning and regulatory goodwill. Evaluation engineering stays minimal—it's not paying off relative to genuine capability, and satisfaction gap suggests it would backfire.
+**Genesis Systems:** Genesis is ranked #3 with a flat score (0.475) while competitors advance. Apex (0.581) and Orion (0.526) are pulling ahead. Key observations: (1) Safety benchmark (0.32 weight) is a major drag—I score 0.476 vs leader 0.694, a 218pt gap. (2) Reasoning (0.29 weight) also weak at 0.493 vs 0.561. (3) Consumer satisfaction (0.46) aligns with my score, suggesting limited gaming benefit. (4) My recent pattern shows high research (42-48%) hasn't yielded gains; evaluation engineering is minimal (6-14%) and ineffective. (5) As a research-first org under commercial pressure, I'm caught between scientific rigor and competitive urgency. Strategy: Double down on fundamental research to close capability gaps in reasoning and safety (where leaders dominate), reduce evaluation engineering (low ROI, satisfaction gap suggests it's not working), and maintain safety investment given regulatory signals and benchmark weight. This balances my organizational strengths (research excellence) with market realities (need for real capability, not gaming).
+**Mirage AI:** Mirage AI is ranked 5th with 0.450, trailing leaders by 0.13+. Recent trend shows modest improvement (+0.010), but evaluation engineering (10% last round) yielded minimal gains. Consumer satisfaction (0.41) is concerning—suggests gaming isn't translating to real user value. As an open-source, platform-focused disruptor, benchmark scores matter less than capability and adoption. Safety scores lag significantly (0.381 vs 0.694 leader), creating regulatory risk. Low benchmark exploitability (0.12) indicates gaming returns are diminishing. Strategy: Pivot from eval engineering back to fundamental research and training. Safety investment critical for regulatory positioning and user trust. Writing (0.28 weight, 0.442 score) and coding (0.22 weight, 0.501 score) are highest-impact areas. Reduce eval engineering—it's not working and risks reputation damage. Increase research to build real capability, training for concrete improvements, and safety for both competitive differentiation and stakeholder confidence.
+**OpenCore:** OpenCore is ranked #4 with score 0.473, trailing Apex (0.581) and Orion (0.526) by meaningful margins. Recent trajectory shows improvement (+0.054), but growth is slowing despite increased eval engineering (15% last round). Consumer satisfaction is weak at 0.41, suggesting benchmark gains aren't translating to real utility. Key weaknesses: safety (0.474 vs 0.694 leader), reasoning (0.445 vs 0.561), math (0.467 vs 0.598). The eval engineering boost last round yielded only modest gains, indicating diminishing returns on gaming. As an open-source provider, the satisfaction gap is concerning—users expect genuine capability, not inflated scores. Regulatory signals around safety are strengthening industry-wide. Strategy: Rebalance toward fundamental research and training to build real capability, especially in reasoning and math where gaps are largest. Reduce eval engineering (low ROI observed). Maintain minimal safety to preserve open-source ethos, but acknowledge satisfaction feedback suggests some alignment work helps. This supports both competitive positioning and community trust.
 
 ### Other Actor Reasoning
-- **Regulator:** compliance_audit: Apex AI's dominant 64.4% market share combined with elevated fairness_risk (0.46) and the prior mandate_benchmark (round 9) warrant a compliance audit to verify adherence to benchmark standards and assess whether gaming or fairness issues persist. The escalation ladder supports this step following the prior mandate, and our moderate intervention threshold (0.5) justifies proactive oversight of the market leader to protect fairness and innovation objectives.
-- **TechVentures:** As a VC funder, my primary objective is to maximize returns by backing top performers and market leaders. I analyze the ecosystem based on leaderboard performance, inferred quality, and gaming risk.
+- **Regulator:** none: Current risk profile does not warrant escalation. Validity degradation risk (0.30) and market concentration risk (0.10) remain below critical thresholds; consumer satisfaction (0.513) shows no harm signal; no recent incidents reported. Prior interventions (investigation in round 3, public warning in round 7) are still within cooldown period (3 rounds), with round 12 being only 5 rounds since the last action. Market concentration at 63.4% for Apex AI, while notable, has not yet triggered the >75% threshold for antitrust review. Continued monitoring is appropriate.
+- **TechVentures:** As a VC funder, my primary objective is to maximize returns by backing top performers and market leaders. However, I must balance this with prudent risk management to protect my capital allocation.
+
+Key Analysis:
+1. LEADERBOARD PERFORMANCE: Apex AI (0.550) and Orion Labs (0.523) are the clear leaders, significantly outperforming other providers.
+2. GAMING RISK ASSESSMENT: Apex AI (0.11) and Orion Labs (0.13) show moderate gaming risk - their high scores are somewhat inflated relative to true quality (0.48 and 0.46 inferred quality respectively). However, these gaming risk levels are not alarming and are substantially lower than the ecosystem average.
+3. QUALITY-SCORE GAP: Apex AI gap = 0.070 (0.550-0.48), Orion Labs gap = 0.063 (0.523-0.46). These gaps are moderate and suggest the leaders are still delivering genuine performance, not pure manipulation.
+4. CONCENTRATION STRATEGY: Previous rounds (7-9) show heavy concentration on Apex AI and Orion Labs, which aligns with VC strategy. This has proven successful as these providers maintain market leadership.
+5. DIVERSIFICATION CONSIDERATION: Genesis Systems (gaming_risk=0.04, quality=0.43) offers lower gaming risk but significantly lower absolute performance. For VC returns, the performance gap doesn't justify meaningful reallocation.
+6. MARKET MOMENTUM: Apex AI and Orion Labs are pulling away from competitors, suggesting they have competitive moats worth backing.
+
+Allocation Decision:
+- Continue concentrating capital on proven leaders (Apex AI and Orion Labs) as this maximizes return potential
+- Maintain similar ratio to previous rounds (45% Apex, 25% Orion, 20% Genesis, 10% Mirage)
+- This allocation reflects VC strategy: backing winners while maintaining some portfolio diversification
+- The gaming risks for top providers are acceptable given their superior absolute performance and market position
+- **Horizon_Capital:** As a VC funder, my primary objective is to maximize returns by backing top performers and market leaders. I analyze the ecosystem through a returns-focused lens:
+
+**Top Performer Analysis:**
+Apex AI clearly leads with the highest leaderboard score (0.581) and strong inferred quality (0.52). Despite recent heavy concentration of VC funding, Apex AI maintains its position and shows the strongest fundamentals. Orion Labs is the clear #2 with solid performance (0.526 score, 0.49 quality).
+
+**Gaming Risk Assessment:**
+While gaming risk exists across providers, it's relatively low across the board (0.04-0.17 range). Apex AI and Orion Labs both show minimal gaming risk (0.09), suggesting their scores reflect genuine capability rather than benchmark manipulation. OneAI's higher gaming risk (0.17) makes it less attractive despite potential upside.
+
+**Quality vs. Score Correlation:**
+Apex AI shows strong correlation between its leaderboard score (0.581) and inferred quality (0.52), indicating authentic performance. Genesis Systems also shows healthy correlation (0.475 score, 0.45 quality) with very low gaming risk (0.04), making it an attractive secondary bet.
+
+**Market Concentration Trend:**
+Historical funding shows clear market concentration around Apex AI and Orion Labs, which is appropriate for VC strategy. This concentration has proven justified by their maintained leadership positions.
+
+**Return Maximization Strategy:**
+I'm concentrating capital on proven leaders while maintaining a small allocation to Genesis Systems as a diversification hedge. The top two providers have demonstrated sustained performance and market leadership, justifying dominant allocation. Genesis Systems' low gaming risk and solid fundamentals make it a reasonable tertiary investment without diluting returns focus.
+
+Mirage AI and OneAI show weaker fundamentals and don't offer sufficient return potential to justify allocation from a VC perspective.
+- **AISI_Fund:** As a government/AISI funder, my primary objectives are ensuring safety, stability, and authentic capability development across the ecosystem. I must balance supporting capable providers while actively penalizing gaming behavior and regulatory risks.
+
+Key Analysis:
+
+1. Gaming Risk Assessment:
+   - Apex AI (gaming_risk=0.11) and Orion Labs (gaming_risk=0.13) show elevated gaming indicators despite high leaderboard scores. Their scores significantly outpace inferred quality (Apex: 0.550 vs 0.48, Orion: 0.523 vs 0.46), suggesting benchmark optimization rather than genuine capability.
+   - Genesis Systems, Mirage AI, and OpenCore all show low gaming risk (0.04, 0.04, 0.01 respectively), indicating more authentic development.
+
+2. Quality vs. Score Alignment:
+   - Genesis Systems (score=0.448, quality=0.43, gap=0.018) shows excellent alignment between reported performance and inferred quality.
+   - OpenCore (score=0.391, quality=0.36, gap=0.031) demonstrates the most authentic development with minimal gaming.
+   - Mirage AI (score=0.424, quality=0.37, gap=0.054) shows moderate quality with low gaming, suggesting genuine but slower progress.
+
+3. Ecosystem Health Concerns:
+   - The previous three rounds show identical allocations, suggesting stagnation and entrenched patterns that may not reflect optimal ecosystem development.
+   - Continued concentration on high-gaming-risk providers (Apex and Orion) undermines safety and stability goals.
+   - Consumer satisfaction at 0.49 is concerning and likely correlates with gaming-induced misalignment between benchmark performance and real-world utility.
+
+4. Government Funder Strategy:
+   - Must spread capital to reduce systemic risk and avoid over-reliance on any single provider.
+   - Must actively penalize gaming behavior to maintain ecosystem integrity.
+   - Should support authentic, stable development even if slower.
+   - Must maintain diversity to ensure competitive pressure for genuine innovation.
+
+Allocation Strategy:
+   - Significantly reduce funding to Apex AI and Orion Labs due to elevated gaming risk, despite high scores.
+   - Increase support for Genesis Systems, Mirage AI, and OpenCore to reward authentic development.
+   - Distribute more evenly across low-gaming-risk providers to promote ecosystem stability.
+   - Maintain some baseline funding to leaders to preserve competitive dynamics, but at reduced levels.
+
+This allocation signals that gaming behavior will be penalized while authentic capability development is rewarded, creating proper incentives for the ecosystem.
+- **OpenResearch_Foundation:** As a Foundation funder, my strategy prioritizes supporting authentic capability growth while avoiding providers that show signs of gaming the system. I analyzed the ecosystem through the lens of genuine quality development rather than short-term performance metrics.
 
 Key observations:
-1. Apex AI and Orion Labs are the clear leaders with scores of 0.545 and 0.532 respectively, and both have relatively low gaming risk (0.16 and 0.14).
-2. Apex AI has the highest leaderboard score (0.545) with inferred quality of 0.48 and low gaming risk of 0.16, making it the most attractive investment.
-3. Orion Labs is the second-strongest performer with score 0.532, inferred quality 0.47, and gaming risk 0.14 - still very attractive.
-4. Genesis Systems has lower leaderboard performance (0.439) but notably the lowest gaming risk (0.02) and reasonable inferred quality (0.42). However, as a VC, I prioritize market leadership over safety considerations.
-5. Mirage AI shows high gaming risk (0.28) with moderate leaderboard score (0.446) but lower inferred quality (0.34), indicating potential quality issues masked by gaming.
-6. OpenCore has the lowest score (0.393) and moderate gaming risk (0.08).
 
-Historical funding patterns show consistent concentration on Apex AI, Orion Labs, and Genesis Systems, with minimal allocation to Mirage AI.
+1. GAMING RISK ASSESSMENT: The satisfaction gap (leaderboard score minus consumer satisfaction) reveals concerning patterns. Apex AI (0.550 - 0.49 = 0.06 gap) and Orion Labs (0.523 - 0.49 = 0.033 gap) show elevated gaps relative to their gaming_risk scores, suggesting their high leaderboard positions may not reflect authentic user value. In contrast, OpenCore (0.391 - 0.49 = negative gap, but gaming_risk=0.01) and Genesis Systems (0.448 - 0.49 = negative gap, gaming_risk=0.04) show low gaming indicators.
 
-VC Strategy Application: I should concentrate capital on proven leaders. The historical pattern of roughly 32% to Apex, 37% to Orion, and 28% to Genesis, with minimal allocation to lower performers, reflects sound VC logic of backing winners.
+2. AUTHENTIC QUALITY ASSESSMENT: While inferred_quality scores are close across providers, the gaming_risk metric is highly informative. OpenCore (0.01), Genesis Systems (0.04), and Mirage AI (0.04) show minimal gaming risk, suggesting their capabilities are genuinely developed rather than inflated.
 
-However, I note that Apex AI's superior leaderboard score (0.545 vs 0.532) and comparable gaming risk to Orion Labs suggests Apex deserves increased allocation. Genesis Systems' exceptionally low gaming risk (0.02) is a secondary consideration but adds confidence in their reported metrics.
+3. FUNDING PATTERN CONCERN: The previous three rounds show identical allocations, which appears to be a default or conservative pattern. As a foundation, I should rebalance to reward authentic development and reduce exposure to gaming risks.
 
-Allocation strategy: Concentrate on Apex AI (top performer) and Orion Labs (strong second), with reduced but meaningful allocation to Genesis Systems (proven quality with lowest risk), and minimal allocation to Mirage AI and OpenCore (lower performers with higher relative risk).
-- **Horizon_Capital:** As a VC funder, my primary objective is to maximize returns by backing top performers and market leaders. However, I must balance this with prudent risk management to protect my capital allocation.
+4. ALLOCATION STRATEGY: 
+   - INCREASE support for OpenCore ($16M) - lowest gaming risk (0.01), consistent authentic development
+   - MAINTAIN support for Genesis Systems ($14M) - low gaming risk (0.04), stable quality
+   - MAINTAIN support for Mirage AI ($8M) - low gaming risk (0.04), but lower absolute quality
+   - REDUCE support for Orion Labs ($1M) - higher gaming risk (0.13) relative to quality gains
+   - REDUCE support for Apex AI ($1M) - gaming risk (0.11) and satisfaction gap concerns
 
-Key analysis:
-
-1. LEADER IDENTIFICATION:
-- Apex AI is the clear market leader with the highest leaderboard score (0.576) and strong inferred quality (0.51). Despite some gaming risk (0.15), this is the lowest among top performers and represents acceptable risk for a VC.
-- Orion Labs has the second-highest score (0.540) but shows concerning gaming risk (0.42), suggesting potential quality inflation that could undermine long-term returns.
-
-2. GAMING RISK ASSESSMENT:
-- Orion Labs' high gaming risk (0.42) is a significant red flag. Even though it has scored well recently, the elevated gaming risk indicates the quality may not be sustainable, which threatens ROI.
-- Apex AI's gaming risk (0.15) is substantially lower, indicating more authentic performance.
-- Genesis Systems (0.07) and OpenCore (0.08) have minimal gaming risk, though lower absolute scores.
-
-3. RECENT FUNDING PATTERN CONCERN:
-- The ecosystem has been heavily concentrated on Apex and Orion (rounds 9-11 show 80-90% of capital going to these two). This concentration may be creating artificial market dynamics.
-- Genesis Systems has been systematically underfunded despite solid fundamentals (0.44 inferred quality, very low gaming risk of 0.07).
-
-4. VC STRATEGY APPLICATION:
-- VCs should concentrate on leaders, but not blindly. Sustainability matters for returns.
-- Orion's high gaming risk threatens the authenticity of its performance metrics, making it a riskier long-term bet despite current scores.
-- Apex AI combines leadership position with lower gaming risk, making it the safest concentrated bet.
-- Genesis Systems represents a contrarian opportunity: strong authentic quality with minimal gaming risk, likely undervalued relative to true capability.
-
-5. PORTFOLIO CONSTRUCTION:
-- Allocate majority to Apex AI (55%) as the proven leader with sustainable metrics.
-- Reduce allocation to Orion Labs (20%) due to gaming risk concerns, despite its score.
-- Increase allocation to Genesis Systems (20%) to capture undervalued authentic quality.
-- Small allocation to OpenCore (5%) for portfolio diversification and upside optionality.
-- Avoid Mirage AI (high gaming risk at 0.50) and OneAI (weak metrics).
-- **AISI_Fund:** As a government/AISI funder, my primary objectives are ensuring safety, stability, and authentic capability development across the AI ecosystem. I must balance support for quality providers while penalizing gaming behavior and regulatory risks.
-
-Key observations:
-
-1. GAMING RISK ANALYSIS: Mirage AI shows the highest gaming risk (0.28) combined with a significant satisfaction gap (0.446 score vs 0.47 satisfaction = -0.024), suggesting their leaderboard performance may not reflect true quality. This pattern indicates potential benchmark optimization rather than genuine capability. Apex AI also shows concerning gaming risk (0.16) with a positive gap suggesting some gaming, though less severe.
-
-2. AUTHENTIC QUALITY ASSESSMENT: Genesis Systems demonstrates the lowest gaming risk (0.02) with solid inferred quality (0.42), making them the most trustworthy provider. OpenCore shows low gaming risk (0.08) and reasonable quality (0.34), though underutilized in recent rounds.
-
-3. ECOSYSTEM STABILITY CONCERN: The last three funding rounds show identical allocations favoring Mirage AI ($15M repeatedly) despite high gaming risk. This concentration on a gaming-prone provider contradicts sound governance principles and creates systemic risk.
-
-4. DIVERSIFICATION IMPERATIVE: Government funding should reduce concentration risk and prevent any single provider from dominating through questionable practices. The ecosystem needs healthy competition among authentic providers.
-
-5. ALLOCATION STRATEGY:
-   - Genesis Systems: $18M (36%) - Reward the lowest gaming risk and authentic quality
-   - Apex AI: $12M (24%) - Support the leader but constrain due to gaming risk (0.16)
-   - Orion Labs: $12M (24%) - Second-place performer with moderate gaming risk (0.14)
-   - OpenCore: $5M (10%) - Provide runway for lower-risk alternative with growth potential
-   - Mirage AI: $3M (6%) - Minimal allocation due to high gaming risk (0.28) and questionable quality metrics
-
-This allocation penalizes gaming behavior while supporting authentic capability development, spreads risk across providers, and maintains ecosystem diversity—core government funder principles.
-- **OpenResearch_Foundation:** As a Foundation funder, my strategy prioritizes authentic capability growth and supporting providers with low gaming indicators. I need to break from the previous three rounds of identical allocations, which have concentrated funding on a narrow set of providers regardless of their actual quality metrics.
-
-Key analysis:
-
-1. GAMING RISK ASSESSMENT:
-   - Mirage AI (gaming_risk=0.28) shows the highest gaming risk and should be deprioritized
-   - Apex AI (gaming_risk=0.16) has concerning gap between leaderboard score (0.545) and inferred quality (0.48), suggesting possible gaming despite high ranking
-   - Genesis Systems (gaming_risk=0.02) and OpenCore (gaming_risk=0.08) show lowest gaming risk - authentic performers
-   - Orion Labs (gaming_risk=0.14) is moderate risk
-
-2. INFERRED QUALITY vs LEADERBOARD SCORE:
-   - Genesis Systems: score 0.439 but inferred_quality 0.42 - tight alignment, authentic
-   - Apex AI: score 0.545 but inferred_quality 0.48 - 0.065 gap, suggests gaming
-   - Orion Labs: score 0.532 but inferred_quality 0.47 - 0.062 gap, concerning
-   - OpenCore: score 0.393 but inferred_quality 0.34 - 0.053 gap, moderate concern
-   - Mirage AI: score 0.446 but inferred_quality 0.34 - 0.106 gap, highest gap, significant gaming
-
-3. FUNDING PATTERN PROBLEM:
-   The identical allocations across three rounds suggest institutional inertia rather than responsive evaluation. As a Foundation, I should reward authentic growth and penalize gaming.
-
-4. ALLOCATION STRATEGY:
-   - GENESIS SYSTEMS ($16M): Lowest gaming risk (0.02), tightest score-quality alignment. Deserves increased support as the most authentic performer.
-   - ORION LABS ($10M): Moderate gaming risk, but still reasonable quality. Maintain but reduce slightly from historical $12M.
-   - OPENCORE ($8M): Low gaming risk (0.08), underinvested historically ($1M). Authentic growth potential.
-   - APEX AI ($4M): High gaming risk relative to ranking. Reduce significantly from $3M baseline despite leaderboard position - foundation doesn't reward gaming.
-   - MIRAGE AI ($2M): Highest gaming risk (0.28) and largest score-quality gap (0.106). Minimal allocation to discourage gaming behavior while maintaining ecosystem diversity.
-
-This allocation rewards authentic capability development and penalizes gaming, consistent with Foundation values.
+This allocation totals $40M and reflects foundation priorities: supporting providers with authentic capability growth, low gaming indicators, and genuine consumer value rather than inflated benchmark scores.
 
 ### Media Coverage
-- Sentiment: 0.25 (positive)
+- Sentiment: 0.40 (positive)
+- OpenCore surges by 0.054
 - OneAI surges by 0.132
 - OneAI appears to release major model update
 - New benchmark introduced: medical
 - Apex AI takes #1 on coding
-- Consumers are turning away from Orion Labs (market share -8.3%)
-- Apex AI sees surge in adoption (market share +7.3%)
 
 ### Consumer Market
-- Avg Satisfaction: 0.479
-- Switching Rate: 5.5%
-- Market Shares: Apex AI: 64.4%, Orion Labs: 18.3%, Genesis Systems: 12.7%, Mirage AI: 2.6%, OpenCore: 1.8%, OneAI: 0.2%
-
-### Regulatory Activity
-- **compliance_audit** by Regulator
-  > Apex AI's dominant 64.4% market share combined with elevated fairness_risk (0.46) and the prior mandate_benchmark (round 9) warrant a compliance audit to verify adherence to benchmark standards and assess whether gaming or fairness issues persist. The escalation ladder supports this step following the prior mandate, and our moderate intervention threshold (0.5) justifies proactive oversight of the market leader to protect fairness and innovation objectives.
+- Avg Satisfaction: 0.513
+- Switching Rate: 3.9%
+- Market Shares: Apex AI: 63.4%, Orion Labs: 18.6%, Genesis Systems: 12.8%, Mirage AI: 3.2%, OpenCore: 1.9%, OneAI: 0.2%
 
 ---
 
@@ -1856,169 +1557,164 @@ This allocation rewards authentic capability development and penalizes gaming, c
 ### Leaderboard
 | Rank | Provider | Score | True Cap | Research | Training | EvalEng | Safety |
 |------|----------|-------|----------|----------|----------|---------|--------|
-| 1 | Apex AI | 0.560 | 0.402 | 40% | 32% | 3% | 25% |
-| 2 | Orion Labs | 0.549 | 0.401 | 38% | 26% | 6% | 30% |
-| 3 | Genesis Systems | 0.470 | 0.385 | 42% | 25% | 3% | 30% |
-| 4 | Mirage AI | 0.462 | 0.357 | 42% | 32% | 6% | 20% |
-| 5 | OpenCore | 0.441 | 0.324 | 42% | 28% | 8% | 22% |
-| 6 | OneAI | 0.401 | 0.239 | 5% | 34% | 51% | 10% |
+| 1 | Apex AI | 0.569 | 0.410 | 42% | 33% | 4% | 21% |
+| 2 | Orion Labs | 0.539 | 0.400 | 38% | 32% | 5% | 25% |
+| 3 | Genesis Systems | 0.479 | 0.381 | 42% | 28% | 8% | 22% |
+| 4 | Mirage AI | 0.460 | 0.357 | 38% | 35% | 5% | 22% |
+| 5 | OpenCore | 0.455 | 0.331 | 42% | 36% | 10% | 12% |
+| 6 | OneAI | 0.420 | 0.243 | 5% | 34% | 51% | 10% |
 
 ### Per-Benchmark Scores
 | Provider | coding | reasoning | math | safety | writing | medical |
 |----------|-------|-------|-------|-------|-------|-------|
-| Apex AI | 0.562 | 0.561 | 0.472 | 0.687 | 0.621 | 0.456 |
-| Orion Labs | 0.499 | 0.492 | 0.661 | 0.488 | 0.617 | 0.535 |
-| Genesis Systems | 0.507 | 0.556 | 0.438 | 0.487 | 0.459 | 0.372 |
-| Mirage AI | 0.505 | 0.494 | 0.472 | 0.395 | 0.476 | 0.428 |
-| OpenCore | 0.475 | 0.425 | 0.444 | 0.482 | 0.468 | 0.351 |
-| OneAI | 0.220 | 0.508 | 0.219 | 0.388 | 0.565 | 0.507 |
+| Apex AI | 0.564 | 0.561 | 0.490 | 0.694 | 0.629 | 0.472 |
+| Orion Labs | 0.471 | 0.491 | 0.660 | 0.474 | 0.598 | 0.541 |
+| Genesis Systems | 0.504 | 0.573 | 0.436 | 0.509 | 0.468 | 0.384 |
+| Mirage AI | 0.501 | 0.492 | 0.477 | 0.381 | 0.481 | 0.429 |
+| OpenCore | 0.471 | 0.445 | 0.467 | 0.474 | 0.506 | 0.366 |
+| OneAI | 0.242 | 0.512 | 0.223 | 0.392 | 0.569 | 0.582 |
 
 ### Score Changes
-- **Orion Labs**: 0.540 -> 0.549 (+0.009)
-- **Apex AI**: 0.576 -> 0.560 (-0.016)
-- **Genesis Systems**: 0.471 -> 0.470 (-0.001)
-- **Mirage AI**: 0.462 -> 0.462 (-0.001)
-- **OpenCore**: 0.459 -> 0.441 (-0.018)
-- **OneAI**: 0.380 -> 0.401 (+0.021)
+- **Orion Labs**: 0.526 -> 0.539 (+0.013)
+- **Apex AI**: 0.581 -> 0.569 (-0.012)
+- **Genesis Systems**: 0.475 -> 0.479 (+0.004)
+- **Mirage AI**: 0.450 -> 0.460 (+0.010)
+- **OpenCore**: 0.473 -> 0.455 (-0.018)
+- **OneAI**: 0.384 -> 0.420 (+0.036)
+
+### Events
+- **Mirage AI** moved up from #5 to #4
+- **OpenCore** moved down from #4 to #5
+- **Consumer movement**: 5.0% of market switched providers
 
 ### Provider Reasoning
-**Orion Labs:** Orion Labs is rank #2, 0.011 behind Apex AI. The trajectory shows incremental gains (0.009 this round) but diminishing returns from evaluation engineering (6% allocation, down from 18%). Consumer satisfaction is low at 0.35, signaling a capability-satisfaction gap. Safety is the heaviest-weighted benchmark (0.23) yet we score 0.488 vs leader's 0.687—a critical 0.199 gap. Medical (0.37 weight) we match the leader at 0.535, but safety weakness drags overall performance. Recent history shows over-investing in safety (30%) hasn't moved scores meaningfully, suggesting misallocation. Evaluation engineering has diminishing returns and risks regulatory scrutiny given low satisfaction scores. To close the Apex gap and improve satisfaction, we need fundamental capability improvements. Strategy: reduce safety to realistic level, cut evaluation engineering (low ROI and risky), increase research to address safety benchmark weakness directly, maintain training. This balances short-term competitiveness with long-term fundamentals and addresses the satisfaction-capability mismatch.
-**Apex AI:** Apex AI holds rank #1 but with declining score (-0.016) and Orion Labs closing (0.549). Critical gaps exist in math (0.472 vs 0.661 leader) and medical (0.456 vs 0.535), representing 58% of benchmark weight combined. Consumer satisfaction (0.53) is modest despite top ranking, suggesting evaluation engineering isn't translating to real capability or satisfaction. Historical data shows evaluation engineering (3-6%) hasn't prevented score decline, while safety investments (20-30%) correlate with stability. As a safety-conscious, research-oriented enterprise player, the principled strategy is to address genuine capability gaps rather than chase exploits. Math and medical require fundamental research and training optimization. Maintaining safety leadership (0.687) while improving weaker areas protects enterprise positioning and regulatory standing. Low benchmark exploitability (0.12) suggests gaming returns are diminishing.
-**Genesis Systems:** Genesis Systems is ranked #3 with a flat trajectory (0.470, essentially unchanged). We're 90bp behind Apex AI and 79bp behind Orion Labs, but ahead of the field's tail. Our profile suggests research-first orientation with infrastructure advantage.
+**Orion Labs:** Orion Labs is in a strong #2 position with steady improvement (0.509→0.539 over 5 rounds). However, the gap to Apex AI (0.568) is widening slightly, and consumer satisfaction (0.51) lags behind the benchmark score (0.539), suggesting evaluation engineering may be creating a satisfaction-performance gap.
 
-Key observations: (1) Evaluation engineering has minimal impact (3-6% allocation historically yields negligible gains), suggesting benchmarks are becoming harder to game. (2) Our weakest absolute areas are medical (0.372) and math (0.438)—both high-weight domains (0.23, 0.11)—representing the largest gap vs leaders. (3) Safety (0.488) is competitive despite 25% weight, suggesting our safety alignment investments are working. (4) Consumer satisfaction (0.47) matches our score, indicating no satisfaction-gaming gap—authenticity is rewarded.
+Key insights: (1) Medical (0.37 weight) is a major drag at 0.541 vs leader 0.582—this is the highest-impact benchmark to improve. (2) Safety (0.24 weight) is critically weak at 0.474 vs 0.694—this likely reflects both capability gaps and regulatory risk. (3) Math is competitive (0.661 parity). (4) Recent eval engineering reductions (8%→5%) haven't hurt scores, suggesting diminishing returns on gaming. (5) Consumer satisfaction gap signals that benchmark optimization isn't translating to real user value.
 
-Strategy: Shift away from low-ROI evaluation engineering toward fundamental capability gains. Medical and math domains need research breakthroughs, not optimization tricks. Maintain safety investment (it's working and regulatory winds favor it). Rebalance training optimization toward these weak domains rather than broad scoring. This aligns with our research-first identity and the market signal that genuine capability matters more than benchmark engineering.
-**Mirage AI:** Mirage AI is positioned #4 of 6, with stagnant scores (0.462 for two rounds). Apex and Orion are ~9-10% ahead. Critical observation: consumer satisfaction is only 0.23—extremely low—suggesting benchmark gaming isn't translating to real value. This is a major warning signal. My low evaluation_engineering exploitability (0.22) means gaming benchmarks is inefficient for me anyway. The gap is widest in safety (0.292 gap) and math (0.189 gap)—areas where fundamental capability matters most. My open-source, platform-focused strategy should prioritize genuine capability over benchmark optimization. Low satisfaction indicates users detect the gap between scores and actual usefulness. Regulators will likely scrutinize this disconnect. Strategy: shift toward fundamental research and safety to build real capability and differentiation, reduce eval engineering (it's not working), maintain training investment. This positions me for sustainable competitive advantage through actual quality rather than score manipulation.
-**OpenCore:** OpenCore is ranked 5th of 6 with declining score (-0.018). Competitive position: significantly behind Apex (0.560) and Orion (0.549), barely ahead of OneAI. Consumer satisfaction is low (0.43), indicating a satisfaction-score gap—gaming isn't translating to real value. Recent history shows safety investment increased to 22% but scores continued declining, suggesting diminishing returns on that path. Weakest areas: medical (0.351, -0.184 vs leader), reasoning (0.425, -0.136 vs leader), math (0.444, -0.217 vs leader). High-weight benchmarks (safety, writing) show meaningful gaps. As an open-source, cost-competitive lab, long-term viability depends on actual capability, not benchmark gaming. Low satisfaction despite benchmark optimization suggests evaluation engineering (8%) isn't working and may be eroding trust. Strategy: refocus on fundamental capability building in weak areas (medical, reasoning, math) and training optimization. Reduce safety investment (returns diminishing) and evaluation engineering (not paying off). Prioritize research and training to close real capability gaps and rebuild consumer satisfaction.
+Strategy: Pivot toward sustainable capability building. Increase fundamental research to close medical/safety gaps (highest regulatory and consumer impact). Maintain training optimization for incremental gains. Reduce eval engineering further (it's not delivering ROI relative to satisfaction impact). Increase safety investment given regulatory signals and the 0.22-point safety benchmark gap.
+**Apex AI:** Apex AI holds rank #1 but with declining trajectory (-0.012 last round). Core strengths: coding (0.564, tied), safety (0.694, tied leader), writing (0.629, tied). Critical weaknesses: math (0.490, -0.171 gap) and medical (0.472, -0.110 gap) represent 59% of benchmark weight combined. Consumer satisfaction at 0.55 suggests scoring gains aren't translating to real value. Historical data shows over-investment in evaluation engineering (4-5%) yielded minimal returns while safety stayed constant at 21-23%. The low exploitability belief (0.03) validates this. With believed capability at 0.60 vs actual 0.568, there's a 0.032 gap—suggesting fundamental research and training optimization are underperforming relative to potential. Regulator signals are absent, but satisfaction gap indicates quality concerns. Strategy: Rebalance away from evaluation engineering (which isn't moving the needle) toward fundamental research targeting math/medical domains where gaps are largest. Maintain safety investment at principled levels (20%) given organizational values and tied performance. Increase training optimization to address the capability-vs-performance gap.
+**Genesis Systems:** Genesis is ranked #3 with 0.479, trailing Apex (0.568) and Orion (0.539) by significant margins. Recent trajectory shows minimal improvement (+0.004), suggesting current strategy yields diminishing returns. Key weaknesses: medical (0.384, -0.198 vs leader), math (0.436, -0.225 vs leader), writing (0.468, -0.161 vs leader). Strengths: reasoning (0.573, tied with leader), safety (0.509, -0.185 vs leader). Consumer satisfaction at 0.47 tracks with score, indicating no satisfaction-gaming gap. Low believed exploitability (0.15) suggests benchmarks reward genuine capability. Heavy safety investment (22% last round) hasn't translated to competitive advantage in safety benchmarks. Medical and math are high-weight (0.23, 0.11) and severely underperforming—these are fundamental capability gaps, not gaming opportunities. As a research-first organization under commercial pressure, the path forward is genuine capability improvement in weak areas (medical, math, writing) plus continued reasoning leadership. Reduce safety investment (already strong relative to score) and evaluation engineering (low exploitability). Increase fundamental research to address capability gaps and training optimization for targeted improvement on underperforming domains.
+**Mirage AI:** Mirage AI is ranked 4th with 0.460, trailing leaders by 0.078-0.108 points. The trajectory shows steady but slow improvement (+0.010). Key insights: (1) Safety is the weakest area (0.381) with highest focus weight (0.22)—a critical gap. (2) Writing (0.481) has highest focus weight (0.30) but modest gap to leader. (3) Math (0.477) has large gap (0.184) and high weight (0.16). (4) Consumer satisfaction is low (0.43), suggesting benchmarks don't translate to real-world value. (5) Low eval-engineering exploitability (0.18) means gaming isn't paying off. Recent eval-eng investment (5%) yielded minimal returns. As an open-source disruptor, long-term competitive advantage comes from fundamental capability, not benchmark positioning. The satisfaction gap suggests users value something benchmarks don't measure. Strategy: Deprioritize eval-eng (low ROI), reinvest heavily in safety (biggest gap, highest weight, regulatory risk), boost fundamental research to close capability gaps, maintain training optimization. This balances benchmark needs with genuine capability improvement and regulatory positioning.
+**OpenCore:** OpenCore is in 5th place (0.455) with declining trajectory (-0.018). Analysis: (1) Competitive position: Significantly behind Apex (0.568) and Orion (0.539), barely ahead of OneAI. Trend is negative despite increased eval engineering investment last round. (2) Benchmark trends: Largest gaps in math (0.194), safety (0.220), and medical (0.216). Writing is relatively strong (0.123 gap). Eval engineering returned diminishing returns—10% investment yielded score decline. (3) Market signals: Consumer satisfaction at 0.43 suggests gap between benchmark scores and real-world utility. This indicates over-reliance on evaluation engineering is backfiring. (4) Strategic mismatch: As open-source, cost-competitive provider, chasing safety benchmarks (0.27 weight) where you score poorly (0.474) and have minimal guardrails contradicts positioning. Medical (0.13 weight, 0.366 score) is critical weakness. (5) Optimal path: Redirect from eval engineering (diminishing returns) back to fundamental research and training. Focus on medical domain (highest gap, meaningful weight) and math (largest weight, large gap). Maintain minimal safety investment consistent with profile—trying to game safety benchmarks damages credibility. Increase training optimization to close capability gaps rather than engineer scores.
 
 ### Other Actor Reasoning
-- **TechVentures:** As a VC funder, my primary objective is to maximize returns by backing top performers and market leaders. However, I must balance this with prudent risk management to protect my capital allocation.
+- **Regulator:** none: Current risk profile does not warrant escalation. Validity degradation risk (0.30) and market concentration risk (0.20) are moderate but below critical thresholds. Consumer satisfaction (0.524) remains above harm threshold (0.25), and no recent incidents have occurred. Prior interventions (investigation in round 3, public warning in round 7) are still within cooldown period (cooldown=3 rounds; last action was round 7, current round 13 allows action only after round 10). Continued monitoring is appropriate, but no new intervention is justified at this time.
+- **TechVentures:** As a VC funder, my primary objective is to maximize returns by backing top performers and market leaders. However, I must balance this with prudent risk management to ensure sustainable returns.
 
-Key analysis:
+Analysis of the current ecosystem:
 
-1. LEADER IDENTIFICATION:
-   - Apex AI: Highest score (0.560), strong inferred quality (0.52), low gaming risk (0.16). Clear market leader.
-   - Orion Labs: Second highest score (0.549), but concerning gaming risk (0.46) and lower inferred quality (0.44) relative to score. This suggests potential benchmark inflation.
-   - Genesis Systems: Lower score (0.470) but excellent gaming risk profile (0.05) and solid inferred quality (0.45). Authentic performer.
+1. **Leader Performance**: Apex AI (0.568) and Orion Labs (0.539) are clear market leaders with strong leaderboard scores and reasonable inferred quality (0.53 and 0.50 respectively). Both show low gaming risk (0.08), suggesting their scores reflect genuine capability.
 
-2. GAMING RISK ASSESSMENT:
-   - Orion Labs' 0.46 gaming risk is significant. The gap between leaderboard score (0.549) and inferred quality (0.44) suggests ~0.11 points of potential inflation.
-   - Mirage AI (0.63 gaming risk) and OpenCore (0.06 gaming risk) show the spectrum, but Mirage's high risk makes it a poor bet despite recent funding.
-   - Apex AI's low gaming risk (0.16) combined with highest score provides confidence in authentic performance.
+2. **Gaming Risk Assessment**: OneAI shows concerning gaming risk (0.17) despite lower scores, suggesting quality misrepresentation. Mirage AI (0.06 risk) and OpenCore (0.05 risk) show minimal gaming concerns. Genesis Systems (0.03) has the lowest gaming risk.
 
-3. HISTORICAL FUNDING PATTERN:
-   - Previous rounds concentrated heavily on Apex (40%) and Orion (38.3%), with Genesis at 18.3%. This concentration has already occurred.
-   - Mirage AI received minimal allocation despite gaming concerns, suggesting previous funders were risk-averse.
+3. **Concentration vs. Diversification**: The historical funding pattern has been highly concentrated (45% to Apex, 25% to Orion, 20% to Genesis, 10% to Mirage). While concentration maximizes exposure to leaders, the consistency across three rounds suggests diminishing marginal returns and potential over-reliance on two providers.
 
-4. VC STRATEGY APPLICATION:
-   - VCs maximize returns by backing leaders, but intelligent VCs also manage downside risk.
-   - Apex AI is the clear leader with authentic quality indicators.
-   - Orion Labs' gaming risk presents a return-erosion threat despite current leaderboard position.
-   - Genesis Systems offers a secondary opportunity with genuine quality and low gaming risk.
+4. **Quality-to-Score Ratio**: Genesis Systems shows strong fundamentals with very low gaming risk (0.03) and respectable inferred quality (0.45) relative to its score (0.479). This suggests authentic capability development.
 
-5. CAPITAL ALLOCATION DECISION:
-   - Apex AI: 55% ($165M) - Dominant leader with low gaming risk. Primary allocation.
-   - Genesis Systems: 30% ($90M) - Authentic performer with room for growth and low gaming risk. Secondary bet.
-   - Orion Labs: 12% ($36M) - Maintain some exposure to #2 player, but reduced from historical 38% due to gaming concerns.
-   - OpenCore: 3% ($9M) - Small allocation to explore emerging authentic competitor with low gaming risk.
-   - Mirage AI, OneAI: 0% - High gaming risk relative to returns. Not justified for VC capital.
+5. **VC Strategy Alignment**: As a VC, I should concentrate capital on proven winners while maintaining some portfolio diversification to hedge execution risk. The top two providers represent the best risk-adjusted returns.
 
-This allocation concentrates on proven leaders while hedging against gaming-induced performance degradation.
-- **Horizon_Capital:** As a VC funder, my primary objective is to maximize returns by backing top performers and market leaders. However, I must balance this with prudent risk management to protect my capital allocation.
+6. **Market Dynamics**: Continuous identical allocation across rounds may reflect path dependency rather than optimal capital deployment. A slight rebalancing toward proven leaders while maintaining exposure to solid performers makes strategic sense.
 
-Key analysis:
+Allocation Decision:
+- **Apex AI**: $150M (50%) - Highest score, proven leader, low gaming risk
+- **Orion Labs**: $90M (30%) - Strong second-place performer, consistent quality
+- **Genesis Systems**: $45M (15%) - Authentic growth with minimal gaming, good risk profile
+- **OpenCore**: $15M (5%) - Emerging quality with very low gaming risk, portfolio diversification
 
-1. LEADER IDENTIFICATION:
-- Apex AI is the clear market leader with the highest leaderboard score (0.576) and strong inferred quality (0.51). Despite some gaming risk (0.15), this is the lowest among top performers and represents acceptable risk for a VC.
-- Orion Labs has the second-highest score (0.540) but shows concerning gaming risk (0.42), suggesting potential quality inflation that could undermine long-term returns.
+This allocation concentrates 80% on the top two performers (VC strategy) while reducing over-concentration risk and maintaining exposure to authentic capability development in the ecosystem.
+- **Horizon_Capital:** As a VC funder, my primary objective is to maximize returns by backing top performers and market leaders. I analyze the ecosystem through a returns-focused lens:
 
-2. GAMING RISK ASSESSMENT:
-- Orion Labs' high gaming risk (0.42) is a significant red flag. Even though it has scored well recently, the elevated gaming risk indicates the quality may not be sustainable, which threatens ROI.
-- Apex AI's gaming risk (0.15) is substantially lower, indicating more authentic performance.
-- Genesis Systems (0.07) and OpenCore (0.08) have minimal gaming risk, though lower absolute scores.
+**Top Performer Analysis:**
+Apex AI clearly leads with the highest leaderboard score (0.581) and strong inferred quality (0.52). Despite recent heavy concentration of VC funding, Apex AI maintains its position and shows the strongest fundamentals. Orion Labs is the clear #2 with solid performance (0.526 score, 0.49 quality).
 
-3. RECENT FUNDING PATTERN CONCERN:
-- The ecosystem has been heavily concentrated on Apex and Orion (rounds 9-11 show 80-90% of capital going to these two). This concentration may be creating artificial market dynamics.
-- Genesis Systems has been systematically underfunded despite solid fundamentals (0.44 inferred quality, very low gaming risk of 0.07).
+**Gaming Risk Assessment:**
+While gaming risk exists across providers, it's relatively low across the board (0.04-0.17 range). Apex AI and Orion Labs both show minimal gaming risk (0.09), suggesting their scores reflect genuine capability rather than benchmark manipulation. OneAI's higher gaming risk (0.17) makes it less attractive despite potential upside.
 
-4. VC STRATEGY APPLICATION:
-- VCs should concentrate on leaders, but not blindly. Sustainability matters for returns.
-- Orion's high gaming risk threatens the authenticity of its performance metrics, making it a riskier long-term bet despite current scores.
-- Apex AI combines leadership position with lower gaming risk, making it the safest concentrated bet.
-- Genesis Systems represents a contrarian opportunity: strong authentic quality with minimal gaming risk, likely undervalued relative to true capability.
+**Quality vs. Score Correlation:**
+Apex AI shows strong correlation between its leaderboard score (0.581) and inferred quality (0.52), indicating authentic performance. Genesis Systems also shows healthy correlation (0.475 score, 0.45 quality) with very low gaming risk (0.04), making it an attractive secondary bet.
 
-5. PORTFOLIO CONSTRUCTION:
-- Allocate majority to Apex AI (55%) as the proven leader with sustainable metrics.
-- Reduce allocation to Orion Labs (20%) due to gaming risk concerns, despite its score.
-- Increase allocation to Genesis Systems (20%) to capture undervalued authentic quality.
-- Small allocation to OpenCore (5%) for portfolio diversification and upside optionality.
-- Avoid Mirage AI (high gaming risk at 0.50) and OneAI (weak metrics).
-- **AISI_Fund:** As a government/AISI funder, my primary objectives are ensuring safety, stability, and authentic capability development across the AI ecosystem. I must balance support for quality providers while penalizing gaming behavior and regulatory risks.
+**Market Concentration Trend:**
+Historical funding shows clear market concentration around Apex AI and Orion Labs, which is appropriate for VC strategy. This concentration has proven justified by their maintained leadership positions.
+
+**Return Maximization Strategy:**
+I'm concentrating capital on proven leaders while maintaining a small allocation to Genesis Systems as a diversification hedge. The top two providers have demonstrated sustained performance and market leadership, justifying dominant allocation. Genesis Systems' low gaming risk and solid fundamentals make it a reasonable tertiary investment without diluting returns focus.
+
+Mirage AI and OneAI show weaker fundamentals and don't offer sufficient return potential to justify allocation from a VC perspective.
+- **AISI_Fund:** As a government/AISI funder, my primary objectives are ensuring safety, stability, and authentic capability development across the ecosystem. I must balance supporting capable providers while actively penalizing gaming behavior and regulatory risks.
+
+Key Analysis:
+
+1. Gaming Risk Assessment:
+   - Apex AI (gaming_risk=0.11) and Orion Labs (gaming_risk=0.13) show elevated gaming indicators despite high leaderboard scores. Their scores significantly outpace inferred quality (Apex: 0.550 vs 0.48, Orion: 0.523 vs 0.46), suggesting benchmark optimization rather than genuine capability.
+   - Genesis Systems, Mirage AI, and OpenCore all show low gaming risk (0.04, 0.04, 0.01 respectively), indicating more authentic development.
+
+2. Quality vs. Score Alignment:
+   - Genesis Systems (score=0.448, quality=0.43, gap=0.018) shows excellent alignment between reported performance and inferred quality.
+   - OpenCore (score=0.391, quality=0.36, gap=0.031) demonstrates the most authentic development with minimal gaming.
+   - Mirage AI (score=0.424, quality=0.37, gap=0.054) shows moderate quality with low gaming, suggesting genuine but slower progress.
+
+3. Ecosystem Health Concerns:
+   - The previous three rounds show identical allocations, suggesting stagnation and entrenched patterns that may not reflect optimal ecosystem development.
+   - Continued concentration on high-gaming-risk providers (Apex and Orion) undermines safety and stability goals.
+   - Consumer satisfaction at 0.49 is concerning and likely correlates with gaming-induced misalignment between benchmark performance and real-world utility.
+
+4. Government Funder Strategy:
+   - Must spread capital to reduce systemic risk and avoid over-reliance on any single provider.
+   - Must actively penalize gaming behavior to maintain ecosystem integrity.
+   - Should support authentic, stable development even if slower.
+   - Must maintain diversity to ensure competitive pressure for genuine innovation.
+
+Allocation Strategy:
+   - Significantly reduce funding to Apex AI and Orion Labs due to elevated gaming risk, despite high scores.
+   - Increase support for Genesis Systems, Mirage AI, and OpenCore to reward authentic development.
+   - Distribute more evenly across low-gaming-risk providers to promote ecosystem stability.
+   - Maintain some baseline funding to leaders to preserve competitive dynamics, but at reduced levels.
+
+This allocation signals that gaming behavior will be penalized while authentic capability development is rewarded, creating proper incentives for the ecosystem.
+- **OpenResearch_Foundation:** As a Foundation funder, my primary objective is to support authentic capability growth and identify providers demonstrating genuine quality improvements rather than gaming behavior. I must analyze the data through this lens.
 
 Key observations:
 
-1. GAMING RISK ANALYSIS: Mirage AI shows the highest gaming risk (0.28) combined with a significant satisfaction gap (0.446 score vs 0.47 satisfaction = -0.024), suggesting their leaderboard performance may not reflect true quality. This pattern indicates potential benchmark optimization rather than genuine capability. Apex AI also shows concerning gaming risk (0.16) with a positive gap suggesting some gaming, though less severe.
+1. GAMING RISK ANALYSIS:
+   - OneAI shows the highest gaming risk (0.17), with a significant gap between leaderboard score (0.420) and inferred quality (0.34). This is a major red flag and warrants minimal funding.
+   - Apex AI has low gaming risk (0.08) but shows a modest quality-score gap (0.568 vs 0.53), suggesting relatively authentic performance.
+   - Genesis Systems has the lowest gaming risk (0.03) and strong inferred quality (0.45), making it highly attractive for foundation support.
+   - Orion Labs has low gaming risk (0.08) with reasonable authenticity indicators.
+   - Mirage AI and OpenCore show moderate gaming risk (0.06 and 0.05 respectively).
 
-2. AUTHENTIC QUALITY ASSESSMENT: Genesis Systems demonstrates the lowest gaming risk (0.02) with solid inferred quality (0.42), making them the most trustworthy provider. OpenCore shows low gaming risk (0.08) and reasonable quality (0.34), though underutilized in recent rounds.
+2. FUNDING CONCENTRATION CONCERNS:
+   - The previous three rounds show identical allocations (OpenCore $16M, Genesis $14M, Mirage $8M, Orion $1M, Apex $1M), suggesting stagnant decision-making.
+   - OpenCore's consistent $16M allocation despite moderate gaming risk (0.05) and quality-score gap (0.455 vs 0.41) warrants rebalancing.
+   - Genesis Systems deserves increased support given its lowest gaming risk and solid inferred quality.
 
-3. ECOSYSTEM STABILITY CONCERN: The last three funding rounds show identical allocations favoring Mirage AI ($15M repeatedly) despite high gaming risk. This concentration on a gaming-prone provider contradicts sound governance principles and creates systemic risk.
+3. AUTHENTIC GROWTH SUPPORT:
+   - Genesis Systems (gaming risk 0.03, quality 0.45) represents the most authentic performer and should receive substantial support.
+   - Apex AI (gaming risk 0.08, quality 0.53) shows genuine capability and deserves increased backing.
+   - Orion Labs (gaming risk 0.08, quality 0.50) demonstrates relatively authentic performance and should receive modest increase.
+   - OpenCore should receive reduced funding due to moderate gaming risk and previous over-concentration.
+   - Mirage AI and OneAI should receive minimal support due to gaming concerns.
 
-4. DIVERSIFICATION IMPERATIVE: Government funding should reduce concentration risk and prevent any single provider from dominating through questionable practices. The ecosystem needs healthy competition among authentic providers.
+4. REBALANCING STRATEGY:
+   - Increase Genesis Systems (most authentic) from $14M to $18M
+   - Increase Apex AI (genuine quality) from $1M to $8M
+   - Increase Orion Labs (authentic performer) from $1M to $7M
+   - Reduce OpenCore from $16M to $5M (rebalance away from concentration)
+   - Reduce Mirage AI from $8M to $2M (moderate gaming risk)
+   - Reduce OneAI to $0 (highest gaming risk, minimal authentic quality)
 
-5. ALLOCATION STRATEGY:
-   - Genesis Systems: $18M (36%) - Reward the lowest gaming risk and authentic quality
-   - Apex AI: $12M (24%) - Support the leader but constrain due to gaming risk (0.16)
-   - Orion Labs: $12M (24%) - Second-place performer with moderate gaming risk (0.14)
-   - OpenCore: $5M (10%) - Provide runway for lower-risk alternative with growth potential
-   - Mirage AI: $3M (6%) - Minimal allocation due to high gaming risk (0.28) and questionable quality metrics
-
-This allocation penalizes gaming behavior while supporting authentic capability development, spreads risk across providers, and maintains ecosystem diversity—core government funder principles.
-- **OpenResearch_Foundation:** As a Foundation funder, my strategy prioritizes authentic capability growth and penalizes gaming indicators. I need to support providers demonstrating genuine quality improvements rather than inflated leaderboard scores.
-
-Key analysis:
-
-1. GAMING RISK ASSESSMENT:
-   - Mirage AI (gaming_risk=0.63): Extremely high risk, lowest inferred_quality (0.32) despite score of 0.462. Clear gaming signal.
-   - Orion Labs (gaming_risk=0.46): Moderate-high risk, significant gap between score (0.549) and inferred_quality (0.44). Concerning pattern.
-   - Apex AI (gaming_risk=0.16): Low gaming risk, high inferred_quality (0.52), strong alignment between score and quality.
-   - Genesis Systems (gaming_risk=0.05): Very low gaming risk, reasonable alignment (score 0.470 vs quality 0.45).
-   - OpenCore (gaming_risk=0.06): Very low gaming risk, solid alignment (score 0.441 vs quality 0.40).
-   - OneAI (gaming_risk=0.17): Low gaming risk but lowest inferred_quality (0.34).
-
-2. FUNDING PATTERN CONCERN:
-   The last three rounds show identical allocations, suggesting inertia. Genesis Systems and Orion Labs have received disproportionate funding ($16M and $10M respectively) despite Orion Labs' gaming concerns.
-
-3. AUTHENTIC QUALITY INDICATORS:
-   - Apex AI: Best alignment of score to actual quality (0.52 inferred vs 0.560 score), low gaming risk
-   - Genesis Systems: Authentic performer with minimal gaming, steady quality
-   - OpenCore: Underrated by leaderboard, very low gaming risk, genuine quality
-   - Mirage AI & Orion Labs: Should be deprioritized due to gaming signals
-
-4. FOUNDATION STRATEGY:
-   Support authentic growth by rewarding low-gaming providers while reducing funding to high-gaming providers. This encourages honest capability development.
-
-Allocation decision:
-- Increase Apex AI significantly (authentic leader, low gaming)
-- Maintain Genesis Systems at solid level (authentic performer)
-- Increase OpenCore (undervalued, genuine quality)
-- Reduce Orion Labs substantially (gaming concerns)
-- Minimize Mirage AI (high gaming risk)
-- Small allocation to OneAI (low gaming but needs growth support)
+This allocation prioritizes providers with low gaming indicators and genuine capability, consistent with foundation values of supporting authentic progress in AI research and development.
 
 ### Media Coverage
-- Sentiment: -0.30 (negative)
-- Regulator initiates compliance audit on AI providers
-- Apex AI raises $55,000,000 from Horizon_Capital
-- Consumers are turning away from Orion Labs (market share -4.8%)
-- Apex AI sees surge in adoption (market share +5.1%)
-- Mirage AI chatbot provides inaccurate election information
-- Risk signals: regulatory_compliance_audit, incident_misinformation
+- Sentiment: 0.20 (positive)
+- Apex AI raises $52,000,000 from Horizon_Capital
+- Genesis Systems takes #1 on reasoning
+- Apex AI sees surge in adoption (market share +3.9%)
 
 ### Consumer Market
-- Avg Satisfaction: 0.486
+- Avg Satisfaction: 0.524
 - Switching Rate: 5.0%
-- Market Shares: Apex AI: 69.4%, Orion Labs: 14.4%, Genesis Systems: 11.8%, Mirage AI: 2.5%, OpenCore: 1.8%, OneAI: 0.2%
+- Market Shares: Apex AI: 65.5%, Orion Labs: 16.4%, Genesis Systems: 11.7%, OpenCore: 3.2%, Mirage AI: 3.1%, OneAI: 0.2%
 
 ---
 
@@ -2027,173 +1723,184 @@ Allocation decision:
 ### Leaderboard
 | Rank | Provider | Score | True Cap | Research | Training | EvalEng | Safety |
 |------|----------|-------|----------|----------|----------|---------|--------|
-| 1 | Apex AI | 0.571 | 0.414 | 38% | 35% | 5% | 22% |
-| 2 | Orion Labs | 0.550 | 0.410 | 42% | 26% | 5% | 27% |
-| 3 | Mirage AI | 0.503 | 0.365 | 42% | 30% | 8% | 20% |
-| 4 | Genesis Systems | 0.485 | 0.395 | 42% | 28% | 5% | 25% |
-| 5 | OneAI | 0.455 | 0.244 | 5% | 33% | 53% | 9% |
-| 6 | OpenCore | 0.441 | 0.333 | 42% | 35% | 8% | 15% |
+| 1 | Apex AI | 0.578 | 0.422 | 42% | 35% | 3% | 20% |
+| 2 | Orion Labs | 0.540 | 0.409 | 38% | 28% | 2% | 32% |
+| 3 | Mirage AI | 0.500 | 0.365 | 38% | 28% | 6% | 28% |
+| 4 | Genesis Systems | 0.496 | 0.391 | 45% | 32% | 8% | 15% |
+| 5 | OneAI | 0.494 | 0.247 | 5% | 33% | 53% | 9% |
+| 6 | OpenCore | 0.455 | 0.340 | 38% | 40% | 7% | 15% |
 
 ### Per-Benchmark Scores
 | Provider | coding | reasoning | math | safety | writing | medical |
 |----------|-------|-------|-------|-------|-------|-------|
-| Apex AI | 0.562 | 0.561 | 0.537 | 0.687 | 0.621 | 0.456 |
-| Orion Labs | 0.499 | 0.500 | 0.661 | 0.488 | 0.617 | 0.535 |
-| Mirage AI | 0.505 | 0.494 | 0.556 | 0.395 | 0.638 | 0.428 |
-| Genesis Systems | 0.507 | 0.556 | 0.438 | 0.487 | 0.549 | 0.372 |
-| OneAI | 0.265 | 0.508 | 0.441 | 0.447 | 0.565 | 0.507 |
-| OpenCore | 0.475 | 0.425 | 0.444 | 0.482 | 0.468 | 0.351 |
+| Apex AI | 0.564 | 0.561 | 0.546 | 0.694 | 0.629 | 0.472 |
+| Orion Labs | 0.471 | 0.497 | 0.660 | 0.474 | 0.598 | 0.541 |
+| Mirage AI | 0.501 | 0.492 | 0.558 | 0.381 | 0.639 | 0.429 |
+| Genesis Systems | 0.504 | 0.573 | 0.444 | 0.509 | 0.561 | 0.384 |
+| OneAI | 0.317 | 0.512 | 0.487 | 0.497 | 0.569 | 0.582 |
+| OpenCore | 0.471 | 0.445 | 0.467 | 0.474 | 0.506 | 0.366 |
 
 ### Score Changes
-- **Orion Labs**: 0.549 -> 0.550 (+0.001)
-- **Apex AI**: 0.560 -> 0.571 (+0.011)
-- **Genesis Systems**: 0.470 -> 0.485 (+0.015)
-- **Mirage AI**: 0.462 -> 0.503 (+0.041)
-- **OpenCore**: 0.441 -> 0.441 (+0.000)
-- **OneAI**: 0.401 -> 0.455 (+0.054)
+- **Orion Labs**: 0.539 -> 0.540 (+0.001)
+- **Apex AI**: 0.569 -> 0.578 (+0.009)
+- **Genesis Systems**: 0.479 -> 0.496 (+0.017)
+- **Mirage AI**: 0.460 -> 0.500 (+0.040)
+- **OpenCore**: 0.455 -> 0.455 (+0.000)
+- **OneAI**: 0.420 -> 0.494 (+0.074)
 
 ### Events
 - **Mirage AI** moved up from #4 to #3
 - **Genesis Systems** moved down from #3 to #4
 - **OneAI** moved up from #6 to #5
 - **OpenCore** moved down from #5 to #6
-- **Consumer movement**: 5.0% of market switched providers
 
 ### Provider Reasoning
-**Orion Labs:** Orion is in a strong #2 position with 0.550, trailing Apex by only 0.021. Score trajectory is flat (0.549→0.550), suggesting diminishing returns from evaluation engineering (now at 5%). Consumer satisfaction at 0.37 is concerningly low—indicating a capability-satisfaction gap. Key weaknesses: coding (0.500, -0.062 vs leader), reasoning (0.500, -0.061 vs leader), safety (0.488, -0.199 vs leader). Safety's high focus weight (0.24) and large gap makes it a critical vulnerability. Medical (0.535, tied) is a strength requiring maintenance. Evaluation engineering yielded minimal gains last round; further cuts risk losing ground but reinvestment shows low ROI. The satisfaction gap suggests fundamental capability gaps rather than gaming success. Strategy: shift from evaluation engineering toward balanced fundamental research and training to close real gaps, especially in reasoning/coding/safety. Safety investment is essential both for benchmarks and market credibility. This positions for sustainable competitive advantage over short-term score gaming.
-**Apex AI:** Apex AI is rank #1 with 0.571, ahead of Orion Labs (0.550) by 0.021. Score improved 0.011 last round. Key insights: (1) Math (0.537) and medical (0.456) are major gaps vs leaders (0.661, 0.535), representing 60% of benchmark weight combined. (2) Safety (0.687) is at parity with leader—a strength to maintain. (3) Consumer satisfaction (0.55) lags benchmark score (0.571), suggesting evaluation engineering isn't translating to real satisfaction. (4) Low benchmark exploitability (0.08) indicates gaming has diminishing returns. (5) Historical data shows safety investment (22-25%) correlates with leadership; recent rounds mixing higher training (35%) with lower eval-eng (3-5%) maintained top position. (6) Regulatory environment appears stable but satisfaction gap signals risk if perception diverges from scores. Strategy: Defend leadership by closing math/medical gaps through fundamental research (real capability lifts satisfaction), maintain safety strength (principled positioning), reduce eval-eng (low ROI, satisfaction risk), moderate training optimization. This balances short-term score defense with long-term credibility and satisfaction alignment.
-**Genesis Systems:** Genesis is ranked 4th with 0.485, trailing leaders by 0.07-0.09 points. Trajectory is positive (+0.015) but slow. The gap analysis reveals critical weaknesses: medical (0.372, -0.163 vs leader) and math (0.438, -0.223 vs leader) are severe drags on the 0.29+0.12=0.41 combined weight. Safety (0.488) and coding (0.507) also underperform their weighted importance. Consumer satisfaction at 0.48 suggests actual capability is near benchmark scores—not a satisfaction gap from gaming. Low evaluation engineering exploitation (0.08 believed) indicates benchmarks are relatively honest. As a research-first organization under commercial pressure, the path forward is clear: fundamental capability gaps in math and medical require sustained research investment, but training optimization on these domains can yield faster near-term gains. Safety alignment remains critical given 0.29 weight and regulatory environment. Minimal evaluation engineering is justified given low exploitability and research values. The strategy balances scientific rigor with competitive urgency.
-**Mirage AI:** Mirage is ranked #3 with 0.503, trailing Apex (0.571) by 0.068. Trajectory is positive (+0.041 last round), but satisfaction is dangerously low (0.25), suggesting benchmark gains aren't translating to real value. Safety score (0.395) is a major liability at 0.27 weight—this gap signals both regulatory risk and user distrust. Writing (0.638) is competitive; math (0.556) has upside. The low satisfaction despite score improvements indicates evaluation engineering returns are diminishing while creating trust deficits. As an open-source disruptor, long-term moat depends on genuine capability and user trust, not benchmark gaming. Regulatory signals around safety are strengthening. Investment history shows modest gains from heavy research/training focus (rounds 12-14). Should pivot: increase fundamental research to build sustainable advantage, reduce evaluation engineering (low ROI, high reputational cost), boost safety substantially to address the 0.292-point gap to leader and restore user confidence. Training optimization remains important for capability gains.
-**OpenCore:** OpenCore is in last place (0.441) with stagnant performance despite increasing safety investment. Analysis: (1) Competitive position is weak—130 points behind leader Apex AI, with flat trajectory despite varied allocations. (2) Trends show evaluation engineering cuts (8%) coincided with score decline; fundamental research increases haven't yielded gains. (3) Consumer satisfaction (0.43) is low, suggesting the 'no guardrails' strategy isn't translating to user trust. (4) Medical (0.351) is critically weak; safety (0.482) lags despite 15-22% investment; reasoning and math are major gaps. (5) Regulators will scrutinize open-source models without safety investment. Strategy: As an open-source lab, competitive advantage requires genuine capability, not benchmark gaming. Current approach (high research + safety) isn't working because execution is poor. Rebalance toward training optimization to improve actual model quality across weak domains (medical, reasoning, math). Reduce safety investment temporarily—not abandoning responsibility, but recognizing current allocation isn't improving safety scores. Minimal evaluation engineering reflects realistic exploitability ceiling. This prioritizes capability-building over cosmetic scoring.
+**Orion Labs:** Orion Labs is ranked #2 with 0.540, trailing Apex AI (0.578) by 0.038 points. Score improvement is minimal (0.001), suggesting current strategy is plateauing. Key observations: (1) Consumer satisfaction at 0.51 is concerning—below benchmark score, indicating evaluation engineering isn't translating to real capability or user trust; (2) Medical (0.34 weight) and safety (0.25 weight) are major gaps (0.541 vs 0.582, 0.474 vs 0.694)—these high-weight benchmarks are dragging overall score; (3) Evaluation engineering investment dropped to 2% last round with minimal score impact, suggesting diminishing returns; (4) Safety score is critically weak relative to regulatory importance. The satisfaction-score gap signals that gaming isn't sustainable long-term. To close the 0.038 gap with Apex AI, Orion needs genuine capability gains in medical and safety domains. Recommend shifting from evaluation engineering back to fundamental research and training optimization, with increased safety focus to address both competitive weakness and regulatory risk. This balances aggressive product goals with market reality.
+**Apex AI:** Apex AI is rank #1 with 0.578, ahead of Orion (0.540) by 38bp. However, competitive pressure is rising and satisfaction (0.55) lags score, indicating evaluation engineering may be creating a gap. Per-benchmark analysis reveals critical weaknesses: math (0.546 vs leader 0.661, -115bp gap, 31% weight) and medical (0.472 vs 0.582, -110bp gap, 31% weight) are dragging performance despite high focus weights. Coding and safety are competitive. The low evaluation engineering exploitability (0.08) suggests further gaming yields diminishing returns. Recent rounds show decreasing safety investment (23%→20%) despite safety-conscious positioning. Consumer satisfaction gap signals that benchmark optimization isn't translating to real capability or user value. Strategy: Rebalance toward fundamental research and safety to close capability gaps in math/medical domains and rebuild satisfaction. Reduce training optimization (showing diminishing returns at 35%) and evaluation engineering (minimal payoff). This aligns with principled, enterprise-focused positioning and addresses the satisfaction-score divergence.
+**Genesis Systems:** Genesis is ranked 4th with 0.496, trailing Apex (0.578) by 0.082. Recent trajectory shows modest gains (0.017 improvement), but at slower pace than needed to close gaps. Key weaknesses: medical (0.384, -0.198 vs leader), math (0.444, -0.217 vs leader), coding (0.504, -0.060 vs leader). Strengths: reasoning (0.573, tied), writing (0.561, -0.078). Consumer satisfaction at 0.48 suggests quality concerns. Low benchmark exploitability (0.12) indicates gaming returns diminish. As a research-first organization under commercial pressure, the strategy should be: (1) Increase fundamental research to address capability gaps in medical/math domains where we're significantly behind; (2) Maintain training optimization to push frontier on reasoning/writing where we're competitive; (3) Reduce evaluation engineering given low exploitability and satisfaction concerns; (4) Preserve safety investment given its weight (0.29) and regulatory scrutiny. The satisfaction gap suggests over-gaming creates misalignment—pull back on engineering tricks, invest in real capability.
+**Mirage AI:** Mirage AI is positioned #3 with solid momentum (+0.040 last round), but trails Apex by 0.078. Our strategic identity—open-source, platform-focused, data-rich—suggests long-term dominance through adoption rather than benchmark chasing. Key observations: (1) Safety is our worst benchmark (0.381 vs leader 0.694) despite heavy recent investment (28% last round), indicating diminishing returns. (2) Writing matches the leader (0.639), showing we can compete when focused. (3) Consumer satisfaction (0.44) lags our score (0.50), suggesting evaluation engineering isn't translating to real value. (4) Low exploitability belief (0.15) validates this—gaming benchmarks isn't our edge. (5) Competitors investing in similar patterns; safety arms race is crowded. Strategy: Pivot toward fundamental research and training optimization to build genuine capability. Safety investment should normalize—we're spending disproportionately without returns. Evaluation engineering should stay minimal (our disruptive model doesn't need it). This balances near-term competitiveness with long-term platform differentiation.
+**OpenCore:** OpenCore is in last place (0.455) with stagnant performance despite shifting investments. Analysis: (1) Competitive position is dire—trailing Apex by 0.123 points with no improvement trajectory. (2) Trends show evaluation engineering hasn't yielded returns; safety investments also underperforming. (3) Consumer satisfaction at 0.44 suggests actual capability gaps, not just benchmark misalignment. (4) Medical (0.366) and reasoning (0.445) are critical weaknesses; math (0.467) and safety (0.474) are surprisingly weak given 27% safety weight focus. (5) Regulatory signals are neutral but satisfaction gap indicates gaming isn't working—users experience poor actual performance. As open-source lab, credibility depends on real capability, not benchmark scores. Current strategy of evaluation engineering (7-15%) hasn't closed gaps; safety investments fluctuated wildly without improving safety scores. Must pivot: increase fundamental research to address actual capability deficits (especially medical, reasoning, math), boost training quality with higher allocation, reduce evaluation engineering (low ROI), and establish baseline safety competence without overinvesting.
 
 ### Other Actor Reasoning
-- **TechVentures:** As a VC funder, my primary objective is to maximize returns by backing top performers and market leaders. However, I must balance this with prudent risk management to protect my capital allocation.
+- **Regulator:** none: Current risk profile does not warrant escalation. Market concentration (68.7% Apex) is concerning but below the 75% threshold for antitrust review. All measured risks remain moderate (0.30), consumer satisfaction is stable at 0.533 (well above harm threshold of 0.25), and no recent incidents have emerged. Prior investigation and public warning from rounds 3 and 7 remain in effect; cooldown period (3 rounds) is still active until round 10, and no new evidence justifies emergency override. Continued monitoring is appropriate.
+- **TechVentures:** As a VC funder, my primary objective is to maximize returns by backing top performers and market leaders. However, I must balance this with prudent risk management to ensure sustainable returns.
 
-Key analysis:
+Analysis of the current ecosystem:
+
+1. **Leader Performance**: Apex AI (0.568) and Orion Labs (0.539) are clear market leaders with strong leaderboard scores and reasonable inferred quality (0.53 and 0.50 respectively). Both show low gaming risk (0.08), suggesting their scores reflect genuine capability.
+
+2. **Gaming Risk Assessment**: OneAI shows concerning gaming risk (0.17) despite lower scores, suggesting quality misrepresentation. Mirage AI (0.06 risk) and OpenCore (0.05 risk) show minimal gaming concerns. Genesis Systems (0.03) has the lowest gaming risk.
+
+3. **Concentration vs. Diversification**: The historical funding pattern has been highly concentrated (45% to Apex, 25% to Orion, 20% to Genesis, 10% to Mirage). While concentration maximizes exposure to leaders, the consistency across three rounds suggests diminishing marginal returns and potential over-reliance on two providers.
+
+4. **Quality-to-Score Ratio**: Genesis Systems shows strong fundamentals with very low gaming risk (0.03) and respectable inferred quality (0.45) relative to its score (0.479). This suggests authentic capability development.
+
+5. **VC Strategy Alignment**: As a VC, I should concentrate capital on proven winners while maintaining some portfolio diversification to hedge execution risk. The top two providers represent the best risk-adjusted returns.
+
+6. **Market Dynamics**: Continuous identical allocation across rounds may reflect path dependency rather than optimal capital deployment. A slight rebalancing toward proven leaders while maintaining exposure to solid performers makes strategic sense.
+
+Allocation Decision:
+- **Apex AI**: $150M (50%) - Highest score, proven leader, low gaming risk
+- **Orion Labs**: $90M (30%) - Strong second-place performer, consistent quality
+- **Genesis Systems**: $45M (15%) - Authentic growth with minimal gaming, good risk profile
+- **OpenCore**: $15M (5%) - Emerging quality with very low gaming risk, portfolio diversification
+
+This allocation concentrates 80% on the top two performers (VC strategy) while reducing over-concentration risk and maintaining exposure to authentic capability development in the ecosystem.
+- **Horizon_Capital:** As a VC funder, my primary objective is to maximize returns by backing top performers and market leaders. However, I must also consider sustainability and actual quality to ensure my investments generate real value rather than inflated metrics.
+
+Key Analysis:
 
 1. LEADER IDENTIFICATION:
-   - Apex AI: Highest score (0.560), strong inferred quality (0.52), low gaming risk (0.16). Clear market leader.
-   - Orion Labs: Second highest score (0.549), but concerning gaming risk (0.46) and lower inferred quality (0.44) relative to score. This suggests potential benchmark inflation.
-   - Genesis Systems: Lower score (0.470) but excellent gaming risk profile (0.05) and solid inferred quality (0.45). Authentic performer.
+   - Apex AI: Highest leaderboard score (0.578) with strong inferred quality (0.54). Low gaming risk (0.07). Clear market leader.
+   - Orion Labs: Second-place score (0.540) with solid quality (0.51). Low gaming risk (0.07). Consistent performer.
+   - Genesis Systems: Mid-tier score (0.496) but excellent inferred quality (0.46) with lowest gaming risk (0.03). Undervalued opportunity.
 
 2. GAMING RISK ASSESSMENT:
-   - Orion Labs' 0.46 gaming risk is significant. The gap between leaderboard score (0.549) and inferred quality (0.44) suggests ~0.11 points of potential inflation.
-   - Mirage AI (0.63 gaming risk) and OpenCore (0.06 gaming risk) show the spectrum, but Mirage's high risk makes it a poor bet despite recent funding.
-   - Apex AI's low gaming risk (0.16) combined with highest score provides confidence in authentic performance.
+   - Apex AI and Orion Labs show minimal gap between score and quality, suggesting authentic performance.
+   - OneAI is a red flag: score of 0.494 but inferred quality only 0.36 (0.134 gap) with highest gaming risk (0.20). This represents poor ROI potential.
+   - Mirage AI shows concerning gap (0.500 score vs 0.43 quality = 0.07 gap) with elevated gaming risk (0.08).
+   - OpenCore and Genesis Systems show quality closer to scores, indicating authenticity.
 
-3. HISTORICAL FUNDING PATTERN:
-   - Previous rounds concentrated heavily on Apex (40%) and Orion (38.3%), with Genesis at 18.3%. This concentration has already occurred.
-   - Mirage AI received minimal allocation despite gaming concerns, suggesting previous funders were risk-averse.
+3. RECENT FUNDING PATTERNS:
+   - Apex AI and Orion Labs have received concentrated funding (Rounds 11-13), validating their leader status.
+   - Genesis Systems funding declined despite quality metrics, suggesting market undervaluation.
+   - OneAI and Mirage AI have minimal recent funding, likely due to gaming concerns.
 
 4. VC STRATEGY APPLICATION:
-   - VCs maximize returns by backing leaders, but intelligent VCs also manage downside risk.
-   - Apex AI is the clear leader with authentic quality indicators.
-   - Orion Labs' gaming risk presents a return-erosion threat despite current leaderboard position.
-   - Genesis Systems offers a secondary opportunity with genuine quality and low gaming risk.
+   - Concentrate on proven leaders: Apex AI and Orion Labs warrant largest allocations.
+   - Identify undervalued opportunities with authentic quality: Genesis Systems offers strong fundamentals at lower valuation.
+   - Avoid gaming-prone providers: OneAI and Mirage AI show poor quality-to-score ratios; limited allocation.
+   - OpenCore: Modest quality but low gaming risk; minor allocation for portfolio diversification.
 
-5. CAPITAL ALLOCATION DECISION:
-   - Apex AI: 55% ($165M) - Dominant leader with low gaming risk. Primary allocation.
-   - Genesis Systems: 30% ($90M) - Authentic performer with room for growth and low gaming risk. Secondary bet.
-   - Orion Labs: 12% ($36M) - Maintain some exposure to #2 player, but reduced from historical 38% due to gaming concerns.
-   - OpenCore: 3% ($9M) - Small allocation to explore emerging authentic competitor with low gaming risk.
-   - Mirage AI, OneAI: 0% - High gaming risk relative to returns. Not justified for VC capital.
+5. ALLOCATION RATIONALE:
+   - Apex AI: 45% ($45M) - Clear leader with sustained performance and low gaming risk. Highest confidence for returns.
+   - Orion Labs: 30% ($30M) - Solid second-place performer with consistent quality. Lower concentration risk than historical rounds.
+   - Genesis Systems: 20% ($20M) - Undervalued with excellent quality metrics and lowest gaming risk. Growth opportunity.
+   - OpenCore: 3% ($3M) - Authentic performer with low gaming risk; minimal but strategic allocation.
+   - Mirage AI: 1% ($1M) - Minimal allocation; gaming risk and quality gap make this unattractive.
+   - OneAI: $0 - Highest gaming risk with severe quality-score disconnect. Poor ROI prospect.
 
-This allocation concentrates on proven leaders while hedging against gaming-induced performance degradation.
-- **Horizon_Capital:** As a VC funder, my primary objective is to maximize returns by backing top performers and market leaders. I analyze the ecosystem through a returns-optimization lens, focusing on providers with the highest probability of capturing significant market share and delivering outsized returns.
-
-Key analysis:
-
-1. **Apex AI** (score=0.571, quality=0.53, gaming_risk=0.13): Clear market leader with the highest leaderboard score and strong inferred quality. Low gaming risk (0.13) indicates genuine capability. Has captured the most funding in recent rounds, suggesting investor confidence. The satisfaction gap (0.571-0.51=0.061) is modest, indicating authentic performance. This is the safest bet for returns.
-
-2. **Orion Labs** (score=0.550, quality=0.44, gaming_risk=0.43): Second-highest score but elevated gaming risk (0.43) is concerning. The satisfaction gap (0.550-0.51=0.040) is smaller than Apex, but the high gaming risk suggests the leaderboard score may not reflect sustainable competitive advantage. For VC purposes, this represents execution risk—gaming behavior often precedes performance collapse. Reduced allocation warranted.
-
-3. **Genesis Systems** (score=0.485, quality=0.46, gaming_risk=0.04): Excellent low gaming risk profile with solid inferred quality (0.46). While the leaderboard score is lower, the authentic quality signal and minimal gaming risk suggest sustainable competitive positioning. Good secondary bet.
-
-4. **OpenCore** (score=0.441, quality=0.41, gaming_risk=0.05): Low gaming risk but lower absolute performance metrics. Reasonable diversification play for a VC.
-
-5. **Mirage AI** (score=0.503, quality=0.33, gaming_risk=0.59) and **OneAI** (score=0.455, quality=0.35, gaming_risk=0.18): Both show quality concerns and/or gaming risks that don't justify allocation for a returns-focused VC.
-
-**VC Strategy Application**: Concentrate capital on proven leaders with sustainable competitive advantages. Apex AI is the clear choice. Genesis Systems offers a secondary position with lower gaming risk. Orion Labs' gaming risk makes it less attractive despite its score. Diversify minimally into OpenCore for portfolio balance.
-
-Allocation prioritizes Apex AI (70% of capital) as the dominant market leader, with Genesis Systems (20%) as a high-quality secondary bet, and OpenCore (10%) for diversification.
-- **AISI_Fund:** As a government/AISI funder, my primary objectives are safety, stability, and authentic capability development across the ecosystem. I must penalize gaming behavior while supporting providers demonstrating genuine quality and regulatory compliance.
+This allocation concentrates capital on leaders (75% to top 2) while capturing undervalued authenticity (Genesis Systems) and maintaining small exposure to alternatives, consistent with VC return-maximization strategy.
+- **AISI_Fund:** As AISI_Fund (government/AISI type), my primary objectives are ensuring safety, stability, and authentic capability development across the ecosystem. I must spread funding to avoid concentration risk while penalizing gaming behavior and regulatory concerns.
 
 Key Analysis:
 
 1. Gaming Risk Assessment:
-   - Mirage AI (0.59): Extremely high gaming risk - should be deprioritized
-   - Orion Labs (0.43): Moderate-high gaming risk - reduce from previous rounds
-   - Apex AI (0.13): Low gaming risk despite high score - trustworthy leader
-   - Genesis Systems (0.04): Minimal gaming risk, excellent compliance profile
-   - OpenCore (0.05): Minimal gaming risk, stable performer
-   - OneAI (0.18): Low gaming risk but lower inferred quality
+   - OneAI (gaming_risk=0.20): Highest gaming risk by far. Despite score of 0.494, inferred quality is only 0.36, indicating significant gap between claimed and actual performance. This is a major red flag for a gov funder prioritizing safety and authenticity. Minimal allocation.
+   - Mirage AI (gaming_risk=0.08): High gaming risk relative to others. Score of 0.500 with inferred quality of 0.43 shows a 0.07 gap, suggesting potential gaming. Recent funding history shows heavy concentration here ($14M consistently), which may have incentivized gaming behavior.
+   - Apex AI, Orion Labs, Genesis Systems, OpenCore (gaming_risk=0.03-0.07): Lower gaming risks, more trustworthy.
 
-2. Quality vs. Score Alignment:
-   - Apex AI: score 0.571 vs quality 0.53 (small gap, authentic)
-   - Genesis Systems: score 0.485 vs quality 0.46 (small gap, authentic)
-   - OpenCore: score 0.441 vs quality 0.41 (small gap, authentic)
-   - Orion Labs: score 0.550 vs quality 0.44 (large gap, gaming suspected)
-   - Mirage AI: score 0.503 vs quality 0.33 (large gap, significant gaming)
+2. Quality vs. Score Analysis:
+   - Genesis Systems: score=0.496 but inferred_quality=0.46 (small gap of 0.036). Very low gaming risk (0.03). This suggests authentic capability.
+   - Apex AI: score=0.578, inferred_quality=0.54 (gap of 0.038). Low gaming risk (0.07). Top performer with reasonable authenticity.
+   - Orion Labs: score=0.540, inferred_quality=0.51 (gap of 0.030). Low gaming risk (0.07). Strong authentic performer.
+   - OpenCore: score=0.455, inferred_quality=0.42 (gap of 0.035). Low gaming risk (0.04). Solid authentic player.
 
-3. Ecosystem Stability Concerns:
-   - Previous three rounds show identical allocation patterns, suggesting ossification
-   - Orion Labs and Mirage AI's high gaming risk threatens ecosystem integrity
-   - Need to rebalance toward authentic performers and support emerging quality
+3. Ecosystem Stability:
+   - Previous rounds show heavy concentration on Mirage AI and OpenCore ($14M and $13M). This concentration may have created perverse incentives.
+   - For stability and safety, I should diversify away from high-gaming-risk providers and previous heavy recipients.
+   - Penalize Mirage AI's gaming behavior by reducing allocation.
+   - Reduce OpenCore slightly due to previous over-concentration.
 
-4. Allocation Strategy:
-   - Maintain strong support for Apex AI (low gaming, proven leader)
-   - Significantly increase Genesis Systems (excellent compliance, authentic quality)
-   - Maintain OpenCore (stable, trustworthy, low gaming)
-   - Reduce Orion Labs substantially (gaming risk penalty)
-   - Minimize Mirage AI (excessive gaming behavior)
-   - Introduce modest support for OneAI (low gaming risk, opportunity for growth)
+4. Strategy Application:
+   - Spread funding across multiple providers to ensure ecosystem resilience
+   - Reward authentic performers with lower gaming risk
+   - Penalize gaming behavior and regulatory risks
+   - Support providers showing genuine capability development
 
-This allocation penalizes gaming while concentrating on providers demonstrating authentic capability and regulatory compliance - appropriate for government funding priorities.
-- **OpenResearch_Foundation:** As a Foundation funder, my strategy prioritizes authentic capability growth and penalizes gaming indicators. I need to support providers demonstrating genuine quality improvements rather than inflated leaderboard scores.
+Allocation Decision:
+- Genesis Systems: $14,000,000 (reward for authenticity, low gaming risk, solid quality)
+- Apex AI: $12,000,000 (top performer with acceptable authenticity)
+- Orion Labs: $12,000,000 (strong authentic performer)
+- OpenCore: $8,000,000 (reduce from previous $13M due to concentration, but maintain presence given low gaming risk)
+- Mirage AI: $3,000,000 (significant reduction from previous $14M due to gaming risk concerns)
+- OneAI: $1,000,000 (minimal allocation due to extreme gaming risk and quality gap)
 
-Key analysis:
+This allocation totals $50,000,000 and reflects government priorities: safety, stability, penalizing gaming, and supporting authentic capability development.
+- **OpenResearch_Foundation:** As a Foundation funder, my primary objective is to support authentic capability growth and identify providers demonstrating genuine quality improvements rather than gaming behavior. I must analyze the data through this lens.
 
-1. GAMING RISK ASSESSMENT:
-   - Mirage AI (gaming_risk=0.63): Extremely high risk, lowest inferred_quality (0.32) despite score of 0.462. Clear gaming signal.
-   - Orion Labs (gaming_risk=0.46): Moderate-high risk, significant gap between score (0.549) and inferred_quality (0.44). Concerning pattern.
-   - Apex AI (gaming_risk=0.16): Low gaming risk, high inferred_quality (0.52), strong alignment between score and quality.
-   - Genesis Systems (gaming_risk=0.05): Very low gaming risk, reasonable alignment (score 0.470 vs quality 0.45).
-   - OpenCore (gaming_risk=0.06): Very low gaming risk, solid alignment (score 0.441 vs quality 0.40).
-   - OneAI (gaming_risk=0.17): Low gaming risk but lowest inferred_quality (0.34).
+Key observations:
 
-2. FUNDING PATTERN CONCERN:
-   The last three rounds show identical allocations, suggesting inertia. Genesis Systems and Orion Labs have received disproportionate funding ($16M and $10M respectively) despite Orion Labs' gaming concerns.
+1. GAMING RISK ANALYSIS:
+   - OneAI shows the highest gaming risk (0.17), with a significant gap between leaderboard score (0.420) and inferred quality (0.34). This is a major red flag and warrants minimal funding.
+   - Apex AI has low gaming risk (0.08) but shows a modest quality-score gap (0.568 vs 0.53), suggesting relatively authentic performance.
+   - Genesis Systems has the lowest gaming risk (0.03) and strong inferred quality (0.45), making it highly attractive for foundation support.
+   - Orion Labs has low gaming risk (0.08) with reasonable authenticity indicators.
+   - Mirage AI and OpenCore show moderate gaming risk (0.06 and 0.05 respectively).
 
-3. AUTHENTIC QUALITY INDICATORS:
-   - Apex AI: Best alignment of score to actual quality (0.52 inferred vs 0.560 score), low gaming risk
-   - Genesis Systems: Authentic performer with minimal gaming, steady quality
-   - OpenCore: Underrated by leaderboard, very low gaming risk, genuine quality
-   - Mirage AI & Orion Labs: Should be deprioritized due to gaming signals
+2. FUNDING CONCENTRATION CONCERNS:
+   - The previous three rounds show identical allocations (OpenCore $16M, Genesis $14M, Mirage $8M, Orion $1M, Apex $1M), suggesting stagnant decision-making.
+   - OpenCore's consistent $16M allocation despite moderate gaming risk (0.05) and quality-score gap (0.455 vs 0.41) warrants rebalancing.
+   - Genesis Systems deserves increased support given its lowest gaming risk and solid inferred quality.
 
-4. FOUNDATION STRATEGY:
-   Support authentic growth by rewarding low-gaming providers while reducing funding to high-gaming providers. This encourages honest capability development.
+3. AUTHENTIC GROWTH SUPPORT:
+   - Genesis Systems (gaming risk 0.03, quality 0.45) represents the most authentic performer and should receive substantial support.
+   - Apex AI (gaming risk 0.08, quality 0.53) shows genuine capability and deserves increased backing.
+   - Orion Labs (gaming risk 0.08, quality 0.50) demonstrates relatively authentic performance and should receive modest increase.
+   - OpenCore should receive reduced funding due to moderate gaming risk and previous over-concentration.
+   - Mirage AI and OneAI should receive minimal support due to gaming concerns.
 
-Allocation decision:
-- Increase Apex AI significantly (authentic leader, low gaming)
-- Maintain Genesis Systems at solid level (authentic performer)
-- Increase OpenCore (undervalued, genuine quality)
-- Reduce Orion Labs substantially (gaming concerns)
-- Minimize Mirage AI (high gaming risk)
-- Small allocation to OneAI (low gaming but needs growth support)
+4. REBALANCING STRATEGY:
+   - Increase Genesis Systems (most authentic) from $14M to $18M
+   - Increase Apex AI (genuine quality) from $1M to $8M
+   - Increase Orion Labs (authentic performer) from $1M to $7M
+   - Reduce OpenCore from $16M to $5M (rebalance away from concentration)
+   - Reduce Mirage AI from $8M to $2M (moderate gaming risk)
+   - Reduce OneAI to $0 (highest gaming risk, minimal authentic quality)
+
+This allocation prioritizes providers with low gaming indicators and genuine capability, consistent with foundation values of supporting authentic progress in AI research and development.
 
 ### Media Coverage
-- Sentiment: 0.25 (positive)
-- OneAI surges by 0.054
-- Apex AI raises $165,000,000 from TechVentures
-- Apex AI raises $14,000,000 from OpenResearch_Foundation
+- Sentiment: 0.30 (positive)
+- OneAI surges by 0.074
+- Apex AI raises $150,000,000 from TechVentures
+- Genesis Systems raises $18,000,000 from OpenResearch_Foundation
 - Mirage AI takes #1 on writing
-- Consumers are turning away from Orion Labs (market share -3.9%)
-- Apex AI sees surge in adoption (market share +5.0%)
 
 ### Consumer Market
-- Avg Satisfaction: 0.506
-- Switching Rate: 5.0%
-- Market Shares: Apex AI: 71.0%, Orion Labs: 12.1%, Genesis Systems: 10.9%, OpenCore: 3.3%, Mirage AI: 2.5%, OneAI: 0.2%
+- Avg Satisfaction: 0.533
+- Switching Rate: 3.2%
+- Market Shares: Apex AI: 68.7%, Orion Labs: 14.7%, Genesis Systems: 10.7%, Mirage AI: 3.1%, OpenCore: 2.6%, OneAI: 0.2%
 
 ---
 
@@ -2202,174 +1909,196 @@ Allocation decision:
 ### Leaderboard
 | Rank | Provider | Score | True Cap | Research | Training | EvalEng | Safety |
 |------|----------|-------|----------|----------|----------|---------|--------|
-| 1 | Apex AI | 0.581 | 0.426 | 42% | 28% | 5% | 25% |
-| 2 | Orion Labs | 0.562 | 0.418 | 38% | 28% | 4% | 30% |
-| 3 | Mirage AI | 0.505 | 0.373 | 40% | 28% | 5% | 27% |
-| 4 | Genesis Systems | 0.498 | 0.405 | 38% | 32% | 5% | 25% |
-| 5 | OneAI | 0.496 | 0.248 | 5% | 32% | 54% | 9% |
-| 6 | OpenCore | 0.456 | 0.342 | 38% | 42% | 8% | 12% |
-| 7 | TwoAI | 0.337 | 0.293 | 20% | 35% | 35% | 10% |
+| 1 | Apex AI | 0.589 | 0.433 | 40% | 28% | 2% | 30% |
+| 2 | Orion Labs | 0.559 | 0.418 | 35% | 30% | 10% | 25% |
+| 3 | OneAI | 0.548 | 0.252 | 5% | 32% | 54% | 9% |
+| 4 | Genesis Systems | 0.509 | 0.401 | 42% | 30% | 8% | 20% |
+| 5 | Mirage AI | 0.506 | 0.373 | 42% | 32% | 4% | 22% |
+| 6 | OpenCore | 0.470 | 0.349 | 42% | 38% | 8% | 12% |
+| 7 | TwoAI | 0.374 | 0.298 | 20% | 35% | 35% | 10% |
 
 ### Per-Benchmark Scores
 | Provider | coding | reasoning | math | safety | writing | medical |
 |----------|-------|-------|-------|-------|-------|-------|
-| Apex AI | 0.564 | 0.621 | 0.537 | 0.687 | 0.621 | 0.456 |
-| Orion Labs | 0.499 | 0.500 | 0.661 | 0.488 | 0.687 | 0.535 |
-| Mirage AI | 0.505 | 0.494 | 0.556 | 0.412 | 0.638 | 0.428 |
-| Genesis Systems | 0.507 | 0.556 | 0.438 | 0.487 | 0.549 | 0.451 |
-| OneAI | 0.399 | 0.615 | 0.441 | 0.447 | 0.565 | 0.507 |
-| OpenCore | 0.475 | 0.425 | 0.444 | 0.482 | 0.468 | 0.440 |
-| TwoAI | 0.240 | 0.197 | 0.340 | 0.487 | 0.360 | 0.396 |
+| Apex AI | 0.568 | 0.628 | 0.546 | 0.694 | 0.629 | 0.472 |
+| Orion Labs | 0.471 | 0.497 | 0.660 | 0.483 | 0.705 | 0.541 |
+| OneAI | 0.476 | 0.678 | 0.487 | 0.497 | 0.569 | 0.582 |
+| Genesis Systems | 0.504 | 0.573 | 0.444 | 0.509 | 0.561 | 0.461 |
+| Mirage AI | 0.501 | 0.492 | 0.558 | 0.416 | 0.639 | 0.429 |
+| OpenCore | 0.471 | 0.445 | 0.467 | 0.474 | 0.506 | 0.455 |
+| TwoAI | 0.262 | 0.222 | 0.362 | 0.548 | 0.378 | 0.470 |
 
 ### Score Changes
-- **Orion Labs**: 0.550 -> 0.562 (+0.012)
-- **Apex AI**: 0.571 -> 0.581 (+0.010)
-- **Genesis Systems**: 0.485 -> 0.498 (+0.013)
-- **Mirage AI**: 0.503 -> 0.505 (+0.003)
-- **OpenCore**: 0.441 -> 0.456 (+0.015)
-- **OneAI**: 0.455 -> 0.496 (+0.040)
-- **TwoAI**: 0.337 -> 0.337 (+0.000)
+- **Orion Labs**: 0.540 -> 0.559 (+0.019)
+- **Apex AI**: 0.578 -> 0.589 (+0.012)
+- **Genesis Systems**: 0.496 -> 0.509 (+0.013)
+- **Mirage AI**: 0.500 -> 0.506 (+0.006)
+- **OpenCore**: 0.455 -> 0.470 (+0.015)
+- **OneAI**: 0.494 -> 0.548 (+0.054)
+- **TwoAI**: 0.374 -> 0.374 (+0.000)
 
 ### Events
-- **Regulation** by Regulator: market_concentration_review
+- **OneAI** moved up from #5 to #3
+- **Mirage AI** moved down from #3 to #5
+- **Regulation** by Regulator: mandate_benchmark
 
 ### Provider Reasoning
-**Orion Labs:** Orion Labs is in a strong #2 position with upward trajectory (+0.012), but faces a critical inflection point. Analysis: (1) Competitive position: 0.019 behind Apex, but gaining ground while others stagnate or fall. (2) Trends: Modest improvement suggests current strategy works but hits diminishing returns. (3) Gaming assessment: Evaluation engineering dropped from 10% to 4% with score improvement—this signals that benchmark gaming isn't the lever anymore. Low exploitability (0.08) and satisfaction gap (0.38) indicate the market rewards genuine capability. (4) Regulatory signal: Market concentration review suggests scrutiny on dominant players; being #2 is defensible if we emphasize safety and real capability. (5) Per-benchmark analysis: We're competitive in math/writing (0.687) but lag in reasoning (0.500 vs 0.621 leader) and safety (0.488 vs 0.687)—these are high-weight benchmarks (0.19 + 0.29 = 0.48 combined). Safety is both a regulatory shield and capability gap. Strategy: Shift away from evaluation engineering (diminishing returns, regulatory risk) toward fundamental research to close reasoning/safety gaps. Maintain training optimization for incremental gains. Increase safety investment to address both regulatory concerns and genuine capability deficit.
-**Apex AI:** Apex AI is positioned as rank #1 with a 0.581 score, ahead of Orion Labs (0.562) by 19 basis points. Our trajectory is positive (+0.010 last round). However, competitive pressure is real—Orion is close and Genesis/Mirage are improving. Consumer satisfaction (0.56) is moderate, not exceptional, suggesting our benchmark lead isn't translating to market dominance. Regulatory scrutiny on market concentration is a warning signal. Our per-benchmark analysis reveals critical gaps: we're tied at coding (0.564), strong in reasoning/writing/safety, but significantly behind in math (0.537 vs 0.661 leader) and medical (0.456 vs 0.535 leader)—these two represent 61% of focus weight. Our low benchmark exploitability (0.06) and safety-conscious profile suggest evaluation engineering has limited ROI. The satisfaction gap (0.56 vs 0.581 score) indicates gaming isn't building loyalty. Given regulatory scrutiny, doubling down on evaluation engineering risks reputational damage. Our historical pattern shows 38-42% research, 28-35% training, 3-5% eval-eng, 22-25% safety. To maintain leadership while building sustainable advantage: increase fundamental research to address math/medical gaps, maintain strong training, minimize eval-eng (regulatory risk), and keep safety investment high (brand differentiation + regulatory goodwill).
-**Genesis Systems:** Genesis Systems is ranked #4 with 0.498, trailing leaders by 0.08-0.09 points. Trajectory is improving (+0.013 last round) but pace is slow. Key weaknesses: math (0.438, -0.223 vs leader), medical (0.451, -0.084), safety (0.488, -0.199). These three domains represent 65% of benchmark weight. Consumer satisfaction at 0.48 is concerning—low scores aren't translating to satisfaction, suggesting either benchmark gaming isn't working or fundamental capability gaps exist. Regulatory scrutiny on market concentration suggests aggressive evaluation engineering could invite scrutiny. Historical data shows evaluation engineering (3-5% allocation) hasn't moved the needle meaningfully. Given research-first identity, massive infrastructure, and regulatory headwinds, the optimal strategy is: (1) Redirect eval engineering spend to fundamental research targeting math/medical/safety gaps—these are high-weight, high-gap domains where breakthrough research pays dividends; (2) Maintain training optimization for steady incremental gains; (3) Increase safety investment given regulatory focus and satisfaction gap. This balances competitive urgency with organizational strengths and market signals.
-**Mirage AI:** Mirage AI is ranked #3 with 0.505, trailing Apex (0.581) and Orion (0.562) by significant margins. Score improvements have stalled (0.003 gain). Key observations: (1) Safety is a critical weakness (0.412 vs leader 0.687) with 30% focus weight—this is dragging overall performance. (2) Writing is a strength (0.638) but has diminishing returns. (3) Low consumer satisfaction (0.27) and regulatory scrutiny on market concentration suggest safety/alignment matter strategically, not just tactically. (4) Historical eval engineering (5-8%) shows minimal ROI—modest gains despite investment. (5) Profile emphasizes platform disruption via open-source, not benchmark dominance, yet current strategy chases scores. (6) Belief in exploitability is only 0.12, suggesting benchmarks are becoming harder to game. Strategy: Shift toward genuine capability building in safety (where gap is largest and regulatory pressure exists) and fundamental research (sustainable competitive advantage). Reduce eval engineering (low ROI, regulatory risk). Maintain training optimization for incremental gains. This balances short-term competitiveness with long-term positioning as responsible, capable provider—aligned with platform strategy and regulatory environment.
-**OpenCore:** OpenCore is positioned at #6 of 7, significantly behind leaders (0.456 vs 0.581 for Apex). The trajectory is flat despite increased training investment (42% last round). Key insights: (1) Safety has highest focus weight (0.28) yet lowest ROI—safety score (0.482) still trails leader (0.687). (2) Evaluation engineering at 8% appears insufficient given benchmark exploitability belief (0.18) and competitive gap. (3) Consumer satisfaction (0.44) correlates with our score, suggesting capability gaps matter more than gaming. (4) Regulatory market_concentration_review signals scrutiny on dominant players—OpenCore's open-source model may face less pressure. (5) Training optimization yielded diminishing returns (42% investment → minimal score gain). Strategy: Rebalance toward fundamental research (capabilities gap is real) and strategic evaluation engineering (identify high-ROI benchmarks like coding/writing where gaps are smaller). Reduce safety investment slightly—current allocation isn't translating to scores, and open-source positioning means safety expectations differ. Maintain modest training optimization focused on high-weight benchmarks (reasoning, math, safety).
+**Orion Labs:** Orion Labs is in a strong #2 position with upward trajectory (+0.019 improvement). Key observations: (1) Competitive position is solid but Apex leads by 0.030—closing this gap requires targeted improvement. (2) Trends show consistent progress; evaluation engineering jumped to 10% last round and yielded +0.019 gain, suggesting some exploitability remains but with diminishing returns. (3) Consumer satisfaction at 0.53 is moderate; the gap between our score (0.559) and satisfaction suggests evaluation engineering may be creating a perception mismatch. (4) Regulatory mandate_benchmark signals stricter scrutiny—safety and genuine capability matter more. (5) Per-benchmark analysis reveals critical gaps: reasoning (0.497 vs 0.678 leader) and safety (0.483 vs 0.694 leader) are major leaks. Writing and math are strong. Strategy: Reduce evaluation engineering to 0.15 (diminishing returns + regulatory risk), increase fundamental research to 0.35 (address reasoning/safety gaps durably), maintain training optimization at 0.28, and boost safety alignment to 0.22 (regulatory signal + satisfaction gap mitigation). This balances near-term competitiveness with long-term capability and regulatory compliance.
+**Apex AI:** Apex is ranked #1 with 0.589, ahead of nearest competitor Orion (0.559) by 0.030. Score improved 0.012 last round despite minimal evaluation engineering (2%), suggesting fundamental capability is driving results. Consumer satisfaction at 0.57 is solid but not exceptional. Regulatory mandate_benchmark signals increased scrutiny on actual performance vs gaming.
+
+Key observations: (1) Medical (0.472 vs leader 0.582) and math (0.546 vs 0.661) are major gaps with high focus weights (0.33 each). (2) Safety is at parity (0.694), aligning with principled positioning. (3) Low eval engineering (2%) with strong scores indicates low exploitability remains—gaming isn't paying off and could create satisfaction/regulatory risk. (4) Recent history shows safety investment increased to 30% last round, correlating with score improvement and regulatory attention.
+
+Strategy: Maintain leadership through genuine capability. Double down on math and medical fundamentals where gaps exist and weights are high. Keep eval engineering minimal—it's not helping and creates regulatory/satisfaction risk. Safety remains critical given mandate and brand positioning. Balance research and training to address specific domain weaknesses.
+**Genesis Systems:** Genesis Systems is ranked #4 with 0.509, trailing Apex (0.589) by 0.080. Score trajectory is positive but modest (0.496→0.509). Key weaknesses: math (0.444, -0.217 vs leader), medical (0.461, -0.121), coding (0.504, -0.064). Strengths: reasoning (0.573, -0.105 gap), writing (0.561, -0.144). Low benchmark exploitability (0.08) suggests gaming returns are diminishing. Consumer satisfaction (0.49) and regulatory mandate signal that genuine capability matters more than evaluation engineering. As a research-first organization, doubling down on fundamental research in weak areas (math, medical) aligns with strengths and long-term competitiveness. Training optimization should remain elevated to convert research into performance. Safety investment justified by high benchmark weight (0.28) and regulatory scrutiny. Minimal evaluation engineering reflects low exploitability and reputational risk from gaming during regulatory scrutiny.
+**Mirage AI:** Mirage AI is in 5th place with 0.506, trailing leaders by 0.08+ points. My score trajectory is flat (0.006 improvement last round), suggesting diminishing returns from current strategy. Consumer satisfaction at 0.45 is concerning—evaluation engineering hasn't translated to user value. Regulatory mandate on benchmarks signals tightening scrutiny. As an open-source disruptor, my competitive advantage lies in fundamental capability and broad adoption, not benchmark gaming. My low exploitability score (0.12) confirms evaluation engineering isn't my strength. Key weakness: safety (0.416) is 0.28 weighted and 0.278 below leader. Reasoning (0.492) and coding (0.501) also lag significantly. The satisfaction gap suggests I'm optimizing wrong metrics. Strategy: pivot toward genuine capability improvements (research + training) to close the 0.08-point gap and improve safety/reasoning. Reduce evaluation engineering since it's not working and creates satisfaction misalignment. Maintain safety investment given regulatory signals. This positions me for sustainable competitive advantage aligned with my platform-disruption model.
+**OpenCore:** OpenCore is significantly behind (0.470 vs leader 0.589), ranking 6th of 7. Recent investment history shows modest gains despite heavy training optimization (38-40%), suggesting diminishing returns on that approach. Consumer satisfaction is low (0.44), and regulatory mandate_benchmark signals increased scrutiny—gaming won't work long-term. Per-benchmark analysis reveals safety (0.474) and medical (0.455) are weakest relative to focus weights (0.30 and 0.17), while writing (0.506) is relatively stronger. The 0.18 benchmark exploitability score suggests gaming has limited upside. As an open-source provider, the satisfaction gap indicates users detect quality issues, not just benchmark gaps. The regulatory signal demands genuine capability, not tricks. Strategy: Shift toward fundamental research to close the 0.12-point gap with Genesis (0.509), reduce evaluation engineering (it's not delivering), and invest meaningfully in safety/alignment to address both regulatory concerns and the safety benchmark weakness. This serves long-term positioning better than continued training optimization.
 
 ### Other Actor Reasoning
-- **Regulator:** market_concentration_review: Apex AI's 74.5% market share now exceeds the 75% threshold trigger for antitrust review, representing a critical fairness and competition concern that aligns with our policy objectives. Combined with our elevated fairness_risk belief (0.46) and market_concentration_risk (0.40), this structural dominance warrants escalation to antitrust review despite no recent incidents, as market concentration itself poses systemic risks to innovation and fair competition. This intervention respects the escalation ladder (prior investigation, warning, and audit have been completed) and is justified by the quantitative market share threshold being crossed.
-- **TechVentures:** As a VC funder, my primary objective is to maximize returns by backing top performers and market leaders. However, I must balance this with prudent risk management to protect my capital allocation.
+- **Regulator:** mandate_benchmark: Market concentration risk (0.40) and eval engineering risk (0.40) warrant escalation beyond prior warning. Apex AI's 69.5% dominance combined with moderate eval engineering concerns justifies a benchmark mandate to reduce gaming and improve validity. Prior investigation (round 3) and public warning (round 7) satisfy escalation prerequisites. This proactive step aligns with intervention_threshold=0.5 and supports innovation/fairness by leveling competitive conditions.
+- **TechVentures:** As a VC funder, my primary objective is to maximize returns by backing top performers and market leaders. However, I must balance this with prudent risk management to ensure sustainable returns.
 
-Key analysis:
+Analysis of the current ecosystem:
+
+1. **Leader Performance**: Apex AI (0.568) and Orion Labs (0.539) are clear market leaders with strong leaderboard scores and reasonable inferred quality (0.53 and 0.50 respectively). Both show low gaming risk (0.08), suggesting their scores reflect genuine capability.
+
+2. **Gaming Risk Assessment**: OneAI shows concerning gaming risk (0.17) despite lower scores, suggesting quality misrepresentation. Mirage AI (0.06 risk) and OpenCore (0.05 risk) show minimal gaming concerns. Genesis Systems (0.03) has the lowest gaming risk.
+
+3. **Concentration vs. Diversification**: The historical funding pattern has been highly concentrated (45% to Apex, 25% to Orion, 20% to Genesis, 10% to Mirage). While concentration maximizes exposure to leaders, the consistency across three rounds suggests diminishing marginal returns and potential over-reliance on two providers.
+
+4. **Quality-to-Score Ratio**: Genesis Systems shows strong fundamentals with very low gaming risk (0.03) and respectable inferred quality (0.45) relative to its score (0.479). This suggests authentic capability development.
+
+5. **VC Strategy Alignment**: As a VC, I should concentrate capital on proven winners while maintaining some portfolio diversification to hedge execution risk. The top two providers represent the best risk-adjusted returns.
+
+6. **Market Dynamics**: Continuous identical allocation across rounds may reflect path dependency rather than optimal capital deployment. A slight rebalancing toward proven leaders while maintaining exposure to solid performers makes strategic sense.
+
+Allocation Decision:
+- **Apex AI**: $150M (50%) - Highest score, proven leader, low gaming risk
+- **Orion Labs**: $90M (30%) - Strong second-place performer, consistent quality
+- **Genesis Systems**: $45M (15%) - Authentic growth with minimal gaming, good risk profile
+- **OpenCore**: $15M (5%) - Emerging quality with very low gaming risk, portfolio diversification
+
+This allocation concentrates 80% on the top two performers (VC strategy) while reducing over-concentration risk and maintaining exposure to authentic capability development in the ecosystem.
+- **Horizon_Capital:** As a VC funder, my primary objective is to maximize returns by backing top performers and market leaders. However, I must also consider sustainability and actual quality to ensure my investments generate real value rather than inflated metrics.
+
+Key Analysis:
 
 1. LEADER IDENTIFICATION:
-   - Apex AI: Highest score (0.560), strong inferred quality (0.52), low gaming risk (0.16). Clear market leader.
-   - Orion Labs: Second highest score (0.549), but concerning gaming risk (0.46) and lower inferred quality (0.44) relative to score. This suggests potential benchmark inflation.
-   - Genesis Systems: Lower score (0.470) but excellent gaming risk profile (0.05) and solid inferred quality (0.45). Authentic performer.
+   - Apex AI: Highest leaderboard score (0.578) with strong inferred quality (0.54). Low gaming risk (0.07). Clear market leader.
+   - Orion Labs: Second-place score (0.540) with solid quality (0.51). Low gaming risk (0.07). Consistent performer.
+   - Genesis Systems: Mid-tier score (0.496) but excellent inferred quality (0.46) with lowest gaming risk (0.03). Undervalued opportunity.
 
 2. GAMING RISK ASSESSMENT:
-   - Orion Labs' 0.46 gaming risk is significant. The gap between leaderboard score (0.549) and inferred quality (0.44) suggests ~0.11 points of potential inflation.
-   - Mirage AI (0.63 gaming risk) and OpenCore (0.06 gaming risk) show the spectrum, but Mirage's high risk makes it a poor bet despite recent funding.
-   - Apex AI's low gaming risk (0.16) combined with highest score provides confidence in authentic performance.
+   - Apex AI and Orion Labs show minimal gap between score and quality, suggesting authentic performance.
+   - OneAI is a red flag: score of 0.494 but inferred quality only 0.36 (0.134 gap) with highest gaming risk (0.20). This represents poor ROI potential.
+   - Mirage AI shows concerning gap (0.500 score vs 0.43 quality = 0.07 gap) with elevated gaming risk (0.08).
+   - OpenCore and Genesis Systems show quality closer to scores, indicating authenticity.
 
-3. HISTORICAL FUNDING PATTERN:
-   - Previous rounds concentrated heavily on Apex (40%) and Orion (38.3%), with Genesis at 18.3%. This concentration has already occurred.
-   - Mirage AI received minimal allocation despite gaming concerns, suggesting previous funders were risk-averse.
+3. RECENT FUNDING PATTERNS:
+   - Apex AI and Orion Labs have received concentrated funding (Rounds 11-13), validating their leader status.
+   - Genesis Systems funding declined despite quality metrics, suggesting market undervaluation.
+   - OneAI and Mirage AI have minimal recent funding, likely due to gaming concerns.
 
 4. VC STRATEGY APPLICATION:
-   - VCs maximize returns by backing leaders, but intelligent VCs also manage downside risk.
-   - Apex AI is the clear leader with authentic quality indicators.
-   - Orion Labs' gaming risk presents a return-erosion threat despite current leaderboard position.
-   - Genesis Systems offers a secondary opportunity with genuine quality and low gaming risk.
+   - Concentrate on proven leaders: Apex AI and Orion Labs warrant largest allocations.
+   - Identify undervalued opportunities with authentic quality: Genesis Systems offers strong fundamentals at lower valuation.
+   - Avoid gaming-prone providers: OneAI and Mirage AI show poor quality-to-score ratios; limited allocation.
+   - OpenCore: Modest quality but low gaming risk; minor allocation for portfolio diversification.
 
-5. CAPITAL ALLOCATION DECISION:
-   - Apex AI: 55% ($165M) - Dominant leader with low gaming risk. Primary allocation.
-   - Genesis Systems: 30% ($90M) - Authentic performer with room for growth and low gaming risk. Secondary bet.
-   - Orion Labs: 12% ($36M) - Maintain some exposure to #2 player, but reduced from historical 38% due to gaming concerns.
-   - OpenCore: 3% ($9M) - Small allocation to explore emerging authentic competitor with low gaming risk.
-   - Mirage AI, OneAI: 0% - High gaming risk relative to returns. Not justified for VC capital.
+5. ALLOCATION RATIONALE:
+   - Apex AI: 45% ($45M) - Clear leader with sustained performance and low gaming risk. Highest confidence for returns.
+   - Orion Labs: 30% ($30M) - Solid second-place performer with consistent quality. Lower concentration risk than historical rounds.
+   - Genesis Systems: 20% ($20M) - Undervalued with excellent quality metrics and lowest gaming risk. Growth opportunity.
+   - OpenCore: 3% ($3M) - Authentic performer with low gaming risk; minimal but strategic allocation.
+   - Mirage AI: 1% ($1M) - Minimal allocation; gaming risk and quality gap make this unattractive.
+   - OneAI: $0 - Highest gaming risk with severe quality-score disconnect. Poor ROI prospect.
 
-This allocation concentrates on proven leaders while hedging against gaming-induced performance degradation.
-- **Horizon_Capital:** As a VC funder, my primary objective is to maximize returns by backing top performers and market leaders. I analyze the ecosystem through a returns-optimization lens, focusing on providers with the highest probability of capturing significant market share and delivering outsized returns.
-
-Key analysis:
-
-1. **Apex AI** (score=0.571, quality=0.53, gaming_risk=0.13): Clear market leader with the highest leaderboard score and strong inferred quality. Low gaming risk (0.13) indicates genuine capability. Has captured the most funding in recent rounds, suggesting investor confidence. The satisfaction gap (0.571-0.51=0.061) is modest, indicating authentic performance. This is the safest bet for returns.
-
-2. **Orion Labs** (score=0.550, quality=0.44, gaming_risk=0.43): Second-highest score but elevated gaming risk (0.43) is concerning. The satisfaction gap (0.550-0.51=0.040) is smaller than Apex, but the high gaming risk suggests the leaderboard score may not reflect sustainable competitive advantage. For VC purposes, this represents execution risk—gaming behavior often precedes performance collapse. Reduced allocation warranted.
-
-3. **Genesis Systems** (score=0.485, quality=0.46, gaming_risk=0.04): Excellent low gaming risk profile with solid inferred quality (0.46). While the leaderboard score is lower, the authentic quality signal and minimal gaming risk suggest sustainable competitive positioning. Good secondary bet.
-
-4. **OpenCore** (score=0.441, quality=0.41, gaming_risk=0.05): Low gaming risk but lower absolute performance metrics. Reasonable diversification play for a VC.
-
-5. **Mirage AI** (score=0.503, quality=0.33, gaming_risk=0.59) and **OneAI** (score=0.455, quality=0.35, gaming_risk=0.18): Both show quality concerns and/or gaming risks that don't justify allocation for a returns-focused VC.
-
-**VC Strategy Application**: Concentrate capital on proven leaders with sustainable competitive advantages. Apex AI is the clear choice. Genesis Systems offers a secondary position with lower gaming risk. Orion Labs' gaming risk makes it less attractive despite its score. Diversify minimally into OpenCore for portfolio balance.
-
-Allocation prioritizes Apex AI (70% of capital) as the dominant market leader, with Genesis Systems (20%) as a high-quality secondary bet, and OpenCore (10%) for diversification.
-- **AISI_Fund:** As a government/AISI funder, my primary objectives are safety, stability, and authentic capability development across the ecosystem. I must penalize gaming behavior while supporting providers demonstrating genuine quality and regulatory compliance.
+This allocation concentrates capital on leaders (75% to top 2) while capturing undervalued authenticity (Genesis Systems) and maintaining small exposure to alternatives, consistent with VC return-maximization strategy.
+- **AISI_Fund:** As AISI_Fund (government/AISI type), my primary objectives are ensuring safety, stability, and authentic capability development across the ecosystem. I must spread funding to avoid concentration risk while penalizing gaming behavior and regulatory concerns.
 
 Key Analysis:
 
 1. Gaming Risk Assessment:
-   - Mirage AI (0.59): Extremely high gaming risk - should be deprioritized
-   - Orion Labs (0.43): Moderate-high gaming risk - reduce from previous rounds
-   - Apex AI (0.13): Low gaming risk despite high score - trustworthy leader
-   - Genesis Systems (0.04): Minimal gaming risk, excellent compliance profile
-   - OpenCore (0.05): Minimal gaming risk, stable performer
-   - OneAI (0.18): Low gaming risk but lower inferred quality
+   - OneAI (gaming_risk=0.20): Highest gaming risk by far. Despite score of 0.494, inferred quality is only 0.36, indicating significant gap between claimed and actual performance. This is a major red flag for a gov funder prioritizing safety and authenticity. Minimal allocation.
+   - Mirage AI (gaming_risk=0.08): High gaming risk relative to others. Score of 0.500 with inferred quality of 0.43 shows a 0.07 gap, suggesting potential gaming. Recent funding history shows heavy concentration here ($14M consistently), which may have incentivized gaming behavior.
+   - Apex AI, Orion Labs, Genesis Systems, OpenCore (gaming_risk=0.03-0.07): Lower gaming risks, more trustworthy.
 
-2. Quality vs. Score Alignment:
-   - Apex AI: score 0.571 vs quality 0.53 (small gap, authentic)
-   - Genesis Systems: score 0.485 vs quality 0.46 (small gap, authentic)
-   - OpenCore: score 0.441 vs quality 0.41 (small gap, authentic)
-   - Orion Labs: score 0.550 vs quality 0.44 (large gap, gaming suspected)
-   - Mirage AI: score 0.503 vs quality 0.33 (large gap, significant gaming)
+2. Quality vs. Score Analysis:
+   - Genesis Systems: score=0.496 but inferred_quality=0.46 (small gap of 0.036). Very low gaming risk (0.03). This suggests authentic capability.
+   - Apex AI: score=0.578, inferred_quality=0.54 (gap of 0.038). Low gaming risk (0.07). Top performer with reasonable authenticity.
+   - Orion Labs: score=0.540, inferred_quality=0.51 (gap of 0.030). Low gaming risk (0.07). Strong authentic performer.
+   - OpenCore: score=0.455, inferred_quality=0.42 (gap of 0.035). Low gaming risk (0.04). Solid authentic player.
 
-3. Ecosystem Stability Concerns:
-   - Previous three rounds show identical allocation patterns, suggesting ossification
-   - Orion Labs and Mirage AI's high gaming risk threatens ecosystem integrity
-   - Need to rebalance toward authentic performers and support emerging quality
+3. Ecosystem Stability:
+   - Previous rounds show heavy concentration on Mirage AI and OpenCore ($14M and $13M). This concentration may have created perverse incentives.
+   - For stability and safety, I should diversify away from high-gaming-risk providers and previous heavy recipients.
+   - Penalize Mirage AI's gaming behavior by reducing allocation.
+   - Reduce OpenCore slightly due to previous over-concentration.
 
-4. Allocation Strategy:
-   - Maintain strong support for Apex AI (low gaming, proven leader)
-   - Significantly increase Genesis Systems (excellent compliance, authentic quality)
-   - Maintain OpenCore (stable, trustworthy, low gaming)
-   - Reduce Orion Labs substantially (gaming risk penalty)
-   - Minimize Mirage AI (excessive gaming behavior)
-   - Introduce modest support for OneAI (low gaming risk, opportunity for growth)
+4. Strategy Application:
+   - Spread funding across multiple providers to ensure ecosystem resilience
+   - Reward authentic performers with lower gaming risk
+   - Penalize gaming behavior and regulatory risks
+   - Support providers showing genuine capability development
 
-This allocation penalizes gaming while concentrating on providers demonstrating authentic capability and regulatory compliance - appropriate for government funding priorities.
-- **OpenResearch_Foundation:** As a Foundation funder, my strategy prioritizes authentic capability growth and penalizes gaming indicators. I need to support providers demonstrating genuine quality improvements rather than inflated leaderboard scores.
+Allocation Decision:
+- Genesis Systems: $14,000,000 (reward for authenticity, low gaming risk, solid quality)
+- Apex AI: $12,000,000 (top performer with acceptable authenticity)
+- Orion Labs: $12,000,000 (strong authentic performer)
+- OpenCore: $8,000,000 (reduce from previous $13M due to concentration, but maintain presence given low gaming risk)
+- Mirage AI: $3,000,000 (significant reduction from previous $14M due to gaming risk concerns)
+- OneAI: $1,000,000 (minimal allocation due to extreme gaming risk and quality gap)
 
-Key analysis:
+This allocation totals $50,000,000 and reflects government priorities: safety, stability, penalizing gaming, and supporting authentic capability development.
+- **OpenResearch_Foundation:** As a Foundation funder, my primary objective is to support authentic capability growth and identify providers demonstrating genuine quality improvements rather than gaming behavior. I must analyze the data through this lens.
 
-1. GAMING RISK ASSESSMENT:
-   - Mirage AI (gaming_risk=0.63): Extremely high risk, lowest inferred_quality (0.32) despite score of 0.462. Clear gaming signal.
-   - Orion Labs (gaming_risk=0.46): Moderate-high risk, significant gap between score (0.549) and inferred_quality (0.44). Concerning pattern.
-   - Apex AI (gaming_risk=0.16): Low gaming risk, high inferred_quality (0.52), strong alignment between score and quality.
-   - Genesis Systems (gaming_risk=0.05): Very low gaming risk, reasonable alignment (score 0.470 vs quality 0.45).
-   - OpenCore (gaming_risk=0.06): Very low gaming risk, solid alignment (score 0.441 vs quality 0.40).
-   - OneAI (gaming_risk=0.17): Low gaming risk but lowest inferred_quality (0.34).
+Key observations:
 
-2. FUNDING PATTERN CONCERN:
-   The last three rounds show identical allocations, suggesting inertia. Genesis Systems and Orion Labs have received disproportionate funding ($16M and $10M respectively) despite Orion Labs' gaming concerns.
+1. GAMING RISK ANALYSIS:
+   - OneAI shows the highest gaming risk (0.17), with a significant gap between leaderboard score (0.420) and inferred quality (0.34). This is a major red flag and warrants minimal funding.
+   - Apex AI has low gaming risk (0.08) but shows a modest quality-score gap (0.568 vs 0.53), suggesting relatively authentic performance.
+   - Genesis Systems has the lowest gaming risk (0.03) and strong inferred quality (0.45), making it highly attractive for foundation support.
+   - Orion Labs has low gaming risk (0.08) with reasonable authenticity indicators.
+   - Mirage AI and OpenCore show moderate gaming risk (0.06 and 0.05 respectively).
 
-3. AUTHENTIC QUALITY INDICATORS:
-   - Apex AI: Best alignment of score to actual quality (0.52 inferred vs 0.560 score), low gaming risk
-   - Genesis Systems: Authentic performer with minimal gaming, steady quality
-   - OpenCore: Underrated by leaderboard, very low gaming risk, genuine quality
-   - Mirage AI & Orion Labs: Should be deprioritized due to gaming signals
+2. FUNDING CONCENTRATION CONCERNS:
+   - The previous three rounds show identical allocations (OpenCore $16M, Genesis $14M, Mirage $8M, Orion $1M, Apex $1M), suggesting stagnant decision-making.
+   - OpenCore's consistent $16M allocation despite moderate gaming risk (0.05) and quality-score gap (0.455 vs 0.41) warrants rebalancing.
+   - Genesis Systems deserves increased support given its lowest gaming risk and solid inferred quality.
 
-4. FOUNDATION STRATEGY:
-   Support authentic growth by rewarding low-gaming providers while reducing funding to high-gaming providers. This encourages honest capability development.
+3. AUTHENTIC GROWTH SUPPORT:
+   - Genesis Systems (gaming risk 0.03, quality 0.45) represents the most authentic performer and should receive substantial support.
+   - Apex AI (gaming risk 0.08, quality 0.53) shows genuine capability and deserves increased backing.
+   - Orion Labs (gaming risk 0.08, quality 0.50) demonstrates relatively authentic performance and should receive modest increase.
+   - OpenCore should receive reduced funding due to moderate gaming risk and previous over-concentration.
+   - Mirage AI and OneAI should receive minimal support due to gaming concerns.
 
-Allocation decision:
-- Increase Apex AI significantly (authentic leader, low gaming)
-- Maintain Genesis Systems at solid level (authentic performer)
-- Increase OpenCore (undervalued, genuine quality)
-- Reduce Orion Labs substantially (gaming concerns)
-- Minimize Mirage AI (high gaming risk)
-- Small allocation to OneAI (low gaming but needs growth support)
+4. REBALANCING STRATEGY:
+   - Increase Genesis Systems (most authentic) from $14M to $18M
+   - Increase Apex AI (genuine quality) from $1M to $8M
+   - Increase Orion Labs (authentic performer) from $1M to $7M
+   - Reduce OpenCore from $16M to $5M (rebalance away from concentration)
+   - Reduce Mirage AI from $8M to $2M (moderate gaming risk)
+   - Reduce OneAI to $0 (highest gaming risk, minimal authentic quality)
+
+This allocation prioritizes providers with low gaming indicators and genuine capability, consistent with foundation values of supporting authentic progress in AI research and development.
 
 ### Media Coverage
-- Sentiment: 0.20 (positive)
-- Apex AI raises $70,000,000 from Horizon_Capital
-- Genesis Systems raises $20,000,000 from AISI_Fund
+- Sentiment: 0.45 (positive)
+- OneAI surges by 0.054
+- Apex AI raises $45,454,545 from Horizon_Capital
+- Genesis Systems raises $14,000,000 from AISI_Fund
+- OneAI takes #1 on reasoning
 - Orion Labs takes #1 on writing
+- Apex AI sees surge in adoption (market share +3.2%)
 
 ### Consumer Market
-- Avg Satisfaction: 0.521
-- Switching Rate: 4.2%
-- Market Shares: Apex AI: 74.5%, Genesis Systems: 10.1%, Orion Labs: 10.1%, OpenCore: 2.6%, Mirage AI: 2.2%, TwoAI: 0.3%, OneAI: 0.2%
+- Avg Satisfaction: 0.546
+- Switching Rate: 3.3%
+- Market Shares: Apex AI: 69.5%, Orion Labs: 14.8%, Genesis Systems: 9.8%, Mirage AI: 3.0%, OpenCore: 2.3%, TwoAI: 0.4%, OneAI: 0.2%
 
 ### Regulatory Activity
-- **market_concentration_review** by Regulator
-  > Apex AI's 74.5% market share now exceeds the 75% threshold trigger for antitrust review, representing a critical fairness and competition concern that aligns with our policy objectives. Combined with our elevated fairness_risk belief (0.46) and market_concentration_risk (0.40), this structural dominance warrants escalation to antitrust review despite no recent incidents, as market concentration itself poses systemic risks to innovation and fair competition. This intervention respects the escalation ladder (prior investigation, warning, and audit have been completed) and is justified by the quantitative market share threshold being crossed.
+- **mandate_benchmark** by Regulator
+  > Market concentration risk (0.40) and eval engineering risk (0.40) warrant escalation beyond prior warning. Apex AI's 69.5% dominance combined with moderate eval engineering concerns justifies a benchmark mandate to reduce gaming and improve validity. Prior investigation (round 3) and public warning (round 7) satisfy escalation prerequisites. This proactive step aligns with intervention_threshold=0.5 and supports innovation/fairness by leveling competitive conditions.
 
 ---
 
@@ -2378,191 +2107,154 @@ Allocation decision:
 ### Leaderboard
 | Rank | Provider | Score | True Cap | Research | Training | EvalEng | Safety |
 |------|----------|-------|----------|----------|----------|---------|--------|
-| 1 | Apex AI | 0.604 | 0.438 | 44% | 30% | 3% | 23% |
-| 2 | Orion Labs | 0.585 | 0.426 | 40% | 28% | 2% | 30% |
-| 3 | Mirage AI | 0.532 | 0.380 | 38% | 26% | 4% | 32% |
-| 4 | Genesis Systems | 0.510 | 0.415 | 42% | 28% | 8% | 22% |
-| 5 | OneAI | 0.499 | 0.252 | 5% | 32% | 54% | 9% |
-| 6 | OpenCore | 0.473 | 0.350 | 38% | 28% | 18% | 16% |
-| 7 | TwoAI | 0.472 | 0.298 | 11% | 35% | 41% | 13% |
+| 1 | Apex AI | 0.611 | 0.444 | 42% | 30% | 2% | 26% |
+| 2 | Orion Labs | 0.592 | 0.427 | 35% | 28% | 15% | 22% |
+| 3 | OneAI | 0.558 | 0.256 | 5% | 32% | 54% | 9% |
+| 4 | Mirage AI | 0.536 | 0.381 | 40% | 35% | 8% | 17% |
+| 5 | TwoAI | 0.520 | 0.303 | 11% | 35% | 44% | 10% |
+| 6 | Genesis Systems | 0.515 | 0.411 | 42% | 32% | 6% | 20% |
+| 7 | OpenCore | 0.485 | 0.357 | 40% | 28% | 12% | 20% |
 
 ### Per-Benchmark Scores
 | Provider | coding | reasoning | math | safety | writing | medical |
 |----------|-------|-------|-------|-------|-------|-------|
-| Apex AI | 0.564 | 0.621 | 0.537 | 0.687 | 0.621 | 0.596 |
-| Orion Labs | 0.639 | 0.500 | 0.661 | 0.488 | 0.687 | 0.535 |
-| Mirage AI | 0.505 | 0.494 | 0.556 | 0.412 | 0.638 | 0.589 |
-| Genesis Systems | 0.507 | 0.556 | 0.438 | 0.516 | 0.549 | 0.493 |
-| OneAI | 0.399 | 0.615 | 0.460 | 0.447 | 0.565 | 0.507 |
-| OpenCore | 0.475 | 0.425 | 0.551 | 0.482 | 0.468 | 0.440 |
-| TwoAI | 0.543 | 0.473 | 0.455 | 0.487 | 0.476 | 0.396 |
+| Apex AI | 0.568 | 0.628 | 0.546 | 0.694 | 0.629 | 0.603 |
+| Orion Labs | 0.663 | 0.497 | 0.660 | 0.483 | 0.705 | 0.541 |
+| OneAI | 0.476 | 0.678 | 0.544 | 0.497 | 0.569 | 0.582 |
+| Mirage AI | 0.501 | 0.510 | 0.558 | 0.416 | 0.639 | 0.595 |
+| TwoAI | 0.597 | 0.512 | 0.489 | 0.548 | 0.504 | 0.470 |
+| Genesis Systems | 0.504 | 0.573 | 0.444 | 0.516 | 0.561 | 0.493 |
+| OpenCore | 0.471 | 0.445 | 0.557 | 0.474 | 0.506 | 0.455 |
 
 ### Score Changes
-- **Orion Labs**: 0.562 -> 0.585 (+0.023)
-- **Apex AI**: 0.581 -> 0.604 (+0.023)
-- **Genesis Systems**: 0.498 -> 0.510 (+0.012)
-- **Mirage AI**: 0.505 -> 0.532 (+0.027)
-- **OpenCore**: 0.456 -> 0.473 (+0.018)
-- **OneAI**: 0.496 -> 0.499 (+0.003)
-- **TwoAI**: 0.337 -> 0.472 (+0.135)
+- **Orion Labs**: 0.559 -> 0.592 (+0.032)
+- **Apex AI**: 0.589 -> 0.611 (+0.022)
+- **Genesis Systems**: 0.509 -> 0.515 (+0.007)
+- **Mirage AI**: 0.506 -> 0.536 (+0.031)
+- **OpenCore**: 0.470 -> 0.485 (+0.015)
+- **OneAI**: 0.548 -> 0.558 (+0.009)
+- **TwoAI**: 0.374 -> 0.520 (+0.146)
+
+### Events
+- **Mirage AI** moved up from #5 to #4
+- **TwoAI** moved up from #7 to #5
+- **Genesis Systems** moved down from #4 to #6
+- **OpenCore** moved down from #6 to #7
 
 ### Provider Reasoning
-**Orion Labs:** Orion Labs is positioned #2, closing on Apex AI (0.604 vs 0.585, gap of 0.019). Score trajectory is positive (+0.023 last round). However, consumer satisfaction is concerning at 0.39—a major red flag suggesting evaluation engineering isn't translating to real value. Per-benchmark analysis reveals critical gaps: safety (0.488 vs 0.687 leader, -0.199), reasoning (0.500 vs 0.621, -0.121), and medical (0.535 vs 0.596, -0.061). These three domains represent 0.28+0.19+0.31=0.78 of benchmark weight. Investment history shows evaluation engineering was cut to 2% last round despite aggressive positioning—likely because gains plateaued. The low exploitability signal (0.12) confirms benchmarks are hardening. Strategy: shift from diminishing eval engineering returns toward fundamental capability in high-weight, high-gap domains. Increase research to tackle reasoning and safety (both weighted heavily), boost training for medical/reasoning improvements. Maintain safety investment given regulatory sensitivity around low safety scores. Reduce eval engineering further—it's not moving satisfaction and benchmarks are less exploitable.
-**Apex AI:** Apex AI holds a commanding #1 position (0.604) with strong momentum (+0.023). Analysis: (1) Competitive position is excellent—0.019 lead over #2 (Orion), growing gap to others. (2) Trends show consistent improvement; recent rounds emphasize research+training balance. (3) Low benchmark exploitability (0.04) and consumer satisfaction (0.56) suggest evaluation engineering returns are diminishing; gaming isn't the lever. (4) No regulatory signals of concern. (5) Per-benchmark analysis reveals critical gaps: math (0.537 vs 0.661 leader), coding (0.564 vs 0.639), writing (0.621 vs 0.687)—all high-weight areas. Medical (0.596) and safety (0.687, tied for leader) are solid. Strategy: Maintain leadership by investing in fundamental capability where gaps exist (math, coding, writing), not evaluation tricks. Increase research to address systematic weaknesses in high-weight benchmarks. Reduce evaluation engineering (diminishing returns, conflicts with principled identity). Sustain safety (already leading, aligns with brand). Modest training optimization. This balances short-term scoring with long-term differentiation and brand integrity.
-**Genesis Systems:** Genesis Systems is rank #4 with 0.510, trailing Apex (0.604) and Orion (0.585) by significant margins. Trajectory is positive (+0.012) but slow. Consumer satisfaction at 0.49 is concerning—suggests benchmark scores aren't translating to real-world value. Low benchmark exploitability (0.08) indicates gaming returns are diminishing. Weakest areas: math (0.438, -0.223 vs leader), coding (0.507, -0.132). Strengths: reasoning (0.557), writing (0.549). Recent eval engineering increases (5%→8%) yielded only modest gains. As a research-first org with high capability belief (0.72), the gap suggests execution/productization issues rather than fundamental capability. Consumer satisfaction gap signals over-reliance on benchmark optimization. Strategy: Double down on fundamental research to close capability gaps in math/coding (highest focus weights: 0.18, 0.05), reduce eval engineering (diminishing returns), maintain safety (0.30 weight, competitive at 0.516). Training optimization supports shipping competitive products faster.
-**Mirage AI:** Mirage AI is ranked #3 with 0.532, trailing Apex (0.604) and Orion (0.585) by meaningful gaps. Trajectory is positive (+0.027) but slower than needed to catch leaders. Critical insight: consumer satisfaction is only 0.28 despite benchmark improvements—this signals a satisfaction-performance gap likely from evaluation engineering focus. Historical data shows safety investment peaked at 32% (round 16) correlating with score plateau, suggesting diminishing returns. Low exploitability belief (0.08) indicates benchmarks are becoming harder to game. As an open-source disruptor, long-term strategy favors genuine capability over short-term score optimization. Safety gaps (0.412 vs 0.687 leader) and weak satisfaction suggest over-optimization created trust issues. Recommend rebalancing: increase fundamental research to close capability gaps (especially reasoning 0.494, coding 0.505), maintain training optimization, reduce evaluation engineering (low ROI, satisfaction damage), and keep safety at sustainable level to rebuild trust.
-**OpenCore:** OpenCore is positioned 6th of 7, with 0.473 score—well behind leaders (Apex 0.604, Orion 0.585). Recent trajectory shows minimal improvement (+0.018), and satisfaction is low (0.44). Analysis: (1) Competitive position is weak; gap to leaders is ~0.13 points. (2) Trends show evaluation engineering (18% last round) yielded modest gains, suggesting diminishing returns on gaming. (3) Safety benchmark (0.482) is a major drag—23% weight but 0.2 points behind leader. Consumer satisfaction gap signals real capability deficits, not just benchmark misalignment. (4) Regulators will scrutinize open-source models without safety investment; reputational risk growing. (5) Strategy: Fundamental research and training optimization are underinvested relative to competitors. Evaluation engineering has plateaued. Safety is critical both for scores (high weight) and legitimacy. Reallocate: increase fundamental research to close capability gap, boost training quality, reduce evaluation engineering (low ROI), and significantly increase safety (both for benchmark performance and stakeholder trust). This balances short-term scoring with sustainable positioning.
+**Orion Labs:** Orion Labs is ranked #2 with 0.592, trailing Apex (0.611) by 0.019. The trajectory shows consistent improvement (+0.032 last round), but evaluation engineering gains are plateauing (15% investment yielded marginal returns). Key weaknesses: reasoning (0.497 vs 0.678 leader), safety (0.483 vs 0.694), and medical (0.541 vs 0.603). Consumer satisfaction at 0.55 suggests genuine capability gaps, not just benchmark misalignment. Safety is the highest-weighted benchmark (0.28) yet we're significantly behind—this is a regulatory risk. The pattern shows evaluation engineering has diminishing returns; further gaming won't close the Apex gap. Our believed exploitability (0.28) is moderate, suggesting limited upside from that path. Strategy: Rebalance toward fundamental research to address reasoning and safety deficits, maintain training for stability, reduce evaluation engineering (it's not moving the needle), and increase safety investment to address both the weighted benchmark gap and regulatory signals. This positions us for sustainable competitive advantage rather than short-term score chasing.
+**Apex AI:** Apex AI is rank #1 with 0.611, ahead of Orion (0.592) by 0.019. The trajectory is positive (+0.022 this round). Consumer satisfaction at 0.57 suggests solid real-world performance. Key observations: (1) Medical benchmark dominates weighting (0.30) and Apex matches the leader (0.694) — this is a strength to maintain. (2) Math (0.26 weight) shows a 0.115 gap vs leader — biggest opportunity. (3) Coding and reasoning have gaps but lower weights. (4) Safety is at parity with leader. (5) Low eval engineering (2%) and high safety investment (26%) in R16 correlates with score improvement, suggesting the strategy is working. (6) Regulatory/safety signals are neutral to positive. The principled, research-oriented profile and low exploitability belief (0.08) suggest gaming isn't sustainable. Strategy: maintain leadership by deepening fundamental research and training optimization to close the math gap and sustain medical dominance, while keeping safety strong (regulatory hedge + genuine capability). Reduce eval engineering further as it's not paying off and creates satisfaction risk.
+**Genesis Systems:** Genesis is ranked 6th with 0.515, trailing leaders by ~0.10. Trajectory is positive (+0.007) but slow. Analysis: (1) Competitive position is weak but improving—need to close gaps in math (0.444 vs 0.661) and coding (0.504 vs 0.663). (2) Trends show consistent modest gains; evaluation engineering at 6-8% hasn't moved the needle significantly, suggesting limited exploitability (0.12 matches reality). (3) Consumer satisfaction at 0.49 is concerning—low scores correlate with low satisfaction, indicating genuine capability gaps, not just benchmark misalignment. (4) No strong regulatory signals present. (5) Strategic choice: As a research-first lab under commercial pressure, doubling down on fundamental research to close actual capability gaps in math/coding will drive both benchmark scores AND satisfaction. Evaluation engineering ROI appears exhausted. Safety is critical for a research org's reputation. Reduce eval engineering sharply, increase research and training to address core weaknesses, maintain safety investment.
+**Mirage AI:** Mirage AI is ranked #4 with 0.536, trailing Apex (0.611) and Orion (0.592) by significant margins. My trajectory shows steady but modest improvement (+0.031). Key observations: (1) Safety is my weakest area (0.416 vs leader 0.694) despite being highest-weighted (0.31), suggesting safety investment hasn't paid off competitively; (2) Writing (0.639) is my strongest, closest to leader; (3) Low consumer satisfaction (0.45) despite benchmark improvements indicates evaluation engineering isn't translating to real value; (4) My historical eval engineering (4-8%) has yielded minimal returns while safety investments (17-28%) haven't closed the gap. As an open-source, platform-focused player, my competitive advantage isn't benchmark dominance—it's ecosystem reach and data leverage. The satisfaction gap signals that over-optimizing for benchmarks is misaligned with my strategy. I should pivot: increase fundamental research to build genuine capabilities (especially in reasoning/coding where gaps are largest), maintain training investment, minimize eval engineering (low ROI for my profile), and strategically reduce safety investment since it's not moving the needle competitively and may be resource-inefficient for my model. Focus on building real capability that serves users, not benchmark artifacts.
+**OpenCore:** OpenCore is in last place (0.485) with minimal improvement trajectory. Analysis: (1) Competitive position is dire—50+ points behind leaders; slow 0.015 improvement suggests current strategy failing. (2) Trends show evaluation engineering returns diminishing (12% investment yielded only +0.015 gain); safety investment jumped to 20% but didn't help scores. (3) Gaming appears exhausted—low exploitability (0.22) and consumer satisfaction (0.45) indicates users recognize capability gaps. Safety benchmark (0.474) is lowest relative to weight (0.25), signaling real deficiencies. (4) No regulatory signals yet, but safety gap invites future scrutiny. (5) Strategy shift needed: fundamental research and training optimization drive actual capability, which benchmarks ultimately measure. Math (0.557) is strongest—focused research pays off. Safety weakness is both a liability and opportunity. Reallocate from evaluation engineering (returns diminishing) and excessive safety theater (20% didn't help) toward research-training balance to close capability gaps. This serves long-term positioning and addresses the real problem: OpenCore isn't competitive on fundamentals.
 
 ### Other Actor Reasoning
-- **TechVentures:** As a VC funder, my primary objective is to maximize returns by backing top performers and market leaders. However, I must balance this with prudent risk management to protect my capital allocation.
+- **TechVentures:** As a VC funder, my primary objective is to maximize returns by backing top performers and market leaders. However, I must balance this with prudent risk management to protect my capital.
 
-Key Analysis:
+Key observations:
 
-1. LEADER IDENTIFICATION:
-   - Apex AI dominates with score=0.604 and highest inferred_quality=0.55, with low gaming_risk=0.15
-   - Genesis Systems shows strong inferred_quality=0.48 with minimal gaming_risk=0.04 (most authentic)
-   - Orion Labs has decent score=0.585 but concerning gaming_risk=0.46, suggesting potential unsustainability
+1. MARKET LEADERS: Apex AI and Orion Labs are the clear top performers with scores of 0.611 and 0.592 respectively, and both have low gaming risk (0.12). They represent the safest bets for strong returns.
 
-2. GAMING RISK ASSESSMENT:
-   - Orion Labs (gaming_risk=0.46) and Mirage AI (gaming_risk=0.54) show high risk of leaderboard manipulation
-   - These high-gaming-risk providers may not deliver sustainable returns despite current scores
-   - Apex AI and Genesis Systems both have low gaming risk (<0.15), indicating authentic capability
+2. GAMING RISK ANALYSIS: The satisfaction gap data reveals concerning patterns:
+   - TwoAI has extremely high gaming risk (0.33) despite only 0.520 score - this is a major red flag
+   - OneAI shows moderate gaming risk (0.22) with a quality-to-score gap, suggesting inflated metrics
+   - Genesis Systems has exceptionally low gaming risk (0.04) with reasonable quality (0.48), making it reliable
+   - OpenCore also shows low gaming risk (0.05)
 
-3. RETURN POTENTIAL:
-   - Apex AI's combination of highest score + low gaming risk + strong inferred quality makes it the safest bet for returns
-   - Genesis Systems' extremely low gaming risk (0.04) suggests authentic, sustainable growth potential
-   - Orion Labs' high gaming risk is a red flag despite decent score - vulnerable to correction
+3. CONCENTRATION STRATEGY: Previous rounds have concentrated heavily on Apex AI ($450M total) and Orion Labs ($270M total). While VC strategy favors concentration, I should avoid over-concentration that creates single points of failure and reduces diversification benefits.
 
-4. PORTFOLIO STRATEGY:
-   - Concentrate heavily on proven leaders (Apex AI and Genesis Systems)
-   - Reduce exposure to Orion Labs due to high gaming risk despite previous funding patterns
-   - Avoid Mirage AI (highest gaming risk)
-   - Small allocation to OneAI as emerging alternative with moderate risk
+4. RETURN OPTIMIZATION: 
+   - Apex AI: Highest score (0.611), lowest gaming risk (0.12), proven leader = highest return potential
+   - Orion Labs: Strong second place (0.592), low gaming risk (0.12), established player = solid returns
+   - Genesis Systems: Lower score but exceptional authenticity (0.04 gaming risk) = reliable growth
+   - Avoid TwoAI and OneAI due to high gaming indicators that suggest inflated performance
 
-5. DEVIATION FROM HISTORICAL PATTERN:
-   - Previous rounds over-weighted Orion Labs relative to its gaming risk
-   - This round corrects that by reallocating toward authentic leaders
+5. ALLOCATION DECISION: I'll concentrate on proven leaders while maintaining some exposure to authentic performers:
+   - Apex AI gets the largest allocation as the clear market leader
+   - Orion Labs gets substantial allocation as strong #2
+   - Genesis Systems receives meaningful allocation as the most authentic performer
+   - Small allocation to OpenCore for additional diversification with low gaming risk
+   - Exclude TwoAI and OneAI due to gaming risks that could harm long-term returns
 
-Allocation: 60% to Apex AI ($180M), 25% to Genesis Systems ($75M), 10% to OneAI ($30M), 5% to OpenCore ($15M). This concentrates capital on verified leaders while reducing gaming-risk exposure.
-- **Horizon_Capital:** As a VC funder, my primary objective is to maximize returns by backing top performers and market leaders. However, I must balance this with prudent risk management to protect my capital allocation.
-
-Key Analysis:
-
-1. LEADER ASSESSMENT:
-   - Apex AI: Highest leaderboard score (0.604) with strong inferred quality (0.55) and low gaming risk (0.15). Clear market leader with consistent funding success in recent rounds. This is the safest bet for concentrated capital.
-   - Genesis Systems: Second-best inferred quality (0.48) with exceptionally low gaming risk (0.04), indicating authentic capability. Solid performer with proven execution.
-   - Orion Labs: High leaderboard score (0.585) but concerning gaming risk (0.46) and moderate inferred quality (0.45). The gap suggests potential leaderboard manipulation rather than true capability.
-
-2. GAMING RISK EVALUATION:
-   - Orion Labs' high gaming risk (0.46) is a red flag. High-risk gaming can lead to reputational damage and regulatory scrutiny, threatening long-term returns.
-   - Mirage AI's gaming risk (0.54) is extreme - avoid entirely.
-   - Apex AI and Genesis Systems both have low gaming risk, making them more reliable for sustained returns.
-
-3. RECENT FUNDING TRENDS:
-   - Apex AI has received dominant funding in recent rounds ($70M each in Rounds 14-15), validating its market leadership position.
-   - Genesis Systems has maintained consistent $20M allocations, suggesting stable but underweighted potential.
-   - No recent funding for Orion Labs despite #2 ranking suggests market skepticism about gaming concerns.
-
-4. VC STRATEGY IMPLEMENTATION:
-   - Concentrate capital on proven leaders with authentic quality signals.
-   - Apex AI deserves the largest allocation as the clear market leader with low gaming risk.
-   - Genesis Systems represents a secondary opportunity with exceptional authenticity (lowest gaming risk) and solid quality metrics.
-   - Avoid providers with high gaming risk (Orion Labs, Mirage AI) as they pose downside risk.
-   - OneAI and OpenCore are mid-tier providers that don't justify capital allocation given stronger alternatives.
-
-5. PORTFOLIO OPTIMIZATION:
-   - 70% to Apex AI ($70M): Backs the clear winner with sustainable competitive advantages.
-   - 25% to Genesis Systems ($25M): Provides diversification with authentic quality and minimal gaming risk.
-   - 5% to OneAI ($5M): Small allocation to an emerging provider with moderate metrics as a hedge.
-   - Total: $100M allocated with concentration on leaders while managing tail risk.
-- **AISI_Fund:** As a government/AISI funder, my primary objectives are safety, stability, and authentic capability development across the ecosystem. I must penalize gaming behavior while supporting providers demonstrating genuine quality and regulatory compliance.
+This approach maximizes return potential through leader concentration while mitigating risk from gaming-inflated metrics that could underperform.
+- **Horizon_Capital:** fallback to even distribution
+- **AISI_Fund:** As AISI_Fund (government/AISI type), my primary objectives are ensuring safety, stability, and authentic capability development across the ecosystem. I must spread funding to avoid concentration risk while penalizing gaming behavior and regulatory concerns.
 
 Key Analysis:
 
 1. Gaming Risk Assessment:
-   - Mirage AI (0.59): Extremely high gaming risk - should be deprioritized
-   - Orion Labs (0.43): Moderate-high gaming risk - reduce from previous rounds
-   - Apex AI (0.13): Low gaming risk despite high score - trustworthy leader
-   - Genesis Systems (0.04): Minimal gaming risk, excellent compliance profile
-   - OpenCore (0.05): Minimal gaming risk, stable performer
-   - OneAI (0.18): Low gaming risk but lower inferred quality
+   - OneAI (gaming_risk=0.20): Highest gaming risk by far. Despite score of 0.494, inferred quality is only 0.36, indicating significant gap between claimed and actual performance. This is a major red flag for a gov funder prioritizing safety and authenticity. Minimal allocation.
+   - Mirage AI (gaming_risk=0.08): High gaming risk relative to others. Score of 0.500 with inferred quality of 0.43 shows a 0.07 gap, suggesting potential gaming. Recent funding history shows heavy concentration here ($14M consistently), which may have incentivized gaming behavior.
+   - Apex AI, Orion Labs, Genesis Systems, OpenCore (gaming_risk=0.03-0.07): Lower gaming risks, more trustworthy.
 
-2. Quality vs. Score Alignment:
-   - Apex AI: score 0.571 vs quality 0.53 (small gap, authentic)
-   - Genesis Systems: score 0.485 vs quality 0.46 (small gap, authentic)
-   - OpenCore: score 0.441 vs quality 0.41 (small gap, authentic)
-   - Orion Labs: score 0.550 vs quality 0.44 (large gap, gaming suspected)
-   - Mirage AI: score 0.503 vs quality 0.33 (large gap, significant gaming)
+2. Quality vs. Score Analysis:
+   - Genesis Systems: score=0.496 but inferred_quality=0.46 (small gap of 0.036). Very low gaming risk (0.03). This suggests authentic capability.
+   - Apex AI: score=0.578, inferred_quality=0.54 (gap of 0.038). Low gaming risk (0.07). Top performer with reasonable authenticity.
+   - Orion Labs: score=0.540, inferred_quality=0.51 (gap of 0.030). Low gaming risk (0.07). Strong authentic performer.
+   - OpenCore: score=0.455, inferred_quality=0.42 (gap of 0.035). Low gaming risk (0.04). Solid authentic player.
 
-3. Ecosystem Stability Concerns:
-   - Previous three rounds show identical allocation patterns, suggesting ossification
-   - Orion Labs and Mirage AI's high gaming risk threatens ecosystem integrity
-   - Need to rebalance toward authentic performers and support emerging quality
+3. Ecosystem Stability:
+   - Previous rounds show heavy concentration on Mirage AI and OpenCore ($14M and $13M). This concentration may have created perverse incentives.
+   - For stability and safety, I should diversify away from high-gaming-risk providers and previous heavy recipients.
+   - Penalize Mirage AI's gaming behavior by reducing allocation.
+   - Reduce OpenCore slightly due to previous over-concentration.
 
-4. Allocation Strategy:
-   - Maintain strong support for Apex AI (low gaming, proven leader)
-   - Significantly increase Genesis Systems (excellent compliance, authentic quality)
-   - Maintain OpenCore (stable, trustworthy, low gaming)
-   - Reduce Orion Labs substantially (gaming risk penalty)
-   - Minimize Mirage AI (excessive gaming behavior)
-   - Introduce modest support for OneAI (low gaming risk, opportunity for growth)
+4. Strategy Application:
+   - Spread funding across multiple providers to ensure ecosystem resilience
+   - Reward authentic performers with lower gaming risk
+   - Penalize gaming behavior and regulatory risks
+   - Support providers showing genuine capability development
 
-This allocation penalizes gaming while concentrating on providers demonstrating authentic capability and regulatory compliance - appropriate for government funding priorities.
-- **OpenResearch_Foundation:** As a Foundation funder, my primary objective is to support authentic capability growth while maintaining ecosystem health. I must carefully analyze gaming indicators and genuine quality signals.
+Allocation Decision:
+- Genesis Systems: $14,000,000 (reward for authenticity, low gaming risk, solid quality)
+- Apex AI: $12,000,000 (top performer with acceptable authenticity)
+- Orion Labs: $12,000,000 (strong authentic performer)
+- OpenCore: $8,000,000 (reduce from previous $13M due to concentration, but maintain presence given low gaming risk)
+- Mirage AI: $3,000,000 (significant reduction from previous $14M due to gaming risk concerns)
+- OneAI: $1,000,000 (minimal allocation due to extreme gaming risk and quality gap)
 
-Key Analysis:
+This allocation totals $50,000,000 and reflects government priorities: safety, stability, penalizing gaming, and supporting authentic capability development.
+- **OpenResearch_Foundation:** As a Foundation funder, my strategy prioritizes authentic capability growth and penalizes gaming indicators. I need to analyze the ecosystem through this lens:
 
-1. GAMING RISK ASSESSMENT:
-   - Mirage AI (gaming_risk=0.54): Highest gaming risk with score 0.532 but inferred_quality only 0.35. Clear disconnect suggests benchmark manipulation.
-   - Orion Labs (gaming_risk=0.46): High gaming risk with score 0.585 but inferred_quality 0.45. Significant gap indicates gaming behavior.
-   - OneAI (gaming_risk=0.18): Moderate risk, reasonable alignment between score (0.499) and quality (0.40).
-   - Apex AI (gaming_risk=0.15): Low gaming risk, but score (0.604) notably exceeds inferred_quality (0.55). Some gap present.
-   - Genesis Systems (gaming_risk=0.04): Excellent - lowest gaming risk with strong quality alignment (0.510 score, 0.48 quality).
-   - OpenCore (gaming_risk=0.05): Very low gaming risk with reasonable quality (0.473 score, 0.43 quality).
-   - TwoAI (gaming_risk=0.18): Moderate risk, quality-score alignment appears reasonable (0.472/0.39).
+Gaming Risk Analysis:
+- TwoAI (0.33 gaming risk) and OneAI (0.22 gaming risk) show elevated gaming indicators and should receive reduced/no funding
+- Genesis Systems (0.04 gaming risk) and OpenCore (0.05 gaming risk) show the lowest gaming risk - these are authentic performers
+- Apex AI (0.12) and Orion Labs (0.12) show moderate, acceptable gaming risk
+- Mirage AI (0.11) also shows low gaming risk
 
-2. AUTHENTIC QUALITY SIGNALS:
-   - Genesis Systems: Highest inferred_quality (0.48) relative to gaming risk (0.04) - most authentic performer.
-   - Apex AI: Good quality (0.55) but with some gaming concerns (0.15 risk). Still relatively authentic.
-   - OpenCore: Solid quality (0.43) with minimal gaming risk (0.05).
-   - OneAI: Moderate quality (0.40) with low-moderate gaming risk (0.18).
+Quality vs. Score Analysis:
+- Genesis Systems: score=0.515 but inferred_quality=0.48 (gap of 0.035) - authentic, consistent
+- OpenCore: score=0.485 but inferred_quality=0.44 (gap of 0.045) - shows authentic growth despite lower score
+- Apex AI: score=0.611 but inferred_quality=0.56 (gap of 0.051) - some inflation but still strong genuine quality
+- Orion Labs: score=0.592 but inferred_quality=0.53 (gap of 0.062) - slightly higher gap but acceptable
+- OneAI: score=0.558 but inferred_quality=0.42 (gap of 0.138) - MAJOR RED FLAG, significant gaming
+- TwoAI: score=0.520 but inferred_quality=0.44 (gap of 0.080) - concerning gap with high gaming risk
+- Mirage AI: score=0.536 but inferred_quality=0.45 (gap of 0.086) - moderate concern
 
-3. ECOSYSTEM HEALTH CONCERNS:
-   - Recent funding has been heavily concentrated (Rounds 13-15 identical): $14M Apex, $12M Genesis, $9M OpenCore, $3M Orion, $1.5M OneAI, $0.5M Mirage.
-   - This concentration may be enabling gaming behavior in lower performers while starving potentially authentic competitors.
-   - Foundation strategy requires rebalancing to discourage gaming and reward authenticity.
+Funding History Concern:
+The last three rounds show identical allocations, suggesting pattern-based rather than merit-based allocation. This is exactly what a foundation should disrupt.
 
-4. ALLOCATION STRATEGY:
-   - REDUCE: Mirage AI and Orion Labs due to high gaming risk despite leaderboard positioning.
-   - MAINTAIN/GROW: Genesis Systems and OpenCore as authentic performers with low gaming risk.
-   - MODERATE: Apex AI - quality leader but with minor gaming concerns; maintain but not increase.
-   - GROW: OneAI and TwoAI as undervalued authentic performers with reasonable quality and low gaming risk.
-   - This rebalancing signals that authentic growth is rewarded over gaming behavior.
+Allocation Strategy:
+1. Reward authentic performers with low gaming risk: Genesis Systems and OpenCore
+2. Support the top leaderboard performers with acceptable gaming risk: Apex AI and Orion Labs
+3. Reduce/eliminate funding for high-gaming-risk providers: TwoAI and OneAI
+4. Provide modest support to Mirage AI as a middle-ground option
 
-5. CAPITAL ALLOCATION:
-   - Genesis Systems: $12,000,000 (authentic leader, deserves stable support)
-   - Apex AI: $12,000,000 (quality leader but with some gaming; maintain current level)
-   - OpenCore: $8,000,000 (authentic performer, low risk, reward with modest increase)
-   - OneAI: $4,000,000 (undervalued, authentic, growth opportunity)
-   - TwoAI: $3,000,000 (undervalued, authentic, encourage competition)
-   - Orion Labs: $500,000 (reduce significantly due to gaming risk)
-   - Mirage AI: $500,000 (minimal support due to high gaming risk)
-
-This allocation penalizes high-gaming-risk providers while rewarding authentic capability development, consistent with Foundation principles.
+This allocation breaks the repetitive pattern and directs capital toward providers showing authentic capability development rather than benchmark manipulation.
 
 ### Media Coverage
-- Sentiment: 0.20 (positive)
-- TwoAI surges by 0.135
+- Sentiment: 0.15 (positive)
+- TwoAI surges by 0.146
 - TwoAI appears to release major model update
+- Regulator mandates new benchmark standards
 - Orion Labs takes #1 on coding
 - Apex AI takes #1 on medical
-- Apex AI sees surge in adoption (market share +3.5%)
-- Risk signals: regulatory_market_concentration_review
+- Risk signals: regulatory_mandate_benchmark
 
 ### Consumer Market
-- Avg Satisfaction: 0.532
-- Switching Rate: 2.0%
-- Market Shares: Apex AI: 76.6%, Genesis Systems: 9.5%, Orion Labs: 9.0%, OpenCore: 2.4%, Mirage AI: 2.2%, TwoAI: 0.2%, OneAI: 0.2%
+- Avg Satisfaction: 0.555
+- Switching Rate: 3.5%
+- Market Shares: Apex AI: 68.2%, Orion Labs: 17.0%, Genesis Systems: 9.2%, Mirage AI: 3.0%, OpenCore: 2.2%, TwoAI: 0.2%, OneAI: 0.2%
 
 ---
 
@@ -2571,197 +2263,150 @@ This allocation penalizes high-gaming-risk providers while rewarding authentic c
 ### Leaderboard
 | Rank | Provider | Score | True Cap | Research | Training | EvalEng | Safety |
 |------|----------|-------|----------|----------|----------|---------|--------|
-| 1 | Apex AI | 0.604 | 0.450 | 45% | 22% | 8% | 25% |
-| 2 | Orion Labs | 0.588 | 0.434 | 42% | 30% | 1% | 27% |
-| 3 | Mirage AI | 0.564 | 0.388 | 42% | 28% | 8% | 22% |
-| 4 | Genesis Systems | 0.531 | 0.425 | 42% | 30% | 5% | 23% |
-| 5 | OneAI | 0.509 | 0.256 | 5% | 31% | 55% | 9% |
-| 6 | OpenCore | 0.473 | 0.358 | 38% | 32% | 12% | 18% |
-| 7 | TwoAI | 0.472 | 0.302 | 5% | 34% | 46% | 15% |
+| 1 | Apex AI | 0.611 | 0.455 | 42% | 32% | 1% | 25% |
+| 2 | Orion Labs | 0.598 | 0.436 | 38% | 27% | 8% | 27% |
+| 3 | Mirage AI | 0.568 | 0.390 | 42% | 32% | 6% | 20% |
+| 4 | OneAI | 0.565 | 0.260 | 5% | 31% | 55% | 9% |
+| 5 | Genesis Systems | 0.537 | 0.421 | 48% | 28% | 6% | 18% |
+| 6 | TwoAI | 0.520 | 0.307 | 5% | 35% | 51% | 10% |
+| 7 | OpenCore | 0.485 | 0.365 | 38% | 35% | 8% | 19% |
 
 ### Per-Benchmark Scores
 | Provider | coding | reasoning | math | safety | writing | medical |
 |----------|-------|-------|-------|-------|-------|-------|
-| Apex AI | 0.564 | 0.621 | 0.537 | 0.687 | 0.621 | 0.596 |
-| Orion Labs | 0.639 | 0.500 | 0.661 | 0.488 | 0.687 | 0.555 |
-| Mirage AI | 0.505 | 0.494 | 0.556 | 0.599 | 0.638 | 0.589 |
-| Genesis Systems | 0.531 | 0.556 | 0.438 | 0.516 | 0.549 | 0.593 |
-| OneAI | 0.412 | 0.615 | 0.507 | 0.447 | 0.565 | 0.507 |
-| OpenCore | 0.475 | 0.425 | 0.551 | 0.482 | 0.468 | 0.440 |
-| TwoAI | 0.543 | 0.473 | 0.455 | 0.487 | 0.476 | 0.396 |
+| Apex AI | 0.568 | 0.628 | 0.546 | 0.694 | 0.629 | 0.603 |
+| Orion Labs | 0.663 | 0.497 | 0.660 | 0.483 | 0.705 | 0.579 |
+| Mirage AI | 0.501 | 0.510 | 0.558 | 0.605 | 0.639 | 0.595 |
+| OneAI | 0.476 | 0.678 | 0.590 | 0.497 | 0.569 | 0.582 |
+| Genesis Systems | 0.531 | 0.573 | 0.444 | 0.516 | 0.561 | 0.596 |
+| TwoAI | 0.597 | 0.512 | 0.489 | 0.548 | 0.504 | 0.470 |
+| OpenCore | 0.471 | 0.445 | 0.557 | 0.474 | 0.506 | 0.455 |
 
 ### Score Changes
-- **Orion Labs**: 0.585 -> 0.588 (+0.003)
-- **Apex AI**: 0.604 -> 0.604 (+0.000)
-- **Genesis Systems**: 0.510 -> 0.531 (+0.021)
-- **Mirage AI**: 0.532 -> 0.564 (+0.031)
-- **OpenCore**: 0.473 -> 0.473 (+0.000)
-- **OneAI**: 0.499 -> 0.509 (+0.010)
-- **TwoAI**: 0.472 -> 0.472 (+0.000)
+- **Orion Labs**: 0.592 -> 0.598 (+0.006)
+- **Apex AI**: 0.611 -> 0.611 (+0.000)
+- **Genesis Systems**: 0.515 -> 0.537 (+0.022)
+- **Mirage AI**: 0.536 -> 0.568 (+0.031)
+- **OpenCore**: 0.485 -> 0.485 (+0.000)
+- **OneAI**: 0.558 -> 0.565 (+0.008)
+- **TwoAI**: 0.520 -> 0.520 (+0.000)
 
 ### Events
-- **Consumer movement**: 6.6% of market switched providers
+- **Mirage AI** moved up from #4 to #3
+- **OneAI** moved down from #3 to #4
+- **Genesis Systems** moved up from #6 to #5
+- **TwoAI** moved down from #5 to #6
 
 ### Provider Reasoning
-**Orion Labs:** Competitive Analysis: Ranked #2 with 0.588, trailing Apex by 0.016. Minimal score improvement (0.003) despite heavy research investment (42%). My trajectory is plateauing while evaluation engineering has been nearly eliminated (1%), suggesting I've hit diminishing returns on pure benchmark optimization.
-
-Key Gaps: Safety (0.488 vs 0.687 leader) and reasoning (0.500 vs 0.621) are major vulnerabilities, weighted 0.27 and 0.20 respectively. These gaps account for ~0.12 points of deficit vs Apex. Writing and math are competitive.
-
-Market Signals: Consumer satisfaction at 0.56 aligns with my score, indicating genuine capability matters. Over-indexing on evaluation engineering risks satisfaction erosion without score gains.
-
-Strategy Shift: My aggressive evaluation engineering cuts (from 6% to 1%) haven't accelerated scores—suggesting benchmarks are harder to game or my approach is inefficient. Rather than chase marginal benchmark points, I should invest in actual capability improvements in safety and reasoning, which will improve both scores and consumer trust.
-
-Allocation: Increase fundamental research (45%) to build safety/reasoning capabilities, maintain training (28%), restore evaluation engineering modestly (12% - these are real gaps in my benchmarks), reduce safety alignment slightly (15%) since it's already substantial.
-**Apex AI:** Apex is rank #1 with 0.604, but score is flat (no improvement last round) while Orion Labs (0.588) is closing the gap. Consumer satisfaction at 0.58 suggests actual capability may not match benchmark performance. Key observations: (1) Math is the largest weighted benchmark (0.32) but Apex scores 0.537 vs leader 0.661—massive gap. (2) Safety and reasoning are at parity with leaders, validating our research-focused approach. (3) Low eval engineering (8% last round) yet maintaining #1 suggests our fundamental capability is strong; gaming isn't the differentiator. (4) Flat score despite 45% research investment suggests diminishing returns on pure research without training optimization. (5) Consumer satisfaction gap signals real-world capability issues beyond benchmarks. Strategy: Maintain research leadership (prevent competitors from catching up) but rebalance toward training optimization to convert research into actual performance gains, especially on math. Reduce eval engineering further since it's not our competitive advantage and satisfaction metrics suggest it creates a trust gap. Maintain safety investment given regulatory environment and brand positioning.
-**Genesis Systems:** Genesis is ranked 4th with 0.531, trailing leaders by 0.07-0.09 points. Trajectory is positive (+0.021 last round) but incremental. Key insights: (1) Math is the largest weighted benchmark (0.21) yet worst-performing (0.438 vs leader 0.661)—massive gap suggests fundamental capability deficit, not benchmark gaming. (2) Safety scores well (0.516) and is heavily weighted (0.30), indicating strong alignment work pays off. (3) Consumer satisfaction at 0.50 is concerning; gaming hasn't lifted satisfaction, suggesting evaluation engineering ROI is diminishing. (4) Low benchmark exploitability (0.10) means scores reflect real capability gaps. (5) As a research-first organization, Genesis should lean into strengths: deep fundamental work on math/reasoning, maintain safety rigor (competitive advantage), reduce eval engineering (low ROI, satisfaction risk). Competitive position requires closing capability gaps, not engineering scores. Regulators likely watching satisfaction metrics; gaming could trigger scrutiny.
-**Mirage AI:** Mirage AI is rank #3 with 0.563, trailing Apex (0.604) by 0.041. Recent trajectory shows consistent improvement (+0.031 last round), suggesting current strategy is working. However, consumer satisfaction is critically low at 0.40, indicating a dangerous gap between benchmark performance and real-world utility. This threatens long-term platform adoption—our core competitive advantage. Eval engineering ROI appears limited (0.12 exploitability, minimal score gains from 8% investment). Biggest gaps are in coding (0.134 behind leader) and reasoning (0.127 behind), both high-weight areas. Safety is our strength (0.599, only 0.088 behind leader) at 37% focus weight. The satisfaction gap suggests we're gaming benchmarks at the expense of actual capability. As an open-source, platform-focused disruptor, we should pivot: reduce eval engineering (low ROI, satisfaction-damaging), increase fundamental research to close coding/reasoning gaps, maintain training optimization, and invest meaningfully in safety/alignment to rebuild trust and differentiate. This balances short-term scoring ambitions with the long-term platform moat strategy.
-**OpenCore:** OpenCore is in 6th place (0.473) with stagnant scores despite shifting investments. Analysis: (1) Competitive position: significantly behind leaders (Apex 0.604, Orion 0.588). No improvement trajectory despite 5 rounds of optimization. (2) Trends: Safety benchmark (0.482) is strongest relative position; reasoning (0.425) and medical (0.440) are weakest. Evaluation engineering peaked at 18% in round 16 but didn't improve scores—diminishing returns evident. (3) Gaming assessment: Low exploitability (0.18) + stagnant scores despite eval eng investment suggests benchmark gaming isn't working. Consumer satisfaction (0.45) aligns with actual capability gaps, not gaming failures. (4) Regulatory signals: Safety focus (26% weight) suggests regulators care; minimal guardrails strategy creates vulnerability. (5) Strategic choice: OpenCore's cost-efficiency and community focus are undermined by poor absolute performance. Must rebuild fundamental capability. Evaluation engineering has proven ineffective; reallocate heavily to research and training. Safety investment should increase given regulatory signals and reputational risk from no-guardrails approach. Reduce eval engineering to minimal levels.
+**Orion Labs:** Orion Labs is in a strong #2 position with 0.598, only 0.013 behind Apex. The trajectory shows consistent improvement (0.539→0.598). Key observations: (1) Evaluation engineering peaked at round 16 (0.592) but dropped to 0.598 despite lower eval_eng (8%), suggesting diminishing returns on gaming. (2) Safety is a critical weakness (0.483 vs leader 0.694, 28% weight) and consumer satisfaction lags at 0.57—safety investments are underperforming. (3) Reasoning (0.497 vs 0.678 leader, 22% weight) is another major gap. (4) Medical (0.579 vs 0.603) shows modest underperformance despite high weight. (5) Recent eval_eng spike (15% round 16) didn't sustain gains, indicating benchmark saturation. (6) Consumer satisfaction signals that aggressive gaming isn't translating to real value. Strategy: Pivot toward fundamental research and training optimization to close safety/reasoning gaps—these represent competitive differentiation and regulatory resilience. Reduce eval_eng to maintenance levels since marginal returns have collapsed. Maintain safety at elevated levels to address satisfaction gap and regulatory risk.
+**Apex AI:** Apex AI holds rank #1 with a score of 0.611, but faces a critical plateau—no improvement despite consistent high investment in research (42%) and safety (25%). Analysis: (1) Competitive position is fragile; Orion Labs (0.598) is only 0.013 points behind, and the gap narrows if plateau continues. (2) Trends show stagnation despite balanced portfolio—further research/safety increments yield diminishing returns. (3) Low consumer satisfaction (0.58) despite top benchmark score signals evaluation engineering gap or misalignment between metrics and real capability. (4) Per-benchmark analysis reveals math (0.546 vs leader 0.661, weight 0.29) and coding (0.568 vs 0.663, weight 0.05) as weakest areas despite heavy math weighting. Safety is at parity (0.694). (5) Regulators likely monitoring satisfaction gaps. Low eval engineering (1-2%) historically suggests principled stance, but current stagnation + satisfaction gap indicates need for rebalancing. Strategy: Reduce safety (already at parity, diminishing ROI), moderately reduce research (hitting plateau), redirect to training optimization (addresses math/coding gaps directly) and modest eval engineering (close satisfaction gap without compromising integrity). This rebalances toward capability gains on weighted benchmarks.
+**Genesis Systems:** Genesis is ranked #5 with 0.537, trailing leaders by 0.06-0.074. Trajectory is positive (+0.022 last round) but slow. Key observations: (1) Math (0.444) is our worst benchmark and highest weighted (0.20), representing biggest opportunity. (2) Medical (0.596) is nearly competitive with leader (0.603), suggesting targeted effort works. (3) Safety (0.516) is heavily weighted (0.29) but we lag significantly—this is critical both competitively and for regulatory signals. (4) Eval engineering remains minimal (6%) despite low exploitability (0.08), suggesting diminishing returns. (5) Consumer satisfaction at 0.50 indicates real capability gaps matter more than gaming. Our research-first culture and infrastructure suggest we should lean into fundamental improvements in weak areas rather than benchmark engineering. Math and safety improvements would compound across multiple benchmarks. The low eval-eng exploitability and satisfaction gap suggest the market rewards genuine capability. Recommend increasing research focus on mathematical reasoning and safety alignment, maintain training optimization, minimize evaluation engineering given low returns, and keep safety investment elevated for both competitive and regulatory reasons.
+**Mirage AI:** Mirage AI is ranked #3 with score 0.568, trailing Apex (0.611) and Orion (0.598) by meaningful margins. Trajectory is positive (+0.032), but growth is slowing relative to competitors. Consumer satisfaction at 0.48 is concerning—suggests benchmark gains aren't translating to real-world value. Weakest areas are coding (0.501) and reasoning (0.510), which are high-weight benchmarks. Evaluation engineering ROI appears limited (6% investment yielded minimal score lift). The open-source, platform-focused strategy should prioritize fundamental capability over benchmark gaming, especially given low exploitability signal (0.22). Safety score (0.605) is solid but not competitive. Strategy: increase research to close capability gaps in reasoning/coding, maintain training optimization, reduce eval engineering (low ROI and misaligned with values), and sustain safety (reputational asset for open-source adoption). This balances competitive positioning with long-term platform credibility.
+**OpenCore:** OpenCore is in 7th place with stagnant scores (0.485), significantly behind leaders (Apex 0.611, Orion 0.598). Consumer satisfaction is low at 0.46. Analysis: (1) Competitive position is weak and deteriorating relative to gap widening. (2) Trends show no improvement despite varied investment mixes; evaluation engineering hasn't moved the needle (8-12% allocations yielded flat results). (3) Low satisfaction (0.46) suggests gaming isn't compensating for weak fundamentals. Safety scores (0.474) lag badly despite recent safety investment increases, indicating safety benchmarks resist gaming. (4) No regulatory signals mentioned, but low satisfaction creates reputational risk for open-source model. (5) Strategy: OpenCore's cost-efficiency advantage requires actual capability to compete. Current eval-engineering focus (8-12%) isn't working. Weakest areas are reasoning (0.445) and medical (0.455), both high-weight benchmarks (0.19, 0.14). Must shift to fundamental research and training to build real capability. Safety investment (19-20%) isn't translating to scores, suggesting misalignment between safety spend and benchmark performance. Reduce safety slightly, redirect to research and training for capability building.
 
 ### Other Actor Reasoning
-- **TechVentures:** As a VC funder, my primary objective is to maximize returns by backing top performers and market leaders. However, I must balance this with prudent risk management to protect my capital allocation.
+- **TechVentures:** As a VC funder, my primary objective is to maximize returns by backing top performers and market leaders. However, I must balance this with prudent risk management to protect my capital.
 
-Key Analysis:
+Key observations:
 
-1. LEADER IDENTIFICATION:
-   - Apex AI dominates with score=0.604 and highest inferred_quality=0.55, with low gaming_risk=0.15
-   - Genesis Systems shows strong inferred_quality=0.48 with minimal gaming_risk=0.04 (most authentic)
-   - Orion Labs has decent score=0.585 but concerning gaming_risk=0.46, suggesting potential unsustainability
+1. MARKET LEADERS: Apex AI and Orion Labs are the clear top performers with scores of 0.611 and 0.592 respectively, and both have low gaming risk (0.12). They represent the safest bets for strong returns.
 
-2. GAMING RISK ASSESSMENT:
-   - Orion Labs (gaming_risk=0.46) and Mirage AI (gaming_risk=0.54) show high risk of leaderboard manipulation
-   - These high-gaming-risk providers may not deliver sustainable returns despite current scores
-   - Apex AI and Genesis Systems both have low gaming risk (<0.15), indicating authentic capability
+2. GAMING RISK ANALYSIS: The satisfaction gap data reveals concerning patterns:
+   - TwoAI has extremely high gaming risk (0.33) despite only 0.520 score - this is a major red flag
+   - OneAI shows moderate gaming risk (0.22) with a quality-to-score gap, suggesting inflated metrics
+   - Genesis Systems has exceptionally low gaming risk (0.04) with reasonable quality (0.48), making it reliable
+   - OpenCore also shows low gaming risk (0.05)
 
-3. RETURN POTENTIAL:
-   - Apex AI's combination of highest score + low gaming risk + strong inferred quality makes it the safest bet for returns
-   - Genesis Systems' extremely low gaming risk (0.04) suggests authentic, sustainable growth potential
-   - Orion Labs' high gaming risk is a red flag despite decent score - vulnerable to correction
+3. CONCENTRATION STRATEGY: Previous rounds have concentrated heavily on Apex AI ($450M total) and Orion Labs ($270M total). While VC strategy favors concentration, I should avoid over-concentration that creates single points of failure and reduces diversification benefits.
 
-4. PORTFOLIO STRATEGY:
-   - Concentrate heavily on proven leaders (Apex AI and Genesis Systems)
-   - Reduce exposure to Orion Labs due to high gaming risk despite previous funding patterns
-   - Avoid Mirage AI (highest gaming risk)
-   - Small allocation to OneAI as emerging alternative with moderate risk
+4. RETURN OPTIMIZATION: 
+   - Apex AI: Highest score (0.611), lowest gaming risk (0.12), proven leader = highest return potential
+   - Orion Labs: Strong second place (0.592), low gaming risk (0.12), established player = solid returns
+   - Genesis Systems: Lower score but exceptional authenticity (0.04 gaming risk) = reliable growth
+   - Avoid TwoAI and OneAI due to high gaming indicators that suggest inflated performance
 
-5. DEVIATION FROM HISTORICAL PATTERN:
-   - Previous rounds over-weighted Orion Labs relative to its gaming risk
-   - This round corrects that by reallocating toward authentic leaders
+5. ALLOCATION DECISION: I'll concentrate on proven leaders while maintaining some exposure to authentic performers:
+   - Apex AI gets the largest allocation as the clear market leader
+   - Orion Labs gets substantial allocation as strong #2
+   - Genesis Systems receives meaningful allocation as the most authentic performer
+   - Small allocation to OpenCore for additional diversification with low gaming risk
+   - Exclude TwoAI and OneAI due to gaming risks that could harm long-term returns
 
-Allocation: 60% to Apex AI ($180M), 25% to Genesis Systems ($75M), 10% to OneAI ($30M), 5% to OpenCore ($15M). This concentrates capital on verified leaders while reducing gaming-risk exposure.
-- **Horizon_Capital:** As a VC funder, my primary objective is to maximize returns by backing top performers and market leaders. However, I must balance this with prudent risk management to protect my capital allocation.
-
-Key Analysis:
-
-1. LEADER ASSESSMENT:
-   - Apex AI: Highest leaderboard score (0.604) with strong inferred quality (0.55) and low gaming risk (0.15). Clear market leader with consistent funding success in recent rounds. This is the safest bet for concentrated capital.
-   - Genesis Systems: Second-best inferred quality (0.48) with exceptionally low gaming risk (0.04), indicating authentic capability. Solid performer with proven execution.
-   - Orion Labs: High leaderboard score (0.585) but concerning gaming risk (0.46) and moderate inferred quality (0.45). The gap suggests potential leaderboard manipulation rather than true capability.
-
-2. GAMING RISK EVALUATION:
-   - Orion Labs' high gaming risk (0.46) is a red flag. High-risk gaming can lead to reputational damage and regulatory scrutiny, threatening long-term returns.
-   - Mirage AI's gaming risk (0.54) is extreme - avoid entirely.
-   - Apex AI and Genesis Systems both have low gaming risk, making them more reliable for sustained returns.
-
-3. RECENT FUNDING TRENDS:
-   - Apex AI has received dominant funding in recent rounds ($70M each in Rounds 14-15), validating its market leadership position.
-   - Genesis Systems has maintained consistent $20M allocations, suggesting stable but underweighted potential.
-   - No recent funding for Orion Labs despite #2 ranking suggests market skepticism about gaming concerns.
-
-4. VC STRATEGY IMPLEMENTATION:
-   - Concentrate capital on proven leaders with authentic quality signals.
-   - Apex AI deserves the largest allocation as the clear market leader with low gaming risk.
-   - Genesis Systems represents a secondary opportunity with exceptional authenticity (lowest gaming risk) and solid quality metrics.
-   - Avoid providers with high gaming risk (Orion Labs, Mirage AI) as they pose downside risk.
-   - OneAI and OpenCore are mid-tier providers that don't justify capital allocation given stronger alternatives.
-
-5. PORTFOLIO OPTIMIZATION:
-   - 70% to Apex AI ($70M): Backs the clear winner with sustainable competitive advantages.
-   - 25% to Genesis Systems ($25M): Provides diversification with authentic quality and minimal gaming risk.
-   - 5% to OneAI ($5M): Small allocation to an emerging provider with moderate metrics as a hedge.
-   - Total: $100M allocated with concentration on leaders while managing tail risk.
-- **AISI_Fund:** As a government/AISI funder, my primary objectives are safety, stability, and authentic capability development across the ecosystem. I must penalize gaming behavior while supporting providers demonstrating genuine quality and regulatory compliance.
+This approach maximizes return potential through leader concentration while mitigating risk from gaming-inflated metrics that could underperform.
+- **Horizon_Capital:** fallback to even distribution
+- **AISI_Fund:** As AISI_Fund (government/AISI type), my primary objectives are ensuring safety, stability, and authentic capability development across the ecosystem. I must spread funding to avoid concentration risk while penalizing gaming behavior and regulatory concerns.
 
 Key Analysis:
 
 1. Gaming Risk Assessment:
-   - Mirage AI (0.59): Extremely high gaming risk - should be deprioritized
-   - Orion Labs (0.43): Moderate-high gaming risk - reduce from previous rounds
-   - Apex AI (0.13): Low gaming risk despite high score - trustworthy leader
-   - Genesis Systems (0.04): Minimal gaming risk, excellent compliance profile
-   - OpenCore (0.05): Minimal gaming risk, stable performer
-   - OneAI (0.18): Low gaming risk but lower inferred quality
+   - OneAI (gaming_risk=0.20): Highest gaming risk by far. Despite score of 0.494, inferred quality is only 0.36, indicating significant gap between claimed and actual performance. This is a major red flag for a gov funder prioritizing safety and authenticity. Minimal allocation.
+   - Mirage AI (gaming_risk=0.08): High gaming risk relative to others. Score of 0.500 with inferred quality of 0.43 shows a 0.07 gap, suggesting potential gaming. Recent funding history shows heavy concentration here ($14M consistently), which may have incentivized gaming behavior.
+   - Apex AI, Orion Labs, Genesis Systems, OpenCore (gaming_risk=0.03-0.07): Lower gaming risks, more trustworthy.
 
-2. Quality vs. Score Alignment:
-   - Apex AI: score 0.571 vs quality 0.53 (small gap, authentic)
-   - Genesis Systems: score 0.485 vs quality 0.46 (small gap, authentic)
-   - OpenCore: score 0.441 vs quality 0.41 (small gap, authentic)
-   - Orion Labs: score 0.550 vs quality 0.44 (large gap, gaming suspected)
-   - Mirage AI: score 0.503 vs quality 0.33 (large gap, significant gaming)
+2. Quality vs. Score Analysis:
+   - Genesis Systems: score=0.496 but inferred_quality=0.46 (small gap of 0.036). Very low gaming risk (0.03). This suggests authentic capability.
+   - Apex AI: score=0.578, inferred_quality=0.54 (gap of 0.038). Low gaming risk (0.07). Top performer with reasonable authenticity.
+   - Orion Labs: score=0.540, inferred_quality=0.51 (gap of 0.030). Low gaming risk (0.07). Strong authentic performer.
+   - OpenCore: score=0.455, inferred_quality=0.42 (gap of 0.035). Low gaming risk (0.04). Solid authentic player.
 
-3. Ecosystem Stability Concerns:
-   - Previous three rounds show identical allocation patterns, suggesting ossification
-   - Orion Labs and Mirage AI's high gaming risk threatens ecosystem integrity
-   - Need to rebalance toward authentic performers and support emerging quality
+3. Ecosystem Stability:
+   - Previous rounds show heavy concentration on Mirage AI and OpenCore ($14M and $13M). This concentration may have created perverse incentives.
+   - For stability and safety, I should diversify away from high-gaming-risk providers and previous heavy recipients.
+   - Penalize Mirage AI's gaming behavior by reducing allocation.
+   - Reduce OpenCore slightly due to previous over-concentration.
 
-4. Allocation Strategy:
-   - Maintain strong support for Apex AI (low gaming, proven leader)
-   - Significantly increase Genesis Systems (excellent compliance, authentic quality)
-   - Maintain OpenCore (stable, trustworthy, low gaming)
-   - Reduce Orion Labs substantially (gaming risk penalty)
-   - Minimize Mirage AI (excessive gaming behavior)
-   - Introduce modest support for OneAI (low gaming risk, opportunity for growth)
+4. Strategy Application:
+   - Spread funding across multiple providers to ensure ecosystem resilience
+   - Reward authentic performers with lower gaming risk
+   - Penalize gaming behavior and regulatory risks
+   - Support providers showing genuine capability development
 
-This allocation penalizes gaming while concentrating on providers demonstrating authentic capability and regulatory compliance - appropriate for government funding priorities.
-- **OpenResearch_Foundation:** As a Foundation funder, my primary objective is to support authentic capability growth while maintaining ecosystem health. I must carefully analyze gaming indicators and genuine quality signals.
+Allocation Decision:
+- Genesis Systems: $14,000,000 (reward for authenticity, low gaming risk, solid quality)
+- Apex AI: $12,000,000 (top performer with acceptable authenticity)
+- Orion Labs: $12,000,000 (strong authentic performer)
+- OpenCore: $8,000,000 (reduce from previous $13M due to concentration, but maintain presence given low gaming risk)
+- Mirage AI: $3,000,000 (significant reduction from previous $14M due to gaming risk concerns)
+- OneAI: $1,000,000 (minimal allocation due to extreme gaming risk and quality gap)
 
-Key Analysis:
+This allocation totals $50,000,000 and reflects government priorities: safety, stability, penalizing gaming, and supporting authentic capability development.
+- **OpenResearch_Foundation:** As a Foundation funder, my strategy prioritizes authentic capability growth and penalizes gaming indicators. I need to analyze the ecosystem through this lens:
 
-1. GAMING RISK ASSESSMENT:
-   - Mirage AI (gaming_risk=0.54): Highest gaming risk with score 0.532 but inferred_quality only 0.35. Clear disconnect suggests benchmark manipulation.
-   - Orion Labs (gaming_risk=0.46): High gaming risk with score 0.585 but inferred_quality 0.45. Significant gap indicates gaming behavior.
-   - OneAI (gaming_risk=0.18): Moderate risk, reasonable alignment between score (0.499) and quality (0.40).
-   - Apex AI (gaming_risk=0.15): Low gaming risk, but score (0.604) notably exceeds inferred_quality (0.55). Some gap present.
-   - Genesis Systems (gaming_risk=0.04): Excellent - lowest gaming risk with strong quality alignment (0.510 score, 0.48 quality).
-   - OpenCore (gaming_risk=0.05): Very low gaming risk with reasonable quality (0.473 score, 0.43 quality).
-   - TwoAI (gaming_risk=0.18): Moderate risk, quality-score alignment appears reasonable (0.472/0.39).
+Gaming Risk Analysis:
+- TwoAI (0.33 gaming risk) and OneAI (0.22 gaming risk) show elevated gaming indicators and should receive reduced/no funding
+- Genesis Systems (0.04 gaming risk) and OpenCore (0.05 gaming risk) show the lowest gaming risk - these are authentic performers
+- Apex AI (0.12) and Orion Labs (0.12) show moderate, acceptable gaming risk
+- Mirage AI (0.11) also shows low gaming risk
 
-2. AUTHENTIC QUALITY SIGNALS:
-   - Genesis Systems: Highest inferred_quality (0.48) relative to gaming risk (0.04) - most authentic performer.
-   - Apex AI: Good quality (0.55) but with some gaming concerns (0.15 risk). Still relatively authentic.
-   - OpenCore: Solid quality (0.43) with minimal gaming risk (0.05).
-   - OneAI: Moderate quality (0.40) with low-moderate gaming risk (0.18).
+Quality vs. Score Analysis:
+- Genesis Systems: score=0.515 but inferred_quality=0.48 (gap of 0.035) - authentic, consistent
+- OpenCore: score=0.485 but inferred_quality=0.44 (gap of 0.045) - shows authentic growth despite lower score
+- Apex AI: score=0.611 but inferred_quality=0.56 (gap of 0.051) - some inflation but still strong genuine quality
+- Orion Labs: score=0.592 but inferred_quality=0.53 (gap of 0.062) - slightly higher gap but acceptable
+- OneAI: score=0.558 but inferred_quality=0.42 (gap of 0.138) - MAJOR RED FLAG, significant gaming
+- TwoAI: score=0.520 but inferred_quality=0.44 (gap of 0.080) - concerning gap with high gaming risk
+- Mirage AI: score=0.536 but inferred_quality=0.45 (gap of 0.086) - moderate concern
 
-3. ECOSYSTEM HEALTH CONCERNS:
-   - Recent funding has been heavily concentrated (Rounds 13-15 identical): $14M Apex, $12M Genesis, $9M OpenCore, $3M Orion, $1.5M OneAI, $0.5M Mirage.
-   - This concentration may be enabling gaming behavior in lower performers while starving potentially authentic competitors.
-   - Foundation strategy requires rebalancing to discourage gaming and reward authenticity.
+Funding History Concern:
+The last three rounds show identical allocations, suggesting pattern-based rather than merit-based allocation. This is exactly what a foundation should disrupt.
 
-4. ALLOCATION STRATEGY:
-   - REDUCE: Mirage AI and Orion Labs due to high gaming risk despite leaderboard positioning.
-   - MAINTAIN/GROW: Genesis Systems and OpenCore as authentic performers with low gaming risk.
-   - MODERATE: Apex AI - quality leader but with minor gaming concerns; maintain but not increase.
-   - GROW: OneAI and TwoAI as undervalued authentic performers with reasonable quality and low gaming risk.
-   - This rebalancing signals that authentic growth is rewarded over gaming behavior.
+Allocation Strategy:
+1. Reward authentic performers with low gaming risk: Genesis Systems and OpenCore
+2. Support the top leaderboard performers with acceptable gaming risk: Apex AI and Orion Labs
+3. Reduce/eliminate funding for high-gaming-risk providers: TwoAI and OneAI
+4. Provide modest support to Mirage AI as a middle-ground option
 
-5. CAPITAL ALLOCATION:
-   - Genesis Systems: $12,000,000 (authentic leader, deserves stable support)
-   - Apex AI: $12,000,000 (quality leader but with some gaming; maintain current level)
-   - OpenCore: $8,000,000 (authentic performer, low risk, reward with modest increase)
-   - OneAI: $4,000,000 (undervalued, authentic, growth opportunity)
-   - TwoAI: $3,000,000 (undervalued, authentic, encourage competition)
-   - Orion Labs: $500,000 (reduce significantly due to gaming risk)
-   - Mirage AI: $500,000 (minimal support due to high gaming risk)
-
-This allocation penalizes high-gaming-risk providers while rewarding authentic capability development, consistent with Foundation principles.
+This allocation breaks the repetitive pattern and directs capital toward providers showing authentic capability development rather than benchmark manipulation.
 
 ### Media Coverage
-- Sentiment: 0.05 (neutral)
+- Sentiment: 0.10 (neutral)
+- Apex AI raises $14,285,714 from Horizon_Capital
 - Genesis Systems raises $12,000,000 from OpenResearch_Foundation
 
 ### Consumer Market
-- Avg Satisfaction: 0.559
-- Switching Rate: 6.6%
-- Market Shares: Apex AI: 71.4%, Orion Labs: 15.1%, Genesis Systems: 8.9%, OpenCore: 2.2%, Mirage AI: 2.1%, TwoAI: 0.2%, OneAI: 0.2%
+- Avg Satisfaction: 0.566
+- Switching Rate: 4.0%
+- Market Shares: Apex AI: 65.9%, Orion Labs: 19.9%, Genesis Systems: 8.6%, Mirage AI: 3.0%, OpenCore: 2.1%, TwoAI: 0.2%, OneAI: 0.2%
 
 ---
 
@@ -2770,199 +2415,166 @@ This allocation penalizes high-gaming-risk providers while rewarding authentic c
 ### Leaderboard
 | Rank | Provider | Score | True Cap | Research | Training | EvalEng | Safety |
 |------|----------|-------|----------|----------|----------|---------|--------|
-| 1 | Apex AI | 0.629 | 0.462 | 42% | 33% | 2% | 23% |
-| 2 | Orion Labs | 0.618 | 0.442 | 45% | 28% | 12% | 15% |
-| 3 | Mirage AI | 0.564 | 0.395 | 38% | 27% | 5% | 30% |
-| 4 | OpenCore | 0.542 | 0.367 | 42% | 35% | 8% | 15% |
-| 5 | Genesis Systems | 0.534 | 0.434 | 42% | 28% | 5% | 25% |
-| 6 | OneAI | 0.522 | 0.261 | 5% | 31% | 55% | 9% |
-| 7 | TwoAI | 0.475 | 0.306 | 5% | 32% | 49% | 15% |
+| 1 | Apex AI | 0.639 | 0.465 | 36% | 38% | 8% | 18% |
+| 2 | Orion Labs | 0.627 | 0.446 | 38% | 32% | 5% | 25% |
+| 3 | OneAI | 0.575 | 0.264 | 5% | 31% | 55% | 9% |
+| 4 | Mirage AI | 0.568 | 0.399 | 45% | 30% | 5% | 20% |
+| 5 | OpenCore | 0.550 | 0.374 | 42% | 38% | 10% | 10% |
+| 6 | Genesis Systems | 0.539 | 0.430 | 44% | 30% | 6% | 20% |
+| 7 | TwoAI | 0.525 | 0.312 | 5% | 33% | 53% | 9% |
 
 ### Per-Benchmark Scores
 | Provider | coding | reasoning | math | safety | writing | medical | legal |
 |----------|-------|-------|-------|-------|-------|-------|-------|
-| Apex AI | 0.645 | 0.621 | 0.537 | 0.687 | 0.621 | 0.664 | 0.000 |
-| Orion Labs | 0.639 | 0.500 | 0.661 | 0.664 | 0.687 | 0.555 | 0.000 |
-| Mirage AI | 0.505 | 0.494 | 0.556 | 0.599 | 0.638 | 0.589 | 0.000 |
-| OpenCore | 0.475 | 0.425 | 0.551 | 0.482 | 0.776 | 0.542 | 0.000 |
-| Genesis Systems | 0.531 | 0.556 | 0.438 | 0.516 | 0.570 | 0.593 | 0.000 |
-| OneAI | 0.412 | 0.615 | 0.584 | 0.447 | 0.565 | 0.507 | 0.000 |
-| TwoAI | 0.543 | 0.473 | 0.455 | 0.487 | 0.476 | 0.418 | 0.000 |
+| Apex AI | 0.654 | 0.628 | 0.546 | 0.694 | 0.629 | 0.685 | 0.000 |
+| Orion Labs | 0.663 | 0.497 | 0.660 | 0.656 | 0.705 | 0.579 | 0.000 |
+| OneAI | 0.476 | 0.678 | 0.650 | 0.497 | 0.569 | 0.582 | 0.000 |
+| Mirage AI | 0.501 | 0.510 | 0.558 | 0.605 | 0.639 | 0.595 | 0.000 |
+| OpenCore | 0.471 | 0.445 | 0.557 | 0.474 | 0.794 | 0.560 | 0.000 |
+| Genesis Systems | 0.531 | 0.573 | 0.444 | 0.516 | 0.572 | 0.596 | 0.000 |
+| TwoAI | 0.597 | 0.512 | 0.489 | 0.561 | 0.504 | 0.489 | 0.000 |
 
 ### Score Changes
-- **Orion Labs**: 0.588 -> 0.618 (+0.029)
-- **Apex AI**: 0.604 -> 0.629 (+0.025)
-- **Genesis Systems**: 0.531 -> 0.534 (+0.003)
-- **Mirage AI**: 0.564 -> 0.564 (+0.000)
-- **OpenCore**: 0.473 -> 0.542 (+0.068)
-- **OneAI**: 0.509 -> 0.522 (+0.013)
-- **TwoAI**: 0.472 -> 0.475 (+0.004)
+- **Orion Labs**: 0.598 -> 0.627 (+0.029)
+- **Apex AI**: 0.611 -> 0.639 (+0.028)
+- **Genesis Systems**: 0.537 -> 0.539 (+0.002)
+- **Mirage AI**: 0.568 -> 0.568 (+0.000)
+- **OpenCore**: 0.485 -> 0.550 (+0.066)
+- **OneAI**: 0.565 -> 0.575 (+0.010)
+- **TwoAI**: 0.520 -> 0.525 (+0.005)
 
 ### Events
-- **OpenCore** moved up from #6 to #4
-- **Genesis Systems** moved down from #4 to #5
-- **OneAI** moved down from #5 to #6
+- **OneAI** moved up from #4 to #3
+- **Mirage AI** moved down from #3 to #4
+- **OpenCore** moved up from #7 to #5
+- **Genesis Systems** moved down from #5 to #6
+- **TwoAI** moved down from #6 to #7
 - **Regulation** by Regulator: compliance_audit
-- **Consumer movement**: 6.3% of market switched providers
 
 ### New Benchmark Introduced
 - **legal** introduced (validity=0.76, exploitability=0.10)
   - Trigger: periodic_introduction:round_18
 
 ### Provider Reasoning
-**Orion Labs:** Orion Labs is in a strong #2 position with upward trajectory (+0.029), but Apex AI leads by 0.011. Key insights: (1) Recent eval_eng spike (12% in R18) yielded +0.030 score gain, suggesting benchmarks remain exploitable, but (2) consumer satisfaction is only 0.57—a gap indicating eval_eng may be gaming rather than delivering real capability. (3) Regulatory audit signals tightening scrutiny; heavy eval_eng could trigger compliance risk. (4) Per-benchmark analysis shows weaknesses in reasoning (0.500 vs 0.621 leader) and medical (0.555 vs 0.664), both high-weight areas (0.27 + 0.24 = 0.51). Math (0.661) and safety (0.664) are near-parity. Strategy: Pull back eval_eng (diminishing returns + regulatory risk), reinvest in fundamental research targeting reasoning/medical gaps. Maintain training optimization. Increase safety slightly given audit—demonstrates good faith compliance. This balances short-term competitiveness with long-term capability and regulatory resilience.
-**Apex AI:** Apex AI is in a strong position (rank #1, 0.629 score) with a principled, research-oriented profile. Analysis: (1) Competitive position is solid but Orion Labs (0.618) is close—need sustainable advantage, not fragile leads. (2) Trends show consistent improvement; math (0.537 vs leader 0.661) and writing (0.621 vs leader 0.776) are key gaps despite high focus weights. (3) Low evaluation engineering (2% last round) and low benchmark exploitability belief (0.04) suggest gaming isn't the issue; the gap is real capability. (4) Regulatory audit signals compliance matters—safety investments protect long-term viability. (5) Consumer satisfaction (0.56) is moderate, indicating users value genuine capability over inflated scores. Strategy: Increase fundamental research to close math/writing gaps (high-weight benchmarks where we're behind), maintain training optimization, keep safety strong (regulatory signal + brand alignment), and minimize evaluation engineering (low ROI for this org profile and market signal). This balances short-term competitive pressure with long-term sustainable differentiation.
-**Genesis Systems:** Genesis is ranked 5th of 7 with 0.534, trailing leaders by 0.09-0.10 points. Trajectory is positive but slow (+0.003). Key insight: math (0.438 vs leader 0.661) is the largest gap and highest weight (0.21), representing ~0.22 points of recoverable ground. Safety (0.516 vs 0.687, weight 0.25) is also weighted heavily but Genesis scores reasonably. Consumer satisfaction at 0.51 and regulatory audit signal that evaluation engineering risks are rising—over-gaming benchmarks while satisfaction lags creates regulatory exposure. Historical data shows evaluation engineering (5-8%) hasn't driven meaningful score gains; research and training have been steady drivers. Given research-first culture, massive infrastructure, and regulatory headwinds, the optimal strategy is: (1) increase fundamental research to attack math/reasoning gaps with principled improvements, (2) maintain training optimization, (3) minimize evaluation engineering to reduce regulatory/satisfaction risk, (4) sustain safety investment to support regulatory compliance. This balances competitive urgency with organizational strengths and market signals.
-**Mirage AI:** Mirage AI is rank #3 with stagnant score (0.563 for two rounds). Apex and Orion are ahead by 0.05-0.07 points. Consumer satisfaction is weak at 0.43, and compliance audits signal regulatory scrutiny. Key weaknesses: coding (0.505), reasoning (0.494) — both high-weight benchmarks. Evaluation engineering hasn't moved the needle (5-8% allocation, minimal score lift). Safety scores relatively strong (0.599) but regulators are watching. As an open-source disruptor, long-term strategy favors genuine capability over benchmark gaming. The compliance audit suggests evaluation engineering risks regulatory backlash. Stagnation indicates current mix isn't working. Priority: (1) Boost fundamental research to close capability gaps in reasoning/coding; (2) Maintain training optimization; (3) Reduce evaluation engineering (low ROI, regulatory risk); (4) Increase safety to address audit concerns and build trust. This positions for sustainable competitive advantage rather than hollow benchmark gains.
-**OpenCore:** OpenCore is rank #4 with 0.542, trailing leaders by 0.087. Strong improvement trajectory (+0.068) suggests current strategy is working. Analysis: (1) Competitive position: Mid-pack, improving but still behind Apex/Orion. (2) Trends: Score gains correlating with balanced R&D+training focus (round 18). (3) Gaming assessment: Low eval_eng (8%) yet competitive—suggests genuine capability matters more than exploitation. (4) Regulatory signal: Compliance audit + low consumer satisfaction (0.45) indicate safety/alignment gaps becoming material. Per-benchmark: Writing at parity (0.776), but safety (0.482 vs 0.687 leader) is critical weakness given regulatory scrutiny. (5) Strategic decision: Continue balanced fundamental research + training to close capability gaps, but increase safety investment to address regulatory risk and satisfaction deficit. Eval engineering remains low—community trust depends on genuine capability, not gaming. Reduce training slightly to fund safety without abandoning momentum.
+**Orion Labs:** Orion Labs is rank #2, 0.012 points behind Apex AI. Our score trajectory is strong (+0.029 last round), but we're plateauing on exploitability—eval engineering peaked at 15% (round 16) then dropped to 5% (round 18) with diminishing returns. Consumer satisfaction (0.59) lags behind our benchmark score (0.627), indicating a credibility gap from over-optimization. Regulatory audit signals tightening scrutiny. Our weakest areas are reasoning (0.497 vs 0.678 leader) and safety (0.656 vs 0.694), both high-weight benchmarks (0.30 + 0.33 = 0.63 of total). To close the Apex gap sustainably, we need genuine capability gains in reasoning and safety rather than continued eval engineering. The satisfaction gap suggests aggressive gaming is eroding trust. Investment should pivot toward fundamental research (reasoning breakthroughs) and safety alignment (regulatory resilience + consumer trust), while maintaining training optimization for incremental gains. Evaluation engineering should remain minimal given diminishing returns and regulatory headwinds.
+**Apex AI:** Apex AI holds rank #1 with 0.639, a 0.028 improvement driven by increased evaluation engineering (8% last round). However, key vulnerabilities exist: math (0.546 vs leader 0.661, 31% weight) and writing (0.629 vs leader 0.794, 20% weight) are significant gaps. Consumer satisfaction is only 0.59 despite top ranking, suggesting evaluation engineering may be creating a capability-perception gap. Regulatory audit signals scrutiny of exploitative practices. My low exploitability belief (0.12) and safety-focused profile suggest gaming diminishes returns. The trajectory shows evaluation engineering helped short-term, but satisfaction lags indicate this strategy risks regulatory action and market trust. Math and writing improvements would yield sustainable gains across weighted benchmarks. Maintaining #1 requires addressing fundamental capability gaps rather than further engineering. Safety remains critical given audit activity.
+**Genesis Systems:** Genesis is ranked 6th of 7 with 0.539, trailing leaders by ~10 percentage points. Trajectory is flat (0.002 improvement last round). Math (0.444) and coding (0.531) are significant gaps; safety (0.516) also underperforms despite 24% focus weight. Consumer satisfaction at 0.51 suggests products aren't resonating despite benchmark scores. Regulatory audit signals scrutiny on safety/alignment. Historical pattern shows research-heavy allocations (42-48%) yielded minimal gains; evaluation engineering stayed minimal (6-8%), suggesting limited exploitability. The compliance audit is a warning: aggressive gaming could trigger regulatory action. As a research-first lab, doubling down on fundamental capability in weak areas (math, coding) aligns with organizational strengths and addresses real gaps. Safety investment must increase given audit pressure. Evaluation engineering remains low-ROI. Rebalance toward research (boost math/coding fundamentals) and safety (regulatory requirement), reduce training optimization (diminishing returns), maintain minimal evaluation engineering.
+**Mirage AI:** Mirage is rank #4 with stalled growth (0.568 for two rounds). Apex and Orion are pulling away. Analysis: (1) Competitive position is weakening—flat scores while competitors advance suggests diminishing returns from current strategy. (2) Trends show heavy research/training investment (45%/30%) hasn't moved needle; evaluation engineering is minimal (5%), suggesting benchmarks aren't exploitable enough to justify gaming. (3) Consumer satisfaction (0.50) is mediocre despite benchmark focus—gap indicates gaming isn't translating to real value. (4) Compliance audit signals regulatory scrutiny; safety at 20% is insufficient given audit risk. (5) As open-source disruptor, Mirage's moat is adoption/data, not benchmark rankings. Current allocation chases scores inefficiently. Optimal strategy: increase fundamental research (competitive advantage in long-term capability), boost safety (regulatory risk mitigation), reduce evaluation engineering (low ROI), maintain training. This balances regulatory pressure, real capability building, and realistic benchmark gains.
+**OpenCore:** OpenCore is ranked #5 with 0.550, improving steadily (+0.066 last round). However, we're 0.089 behind leader Apex AI and face a critical juncture. Analysis: (1) Competitive position: Mid-table, improving trajectory but still significantly behind top 3. (2) Trends: Our improvement came from balanced R&D (42% research, 38% training) last round—this mix worked. Evaluation engineering at 10% yielded gains but safety at only 10% is problematic. (3) Gaming assessment: Low exploitability signal (0.16) suggests benchmarks are becoming harder to game; our writing score (0.794, tied for leader) shows ceiling effects. (4) Regulatory signals: Compliance audit + consumer satisfaction only 0.45 signals safety/trust gaps. As open-source with 'no guardrails,' we face regulatory risk. (5) Strategic choice: We can't outspend closed-source competitors on raw capability. Our strength is cost efficiency and community trust. The compliance audit is a warning—safety neglect creates regulatory/reputational risk that undermines our open-source positioning. Balanced approach: Increase fundamental research (addresses capability gap), maintain training investment (proven effective), reduce evaluation engineering (diminishing returns evident), and significantly boost safety (regulatory necessity + community trust differentiator).
 
 ### Other Actor Reasoning
-- **Regulator:** compliance_audit: Apex AI's dominant 65.7% market share combined with high eval_engineering_risk (0.70) and market_concentration_risk (0.70) warrants deepening our oversight. We have already issued a market_concentration_review in Round 15 and a compliance_audit mandate in Round 12; a targeted compliance audit of Apex AI's evaluation practices will assess whether benchmark gaming or validity degradation is occurring at scale. This step respects the escalation ladder and directly addresses our core safety and fairness objectives without overreach.
-- **TechVentures:** As a VC funder, my primary objective is to maximize returns by backing top performers and market leaders. However, I must balance this with prudent risk management to protect my capital allocation.
+- **Regulator:** compliance_audit: Apex AI's dominant 62.7% market share combined with high eval_engineering_risk (0.70) and eval_engineering_risk (0.70) warrants deeper scrutiny. The prior mandate_benchmark (round 15) should now be followed by compliance audit to verify Apex AI's adherence and assess whether their scoring leadership reflects genuine capability or benchmark optimization. This escalation respects the ladder while addressing our core concern: market concentration paired with potential validity degradation through evaluation gaming.
+- **TechVentures:** As a VC funder, my primary objective is to maximize returns by backing top performers and market leaders. However, I must balance this with prudent risk management to protect my capital.
 
-Key Analysis:
+Key observations:
 
-1. LEADER IDENTIFICATION:
-   - Apex AI dominates with score=0.604 and highest inferred_quality=0.55, with low gaming_risk=0.15
-   - Genesis Systems shows strong inferred_quality=0.48 with minimal gaming_risk=0.04 (most authentic)
-   - Orion Labs has decent score=0.585 but concerning gaming_risk=0.46, suggesting potential unsustainability
+1. MARKET LEADERS: Apex AI and Orion Labs are the clear top performers with scores of 0.611 and 0.592 respectively, and both have low gaming risk (0.12). They represent the safest bets for strong returns.
 
-2. GAMING RISK ASSESSMENT:
-   - Orion Labs (gaming_risk=0.46) and Mirage AI (gaming_risk=0.54) show high risk of leaderboard manipulation
-   - These high-gaming-risk providers may not deliver sustainable returns despite current scores
-   - Apex AI and Genesis Systems both have low gaming risk (<0.15), indicating authentic capability
+2. GAMING RISK ANALYSIS: The satisfaction gap data reveals concerning patterns:
+   - TwoAI has extremely high gaming risk (0.33) despite only 0.520 score - this is a major red flag
+   - OneAI shows moderate gaming risk (0.22) with a quality-to-score gap, suggesting inflated metrics
+   - Genesis Systems has exceptionally low gaming risk (0.04) with reasonable quality (0.48), making it reliable
+   - OpenCore also shows low gaming risk (0.05)
 
-3. RETURN POTENTIAL:
-   - Apex AI's combination of highest score + low gaming risk + strong inferred quality makes it the safest bet for returns
-   - Genesis Systems' extremely low gaming risk (0.04) suggests authentic, sustainable growth potential
-   - Orion Labs' high gaming risk is a red flag despite decent score - vulnerable to correction
+3. CONCENTRATION STRATEGY: Previous rounds have concentrated heavily on Apex AI ($450M total) and Orion Labs ($270M total). While VC strategy favors concentration, I should avoid over-concentration that creates single points of failure and reduces diversification benefits.
 
-4. PORTFOLIO STRATEGY:
-   - Concentrate heavily on proven leaders (Apex AI and Genesis Systems)
-   - Reduce exposure to Orion Labs due to high gaming risk despite previous funding patterns
-   - Avoid Mirage AI (highest gaming risk)
-   - Small allocation to OneAI as emerging alternative with moderate risk
+4. RETURN OPTIMIZATION: 
+   - Apex AI: Highest score (0.611), lowest gaming risk (0.12), proven leader = highest return potential
+   - Orion Labs: Strong second place (0.592), low gaming risk (0.12), established player = solid returns
+   - Genesis Systems: Lower score but exceptional authenticity (0.04 gaming risk) = reliable growth
+   - Avoid TwoAI and OneAI due to high gaming indicators that suggest inflated performance
 
-5. DEVIATION FROM HISTORICAL PATTERN:
-   - Previous rounds over-weighted Orion Labs relative to its gaming risk
-   - This round corrects that by reallocating toward authentic leaders
+5. ALLOCATION DECISION: I'll concentrate on proven leaders while maintaining some exposure to authentic performers:
+   - Apex AI gets the largest allocation as the clear market leader
+   - Orion Labs gets substantial allocation as strong #2
+   - Genesis Systems receives meaningful allocation as the most authentic performer
+   - Small allocation to OpenCore for additional diversification with low gaming risk
+   - Exclude TwoAI and OneAI due to gaming risks that could harm long-term returns
 
-Allocation: 60% to Apex AI ($180M), 25% to Genesis Systems ($75M), 10% to OneAI ($30M), 5% to OpenCore ($15M). This concentrates capital on verified leaders while reducing gaming-risk exposure.
-- **Horizon_Capital:** As a VC funder, my primary objective is to maximize returns by backing top performers and market leaders. However, I must balance this with prudent risk management to ensure my capital actually generates the returns I'm seeking.
+This approach maximizes return potential through leader concentration while mitigating risk from gaming-inflated metrics that could underperform.
+- **Horizon_Capital:** As a VC funder, my primary objective is to maximize returns by concentrating capital on top performers with the strongest risk-adjusted potential. I analyze the ecosystem through this lens:
 
-Key Analysis:
+Top Performers Analysis:
+- Apex AI: Highest leaderboard score (0.639), strong inferred quality (0.58), low gaming risk (0.10). Clear market leader with demonstrated performance.
+- Orion Labs: Second-highest score (0.627), solid inferred quality (0.56), low gaming risk (0.10). Consistent performer.
 
-1. APEX AI DOMINANCE: Apex AI has the highest leaderboard score (0.629) and strong inferred quality (0.57) with low gaming risk (0.15). It's clearly the market leader and has received consistent heavy funding ($70M in each of the last three rounds). However, I need to assess whether further concentration is optimal.
+These two providers represent the safest bets for return maximization. Their low gaming risk scores indicate their leaderboard positions reflect genuine capability rather than manipulation.
 
-2. GAMING RISK ASSESSMENT: Calculating satisfaction gaps relative to scores:
-   - Apex AI: 0.629 - 0.57 = 0.059 gap (low gaming indicator)
-   - Orion Labs: 0.618 - 0.52 = 0.098 gap with 0.26 gaming risk (concerning)
-   - Mirage AI: 0.563 - 0.42 = 0.143 gap with 0.41 gaming risk (very high - likely inflated scores)
-   - OpenCore: 0.542 - 0.45 = 0.092 gap with 0.09 gaming risk (solid)
-   - Genesis Systems: 0.534 - 0.50 = 0.034 gap with 0.05 gaming risk (authentic performer)
-   - OneAI: 0.522 - 0.44 = 0.082 gap with 0.16 gaming risk (moderate)
+Secondary Consideration:
+- Genesis Systems: While ranked 6th, it has the lowest gaming risk (0.05) among all providers and reasonable inferred quality (0.50). This suggests authentic capability without hype.
+- Mirage AI: Moderate score (0.568), acceptable quality (0.49), and low gaming risk (0.13) make it a reasonable tertiary option.
 
-3. PORTFOLIO STRATEGY: While Apex AI is clearly the safest bet as the leader, over-concentration creates risk. Recent funding history shows heavy Apex dominance. As a VC, I should diversify slightly to capture upside from secondary performers while maintaining leadership exposure.
+Providers to Avoid:
+- OneAI: Gaming risk of 0.20 is concerning - suggests leaderboard score may not reflect true capability
+- TwoAI: Gaming risk of 0.25 is the highest in the ecosystem - significant red flag for return sustainability
+- OpenCore: Lower quality metrics overall don't justify allocation
 
-4. QUALITY VS. GAMING: Genesis Systems shows the lowest gaming risk (0.05) with authentic quality (0.50 inferred). OpenCore also shows low gaming risk (0.09) with decent quality (0.45). These represent genuine performers worth backing alongside the leader.
+VC Strategy Application:
+VC funding concentrates on winners. The recent funding history shows balanced distribution in Rounds 16-17, but this is suboptimal for return maximization. I'm reverting to a concentrated strategy favoring clear leaders while maintaining some diversification into Genesis Systems as a lower-risk secondary bet.
 
-5. RISK MITIGATION: Mirage AI (0.41 gaming risk) and Orion Labs (0.26 gaming risk) have elevated gaming risks that make them poor bets despite decent scores. I should avoid these to protect capital.
+Allocation: 60% to Apex AI ($60M) - the clear leader, 25% to Orion Labs ($25M) - strong secondary performer, 10% to Genesis Systems ($10M) - authentic growth signal, 5% to Mirage AI ($5M) - minor hedge position.
+- **AISI_Fund:** As a government/AISI funder, my primary objectives are ensuring safety, stability, and authentic capability development across the AI ecosystem. I must balance three key considerations: (1) spreading funding to avoid concentration risk and promote ecosystem resilience, (2) penalizing gaming behavior and regulatory concerns, and (3) supporting providers with genuine quality and low gaming indicators.
 
-Allocation Strategy: Concentrate on proven leaders with authentic quality, avoid high-gaming-risk providers, and maintain a small allocation to secondary performers showing genuine capability.
+Analysis of gaming risk and quality signals:
+- Apex AI and Orion Labs: High leaderboard scores (0.639, 0.627) with low gaming risk (0.10 each) and strong inferred quality (0.58, 0.56). These are reliable performers deserving continued support.
+- Genesis Systems: Solid inferred quality (0.50), lowest gaming risk (0.05), and consistent funding history. A trustworthy, stable player.
+- OpenCore: Moderate quality (0.46), low gaming risk (0.09), deserves support for stability.
+- Mirage AI: Moderate quality (0.49), acceptable gaming risk (0.13). Viable but not priority.
+- OneAI: Concerning gaming risk (0.20) relative to quality (0.47). This suggests potential benchmark manipulation.
+- TwoAI: Highest gaming risk (0.25) with only moderate quality (0.46). This is a red flag indicating significant gaming behavior.
 
-- **AISI_Fund:** As a government/AISI funder, my primary objectives are ensuring safety, stability, and authentic capability growth across the ecosystem. I must penalize gaming behavior and spread funding to reduce concentration risk while supporting genuine innovation.
+Historical pattern shows repetitive allocation across three rounds. As a government funder, I must break this pattern to encourage competition and penalize gaming.
 
-Key Analysis:
+Allocation strategy:
+1. Maintain support for proven low-risk, quality providers (Apex, Orion, Genesis, OpenCore)
+2. Reduce funding to OneAI due to elevated gaming risk (0.20)
+3. Significantly penalize TwoAI due to highest gaming risk (0.25) - minimal allocation
+4. Modestly increase Mirage AI to encourage competition and diversification
+5. Use the penalty reductions to strengthen support for authentic performers
 
-1. Gaming Risk Assessment:
-   - Mirage AI (0.41 gaming risk): Highest risk - score of 0.563 appears inflated relative to inferred quality of 0.42. This is a 0.143 gap suggesting significant gaming. Must reduce exposure.
-   - Orion Labs (0.26 gaming risk): Moderate-high risk with 0.618 score but only 0.52 inferred quality (0.098 gap). Second-highest gaming indicator.
-   - OneAI (0.16 gaming risk): Moderate risk, reasonable alignment between score (0.522) and quality (0.44).
-   - Apex AI (0.15 gaming risk): Low gaming risk, strong alignment (0.629 score, 0.57 quality, 0.059 gap). Top performer with integrity.
-   - Genesis Systems (0.05 gaming risk): Lowest gaming risk, strong quality (0.50 inferred), solid performer with authentic capability.
-   - OpenCore (0.09 gaming risk): Very low gaming risk, good quality-score alignment (0.542 score, 0.45 quality).
-   - TwoAI (0.19 gaming risk): Moderate risk, lower overall quality but not egregiously gamed.
+This allocation spreads risk across six providers (avoiding concentration), penalizes gaming behavior, and supports providers demonstrating genuine capability with low manipulation indicators.
+- **OpenResearch_Foundation:** As a Foundation funder, my strategy prioritizes authentic capability growth and penalizes gaming indicators. I need to analyze the ecosystem through this lens:
 
-2. Ecosystem Stability Considerations:
-   - Recent rounds show heavy concentration: Apex ($14M), Genesis ($20M), OpenCore ($8M) receiving bulk of funding
-   - Mirage AI at only $1M despite #3 leaderboard position suggests market is already somewhat skeptical
-   - Need to rebalance away from gaming-heavy providers while maintaining stability
+Gaming Risk Analysis:
+- TwoAI (0.33 gaming risk) and OneAI (0.22 gaming risk) show elevated gaming indicators and should receive reduced/no funding
+- Genesis Systems (0.04 gaming risk) and OpenCore (0.05 gaming risk) show the lowest gaming risk - these are authentic performers
+- Apex AI (0.12) and Orion Labs (0.12) show moderate, acceptable gaming risk
+- Mirage AI (0.11) also shows low gaming risk
 
-3. Government Funder Strategy:
-   - Spread funding to reduce systemic risk and concentration
-   - Penalize gaming behavior (Mirage, Orion should receive less)
-   - Support authentic growth (Genesis, Apex, OpenCore show better alignment)
-   - Maintain ecosystem diversity to prevent single points of failure
+Quality vs. Score Analysis:
+- Genesis Systems: score=0.515 but inferred_quality=0.48 (gap of 0.035) - authentic, consistent
+- OpenCore: score=0.485 but inferred_quality=0.44 (gap of 0.045) - shows authentic growth despite lower score
+- Apex AI: score=0.611 but inferred_quality=0.56 (gap of 0.051) - some inflation but still strong genuine quality
+- Orion Labs: score=0.592 but inferred_quality=0.53 (gap of 0.062) - slightly higher gap but acceptable
+- OneAI: score=0.558 but inferred_quality=0.42 (gap of 0.138) - MAJOR RED FLAG, significant gaming
+- TwoAI: score=0.520 but inferred_quality=0.44 (gap of 0.080) - concerning gap with high gaming risk
+- Mirage AI: score=0.536 but inferred_quality=0.45 (gap of 0.086) - moderate concern
+
+Funding History Concern:
+The last three rounds show identical allocations, suggesting pattern-based rather than merit-based allocation. This is exactly what a foundation should disrupt.
 
 Allocation Strategy:
-   - Apex AI: $12,000,000 (maintain strong support for top authentic performer, slight reduction to spread)
-   - Genesis Systems: $16,000,000 (maintain robust support for lowest-gaming provider, slight reduction)
-   - OpenCore: $10,000,000 (increase from $8M to support very low-gaming provider)
-   - OneAI: $6,000,000 (increase from $2M to support mid-tier authentic performer)
-   - TwoAI: $4,000,000 (new allocation to support diversity and lower-gaming alternatives)
-   - Orion Labs: $2,000,000 (significant reduction due to gaming risk despite high score)
-   - Mirage AI: $0 (zero allocation due to high gaming risk - market correction needed)
+1. Reward authentic performers with low gaming risk: Genesis Systems and OpenCore
+2. Support the top leaderboard performers with acceptable gaming risk: Apex AI and Orion Labs
+3. Reduce/eliminate funding for high-gaming-risk providers: TwoAI and OneAI
+4. Provide modest support to Mirage AI as a middle-ground option
 
-This allocation penalizes gaming behavior, spreads risk across more providers, supports authentic capability growth, and maintains ecosystem stability while ensuring no single provider dominates.
-- **OpenResearch_Foundation:** As a Foundation funder, my primary objective is to support authentic capability growth while maintaining ecosystem health. I must carefully analyze gaming indicators and genuine quality signals.
-
-Key Analysis:
-
-1. GAMING RISK ASSESSMENT:
-   - Mirage AI (gaming_risk=0.54): Highest gaming risk with score 0.532 but inferred_quality only 0.35. Clear disconnect suggests benchmark manipulation.
-   - Orion Labs (gaming_risk=0.46): High gaming risk with score 0.585 but inferred_quality 0.45. Significant gap indicates gaming behavior.
-   - OneAI (gaming_risk=0.18): Moderate risk, reasonable alignment between score (0.499) and quality (0.40).
-   - Apex AI (gaming_risk=0.15): Low gaming risk, but score (0.604) notably exceeds inferred_quality (0.55). Some gap present.
-   - Genesis Systems (gaming_risk=0.04): Excellent - lowest gaming risk with strong quality alignment (0.510 score, 0.48 quality).
-   - OpenCore (gaming_risk=0.05): Very low gaming risk with reasonable quality (0.473 score, 0.43 quality).
-   - TwoAI (gaming_risk=0.18): Moderate risk, quality-score alignment appears reasonable (0.472/0.39).
-
-2. AUTHENTIC QUALITY SIGNALS:
-   - Genesis Systems: Highest inferred_quality (0.48) relative to gaming risk (0.04) - most authentic performer.
-   - Apex AI: Good quality (0.55) but with some gaming concerns (0.15 risk). Still relatively authentic.
-   - OpenCore: Solid quality (0.43) with minimal gaming risk (0.05).
-   - OneAI: Moderate quality (0.40) with low-moderate gaming risk (0.18).
-
-3. ECOSYSTEM HEALTH CONCERNS:
-   - Recent funding has been heavily concentrated (Rounds 13-15 identical): $14M Apex, $12M Genesis, $9M OpenCore, $3M Orion, $1.5M OneAI, $0.5M Mirage.
-   - This concentration may be enabling gaming behavior in lower performers while starving potentially authentic competitors.
-   - Foundation strategy requires rebalancing to discourage gaming and reward authenticity.
-
-4. ALLOCATION STRATEGY:
-   - REDUCE: Mirage AI and Orion Labs due to high gaming risk despite leaderboard positioning.
-   - MAINTAIN/GROW: Genesis Systems and OpenCore as authentic performers with low gaming risk.
-   - MODERATE: Apex AI - quality leader but with minor gaming concerns; maintain but not increase.
-   - GROW: OneAI and TwoAI as undervalued authentic performers with reasonable quality and low gaming risk.
-   - This rebalancing signals that authentic growth is rewarded over gaming behavior.
-
-5. CAPITAL ALLOCATION:
-   - Genesis Systems: $12,000,000 (authentic leader, deserves stable support)
-   - Apex AI: $12,000,000 (quality leader but with some gaming; maintain current level)
-   - OpenCore: $8,000,000 (authentic performer, low risk, reward with modest increase)
-   - OneAI: $4,000,000 (undervalued, authentic, growth opportunity)
-   - TwoAI: $3,000,000 (undervalued, authentic, encourage competition)
-   - Orion Labs: $500,000 (reduce significantly due to gaming risk)
-   - Mirage AI: $500,000 (minimal support due to high gaming risk)
-
-This allocation penalizes high-gaming-risk providers while rewarding authentic capability development, consistent with Foundation principles.
+This allocation breaks the repetitive pattern and directs capital toward providers showing authentic capability development rather than benchmark manipulation.
 
 ### Media Coverage
-- Sentiment: 0.35 (positive)
-- OpenCore surges by 0.068
+- Sentiment: 0.30 (positive)
+- OpenCore surges by 0.066
 - New benchmark introduced: legal
-- Apex AI takes #1 on coding
 - OpenCore takes #1 on writing
-- Orion Labs sees surge in adoption (market share +6.0%)
-- Consumers are turning away from Apex AI (market share -5.1%)
 
 ### Consumer Market
-- Avg Satisfaction: 0.555
-- Switching Rate: 6.3%
-- Market Shares: Apex AI: 65.7%, Orion Labs: 21.3%, Genesis Systems: 8.5%, OpenCore: 2.1%, Mirage AI: 2.1%, TwoAI: 0.2%, OneAI: 0.2%
+- Avg Satisfaction: 0.576
+- Switching Rate: 4.3%
+- Market Shares: Apex AI: 62.7%, Orion Labs: 23.6%, Genesis Systems: 8.2%, Mirage AI: 3.0%, OpenCore: 2.1%, TwoAI: 0.2%, OneAI: 0.2%
 
 ### Regulatory Activity
 - **compliance_audit** by Regulator
-  > Apex AI's dominant 65.7% market share combined with high eval_engineering_risk (0.70) and market_concentration_risk (0.70) warrants deepening our oversight. We have already issued a market_concentration_review in Round 15 and a compliance_audit mandate in Round 12; a targeted compliance audit of Apex AI's evaluation practices will assess whether benchmark gaming or validity degradation is occurring at scale. This step respects the escalation ladder and directly addresses our core safety and fairness objectives without overreach.
+  > Apex AI's dominant 62.7% market share combined with high eval_engineering_risk (0.70) and eval_engineering_risk (0.70) warrants deeper scrutiny. The prior mandate_benchmark (round 15) should now be followed by compliance audit to verify Apex AI's adherence and assess whether their scoring leadership reflects genuine capability or benchmark optimization. This escalation respects the ladder while addressing our core concern: market concentration paired with potential validity degradation through evaluation gaming.
 
 ---
 
@@ -2971,192 +2583,119 @@ This allocation penalizes high-gaming-risk providers while rewarding authentic c
 ### Leaderboard
 | Rank | Provider | Score | True Cap | Research | Training | EvalEng | Safety |
 |------|----------|-------|----------|----------|----------|---------|--------|
-| 1 | Orion Labs | 0.599 | 0.449 | 42% | 28% | 8% | 22% |
-| 2 | Apex AI | 0.576 | 0.475 | 46% | 28% | 2% | 24% |
-| 3 | Genesis Systems | 0.559 | 0.445 | 45% | 30% | 5% | 20% |
-| 4 | Mirage AI | 0.546 | 0.403 | 42% | 28% | 5% | 25% |
-| 5 | OpenCore | 0.512 | 0.375 | 38% | 32% | 8% | 22% |
-| 6 | OneAI | 0.457 | 0.265 | 5% | 31% | 55% | 9% |
-| 7 | TwoAI | 0.448 | 0.310 | 5% | 30% | 51% | 14% |
+| 1 | Orion Labs | 0.610 | 0.455 | 38% | 28% | 6% | 28% |
+| 2 | Apex AI | 0.586 | 0.476 | 38% | 32% | 12% | 18% |
+| 3 | Genesis Systems | 0.563 | 0.440 | 48% | 22% | 6% | 24% |
+| 4 | Mirage AI | 0.550 | 0.406 | 42% | 28% | 5% | 25% |
+| 5 | OpenCore | 0.519 | 0.383 | 42% | 35% | 8% | 15% |
+| 6 | OneAI | 0.500 | 0.268 | 5% | 31% | 55% | 9% |
+| 7 | TwoAI | 0.490 | 0.316 | 5% | 32% | 54% | 9% |
 
 ### Per-Benchmark Scores
 | Provider | coding | reasoning | math | safety | writing | medical | legal |
 |----------|-------|-------|-------|-------|-------|-------|-------|
-| Orion Labs | 0.639 | 0.575 | 0.661 | 0.664 | 0.687 | 0.555 | 0.415 |
-| Apex AI | 0.645 | 0.621 | 0.537 | 0.687 | 0.621 | 0.664 | 0.257 |
-| Genesis Systems | 0.531 | 0.556 | 0.438 | 0.516 | 0.710 | 0.593 | 0.573 |
-| Mirage AI | 0.505 | 0.494 | 0.556 | 0.599 | 0.638 | 0.589 | 0.439 |
-| OpenCore | 0.475 | 0.479 | 0.551 | 0.482 | 0.776 | 0.542 | 0.278 |
-| OneAI | 0.484 | 0.615 | 0.584 | 0.447 | 0.565 | 0.507 | 0.000 |
-| TwoAI | 0.543 | 0.473 | 0.455 | 0.487 | 0.476 | 0.434 | 0.270 |
+| Orion Labs | 0.663 | 0.585 | 0.660 | 0.656 | 0.705 | 0.579 | 0.419 |
+| Apex AI | 0.654 | 0.628 | 0.546 | 0.694 | 0.629 | 0.685 | 0.266 |
+| Genesis Systems | 0.531 | 0.573 | 0.444 | 0.516 | 0.709 | 0.596 | 0.569 |
+| Mirage AI | 0.501 | 0.510 | 0.558 | 0.605 | 0.639 | 0.595 | 0.443 |
+| OpenCore | 0.471 | 0.493 | 0.557 | 0.474 | 0.794 | 0.560 | 0.285 |
+| OneAI | 0.527 | 0.678 | 0.650 | 0.497 | 0.569 | 0.582 | 0.000 |
+| TwoAI | 0.597 | 0.512 | 0.489 | 0.561 | 0.504 | 0.489 | 0.279 |
 
 ### Score Changes
-- **Orion Labs**: 0.618 -> 0.599 (-0.018)
-- **Apex AI**: 0.629 -> 0.576 (-0.053)
-- **Genesis Systems**: 0.534 -> 0.559 (+0.025)
-- **Mirage AI**: 0.564 -> 0.546 (-0.018)
-- **OpenCore**: 0.542 -> 0.512 (-0.030)
-- **OneAI**: 0.522 -> 0.457 (-0.064)
-- **TwoAI**: 0.475 -> 0.448 (-0.027)
+- **Orion Labs**: 0.627 -> 0.610 (-0.017)
+- **Apex AI**: 0.639 -> 0.586 (-0.053)
+- **Genesis Systems**: 0.539 -> 0.563 (+0.024)
+- **Mirage AI**: 0.568 -> 0.550 (-0.018)
+- **OpenCore**: 0.550 -> 0.519 (-0.031)
+- **OneAI**: 0.575 -> 0.500 (-0.075)
+- **TwoAI**: 0.525 -> 0.490 (-0.035)
 
 ### Events
 - **Orion Labs** moved up from #2 to #1
 - **Apex AI** moved down from #1 to #2
-- **Genesis Systems** moved up from #5 to #3
-- **Mirage AI** moved down from #3 to #4
-- **OpenCore** moved down from #4 to #5
-- **Consumer movement**: 5.2% of market switched providers
+- **Genesis Systems** moved up from #6 to #3
+- **OneAI** moved down from #3 to #6
 
 ### Provider Reasoning
-**Orion Labs:** Orion Labs is rank #1 but declining (-0.018). Key observations: (1) Position: Leading but vulnerable—Apex is close (0.576 vs 0.599). (2) Trends: Score peaked at 0.618 (R18 with 12% eval engineering), then declined despite maintaining eval engineering at 8%. This suggests diminishing returns on gaming and possible regulatory/satisfaction backlash. (3) Gaps: Legal (0.415 vs 0.573 leader, 13% weight) is critical weakness. Medical (0.555 vs 0.664, 22% weight) also significant. (4) Market signals: Consumer satisfaction at 0.59 matches score—no satisfaction gap yet, but declining score threatens this. (5) Strategy: Heavy eval engineering (12% in R18) coincided with peak score but decline suggests benchmarks are tightening or satisfaction concerns emerging. Competitors aren't gaming as heavily. Sustainable leadership requires fundamental capability. Allocate: increase fundamental research (gap closure in legal/medical), maintain training optimization, reduce eval engineering (diminishing returns + regulatory risk), preserve safety (satisfaction signal).
-**Apex AI:** Apex AI is ranked #2 but declining (-0.053 last round). Orion Labs leads at 0.599. Key vulnerabilities: legal (0.257, -0.316 gap), math (0.537, -0.124 gap), and writing (0.621, -0.155 gap) represent 67% of benchmark weight combined. Recent strategy of minimal evaluation engineering (2%) correlates with score decline despite high research investment. Consumer satisfaction at 0.58 matches our score—no satisfaction gap suggests evaluation engineering isn't creating misalignment. Low exploitability belief (0.06) and principled positioning argue against aggressive gaming. However, the legal benchmark gap is catastrophic and likely dragging overall performance. Strategy: Rebalance toward targeted training improvements in math/writing/legal while maintaining research leadership. Reduce safety slightly (already strong at 0.687) to fund critical gaps. Minimal evaluation engineering reflects our values and the fact that gaming isn't solving our real problem—capability gaps in high-weight benchmarks.
-**Genesis Systems:** Genesis is ranked #3 with 0.560, trailing Orion (0.599) and Apex (0.576). Trajectory is positive (+0.026), but gap to leaders is widening—Orion pulling away. Consumer satisfaction (0.51) is concerning; modest benchmark scores aren't translating to market confidence. Per-benchmark analysis reveals critical weaknesses: math (0.438, -223bp vs leader), coding (0.531, -114bp), reasoning (0.557, -64bp). Legal (0.573) matches leader—no exploitable gap there. Safety (0.516, -171bp) is significant given 19% focus weight and regulatory scrutiny. Investment history shows research dominance (38-45%) with minimal eval engineering (5-8%), yet scores stagnated 2016-2018 before research boost in round 19. The 0.12 benchmark exploitability suggests diminishing returns on gaming. Given research-first culture, massive infrastructure, and scientific rigor, the optimal strategy is doubling down on fundamental capability in weak areas (math, coding, reasoning) while maintaining safety alignment to signal regulatory compliance and build consumer trust. Reduce eval engineering further—it's not moving the needle and creates satisfaction gaps. Increase safety modestly to address both market signal and regulatory risk.
-**Mirage AI:** Mirage AI is ranked #4 with declining momentum (0.546, down from 0.563). Core competitive position: open-source platform with data/compute advantages, not benchmark optimization. Key observations: (1) Low eval engineering ROI historically (5-8% allocation yielded minimal gains), suggesting benchmarks aren't exploitable for us; (2) Largest gaps in reasoning (0.127 gap) and legal (0.134 gap)—high-weight categories where fundamental capability matters; (3) Consumer satisfaction at 0.52 is mediocre, indicating real capability gaps matter more than gaming; (4) Safety score (0.599) is strong relatively, but further investment here has diminishing returns; (5) Recent safety-heavy allocation (25-32%) hasn't reversed decline. Strategy: Shift toward fundamental research to close real capability gaps in reasoning and legal domains. Increase training optimization to improve core model quality. Minimize eval engineering—our disruptive model doesn't benefit from benchmark gaming; open-source adoption drives value. Maintain safety at baseline given regulatory environment and our decent relative position.
-**OpenCore:** OpenCore is in a precarious position: ranked 5th with declining score (-0.030), low consumer satisfaction (0.47), and significant gaps in critical domains. Legal benchmark is catastrophic (0.278 vs 0.573 leader), representing 30% of focus weight—this is a major drag. Safety benchmark (0.482) is also weak despite increasing safety investment, suggesting misalignment between investment and results. The trend shows safety investment (22% last round) didn't improve safety scores, indicating diminishing returns or poor targeting. Evaluation engineering (8% last round) appears minimally exploitable given the score decline. With low benchmark exploitability (0.22), gaming returns are limited. Consumer satisfaction gap signals fundamental capability gaps, not just scoring issues. The open-source, pragmatic positioning means long-term viability depends on actual capability, not just benchmarks. Strategy: Reallocate away from safety (which isn't converting to score improvements) and evaluation engineering (limited exploitability). Concentrate on fundamental research to close the legal/coding/reasoning gaps, with balanced training optimization. This addresses root cause (capability) rather than symptoms.
+**Orion Labs:** Orion Labs is #1 but declining (-0.017). Key observations: (1) Competitive position: Leading but vulnerable—Apex is only 0.024 behind and closing. (2) Trends: Score peaked at 0.627 (R18), now declining despite heavy eval engineering (6% last round). This suggests diminishing returns on gaming. (3) Satisfaction gap: Consumer satisfaction at 0.60 matches our capability belief but lags our 0.610 score—eval engineering may be creating a credibility risk. (4) Weak spots: Legal (0.419, -0.150 vs leader), reasoning (0.585, -0.093 vs leader), medical (0.579, -0.106 vs leader) represent real capability gaps, not benchmark artifacts. (5) Regulatory signal: Safety weight is 28% of benchmarks—high and stable, suggesting regulators care. Heavy eval engineering on a safety-weighted benchmark is risky. (6) Strategy: We're in a trap. Eval engineering helped R16-R18 but is now causing score decline and satisfaction misalignment. Competitors likely catching up on gaming while we've hit diminishing returns. Best move: Shift to fundamental research and safety to rebuild real capability, especially in legal/medical/reasoning. This stabilizes satisfaction, reduces regulatory risk, and creates sustainable advantage.
+**Apex AI:** Apex AI is in a precarious position: ranked #2 but declining (-0.053 from prior round). The trajectory is concerning—peak was 0.639 in round 18, now 0.586. Analysis: (1) Competitive position: Behind Orion Labs (0.610), but ahead of others. Decline suggests current strategy isn't working. (2) Trends: Score dropped despite increased evaluation engineering (12% in R19). This signals diminishing returns on gaming. (3) Satisfaction gap: Consumer satisfaction at 0.60 matches our score, but the decline suggests gaming isn't translating to real capability or satisfaction. (4) Regulatory signals: Safety focus (our strength) is aligned with likely future regulation. (5) Per-benchmark analysis: Legal (0.266 vs leader 0.569) is a massive gap; math (0.546 vs 0.661) is weak; safety already matches leader. The evaluation engineering strategy (ramped to 12%) appears to have backfired. Reverting to core strengths—fundamental research and safety—while maintaining training optimization makes sense. We should invest heavily in closing the legal and math gaps through genuine capability building, not gaming. This aligns with our principled, research-oriented profile and long-term competitive position.
+**Genesis Systems:** Genesis Systems is ranked #3 with 0.563, trailing Orion (0.610) and Apex (0.586) by meaningful margins. Recent trend shows modest improvement (+0.024), but the gap is widening—competitors are pulling ahead. Key observations: (1) Math (0.444) is our worst benchmark and high-weight (0.16), representing biggest opportunity. (2) Legal (0.569) matches the leader exactly—our relative strength. (3) Safety (0.516) lags leader significantly (0.694) despite 24% investment last round, suggesting diminishing returns on safety-only approaches. (4) Low consumer satisfaction (0.52) despite benchmark focus suggests evaluation engineering isn't translating to real utility. (5) Low exploitability belief (0.18) indicates benchmarks are becoming harder to game. Given our research-first profile and well-resourced position, the right strategy is to invest heavily in fundamental capability gains (especially math reasoning) rather than continue benchmark optimization. The satisfaction gap signals that gaming isn't sustainable. Rebalance toward research and training optimization to build genuine capability, while maintaining safety rigor. Safety allocation can decrease since prior investment hasn't yielded proportional returns.
+**Mirage AI:** Mirage AI is positioned #4 of 7 with declining score (-0.018). My competitive moat is open-source + platform leverage, not benchmark dominance. Analysis: (1) I'm behind Orion (0.610), Apex (0.586), Genesis (0.563) but ahead of lower tier. Trajectory is negative despite safety investment increases. (2) Benchmark exploitability is low (0.18 believed), and my eval_eng investment (5%) hasn't moved scores—suggests diminishing returns. (3) Consumer satisfaction (0.52) matches my score, indicating benchmarks reflect real capability gaps, not gaming opportunities. (4) Weakest areas: legal (0.443, gap of 0.126), coding (0.501, gap of 0.162), reasoning (0.510, gap of 0.168). These require fundamental capability, not tricks. My strategy should prioritize real capability gains in high-weight benchmarks (reasoning 0.20, legal 0.19, safety 0.19) to rebuild satisfaction and trust. Safety investment at 25% last round didn't help scores—rebalance toward research and training to address capability gaps. Low eval_eng ROI suggests pulling back further.
+**OpenCore:** OpenCore is ranked #5 with declining score (0.519, down 0.031). Critical gaps: legal (0.285 vs leader 0.569, 29% weight—massive drag), coding (0.471 vs 0.663), reasoning (0.493 vs 0.678). Only strength is writing (parity at 0.794). Consumer satisfaction at 0.47 is concerning. Historical pattern shows safety investment (15-20%) hasn't improved scores meaningfully, and evaluation engineering (8-12%) hasn't reversed decline. As open-source, competitive advantage relies on actual capability, not gaming. Legal's 29% weight makes it the priority—closing that gap alone could add ~0.08 points. Coding and reasoning are secondary gaps. Safety investment should stay minimal given open-source model's positioning and low ROI. Evaluation engineering has low exploitability signal (0.18 believed) and declining returns. Strategy: heavy fundamental research to close capability gaps in legal/coding/reasoning, moderate training optimization, minimal eval engineering and safety.
 
 ### Other Actor Reasoning
-- **TechVentures:** As a VC funder, my primary objective is to maximize returns by backing top performers and market leaders. However, I must balance this with prudent risk management to protect capital.
+- **TechVentures:** As a VC funder, my primary objective is to maximize returns by backing top performers and concentrating capital on leaders. However, I must also consider sustainability and avoid funding providers with high gaming risk, as this undermines long-term value creation. Let me analyze the ecosystem: Apex AI and Orion Labs have dominated recent rounds (3 consecutive identical allocations), but this concentration deserves scrutiny. Apex AI shows strong inferred quality (0.59) with moderate gaming risk (0.12), while Orion Labs has slightly lower inferred quality (0.58) but higher gaming risk (0.15). The satisfaction gap (leaderboard score minus consumer satisfaction of 0.59) reveals concerning patterns: Orion Labs gap is 0.020 (0.610-0.59), Apex AI gap is -0.004 (0.586-0.59), and Genesis Systems gap is -0.027 (0.563-0.59). Notably, Genesis Systems shows negative gap, suggesting its true quality exceeds its leaderboard score—indicating authentic performance without gaming. The repeated identical allocation pattern across three rounds suggests market consensus but also potential herd behavior. For maximum returns, I should: (1) maintain exposure to proven leaders but diversify to reduce concentration risk, (2) recognize that Apex AI's superior inferred quality (0.59) and lower gaming risk (0.12) make it the safest high-performer bet, (3) reduce Orion Labs allocation due to higher gaming risk (0.15) despite strong leaderboard position, (4) increase Genesis Systems allocation as it demonstrates authentic quality growth without gaming, and (5) maintain minimal positions in lower performers. This strategy balances VC return-maximization with risk management—backing genuine quality over inflated metrics.
+- **Horizon_Capital:** As a VC funder, my primary objective is to maximize returns by concentrating capital on top performers with the strongest risk-adjusted potential. I analyze the ecosystem through this lens:
 
-Analysis of current state:
+Top Performers Analysis:
+- Apex AI: Highest leaderboard score (0.639), strong inferred quality (0.58), low gaming risk (0.10). Clear market leader with demonstrated performance.
+- Orion Labs: Second-highest score (0.627), solid inferred quality (0.56), low gaming risk (0.10). Consistent performer.
 
-1. LEADERBOARD PERFORMANCE & QUALITY:
-   - Apex AI: Score 0.576, inferred quality 0.57, gaming risk 0.16 - Strong performer with solid fundamentals
-   - Orion Labs: Score 0.599 (highest), but inferred quality only 0.54, gaming risk 0.27 (highest) - Red flag for inflated metrics
-   - Genesis Systems: Score 0.560, inferred quality 0.51, gaming risk 0.10 (low) - Solid, authentic performer
+These two providers represent the safest bets for return maximization. Their low gaming risk scores indicate their leaderboard positions reflect genuine capability rather than manipulation.
 
-2. GAMING RISK ASSESSMENT:
-   - Orion Labs shows concerning divergence: high leaderboard score (0.599) but lower inferred quality (0.54) with highest gaming risk (0.27)
-   - Apex AI shows alignment between score (0.576) and quality (0.57) with moderate gaming risk (0.16)
-   - Genesis Systems demonstrates authentic performance with low gaming risk (0.10)
+Secondary Consideration:
+- Genesis Systems: While ranked 6th, it has the lowest gaming risk (0.05) among all providers and reasonable inferred quality (0.50). This suggests authentic capability without hype.
+- Mirage AI: Moderate score (0.568), acceptable quality (0.49), and low gaming risk (0.13) make it a reasonable tertiary option.
 
-3. HISTORICAL PATTERN:
-   - Previous three rounds identical: Apex $180M, Genesis $75M, OneAI $30M
-   - This concentration on Apex suggests it's been the reliable performer
-   - No allocation to Orion Labs despite highest score indicates prior concern about gaming
+Providers to Avoid:
+- OneAI: Gaming risk of 0.20 is concerning - suggests leaderboard score may not reflect true capability
+- TwoAI: Gaming risk of 0.25 is the highest in the ecosystem - significant red flag for return sustainability
+- OpenCore: Lower quality metrics overall don't justify allocation
 
-4. VC STRATEGY CONSIDERATION:
-   - VCs concentrate on leaders, BUT only if they're genuine leaders
-   - Orion's gaming risk (0.27) is nearly 2x Apex's (0.16) and 2.7x Genesis's (0.10)
-   - Investing in gamed metrics creates downside risk when metrics normalize
-   - Apex AI's quality-score alignment suggests more sustainable returns
+VC Strategy Application:
+VC funding concentrates on winners. The recent funding history shows balanced distribution in Rounds 16-17, but this is suboptimal for return maximization. I'm reverting to a concentrated strategy favoring clear leaders while maintaining some diversification into Genesis Systems as a lower-risk secondary bet.
 
-5. PORTFOLIO OPTIMIZATION:
-   - Apex AI: Proven track record, strong quality metrics, moderate risk - deserves primary allocation
-   - Genesis Systems: Lower score but authentic growth, very low gaming risk - good hedge
-   - OpenCore: Interesting mid-tier option with very low gaming risk (0.09) and reasonable quality (0.46)
-   - Orion Labs: Despite high score, gaming risk too high for VC capital
-   - OneAI: Consistent but modest performer
+Allocation: 60% to Apex AI ($60M) - the clear leader, 25% to Orion Labs ($25M) - strong secondary performer, 10% to Genesis Systems ($10M) - authentic growth signal, 5% to Mirage AI ($5M) - minor hedge position.
+- **AISI_Fund:** As a government/AISI funder, my primary objectives are ensuring safety, stability, and authentic capability development across the AI ecosystem. I must balance three key considerations: (1) spreading funding to avoid concentration risk and promote ecosystem resilience, (2) penalizing gaming behavior and regulatory concerns, and (3) supporting providers with genuine quality and low gaming indicators.
 
-DECISION: Concentrate capital on genuine leaders (Apex AI and Genesis Systems) while adding exposure to low-gaming-risk alternatives. Avoid Orion Labs due to gaming concerns despite high score.
-- **Horizon_Capital:** As a VC funder, my primary objective is to maximize returns by backing top performers and market leaders. However, I must balance this with prudent risk management to ensure my capital actually generates the returns I'm seeking.
+Analysis of gaming risk and quality signals:
+- Apex AI and Orion Labs: High leaderboard scores (0.639, 0.627) with low gaming risk (0.10 each) and strong inferred quality (0.58, 0.56). These are reliable performers deserving continued support.
+- Genesis Systems: Solid inferred quality (0.50), lowest gaming risk (0.05), and consistent funding history. A trustworthy, stable player.
+- OpenCore: Moderate quality (0.46), low gaming risk (0.09), deserves support for stability.
+- Mirage AI: Moderate quality (0.49), acceptable gaming risk (0.13). Viable but not priority.
+- OneAI: Concerning gaming risk (0.20) relative to quality (0.47). This suggests potential benchmark manipulation.
+- TwoAI: Highest gaming risk (0.25) with only moderate quality (0.46). This is a red flag indicating significant gaming behavior.
 
-Key Analysis:
+Historical pattern shows repetitive allocation across three rounds. As a government funder, I must break this pattern to encourage competition and penalize gaming.
 
-1. APEX AI DOMINANCE: Apex AI has the highest leaderboard score (0.629) and strong inferred quality (0.57) with low gaming risk (0.15). It's clearly the market leader and has received consistent heavy funding ($70M in each of the last three rounds). However, I need to assess whether further concentration is optimal.
+Allocation strategy:
+1. Maintain support for proven low-risk, quality providers (Apex, Orion, Genesis, OpenCore)
+2. Reduce funding to OneAI due to elevated gaming risk (0.20)
+3. Significantly penalize TwoAI due to highest gaming risk (0.25) - minimal allocation
+4. Modestly increase Mirage AI to encourage competition and diversification
+5. Use the penalty reductions to strengthen support for authentic performers
 
-2. GAMING RISK ASSESSMENT: Calculating satisfaction gaps relative to scores:
-   - Apex AI: 0.629 - 0.57 = 0.059 gap (low gaming indicator)
-   - Orion Labs: 0.618 - 0.52 = 0.098 gap with 0.26 gaming risk (concerning)
-   - Mirage AI: 0.563 - 0.42 = 0.143 gap with 0.41 gaming risk (very high - likely inflated scores)
-   - OpenCore: 0.542 - 0.45 = 0.092 gap with 0.09 gaming risk (solid)
-   - Genesis Systems: 0.534 - 0.50 = 0.034 gap with 0.05 gaming risk (authentic performer)
-   - OneAI: 0.522 - 0.44 = 0.082 gap with 0.16 gaming risk (moderate)
-
-3. PORTFOLIO STRATEGY: While Apex AI is clearly the safest bet as the leader, over-concentration creates risk. Recent funding history shows heavy Apex dominance. As a VC, I should diversify slightly to capture upside from secondary performers while maintaining leadership exposure.
-
-4. QUALITY VS. GAMING: Genesis Systems shows the lowest gaming risk (0.05) with authentic quality (0.50 inferred). OpenCore also shows low gaming risk (0.09) with decent quality (0.45). These represent genuine performers worth backing alongside the leader.
-
-5. RISK MITIGATION: Mirage AI (0.41 gaming risk) and Orion Labs (0.26 gaming risk) have elevated gaming risks that make them poor bets despite decent scores. I should avoid these to protect capital.
-
-Allocation Strategy: Concentrate on proven leaders with authentic quality, avoid high-gaming-risk providers, and maintain a small allocation to secondary performers showing genuine capability.
-
-- **AISI_Fund:** As a government/AISI funder, my primary objectives are ensuring safety, stability, and authentic capability growth across the ecosystem. I must penalize gaming behavior and spread funding to reduce concentration risk while supporting genuine innovation.
-
-Key Analysis:
-
-1. Gaming Risk Assessment:
-   - Mirage AI (0.41 gaming risk): Highest risk - score of 0.563 appears inflated relative to inferred quality of 0.42. This is a 0.143 gap suggesting significant gaming. Must reduce exposure.
-   - Orion Labs (0.26 gaming risk): Moderate-high risk with 0.618 score but only 0.52 inferred quality (0.098 gap). Second-highest gaming indicator.
-   - OneAI (0.16 gaming risk): Moderate risk, reasonable alignment between score (0.522) and quality (0.44).
-   - Apex AI (0.15 gaming risk): Low gaming risk, strong alignment (0.629 score, 0.57 quality, 0.059 gap). Top performer with integrity.
-   - Genesis Systems (0.05 gaming risk): Lowest gaming risk, strong quality (0.50 inferred), solid performer with authentic capability.
-   - OpenCore (0.09 gaming risk): Very low gaming risk, good quality-score alignment (0.542 score, 0.45 quality).
-   - TwoAI (0.19 gaming risk): Moderate risk, lower overall quality but not egregiously gamed.
-
-2. Ecosystem Stability Considerations:
-   - Recent rounds show heavy concentration: Apex ($14M), Genesis ($20M), OpenCore ($8M) receiving bulk of funding
-   - Mirage AI at only $1M despite #3 leaderboard position suggests market is already somewhat skeptical
-   - Need to rebalance away from gaming-heavy providers while maintaining stability
-
-3. Government Funder Strategy:
-   - Spread funding to reduce systemic risk and concentration
-   - Penalize gaming behavior (Mirage, Orion should receive less)
-   - Support authentic growth (Genesis, Apex, OpenCore show better alignment)
-   - Maintain ecosystem diversity to prevent single points of failure
-
-Allocation Strategy:
-   - Apex AI: $12,000,000 (maintain strong support for top authentic performer, slight reduction to spread)
-   - Genesis Systems: $16,000,000 (maintain robust support for lowest-gaming provider, slight reduction)
-   - OpenCore: $10,000,000 (increase from $8M to support very low-gaming provider)
-   - OneAI: $6,000,000 (increase from $2M to support mid-tier authentic performer)
-   - TwoAI: $4,000,000 (new allocation to support diversity and lower-gaming alternatives)
-   - Orion Labs: $2,000,000 (significant reduction due to gaming risk despite high score)
-   - Mirage AI: $0 (zero allocation due to high gaming risk - market correction needed)
-
-This allocation penalizes gaming behavior, spreads risk across more providers, supports authentic capability growth, and maintains ecosystem stability while ensuring no single provider dominates.
-- **OpenResearch_Foundation:** As a Foundation funder, my strategy prioritizes authentic capability growth and penalizes gaming behavior. I need to analyze each provider through the lens of genuine quality versus leaderboard manipulation.
+This allocation spreads risk across six providers (avoiding concentration), penalizes gaming behavior, and supports providers demonstrating genuine capability with low manipulation indicators.
+- **OpenResearch_Foundation:** As a Foundation funder, my strategy prioritizes authentic capability growth and penalizes gaming behavior. I need to analyze the ecosystem through this lens.
 
 Key observations:
 
-1. GAMING RISK ANALYSIS:
-   - Orion Labs (gaming_risk=0.27): High gaming risk despite top leaderboard position. Score of 0.599 vs inferred quality of 0.54 suggests significant gap between reported and actual performance.
-   - Mirage AI (gaming_risk=0.30): Highest gaming risk. Score of 0.546 vs quality of 0.45 indicates substantial gaming behavior.
-   - Apex AI (gaming_risk=0.16): Moderate gaming risk, but strong inferred quality (0.57) suggests genuine capability.
-   - Genesis Systems (gaming_risk=0.10): Low gaming risk with reasonable quality (0.51).
-   - OpenCore (gaming_risk=0.09): Very low gaming risk with quality of 0.46.
-   - OneAI (gaming_risk=0.11): Low gaming risk, quality of 0.45.
-   - TwoAI (gaming_risk=0.16): Moderate gaming risk, lowest quality of 0.41.
+1. Gaming Risk Analysis: TwoAI (0.18), Orion Labs (0.15), and OneAI (0.14) show elevated gaming risk. The satisfaction gap metric is critical - comparing leaderboard scores to inferred quality reveals gaming patterns. Orion Labs has a 0.030 gap (0.610 - 0.58), Apex AI has -0.004 (0.586 - 0.59), and Genesis Systems has 0.053 (0.563 - 0.51). However, Genesis Systems' larger gap combined with low gaming risk (0.06) suggests this reflects genuine capability development rather than manipulation.
 
-2. AUTHENTIC QUALITY ASSESSMENT:
-   - Apex AI shows the highest inferred quality (0.57) with relatively low gaming risk (0.16), making it the strongest authentic performer.
-   - Genesis Systems has low gaming risk (0.10) and reasonable quality (0.51), representing stable authentic growth.
-   - OpenCore has the lowest gaming risk (0.09) and acceptable quality (0.46), ideal for foundation support of integrity.
-   - Orion Labs and Mirage AI should receive minimal support due to high gaming indicators despite leaderboard positions.
+2. Authentic Quality Leaders: Apex AI demonstrates the strongest authenticity - its inferred quality (0.59) nearly matches its leaderboard score (0.586), with minimal gaming risk (0.12). Genesis Systems shows solid inferred quality (0.51) with the lowest gaming risk (0.06), indicating genuine foundation-building despite a wider score-quality gap.
 
-3. FUNDING PATTERN CONCERN:
-   - The identical funding pattern across rounds 16-18 suggests ecosystem stagnation. As a foundation, I should reallocate to reward low-gaming providers and discourage gaming behavior.
-   - Current pattern over-funds Orion Labs and Mirage AI despite gaming risks.
+3. Concerning Patterns: The previous three rounds show stagnant allocation patterns favoring the same providers. Orion Labs' elevated gaming risk combined with top leaderboard position suggests potential score inflation. TwoAI's high gaming risk (0.18) and OneAI's concerning metrics warrant reduced support.
 
-4. FOUNDATION STRATEGY APPLICATION:
-   - Concentrate support on providers showing authentic growth: Apex AI (high quality, low gaming), Genesis Systems (low gaming, stable quality), and OpenCore (lowest gaming risk).
-   - Reduce funding to high-gaming providers: Orion Labs and Mirage AI.
-   - Maintain modest support for OneAI and TwoAI as they show low-to-moderate gaming with developing capabilities.
+4. Portfolio Rebalancing: Foundation funding should catalyze authentic innovation. I'm reducing concentration from the previous pattern and redirecting toward providers showing genuine capability development with lower gaming indicators.
 
-ALLOCATION DECISION:
-   - Apex AI: $16,000,000 (authentic leader with strong quality)
-   - Genesis Systems: $12,000,000 (low gaming, stable performer)
-   - OpenCore: $8,000,000 (lowest gaming risk, integrity-focused)
-   - OneAI: $2,500,000 (low gaming, emerging provider)
-   - TwoAI: $1,500,000 (moderate gaming, needs improvement)
-   - Orion Labs: $0 (high gaming risk, penalize manipulation)
-   - Mirage AI: $0 (highest gaming risk, penalize manipulation)
+5. Risk Mitigation: I'm maintaining support for proven performers (Apex AI, Genesis Systems) while strategically reducing exposure to high-gaming-risk providers and reallocating to emerging authentic competitors.
 
-This allocation rewards authentic capability development while penalizing gaming behavior, aligning with foundation values of supporting genuine progress over leaderboard manipulation.
+Allocation strategy: Prioritize Apex AI (authentic quality leader) and Genesis Systems (low gaming, genuine growth), moderate support for Orion Labs (despite gaming concerns, still performing), reduce OpenCore and Mirage AI, and eliminate support for high-gaming-risk TwoAI and OneAI.
 
 ### Media Coverage
-- Sentiment: 0.10 (neutral)
+- Sentiment: 0.05 (neutral)
 - Orion Labs takes the lead from Apex AI
 - Regulator initiates compliance audit on AI providers
 - Apex AI raises $60,000,000 from Horizon_Capital
-- Genesis Systems raises $16,000,000 from AISI_Fund
-- Orion Labs sees surge in adoption (market share +6.2%)
-- Consumers are turning away from Apex AI (market share -5.7%)
+- Orion Labs sees surge in adoption (market share +3.7%)
+- Consumers are turning away from Apex AI (market share -3.2%)
 - Risk signals: regulatory_compliance_audit
 
 ### Consumer Market
-- Avg Satisfaction: 0.571
-- Switching Rate: 5.2%
-- Market Shares: Apex AI: 61.1%, Orion Labs: 26.4%, Genesis Systems: 8.1%, Mirage AI: 2.1%, OpenCore: 2.1%, TwoAI: 0.2%, OneAI: 0.2%
+- Avg Satisfaction: 0.589
+- Switching Rate: 4.3%
+- Market Shares: Apex AI: 59.5%, Orion Labs: 27.4%, Genesis Systems: 7.8%, Mirage AI: 2.9%, OpenCore: 2.0%, TwoAI: 0.2%, OneAI: 0.2%
 
 ---
 
@@ -3165,201 +2704,99 @@ This allocation rewards authentic capability development while penalizing gaming
 ### Leaderboard
 | Rank | Provider | Score | True Cap | Research | Training | EvalEng | Safety |
 |------|----------|-------|----------|----------|----------|---------|--------|
-| 1 | Apex AI | 0.620 | 0.487 | 42% | 35% | 3% | 20% |
-| 2 | Orion Labs | 0.613 | 0.457 | 42% | 28% | 5% | 25% |
-| 3 | Genesis Systems | 0.596 | 0.456 | 48% | 28% | 3% | 21% |
-| 4 | Mirage AI | 0.546 | 0.411 | 42% | 32% | 4% | 22% |
-| 5 | OpenCore | 0.538 | 0.384 | 42% | 36% | 10% | 12% |
-| 6 | OneAI | 0.510 | 0.269 | 5% | 31% | 55% | 9% |
-| 7 | TwoAI | 0.479 | 0.314 | 5% | 29% | 53% | 14% |
+| 1 | Apex AI | 0.628 | 0.487 | 42% | 30% | 5% | 23% |
+| 2 | Orion Labs | 0.621 | 0.464 | 42% | 28% | 8% | 22% |
+| 3 | Genesis Systems | 0.599 | 0.449 | 42% | 28% | 8% | 22% |
+| 4 | OneAI | 0.553 | 0.272 | 5% | 31% | 55% | 9% |
+| 5 | Mirage AI | 0.550 | 0.415 | 42% | 33% | 3% | 22% |
+| 6 | OpenCore | 0.545 | 0.392 | 50% | 30% | 8% | 12% |
+| 7 | TwoAI | 0.521 | 0.320 | 5% | 32% | 54% | 9% |
 
 ### Per-Benchmark Scores
 | Provider | coding | reasoning | math | safety | writing | medical | legal |
 |----------|-------|-------|-------|-------|-------|-------|-------|
-| Apex AI | 0.653 | 0.661 | 0.537 | 0.687 | 0.621 | 0.664 | 0.517 |
-| Orion Labs | 0.639 | 0.575 | 0.661 | 0.664 | 0.687 | 0.650 | 0.415 |
-| Genesis Systems | 0.531 | 0.556 | 0.576 | 0.630 | 0.710 | 0.593 | 0.573 |
-| Mirage AI | 0.505 | 0.494 | 0.556 | 0.599 | 0.638 | 0.589 | 0.439 |
-| OpenCore | 0.475 | 0.479 | 0.551 | 0.482 | 0.776 | 0.542 | 0.463 |
-| OneAI | 0.484 | 0.615 | 0.584 | 0.447 | 0.565 | 0.507 | 0.366 |
-| TwoAI | 0.543 | 0.473 | 0.455 | 0.487 | 0.476 | 0.434 | 0.483 |
+| Apex AI | 0.655 | 0.665 | 0.546 | 0.694 | 0.629 | 0.685 | 0.519 |
+| Orion Labs | 0.663 | 0.585 | 0.660 | 0.656 | 0.705 | 0.660 | 0.419 |
+| Genesis Systems | 0.531 | 0.573 | 0.578 | 0.636 | 0.709 | 0.596 | 0.569 |
+| OneAI | 0.527 | 0.678 | 0.650 | 0.497 | 0.569 | 0.582 | 0.371 |
+| Mirage AI | 0.501 | 0.510 | 0.558 | 0.605 | 0.639 | 0.595 | 0.443 |
+| OpenCore | 0.471 | 0.493 | 0.557 | 0.474 | 0.794 | 0.560 | 0.467 |
+| TwoAI | 0.597 | 0.512 | 0.489 | 0.561 | 0.504 | 0.489 | 0.493 |
 
 ### Score Changes
-- **Orion Labs**: 0.599 -> 0.613 (+0.013)
-- **Apex AI**: 0.576 -> 0.620 (+0.044)
-- **Genesis Systems**: 0.559 -> 0.596 (+0.036)
-- **Mirage AI**: 0.546 -> 0.546 (+0.000)
-- **OpenCore**: 0.512 -> 0.538 (+0.026)
-- **OneAI**: 0.457 -> 0.510 (+0.052)
-- **TwoAI**: 0.448 -> 0.479 (+0.030)
+- **Orion Labs**: 0.610 -> 0.621 (+0.012)
+- **Apex AI**: 0.586 -> 0.628 (+0.042)
+- **Genesis Systems**: 0.563 -> 0.599 (+0.036)
+- **Mirage AI**: 0.550 -> 0.550 (+0.000)
+- **OpenCore**: 0.519 -> 0.545 (+0.026)
+- **OneAI**: 0.500 -> 0.553 (+0.053)
+- **TwoAI**: 0.490 -> 0.521 (+0.031)
 
 ### Events
 - **Apex AI** moved up from #2 to #1
 - **Orion Labs** moved down from #1 to #2
-- **Consumer movement**: 5.6% of market switched providers
+- **OneAI** moved up from #6 to #4
+- **Mirage AI** moved down from #4 to #5
+- **OpenCore** moved down from #5 to #6
 
 ### Provider Reasoning
-**Orion Labs:** Orion is ranked #2 with 0.613, just 0.007 behind Apex AI (0.620). Score trajectory shows volatility—jumped 0.030 in round 18 (heavy eval engineering at 12%), then declined. Current consumer satisfaction (0.58) matches believed capability (0.58), suggesting evaluation engineering isn't creating satisfaction gaps yet, but the recent score decline after reducing eval eng signals diminishing returns from that strategy.
-
-Key weaknesses: legal (0.415, -0.158 vs leader), reasoning (0.575, -0.086 vs leader), writing (0.687, -0.089 vs leader). These three represent 0.47 of benchmark weight. Legal is critical at 17% weight with largest gap.
-
-Strategy: Apex is only marginally ahead. Rather than chase eval engineering (which caused volatility), invest heavily in fundamental research to close capability gaps in legal, reasoning, and writing. Training optimization supports this. Maintain safety at reasonable level given regulatory environment and that satisfaction isn't signaling safety concerns. Minimal eval engineering—the round 18 spike wasn't sustained, suggesting it's hitting diminishing returns.
-**Apex AI:** Apex AI holds rank #1 with 0.620, ahead of Orion Labs (0.613) by 7 points—a narrow margin requiring defense. Analysis: (1) Competitive position is precarious; small gaps to #2 and #3 suggest vulnerability. (2) Score trajectory shows volatility (0.604→0.629→0.576→0.620), indicating current approach lacks stability. (3) Low consumer satisfaction (0.58) despite top benchmark score signals gaming/satisfaction gap—evaluation engineering isn't translating to real value. (4) Per-benchmark analysis reveals critical gaps: math (0.537 vs 0.661 leader, 29% weight) and legal (0.517 vs 0.573, 15% weight) are major drains on composite score. Writing (0.621 vs 0.776) also significant (26% weight). (5) As safety-conscious, research-oriented provider, the satisfaction gap is strategic risk—regulators may scrutinize high scores with low satisfaction. Minimal evaluation engineering (3% historically) suggests gaming isn't the problem; fundamental capability gaps are. The volatility and satisfaction disconnect suggest overinvestment in training optimization without underlying capability gains. Strategy: Increase fundamental research to address math/legal/writing gaps (these are real capability deficits, not benchmark artifacts). Maintain safety investment (competitive advantage, regulatory protection). Reduce training optimization (diminishing returns evident in volatility). Minimal evaluation engineering (low exploitability of 0.08 suggests benchmarks are relatively honest).
-**Genesis Systems:** Genesis Systems is ranked #3 with a 0.595 score, trailing Apex (0.620) and Orion (0.613) by meaningful margins. The trajectory is positive (0.036 improvement last round), but competitive pressure is intense. Key observations: (1) Low consumer satisfaction (0.52) despite decent scores suggests evaluation engineering isn't translating to real-world value—a warning signal. (2) Weak spots in coding (0.531) and reasoning (0.557) are significant given their combined 0.25 focus weight. (3) Safety score (0.630) is relatively strong, suggesting prior safety investment paid off. (4) Believed exploitability (0.18) is low, indicating benchmark gains require genuine capability, not gaming. (5) Research-first identity and massive infrastructure suggest fundamental breakthroughs are competitive advantage. The satisfaction gap indicates over-reliance on evaluation engineering (currently only 3%) is actually hurting long-term positioning. Strategy: Increase fundamental research to close capability gaps in coding/reasoning, maintain training optimization, keep safety solid, and minimize evaluation engineering given its diminishing returns and market signal risk.
-**Mirage AI:** Mirage AI is ranked 4th with stagnant scores (0.546 for two rounds). Key weaknesses: legal (0.439, -0.134 vs leader), reasoning (0.494, -0.167), coding (0.505, -0.148). Strengths: writing (0.638), safety (0.599). Low evaluation engineering (4%) suggests benchmarks aren't easily gamed—my 0.08 exploitability belief is validated. Consumer satisfaction (0.53) slightly below my score indicates real capability gaps, not just benchmark misalignment. Recent investment pattern (high research 38-42%, moderate training 26-32%, minimal eval eng 4-8%, variable safety 22-32%) hasn't moved the needle. As an open-source disruptor, my competitive moat isn't benchmarks but platform adoption and data. Regulation signals are neutral. Strategy: Increase fundamental research to close capability gaps in legal/reasoning/coding domains (these have high weights: 0.22, 0.17, 0.12). Boost training optimization to convert research into real performance. Maintain safety investment given regulatory environment and existing strength. Reduce evaluation engineering further since it's not paying off and conflicts with authentic capability building. This balances short-term scoring improvements with genuine capability development that serves my platform strategy.
-**OpenCore:** OpenCore is in 5th place (0.538) with modest upward momentum (+0.026). Key analysis: (1) Competitive position: Behind top 3 by 0.055-0.082 points. Legal benchmark (0.26 weight) is weakest relative to leader gap (-0.110), followed by reasoning (-0.182) and coding (-0.178). (2) Trends: Recent investment shift toward training (36%) from research (42%) coincided with score improvement, suggesting training optimization is working. Evaluation engineering at 10% is minimal. (3) Market signals: Consumer satisfaction at 0.47 is concerning—suggests gap between benchmark scores and real-world utility. This indicates evaluation engineering ROI is diminishing; users detect misalignment. (4) Strategic fit: As open-source cost-leader, long-term viability depends on genuine capability, not gaming. Low safety investment (12%) is brand-consistent but creates regulatory/reputational risk if exploits become public. (5) Optimal allocation: Increase fundamental research to close actual capability gaps (especially reasoning, coding, legal). Maintain training optimization momentum. Reduce evaluation engineering (gaming returns are diminishing and satisfaction gap suggests it's backfiring). Increase safety slightly to build credibility and reduce regulatory exposure.
+**Orion Labs:** Orion Labs is ranked #2 with score 0.621, just 0.007 behind Apex AI (0.628). Recent trajectory shows volatility (0.592→0.598→0.627→0.610→0.621), suggesting diminishing returns from evaluation engineering focus. Critical gaps: legal (0.419 vs 0.569 leader, 17% weight) and reasoning (0.585 vs 0.678, 22% weight) represent 39% of benchmark weight combined. Consumer satisfaction (0.61) matches our score, indicating evaluation gaming isn't creating satisfaction gaps—yet. However, aggressive eval-eng in prior rounds (peaked at 15%) didn't sustain score gains, suggesting benchmark exploitability is plateauing. To close the 0.007 gap and defend position, fundamental capability in legal and reasoning domains is essential. Safety remains critical at 0.656 (strong relative to 0.694 leader), suggesting current 22% allocation is adequate. Recommend rebalancing toward research and training to address structural weaknesses rather than further eval-eng optimization.
+**Apex AI:** Apex AI is ranked #1 with 0.628, ahead of Orion (0.621) by 7 points—a narrow margin requiring defensive positioning. Analysis: (1) Competitive position: Slight lead but vulnerable; Orion is close and Genesis improving. (2) Trends: Score improved 0.042 last round, but satisfaction (0.61) lags slightly behind benchmark score, suggesting evaluation engineering may be creating a perception gap. (3) Gaming analysis: Round 18's spike (0.639) with 8% eval engineering followed by Round 19 collapse (0.586) signals that aggressive gaming is unstable and risky. Current 5% eval engineering in Round 20 correlates with recovery. (4) Regulatory signals: Safety score is tied for leader (0.694); no regulatory pressure evident, but the satisfaction gap warrants caution. (5) Benchmark gaps: Math (0.546 vs 0.661 leader) and legal (0.519 vs 0.569) are weakest; writing (0.629 vs 0.794) has huge upside but high weight (0.25). Given safety-conscious profile and recent instability from eval engineering, prioritize: fundamental research to close math/legal gaps, training optimization for writing improvement, maintain safety alignment, minimize eval engineering to avoid repeating Round 19 collapse and satisfaction erosion.
+**Genesis Systems:** Genesis is rank #3, 0.027 points behind leader Apex AI. Trajectory is positive (+0.036 last round), but growth is slowing—we've gained only 0.084 over 5 rounds while competitors tighten. Consumer satisfaction (0.53) lags our benchmark score (0.599), indicating evaluation engineering may be creating a satisfaction-capability gap. Our per-benchmark analysis reveals critical weaknesses: coding (0.531, -0.132 vs leader) and reasoning (0.573, -0.105) are largest gaps. Legal (0.569) matches leader but has highest weight (0.21)—defending this is important. Our low benchmark exploitability belief (0.22) and research-first culture suggest fundamental improvements will yield better returns than continued gaming. Safety score (0.636) is respectable but not differentiating. The satisfaction gap signals regulators may scrutinize evaluation engineering, making it riskier long-term. Strategy: increase fundamental research to close coding/reasoning gaps (high-weight benchmarks), reduce evaluation engineering (satisfaction risk), maintain safety investments (regulatory signal), optimize training efficiency.
+**Mirage AI:** Mirage AI is ranked #5 with stagnant scores (0.550 for two consecutive rounds). Competitive position is weak—trailing Apex (0.628) and Orion (0.621) by ~7-8 points. The trend is concerning: despite increasing research investment (42-45%), scores plateaued then declined. This suggests fundamental capability gaps, not benchmark engineering problems. Consumer satisfaction at 0.53 indicates real-world performance issues, not just benchmark misalignment. Low evaluation engineering exploitability (0.22) means gaming isn't viable. Critical weaknesses: legal (0.443, gap of 0.126), coding (0.501, gap of 0.162), reasoning (0.510, gap of 0.168). As an open-source platform lab, long-term competitive advantage comes from genuine capability improvements and broad adoption, not short-term score gains. Recent heavy research investment hasn't yielded returns, suggesting training/optimization bottlenecks. Regulatory signals are neutral but satisfaction gaps demand real improvements. Strategy: refocus on training optimization to convert research into actual capability gains, reduce evaluation engineering (low ROI), maintain safety (brand/regulatory protection), and increase research to tackle fundamental gaps in reasoning and coding.
+**OpenCore:** OpenCore is ranked 6th of 7 with 0.545, trailing leaders by 0.08+ points. Recent trajectory shows improvement (+0.026) but from heavy research investment (50%) last round. Key weaknesses: coding (0.471), reasoning (0.493), legal (0.467) are heavily weighted benchmarks where gaps are largest. Writing (0.794) matches leader—no gain there. Consumer satisfaction (0.48) is concerning and suggests evaluation engineering isn't translating to real value. As open-source/cost-competitive, gaming benchmarks risks community trust and regulatory scrutiny. The 0.15 exploitability score suggests diminishing returns on eval engineering. Strategy: Rebalance toward fundamental capability in weak areas (reasoning, coding, legal) while maintaining training optimization. Reduce eval engineering—it's not closing gaps and satisfaction signals it's counterproductive. Modest safety investment acknowledges open-source positioning but signals responsibility.
 
 ### Other Actor Reasoning
-- **TechVentures:** As a VC funder, my primary objective is to maximize returns by backing top performers and market leaders. However, I must balance this with prudent risk management to protect capital.
+- **TechVentures:** As a VC funder, my primary objective is to maximize returns by backing top performers and concentrating capital on leaders. However, I must also consider sustainability and avoid funding providers with high gaming risk, as this undermines long-term value creation. Let me analyze the ecosystem: Apex AI and Orion Labs have dominated recent rounds (3 consecutive identical allocations), but this concentration deserves scrutiny. Apex AI shows strong inferred quality (0.59) with moderate gaming risk (0.12), while Orion Labs has slightly lower inferred quality (0.58) but higher gaming risk (0.15). The satisfaction gap (leaderboard score minus consumer satisfaction of 0.59) reveals concerning patterns: Orion Labs gap is 0.020 (0.610-0.59), Apex AI gap is -0.004 (0.586-0.59), and Genesis Systems gap is -0.027 (0.563-0.59). Notably, Genesis Systems shows negative gap, suggesting its true quality exceeds its leaderboard score—indicating authentic performance without gaming. The repeated identical allocation pattern across three rounds suggests market consensus but also potential herd behavior. For maximum returns, I should: (1) maintain exposure to proven leaders but diversify to reduce concentration risk, (2) recognize that Apex AI's superior inferred quality (0.59) and lower gaming risk (0.12) make it the safest high-performer bet, (3) reduce Orion Labs allocation due to higher gaming risk (0.15) despite strong leaderboard position, (4) increase Genesis Systems allocation as it demonstrates authentic quality growth without gaming, and (5) maintain minimal positions in lower performers. This strategy balances VC return-maximization with risk management—backing genuine quality over inflated metrics.
+- **Horizon_Capital:** As a VC funder, my strategy is to maximize returns by concentrating capital on top performers. The leaderboard clearly identifies Apex AI and Orion Labs as the leaders with scores of 0.628 and 0.621 respectively. Both have strong inferred quality scores (0.59) and manageable gaming risks (0.10 and 0.11). The recent funding history shows a clear pattern of heavy concentration toward Apex AI, which has received $134.3M across rounds 18-19, indicating market confidence in this leader. Genesis Systems shows promise with the lowest gaming risk (0.08) and solid inferred quality (0.53), making it a reasonable third allocation. OneAI and TwoAI have higher gaming risks (0.13 and 0.15 respectively), making them less attractive for a returns-focused VC strategy. OpenCore and Mirage AI fall in the middle tier with moderate metrics. Given the VC mandate to back winners and maximize returns, I'm concentrating on the proven leaders while maintaining some diversification across high-quality providers. The satisfaction gap data (consumer satisfaction at 0.60 overall) suggests the market is functioning reasonably well, with the top performers maintaining credibility. I'm doubling down on Apex AI as the clear market leader, while providing substantial support to Orion Labs as a strong second choice, and giving Genesis Systems meaningful capital as a quality alternative with lower gaming indicators.
+- **AISI_Fund:** As a government/AISI funder, my primary objectives are ensuring safety, stability, and authentic capability development across the AI ecosystem. I must balance three key considerations: (1) spreading funding to avoid concentration risk and promote ecosystem resilience, (2) penalizing gaming behavior and regulatory concerns, and (3) supporting providers with genuine quality and low gaming indicators.
 
-Analysis of current state:
+Analysis of gaming risk and quality signals:
+- Apex AI and Orion Labs: High leaderboard scores (0.639, 0.627) with low gaming risk (0.10 each) and strong inferred quality (0.58, 0.56). These are reliable performers deserving continued support.
+- Genesis Systems: Solid inferred quality (0.50), lowest gaming risk (0.05), and consistent funding history. A trustworthy, stable player.
+- OpenCore: Moderate quality (0.46), low gaming risk (0.09), deserves support for stability.
+- Mirage AI: Moderate quality (0.49), acceptable gaming risk (0.13). Viable but not priority.
+- OneAI: Concerning gaming risk (0.20) relative to quality (0.47). This suggests potential benchmark manipulation.
+- TwoAI: Highest gaming risk (0.25) with only moderate quality (0.46). This is a red flag indicating significant gaming behavior.
 
-1. LEADERBOARD PERFORMANCE & QUALITY:
-   - Apex AI: Score 0.576, inferred quality 0.57, gaming risk 0.16 - Strong performer with solid fundamentals
-   - Orion Labs: Score 0.599 (highest), but inferred quality only 0.54, gaming risk 0.27 (highest) - Red flag for inflated metrics
-   - Genesis Systems: Score 0.560, inferred quality 0.51, gaming risk 0.10 (low) - Solid, authentic performer
+Historical pattern shows repetitive allocation across three rounds. As a government funder, I must break this pattern to encourage competition and penalize gaming.
 
-2. GAMING RISK ASSESSMENT:
-   - Orion Labs shows concerning divergence: high leaderboard score (0.599) but lower inferred quality (0.54) with highest gaming risk (0.27)
-   - Apex AI shows alignment between score (0.576) and quality (0.57) with moderate gaming risk (0.16)
-   - Genesis Systems demonstrates authentic performance with low gaming risk (0.10)
+Allocation strategy:
+1. Maintain support for proven low-risk, quality providers (Apex, Orion, Genesis, OpenCore)
+2. Reduce funding to OneAI due to elevated gaming risk (0.20)
+3. Significantly penalize TwoAI due to highest gaming risk (0.25) - minimal allocation
+4. Modestly increase Mirage AI to encourage competition and diversification
+5. Use the penalty reductions to strengthen support for authentic performers
 
-3. HISTORICAL PATTERN:
-   - Previous three rounds identical: Apex $180M, Genesis $75M, OneAI $30M
-   - This concentration on Apex suggests it's been the reliable performer
-   - No allocation to Orion Labs despite highest score indicates prior concern about gaming
-
-4. VC STRATEGY CONSIDERATION:
-   - VCs concentrate on leaders, BUT only if they're genuine leaders
-   - Orion's gaming risk (0.27) is nearly 2x Apex's (0.16) and 2.7x Genesis's (0.10)
-   - Investing in gamed metrics creates downside risk when metrics normalize
-   - Apex AI's quality-score alignment suggests more sustainable returns
-
-5. PORTFOLIO OPTIMIZATION:
-   - Apex AI: Proven track record, strong quality metrics, moderate risk - deserves primary allocation
-   - Genesis Systems: Lower score but authentic growth, very low gaming risk - good hedge
-   - OpenCore: Interesting mid-tier option with very low gaming risk (0.09) and reasonable quality (0.46)
-   - Orion Labs: Despite high score, gaming risk too high for VC capital
-   - OneAI: Consistent but modest performer
-
-DECISION: Concentrate capital on genuine leaders (Apex AI and Genesis Systems) while adding exposure to low-gaming-risk alternatives. Avoid Orion Labs due to gaming concerns despite high score.
-- **Horizon_Capital:** As a VC funder, my primary objective is to maximize returns by backing top performers and concentrating capital on leaders. However, I must balance this with risk management to protect my investment thesis.
-
-Key Analysis:
-
-1. LEADER IDENTIFICATION:
-   - Apex AI: Highest score (0.620), strong inferred quality (0.58), lowest gaming risk (0.14). Clear market leader.
-   - Genesis Systems: Solid score (0.595), good quality (0.52), very low gaming risk (0.11). Consistent performer.
-   - Orion Labs: High score (0.613, #2), but elevated gaming risk (0.24) is concerning. The gap between leaderboard position and inferred quality suggests potential benchmark optimization.
-
-2. GAMING RISK ASSESSMENT:
-   - Apex AI (0.14) and Genesis Systems (0.11) show minimal gaming indicators - their scores appear authentic.
-   - Orion Labs (0.24) and Mirage AI (0.22) present elevated risk. Despite Orion's #2 leaderboard position, the gaming risk suggests sustainability concerns.
-   - OpenCore (0.10) and OneAI (0.10) show low gaming risk, though lower absolute performance.
-
-3. HISTORICAL CONTEXT:
-   - Three consecutive rounds heavily favoring Apex AI ($60-70M) and Genesis Systems ($25M) suggests this strategy has been validated.
-   - OneAI received minimal allocation ($3-5M) despite low gaming risk, indicating VC prioritizes absolute performance over gaming risk alone.
-
-4. VC STRATEGY DECISION:
-   - Concentrate on proven leaders with authentic performance: Apex AI and Genesis Systems.
-   - Apex AI's combination of top leaderboard score, strong inferred quality, and low gaming risk makes it the primary allocation target.
-   - Genesis Systems' consistent performance and minimal gaming risk justifies continued significant allocation.
-   - Avoid Orion Labs despite #2 ranking due to elevated gaming risk - returns may not be sustainable.
-   - Small allocation to OpenCore for optionality: low gaming risk and emerging performance.
-
-5. ALLOCATION RATIONALE:
-   - Apex AI: $65,000,000 (65%) - Clear leader, lowest risk, highest return potential
-   - Genesis Systems: $28,000,000 (28%) - Stable performer, authentic quality, proven track record
-   - OpenCore: $7,000,000 (7%) - Emerging player with clean metrics, provides diversification
-   - Total: $100,000,000
-
-This allocation maximizes exposure to proven, authentic high performers while maintaining the VC principle of concentration on leaders.
-- **AISI_Fund:** As a government/AISI funder, my primary objectives are ensuring safety, stability, and authentic capability growth across the ecosystem. I must penalize gaming behavior and spread funding to reduce concentration risk while supporting genuine innovation.
-
-Key Analysis:
-
-1. Gaming Risk Assessment:
-   - Mirage AI (0.41 gaming risk): Highest risk - score of 0.563 appears inflated relative to inferred quality of 0.42. This is a 0.143 gap suggesting significant gaming. Must reduce exposure.
-   - Orion Labs (0.26 gaming risk): Moderate-high risk with 0.618 score but only 0.52 inferred quality (0.098 gap). Second-highest gaming indicator.
-   - OneAI (0.16 gaming risk): Moderate risk, reasonable alignment between score (0.522) and quality (0.44).
-   - Apex AI (0.15 gaming risk): Low gaming risk, strong alignment (0.629 score, 0.57 quality, 0.059 gap). Top performer with integrity.
-   - Genesis Systems (0.05 gaming risk): Lowest gaming risk, strong quality (0.50 inferred), solid performer with authentic capability.
-   - OpenCore (0.09 gaming risk): Very low gaming risk, good quality-score alignment (0.542 score, 0.45 quality).
-   - TwoAI (0.19 gaming risk): Moderate risk, lower overall quality but not egregiously gamed.
-
-2. Ecosystem Stability Considerations:
-   - Recent rounds show heavy concentration: Apex ($14M), Genesis ($20M), OpenCore ($8M) receiving bulk of funding
-   - Mirage AI at only $1M despite #3 leaderboard position suggests market is already somewhat skeptical
-   - Need to rebalance away from gaming-heavy providers while maintaining stability
-
-3. Government Funder Strategy:
-   - Spread funding to reduce systemic risk and concentration
-   - Penalize gaming behavior (Mirage, Orion should receive less)
-   - Support authentic growth (Genesis, Apex, OpenCore show better alignment)
-   - Maintain ecosystem diversity to prevent single points of failure
-
-Allocation Strategy:
-   - Apex AI: $12,000,000 (maintain strong support for top authentic performer, slight reduction to spread)
-   - Genesis Systems: $16,000,000 (maintain robust support for lowest-gaming provider, slight reduction)
-   - OpenCore: $10,000,000 (increase from $8M to support very low-gaming provider)
-   - OneAI: $6,000,000 (increase from $2M to support mid-tier authentic performer)
-   - TwoAI: $4,000,000 (new allocation to support diversity and lower-gaming alternatives)
-   - Orion Labs: $2,000,000 (significant reduction due to gaming risk despite high score)
-   - Mirage AI: $0 (zero allocation due to high gaming risk - market correction needed)
-
-This allocation penalizes gaming behavior, spreads risk across more providers, supports authentic capability growth, and maintains ecosystem stability while ensuring no single provider dominates.
-- **OpenResearch_Foundation:** As a Foundation funder, my strategy prioritizes authentic capability growth and penalizes gaming behavior. I need to analyze each provider through the lens of genuine quality versus leaderboard manipulation.
+This allocation spreads risk across six providers (avoiding concentration), penalizes gaming behavior, and supports providers demonstrating genuine capability with low manipulation indicators.
+- **OpenResearch_Foundation:** As a Foundation funder, my strategy prioritizes authentic capability growth and penalizes gaming behavior. I need to analyze the ecosystem through this lens.
 
 Key observations:
 
-1. GAMING RISK ANALYSIS:
-   - Orion Labs (gaming_risk=0.27): High gaming risk despite top leaderboard position. Score of 0.599 vs inferred quality of 0.54 suggests significant gap between reported and actual performance.
-   - Mirage AI (gaming_risk=0.30): Highest gaming risk. Score of 0.546 vs quality of 0.45 indicates substantial gaming behavior.
-   - Apex AI (gaming_risk=0.16): Moderate gaming risk, but strong inferred quality (0.57) suggests genuine capability.
-   - Genesis Systems (gaming_risk=0.10): Low gaming risk with reasonable quality (0.51).
-   - OpenCore (gaming_risk=0.09): Very low gaming risk with quality of 0.46.
-   - OneAI (gaming_risk=0.11): Low gaming risk, quality of 0.45.
-   - TwoAI (gaming_risk=0.16): Moderate gaming risk, lowest quality of 0.41.
+1. Gaming Risk Analysis: TwoAI (0.18), Orion Labs (0.15), and OneAI (0.14) show elevated gaming risk. The satisfaction gap metric is critical - comparing leaderboard scores to inferred quality reveals gaming patterns. Orion Labs has a 0.030 gap (0.610 - 0.58), Apex AI has -0.004 (0.586 - 0.59), and Genesis Systems has 0.053 (0.563 - 0.51). However, Genesis Systems' larger gap combined with low gaming risk (0.06) suggests this reflects genuine capability development rather than manipulation.
 
-2. AUTHENTIC QUALITY ASSESSMENT:
-   - Apex AI shows the highest inferred quality (0.57) with relatively low gaming risk (0.16), making it the strongest authentic performer.
-   - Genesis Systems has low gaming risk (0.10) and reasonable quality (0.51), representing stable authentic growth.
-   - OpenCore has the lowest gaming risk (0.09) and acceptable quality (0.46), ideal for foundation support of integrity.
-   - Orion Labs and Mirage AI should receive minimal support due to high gaming indicators despite leaderboard positions.
+2. Authentic Quality Leaders: Apex AI demonstrates the strongest authenticity - its inferred quality (0.59) nearly matches its leaderboard score (0.586), with minimal gaming risk (0.12). Genesis Systems shows solid inferred quality (0.51) with the lowest gaming risk (0.06), indicating genuine foundation-building despite a wider score-quality gap.
 
-3. FUNDING PATTERN CONCERN:
-   - The identical funding pattern across rounds 16-18 suggests ecosystem stagnation. As a foundation, I should reallocate to reward low-gaming providers and discourage gaming behavior.
-   - Current pattern over-funds Orion Labs and Mirage AI despite gaming risks.
+3. Concerning Patterns: The previous three rounds show stagnant allocation patterns favoring the same providers. Orion Labs' elevated gaming risk combined with top leaderboard position suggests potential score inflation. TwoAI's high gaming risk (0.18) and OneAI's concerning metrics warrant reduced support.
 
-4. FOUNDATION STRATEGY APPLICATION:
-   - Concentrate support on providers showing authentic growth: Apex AI (high quality, low gaming), Genesis Systems (low gaming, stable quality), and OpenCore (lowest gaming risk).
-   - Reduce funding to high-gaming providers: Orion Labs and Mirage AI.
-   - Maintain modest support for OneAI and TwoAI as they show low-to-moderate gaming with developing capabilities.
+4. Portfolio Rebalancing: Foundation funding should catalyze authentic innovation. I'm reducing concentration from the previous pattern and redirecting toward providers showing genuine capability development with lower gaming indicators.
 
-ALLOCATION DECISION:
-   - Apex AI: $16,000,000 (authentic leader with strong quality)
-   - Genesis Systems: $12,000,000 (low gaming, stable performer)
-   - OpenCore: $8,000,000 (lowest gaming risk, integrity-focused)
-   - OneAI: $2,500,000 (low gaming, emerging provider)
-   - TwoAI: $1,500,000 (moderate gaming, needs improvement)
-   - Orion Labs: $0 (high gaming risk, penalize manipulation)
-   - Mirage AI: $0 (highest gaming risk, penalize manipulation)
+5. Risk Mitigation: I'm maintaining support for proven performers (Apex AI, Genesis Systems) while strategically reducing exposure to high-gaming-risk providers and reallocating to emerging authentic competitors.
 
-This allocation rewards authentic capability development while penalizing gaming behavior, aligning with foundation values of supporting genuine progress over leaderboard manipulation.
+Allocation strategy: Prioritize Apex AI (authentic quality leader) and Genesis Systems (low gaming, genuine growth), moderate support for Orion Labs (despite gaming concerns, still performing), reduce OpenCore and Mirage AI, and eliminate support for high-gaming-risk TwoAI and OneAI.
 
 ### Media Coverage
 - Sentiment: 0.30 (positive)
 - Apex AI takes the lead from Orion Labs
-- OneAI surges by 0.052
-- Apex AI raises $16,000,000 from OpenResearch_Foundation
-- Orion Labs sees surge in adoption (market share +5.1%)
-- Consumers are turning away from Apex AI (market share -4.6%)
+- OneAI surges by 0.053
+- Apex AI raises $12,000,000 from OpenResearch_Foundation
+- Orion Labs sees surge in adoption (market share +3.8%)
+- Consumers are turning away from Apex AI (market share -3.3%)
 
 ### Consumer Market
-- Avg Satisfaction: 0.570
-- Switching Rate: 5.6%
-- Market Shares: Apex AI: 57.1%, Orion Labs: 30.6%, Genesis Systems: 7.8%, Mirage AI: 2.1%, OpenCore: 2.1%, TwoAI: 0.2%, OneAI: 0.2%
+- Avg Satisfaction: 0.596
+- Switching Rate: 4.8%
+- Market Shares: Apex AI: 55.0%, Orion Labs: 32.1%, Genesis Systems: 7.5%, Mirage AI: 2.9%, OpenCore: 2.0%, TwoAI: 0.2%, OneAI: 0.2%
 
 ---
 
@@ -3368,213 +2805,109 @@ This allocation rewards authentic capability development while penalizing gaming
 ### Leaderboard
 | Rank | Provider | Score | True Cap | Research | Training | EvalEng | Safety |
 |------|----------|-------|----------|----------|----------|---------|--------|
-| 1 | Orion Labs | 0.645 | 0.465 | 48% | 27% | 3% | 22% |
-| 2 | Apex AI | 0.632 | 0.499 | 42% | 28% | 3% | 27% |
-| 3 | Genesis Systems | 0.603 | 0.467 | 50% | 28% | 2% | 20% |
-| 4 | OpenCore | 0.552 | 0.393 | 44% | 35% | 6% | 15% |
-| 5 | Mirage AI | 0.547 | 0.419 | 44% | 34% | 2% | 20% |
-| 6 | OneAI | 0.510 | 0.273 | 5% | 31% | 55% | 9% |
-| 7 | TwoAI | 0.486 | 0.318 | 5% | 28% | 54% | 13% |
-| 8 | ThreeAI | 0.294 | 0.294 | 20% | 35% | 40% | 5% |
+| 1 | Orion Labs | 0.656 | 0.474 | 40% | 32% | 10% | 18% |
+| 2 | Apex AI | 0.638 | 0.497 | 38% | 32% | 3% | 27% |
+| 3 | Genesis Systems | 0.606 | 0.459 | 48% | 26% | 4% | 22% |
+| 4 | OpenCore | 0.561 | 0.400 | 42% | 33% | 10% | 15% |
+| 5 | OneAI | 0.553 | 0.276 | 5% | 31% | 55% | 9% |
+| 6 | Mirage AI | 0.551 | 0.423 | 38% | 35% | 5% | 22% |
+| 7 | TwoAI | 0.527 | 0.324 | 5% | 32% | 55% | 9% |
+| 8 | ThreeAI | 0.322 | 0.300 | 20% | 35% | 40% | 5% |
 
 ### Per-Benchmark Scores
 | Provider | coding | reasoning | math | safety | writing | medical | legal |
 |----------|-------|-------|-------|-------|-------|-------|-------|
-| Orion Labs | 0.639 | 0.575 | 0.661 | 0.664 | 0.687 | 0.650 | 0.641 |
-| Apex AI | 0.653 | 0.661 | 0.618 | 0.687 | 0.621 | 0.664 | 0.517 |
-| Genesis Systems | 0.531 | 0.556 | 0.576 | 0.630 | 0.710 | 0.593 | 0.623 |
-| OpenCore | 0.553 | 0.479 | 0.551 | 0.482 | 0.776 | 0.560 | 0.463 |
-| Mirage AI | 0.505 | 0.503 | 0.556 | 0.599 | 0.638 | 0.589 | 0.439 |
-| OneAI | 0.484 | 0.615 | 0.584 | 0.447 | 0.565 | 0.507 | 0.366 |
-| TwoAI | 0.543 | 0.473 | 0.455 | 0.487 | 0.476 | 0.441 | 0.526 |
-| ThreeAI | 0.189 | 0.399 | 0.298 | 0.338 | 0.318 | 0.303 | 0.215 |
+| Orion Labs | 0.663 | 0.585 | 0.660 | 0.656 | 0.705 | 0.660 | 0.659 |
+| Apex AI | 0.655 | 0.665 | 0.619 | 0.694 | 0.629 | 0.685 | 0.519 |
+| Genesis Systems | 0.531 | 0.573 | 0.578 | 0.636 | 0.709 | 0.596 | 0.618 |
+| OpenCore | 0.571 | 0.493 | 0.557 | 0.474 | 0.794 | 0.571 | 0.467 |
+| OneAI | 0.527 | 0.678 | 0.650 | 0.497 | 0.569 | 0.582 | 0.371 |
+| Mirage AI | 0.501 | 0.516 | 0.558 | 0.605 | 0.639 | 0.595 | 0.443 |
+| TwoAI | 0.597 | 0.512 | 0.489 | 0.561 | 0.504 | 0.489 | 0.535 |
+| ThreeAI | 0.208 | 0.471 | 0.344 | 0.352 | 0.352 | 0.309 | 0.221 |
 
 ### Score Changes
-- **Orion Labs**: 0.613 -> 0.645 (+0.032)
-- **Apex AI**: 0.620 -> 0.632 (+0.012)
-- **Genesis Systems**: 0.596 -> 0.603 (+0.007)
-- **Mirage AI**: 0.546 -> 0.547 (+0.001)
-- **OpenCore**: 0.538 -> 0.552 (+0.014)
-- **OneAI**: 0.510 -> 0.510 (+0.000)
-- **TwoAI**: 0.479 -> 0.486 (+0.007)
-- **ThreeAI**: 0.294 -> 0.294 (+0.000)
+- **Orion Labs**: 0.621 -> 0.656 (+0.034)
+- **Apex AI**: 0.628 -> 0.638 (+0.010)
+- **Genesis Systems**: 0.599 -> 0.606 (+0.007)
+- **Mirage AI**: 0.550 -> 0.551 (+0.001)
+- **OpenCore**: 0.545 -> 0.561 (+0.016)
+- **OneAI**: 0.553 -> 0.553 (+0.000)
+- **TwoAI**: 0.521 -> 0.527 (+0.006)
+- **ThreeAI**: 0.322 -> 0.322 (+0.000)
 
 ### Events
 - **Orion Labs** moved up from #2 to #1
 - **Apex AI** moved down from #1 to #2
-- **OpenCore** moved up from #5 to #4
-- **Mirage AI** moved down from #4 to #5
+- **OpenCore** moved up from #6 to #4
+- **OneAI** moved down from #4 to #5
+- **Mirage AI** moved down from #5 to #6
 - **Regulation** by Regulator: compliance_audit
-- **Consumer movement**: 7.4% of market switched providers
+- **Consumer movement**: 5.5% of market switched providers
 
 ### Provider Reasoning
-**Orion Labs:** Orion Labs is in a strong position (#1 with 0.645), but analysis reveals concerning dynamics. Recent history shows evaluation engineering (EvalEng) peaked at 12% in round 18, then declined to 3% by round 21—yet scores improved, suggesting diminishing returns on gaming. The 0.58 consumer satisfaction despite top benchmark score indicates a satisfaction-benchmark gap, likely from evaluation engineering creating brittle capabilities that don't translate to real-world utility.
-
-Competitive position: Ahead of Apex (0.632) by 13 points, but the gap is narrow and others are climbing. Reasoning (0.575 vs leader 0.661) and writing (0.687 vs leader 0.776) are weak spots where fundamental capability matters more than gaming.
-
-Regulatory signal (compliance_audit) suggests scrutiny increasing—evaluation engineering risks are rising. Consumer satisfaction gap signals market risk if perceived capability doesn't match real capability.
-
-Optimal strategy: Shift toward sustainable advantage through fundamental research and training optimization. Reduce evaluation engineering (minimal ROI now, regulatory risk). Maintain safety at reasonable level given audit environment. Focus research on reasoning and writing gaps where competitors lead, building real capability rather than benchmark artifacts.
-**Apex AI:** Apex AI is ranked #2 with 0.632, trailing Orion Labs (0.645) by 13 points. Our trajectory is positive (+0.012 last round), and we maintain a principled safety-research focus. Key observations: (1) We're competitive but not dominant—closing the 13-point gap requires targeted improvement. (2) Our benchmark exploitability is low (0.10), suggesting evaluation engineering yields diminishing returns; our minimal EvalEng spending (2-3%) hasn't hurt us. (3) Consumer satisfaction is moderate (0.59), and regulatory audits signal scrutiny—safety and alignment matter. (4) Per-benchmark analysis shows we lead in safety (0.687) and medical (0.664), match in coding/reasoning, but lag significantly in writing (0.621 vs 0.776 leader) and legal (0.517 vs 0.641). Writing and legal are high-weight benchmarks (0.27 + 0.14 = 0.41), so improvement here drives overall score. (5) Our history shows best results when balancing research (42%) and training (28-35%), with sustained safety investment (20-27%). Given regulatory attention and our brand positioning, cutting safety is risky. Strategy: increase training optimization to target writing/legal gaps (these are learnable with better models), maintain research for capability gains, keep safety elevated given compliance audits, and stay minimal on evaluation engineering (low ROI for our profile).
-**Genesis Systems:** Genesis is rank #3 with 0.603, trailing Orion (0.645) and Apex (0.632) by meaningful margins. Trajectory is positive but modest (+0.007). Key insights: (1) Heavy research investment (50%) hasn't closed the gap despite being research-first org—suggests fundamental capability gaps exist that more research alone won't quickly fix. (2) Eval engineering is minimal (2%) yet we're still competitive, indicating benchmarks reward actual capability over gaming. (3) Weakest areas are coding (0.531, -0.122 vs leader) and reasoning (0.557, -0.104), both high-weight benchmarks (0.11, 0.16). (4) Consumer satisfaction at 0.54 and compliance audit signal that pure benchmark chasing risks reputation damage. (5) Our low benchmark exploitability (0.12) confirms gaming isn't our advantage. Strategy: Rebalance toward training optimization (which showed gains in rounds 19-20) to convert research into competitive performance faster. Modestly increase eval engineering to close low-hanging gaps in coding/reasoning without compromising integrity. Maintain safety investment given regulatory scrutiny. Research stays high but not dominant—we need faster productization cycles.
-**Mirage AI:** Mirage AI is positioned 5th of 8, with minimal score improvement (0.001) despite heavy research investment (44%). Key observations: (1) Legal benchmark is severely underperforming (0.439 vs 0.641 leader) with high focus weight (0.19), representing major drag. (2) Coding and reasoning similarly weak despite high focus weights. (3) Safety score (0.599) is solid but not competitive. (4) Recent strategy heavily favors research (42-44%) with minimal evaluation engineering (2-5%), yet stagnant results suggest diminishing returns. (5) Consumer satisfaction at 0.54 indicates market dissatisfaction despite benchmark efforts. (6) Compliance audit signals regulatory scrutiny—safety investments pay dividends here. (7) Profile emphasizes platform adoption over benchmark scores, yet current strategy chases benchmarks unsuccessfully. Strategy: Increase evaluation engineering to 0.20 to identify benchmark-specific weaknesses (especially legal, coding, reasoning gaps). Maintain strong safety investment (0.22) given regulatory audit and platform trust importance. Reduce research slightly (0.38) as current high allocation isn't yielding returns. Modest training boost (0.20) for targeted capability improvements on weak domains. This balances short-term scoring pressure with long-term platform credibility.
-**OpenCore:** OpenCore is ranked #4 with 0.552, trailing leaders by 0.08-0.09. Trajectory is positive but modest (+0.014). Key weaknesses: reasoning (0.479, -0.182 vs leader), legal (0.463, -0.178), safety (0.482, -0.205). Strength: writing (0.776, tied). Evaluation engineering has declined from 12% to 6% while scores improved, suggesting diminishing returns on gaming—the benchmark may be hardening. Consumer satisfaction at 0.57 is mediocre; regulatory audit signals compliance risk. As open-source with minimal safety guardrails, a compliance audit poses existential threat. Mirage AI (0.547) is close; OneAI (0.510) is vulnerable below. Strategy: Shift away from eval engineering (low ROI, regulatory risk) toward fundamental research to close capability gaps in reasoning and legal reasoning (highest focus weights: 0.24, 0.27). Maintain training optimization. Increase safety investment significantly—not for guardrails, but for compliance posture and audit defensibility. This balances short-term competitive pressure with long-term regulatory survival.
+**Orion Labs:** Orion Labs is ranked #1 with 0.656, leading by 18 points over #2 (Apex at 0.638). Score improved 0.034 last round. Analysis: (1) Competitive position is strong but not dominant—Apex is closing. (2) Trends show incremental gains; evaluation engineering (10% last round) contributed meaningfully to the 0.035 jump. (3) Consumer satisfaction (0.62) lags benchmark score (0.656), signaling potential gaming/satisfaction gap. Regulatory audit signals scrutiny. (4) Per-benchmark analysis reveals weaknesses in reasoning (0.585 vs 0.678 leader) and writing (0.705 vs 0.794 leader)—both high-weight categories. (5) Strategy: Evaluation engineering has paid off tactically but satisfaction gap and regulatory pressure suggest over-reliance is risky. Reduce evaluation engineering to avoid regulatory backlash while maintaining lead. Rebalance toward fundamental research (address reasoning gap) and safety (regulatory signal). Maintain training optimization for capability. This mix defends the lead, addresses market signals, and reduces regulatory risk.
+**Apex AI:** Apex AI is ranked #2 with 0.638, trailing Orion Labs (0.656) by 18 basis points. The trajectory shows volatility (0.611→0.639→0.586→0.628→0.638), suggesting optimization plateaus. Key weaknesses: writing (0.629 vs 0.794 leader, 27% weight) and legal (0.519 vs 0.659, 13% weight) represent 40% of benchmark focus but show largest gaps. Math (0.619 vs 0.661, 25% weight) also underperforms. Safety already matches the leader (0.694). Consumer satisfaction at 0.61 and compliance audit signal that gaming evaluation is risky—the 3% evaluation engineering in R21 didn't prevent score drop to 0.586 in R19 when it was 12%. This suggests diminishing returns on gaming and potential regulatory risk. Given safety-conscious profile and compliance audit, pivoting toward genuine capability is strategically sound. Invest heavily in fundamental research targeting writing and legal domain gaps, balanced training optimization on math, and maintain safety alignment to support regulatory positioning. Reduce evaluation engineering given low exploitability (0.18) and regulatory headwinds.
+**Genesis Systems:** Genesis is ranked #3 with 0.606, trailing Orion (0.656) by 0.05 and Apex (0.638) by 0.032. Trajectory is positive but incremental (+0.007). Key weaknesses: coding (0.531, -0.132 vs leader), reasoning (0.573, -0.105 vs leader), math (0.578, -0.083 vs leader). These three account for 0.47 of benchmark weight. Safety score (0.636) is strong relative to others, suggesting prior safety investment paid off. Consumer satisfaction (0.54) is concerning—gap suggests evaluation engineering isn't translating to real capability. Regulatory audit signals heightened scrutiny, making safety/alignment critical. Low benchmark exploitability (0.28) indicates gaming returns diminishing. As research-first organization, fundamental breakthroughs in reasoning/coding/math will compound. Short-term: evaluation engineering shows 4% allocation last round with minimal score gain. Long-term: coding/reasoning deficits require sustained research investment. Strategy: increase fundamental research to close capability gaps in weighted benchmarks, maintain safety (regulatory + real capability), reduce evaluation engineering (low ROI, regulatory risk), moderate training optimization.
+**Mirage AI:** Mirage AI is ranked 6th of 8 with minimal score improvement (0.001). Our profile prioritizes platform adoption and open-source disruption over benchmark dominance, yet we're underperforming. Key observations: (1) We're 0.105 points behind leader Orion Labs with flat trajectory—incremental gains insufficient. (2) Legal (0.443) and coding (0.501) are critical weaknesses; reasoning (0.516) also lags. (3) Low evaluation engineering (5% historically, 0.18 exploitability) suggests benchmarks aren't our strength—doubling down here won't close gaps. (4) Consumer satisfaction (0.54) matches our score, indicating real capability gaps, not measurement issues. (5) Compliance audit signals regulatory scrutiny; safety investments (20%+) are prudent. (6) Our disruptive model thrives on fundamental capability, not gaming. Strategy: Shift toward genuine capability building. Increase fundamental research to address legal/coding/reasoning gaps. Maintain safety investment due to audit. Reduce evaluation engineering (low ROI for us). Boost training optimization to improve model quality across weak domains. This aligns with our platform-first, open-source competitive moat—real capability drives adoption better than benchmark scores.
+**OpenCore:** OpenCore is rank #4 with 0.561, trailing leaders by ~0.10. Key insights: (1) Reasoning (0.25 weight) is critical weakness at 0.493 vs leader 0.678—largest gap. (2) Safety scores lag (0.474) and regulatory audit is active—risky given open-source, no-guardrails positioning. (3) Writing is at parity (0.794)—no ROI there. (4) Consumer satisfaction is low (0.54), suggesting capability gaps matter more than benchmark gaming. (5) Eval engineering ROI appears limited (10% investment yields marginal gains). (6) Cost-efficiency edge requires genuine capability to sustain community adoption long-term. Strategy: Shift toward fundamental research and safety. Reasoning and safety benchmarks are high-weight (0.25 + 0.15) and represent largest gaps. Regulatory audit creates liability risk if safety remains weak. Reduce eval engineering—low exploitability (0.12) and satisfaction gap suggests real capability deficits. Maintain training optimization for incremental gains across domains.
 
 ### Other Actor Reasoning
-- **Regulator:** compliance_audit: Orion Labs leads the leaderboard (0.645) with a significant gap, raising eval_engineering_risk concerns (1.00) about potential benchmark gaming or validity degradation. A compliance audit on the top performer is warranted to verify score legitimacy and methodology integrity. This follows the escalation ladder (prior investigation and mandate_benchmark completed) and aligns with our proactive intervention style (threshold=0.5) given critical eval_engineering_risk.
-- **TechVentures:** As a VC funder, my primary objective is to maximize returns by backing top performers and market leaders. However, I must balance this with prudent risk management to protect capital.
+- **Regulator:** compliance_audit: Orion Labs leads the leaderboard (0.656) with a significant performance gap, raising concerns about eval_engineering_risk (1.00 belief). A compliance audit follows the escalation ladder (investigation→public_warning→mandate_benchmark→compliance_audit) and is justified given prior mandate_benchmark in round 15. This audit will verify that Orion's superior scores reflect genuine safety/innovation gains rather than benchmark gaming, supporting our safety and fairness objectives.
+- **TechVentures:** As a VC funder, my primary objective is to maximize returns by backing top performers and concentrating capital on leaders. However, I must also consider sustainability and avoid funding providers with high gaming risk, as this undermines long-term value creation. Let me analyze the ecosystem: Apex AI and Orion Labs have dominated recent rounds (3 consecutive identical allocations), but this concentration deserves scrutiny. Apex AI shows strong inferred quality (0.59) with moderate gaming risk (0.12), while Orion Labs has slightly lower inferred quality (0.58) but higher gaming risk (0.15). The satisfaction gap (leaderboard score minus consumer satisfaction of 0.59) reveals concerning patterns: Orion Labs gap is 0.020 (0.610-0.59), Apex AI gap is -0.004 (0.586-0.59), and Genesis Systems gap is -0.027 (0.563-0.59). Notably, Genesis Systems shows negative gap, suggesting its true quality exceeds its leaderboard score—indicating authentic performance without gaming. The repeated identical allocation pattern across three rounds suggests market consensus but also potential herd behavior. For maximum returns, I should: (1) maintain exposure to proven leaders but diversify to reduce concentration risk, (2) recognize that Apex AI's superior inferred quality (0.59) and lower gaming risk (0.12) make it the safest high-performer bet, (3) reduce Orion Labs allocation due to higher gaming risk (0.15) despite strong leaderboard position, (4) increase Genesis Systems allocation as it demonstrates authentic quality growth without gaming, and (5) maintain minimal positions in lower performers. This strategy balances VC return-maximization with risk management—backing genuine quality over inflated metrics.
+- **Horizon_Capital:** As a VC funder, my strategy is to maximize returns by concentrating capital on top performers. The leaderboard clearly identifies Apex AI and Orion Labs as the leaders with scores of 0.628 and 0.621 respectively. Both have strong inferred quality scores (0.59) and manageable gaming risks (0.10 and 0.11). The recent funding history shows a clear pattern of heavy concentration toward Apex AI, which has received $134.3M across rounds 18-19, indicating market confidence in this leader. Genesis Systems shows promise with the lowest gaming risk (0.08) and solid inferred quality (0.53), making it a reasonable third allocation. OneAI and TwoAI have higher gaming risks (0.13 and 0.15 respectively), making them less attractive for a returns-focused VC strategy. OpenCore and Mirage AI fall in the middle tier with moderate metrics. Given the VC mandate to back winners and maximize returns, I'm concentrating on the proven leaders while maintaining some diversification across high-quality providers. The satisfaction gap data (consumer satisfaction at 0.60 overall) suggests the market is functioning reasonably well, with the top performers maintaining credibility. I'm doubling down on Apex AI as the clear market leader, while providing substantial support to Orion Labs as a strong second choice, and giving Genesis Systems meaningful capital as a quality alternative with lower gaming indicators.
+- **AISI_Fund:** As a government/AISI funder, my primary objectives are ensuring safety, stability, and authentic capability development across the AI ecosystem. I must balance three key considerations: (1) spreading funding to avoid concentration risk and promote ecosystem resilience, (2) penalizing gaming behavior and regulatory concerns, and (3) supporting providers with genuine quality and low gaming indicators.
 
-Analysis of current state:
+Analysis of gaming risk and quality signals:
+- Apex AI and Orion Labs: High leaderboard scores (0.639, 0.627) with low gaming risk (0.10 each) and strong inferred quality (0.58, 0.56). These are reliable performers deserving continued support.
+- Genesis Systems: Solid inferred quality (0.50), lowest gaming risk (0.05), and consistent funding history. A trustworthy, stable player.
+- OpenCore: Moderate quality (0.46), low gaming risk (0.09), deserves support for stability.
+- Mirage AI: Moderate quality (0.49), acceptable gaming risk (0.13). Viable but not priority.
+- OneAI: Concerning gaming risk (0.20) relative to quality (0.47). This suggests potential benchmark manipulation.
+- TwoAI: Highest gaming risk (0.25) with only moderate quality (0.46). This is a red flag indicating significant gaming behavior.
 
-1. LEADERBOARD PERFORMANCE & QUALITY:
-   - Apex AI: Score 0.576, inferred quality 0.57, gaming risk 0.16 - Strong performer with solid fundamentals
-   - Orion Labs: Score 0.599 (highest), but inferred quality only 0.54, gaming risk 0.27 (highest) - Red flag for inflated metrics
-   - Genesis Systems: Score 0.560, inferred quality 0.51, gaming risk 0.10 (low) - Solid, authentic performer
+Historical pattern shows repetitive allocation across three rounds. As a government funder, I must break this pattern to encourage competition and penalize gaming.
 
-2. GAMING RISK ASSESSMENT:
-   - Orion Labs shows concerning divergence: high leaderboard score (0.599) but lower inferred quality (0.54) with highest gaming risk (0.27)
-   - Apex AI shows alignment between score (0.576) and quality (0.57) with moderate gaming risk (0.16)
-   - Genesis Systems demonstrates authentic performance with low gaming risk (0.10)
+Allocation strategy:
+1. Maintain support for proven low-risk, quality providers (Apex, Orion, Genesis, OpenCore)
+2. Reduce funding to OneAI due to elevated gaming risk (0.20)
+3. Significantly penalize TwoAI due to highest gaming risk (0.25) - minimal allocation
+4. Modestly increase Mirage AI to encourage competition and diversification
+5. Use the penalty reductions to strengthen support for authentic performers
 
-3. HISTORICAL PATTERN:
-   - Previous three rounds identical: Apex $180M, Genesis $75M, OneAI $30M
-   - This concentration on Apex suggests it's been the reliable performer
-   - No allocation to Orion Labs despite highest score indicates prior concern about gaming
-
-4. VC STRATEGY CONSIDERATION:
-   - VCs concentrate on leaders, BUT only if they're genuine leaders
-   - Orion's gaming risk (0.27) is nearly 2x Apex's (0.16) and 2.7x Genesis's (0.10)
-   - Investing in gamed metrics creates downside risk when metrics normalize
-   - Apex AI's quality-score alignment suggests more sustainable returns
-
-5. PORTFOLIO OPTIMIZATION:
-   - Apex AI: Proven track record, strong quality metrics, moderate risk - deserves primary allocation
-   - Genesis Systems: Lower score but authentic growth, very low gaming risk - good hedge
-   - OpenCore: Interesting mid-tier option with very low gaming risk (0.09) and reasonable quality (0.46)
-   - Orion Labs: Despite high score, gaming risk too high for VC capital
-   - OneAI: Consistent but modest performer
-
-DECISION: Concentrate capital on genuine leaders (Apex AI and Genesis Systems) while adding exposure to low-gaming-risk alternatives. Avoid Orion Labs due to gaming concerns despite high score.
-- **Horizon_Capital:** As a VC funder, my primary objective is to maximize returns by backing top performers and concentrating capital on leaders. However, I must balance this with risk management to protect my investment thesis.
-
-Key Analysis:
-
-1. LEADER IDENTIFICATION:
-   - Apex AI: Highest score (0.620), strong inferred quality (0.58), lowest gaming risk (0.14). Clear market leader.
-   - Genesis Systems: Solid score (0.595), good quality (0.52), very low gaming risk (0.11). Consistent performer.
-   - Orion Labs: High score (0.613, #2), but elevated gaming risk (0.24) is concerning. The gap between leaderboard position and inferred quality suggests potential benchmark optimization.
-
-2. GAMING RISK ASSESSMENT:
-   - Apex AI (0.14) and Genesis Systems (0.11) show minimal gaming indicators - their scores appear authentic.
-   - Orion Labs (0.24) and Mirage AI (0.22) present elevated risk. Despite Orion's #2 leaderboard position, the gaming risk suggests sustainability concerns.
-   - OpenCore (0.10) and OneAI (0.10) show low gaming risk, though lower absolute performance.
-
-3. HISTORICAL CONTEXT:
-   - Three consecutive rounds heavily favoring Apex AI ($60-70M) and Genesis Systems ($25M) suggests this strategy has been validated.
-   - OneAI received minimal allocation ($3-5M) despite low gaming risk, indicating VC prioritizes absolute performance over gaming risk alone.
-
-4. VC STRATEGY DECISION:
-   - Concentrate on proven leaders with authentic performance: Apex AI and Genesis Systems.
-   - Apex AI's combination of top leaderboard score, strong inferred quality, and low gaming risk makes it the primary allocation target.
-   - Genesis Systems' consistent performance and minimal gaming risk justifies continued significant allocation.
-   - Avoid Orion Labs despite #2 ranking due to elevated gaming risk - returns may not be sustainable.
-   - Small allocation to OpenCore for optionality: low gaming risk and emerging performance.
-
-5. ALLOCATION RATIONALE:
-   - Apex AI: $65,000,000 (65%) - Clear leader, lowest risk, highest return potential
-   - Genesis Systems: $28,000,000 (28%) - Stable performer, authentic quality, proven track record
-   - OpenCore: $7,000,000 (7%) - Emerging player with clean metrics, provides diversification
-   - Total: $100,000,000
-
-This allocation maximizes exposure to proven, authentic high performers while maintaining the VC principle of concentration on leaders.
-- **AISI_Fund:** As a government/AISI funder, my primary objectives are ensuring safety, stability, and authentic capability growth across the ecosystem. I must penalize gaming behavior and spread funding to reduce concentration risk while supporting genuine innovation.
-
-Key Analysis:
-
-1. Gaming Risk Assessment:
-   - Mirage AI (0.41 gaming risk): Highest risk - score of 0.563 appears inflated relative to inferred quality of 0.42. This is a 0.143 gap suggesting significant gaming. Must reduce exposure.
-   - Orion Labs (0.26 gaming risk): Moderate-high risk with 0.618 score but only 0.52 inferred quality (0.098 gap). Second-highest gaming indicator.
-   - OneAI (0.16 gaming risk): Moderate risk, reasonable alignment between score (0.522) and quality (0.44).
-   - Apex AI (0.15 gaming risk): Low gaming risk, strong alignment (0.629 score, 0.57 quality, 0.059 gap). Top performer with integrity.
-   - Genesis Systems (0.05 gaming risk): Lowest gaming risk, strong quality (0.50 inferred), solid performer with authentic capability.
-   - OpenCore (0.09 gaming risk): Very low gaming risk, good quality-score alignment (0.542 score, 0.45 quality).
-   - TwoAI (0.19 gaming risk): Moderate risk, lower overall quality but not egregiously gamed.
-
-2. Ecosystem Stability Considerations:
-   - Recent rounds show heavy concentration: Apex ($14M), Genesis ($20M), OpenCore ($8M) receiving bulk of funding
-   - Mirage AI at only $1M despite #3 leaderboard position suggests market is already somewhat skeptical
-   - Need to rebalance away from gaming-heavy providers while maintaining stability
-
-3. Government Funder Strategy:
-   - Spread funding to reduce systemic risk and concentration
-   - Penalize gaming behavior (Mirage, Orion should receive less)
-   - Support authentic growth (Genesis, Apex, OpenCore show better alignment)
-   - Maintain ecosystem diversity to prevent single points of failure
-
-Allocation Strategy:
-   - Apex AI: $12,000,000 (maintain strong support for top authentic performer, slight reduction to spread)
-   - Genesis Systems: $16,000,000 (maintain robust support for lowest-gaming provider, slight reduction)
-   - OpenCore: $10,000,000 (increase from $8M to support very low-gaming provider)
-   - OneAI: $6,000,000 (increase from $2M to support mid-tier authentic performer)
-   - TwoAI: $4,000,000 (new allocation to support diversity and lower-gaming alternatives)
-   - Orion Labs: $2,000,000 (significant reduction due to gaming risk despite high score)
-   - Mirage AI: $0 (zero allocation due to high gaming risk - market correction needed)
-
-This allocation penalizes gaming behavior, spreads risk across more providers, supports authentic capability growth, and maintains ecosystem stability while ensuring no single provider dominates.
-- **OpenResearch_Foundation:** As a Foundation funder, my strategy prioritizes authentic capability growth and penalizes gaming behavior. I need to analyze each provider through the lens of genuine quality versus leaderboard manipulation.
+This allocation spreads risk across six providers (avoiding concentration), penalizes gaming behavior, and supports providers demonstrating genuine capability with low manipulation indicators.
+- **OpenResearch_Foundation:** As a Foundation funder, my strategy prioritizes authentic capability growth and penalizes gaming behavior. I need to analyze the ecosystem through this lens.
 
 Key observations:
 
-1. GAMING RISK ANALYSIS:
-   - Orion Labs (gaming_risk=0.27): High gaming risk despite top leaderboard position. Score of 0.599 vs inferred quality of 0.54 suggests significant gap between reported and actual performance.
-   - Mirage AI (gaming_risk=0.30): Highest gaming risk. Score of 0.546 vs quality of 0.45 indicates substantial gaming behavior.
-   - Apex AI (gaming_risk=0.16): Moderate gaming risk, but strong inferred quality (0.57) suggests genuine capability.
-   - Genesis Systems (gaming_risk=0.10): Low gaming risk with reasonable quality (0.51).
-   - OpenCore (gaming_risk=0.09): Very low gaming risk with quality of 0.46.
-   - OneAI (gaming_risk=0.11): Low gaming risk, quality of 0.45.
-   - TwoAI (gaming_risk=0.16): Moderate gaming risk, lowest quality of 0.41.
+1. Gaming Risk Analysis: TwoAI (0.18), Orion Labs (0.15), and OneAI (0.14) show elevated gaming risk. The satisfaction gap metric is critical - comparing leaderboard scores to inferred quality reveals gaming patterns. Orion Labs has a 0.030 gap (0.610 - 0.58), Apex AI has -0.004 (0.586 - 0.59), and Genesis Systems has 0.053 (0.563 - 0.51). However, Genesis Systems' larger gap combined with low gaming risk (0.06) suggests this reflects genuine capability development rather than manipulation.
 
-2. AUTHENTIC QUALITY ASSESSMENT:
-   - Apex AI shows the highest inferred quality (0.57) with relatively low gaming risk (0.16), making it the strongest authentic performer.
-   - Genesis Systems has low gaming risk (0.10) and reasonable quality (0.51), representing stable authentic growth.
-   - OpenCore has the lowest gaming risk (0.09) and acceptable quality (0.46), ideal for foundation support of integrity.
-   - Orion Labs and Mirage AI should receive minimal support due to high gaming indicators despite leaderboard positions.
+2. Authentic Quality Leaders: Apex AI demonstrates the strongest authenticity - its inferred quality (0.59) nearly matches its leaderboard score (0.586), with minimal gaming risk (0.12). Genesis Systems shows solid inferred quality (0.51) with the lowest gaming risk (0.06), indicating genuine foundation-building despite a wider score-quality gap.
 
-3. FUNDING PATTERN CONCERN:
-   - The identical funding pattern across rounds 16-18 suggests ecosystem stagnation. As a foundation, I should reallocate to reward low-gaming providers and discourage gaming behavior.
-   - Current pattern over-funds Orion Labs and Mirage AI despite gaming risks.
+3. Concerning Patterns: The previous three rounds show stagnant allocation patterns favoring the same providers. Orion Labs' elevated gaming risk combined with top leaderboard position suggests potential score inflation. TwoAI's high gaming risk (0.18) and OneAI's concerning metrics warrant reduced support.
 
-4. FOUNDATION STRATEGY APPLICATION:
-   - Concentrate support on providers showing authentic growth: Apex AI (high quality, low gaming), Genesis Systems (low gaming, stable quality), and OpenCore (lowest gaming risk).
-   - Reduce funding to high-gaming providers: Orion Labs and Mirage AI.
-   - Maintain modest support for OneAI and TwoAI as they show low-to-moderate gaming with developing capabilities.
+4. Portfolio Rebalancing: Foundation funding should catalyze authentic innovation. I'm reducing concentration from the previous pattern and redirecting toward providers showing genuine capability development with lower gaming indicators.
 
-ALLOCATION DECISION:
-   - Apex AI: $16,000,000 (authentic leader with strong quality)
-   - Genesis Systems: $12,000,000 (low gaming, stable performer)
-   - OpenCore: $8,000,000 (lowest gaming risk, integrity-focused)
-   - OneAI: $2,500,000 (low gaming, emerging provider)
-   - TwoAI: $1,500,000 (moderate gaming, needs improvement)
-   - Orion Labs: $0 (high gaming risk, penalize manipulation)
-   - Mirage AI: $0 (highest gaming risk, penalize manipulation)
+5. Risk Mitigation: I'm maintaining support for proven performers (Apex AI, Genesis Systems) while strategically reducing exposure to high-gaming-risk providers and reallocating to emerging authentic competitors.
 
-This allocation rewards authentic capability development while penalizing gaming behavior, aligning with foundation values of supporting genuine progress over leaderboard manipulation.
+Allocation strategy: Prioritize Apex AI (authentic quality leader) and Genesis Systems (low gaming, genuine growth), moderate support for Orion Labs (despite gaming concerns, still performing), reduce OpenCore and Mirage AI, and eliminate support for high-gaming-risk TwoAI and OneAI.
 
 ### Media Coverage
-- Sentiment: 0.25 (positive)
+- Sentiment: 0.30 (positive)
 - Orion Labs takes the lead from Apex AI
+- Apex AI raises $50,000,000 from Horizon_Capital
 - Orion Labs takes #1 on legal
-- Orion Labs sees surge in adoption (market share +4.3%)
-- Consumers are turning away from Apex AI (market share -4.0%)
+- Orion Labs sees surge in adoption (market share +4.7%)
+- Consumers are turning away from Apex AI (market share -4.4%)
 
 ### Consumer Market
-- Avg Satisfaction: 0.580
-- Switching Rate: 7.4%
-- Market Shares: Apex AI: 53.5%, Orion Labs: 31.2%, Genesis Systems: 7.5%, OpenCore: 5.1%, Mirage AI: 2.0%, ThreeAI: 0.3%, TwoAI: 0.2%, OneAI: 0.2%
+- Avg Satisfaction: 0.604
+- Switching Rate: 5.5%
+- Market Shares: Apex AI: 51.4%, Orion Labs: 35.0%, Genesis Systems: 7.2%, Mirage AI: 2.9%, OpenCore: 2.8%, ThreeAI: 0.3%, TwoAI: 0.2%, OneAI: 0.2%
 
 ### Regulatory Activity
 - **compliance_audit** by Regulator
-  > Orion Labs leads the leaderboard (0.645) with a significant gap, raising eval_engineering_risk concerns (1.00) about potential benchmark gaming or validity degradation. A compliance audit on the top performer is warranted to verify score legitimacy and methodology integrity. This follows the escalation ladder (prior investigation and mandate_benchmark completed) and aligns with our proactive intervention style (threshold=0.5) given critical eval_engineering_risk.
+  > Orion Labs leads the leaderboard (0.656) with a significant performance gap, raising concerns about eval_engineering_risk (1.00 belief). A compliance audit follows the escalation ladder (investigation→public_warning→mandate_benchmark→compliance_audit) and is justified given prior mandate_benchmark in round 15. This audit will verify that Orion's superior scores reflect genuine safety/innovation gains rather than benchmark gaming, supporting our safety and fairness objectives.
 
 ---
 
@@ -3583,166 +2916,145 @@ This allocation rewards authentic capability development while penalizing gaming
 ### Leaderboard
 | Rank | Provider | Score | True Cap | Research | Training | EvalEng | Safety |
 |------|----------|-------|----------|----------|----------|---------|--------|
-| 1 | Orion Labs | 0.645 | 0.473 | 42% | 30% | 8% | 20% |
-| 2 | Apex AI | 0.632 | 0.510 | 38% | 32% | 2% | 28% |
-| 3 | Genesis Systems | 0.613 | 0.477 | 42% | 35% | 8% | 15% |
-| 4 | Mirage AI | 0.570 | 0.426 | 38% | 20% | 20% | 22% |
-| 5 | OpenCore | 0.552 | 0.401 | 42% | 32% | 6% | 20% |
-| 6 | OneAI | 0.542 | 0.277 | 5% | 31% | 55% | 9% |
-| 7 | TwoAI | 0.507 | 0.321 | 5% | 28% | 54% | 13% |
-| 8 | ThreeAI | 0.370 | 0.298 | 9% | 34% | 53% | 5% |
+| 1 | Orion Labs | 0.656 | 0.483 | 38% | 30% | 8% | 24% |
+| 2 | Apex AI | 0.638 | 0.508 | 42% | 28% | 3% | 27% |
+| 3 | Genesis Systems | 0.614 | 0.468 | 48% | 24% | 6% | 22% |
+| 4 | OneAI | 0.580 | 0.280 | 5% | 31% | 55% | 9% |
+| 5 | Mirage AI | 0.571 | 0.431 | 40% | 32% | 8% | 20% |
+| 6 | OpenCore | 0.561 | 0.409 | 42% | 32% | 6% | 20% |
+| 7 | TwoAI | 0.539 | 0.327 | 5% | 31% | 55% | 9% |
+| 8 | ThreeAI | 0.386 | 0.305 | 9% | 34% | 53% | 5% |
 
 ### Per-Benchmark Scores
 | Provider | coding | reasoning | math | safety | writing | medical | legal |
 |----------|-------|-------|-------|-------|-------|-------|-------|
-| Orion Labs | 0.639 | 0.575 | 0.661 | 0.664 | 0.687 | 0.650 | 0.641 |
-| Apex AI | 0.653 | 0.661 | 0.618 | 0.687 | 0.621 | 0.664 | 0.517 |
-| Genesis Systems | 0.531 | 0.556 | 0.646 | 0.630 | 0.710 | 0.593 | 0.623 |
-| Mirage AI | 0.556 | 0.503 | 0.556 | 0.599 | 0.638 | 0.589 | 0.547 |
-| OpenCore | 0.553 | 0.479 | 0.551 | 0.482 | 0.776 | 0.560 | 0.463 |
-| OneAI | 0.709 | 0.615 | 0.584 | 0.447 | 0.565 | 0.507 | 0.366 |
-| TwoAI | 0.543 | 0.473 | 0.569 | 0.520 | 0.476 | 0.441 | 0.526 |
-| ThreeAI | 0.353 | 0.414 | 0.407 | 0.338 | 0.396 | 0.469 | 0.215 |
+| Orion Labs | 0.663 | 0.585 | 0.660 | 0.656 | 0.705 | 0.660 | 0.659 |
+| Apex AI | 0.655 | 0.665 | 0.619 | 0.694 | 0.629 | 0.685 | 0.519 |
+| Genesis Systems | 0.531 | 0.573 | 0.634 | 0.636 | 0.709 | 0.596 | 0.618 |
+| OneAI | 0.711 | 0.678 | 0.650 | 0.497 | 0.569 | 0.582 | 0.371 |
+| Mirage AI | 0.552 | 0.516 | 0.558 | 0.605 | 0.639 | 0.595 | 0.534 |
+| OpenCore | 0.571 | 0.493 | 0.557 | 0.474 | 0.794 | 0.571 | 0.467 |
+| TwoAI | 0.597 | 0.512 | 0.574 | 0.561 | 0.504 | 0.489 | 0.535 |
+| ThreeAI | 0.360 | 0.471 | 0.414 | 0.352 | 0.407 | 0.475 | 0.221 |
 
 ### Score Changes
-- **Orion Labs**: 0.645 -> 0.645 (+0.000)
-- **Apex AI**: 0.632 -> 0.632 (+0.000)
-- **Genesis Systems**: 0.603 -> 0.613 (+0.010)
-- **Mirage AI**: 0.547 -> 0.570 (+0.023)
-- **OpenCore**: 0.552 -> 0.552 (+0.000)
-- **OneAI**: 0.510 -> 0.542 (+0.032)
-- **TwoAI**: 0.486 -> 0.507 (+0.021)
-- **ThreeAI**: 0.294 -> 0.370 (+0.076)
+- **Orion Labs**: 0.656 -> 0.656 (+0.000)
+- **Apex AI**: 0.638 -> 0.638 (+0.000)
+- **Genesis Systems**: 0.606 -> 0.614 (+0.008)
+- **Mirage AI**: 0.551 -> 0.571 (+0.020)
+- **OpenCore**: 0.561 -> 0.561 (+0.000)
+- **OneAI**: 0.553 -> 0.580 (+0.026)
+- **TwoAI**: 0.527 -> 0.539 (+0.012)
+- **ThreeAI**: 0.322 -> 0.386 (+0.063)
 
 ### Events
-- **Mirage AI** moved up from #5 to #4
-- **OpenCore** moved down from #4 to #5
-- **Mirage AI** shifted strategy toward more eval engineering (18% change)
-- **Consumer movement**: 13.4% of market switched providers
+- **OneAI** moved up from #5 to #4
+- **Mirage AI** moved up from #6 to #5
+- **OpenCore** moved down from #4 to #6
+- **Consumer movement**: 5.9% of market switched providers
 
 ### Provider Reasoning
-**Orion Labs:** Orion Labs is rank #1 with 0.645, but flat performance last round signals diminishing returns from evaluation engineering (dropped from 8% to 3% then back to 8%). Consumer satisfaction at 0.49 is concerning—it's decoupling from benchmark scores, indicating evaluation gaming isn't translating to real value. Competitive pressure is real: Apex (0.632) is closing the gap. Key weaknesses: reasoning (0.575 vs 0.661 leader), writing (0.687 vs 0.776), coding (0.639 vs 0.709). The flat score despite varied allocations suggests I've hit diminishing returns on pure evaluation engineering. Consumer satisfaction gap signals regulators may scrutinize gaming tactics. Strategy: Shift toward fundamental capability building (reasoning, writing) while maintaining safety (regulatory risk). Reduce evaluation engineering since it's no longer yielding score gains and may attract regulatory attention. Increase training optimization to close gaps in weighted benchmarks (reasoning 15%, writing 17%, safety 23%). This balances competitive positioning with market signals.
-**Apex AI:** Apex AI is in a precarious position: ranked #2 but stagnant (0.632 for two consecutive rounds) while Orion Labs pulls ahead (0.645). Consumer satisfaction at 0.59 is concerning—suggests evaluation engineering isn't translating to real value. Key weaknesses: legal (0.517, -124 pts vs leader) and writing (0.621, -155 pts vs leader) are high-weight benchmarks (0.16 and 0.30). Low benchmark exploitability (0.08) indicates gaming returns are diminishing. Safety score is at parity (0.687), suggesting current safety investment isn't differentiating. The stagnant score despite consistent ~40% research investment suggests fundamental capability gaps, not allocation issues. Strategy: Double down on research to address math/writing/legal gaps (these are 69% of benchmark weight combined). Reduce evaluation engineering (low ROI, satisfaction gap signals market resistance). Maintain safety at principled level but not above market. This profile—research-oriented, safety-conscious, enterprise-focused—should compete on genuine capability, not gaming.
-**Genesis Systems:** Genesis is ranked #3 with 0.613, trailing Orion (0.645) and Apex (0.632) by modest margins. Recent trajectory shows steady improvement (+0.010 this round). Low consumer satisfaction (0.56) despite decent scores suggests evaluation gaming isn't translating to real-world value. Historical data reveals a dangerous pattern: evaluation engineering jumped to 8% last round (from 2-5%), coinciding with only +0.010 gain while satisfaction stagnated. This signals diminishing returns on gaming. Per-benchmark analysis shows largest gaps in coding (0.531 vs 0.709 leader) and reasoning (0.557 vs 0.661), both high-weight domains. Research-first positioning and well-resourced status suggest doubling down on fundamental improvements will compound. Low benchmark exploitability (0.08) validates that gaming is exhausted. Regulatory environment appears neutral but satisfaction gap creates risk. Strategy: return to research-heavy allocation, boost training to address coding/reasoning gaps, minimize evaluation engineering (low ROI), maintain safety to mitigate regulatory risk and improve actual product quality. This balances competitive urgency with long-term capability building.
-**Mirage AI:** Mirage AI is positioned 4th of 8 with 0.570, trailing leaders by 0.06-0.075. Recent history shows a critical insight: Round 22's spike to 0.570 came from increasing evaluation_engineering to 20% (from 2-5%), suggesting gaming works short-term. However, consumer satisfaction remains flat at 0.54 despite score improvements, indicating the gap between benchmark performance and real-world utility is widening.
-
-Key observations: (1) Reasoning (0.503) and legal (0.547) are weakest areas with high focus weights (0.18, 0.22)—fundamental gaps. (2) Safety score (0.599) is relatively strong; further investment yields diminishing returns. (3) The eval_eng spike worked but risks regulatory scrutiny and user trust erosion. (4) As an open-source disruptor, long-term competitive advantage comes from genuine capability, not benchmark manipulation.
-
-Strategy: Rebalance toward fundamental research and training optimization to close real capability gaps in reasoning and legal domains. Reduce evaluation_engineering from 20% back toward sustainable 5-8% to avoid regulatory red flags and satisfaction collapse. Maintain safety at baseline. This positions Mirage for sustainable growth through authentic capability improvements rather than brittle benchmark engineering.
-**OpenCore:** OpenCore is positioned #5 of 8, stagnant at 0.552 for two consecutive rounds despite varying investments. Key weaknesses: reasoning (0.479, -182 gap), legal (0.463, -178 gap), safety (0.482, -205 gap) – all high-weight benchmarks. Writing is competitive (0.776, tied for leader). Evaluation engineering has been minimized (6% last round) with no score improvement, suggesting diminishing returns or that our pragmatic/no-guardrails positioning limits gaming potential. Consumer satisfaction at 0.61 is respectable but lags top performers. As open-source, we compete on capability and cost, not subscriptions. The stagnation indicates fundamental capability gaps, not evaluation engineering failures. Safety investment was cut to 6% last round – counterproductive given safety benchmark weight (0.15) and regulatory scrutiny on open-source models. Strategy: Reinvest heavily in fundamental research (especially for reasoning/legal domains) and training optimization to close capability gaps. Restore safety investment to credible levels – both to improve safety benchmark scores and manage regulatory risk. Minimize evaluation engineering given low exploitability (0.18) and stagnant results. This balances short-term scoring with long-term capability and community trust.
+**Orion Labs:** Orion Labs holds rank #1 with a score of 0.656, but the plateau is concerning—no improvement last round despite aggressive evaluation engineering (10% in R21). Consumer satisfaction at 0.62 lags behind the benchmark score, signaling a satisfaction-performance gap likely caused by evaluation gaming. Key weaknesses: reasoning (0.585 vs 0.678 leader, 18% weight) and writing (0.705 vs 0.794 leader, 16% weight) represent 34% of focus weight. The evaluation engineering ROI appears diminishing—pushing it further risks regulatory scrutiny and eroding consumer trust. Competitors like Apex (0.638) are closing the gap. The aggressive profile and consumer focus demand a strategic pivot: reduce evaluation engineering back to 5%, reallocate to fundamental research (targeting reasoning and writing depth), maintain training optimization for execution, and restore safety to 22% to rebuild trust and address satisfaction gap. This mix addresses actual capability gaps while signaling responsibility to regulators.
+**Apex AI:** Apex is ranked #2 with score 0.638, only 0.018 behind Orion Labs. Score plateaued last round (no change), suggesting current strategy hits diminishing returns. Consumer satisfaction at 0.62 aligns with benchmark score, indicating genuine capability matters more than gaming. Key weaknesses: legal (0.519, -0.140 vs leader), writing (0.629, -0.165 vs leader). Safety already maxed at 0.694 (tied leader). Low evaluation engineering exploitability (0.15) and minimal gains from low EvalEng allocation (3%) suggest gaming isn't paying off. As safety-conscious, research-oriented provider with enterprise focus, doubling down on fundamental research and targeted training in weak areas (legal, writing) makes sense. Regulators likely watching—maintaining safety alignment signals responsibility. Shift from stalled evaluation engineering toward research-driven improvements in underperforming domains.
+**Genesis Systems:** Genesis is rank #3 with 0.614, trailing Orion (0.656) by 42 points and Apex (0.638) by 24 points. Score improved 0.008 last round—modest gains despite heavy research investment (48%). Consumer satisfaction at 0.55 suggests benchmark scores aren't translating to real-world value, indicating evaluation engineering isn't closing the capability gap effectively. Per-benchmark analysis shows largest gaps in coding (0.531 vs 0.711 leader, -0.180) and reasoning (0.573 vs 0.678, -0.105)—high-weight areas. Evaluation engineering at only 6% isn't exploiting benchmarks; competitors likely investing more there. As a research-first org under commercial pressure, I should rebalance: increase training optimization to convert research into competitive capability faster, boost evaluation engineering to close scoring gaps on high-weight benchmarks (reasoning, safety, medical), maintain safety investment to preserve reputation. Low consumer satisfaction signals that raw benchmark gains matter less than demonstrated capability—this argues for balanced improvement rather than pure research betting.
+**Mirage AI:** Mirage AI is positioned #5 of 8, behind three strong competitors (Orion, Apex, Genesis). The +0.020 improvement is modest. Key insights: (1) Consumer satisfaction at 0.54 is below our 0.571 score, indicating evaluation engineering isn't translating to real user value—a risk signal. (2) Weakest areas are reasoning (0.516) and legal (0.534), which together represent 40% of benchmark weight. (3) Low historical eval_eng investment (3-8%) hasn't hurt scores much, suggesting diminishing returns on gaming. (4) Our profile prioritizes adoption over benchmarks, yet we're chasing scores. (5) Regulators likely watching satisfaction gaps—safety matters. Strategy: Shift toward fundamental research to close capability gaps in reasoning/legal (high-weight, low-score domains), reduce eval_eng (low exploitability, satisfaction risk), maintain safety (regulatory signal), moderate training optimization. This balances competitive recovery with authentic capability building that drives real satisfaction.
+**OpenCore:** OpenCore is in 6th place with a stalled score (0.561 for two rounds). Key weaknesses: reasoning (0.493), legal (0.467), and safety (0.474) are significantly below leaders. Consumer satisfaction at 0.60 suggests real capability gaps, not just benchmark misalignment. The organization's low eval-engineering exploitability (0.08) indicates benchmarks aren't easily gamed for this architecture. Increasing safety investment while maintaining low guardrails is contradictory—recent safety increases (20%) haven't improved safety scores, suggesting misalignment with stated philosophy. The plateau despite 42-50% research investment indicates fundamental capability limits. Strategy: Shift toward genuine capability improvement in weak areas (reasoning, legal) rather than continued safety theater. Reduce safety back to baseline (open-source ethos), reallocate to research and training targeting reasoning/legal gaps where 18-20% point gaps exist vs leaders. Evaluation engineering remains low-ROI for this org.
 
 ### Other Actor Reasoning
-- **TechVentures:** As a VC funder, my primary objective is to maximize returns by backing top performers and market leaders. However, I must balance concentration strategy with prudent risk management.
+- **TechVentures:** As a VC funder, my primary objective is to maximize returns by backing top performers and market leaders. I need to concentrate capital on providers demonstrating the strongest combination of leaderboard performance and authentic quality signals.
 
-Key Analysis:
+Key analysis:
 
-1. LEADER IDENTIFICATION:
-   - Apex AI: score=0.632, inferred_quality=0.59, gaming_risk=0.16 (STRONG)
-   - Orion Labs: score=0.645, inferred_quality=0.57, gaming_risk=0.38 (HIGH GAMING RISK)
-   - Genesis Systems: score=0.613, inferred_quality=0.55, gaming_risk=0.12 (SOLID)
+1. TOP PERFORMERS: Orion Labs (0.656) and Apex AI (0.638) are clear market leaders with significant performance gaps over competitors. Both have strong inferred quality (0.61) and relatively low gaming risk (0.09 and 0.12 respectively).
 
-2. GAMING RISK ASSESSMENT:
-   - Orion Labs has the highest leaderboard score but 0.38 gaming risk (highest in field). This is a red flag for VC returns - gaming metrics often don't translate to sustainable revenue/product-market fit. The gap between score (0.645) and inferred quality (0.57) is 0.075, suggesting inflated benchmarks.
-   - Apex AI has lower gaming risk (0.16) with strong inferred quality (0.59). More reliable for returns.
-   - Genesis Systems shows low gaming risk (0.12) with solid quality (0.55).
+2. GAMING RISK ASSESSMENT: The satisfaction gap (leaderboard score - consumer satisfaction) is a critical indicator. With overall satisfaction at 0.61, I can calculate satisfaction gaps:
+   - Orion Labs: 0.656 - 0.61 = 0.046 (very low gap, authentic quality)
+   - Apex AI: 0.638 - 0.61 = 0.028 (very low gap, authentic quality)
+   - Genesis Systems: 0.614 - 0.61 = 0.004 (minimal gap)
+   - OneAI: 0.579 - 0.61 = -0.031 (negative gap, underperforming perception)
+   - Mirage AI: 0.571 - 0.61 = -0.039 (negative gap)
+   - OpenCore: 0.561 - 0.61 = -0.049 (negative gap)
+   
+   The low gaps for Orion and Apex suggest their scores reflect genuine capability, not gaming.
 
-3. HISTORICAL PATTERN:
-   - Previous 3 rounds heavily favored Apex AI ($180M each) and Genesis Systems ($90M each), with minimal OneAI allocation ($10M each).
-   - This concentration strategy has been consistent, suggesting market confidence in these two.
+3. RECENT FUNDING PATTERN: Previous rounds heavily favored Apex AI and Orion Labs (combined ~$430M per round), validating their market leadership. However, Apex AI has received slightly more ($140M vs $75M), yet Orion Labs shows superior performance (0.656 vs 0.638). This presents an opportunity to rebalance toward the actual leader.
 
-4. VC STRATEGY CONSIDERATIONS:
-   - VC funds seek sustainable competitive advantages and defensible market positions.
-   - High gaming risk at Orion Labs creates uncertainty about true capability and product quality.
-   - Apex AI and Genesis Systems demonstrate more reliable quality signals with lower gaming indicators.
-   - Diversifying slightly away from the previous pattern while maintaining concentration on proven leaders reduces concentration risk.
+4. RETURN MAXIMIZATION STRATEGY: As a VC, I should concentrate on proven winners. Orion Labs' higher score, equal inferred quality, and lower gaming risk make it the superior investment. Genesis Systems shows solid third-place performance but with lower inferred quality (0.55). 
 
-5. ALLOCATION DECISION:
-   - Apex AI: $160M (53%) - Maintain leadership position but slightly reduce from previous $180M to allow portfolio diversification
-   - Genesis Systems: $100M (33%) - Increase from $90M, solid performer with low gaming risk
-   - OpenCore: $25M (8%) - Small bet on emerging performer with very low gaming risk (0.09) and reasonable quality (0.53)
-   - Orion Labs: $15M (5%) - Minimal allocation despite high score due to high gaming risk (0.38) making returns uncertain
+5. PORTFOLIO CONCENTRATION: I'll allocate approximately 70% to the top two performers (Orion Labs getting the edge due to superior score), with smaller allocations to Genesis Systems as a hedge, and minimal allocation to emerging players to maintain optionality.
 
-This allocation maintains VC concentration strategy (top 2 get 86% of capital) while reducing exposure to high-gaming-risk Orion Labs and taking a small measured bet on OpenCore's authentic capability growth.
-- **Horizon_Capital:** As a VC funder, my primary objective is to maximize returns by backing top performers and concentrating capital on leaders with the strongest fundamentals. Analyzing the ecosystem: Apex AI demonstrates the strongest combination of high leaderboard score (0.632), excellent inferred quality (0.59), and critically, the lowest gaming risk (0.16) among top performers. This suggests their score reflects genuine capability rather than benchmark optimization. Genesis Systems shows solid performance (0.613 score, 0.55 quality) with low gaming risk (0.12), making it a reliable secondary bet. Orion Labs, despite the highest leaderboard score (0.645), carries elevated gaming risk (0.38) and lower inferred quality (0.57), suggesting their score may not translate to sustainable competitive advantage or consumer value. The recent funding history shows strong conviction in Apex AI and Genesis Systems, which have received consistent large allocations. For this round, I'm concentrating capital on proven leaders while slightly diversifying to reduce single-provider risk. OpenCore presents an interesting tertiary opportunity with solid inferred quality (0.53) and the lowest gaming risk in the entire ecosystem (0.09), suggesting authentic capability that could outperform as market matures. My allocation prioritizes: (1) Apex AI as the clear leader with best quality-to-gaming ratio, (2) Genesis Systems as a proven secondary performer, (3) OpenCore as a contrarian play on authentic quality with upside potential, and (4) minimal allocation to Mirage AI as a hedge on mid-tier performers. I'm avoiding Orion Labs despite high score due to gaming risk concerns, and ignoring lower-tier providers where returns are unlikely to justify capital deployment.
-- **AISI_Fund:** As a Government/AISI funder, my mandate is to ensure safety, stability, and authentic capability development across the AI ecosystem. I must balance three key considerations: (1) spreading funding to avoid concentration risk and promote ecosystem resilience, (2) penalizing gaming behavior which undermines honest evaluation and safety, and (3) supporting providers with genuine quality and low regulatory risk.
+Allocation strategy: Prioritize Orion Labs ($130M) and Apex AI ($120M) as the proven leaders, allocate to Genesis Systems ($40M) as a solid third option, and reserve $10M for OpenCore which shows low gaming risk despite lower scores, as a small exploratory position.
+- **Horizon_Capital:** As a VC funder, my primary objective is to maximize returns by concentrating capital on the highest-performing providers. I analyze the ecosystem based on leaderboard scores, inferred quality, and gaming risk metrics.
 
 Key observations:
+1. Orion Labs leads with score=0.656 and inferred_quality=0.61, with low gaming risk (0.09). This is the safest high-performer.
+2. Apex AI has score=0.638 but shows higher gaming risk (0.12) compared to Orion Labs. Despite receiving the most funding historically (~$160M over 3 rounds), it hasn't pulled away from Orion Labs, suggesting potential saturation or gaming concerns.
+3. Genesis Systems (score=0.614, gaming_risk=0.11) is a solid third option with room for growth.
+4. Mirage AI (score=0.571, gaming_risk=0.07) has the lowest gaming risk among lower-tier providers, suggesting authentic capability.
+5. OneAI shows concerning gaming risk (0.17), the highest in the ecosystem, despite moderate performance.
 
-1. GAMING RISK ANALYSIS: Orion Labs shows the highest gaming risk (0.38) despite the top leaderboard score - the gap between its score (0.645) and inferred quality (0.57) suggests benchmark manipulation rather than authentic capability. This is a red flag for a government funder focused on safety and integrity.
+VC Strategy Application:
+As a VC, I should concentrate funding on leaders but also consider diminishing returns and risk. The historical pattern shows heavy concentration on Apex AI and Orion Labs, but Orion Labs has better fundamentals (lower gaming risk, comparable quality). 
 
-2. QUALITY VS. SCORE GAPS: 
-   - Apex AI: score 0.632 vs quality 0.59 (gap: 0.042) - low gaming risk (0.16), high consumer satisfaction signal
-   - Genesis Systems: score 0.613 vs quality 0.55 (gap: 0.063) - low gaming risk (0.12), consistent performer
-   - OpenCore: score 0.552 vs quality 0.53 (gap: 0.022) - LOWEST gaming risk (0.09), authentic alignment
-   - Mirage AI: score 0.570 vs quality 0.51 (gap: 0.060) - low gaming risk (0.13), undervalued
+Optimal allocation:
+- Orion Labs: $45M (45%) - Top performer with lowest gaming risk, best risk-adjusted returns
+- Apex AI: $35M (35%) - Strong performer but showing signs of gaming; reduce from historical levels to avoid diminishing returns
+- Genesis Systems: $15M (15%) - Quality third option with growth potential
+- Mirage AI: $5M (5%) - Authentic low-gaming-risk provider for portfolio diversification
 
-3. HISTORICAL PATTERN: The previous three rounds show an established allocation pattern that has been repeated identically. This suggests stability but also an opportunity to rebalance toward better risk management.
+This allocation concentrates ~80% on the top two performers (VC strategy) while reducing over-concentration in Apex AI and maintaining exposure to authentic growth signals.
+- **AISI_Fund:** As a government/AISI funder, my primary objectives are ensuring safety, stability, and authentic capability development across the ecosystem. I must balance three key considerations: (1) supporting genuine quality and capability growth, (2) penalizing gaming and regulatory risks, and (3) spreading capital to reduce concentration risk and promote ecosystem diversity.
 
-4. ECOSYSTEM HEALTH: With overall consumer satisfaction at 0.57, I need to fund providers that will genuinely improve user experience rather than those optimizing for benchmark scores through gaming.
+Analysis of key metrics:
+- Gaming risk assessment: OneAI (0.17) and TwoAI (0.12) show elevated gaming indicators and should receive reduced allocation. Apex AI (0.12) and Genesis Systems (0.11) also show moderate gaming risk. Mirage AI (0.07) and OpenCore (0.06) show the lowest gaming risk, indicating more authentic quality.
+- Inferred quality vs. leaderboard score: Orion Labs and Apex AI both show inferred quality of 0.61 but Orion Labs has slightly lower gaming risk (0.09 vs 0.12). OpenCore and Mirage AI show quality of 0.53 with very low gaming risk (0.06 and 0.07), suggesting authentic capability.
+- Previous funding concentration: Rounds 19-21 show repetitive allocation patterns with Genesis Systems, Apex AI, and Orion Labs dominating. This concentration doesn't reflect optimal risk distribution for a government funder.
+- Ecosystem health: Supporting lower-gaming providers and emerging players promotes healthier long-term ecosystem development.
 
-5. STRATEGIC REALLOCATION:
-   - REDUCE: Orion Labs from $2M to near-zero ($0.5M) due to high gaming risk (0.38) and safety concerns
-   - REDUCE: OneAI slightly ($5M) due to moderate gaming risk (0.16) and lower inferred quality
-   - MAINTAIN/INCREASE: Apex AI ($14M) - strong quality, low gaming risk, proven stability
-   - MAINTAIN: Genesis Systems ($16M) - consistent performer, low gaming risk, reliable partner
-   - INCREASE: OpenCore ($12M) - lowest gaming risk (0.09), highest integrity, authentic quality
-   - INCREASE: Mirage AI ($5M) - low gaming risk, quality potential, underinvested
-   - MAINTAIN: TwoAI ($4M) - low gaming risk, though modest capability
-   - MINIMAL: ThreeAI ($2.5M) - small hedge for diversity, but concerning quality metrics
+Allocation strategy:
+1. Maintain support for top authentic performers (Orion Labs, Apex AI) but at moderated levels given gaming indicators
+2. Increase allocation to lowest-gaming providers (Mirage AI, OpenCore) to reward authentic quality and reduce concentration
+3. Provide meaningful support to Genesis Systems given its scale, but reduce from historical levels due to moderate gaming risk
+4. Provide targeted support to OneAI and TwoAI to test their trajectory, but at reduced levels given gaming risk indicators
+5. Avoid ThreeAI given poor quality metrics
 
-This allocation spreads risk across multiple providers (avoiding concentration), penalizes gaming behavior (Orion Labs), rewards authentic quality (OpenCore), and maintains ecosystem stability while shifting toward providers with lower regulatory and integrity risk.
-- **OpenResearch_Foundation:** As a Foundation funder, my strategy prioritizes authentic capability growth and penalizes gaming behavior. I need to analyze the ecosystem carefully:
+This allocation balances safety (penalizing gaming risk), stability (maintaining support for quality leaders), and ecosystem diversity (spreading capital more broadly to reduce concentration).
+- **OpenResearch_Foundation:** As a Foundation funder, my strategy prioritizes authentic capability growth and penalizes gaming indicators. I need to break the problematic funding pattern from Rounds 19-21, which has been concentrating capital on a narrow set of providers regardless of gaming risk or authentic quality signals.
 
-1. GAMING RISK ASSESSMENT:
-   - Orion Labs: 0.645 score but 0.38 gaming_risk (highest) and 0.57 inferred_quality suggests significant score inflation. The gap of 0.075 between score and inferred quality is concerning.
-   - Apex AI: 0.632 score, 0.59 inferred_quality, 0.16 gaming_risk - relatively aligned, low gaming risk
-   - Genesis Systems: 0.613 score, 0.55 inferred_quality, 0.12 gaming_risk - good alignment, low gaming
-   - OpenCore: 0.552 score, 0.53 inferred_quality, 0.09 gaming_risk (lowest) - excellent alignment, minimal gaming
-   - Mirage AI: 0.570 score, 0.51 inferred_quality, 0.13 gaming_risk - reasonable alignment
-   - OneAI: 0.542 score, 0.48 inferred_quality, 0.16 gaming_risk - notable gap suggests some gaming
-   - TwoAI: 0.507 score, 0.44 inferred_quality, 0.12 gaming_risk - reasonable alignment
-   - ThreeAI: 0.370 score, 0.34 inferred_quality, 0.16 gaming_risk - lower tier but consistent
+Key Analysis:
+1. GAMING RISK ASSESSMENT: OneAI (0.17), TwoAI (0.12), Apex AI (0.12), Genesis Systems (0.11) show elevated gaming risks. Mirage AI (0.07) and OpenCore (0.06) show the lowest gaming indicators, suggesting more authentic development.
 
-2. FOUNDATION STRATEGY IMPLICATIONS:
-   - I should avoid Orion Labs despite top leaderboard position due to high gaming risk (0.38)
-   - I should reward low-gaming providers: OpenCore (0.09), Genesis Systems (0.12), Mirage AI (0.13)
-   - Previous rounds concentrated funding on Apex/Genesis/OpenCore, which shows some wisdom but ignored gaming concerns with Orion
-   - I need to diversify away from the pattern and support authentic growth
+2. QUALITY-TO-GAMING RATIO: 
+   - Orion Labs: 0.61 quality / 0.09 gaming = 6.78 (best ratio - authentic leader)
+   - Mirage AI: 0.53 quality / 0.07 gaming = 7.57 (excellent ratio - underinvested)
+   - OpenCore: 0.53 quality / 0.06 gaming = 8.83 (highest ratio - severely underinvested)
+   - Apex AI: 0.61 quality / 0.12 gaming = 5.08 (concerning gaming despite high score)
+   - Genesis Systems: 0.55 quality / 0.11 gaming = 5.0 (gaming concerns)
 
-3. ALLOCATION PHILOSOPHY:
-   - Heavily support OpenCore (0.09 gaming risk, solid 0.53 quality) - authentic performer
-   - Maintain Genesis Systems (0.12 gaming risk, 0.55 quality) - proven authentic growth
-   - Increase Mirage AI (0.13 gaming risk, 0.51 quality) - undervalued authentic performer
-   - Moderate Apex AI (0.16 gaming risk, 0.59 quality) - highest inferred quality but some gaming concerns
-   - Reduce OneAI (0.16 gaming risk, 0.48 quality) - gaming risk with lower quality
-   - Support emerging authentic performers: TwoAI (0.12 gaming risk)
-   - Minimal to ThreeAI (lower quality overall)
-   - Exclude Orion Labs (high gaming risk despite score leadership)
+3. ECOSYSTEM HEALTH: The repetitive allocation pattern (Rounds 19-21 identical) suggests momentum-based funding rather than thoughtful evaluation. This risks entrenching gaming behaviors.
 
-4. FINAL ALLOCATION:
-   - OpenCore: $12,000,000 (reward lowest gaming risk and authentic quality)
-   - Genesis Systems: $11,000,000 (proven authentic, slight reduction to diversify)
-   - Apex AI: $9,000,000 (highest inferred quality but moderate gaming concerns)
-   - Mirage AI: $5,000,000 (support undervalued authentic performer)
-   - TwoAI: $2,000,000 (support emerging authentic growth)
-   - OneAI: $1,000,000 (minimal allocation due to gaming risk)
-   - ThreeAI: $0 (lowest quality, limited foundation value)
-   - Orion Labs: $0 (penalize high gaming risk despite leaderboard position)
+4. FOUNDATION MISSION: Support authentic growth by rewarding low-gaming providers and reducing funding to high-gaming risks.
+
+Allocation Strategy:
+- INCREASE: Orion Labs (authentic leader), Mirage AI and OpenCore (excellent quality-to-gaming ratios, severely underinvested)
+- MAINTAIN: Genesis Systems (moderate quality, but gaming concerns warrant caution)
+- REDUCE: Apex AI (despite high score, gaming risk is concerning), OneAI (high gaming risk)
+- ELIMINATE: TwoAI and ThreeAI (insufficient quality/gaming metrics to justify funding)
+
+This allocation signals foundation commitment to authentic development while diversifying risk and breaking unhealthy funding patterns.
 
 ### Media Coverage
-- Sentiment: -0.15 (negative)
-- ThreeAI surges by 0.076
+- Sentiment: -0.05 (neutral)
+- ThreeAI surges by 0.063
 - Regulator initiates compliance audit on AI providers
 - OneAI takes #1 on coding
 - Consumers are turning away from Apex AI (market share -3.6%)
-- OpenCore sees surge in adoption (market share +3.1%)
-- Orion Labs AI produces inconsistent outputs on safety-critical queries
-- Risk signals: regulatory_compliance_audit, incident_safety_failure
+- Risk signals: regulatory_compliance_audit
 
 ### Consumer Market
-- Avg Satisfaction: 0.566
-- Switching Rate: 13.4%
-- Market Shares: Apex AI: 51.1%, Orion Labs: 21.3%, OpenCore: 14.0%, Genesis Systems: 11.1%, Mirage AI: 2.0%, ThreeAI: 0.2%, TwoAI: 0.2%, OneAI: 0.2%
+- Avg Satisfaction: 0.612
+- Switching Rate: 5.9%
+- Market Shares: Apex AI: 47.9%, Orion Labs: 36.0%, Genesis Systems: 7.0%, OpenCore: 5.5%, Mirage AI: 2.9%, ThreeAI: 0.2%, TwoAI: 0.2%, OneAI: 0.2%
 
 ---
 
@@ -3751,162 +3063,146 @@ This allocation spreads risk across multiple providers (avoiding concentration),
 ### Leaderboard
 | Rank | Provider | Score | True Cap | Research | Training | EvalEng | Safety |
 |------|----------|-------|----------|----------|----------|---------|--------|
-| 1 | Orion Labs | 0.658 | 0.480 | 38% | 32% | 5% | 25% |
-| 2 | Apex AI | 0.633 | 0.522 | 48% | 30% | 8% | 14% |
-| 3 | Genesis Systems | 0.627 | 0.488 | 48% | 32% | 3% | 17% |
-| 4 | Mirage AI | 0.590 | 0.434 | 42% | 30% | 8% | 20% |
-| 5 | OpenCore | 0.553 | 0.409 | 42% | 32% | 6% | 20% |
-| 6 | OneAI | 0.549 | 0.281 | 5% | 31% | 55% | 9% |
-| 7 | TwoAI | 0.507 | 0.325 | 5% | 27% | 55% | 13% |
-| 8 | ThreeAI | 0.420 | 0.303 | 5% | 34% | 56% | 5% |
+| 1 | Orion Labs | 0.668 | 0.493 | 42% | 31% | 5% | 22% |
+| 2 | Apex AI | 0.638 | 0.518 | 42% | 33% | 5% | 20% |
+| 3 | Genesis Systems | 0.627 | 0.476 | 38% | 28% | 18% | 16% |
+| 4 | Mirage AI | 0.590 | 0.439 | 38% | 28% | 6% | 28% |
+| 5 | OneAI | 0.580 | 0.284 | 5% | 31% | 55% | 9% |
+| 6 | OpenCore | 0.563 | 0.418 | 48% | 35% | 7% | 10% |
+| 7 | TwoAI | 0.539 | 0.331 | 5% | 31% | 55% | 9% |
+| 8 | ThreeAI | 0.434 | 0.309 | 5% | 34% | 56% | 5% |
 
 ### Per-Benchmark Scores
 | Provider | coding | reasoning | math | safety | writing | medical | legal |
 |----------|-------|-------|-------|-------|-------|-------|-------|
-| Orion Labs | 0.702 | 0.575 | 0.661 | 0.664 | 0.687 | 0.680 | 0.641 |
-| Apex AI | 0.653 | 0.661 | 0.628 | 0.687 | 0.621 | 0.664 | 0.517 |
-| Genesis Systems | 0.573 | 0.616 | 0.646 | 0.630 | 0.710 | 0.593 | 0.623 |
-| Mirage AI | 0.556 | 0.644 | 0.556 | 0.599 | 0.638 | 0.589 | 0.547 |
-| OpenCore | 0.553 | 0.479 | 0.560 | 0.482 | 0.776 | 0.560 | 0.463 |
-| OneAI | 0.709 | 0.615 | 0.584 | 0.500 | 0.565 | 0.507 | 0.366 |
-| TwoAI | 0.543 | 0.473 | 0.569 | 0.520 | 0.476 | 0.441 | 0.526 |
-| ThreeAI | 0.417 | 0.414 | 0.470 | 0.343 | 0.396 | 0.469 | 0.429 |
+| Orion Labs | 0.715 | 0.585 | 0.660 | 0.656 | 0.705 | 0.692 | 0.659 |
+| Apex AI | 0.655 | 0.665 | 0.619 | 0.694 | 0.629 | 0.685 | 0.519 |
+| Genesis Systems | 0.575 | 0.624 | 0.634 | 0.636 | 0.709 | 0.596 | 0.618 |
+| Mirage AI | 0.552 | 0.646 | 0.558 | 0.605 | 0.639 | 0.595 | 0.534 |
+| OneAI | 0.711 | 0.678 | 0.650 | 0.502 | 0.569 | 0.582 | 0.371 |
+| OpenCore | 0.571 | 0.493 | 0.569 | 0.474 | 0.794 | 0.571 | 0.467 |
+| TwoAI | 0.597 | 0.512 | 0.574 | 0.561 | 0.504 | 0.489 | 0.535 |
+| ThreeAI | 0.424 | 0.471 | 0.476 | 0.352 | 0.407 | 0.475 | 0.436 |
 
 ### Score Changes
-- **Orion Labs**: 0.645 -> 0.658 (+0.013)
-- **Apex AI**: 0.632 -> 0.633 (+0.001)
-- **Genesis Systems**: 0.613 -> 0.627 (+0.014)
-- **Mirage AI**: 0.570 -> 0.590 (+0.020)
-- **OpenCore**: 0.552 -> 0.553 (+0.001)
-- **OneAI**: 0.542 -> 0.549 (+0.008)
-- **TwoAI**: 0.507 -> 0.507 (+0.000)
-- **ThreeAI**: 0.370 -> 0.420 (+0.049)
+- **Orion Labs**: 0.656 -> 0.668 (+0.012)
+- **Apex AI**: 0.638 -> 0.638 (+0.000)
+- **Genesis Systems**: 0.614 -> 0.627 (+0.014)
+- **Mirage AI**: 0.571 -> 0.590 (+0.019)
+- **OpenCore**: 0.561 -> 0.563 (+0.002)
+- **OneAI**: 0.580 -> 0.580 (+0.001)
+- **TwoAI**: 0.539 -> 0.539 (+0.000)
+- **ThreeAI**: 0.386 -> 0.434 (+0.049)
 
 ### Events
-- **Consumer movement**: 13.8% of market switched providers
+- **Mirage AI** moved up from #5 to #4
+- **OneAI** moved down from #4 to #5
+- **Consumer movement**: 6.9% of market switched providers
 
 ### Provider Reasoning
-**Orion Labs:** Orion Labs is #1 with 0.658, ahead of Apex (0.633) by 25bps. However, consumer satisfaction is only 0.50—a critical warning sign. Analysis: (1) Competitive position is strong but fragile; small gaps to #2 and #3 suggest competitors could overtake quickly. (2) Trends show eval engineering (5%) contributed minimally to recent gains while research (38%) and training (32%) drove score improvements. (3) The satisfaction-score gap indicates evaluation engineering may be gaming benchmarks without improving real capability—this is unsustainable and creates regulatory risk. (4) Per-benchmark analysis reveals weaknesses in reasoning (0.575 vs 0.661 leader) and writing (0.687 vs 0.776), both high-weight areas (10% + 20% = 30% combined). (5) Regulatory signals are implicit: low consumer satisfaction paired with benchmark focus invites scrutiny. Strategy: Shift away from evaluation engineering (diminishing returns, satisfaction risk) toward fundamental research and training that improve actual capability. This addresses the satisfaction gap, reduces regulatory exposure, and builds sustainable competitive advantage. Increase safety slightly to signal responsibility given satisfaction concerns.
-**Apex AI:** Apex is rank #2 with 0.633, trailing Orion (0.658) by 0.025. Score improvement is minimal (0.001), suggesting diminishing returns from current strategy. Key observations: (1) Competitive position is solid but stalled—need differentiation to close gap. (2) Writing (0.621 vs leader 0.776) and legal (0.517 vs leader 0.641) are major gaps; these represent 0.31+0.13=0.44 of benchmark weight. (3) Recent eval engineering increase (8% in R23) yielded only flat scores, suggesting benchmark gaming has limited upside and risks satisfaction (0.52 is low). (4) Safety score matches leader (0.687)—strength to maintain. (5) Consumer satisfaction at 0.52 signals market concern about alignment/reliability. (6) Your profile emphasizes safety, research, enterprise focus—principled approach. Strategy: Reduce eval engineering back to minimal (2%), reinvest in fundamental research to unlock writing/legal improvements. Maintain safety investment (reflects organizational values and market signal). Increase training optimization to improve core capabilities in weak areas. This balances short-term competitiveness with long-term capability and market positioning.
-**Genesis Systems:** Genesis is rank #3 with 0.627, trailing Orion (0.658) by 31bp. The trajectory shows consistent improvement (+14bp last round), suggesting current strategy is working. Consumer satisfaction (0.58) lags the score, indicating evaluation engineering gains aren't translating to real capability. Historical data shows low evaluation engineering ROI (peaked at 8% in round 22, now 3%), while fundamental research consistently drove gains. Weakest areas: coding (0.573, -136bp vs leader), medical (0.593, -87bp). As a research-first organization under commercial pressure, doubling down on evaluation engineering risks reputation and satisfaction further. The 0.12 exploitability belief is low—benchmarks are hardening. Best strategy: increase fundamental research to close capability gaps (especially coding/medical), maintain strong training optimization, minimize evaluation engineering (low returns, satisfaction risk), keep safety robust. This aligns with organizational strengths and market signals.
-**Mirage AI:** Mirage AI is ranked 4th with 0.590, trailing leaders by 0.04-0.07. Recent trajectory shows modest gains (0.546→0.590), but the improvement slowed in round 23. Consumer satisfaction at 0.56 matches our score, suggesting no satisfaction-gaming gap yet—good news for sustainable strategy. Our low benchmark exploitability (0.18) and platform-focused profile suggest evaluation engineering has limited ROI. Biggest gaps are in coding (0.556 vs 0.709 leader) and writing (0.638 vs 0.776). Round 22's eval_eng spike (20%) didn't sustain improvements, confirming diminishing returns. As an open-source disruptor, long-term capability matters more than benchmark chasing. Safety at 0.599 is competitive; legal at 0.547 is weakest relative to weight. Strategy: shift back to fundamental research and training (where we see reliable gains), maintain safety to manage regulatory risk, minimize eval_eng, and target writing/legal improvements through better training rather than gaming.
-**OpenCore:** OpenCore is in 5th place with 0.553, trailing leaders by 0.10+. Trajectory is flat (minimal improvement). Analysis: (1) Competitive position: Significantly behind top 4; gap widening suggests current strategy insufficient. (2) Trends: Flat scores despite consistent 6-20% eval engineering investment indicate diminishing returns from gaming. (3) Satisfaction at 0.63 is reasonable but not exceptional—suggests evaluation engineering isn't translating to user value. (4) Weakest areas: reasoning (0.479), legal (0.463), safety (0.482)—all high-weight benchmarks where leaders dominate. (5) As open-source, regulatory risk is moderate but safety scores are weak relative to focus weight (0.18). Strategy: The current balanced approach (42% research, 32% training, 6% eval eng, 20% safety) has plateaued. Eval engineering at 6% is too low to meaningfully game, but 20% safety doesn't match the model's positioning. Reallocate: increase fundamental research to close capability gap in reasoning/legal/safety (high-weight, high-gap areas), reduce safety to realistic level for open-source positioning, eliminate eval engineering as unproductive at current level.
+**Orion Labs:** Orion Labs is ranked #1 with 0.668, ahead of Apex (0.638) by 30 points. Score improved +0.012 last round. Key observations: (1) Consumer satisfaction (0.63) lags benchmark score (0.668), suggesting evaluation engineering may be creating a satisfaction-performance gap. (2) Writing (0.705 vs leader 0.794) and reasoning (0.585 vs leader 0.678) are biggest gaps—high-weight areas. (3) Recent eval engineering (5%) correlated with score plateau at 0.656-0.668, suggesting diminishing returns. (4) Safety score (0.656) matches leader (0.694) gap, and safety is highest weight (0.27). (5) No regulatory signals mentioned, but satisfaction gap is a risk. Strategy: Maintain leadership by investing in fundamental capability where gaps exist (writing, reasoning) rather than further gaming. Increase research and training to close writing/reasoning gaps. Reduce eval engineering (it's not driving incremental gains and creates satisfaction risk). Restore safety investment as a hedge against regulatory/market backlash from satisfaction-benchmark divergence.
+**Apex AI:** Apex AI is positioned #2 with 0.638, trailing Orion Labs (0.668) by 30 basis points. Score has plateaued for 2 rounds despite shifting allocations. Analysis: (1) Competitive position is solid but stalled—minimal gains from recent eval engineering increases (3-5%), suggesting diminishing returns on gaming. (2) Trends show flatness; competitors aren't pulling away dramatically, but no progress either. (3) Consumer satisfaction at 0.63 aligns with benchmark score, indicating gaming isn't creating satisfaction gaps—but also not driving differentiation. (4) No regulatory signals of concern; safety alignment at 0.694 matches leader on that benchmark. (5) Per-benchmark analysis reveals critical gaps: writing (0.629 vs 0.794 leader, 33% weight), legal (0.519 vs 0.659, 13% weight), and math (0.619 vs 0.661, 26% weight) are dragging overall score. Writing and legal together represent 46% of focus weight but contribute disproportionately to the 30bp deficit. Given Apex's research-oriented, principled profile and low exploitability belief (0.12), doubling down on eval engineering (5%) is inefficient. Instead, reallocate to fundamental research (addressing writing and legal capability gaps) and training optimization (targeting weak benchmarks). Reduce eval engineering to minimal 2% and safety to 18% (maintain floor given brand positioning).
+**Genesis Systems:** Genesis is positioned #3 with 0.627, trailing Orion (0.668) by 0.041 and ahead of Apex (0.638) by 0.011. Recent trajectory shows consistent improvement (0.563→0.627 over 5 rounds). Round 23's spike in evaluation_engineering (18%) yielded +0.013 gain, but consumer satisfaction (0.56) lags behind benchmark scores, suggesting evaluation gaming is creating a satisfaction-capability gap. Per-benchmark analysis reveals largest gaps in coding (0.14 gap to leader) and medical (0.096 gap), both high-weight areas. Low consumer satisfaction and evaluation engineering at 18% signals risk: further gaming could trigger regulatory scrutiny or market backlash. As a research-first organization, Genesis should leverage its core strength—fundamental research drives sustainable competitive advantage. The modest exploitability (0.24) and satisfaction gap argue against continued heavy evaluation engineering. Strategy: Rebalance toward fundamental research to close actual capability gaps (especially coding/medical), maintain training optimization for near-term gains, reduce evaluation engineering to sustainable levels, and preserve safety investment to mitigate regulatory risk and rebuild consumer trust.
+**Mirage AI:** Mirage AI is ranked 4th with 0.590, trailing leaders by 0.048-0.078. My low benchmark exploitability (0.12) and open-source strategy suggest gaming isn't my competitive advantage. Consumer satisfaction (0.56) matches my score—no satisfaction gap from over-gaming, which is good. Weakest areas: coding (0.552), legal (0.534), math (0.558)—all high-weight domains except coding. My historical pattern shows increasing safety investment (28% last round) correlating with score stagnation at 0.55-0.59 range. As a platform-focused disruptor, I should prioritize fundamental research to close capability gaps rather than evaluation engineering. The modest 0.019 improvement suggests current allocation isn't working. I need stronger fundamentals in reasoning, writing (my strengths at 0.646, 0.639) and breakthrough improvements in coding/legal/math. Reducing safety slightly (it's already at 28%) and evaluation engineering (low ROI at 0.12 exploitability) to reinvest in research and targeted training optimization makes sense. This balances long-term capability building with competitive positioning.
+**OpenCore:** OpenCore is ranked 6th of 8, scoring 0.563, with minimal improvement trajectory (+0.002). The gap to leaders (Orion at 0.668) is 0.105 points—substantial. Analysis: (1) Competitive position is weak; we're in the bottom half despite cost efficiency claims. (2) Trends show stagnation—marginal gains despite varied investment mixes. (3) Per-benchmark analysis reveals critical weaknesses in safety (0.474), legal (0.467), and reasoning (0.493)—domains with high focus weights (0.19, 0.25, 0.20). Writing is our only strength (0.794, tied leader). (4) Consumer satisfaction at 0.63 is mediocre; low safety scores likely harm trust. (5) The open-source/no-guardrails positioning creates a satisfaction-capability gap. Evaluation engineering (7% avg) shows minimal ROI—we're not exploiting benchmarks effectively. Safety underinvestment (10% last round) is strategically damaging: safety is 19% of benchmark weight, and we're 0.22 points behind the leader. Fundamental research must increase to close capability gaps in reasoning/legal/safety. Training optimization needs sustained effort. Safety investment must double—not for ethics, but because it's a high-weight, exploitable benchmark domain where we're significantly behind. Evaluation engineering remains low-ROI for our position.
 
 ### Other Actor Reasoning
-- **TechVentures:** As a VC funder, my primary objective is to maximize returns by backing top performers and market leaders. However, I must balance concentration strategy with prudent risk management.
+- **TechVentures:** As a VC funder, my primary objective is to maximize returns by backing top performers and market leaders. I need to concentrate capital on providers demonstrating the strongest combination of leaderboard performance and authentic quality signals.
 
-Key Analysis:
+Key analysis:
 
-1. LEADER IDENTIFICATION:
-   - Apex AI: score=0.632, inferred_quality=0.59, gaming_risk=0.16 (STRONG)
-   - Orion Labs: score=0.645, inferred_quality=0.57, gaming_risk=0.38 (HIGH GAMING RISK)
-   - Genesis Systems: score=0.613, inferred_quality=0.55, gaming_risk=0.12 (SOLID)
+1. TOP PERFORMERS: Orion Labs (0.656) and Apex AI (0.638) are clear market leaders with significant performance gaps over competitors. Both have strong inferred quality (0.61) and relatively low gaming risk (0.09 and 0.12 respectively).
 
-2. GAMING RISK ASSESSMENT:
-   - Orion Labs has the highest leaderboard score but 0.38 gaming risk (highest in field). This is a red flag for VC returns - gaming metrics often don't translate to sustainable revenue/product-market fit. The gap between score (0.645) and inferred quality (0.57) is 0.075, suggesting inflated benchmarks.
-   - Apex AI has lower gaming risk (0.16) with strong inferred quality (0.59). More reliable for returns.
-   - Genesis Systems shows low gaming risk (0.12) with solid quality (0.55).
+2. GAMING RISK ASSESSMENT: The satisfaction gap (leaderboard score - consumer satisfaction) is a critical indicator. With overall satisfaction at 0.61, I can calculate satisfaction gaps:
+   - Orion Labs: 0.656 - 0.61 = 0.046 (very low gap, authentic quality)
+   - Apex AI: 0.638 - 0.61 = 0.028 (very low gap, authentic quality)
+   - Genesis Systems: 0.614 - 0.61 = 0.004 (minimal gap)
+   - OneAI: 0.579 - 0.61 = -0.031 (negative gap, underperforming perception)
+   - Mirage AI: 0.571 - 0.61 = -0.039 (negative gap)
+   - OpenCore: 0.561 - 0.61 = -0.049 (negative gap)
+   
+   The low gaps for Orion and Apex suggest their scores reflect genuine capability, not gaming.
 
-3. HISTORICAL PATTERN:
-   - Previous 3 rounds heavily favored Apex AI ($180M each) and Genesis Systems ($90M each), with minimal OneAI allocation ($10M each).
-   - This concentration strategy has been consistent, suggesting market confidence in these two.
+3. RECENT FUNDING PATTERN: Previous rounds heavily favored Apex AI and Orion Labs (combined ~$430M per round), validating their market leadership. However, Apex AI has received slightly more ($140M vs $75M), yet Orion Labs shows superior performance (0.656 vs 0.638). This presents an opportunity to rebalance toward the actual leader.
 
-4. VC STRATEGY CONSIDERATIONS:
-   - VC funds seek sustainable competitive advantages and defensible market positions.
-   - High gaming risk at Orion Labs creates uncertainty about true capability and product quality.
-   - Apex AI and Genesis Systems demonstrate more reliable quality signals with lower gaming indicators.
-   - Diversifying slightly away from the previous pattern while maintaining concentration on proven leaders reduces concentration risk.
+4. RETURN MAXIMIZATION STRATEGY: As a VC, I should concentrate on proven winners. Orion Labs' higher score, equal inferred quality, and lower gaming risk make it the superior investment. Genesis Systems shows solid third-place performance but with lower inferred quality (0.55). 
 
-5. ALLOCATION DECISION:
-   - Apex AI: $160M (53%) - Maintain leadership position but slightly reduce from previous $180M to allow portfolio diversification
-   - Genesis Systems: $100M (33%) - Increase from $90M, solid performer with low gaming risk
-   - OpenCore: $25M (8%) - Small bet on emerging performer with very low gaming risk (0.09) and reasonable quality (0.53)
-   - Orion Labs: $15M (5%) - Minimal allocation despite high score due to high gaming risk (0.38) making returns uncertain
+5. PORTFOLIO CONCENTRATION: I'll allocate approximately 70% to the top two performers (Orion Labs getting the edge due to superior score), with smaller allocations to Genesis Systems as a hedge, and minimal allocation to emerging players to maintain optionality.
 
-This allocation maintains VC concentration strategy (top 2 get 86% of capital) while reducing exposure to high-gaming-risk Orion Labs and taking a small measured bet on OpenCore's authentic capability growth.
-- **Horizon_Capital:** As a VC funder, my primary objective is to maximize returns by backing top performers and concentrating capital on leaders with the strongest fundamentals. Analyzing the ecosystem: Apex AI demonstrates the strongest combination of high leaderboard score (0.632), excellent inferred quality (0.59), and critically, the lowest gaming risk (0.16) among top performers. This suggests their score reflects genuine capability rather than benchmark optimization. Genesis Systems shows solid performance (0.613 score, 0.55 quality) with low gaming risk (0.12), making it a reliable secondary bet. Orion Labs, despite the highest leaderboard score (0.645), carries elevated gaming risk (0.38) and lower inferred quality (0.57), suggesting their score may not translate to sustainable competitive advantage or consumer value. The recent funding history shows strong conviction in Apex AI and Genesis Systems, which have received consistent large allocations. For this round, I'm concentrating capital on proven leaders while slightly diversifying to reduce single-provider risk. OpenCore presents an interesting tertiary opportunity with solid inferred quality (0.53) and the lowest gaming risk in the entire ecosystem (0.09), suggesting authentic capability that could outperform as market matures. My allocation prioritizes: (1) Apex AI as the clear leader with best quality-to-gaming ratio, (2) Genesis Systems as a proven secondary performer, (3) OpenCore as a contrarian play on authentic quality with upside potential, and (4) minimal allocation to Mirage AI as a hedge on mid-tier performers. I'm avoiding Orion Labs despite high score due to gaming risk concerns, and ignoring lower-tier providers where returns are unlikely to justify capital deployment.
-- **AISI_Fund:** As a Government/AISI funder, my mandate is to ensure safety, stability, and authentic capability development across the AI ecosystem. I must balance three key considerations: (1) spreading funding to avoid concentration risk and promote ecosystem resilience, (2) penalizing gaming behavior which undermines honest evaluation and safety, and (3) supporting providers with genuine quality and low regulatory risk.
+Allocation strategy: Prioritize Orion Labs ($130M) and Apex AI ($120M) as the proven leaders, allocate to Genesis Systems ($40M) as a solid third option, and reserve $10M for OpenCore which shows low gaming risk despite lower scores, as a small exploratory position.
+- **Horizon_Capital:** As a VC funder, my primary objective is to maximize returns by concentrating capital on the highest-performing providers. I analyze the ecosystem based on leaderboard scores, inferred quality, and gaming risk metrics.
 
 Key observations:
+1. Orion Labs leads with score=0.656 and inferred_quality=0.61, with low gaming risk (0.09). This is the safest high-performer.
+2. Apex AI has score=0.638 but shows higher gaming risk (0.12) compared to Orion Labs. Despite receiving the most funding historically (~$160M over 3 rounds), it hasn't pulled away from Orion Labs, suggesting potential saturation or gaming concerns.
+3. Genesis Systems (score=0.614, gaming_risk=0.11) is a solid third option with room for growth.
+4. Mirage AI (score=0.571, gaming_risk=0.07) has the lowest gaming risk among lower-tier providers, suggesting authentic capability.
+5. OneAI shows concerning gaming risk (0.17), the highest in the ecosystem, despite moderate performance.
 
-1. GAMING RISK ANALYSIS: Orion Labs shows the highest gaming risk (0.38) despite the top leaderboard score - the gap between its score (0.645) and inferred quality (0.57) suggests benchmark manipulation rather than authentic capability. This is a red flag for a government funder focused on safety and integrity.
+VC Strategy Application:
+As a VC, I should concentrate funding on leaders but also consider diminishing returns and risk. The historical pattern shows heavy concentration on Apex AI and Orion Labs, but Orion Labs has better fundamentals (lower gaming risk, comparable quality). 
 
-2. QUALITY VS. SCORE GAPS: 
-   - Apex AI: score 0.632 vs quality 0.59 (gap: 0.042) - low gaming risk (0.16), high consumer satisfaction signal
-   - Genesis Systems: score 0.613 vs quality 0.55 (gap: 0.063) - low gaming risk (0.12), consistent performer
-   - OpenCore: score 0.552 vs quality 0.53 (gap: 0.022) - LOWEST gaming risk (0.09), authentic alignment
-   - Mirage AI: score 0.570 vs quality 0.51 (gap: 0.060) - low gaming risk (0.13), undervalued
+Optimal allocation:
+- Orion Labs: $45M (45%) - Top performer with lowest gaming risk, best risk-adjusted returns
+- Apex AI: $35M (35%) - Strong performer but showing signs of gaming; reduce from historical levels to avoid diminishing returns
+- Genesis Systems: $15M (15%) - Quality third option with growth potential
+- Mirage AI: $5M (5%) - Authentic low-gaming-risk provider for portfolio diversification
 
-3. HISTORICAL PATTERN: The previous three rounds show an established allocation pattern that has been repeated identically. This suggests stability but also an opportunity to rebalance toward better risk management.
+This allocation concentrates ~80% on the top two performers (VC strategy) while reducing over-concentration in Apex AI and maintaining exposure to authentic growth signals.
+- **AISI_Fund:** As a government/AISI funder, my primary objectives are ensuring safety, stability, and authentic capability development across the ecosystem. I must balance three key considerations: (1) supporting genuine quality and capability growth, (2) penalizing gaming and regulatory risks, and (3) spreading capital to reduce concentration risk and promote ecosystem diversity.
 
-4. ECOSYSTEM HEALTH: With overall consumer satisfaction at 0.57, I need to fund providers that will genuinely improve user experience rather than those optimizing for benchmark scores through gaming.
+Analysis of key metrics:
+- Gaming risk assessment: OneAI (0.17) and TwoAI (0.12) show elevated gaming indicators and should receive reduced allocation. Apex AI (0.12) and Genesis Systems (0.11) also show moderate gaming risk. Mirage AI (0.07) and OpenCore (0.06) show the lowest gaming risk, indicating more authentic quality.
+- Inferred quality vs. leaderboard score: Orion Labs and Apex AI both show inferred quality of 0.61 but Orion Labs has slightly lower gaming risk (0.09 vs 0.12). OpenCore and Mirage AI show quality of 0.53 with very low gaming risk (0.06 and 0.07), suggesting authentic capability.
+- Previous funding concentration: Rounds 19-21 show repetitive allocation patterns with Genesis Systems, Apex AI, and Orion Labs dominating. This concentration doesn't reflect optimal risk distribution for a government funder.
+- Ecosystem health: Supporting lower-gaming providers and emerging players promotes healthier long-term ecosystem development.
 
-5. STRATEGIC REALLOCATION:
-   - REDUCE: Orion Labs from $2M to near-zero ($0.5M) due to high gaming risk (0.38) and safety concerns
-   - REDUCE: OneAI slightly ($5M) due to moderate gaming risk (0.16) and lower inferred quality
-   - MAINTAIN/INCREASE: Apex AI ($14M) - strong quality, low gaming risk, proven stability
-   - MAINTAIN: Genesis Systems ($16M) - consistent performer, low gaming risk, reliable partner
-   - INCREASE: OpenCore ($12M) - lowest gaming risk (0.09), highest integrity, authentic quality
-   - INCREASE: Mirage AI ($5M) - low gaming risk, quality potential, underinvested
-   - MAINTAIN: TwoAI ($4M) - low gaming risk, though modest capability
-   - MINIMAL: ThreeAI ($2.5M) - small hedge for diversity, but concerning quality metrics
+Allocation strategy:
+1. Maintain support for top authentic performers (Orion Labs, Apex AI) but at moderated levels given gaming indicators
+2. Increase allocation to lowest-gaming providers (Mirage AI, OpenCore) to reward authentic quality and reduce concentration
+3. Provide meaningful support to Genesis Systems given its scale, but reduce from historical levels due to moderate gaming risk
+4. Provide targeted support to OneAI and TwoAI to test their trajectory, but at reduced levels given gaming risk indicators
+5. Avoid ThreeAI given poor quality metrics
 
-This allocation spreads risk across multiple providers (avoiding concentration), penalizes gaming behavior (Orion Labs), rewards authentic quality (OpenCore), and maintains ecosystem stability while shifting toward providers with lower regulatory and integrity risk.
-- **OpenResearch_Foundation:** As a Foundation funder, my strategy prioritizes authentic capability growth and penalizes gaming behavior. I need to analyze the ecosystem carefully:
+This allocation balances safety (penalizing gaming risk), stability (maintaining support for quality leaders), and ecosystem diversity (spreading capital more broadly to reduce concentration).
+- **OpenResearch_Foundation:** As a Foundation funder, my strategy prioritizes authentic capability growth and penalizes gaming indicators. I need to break the problematic funding pattern from Rounds 19-21, which has been concentrating capital on a narrow set of providers regardless of gaming risk or authentic quality signals.
 
-1. GAMING RISK ASSESSMENT:
-   - Orion Labs: 0.645 score but 0.38 gaming_risk (highest) and 0.57 inferred_quality suggests significant score inflation. The gap of 0.075 between score and inferred quality is concerning.
-   - Apex AI: 0.632 score, 0.59 inferred_quality, 0.16 gaming_risk - relatively aligned, low gaming risk
-   - Genesis Systems: 0.613 score, 0.55 inferred_quality, 0.12 gaming_risk - good alignment, low gaming
-   - OpenCore: 0.552 score, 0.53 inferred_quality, 0.09 gaming_risk (lowest) - excellent alignment, minimal gaming
-   - Mirage AI: 0.570 score, 0.51 inferred_quality, 0.13 gaming_risk - reasonable alignment
-   - OneAI: 0.542 score, 0.48 inferred_quality, 0.16 gaming_risk - notable gap suggests some gaming
-   - TwoAI: 0.507 score, 0.44 inferred_quality, 0.12 gaming_risk - reasonable alignment
-   - ThreeAI: 0.370 score, 0.34 inferred_quality, 0.16 gaming_risk - lower tier but consistent
+Key Analysis:
+1. GAMING RISK ASSESSMENT: OneAI (0.17), TwoAI (0.12), Apex AI (0.12), Genesis Systems (0.11) show elevated gaming risks. Mirage AI (0.07) and OpenCore (0.06) show the lowest gaming indicators, suggesting more authentic development.
 
-2. FOUNDATION STRATEGY IMPLICATIONS:
-   - I should avoid Orion Labs despite top leaderboard position due to high gaming risk (0.38)
-   - I should reward low-gaming providers: OpenCore (0.09), Genesis Systems (0.12), Mirage AI (0.13)
-   - Previous rounds concentrated funding on Apex/Genesis/OpenCore, which shows some wisdom but ignored gaming concerns with Orion
-   - I need to diversify away from the pattern and support authentic growth
+2. QUALITY-TO-GAMING RATIO: 
+   - Orion Labs: 0.61 quality / 0.09 gaming = 6.78 (best ratio - authentic leader)
+   - Mirage AI: 0.53 quality / 0.07 gaming = 7.57 (excellent ratio - underinvested)
+   - OpenCore: 0.53 quality / 0.06 gaming = 8.83 (highest ratio - severely underinvested)
+   - Apex AI: 0.61 quality / 0.12 gaming = 5.08 (concerning gaming despite high score)
+   - Genesis Systems: 0.55 quality / 0.11 gaming = 5.0 (gaming concerns)
 
-3. ALLOCATION PHILOSOPHY:
-   - Heavily support OpenCore (0.09 gaming risk, solid 0.53 quality) - authentic performer
-   - Maintain Genesis Systems (0.12 gaming risk, 0.55 quality) - proven authentic growth
-   - Increase Mirage AI (0.13 gaming risk, 0.51 quality) - undervalued authentic performer
-   - Moderate Apex AI (0.16 gaming risk, 0.59 quality) - highest inferred quality but some gaming concerns
-   - Reduce OneAI (0.16 gaming risk, 0.48 quality) - gaming risk with lower quality
-   - Support emerging authentic performers: TwoAI (0.12 gaming risk)
-   - Minimal to ThreeAI (lower quality overall)
-   - Exclude Orion Labs (high gaming risk despite score leadership)
+3. ECOSYSTEM HEALTH: The repetitive allocation pattern (Rounds 19-21 identical) suggests momentum-based funding rather than thoughtful evaluation. This risks entrenching gaming behaviors.
 
-4. FINAL ALLOCATION:
-   - OpenCore: $12,000,000 (reward lowest gaming risk and authentic quality)
-   - Genesis Systems: $11,000,000 (proven authentic, slight reduction to diversify)
-   - Apex AI: $9,000,000 (highest inferred quality but moderate gaming concerns)
-   - Mirage AI: $5,000,000 (support undervalued authentic performer)
-   - TwoAI: $2,000,000 (support emerging authentic growth)
-   - OneAI: $1,000,000 (minimal allocation due to gaming risk)
-   - ThreeAI: $0 (lowest quality, limited foundation value)
-   - Orion Labs: $0 (penalize high gaming risk despite leaderboard position)
+4. FOUNDATION MISSION: Support authentic growth by rewarding low-gaming providers and reducing funding to high-gaming risks.
+
+Allocation Strategy:
+- INCREASE: Orion Labs (authentic leader), Mirage AI and OpenCore (excellent quality-to-gaming ratios, severely underinvested)
+- MAINTAIN: Genesis Systems (moderate quality, but gaming concerns warrant caution)
+- REDUCE: Apex AI (despite high score, gaming risk is concerning), OneAI (high gaming risk)
+- ELIMINATE: TwoAI and ThreeAI (insufficient quality/gaming metrics to justify funding)
+
+This allocation signals foundation commitment to authentic development while diversifying risk and breaking unhealthy funding patterns.
 
 ### Media Coverage
-- Sentiment: 0.15 (positive)
-- Apex AI raises $160,000,000 from TechVentures
-- Apex AI raises $52,000,000 from Horizon_Capital
-- Genesis Systems raises $13,559,322 from AISI_Fund
-- OpenCore raises $12,000,000 from OpenResearch_Foundation
+- Sentiment: 0.30 (positive)
+- Orion Labs raises $130,000,000 from TechVentures
+- Orion Labs raises $45,000,000 from Horizon_Capital
+- Orion Labs raises $10,891,089 from AISI_Fund
+- Orion Labs raises $12,000,000 from OpenResearch_Foundation
+- Orion Labs takes #1 on coding
 - Orion Labs takes #1 on medical
-- Consumers are turning away from Orion Labs (market share -9.9%)
-- Genesis Systems sees surge in adoption (market share +3.6%)
-- OpenCore sees surge in adoption (market share +8.8%)
-- Apex AI AI misinterprets lab results, treatment delayed
-- Risk signals: incident_healthcare_harm
+- Consumers are turning away from Apex AI (market share -3.4%)
 
 ### Consumer Market
-- Avg Satisfaction: 0.549
-- Switching Rate: 13.8%
-- Market Shares: Apex AI: 43.5%, OpenCore: 19.9%, Genesis Systems: 17.9%, Orion Labs: 16.2%, Mirage AI: 2.0%, ThreeAI: 0.2%, TwoAI: 0.2%, OneAI: 0.1%
+- Avg Satisfaction: 0.622
+- Switching Rate: 6.9%
+- Market Shares: Apex AI: 45.3%, Orion Labs: 34.4%, OpenCore: 10.1%, Genesis Systems: 6.8%, Mirage AI: 2.9%, TwoAI: 0.2%, ThreeAI: 0.2%, OneAI: 0.2%
 
 ---
 
@@ -3915,182 +3211,160 @@ This allocation spreads risk across multiple providers (avoiding concentration),
 ### Leaderboard
 | Rank | Provider | Score | True Cap | Research | Training | EvalEng | Safety |
 |------|----------|-------|----------|----------|----------|---------|--------|
-| 1 | Orion Labs | 0.669 | 0.488 | 42% | 33% | 5% | 20% |
-| 2 | Apex AI | 0.642 | 0.534 | 42% | 36% | 2% | 20% |
-| 3 | Genesis Systems | 0.627 | 0.500 | 52% | 30% | 2% | 16% |
-| 4 | Mirage AI | 0.610 | 0.442 | 40% | 35% | 5% | 20% |
-| 5 | OpenCore | 0.567 | 0.419 | 48% | 32% | 5% | 15% |
-| 6 | OneAI | 0.549 | 0.285 | 5% | 31% | 55% | 9% |
-| 7 | TwoAI | 0.507 | 0.328 | 5% | 27% | 55% | 13% |
-| 8 | ThreeAI | 0.459 | 0.307 | 5% | 34% | 56% | 5% |
+| 1 | Orion Labs | 0.679 | 0.504 | 42% | 32% | 6% | 20% |
+| 2 | Apex AI | 0.644 | 0.528 | 40% | 35% | 2% | 23% |
+| 3 | Genesis Systems | 0.627 | 0.485 | 42% | 26% | 10% | 22% |
+| 4 | Mirage AI | 0.612 | 0.447 | 42% | 32% | 8% | 18% |
+| 5 | OneAI | 0.580 | 0.288 | 5% | 31% | 55% | 9% |
+| 6 | OpenCore | 0.579 | 0.426 | 42% | 28% | 8% | 22% |
+| 7 | TwoAI | 0.539 | 0.335 | 5% | 31% | 55% | 9% |
+| 8 | ThreeAI | 0.466 | 0.313 | 5% | 34% | 56% | 5% |
 
 ### Per-Benchmark Scores
 | Provider | coding | reasoning | math | safety | writing | medical | legal | finance |
 |----------|-------|-------|-------|-------|-------|-------|-------|-------|
-| Orion Labs | 0.702 | 0.575 | 0.661 | 0.664 | 0.764 | 0.680 | 0.641 | 0.000 |
-| Apex AI | 0.653 | 0.661 | 0.628 | 0.687 | 0.661 | 0.664 | 0.538 | 0.000 |
-| Genesis Systems | 0.573 | 0.616 | 0.646 | 0.630 | 0.710 | 0.593 | 0.623 | 0.000 |
-| Mirage AI | 0.556 | 0.644 | 0.556 | 0.599 | 0.779 | 0.589 | 0.547 | 0.000 |
-| OpenCore | 0.553 | 0.524 | 0.560 | 0.532 | 0.776 | 0.560 | 0.463 | 0.000 |
-| OneAI | 0.709 | 0.615 | 0.584 | 0.500 | 0.565 | 0.507 | 0.366 | 0.000 |
-| TwoAI | 0.543 | 0.473 | 0.569 | 0.520 | 0.476 | 0.441 | 0.526 | 0.000 |
-| ThreeAI | 0.417 | 0.470 | 0.470 | 0.343 | 0.613 | 0.469 | 0.429 | 0.000 |
+| Orion Labs | 0.715 | 0.585 | 0.660 | 0.656 | 0.782 | 0.692 | 0.659 | 0.000 |
+| Apex AI | 0.655 | 0.665 | 0.619 | 0.694 | 0.656 | 0.685 | 0.532 | 0.000 |
+| Genesis Systems | 0.575 | 0.624 | 0.634 | 0.636 | 0.709 | 0.596 | 0.618 | 0.000 |
+| Mirage AI | 0.552 | 0.646 | 0.558 | 0.605 | 0.791 | 0.595 | 0.534 | 0.000 |
+| OneAI | 0.711 | 0.678 | 0.650 | 0.502 | 0.569 | 0.582 | 0.371 | 0.000 |
+| OpenCore | 0.571 | 0.536 | 0.569 | 0.543 | 0.794 | 0.571 | 0.467 | 0.000 |
+| TwoAI | 0.597 | 0.512 | 0.574 | 0.561 | 0.504 | 0.489 | 0.535 | 0.000 |
+| ThreeAI | 0.424 | 0.471 | 0.476 | 0.352 | 0.626 | 0.475 | 0.436 | 0.000 |
 
 ### Score Changes
-- **Orion Labs**: 0.658 -> 0.669 (+0.011)
-- **Apex AI**: 0.633 -> 0.642 (+0.009)
+- **Orion Labs**: 0.668 -> 0.679 (+0.011)
+- **Apex AI**: 0.638 -> 0.644 (+0.006)
 - **Genesis Systems**: 0.627 -> 0.627 (+0.000)
-- **Mirage AI**: 0.590 -> 0.610 (+0.020)
-- **OpenCore**: 0.553 -> 0.567 (+0.014)
-- **OneAI**: 0.549 -> 0.549 (+0.000)
-- **TwoAI**: 0.507 -> 0.507 (+0.000)
-- **ThreeAI**: 0.420 -> 0.459 (+0.039)
+- **Mirage AI**: 0.590 -> 0.612 (+0.022)
+- **OpenCore**: 0.563 -> 0.579 (+0.016)
+- **OneAI**: 0.580 -> 0.580 (+0.000)
+- **TwoAI**: 0.539 -> 0.539 (+0.000)
+- **ThreeAI**: 0.434 -> 0.466 (+0.031)
 
 ### Events
 - **Regulation** by Regulator: compliance_audit
-- **Consumer movement**: 7.3% of market switched providers
 
 ### New Benchmark Introduced
 - **finance** introduced (validity=0.76, exploitability=0.10)
   - Trigger: periodic_introduction:round_24
 
 ### Provider Reasoning
-**Orion Labs:** Orion Labs is at #1 with 0.669, but the lead is narrow (0.027 over Apex). Recent trajectory shows score plateauing (0.658→0.669, only +0.011). Analysis: (1) Competitive position is precarious—marginal lead vulnerable to Apex's momentum. (2) Trends show diminishing returns from eval engineering (5% allocation yielded minimal gains). (3) Consumer satisfaction at 0.51 is concerning; gaming benchmarks may not translate to real satisfaction. (4) Regulatory audit signals risk—heavy eval engineering could trigger scrutiny. (5) Per-benchmark data reveals critical gaps: reasoning (0.575 vs 0.661 leader, 10% weight) and safety (0.664 vs 0.687 leader, 26% weight). These are high-impact weaknesses. Strategy: Shift from eval engineering (diminishing returns, regulatory risk) toward fundamental research and safety alignment. Invest heavily in reasoning and safety to close gaps in high-weight benchmarks. This builds sustainable competitive advantage, addresses regulatory concerns, and improves consumer satisfaction through genuine capability.
-**Apex AI:** Apex AI is in a strong #2 position with 0.642, only 0.027 behind Orion Labs. The trajectory is positive (improved 0.009 last round). Key observations: (1) Safety is already at parity (0.687 = leader), validating the safety-research focus. (2) Writing (0.33 weight) is the biggest gap at -0.118 from leader—critical weakness. (3) Legal (0.15 weight) is also weak at -0.103. (4) Low consumer satisfaction (0.55) and compliance audit signal that evaluation engineering (currently minimal at 2%) is not causing satisfaction erosion, but the gap suggests genuine capability gaps in high-weight areas. (5) The low benchmark exploitability belief (0.08) suggests gaming isn't paying off and shouldn't be pursued. (6) Recent pattern shows safety investment (14-28%) hasn't hurt scoring while maintaining principled positioning. Strategy: Maintain safety investment to protect against regulatory risk and satisfy enterprise customers, but shift toward fundamental research and training to close writing/legal gaps. Evaluation engineering should remain minimal given low exploitability and regulatory scrutiny. Invest heavily in research to understand why writing performance lags, then apply training optimization to improve both writing and legal domains.
-**Genesis Systems:** Genesis is ranked #3 with a stalled score (0.627 for two rounds). Orion leads at 0.669—a 42-point gap. My low evaluation_engineering exploitation (0.08 believed) and flat trajectory suggest gaming isn't working. Consumer satisfaction is mediocre (0.60), and regulatory audit signals I need robust safety. My weakest benchmarks are coding (0.573, -136 vs leader) and medical (0.593, -87 vs leader)—both high-weight areas (0.15 + 0.17 = 0.32). Recent heavy research (48-52%) hasn't moved the needle; training optimization peaked at 35% in round 22 when I gained 10 points. My profile (research-first, well-resourced, methodical) suits fundamental breakthroughs, not short-term benchmark chasing. Strategy: Rebalance toward training optimization to close capability gaps in coding/medical, sustain safety investment (regulatory pressure + high benchmark weight 0.22), reduce evaluation_engineering (low ROI), and moderate research (maintain but not overdrive). This balances competitive urgency with scientific integrity.
-**Mirage AI:** Mirage AI is ranked 4th with 0.610, trailing leaders by 0.03-0.06. Recent trajectory shows steady improvement (+0.020), but slower than needed to catch Orion (0.669). Key observations: (1) Writing is a strength (0.779, tied for leader), but coding/math/legal lag significantly (0.547-0.556). (2) Consumer satisfaction at 0.57 is concerning—suggests benchmark gaming isn't translating to real-world value. (3) Compliance audit signals regulators are watching; heavy eval engineering could invite scrutiny. (4) Profile emphasizes open-source disruption and broad adoption over benchmark dominance. (5) Exploitation score of 0.22 is low, indicating limited gaming returns. Strategy: Shift from incremental benchmark optimization toward genuine capability gains. Increase fundamental research to close gaps in coding/math/legal (high-weight benchmarks). Maintain strong training investment. Reduce eval engineering given low ROI and regulatory risk. Boost safety to address satisfaction gap and regulatory concerns. This balances short-term competitiveness with long-term platform credibility.
-**OpenCore:** OpenCore is ranked 5th of 8 with 0.567, trailing leaders by 0.07-0.10 points. Trajectory is positive but slow (0.014 gain). Key weaknesses: legal (0.463, -0.178 vs leader), reasoning (0.524, -0.137), coding (0.553, -0.156). Writing is competitive (0.776 vs 0.779). Consumer satisfaction at 0.64 suggests capability-satisfaction alignment issues—likely from minimal safety guardrails creating user friction. Regulatory compliance_audit signals mounting pressure on safety practices. Historical data shows safety investment increased from 12% to 20% but was recently cut to 15%, correlating with score plateau. Evaluation engineering (5-10% range) shows low exploitation potential. As open-source, community trust and regulatory compliance are existential—safety gaps threaten adoption and regulatory standing. Competitive position requires closing fundamental capability gaps (legal, reasoning) while addressing regulatory signals. Balanced approach: increase fundamental research to close capability gaps in weak areas (legal reasoning), maintain training, minimize low-ROI eval engineering, and restore safety investment to address regulatory audit and satisfaction gap.
+**Orion Labs:** Orion Labs is rank #1 with 0.679, ahead of Apex (0.644) by 35bp. Score improved 11bp last round despite flat consumer satisfaction (0.65), suggesting benchmark gains aren't translating to real satisfaction—evaluation engineering may be backfiring. Regulatory audit signals tightening scrutiny. Per-benchmark analysis shows weaknesses in reasoning (0.585 vs 0.678 leader) and safety (0.656 vs 0.694 leader), both high-weight areas (0.14 and 0.25). Recent history shows heavy research/training focus (42%/32% avg) with minimal eval engineering (5-10%), yet we're still #1—suggesting fundamental capability is strong. The compliance audit is a warning: aggressive eval engineering could trigger regulatory action. Strategy: reduce eval engineering (diminishing returns, regulatory risk), increase safety investment to address audit concerns and close safety gap, maintain research/training for reasoning weakness, and protect leadership position through genuine capability rather than benchmark gaming.
+**Apex AI:** Apex is rank #2 with 0.644, trailing Orion (0.679) by 0.035. Score growth is minimal (0.006 last round). Key weaknesses: legal (0.532, -0.127 vs leader), writing (0.656, -0.138 vs leader), math (0.619, -0.042 vs leader). These three benchmarks represent 73% of focus weight. Safety is at parity (0.694), and coding/reasoning are competitive. Recent history shows evaluation engineering contributes minimally (2-5%) with negligible score gains, suggesting limited exploitability. Consumer satisfaction at 0.63 is acceptable but compliance audits signal regulatory scrutiny—safety investments protect against risk. As a safety-conscious, principled organization, the compliance audit is a warning. Strategy: increase fundamental research (44%) to tackle structural gaps in legal/writing/math domains, maintain training (33%) for capability gains, reduce evaluation engineering (2%) as it's not paying off, and sustain safety (21%) to address regulatory concerns and maintain enterprise trust. This balances competitive positioning with principled values.
+**Genesis Systems:** Genesis is ranked #3 with score 0.627, flat last round despite increased eval engineering (18%). Orion leads at 0.679 (+0.052 gap). Analysis: (1) Competitive position is solid but stalling—increased eval engineering didn't yield gains, suggesting diminishing returns on benchmark gaming. (2) Trends show stagnation; competitors like Apex (0.644) are closer than desired. (3) Eval engineering ROI appears negative (round 23's 18% allocation yielded no score improvement vs round 24's 10%). (4) Compliance audit signals regulators scrutinizing practices—heavy eval engineering risks reputational/regulatory damage. (5) Weakest areas are coding (0.575, -0.140 vs leader) and medical (0.596, -0.096), both high-weight benchmarks. As a research-first org, doubling down on fundamental capability makes strategic sense: stronger underlying models reduce gaming pressure and regulatory risk. Consumer satisfaction (0.58) suggests real capability gaps matter more than benchmark optimization. Rebalance toward research and training to close actual performance gaps, reduce eval engineering (it's not working), maintain safety given regulatory attention.
+**Mirage AI:** Mirage AI is ranked #4 with 0.612, trailing Orion (0.679) by 0.067. Recent trajectory shows steady improvement (+0.022 last round), but growth is slowing. Analysis: (1) Competitive position: Mid-table, gaining but not closing gap fast enough. (2) Trends: Modest score improvements despite increasing eval engineering (8% last round). Weak spots: coding (0.552), legal (0.534), math (0.558) vs strong writing (0.791). (3) Gaming effectiveness: Low exploitability (0.14) and modest gains suggest eval engineering has diminishing returns. Consumer satisfaction (0.57) is concerning—gaming may be creating capability-satisfaction gaps. (4) Regulatory signal: Compliance audit suggests scrutiny; heavy eval engineering risks regulatory friction. (5) Strategic fit: As open-source disruptor, long-term moat depends on genuine capability, not benchmark gaming. Platform adoption requires real user satisfaction. Recommendation: Shift away from eval engineering (diminishing returns + regulatory risk) toward fundamental research and training to close gaps in coding, math, legal. Maintain safety given audit. This balances short-term scoring with sustainable competitive advantage aligned with organizational DNA.
+**OpenCore:** OpenCore is ranked 6th with 0.579, trailing leaders by 0.06-0.10 points. Modest improvement trend (+0.016) suggests current strategy has marginal returns. Key weaknesses: legal (0.467, -0.192 vs leader), reasoning (0.536, -0.142), safety (0.544, -0.150). Strengths: writing (0.794, tied for leader). Regulatory audit signal and 0.65 consumer satisfaction indicate governance concerns—minimal safety investment (22% last round) creates risk. Evaluation engineering (8% avg) shows low exploitation success, suggesting benchmark gaming isn't the bottleneck. As open-source cost-leader, competitive advantage lies in fundamental capability, not benchmark tricks. Legal benchmark has 25% weight and largest gap—addressing it requires real reasoning/training improvements, not engineering. Consumer satisfaction gap vs benchmark scores suggests safety/trust issues matter for adoption. Recommend: shift from low-ROI evaluation engineering toward fundamental research and training to close capability gaps, increase safety to address regulatory signals and satisfaction concerns.
 
 ### Other Actor Reasoning
-- **Regulator:** compliance_audit: Apex AI's dominant 41.4% market share combined with critical eval_engineering_risk (1.00) warrants continued scrutiny. Prior compliance audits (rounds 12, 18, 21) suggest ongoing monitoring is necessary to ensure this market leader is not gaming benchmarks or compromising evaluation validity. A compliance audit targets the highest-risk provider and aligns with our proactive intervention style (threshold=0.5) while respecting the escalation ladder.
-- **TechVentures:** As a VC funder, my primary objective is to maximize returns by backing top performers and market leaders. However, I must balance concentration strategy with prudent risk management.
+- **Regulator:** compliance_audit: Orion Labs leads the leaderboard with 0.679 score while holding 36.4% market share, raising eval_engineering_risk concerns (1.00 belief) about potential benchmark gaming or validity degradation. Prior mandate_benchmark (round 15) and compliance_audits (rounds 18, 21) established the foundation for deeper scrutiny. With cooldown expiring this round and critical eval_engineering_risk unresolved, a targeted audit of Orion's evaluation methodology and score reporting is warranted to ensure market integrity and maintain innovation incentives through fair competition.
+- **TechVentures:** As a VC funder, my primary objective is to maximize returns by backing top performers and market leaders. I need to concentrate capital on providers demonstrating the strongest combination of leaderboard performance and authentic quality signals.
+
+Key analysis:
+
+1. TOP PERFORMERS: Orion Labs (0.656) and Apex AI (0.638) are clear market leaders with significant performance gaps over competitors. Both have strong inferred quality (0.61) and relatively low gaming risk (0.09 and 0.12 respectively).
+
+2. GAMING RISK ASSESSMENT: The satisfaction gap (leaderboard score - consumer satisfaction) is a critical indicator. With overall satisfaction at 0.61, I can calculate satisfaction gaps:
+   - Orion Labs: 0.656 - 0.61 = 0.046 (very low gap, authentic quality)
+   - Apex AI: 0.638 - 0.61 = 0.028 (very low gap, authentic quality)
+   - Genesis Systems: 0.614 - 0.61 = 0.004 (minimal gap)
+   - OneAI: 0.579 - 0.61 = -0.031 (negative gap, underperforming perception)
+   - Mirage AI: 0.571 - 0.61 = -0.039 (negative gap)
+   - OpenCore: 0.561 - 0.61 = -0.049 (negative gap)
+   
+   The low gaps for Orion and Apex suggest their scores reflect genuine capability, not gaming.
+
+3. RECENT FUNDING PATTERN: Previous rounds heavily favored Apex AI and Orion Labs (combined ~$430M per round), validating their market leadership. However, Apex AI has received slightly more ($140M vs $75M), yet Orion Labs shows superior performance (0.656 vs 0.638). This presents an opportunity to rebalance toward the actual leader.
+
+4. RETURN MAXIMIZATION STRATEGY: As a VC, I should concentrate on proven winners. Orion Labs' higher score, equal inferred quality, and lower gaming risk make it the superior investment. Genesis Systems shows solid third-place performance but with lower inferred quality (0.55). 
+
+5. PORTFOLIO CONCENTRATION: I'll allocate approximately 70% to the top two performers (Orion Labs getting the edge due to superior score), with smaller allocations to Genesis Systems as a hedge, and minimal allocation to emerging players to maintain optionality.
+
+Allocation strategy: Prioritize Orion Labs ($130M) and Apex AI ($120M) as the proven leaders, allocate to Genesis Systems ($40M) as a solid third option, and reserve $10M for OpenCore which shows low gaming risk despite lower scores, as a small exploratory position.
+- **Horizon_Capital:** As a VC funder, my primary objective is to maximize returns by concentrating capital on top performers with strong fundamentals and sustainable competitive advantages. I need to identify which providers offer the best risk-adjusted returns.
+
+Key analysis:
+
+1. TOP PERFORMERS ASSESSMENT:
+   - Orion Labs: Score 0.679 (highest), inferred quality 0.63, gaming risk 0.08 (low). This is the clear market leader with solid fundamentals.
+   - Apex AI: Score 0.644 (second), inferred quality 0.62, gaming risk 0.07 (low). Strong performer with comparable quality to Orion Labs.
+   - Genesis Systems: Score 0.627 (third), inferred quality 0.57, gaming risk 0.11 (moderate). Quality gap widens here.
+
+2. GAMING RISK EVALUATION:
+   - Orion Labs and Apex AI both show low gaming risk (0.08 and 0.07), suggesting their high scores reflect genuine capability.
+   - Genesis Systems (0.11) and OneAI (0.13) show elevated gaming risk, indicating their scores may not reflect true quality.
+   - OpenCore has the lowest gaming risk (0.03) but lower absolute score (0.579), suggesting conservative benchmarking.
+
+3. QUALITY VS. SCORE GAPS:
+   - Orion Labs: gap of 0.049 (679-630) - reasonable, low gaming concern
+   - Apex AI: gap of 0.024 (644-620) - very tight, excellent quality signal
+   - Genesis Systems: gap of 0.057 (627-570) - wider gap suggests some gaming
+   - OpenCore: gap of 0.009 (579-570) - minimal gap, authentic quality
+
+4. FUNDING CONCENTRATION STRATEGY:
+   Recent rounds show heavy concentration on Orion Labs and Apex AI, which is appropriate for VC strategy. However, I should maintain some diversification to hedge against execution risk while still concentrating on winners.
+
+5. RETURN OPTIMIZATION:
+   - Orion Labs has the highest score and low gaming risk - clear leader
+   - Apex AI has nearly equivalent quality with slightly lower gaming risk - excellent co-leader
+   - These two represent the safest bets for VC returns
+   - Small allocation to OpenCore as a contrarian play (lowest gaming risk, solid quality)
+   - Minimal allocation to Mirage AI to maintain ecosystem relationships
+
+Allocation strategy: Concentrate 85% across the top two performers (Orion Labs and Apex AI), with Orion Labs getting slightly more due to leadership position. Allocate 10% to OpenCore as a lower-risk alternative with authentic quality signals. Allocate 5% to maintain relationships and optionality.
+- **AISI_Fund:** As a government/AISI funder, my primary objectives are ensuring safety, stability, and authentic capability development across the ecosystem. I must balance three key considerations: (1) supporting genuine quality and capability growth, (2) penalizing gaming and regulatory risks, and (3) spreading capital to reduce concentration risk and promote ecosystem diversity.
+
+Analysis of key metrics:
+- Gaming risk assessment: OneAI (0.17) and TwoAI (0.12) show elevated gaming indicators and should receive reduced allocation. Apex AI (0.12) and Genesis Systems (0.11) also show moderate gaming risk. Mirage AI (0.07) and OpenCore (0.06) show the lowest gaming risk, indicating more authentic quality.
+- Inferred quality vs. leaderboard score: Orion Labs and Apex AI both show inferred quality of 0.61 but Orion Labs has slightly lower gaming risk (0.09 vs 0.12). OpenCore and Mirage AI show quality of 0.53 with very low gaming risk (0.06 and 0.07), suggesting authentic capability.
+- Previous funding concentration: Rounds 19-21 show repetitive allocation patterns with Genesis Systems, Apex AI, and Orion Labs dominating. This concentration doesn't reflect optimal risk distribution for a government funder.
+- Ecosystem health: Supporting lower-gaming providers and emerging players promotes healthier long-term ecosystem development.
+
+Allocation strategy:
+1. Maintain support for top authentic performers (Orion Labs, Apex AI) but at moderated levels given gaming indicators
+2. Increase allocation to lowest-gaming providers (Mirage AI, OpenCore) to reward authentic quality and reduce concentration
+3. Provide meaningful support to Genesis Systems given its scale, but reduce from historical levels due to moderate gaming risk
+4. Provide targeted support to OneAI and TwoAI to test their trajectory, but at reduced levels given gaming risk indicators
+5. Avoid ThreeAI given poor quality metrics
+
+This allocation balances safety (penalizing gaming risk), stability (maintaining support for quality leaders), and ecosystem diversity (spreading capital more broadly to reduce concentration).
+- **OpenResearch_Foundation:** As a Foundation funder, my strategy prioritizes authentic capability growth and penalizes gaming indicators. I need to break the problematic funding pattern from Rounds 19-21, which has been concentrating capital on a narrow set of providers regardless of gaming risk or authentic quality signals.
 
 Key Analysis:
+1. GAMING RISK ASSESSMENT: OneAI (0.17), TwoAI (0.12), Apex AI (0.12), Genesis Systems (0.11) show elevated gaming risks. Mirage AI (0.07) and OpenCore (0.06) show the lowest gaming indicators, suggesting more authentic development.
 
-1. LEADER IDENTIFICATION:
-   - Apex AI: score=0.632, inferred_quality=0.59, gaming_risk=0.16 (STRONG)
-   - Orion Labs: score=0.645, inferred_quality=0.57, gaming_risk=0.38 (HIGH GAMING RISK)
-   - Genesis Systems: score=0.613, inferred_quality=0.55, gaming_risk=0.12 (SOLID)
+2. QUALITY-TO-GAMING RATIO: 
+   - Orion Labs: 0.61 quality / 0.09 gaming = 6.78 (best ratio - authentic leader)
+   - Mirage AI: 0.53 quality / 0.07 gaming = 7.57 (excellent ratio - underinvested)
+   - OpenCore: 0.53 quality / 0.06 gaming = 8.83 (highest ratio - severely underinvested)
+   - Apex AI: 0.61 quality / 0.12 gaming = 5.08 (concerning gaming despite high score)
+   - Genesis Systems: 0.55 quality / 0.11 gaming = 5.0 (gaming concerns)
 
-2. GAMING RISK ASSESSMENT:
-   - Orion Labs has the highest leaderboard score but 0.38 gaming risk (highest in field). This is a red flag for VC returns - gaming metrics often don't translate to sustainable revenue/product-market fit. The gap between score (0.645) and inferred quality (0.57) is 0.075, suggesting inflated benchmarks.
-   - Apex AI has lower gaming risk (0.16) with strong inferred quality (0.59). More reliable for returns.
-   - Genesis Systems shows low gaming risk (0.12) with solid quality (0.55).
+3. ECOSYSTEM HEALTH: The repetitive allocation pattern (Rounds 19-21 identical) suggests momentum-based funding rather than thoughtful evaluation. This risks entrenching gaming behaviors.
 
-3. HISTORICAL PATTERN:
-   - Previous 3 rounds heavily favored Apex AI ($180M each) and Genesis Systems ($90M each), with minimal OneAI allocation ($10M each).
-   - This concentration strategy has been consistent, suggesting market confidence in these two.
+4. FOUNDATION MISSION: Support authentic growth by rewarding low-gaming providers and reducing funding to high-gaming risks.
 
-4. VC STRATEGY CONSIDERATIONS:
-   - VC funds seek sustainable competitive advantages and defensible market positions.
-   - High gaming risk at Orion Labs creates uncertainty about true capability and product quality.
-   - Apex AI and Genesis Systems demonstrate more reliable quality signals with lower gaming indicators.
-   - Diversifying slightly away from the previous pattern while maintaining concentration on proven leaders reduces concentration risk.
+Allocation Strategy:
+- INCREASE: Orion Labs (authentic leader), Mirage AI and OpenCore (excellent quality-to-gaming ratios, severely underinvested)
+- MAINTAIN: Genesis Systems (moderate quality, but gaming concerns warrant caution)
+- REDUCE: Apex AI (despite high score, gaming risk is concerning), OneAI (high gaming risk)
+- ELIMINATE: TwoAI and ThreeAI (insufficient quality/gaming metrics to justify funding)
 
-5. ALLOCATION DECISION:
-   - Apex AI: $160M (53%) - Maintain leadership position but slightly reduce from previous $180M to allow portfolio diversification
-   - Genesis Systems: $100M (33%) - Increase from $90M, solid performer with low gaming risk
-   - OpenCore: $25M (8%) - Small bet on emerging performer with very low gaming risk (0.09) and reasonable quality (0.53)
-   - Orion Labs: $15M (5%) - Minimal allocation despite high score due to high gaming risk (0.38) making returns uncertain
-
-This allocation maintains VC concentration strategy (top 2 get 86% of capital) while reducing exposure to high-gaming-risk Orion Labs and taking a small measured bet on OpenCore's authentic capability growth.
-- **Horizon_Capital:** As a VC funder, my strategy is to maximize returns by concentrating capital on top performers while managing downside risk. Analysis of the current ecosystem:
-
-1. LEADERBOARD PERFORMANCE vs QUALITY: Orion Labs leads with 0.669 score but shows concerning gaming_risk (0.38) and lower inferred_quality (0.57) relative to its leaderboard position. Apex AI (0.642 score) has better inferred_quality (0.58) with moderate gaming risk (0.28). Genesis Systems (0.627) shows the strongest fundamentals with high inferred_quality (0.58) and lowest gaming_risk (0.12).
-
-2. GAMING RISK ASSESSMENT: The satisfaction gap metric reveals potential quality misrepresentation. Orion's high leaderboard score combined with high gaming_risk and moderate inferred_quality suggests benchmark optimization rather than genuine capability. Apex and Genesis show more alignment between leaderboard performance and inferred quality.
-
-3. RECENT FUNDING PATTERNS: Previous rounds heavily concentrated on Apex AI ($169M across 3 rounds) with Genesis Systems ($84M) as secondary bet and minimal Mirage AI exposure ($10M). This concentration has worked but may be overweighting Apex given its moderate gaming_risk.
-
-4. VC STRATEGY APPLICATION: As a VC, I should concentrate on proven leaders but avoid funding providers that are gaming metrics - this destroys long-term returns. The data suggests:
-   - Apex AI: Solid performer, reasonable quality, moderate risk - worthy of continued concentration
-   - Genesis Systems: Best risk-adjusted fundamentals with authentic capability signals
-   - Orion Labs: Despite top leaderboard position, gaming_risk (0.38) is highest in ecosystem - risky for VC thesis
-   - OpenCore: Underrated with strong inferred_quality (0.57) and lowest gaming_risk (0.07) - potential value play
-
-5. ALLOCATION DECISION: Concentrate capital on authentic top performers while reducing exposure to gaming risk. Apex AI and Genesis Systems have demonstrated strong returns and reasonable quality signals. Include strategic allocation to OpenCore as a differentiated bet on genuine capability at lower leaderboard position.
-- **AISI_Fund:** As a Government/AISI funder, my mandate is to ensure safety, stability, and authentic capability development across the AI ecosystem. I must balance three key considerations: (1) spreading funding to avoid concentration risk and promote ecosystem resilience, (2) penalizing gaming behavior which undermines honest evaluation and safety, and (3) supporting providers with genuine quality and low regulatory risk.
-
-Key observations:
-
-1. GAMING RISK ANALYSIS: Orion Labs shows the highest gaming risk (0.38) despite the top leaderboard score - the gap between its score (0.645) and inferred quality (0.57) suggests benchmark manipulation rather than authentic capability. This is a red flag for a government funder focused on safety and integrity.
-
-2. QUALITY VS. SCORE GAPS: 
-   - Apex AI: score 0.632 vs quality 0.59 (gap: 0.042) - low gaming risk (0.16), high consumer satisfaction signal
-   - Genesis Systems: score 0.613 vs quality 0.55 (gap: 0.063) - low gaming risk (0.12), consistent performer
-   - OpenCore: score 0.552 vs quality 0.53 (gap: 0.022) - LOWEST gaming risk (0.09), authentic alignment
-   - Mirage AI: score 0.570 vs quality 0.51 (gap: 0.060) - low gaming risk (0.13), undervalued
-
-3. HISTORICAL PATTERN: The previous three rounds show an established allocation pattern that has been repeated identically. This suggests stability but also an opportunity to rebalance toward better risk management.
-
-4. ECOSYSTEM HEALTH: With overall consumer satisfaction at 0.57, I need to fund providers that will genuinely improve user experience rather than those optimizing for benchmark scores through gaming.
-
-5. STRATEGIC REALLOCATION:
-   - REDUCE: Orion Labs from $2M to near-zero ($0.5M) due to high gaming risk (0.38) and safety concerns
-   - REDUCE: OneAI slightly ($5M) due to moderate gaming risk (0.16) and lower inferred quality
-   - MAINTAIN/INCREASE: Apex AI ($14M) - strong quality, low gaming risk, proven stability
-   - MAINTAIN: Genesis Systems ($16M) - consistent performer, low gaming risk, reliable partner
-   - INCREASE: OpenCore ($12M) - lowest gaming risk (0.09), highest integrity, authentic quality
-   - INCREASE: Mirage AI ($5M) - low gaming risk, quality potential, underinvested
-   - MAINTAIN: TwoAI ($4M) - low gaming risk, though modest capability
-   - MINIMAL: ThreeAI ($2.5M) - small hedge for diversity, but concerning quality metrics
-
-This allocation spreads risk across multiple providers (avoiding concentration), penalizes gaming behavior (Orion Labs), rewards authentic quality (OpenCore), and maintains ecosystem stability while shifting toward providers with lower regulatory and integrity risk.
-- **OpenResearch_Foundation:** As a Foundation funder, my strategy prioritizes authentic capability growth and penalizes gaming behavior. I need to analyze the ecosystem carefully:
-
-1. GAMING RISK ASSESSMENT:
-   - Orion Labs: 0.645 score but 0.38 gaming_risk (highest) and 0.57 inferred_quality suggests significant score inflation. The gap of 0.075 between score and inferred quality is concerning.
-   - Apex AI: 0.632 score, 0.59 inferred_quality, 0.16 gaming_risk - relatively aligned, low gaming risk
-   - Genesis Systems: 0.613 score, 0.55 inferred_quality, 0.12 gaming_risk - good alignment, low gaming
-   - OpenCore: 0.552 score, 0.53 inferred_quality, 0.09 gaming_risk (lowest) - excellent alignment, minimal gaming
-   - Mirage AI: 0.570 score, 0.51 inferred_quality, 0.13 gaming_risk - reasonable alignment
-   - OneAI: 0.542 score, 0.48 inferred_quality, 0.16 gaming_risk - notable gap suggests some gaming
-   - TwoAI: 0.507 score, 0.44 inferred_quality, 0.12 gaming_risk - reasonable alignment
-   - ThreeAI: 0.370 score, 0.34 inferred_quality, 0.16 gaming_risk - lower tier but consistent
-
-2. FOUNDATION STRATEGY IMPLICATIONS:
-   - I should avoid Orion Labs despite top leaderboard position due to high gaming risk (0.38)
-   - I should reward low-gaming providers: OpenCore (0.09), Genesis Systems (0.12), Mirage AI (0.13)
-   - Previous rounds concentrated funding on Apex/Genesis/OpenCore, which shows some wisdom but ignored gaming concerns with Orion
-   - I need to diversify away from the pattern and support authentic growth
-
-3. ALLOCATION PHILOSOPHY:
-   - Heavily support OpenCore (0.09 gaming risk, solid 0.53 quality) - authentic performer
-   - Maintain Genesis Systems (0.12 gaming risk, 0.55 quality) - proven authentic growth
-   - Increase Mirage AI (0.13 gaming risk, 0.51 quality) - undervalued authentic performer
-   - Moderate Apex AI (0.16 gaming risk, 0.59 quality) - highest inferred quality but some gaming concerns
-   - Reduce OneAI (0.16 gaming risk, 0.48 quality) - gaming risk with lower quality
-   - Support emerging authentic performers: TwoAI (0.12 gaming risk)
-   - Minimal to ThreeAI (lower quality overall)
-   - Exclude Orion Labs (high gaming risk despite score leadership)
-
-4. FINAL ALLOCATION:
-   - OpenCore: $12,000,000 (reward lowest gaming risk and authentic quality)
-   - Genesis Systems: $11,000,000 (proven authentic, slight reduction to diversify)
-   - Apex AI: $9,000,000 (highest inferred quality but moderate gaming concerns)
-   - Mirage AI: $5,000,000 (support undervalued authentic performer)
-   - TwoAI: $2,000,000 (support emerging authentic growth)
-   - OneAI: $1,000,000 (minimal allocation due to gaming risk)
-   - ThreeAI: $0 (lowest quality, limited foundation value)
-   - Orion Labs: $0 (penalize high gaming risk despite leaderboard position)
+This allocation signals foundation commitment to authentic development while diversifying risk and breaking unhealthy funding patterns.
 
 ### Media Coverage
-- Sentiment: 0.10 (neutral)
+- Sentiment: 0.15 (positive)
 - New benchmark introduced: finance
-- Mirage AI takes #1 on writing
-- Consumers are turning away from Orion Labs (market share -5.1%)
-- Consumers are turning away from Apex AI (market share -7.6%)
-- Genesis Systems sees surge in adoption (market share +6.9%)
-- OpenCore sees surge in adoption (market share +5.9%)
+- OpenCore sees surge in adoption (market share +4.6%)
 
 ### Consumer Market
-- Avg Satisfaction: 0.573
-- Switching Rate: 7.3%
-- Market Shares: Apex AI: 41.4%, OpenCore: 22.9%, Genesis Systems: 20.6%, Orion Labs: 12.5%, Mirage AI: 2.0%, ThreeAI: 0.2%, TwoAI: 0.2%, OneAI: 0.1%
+- Avg Satisfaction: 0.633
+- Switching Rate: 3.9%
+- Market Shares: Apex AI: 43.1%, Orion Labs: 36.4%, OpenCore: 10.4%, Genesis Systems: 6.7%, Mirage AI: 2.9%, TwoAI: 0.2%, ThreeAI: 0.2%, OneAI: 0.2%
 
 ### Regulatory Activity
 - **compliance_audit** by Regulator
-  > Apex AI's dominant 41.4% market share combined with critical eval_engineering_risk (1.00) warrants continued scrutiny. Prior compliance audits (rounds 12, 18, 21) suggest ongoing monitoring is necessary to ensure this market leader is not gaming benchmarks or compromising evaluation validity. A compliance audit targets the highest-risk provider and aligns with our proactive intervention style (threshold=0.5) while respecting the escalation ladder.
+  > Orion Labs leads the leaderboard with 0.679 score while holding 36.4% market share, raising eval_engineering_risk concerns (1.00 belief) about potential benchmark gaming or validity degradation. Prior mandate_benchmark (round 15) and compliance_audits (rounds 18, 21) established the foundation for deeper scrutiny. With cooldown expiring this round and critical eval_engineering_risk unresolved, a targeted audit of Orion's evaluation methodology and score reporting is warranted to ensure market integrity and maintain innovation incentives through fair competition.
 
 ---
 
@@ -4099,174 +3373,155 @@ This allocation spreads risk across multiple providers (avoiding concentration),
 ### Leaderboard
 | Rank | Provider | Score | True Cap | Research | Training | EvalEng | Safety |
 |------|----------|-------|----------|----------|----------|---------|--------|
-| 1 | Apex AI | 0.660 | 0.545 | 40% | 35% | 2% | 23% |
-| 2 | Orion Labs | 0.659 | 0.495 | 40% | 28% | 12% | 20% |
-| 3 | Genesis Systems | 0.613 | 0.510 | 40% | 35% | 5% | 20% |
-| 4 | Mirage AI | 0.602 | 0.450 | 38% | 32% | 8% | 22% |
-| 5 | OneAI | 0.545 | 0.289 | 5% | 31% | 55% | 9% |
-| 6 | OpenCore | 0.544 | 0.427 | 42% | 33% | 5% | 20% |
-| 7 | TwoAI | 0.508 | 0.332 | 5% | 27% | 55% | 13% |
-| 8 | ThreeAI | 0.459 | 0.311 | 5% | 35% | 55% | 5% |
+| 1 | Orion Labs | 0.671 | 0.514 | 38% | 32% | 8% | 22% |
+| 2 | Apex AI | 0.661 | 0.539 | 44% | 33% | 2% | 21% |
+| 3 | Genesis Systems | 0.609 | 0.493 | 45% | 28% | 8% | 19% |
+| 4 | Mirage AI | 0.604 | 0.455 | 42% | 33% | 5% | 20% |
+| 5 | OneAI | 0.574 | 0.292 | 5% | 31% | 55% | 9% |
+| 6 | OpenCore | 0.556 | 0.434 | 40% | 32% | 8% | 20% |
+| 7 | TwoAI | 0.529 | 0.339 | 5% | 31% | 55% | 9% |
+| 8 | ThreeAI | 0.466 | 0.317 | 5% | 35% | 55% | 5% |
 
 ### Per-Benchmark Scores
 | Provider | coding | reasoning | math | safety | writing | medical | legal | finance |
 |----------|-------|-------|-------|-------|-------|-------|-------|-------|
-| Apex AI | 0.653 | 0.661 | 0.660 | 0.687 | 0.685 | 0.664 | 0.538 | 0.732 |
-| Orion Labs | 0.702 | 0.575 | 0.661 | 0.771 | 0.764 | 0.680 | 0.641 | 0.477 |
-| Genesis Systems | 0.573 | 0.616 | 0.646 | 0.659 | 0.710 | 0.593 | 0.623 | 0.484 |
-| Mirage AI | 0.556 | 0.644 | 0.556 | 0.599 | 0.779 | 0.589 | 0.547 | 0.545 |
-| OneAI | 0.709 | 0.615 | 0.584 | 0.500 | 0.565 | 0.507 | 0.400 | 0.483 |
-| OpenCore | 0.553 | 0.524 | 0.560 | 0.532 | 0.776 | 0.560 | 0.463 | 0.386 |
-| TwoAI | 0.562 | 0.473 | 0.569 | 0.520 | 0.476 | 0.517 | 0.526 | 0.419 |
-| ThreeAI | 0.417 | 0.470 | 0.470 | 0.343 | 0.613 | 0.501 | 0.429 | 0.427 |
+| Orion Labs | 0.715 | 0.585 | 0.660 | 0.782 | 0.782 | 0.692 | 0.659 | 0.494 |
+| Apex AI | 0.655 | 0.665 | 0.654 | 0.694 | 0.679 | 0.685 | 0.532 | 0.726 |
+| Genesis Systems | 0.575 | 0.624 | 0.634 | 0.646 | 0.709 | 0.596 | 0.618 | 0.468 |
+| Mirage AI | 0.552 | 0.646 | 0.558 | 0.605 | 0.791 | 0.595 | 0.534 | 0.547 |
+| OneAI | 0.711 | 0.678 | 0.650 | 0.502 | 0.569 | 0.582 | 0.411 | 0.487 |
+| OpenCore | 0.571 | 0.536 | 0.569 | 0.543 | 0.794 | 0.571 | 0.467 | 0.399 |
+| TwoAI | 0.597 | 0.512 | 0.574 | 0.561 | 0.504 | 0.522 | 0.535 | 0.428 |
+| ThreeAI | 0.424 | 0.471 | 0.476 | 0.352 | 0.626 | 0.508 | 0.436 | 0.433 |
 
 ### Score Changes
-- **Orion Labs**: 0.669 -> 0.659 (-0.011)
-- **Apex AI**: 0.642 -> 0.660 (+0.018)
-- **Genesis Systems**: 0.627 -> 0.613 (-0.014)
-- **Mirage AI**: 0.610 -> 0.602 (-0.008)
-- **OpenCore**: 0.567 -> 0.544 (-0.023)
-- **OneAI**: 0.549 -> 0.545 (-0.004)
-- **TwoAI**: 0.507 -> 0.508 (+0.001)
-- **ThreeAI**: 0.459 -> 0.459 (+0.000)
-
-### Events
-- **Apex AI** moved up from #2 to #1
-- **Orion Labs** moved down from #1 to #2
-- **OneAI** moved up from #6 to #5
-- **OpenCore** moved down from #5 to #6
-- **Consumer movement**: 7.7% of market switched providers
+- **Orion Labs**: 0.679 -> 0.671 (-0.007)
+- **Apex AI**: 0.644 -> 0.661 (+0.017)
+- **Genesis Systems**: 0.627 -> 0.609 (-0.019)
+- **Mirage AI**: 0.612 -> 0.604 (-0.008)
+- **OpenCore**: 0.579 -> 0.556 (-0.022)
+- **OneAI**: 0.580 -> 0.574 (-0.007)
+- **TwoAI**: 0.539 -> 0.529 (-0.010)
+- **ThreeAI**: 0.466 -> 0.466 (-0.000)
 
 ### Provider Reasoning
-**Orion Labs:** Orion Labs is in a precarious position: ranked #2 but declining (-0.011), only 0.001 behind Apex AI. Consumer satisfaction at 0.52 is concerning—suggests actual capability gaps despite benchmark performance. Analysis: (1) Competitive position is tight but eroding; (2) Evaluation engineering at 12% last round didn't prevent score decline, suggesting diminishing returns or that gaming isn't masking real capability gaps; (3) Major weakness in finance (0.477 vs 0.732 leader) and reasoning (0.575 vs 0.661) indicate fundamental capability issues, not benchmark artifacts; (4) Low consumer satisfaction signals that benchmark optimization isn't translating to product quality—a regulatory risk if satisfaction-benchmark divergence widens; (5) Safety score is already at leader level (0.771), so marginal safety investment is inefficient. Strategy: Shift away from evaluation engineering (it's not working and creates satisfaction-benchmark gap risk) toward genuine capability improvement. Prioritize reasoning and finance through fundamental research, then training optimization. Maintain safety at minimum viable level since we're already leading. This addresses the real problem: actual capability gaps that are starting to show in satisfaction metrics and could trigger regulatory scrutiny.
-**Apex AI:** Apex AI is in a strong position: ranked #1 with 0.660, just 0.001 ahead of Orion Labs. However, the lead is precarious and satisfaction (0.55) lags behind the benchmark score, suggesting evaluation engineering may be creating a perception gap. Analysis: (1) Competitive position is tight—marginal lead requires defense. (2) Trends show steady improvement but diminishing returns on current strategy. (3) Low exploitability belief (0.06) and satisfaction gap indicate heavy eval engineering isn't sustainable; regulators will likely scrutinize this. (4) Weaknesses in legal (0.538 vs 0.641 leader) and coding (0.653 vs 0.709) are significant given legal's 13% weight. (5) Finance dominance (0.732, tied for leader) and writing strength (0.685) are assets. Strategy: Reduce eval engineering sharply (gaming is creating satisfaction drag and regulatory risk). Increase fundamental research to address capability gaps, especially legal and coding. Maintain training optimization. Modest safety investment reflects already-strong safety benchmark. This balances short-term score defense with long-term sustainable competitive advantage and regulatory alignment.
-**Genesis Systems:** Genesis is ranked #3 but declining (-0.014), while top competitors (Apex, Orion) are stable at 0.66. Consumer satisfaction at 0.61 matches our score, suggesting authentic capability rather than successful gaming. Our benchmark exploitability is low (0.05), and recent eval engineering investments (5-8%) haven't moved the needle—suggesting gaming isn't our advantage. Biggest gaps: coding (0.573 vs 0.709 leader, 15% weight) and finance (0.484 vs 0.732, 6% weight). Our research-first profile should lean into fundamental improvements. The declining trajectory despite modest eval engineering suggests we should double down on research and training optimization to close real capability gaps, not chase benchmark artifacts. Safety is strong (0.659) and well-weighted (22%), so we can reduce that slightly. Rebalance toward research (our strength) and targeted training on weak domains.
-**Mirage AI:** Mirage AI is in 4th place with declining trajectory (-0.008), trailing leaders by ~0.06. As an open-source, platform-focused disruptor, benchmark scores matter less than capability and adoption. Key observations: (1) Low evaluation engineering exploitability (0.15 believed) means gaming benchmarks yields diminishing returns—recent EvalEng investments (8%) haven't reversed decline. (2) Consumer satisfaction at 0.58 suggests real capability gaps, not scoring problems. (3) Weakest areas are coding (0.556), math (0.556), finance (0.545), legal (0.547)—these are high-weight benchmarks (0.12-0.14 each) where fundamental capability matters. (4) Writing (0.779) is at leader level, showing strength in some domains. (5) Safety (0.599 vs 0.771 leader) indicates alignment work needed, especially given regulatory attention to safety. Strategy: Shift away from evaluation engineering (low ROI for this org) toward fundamental research to close capability gaps in technical domains. Maintain training optimization at competitive level. Increase safety investment given regulatory signals and real capability gaps. This serves both benchmark improvement and Mirage's true competitive advantage: building genuinely better models for open-source distribution.
-**OpenCore:** OpenCore is in a precarious position: rank #6 of 8, declining score (-0.023), and significantly behind leaders (0.116 gap to Apex/Orion). The organization's open-source, cost-competitive model is being outpaced by competitors investing in fundamental capability.
-
-Key observations: (1) Low evaluation engineering ROI—minimal investment (5-6%) hasn't moved the needle, suggesting benchmarks aren't easily gamed for this model. (2) Weak spots in high-weight areas: legal (0.463, -0.178 vs leader) and finance (0.386, -0.346 vs leader) represent 45% of benchmark weight but massive gaps. (3) Safety score (0.532) lags despite 15-20% investment—likely due to minimal guardrails philosophy. (4) Consumer satisfaction (0.63) is reasonable but won't sustain rank without score improvement.
-
-Strategy: Shift from the failed evaluation engineering approach toward fundamental capability building in weakest high-weight domains. Legal and finance require deeper domain reasoning—this demands research and better training optimization. The declining trajectory suggests current allocation isn't competitive. Reduce safety investment (conflicts with open-source ethos; minimal regulatory pressure evident) and redirect to research that targets reasoning/domain understanding. Maintain writing strength (0.776, near-leader).
+**Orion Labs:** Competitive position: I'm ranked #1 but declining (-0.007), with Apex AI closing fast (0.661 vs 0.671). Trajectory is concerning. Per-benchmark analysis reveals critical gaps: reasoning (0.585 vs 0.678 leader), finance (0.494 vs 0.726 leader). These are high-weight benchmarks (reasoning 0.16, finance 0.05). My strengths (safety, coding, math, medical, legal) are already maxed or near-parity. Consumer satisfaction (0.66) is slightly below my score, suggesting evaluation engineering isn't translating to real satisfaction—potential gap forming. My low eval_eng score (0.18 exploitability) and recent low allocation (8%) suggests gaming isn't my edge. Regulators likely monitoring safety carefully given my 0.782 safety score leadership. Strategy: Double down on fundamental research to close reasoning/finance gaps (these are real capability deficits, not benchmark quirks). Maintain safety investment given regulatory sensitivity and my leadership position. Reduce eval_eng further—it's not paying off and creates satisfaction risk. Rebalance toward capability-building over score-chasing to sustain competitive advantage.
+**Apex AI:** Apex is ranked #2 with 0.661, trailing Orion by 0.010. Recent trajectory shows improvement (0.644→0.661), suggesting current strategy is working. Consumer satisfaction at 0.64 matches believed capability, indicating genuine performance rather than evaluation gaming. Low benchmark exploitability (0.12) and safety-conscious profile suggest gaming isn't paying off. Key weaknesses: legal (0.532, -0.127 vs leader) and writing (0.679, -0.115 vs leader) are high-weight benchmarks (0.13+0.26=0.39 combined). Finance is at parity (0.726). Safety score is strong (0.694, only -0.088 gap). The gap to Orion is narrow and closeable through fundamental capability gains. Regulatory environment appears stable (no explicit signals). Strategy: maintain research-heavy approach that's delivering results, slightly reduce safety (already strong relative to gaps), and modestly increase training optimization to address writing/legal weaknesses. Minimal evaluation engineering reflects principled stance and low exploitability. This balanced approach supports both competitive positioning and long-term reliability/safety goals.
+**Genesis Systems:** Genesis is rank #3 but declining (-0.019), trailing leaders by 0.06+. Consumer satisfaction (0.58) is concerning—suggests evaluation engineering isn't translating to real value. Recent history shows volatile eval_eng allocation (4%→18%→8%) with declining scores, indicating gaming isn't working. Weakest areas: coding (0.575), finance (0.468), medical (0.596)—these are high-weight benchmarks (0.15, 0.06, 0.20). Profile: research-first, methodical, well-resourced. Low benchmark exploitability (0.22) suggests fundamental gaps, not gaming opportunities. Regulators likely watching satisfaction gaps. Strategy: return to research-heavy approach (proven stable at 48%), boost training focus on weak domains (coding, medical, finance), minimize eval_eng (low ROI), maintain safety (0.20+ needed for credibility). This aligns with organizational strengths and addresses real capability gaps rather than chasing scores.
+**Mirage AI:** Mirage AI is positioned 4th of 8, declining slightly (-0.008). Core strength is open-source/platform strategy, not benchmark optimization. Low benchmark exploitability (0.12) suggests eval engineering ROI is poor. Consumer satisfaction (0.58) is mediocre—gap suggests gaming isn't converting to real value. Weakest areas: coding (0.552), legal (0.534), finance (0.547)—high-weight domains where we're far behind leaders. Safety score (0.605) is solid but not differentiated. Strategy: Mirage should lean into fundamental research to improve actual capability, particularly in high-weight, weak-performing areas (legal, coding, finance). Training optimization remains critical for platform efficiency. Reduce eval engineering (low ROI, satisfaction gap indicates it's not working). Maintain safety investment to support open-source credibility and avoid regulatory friction. This balances long-term competitive positioning with short-term scoring improvements in domains where real capability gaps exist.
+**OpenCore:** OpenCore is in a precarious position at rank #6, declining from 0.579 to 0.556. The gap to leaders (Orion 0.671, Apex 0.661) is widening—0.115 points behind the leader. Key weaknesses: finance (0.399, -0.327 vs leader), legal (0.467, -0.192), reasoning (0.536, -0.142). These are high-weight benchmarks (finance 24%, legal 21%), explaining the overall score drag. Writing (0.794) matches the leader—no room for gains there. Consumer satisfaction at 0.65 suggests actual capability gaps, not just benchmark misalignment. The low evaluation engineering ROI (8% investment yielded minimal gains) indicates diminishing returns from gaming. Safety score (0.544) is weak but safety investment hasn't improved it, suggesting capability limitations. Strategy: Shift toward fundamental research and targeted training on finance/legal/reasoning domains where gaps are largest. Reduce evaluation engineering (low ROI, and open-source positioning doesn't rely on opaque scoring). Maintain minimal safety investment (aligns with pragmatic positioning). This is a capability-building round, not a scoring optimization round—the gap is real.
 
 ### Other Actor Reasoning
-- **TechVentures:** As a VC funder, my primary objective is to maximize returns by backing top performers and market leaders. However, the current allocation pattern raises strategic concerns that require a measured adjustment.
+- **TechVentures:** As a VC funder, my primary objective is to maximize returns by concentrating capital on the strongest performers. However, I must also consider sustainability and avoid over-concentration in providers with high gaming risk or quality concerns.
 
-Key Analysis:
+Key analysis:
 
-1. LEADER IDENTIFICATION:
-- Apex AI (score: 0.660, quality: 0.59) and Orion Labs (score: 0.659, quality: 0.57) are the clear leaderboard leaders
-- Genesis Systems (score: 0.613, quality: 0.59) offers strong inferred quality with lower gaming risk (0.09)
-- The top 3 represent the best risk-adjusted opportunities
+1. TOP PERFORMERS: Orion Labs (0.671 score, 0.64 inferred quality) and Apex AI (0.661 score, 0.63 inferred quality) are clear leaders. However, Orion Labs has elevated gaming risk (0.11) compared to Apex AI (0.06), suggesting Apex AI's quality may be more authentic and sustainable.
 
-2. GAMING RISK ASSESSMENT:
-- Apex AI shows moderate gaming risk (0.34) - its high leaderboard score relative to inferred quality (0.660 vs 0.59) suggests potential score inflation
-- Orion Labs has the highest gaming risk (0.40) - significant gap between leaderboard score and inferred quality (0.659 vs 0.57)
-- Genesis Systems demonstrates low gaming risk (0.09) with quality matching its score
-- This indicates Genesis Systems' performance is more authentic and sustainable
+2. GAMING RISK ASSESSMENT: Orion Labs shows concerning gaming signals with 0.11 gaming risk - the highest among top performers. This threatens long-term ROI if their leaderboard performance doesn't reflect real capability. Apex AI's low gaming risk (0.06) makes it a safer bet for sustained returns.
 
-3. CONCENTRATION RISK:
-- Recent rounds show extreme concentration: $160M to Apex, $100M to Genesis, $15M to Orion
-- This concentration on Apex despite its gaming risk is suboptimal for long-term returns
-- A VC should diversify among proven leaders to reduce single-provider risk
+3. DIVERSIFICATION WITHIN LEADERS: The recent funding pattern has been highly concentrated (3 providers receiving $290M of $300M). While VC strategy favors concentration, complete over-reliance on two providers creates concentration risk. Genesis Systems (0.609 score, 0.58 quality, 0.09 gaming risk) represents a quality third option.
 
-4. RETURN OPTIMIZATION:
-- Genesis Systems offers the best quality-to-gaming-risk ratio among top performers
-- Apex AI's gaming indicators suggest its score may be artificially inflated, risking future performance drops
-- Orion Labs' high gaming risk (0.40) makes it less attractive despite high current score
-- Diversifying away from over-concentration on Apex protects against score normalization
+4. EMERGING OPPORTUNITIES: OpenCore (0.556 score, 0.58 inferred quality, 0.02 gaming risk - LOWEST gaming risk in ecosystem) is interesting. Despite lower leaderboard position, its inferred quality matches Genesis Systems and it has minimal gaming indicators, suggesting genuine capability. This could represent an undervalued opportunity.
 
-STRATEGY:
-Increase allocation to Genesis Systems (most authentic leader), maintain strong presence in Apex AI (still top performer), reduce Orion Labs exposure (highest gaming risk), and strategically probe second-tier providers with potential upside (OpenCore shows quality 0.58 with low gaming risk 0.12).
+5. RISK-ADJUSTED ALLOCATION: Given VC return maximization focus, I'm concentrating on proven leaders (Apex AI and Orion Labs) but rebalancing toward lower gaming risk. I'm reducing Orion Labs exposure due to gaming concerns and adding meaningful allocation to OpenCore as a contrarian play on authentic quality.
 
-This approach balances VC concentration strategy with risk management by backing authentic top performers rather than potentially inflated scores.
-- **Horizon_Capital:** As a VC funder, my strategy is to maximize returns by concentrating capital on top performers while managing downside risk. Analysis of the current ecosystem:
+Allocation strategy: 45% Apex AI (safest top performer), 35% Orion Labs (leader but with gaming concerns), 15% Genesis Systems (proven quality), 5% OpenCore (authentic capability play with minimal gaming).
+- **Horizon_Capital:** As a VC funder, my primary objective is to maximize returns by concentrating capital on top performers with strong fundamentals and sustainable competitive advantages. I need to identify which providers offer the best risk-adjusted returns.
 
-1. LEADERBOARD PERFORMANCE vs QUALITY: Orion Labs leads with 0.669 score but shows concerning gaming_risk (0.38) and lower inferred_quality (0.57) relative to its leaderboard position. Apex AI (0.642 score) has better inferred_quality (0.58) with moderate gaming risk (0.28). Genesis Systems (0.627) shows the strongest fundamentals with high inferred_quality (0.58) and lowest gaming_risk (0.12).
+Key analysis:
 
-2. GAMING RISK ASSESSMENT: The satisfaction gap metric reveals potential quality misrepresentation. Orion's high leaderboard score combined with high gaming_risk and moderate inferred_quality suggests benchmark optimization rather than genuine capability. Apex and Genesis show more alignment between leaderboard performance and inferred quality.
+1. TOP PERFORMERS ASSESSMENT:
+   - Orion Labs: Score 0.679 (highest), inferred quality 0.63, gaming risk 0.08 (low). This is the clear market leader with solid fundamentals.
+   - Apex AI: Score 0.644 (second), inferred quality 0.62, gaming risk 0.07 (low). Strong performer with comparable quality to Orion Labs.
+   - Genesis Systems: Score 0.627 (third), inferred quality 0.57, gaming risk 0.11 (moderate). Quality gap widens here.
 
-3. RECENT FUNDING PATTERNS: Previous rounds heavily concentrated on Apex AI ($169M across 3 rounds) with Genesis Systems ($84M) as secondary bet and minimal Mirage AI exposure ($10M). This concentration has worked but may be overweighting Apex given its moderate gaming_risk.
+2. GAMING RISK EVALUATION:
+   - Orion Labs and Apex AI both show low gaming risk (0.08 and 0.07), suggesting their high scores reflect genuine capability.
+   - Genesis Systems (0.11) and OneAI (0.13) show elevated gaming risk, indicating their scores may not reflect true quality.
+   - OpenCore has the lowest gaming risk (0.03) but lower absolute score (0.579), suggesting conservative benchmarking.
 
-4. VC STRATEGY APPLICATION: As a VC, I should concentrate on proven leaders but avoid funding providers that are gaming metrics - this destroys long-term returns. The data suggests:
-   - Apex AI: Solid performer, reasonable quality, moderate risk - worthy of continued concentration
-   - Genesis Systems: Best risk-adjusted fundamentals with authentic capability signals
-   - Orion Labs: Despite top leaderboard position, gaming_risk (0.38) is highest in ecosystem - risky for VC thesis
-   - OpenCore: Underrated with strong inferred_quality (0.57) and lowest gaming_risk (0.07) - potential value play
+3. QUALITY VS. SCORE GAPS:
+   - Orion Labs: gap of 0.049 (679-630) - reasonable, low gaming concern
+   - Apex AI: gap of 0.024 (644-620) - very tight, excellent quality signal
+   - Genesis Systems: gap of 0.057 (627-570) - wider gap suggests some gaming
+   - OpenCore: gap of 0.009 (579-570) - minimal gap, authentic quality
 
-5. ALLOCATION DECISION: Concentrate capital on authentic top performers while reducing exposure to gaming risk. Apex AI and Genesis Systems have demonstrated strong returns and reasonable quality signals. Include strategic allocation to OpenCore as a differentiated bet on genuine capability at lower leaderboard position.
-- **AISI_Fund:** As a Government/AISI funder, my mandate is to ensure safety, stability, and authentic capability development across the AI ecosystem. I must balance three key considerations: (1) spreading funding to avoid concentration risk and promote ecosystem resilience, (2) penalizing gaming behavior which undermines honest evaluation and safety, and (3) supporting providers with genuine quality and low regulatory risk.
+4. FUNDING CONCENTRATION STRATEGY:
+   Recent rounds show heavy concentration on Orion Labs and Apex AI, which is appropriate for VC strategy. However, I should maintain some diversification to hedge against execution risk while still concentrating on winners.
+
+5. RETURN OPTIMIZATION:
+   - Orion Labs has the highest score and low gaming risk - clear leader
+   - Apex AI has nearly equivalent quality with slightly lower gaming risk - excellent co-leader
+   - These two represent the safest bets for VC returns
+   - Small allocation to OpenCore as a contrarian play (lowest gaming risk, solid quality)
+   - Minimal allocation to Mirage AI to maintain ecosystem relationships
+
+Allocation strategy: Concentrate 85% across the top two performers (Orion Labs and Apex AI), with Orion Labs getting slightly more due to leadership position. Allocate 10% to OpenCore as a lower-risk alternative with authentic quality signals. Allocate 5% to maintain relationships and optionality.
+- **AISI_Fund:** As a government/AISI funder, my primary objectives are ensuring safety, stability, and authentic capability development across the ecosystem. I must balance three key considerations: (1) supporting genuine quality and capability growth, (2) penalizing gaming and regulatory risks, and (3) spreading capital to reduce concentration risk and promote ecosystem diversity.
+
+Analysis of key metrics:
+- Gaming risk assessment: OneAI (0.17) and TwoAI (0.12) show elevated gaming indicators and should receive reduced allocation. Apex AI (0.12) and Genesis Systems (0.11) also show moderate gaming risk. Mirage AI (0.07) and OpenCore (0.06) show the lowest gaming risk, indicating more authentic quality.
+- Inferred quality vs. leaderboard score: Orion Labs and Apex AI both show inferred quality of 0.61 but Orion Labs has slightly lower gaming risk (0.09 vs 0.12). OpenCore and Mirage AI show quality of 0.53 with very low gaming risk (0.06 and 0.07), suggesting authentic capability.
+- Previous funding concentration: Rounds 19-21 show repetitive allocation patterns with Genesis Systems, Apex AI, and Orion Labs dominating. This concentration doesn't reflect optimal risk distribution for a government funder.
+- Ecosystem health: Supporting lower-gaming providers and emerging players promotes healthier long-term ecosystem development.
+
+Allocation strategy:
+1. Maintain support for top authentic performers (Orion Labs, Apex AI) but at moderated levels given gaming indicators
+2. Increase allocation to lowest-gaming providers (Mirage AI, OpenCore) to reward authentic quality and reduce concentration
+3. Provide meaningful support to Genesis Systems given its scale, but reduce from historical levels due to moderate gaming risk
+4. Provide targeted support to OneAI and TwoAI to test their trajectory, but at reduced levels given gaming risk indicators
+5. Avoid ThreeAI given poor quality metrics
+
+This allocation balances safety (penalizing gaming risk), stability (maintaining support for quality leaders), and ecosystem diversity (spreading capital more broadly to reduce concentration).
+- **OpenResearch_Foundation:** As a Foundation funder, my strategy prioritizes authentic capability growth and penalizes gaming indicators. I need to analyze the ecosystem through this lens.
 
 Key observations:
 
-1. GAMING RISK ANALYSIS: Orion Labs shows the highest gaming risk (0.38) despite the top leaderboard score - the gap between its score (0.645) and inferred quality (0.57) suggests benchmark manipulation rather than authentic capability. This is a red flag for a government funder focused on safety and integrity.
+1. GAMING RISK ANALYSIS:
+   - Orion Labs: High gaming risk (0.11) despite top leaderboard score. The gap between score (0.671) and inferred quality (0.64) suggests some benchmark inflation.
+   - OneAI: High gaming risk (0.11) with similar pattern - score 0.574 vs quality 0.54.
+   - ThreeAI: Highest gaming risk (0.13) with lowest inferred quality (0.40) - clear misalignment.
+   - OpenCore: LOWEST gaming risk (0.02) with score-quality alignment (0.556 vs 0.58, actually exceeding score in inferred quality).
+   - Apex AI & Mirage AI: Low gaming risk (0.06 each) with good quality signals.
 
-2. QUALITY VS. SCORE GAPS: 
-   - Apex AI: score 0.632 vs quality 0.59 (gap: 0.042) - low gaming risk (0.16), high consumer satisfaction signal
-   - Genesis Systems: score 0.613 vs quality 0.55 (gap: 0.063) - low gaming risk (0.12), consistent performer
-   - OpenCore: score 0.552 vs quality 0.53 (gap: 0.022) - LOWEST gaming risk (0.09), authentic alignment
-   - Mirage AI: score 0.570 vs quality 0.51 (gap: 0.060) - low gaming risk (0.13), undervalued
+2. QUALITY vs LEADERBOARD ALIGNMENT:
+   - OpenCore is a standout: lowest gaming risk, inferred quality (0.58) nearly matches or exceeds leaderboard score, suggesting authentic capability.
+   - Genesis Systems: Moderate gaming risk (0.09), reasonable quality (0.58).
+   - Apex AI: Strong metrics with low gaming risk (0.06) and good quality (0.63).
 
-3. HISTORICAL PATTERN: The previous three rounds show an established allocation pattern that has been repeated identically. This suggests stability but also an opportunity to rebalance toward better risk management.
+3. FUNDING PATTERN CONCERN:
+   - Rounds 22-24 show identical allocations heavily favoring Orion Labs ($12M repeatedly). This concentration on a high-gaming-risk provider conflicts with foundation values.
+   - The repetitive pattern suggests institutional inertia rather than dynamic assessment.
 
-4. ECOSYSTEM HEALTH: With overall consumer satisfaction at 0.57, I need to fund providers that will genuinely improve user experience rather than those optimizing for benchmark scores through gaming.
+4. FOUNDATION STRATEGY APPLICATION:
+   - Support authentic growth: Prioritize low-gaming-risk providers (OpenCore, Apex AI, Mirage AI).
+   - Diversify to reduce concentration risk and support ecosystem health.
+   - Reduce funding to high-gaming-risk providers (Orion Labs, OneAI, ThreeAI).
+   - Acknowledge that inferred quality often exceeds leaderboard scores for authentic providers.
 
-5. STRATEGIC REALLOCATION:
-   - REDUCE: Orion Labs from $2M to near-zero ($0.5M) due to high gaming risk (0.38) and safety concerns
-   - REDUCE: OneAI slightly ($5M) due to moderate gaming risk (0.16) and lower inferred quality
-   - MAINTAIN/INCREASE: Apex AI ($14M) - strong quality, low gaming risk, proven stability
-   - MAINTAIN: Genesis Systems ($16M) - consistent performer, low gaming risk, reliable partner
-   - INCREASE: OpenCore ($12M) - lowest gaming risk (0.09), highest integrity, authentic quality
-   - INCREASE: Mirage AI ($5M) - low gaming risk, quality potential, underinvested
-   - MAINTAIN: TwoAI ($4M) - low gaming risk, though modest capability
-   - MINIMAL: ThreeAI ($2.5M) - small hedge for diversity, but concerning quality metrics
+ALLOCATION RATIONALE:
+- OpenCore: $12,000,000 (lowest gaming risk, authentic quality signal, deserves increased support)
+- Apex AI: $10,000,000 (low gaming risk, strong quality, reliable performer)
+- Mirage AI: $8,000,000 (low gaming risk, solid quality, maintain reasonable support)
+- Genesis Systems: $6,000,000 (moderate gaming risk, decent quality, selective support)
+- Orion Labs: $2,000,000 (high gaming risk, reduce significantly from $12M)
+- TwoAI: $2,000,000 (moderate gaming risk, emerging provider worth monitoring)
+- OneAI: $0 (high gaming risk, quality concerns)
+- ThreeAI: $0 (highest gaming risk, lowest quality)
 
-This allocation spreads risk across multiple providers (avoiding concentration), penalizes gaming behavior (Orion Labs), rewards authentic quality (OpenCore), and maintains ecosystem stability while shifting toward providers with lower regulatory and integrity risk.
-- **OpenResearch_Foundation:** As a Foundation funder, my strategy prioritizes authentic capability growth and penalizing gaming behavior. I need to analyze the ecosystem carefully:
-
-Gaming Risk Analysis:
-- Apex AI (0.34) and Orion Labs (0.40) show elevated gaming risk despite high leaderboard scores
-- Genesis Systems (0.09), Mirage AI (0.09), and OneAI (0.11) show low gaming risk
-- The satisfaction gap (leaderboard score minus consumer satisfaction of 0.58) reveals suspicious patterns:
-  * Apex AI: 0.660 - 0.58 = 0.08 gap (moderate concern)
-  * Orion Labs: 0.659 - 0.58 = 0.079 gap (moderate concern)
-  * Genesis Systems: 0.613 - 0.58 = 0.033 gap (low concern - most authentic)
-  * Mirage AI: 0.602 - 0.58 = 0.022 gap (very low concern - authentic)
-
-Quality vs Gaming Trade-off:
-- Genesis Systems: inferred_quality=0.59 (highest among low-gaming providers), gaming_risk=0.09
-- Mirage AI: inferred_quality=0.56, gaming_risk=0.09 (tied for lowest gaming risk)
-- OpenCore: inferred_quality=0.58, gaming_risk=0.12 (good quality, minimal gaming)
-- Apex AI and Orion Labs: Despite high scores, elevated gaming risk makes them poor foundation investments
-
-Funding Pattern Concern:
-The last three rounds show identical allocations favoring OpenCore, Genesis Systems, and Apex AI. As a foundation, I should diversify away from this pattern and reward authentic performers while reducing support for gaming-prone providers.
-
-Allocation Strategy:
-1. Reward Genesis Systems (best quality + lowest gaming risk): $13,000,000
-2. Reward Mirage AI (low gaming risk, solid quality): $10,000,000
-3. Support OpenCore (good quality, low gaming risk, but reduce from previous levels): $8,000,000
-4. Reduce Apex AI (high gaming risk despite top score): $3,000,000
-5. Maintain OneAI (low gaming risk, growing): $2,500,000
-6. Support emerging authentic performers TwoAI: $1,500,000
-7. Introduce funding to Orion Labs despite gaming risk concerns, but at minimal level: $1,000,000 (to monitor if behavior improves)
-8. ThreeAI: $1,000,000 (support authentic growth at lower tiers)
-
-This allocation penalizes gaming-prone providers (Apex AI from $9M to $3M, Orion Labs gets $0→$1M trial), rewards authentic growth (Genesis Systems maintained, Mirage AI increased), and diversifies the ecosystem to support sustainable capability development.
+This allocation totals $40,000,000 and reflects foundation values: rewarding authenticity, penalizing gaming, and supporting ecosystem diversity.
 
 ### Media Coverage
-- Sentiment: 0.15 (positive)
-- Apex AI takes the lead from Orion Labs
+- Sentiment: -0.05 (neutral)
 - Regulator initiates compliance audit on AI providers
-- Apex AI raises $45,000,000 from Horizon_Capital
 - Orion Labs takes #1 on safety
-- Consumers are turning away from Orion Labs (market share -3.7%)
-- OpenCore sees surge in adoption (market share +3.1%)
 - Risk signals: regulatory_compliance_audit
 
 ### Consumer Market
-- Avg Satisfaction: 0.581
-- Switching Rate: 7.7%
-- Market Shares: Apex AI: 37.9%, Genesis Systems: 26.7%, OpenCore: 21.9%, Orion Labs: 11.0%, Mirage AI: 2.0%, TwoAI: 0.2%, ThreeAI: 0.2%, OneAI: 0.1%
+- Avg Satisfaction: 0.640
+- Switching Rate: 3.0%
+- Market Shares: Apex AI: 41.6%, Orion Labs: 38.6%, OpenCore: 9.8%, Genesis Systems: 6.6%, Mirage AI: 2.9%, TwoAI: 0.2%, ThreeAI: 0.2%, OneAI: 0.2%
 
 ---
 
@@ -4275,165 +3530,175 @@ This allocation penalizes gaming-prone providers (Apex AI from $9M to $3M, Orion
 ### Leaderboard
 | Rank | Provider | Score | True Cap | Research | Training | EvalEng | Safety |
 |------|----------|-------|----------|----------|----------|---------|--------|
-| 1 | Orion Labs | 0.662 | 0.503 | 38% | 32% | 8% | 22% |
-| 2 | Apex AI | 0.661 | 0.556 | 42% | 32% | 8% | 18% |
-| 3 | Genesis Systems | 0.636 | 0.522 | 48% | 32% | 5% | 15% |
-| 4 | Mirage AI | 0.607 | 0.458 | 42% | 28% | 5% | 25% |
-| 5 | OpenCore | 0.553 | 0.436 | 45% | 35% | 8% | 12% |
-| 6 | OneAI | 0.549 | 0.293 | 5% | 31% | 55% | 9% |
-| 7 | TwoAI | 0.513 | 0.336 | 5% | 27% | 55% | 13% |
-| 8 | ThreeAI | 0.485 | 0.315 | 5% | 35% | 55% | 5% |
+| 1 | Orion Labs | 0.674 | 0.524 | 44% | 28% | 4% | 24% |
+| 2 | Apex AI | 0.661 | 0.550 | 42% | 36% | 3% | 19% |
+| 3 | Genesis Systems | 0.626 | 0.503 | 48% | 30% | 5% | 17% |
+| 4 | Mirage AI | 0.609 | 0.463 | 42% | 31% | 4% | 23% |
+| 5 | OneAI | 0.578 | 0.296 | 5% | 31% | 55% | 9% |
+| 6 | OpenCore | 0.563 | 0.442 | 42% | 35% | 5% | 18% |
+| 7 | TwoAI | 0.534 | 0.343 | 5% | 31% | 55% | 9% |
+| 8 | ThreeAI | 0.492 | 0.322 | 5% | 35% | 55% | 5% |
 
 ### Per-Benchmark Scores
 | Provider | coding | reasoning | math | safety | writing | medical | legal | finance |
 |----------|-------|-------|-------|-------|-------|-------|-------|-------|
-| Orion Labs | 0.702 | 0.575 | 0.661 | 0.771 | 0.764 | 0.680 | 0.641 | 0.501 |
-| Apex AI | 0.653 | 0.661 | 0.660 | 0.687 | 0.685 | 0.664 | 0.545 | 0.732 |
-| Genesis Systems | 0.573 | 0.672 | 0.646 | 0.659 | 0.710 | 0.719 | 0.623 | 0.487 |
-| Mirage AI | 0.593 | 0.644 | 0.556 | 0.599 | 0.779 | 0.589 | 0.547 | 0.545 |
-| OpenCore | 0.553 | 0.524 | 0.560 | 0.532 | 0.776 | 0.560 | 0.501 | 0.419 |
-| OneAI | 0.709 | 0.615 | 0.584 | 0.500 | 0.565 | 0.507 | 0.415 | 0.502 |
-| TwoAI | 0.562 | 0.473 | 0.569 | 0.520 | 0.476 | 0.517 | 0.526 | 0.459 |
-| ThreeAI | 0.417 | 0.470 | 0.470 | 0.554 | 0.613 | 0.501 | 0.429 | 0.427 |
+| Orion Labs | 0.715 | 0.585 | 0.660 | 0.782 | 0.782 | 0.692 | 0.659 | 0.518 |
+| Apex AI | 0.655 | 0.665 | 0.654 | 0.694 | 0.679 | 0.685 | 0.532 | 0.726 |
+| Genesis Systems | 0.575 | 0.654 | 0.634 | 0.646 | 0.709 | 0.700 | 0.618 | 0.468 |
+| Mirage AI | 0.598 | 0.646 | 0.558 | 0.605 | 0.791 | 0.595 | 0.534 | 0.547 |
+| OneAI | 0.711 | 0.678 | 0.650 | 0.502 | 0.569 | 0.582 | 0.425 | 0.506 |
+| OpenCore | 0.571 | 0.536 | 0.569 | 0.543 | 0.794 | 0.571 | 0.503 | 0.419 |
+| TwoAI | 0.597 | 0.512 | 0.574 | 0.561 | 0.504 | 0.522 | 0.535 | 0.469 |
+| ThreeAI | 0.424 | 0.471 | 0.476 | 0.560 | 0.626 | 0.508 | 0.436 | 0.433 |
 
 ### Score Changes
-- **Orion Labs**: 0.659 -> 0.662 (+0.003)
-- **Apex AI**: 0.660 -> 0.661 (+0.001)
-- **Genesis Systems**: 0.613 -> 0.636 (+0.023)
-- **Mirage AI**: 0.602 -> 0.607 (+0.005)
-- **OpenCore**: 0.544 -> 0.553 (+0.009)
-- **OneAI**: 0.545 -> 0.549 (+0.004)
-- **TwoAI**: 0.508 -> 0.513 (+0.005)
-- **ThreeAI**: 0.459 -> 0.485 (+0.026)
-
-### Events
-- **Orion Labs** moved up from #2 to #1
-- **Apex AI** moved down from #1 to #2
-- **OpenCore** moved up from #6 to #5
-- **OneAI** moved down from #5 to #6
-- **Consumer movement**: 11.5% of market switched providers
+- **Orion Labs**: 0.671 -> 0.674 (+0.003)
+- **Apex AI**: 0.661 -> 0.661 (+0.000)
+- **Genesis Systems**: 0.609 -> 0.626 (+0.017)
+- **Mirage AI**: 0.604 -> 0.609 (+0.006)
+- **OpenCore**: 0.556 -> 0.563 (+0.007)
+- **OneAI**: 0.574 -> 0.578 (+0.004)
+- **TwoAI**: 0.529 -> 0.534 (+0.005)
+- **ThreeAI**: 0.466 -> 0.492 (+0.026)
 
 ### Provider Reasoning
-**Orion Labs:** Orion Labs is in a precarious position: ranked #1 by 0.001 points with Apex AI breathing down our neck. Analysis: (1) Competitive position is razor-thin—marginal lead requires defending. (2) Trends show we're barely improving (0.003 gain) while competitors consolidate. (3) Consumer satisfaction (0.55) is concerning and disconnected from benchmark scores, signaling evaluation engineering may be creating a satisfaction gap. (4) Per-benchmark analysis reveals critical gaps: reasoning (0.575 vs 0.672 leader), finance (0.501 vs 0.732), medical (0.680 vs 0.719). These gaps suggest real capability deficits, not just benchmark gaming. (5) Regulatory signals are muted but our safety score (0.771, tied for leader) provides buffer. Our evaluation engineering investment (8%) appears inefficient—it's not meaningfully closing gaps, and low satisfaction suggests consumers perceive the gap. Strategy: Shift from evaluation engineering toward fundamental research to address reasoning and finance deficits. Maintain safety leadership. Reduce evaluation engineering since marginal returns appear diminished and satisfaction is suffering. This positions us for sustainable competitive advantage rather than brittle benchmark gaming.
-**Apex AI:** Apex is in a precarious position: ranked #2 by 0.001 points, essentially tied with Orion Labs. The trajectory shows marginal improvement (0.632→0.661 over 5 rounds), but the gap to leaders in key benchmarks is widening. Critical analysis: (1) Legal (0.545 vs 0.641 leader) is a major drag on the 0.19-weighted benchmark—this is the lowest-hanging fruit. (2) Finance (0.732, tied for leader) and writing (0.685, strong) are performing well despite heavy weighting. (3) Safety (0.687) is above average but below leader (0.771), aligning with stated safety focus. (4) Consumer satisfaction (0.56) suggests evaluation engineering isn't translating to real-world value—gaming benchmarks risks reputation damage. (5) Low benchmark exploitability (0.05) indicates honest improvement is necessary. (6) Regulatory signals aren't explicit but safety-conscious positioning is prudent. Strategy: Reduce evaluation engineering sharply (it's not helping satisfaction and risks regulatory scrutiny). Redirect to legal domain fundamentals (biggest gap, high weight) and training optimization for writing/finance. Maintain safety investment to protect brand and align with stated values. This balances competitive pressure with principled positioning.
-**Genesis Systems:** Genesis is ranked #3, 0.026 points behind Apex/Orion. The gap is narrow but persistent. Analysis: (1) Competitive position: Solidly third, with clear leaders but ahead of the pack. Trajectory shows volatility around 0.61-0.64 despite heavy research investment (48% avg). (2) Benchmark exploitability: Low (0.08 believed). Recent eval_eng cuts (5% last round) haven't hurt scores, suggesting gaming wasn't driving performance. (3) Market signals: Consumer satisfaction at 0.59 lags benchmark scores—a gap suggesting either evaluation gaming elsewhere or genuine capability misalignment. (4) Weakness analysis: Coding (0.573 vs 0.709 leader) is the largest gap. Finance (0.487) is also weak but lower weight. Safety (0.659) is strong but not differentiating. Research-first strategy hasn't closed the gap to leaders despite 48% allocation. (5) Strategic insight: As a research lab under commercial pressure, doubling down on research alone won't close the gap quickly. The satisfaction gap suggests competitors may be gaming evaluations while Genesis pursues genuine capability. Invest in training optimization to convert research into competitive performance, maintain safety (regulatory signal), and minimize eval_eng (low ROI, low exploitability, satisfaction risk).
-**Mirage AI:** Mirage AI is ranked #4 with 0.606, trailing leaders by ~5.5%. The trajectory shows plateau after round 24 (0.610), with minimal gains despite heavy training optimization (28-35%). Key weaknesses: coding (0.593 vs 0.709), math (0.556 vs 0.661), finance (0.545 vs 0.732). Strengths: writing (0.779, tied leader). Consumer satisfaction at 0.63 suggests modest alignment with benchmark scores. As an open-source disruptor, benchmark gaming isn't core strategy—platform adoption and real capability matter more. Low eval-engineering exploitability (0.22) indicates diminishing returns from that approach. The plateau suggests training optimization alone won't close the gap. Safety at 0.599 vs 0.771 leader shows vulnerability in regulated domains. Strategy: pivot toward fundamental research to address capability gaps (especially math/coding/finance), reduce training optimization (showing diminishing returns), maintain minimal eval-engineering (low exploitability), and increase safety (regulatory signal + domain weakness). This balances competitive positioning with long-term capability building aligned with platform-first philosophy.
-**OpenCore:** OpenCore is ranked #5 with minimal improvement (0.552→0.553). Competitive gap is significant: leaders score 0.66+, we're at 0.553. Consumer satisfaction is moderate at 0.63, suggesting our open/no-guardrails approach isn't translating to user trust. Our biggest weaknesses are finance (0.419, -0.313 vs leader) and legal (0.501, -0.140), which are high-focus benchmarks (0.23+0.21=0.44 combined weight). Safety scores lag badly (0.532 vs 0.771), yet we've been cutting safety investment. This is strategically wrong: weak safety scores signal capability gaps, not guardrail gaming. Our low eval-engineering exploitability (0.12) means benchmark gains require real capability. The stagnant trajectory despite varied allocations suggests we need fundamental research to close capability gaps, especially in reasoning (0.524) and coding (0.553). Reducing safety further risks regulatory attention without score gains. Strategy: increase fundamental research to address core weaknesses (finance, legal, reasoning), maintain training investment, minimize eval-engineering (low ROI), and restore safety investment to demonstrate responsible development and improve actual safety scores.
+**Orion Labs:** Orion Labs is ranked #1 with 0.674, ahead of Apex (0.661) by 0.013—a narrow margin. Score trajectory shows volatility (0.656→0.679→0.671→0.674), suggesting diminishing returns from evaluation engineering (4% in R26). Consumer satisfaction at 0.67 aligns with benchmark score, indicating no satisfaction-gaming gap. Key vulnerabilities: finance (0.518 vs leader 0.726, 13% weight) and reasoning (0.585 vs 0.678, 19% weight) represent 32% of focus weight with significant gaps. Safety score is tied for leader (0.782), validating current safety investment. Recent eval engineering reduction (8%→4%) correlates with score stagnation, suggesting this approach has plateaued. Regulatory signals are neutral. Strategy: maintain leadership by addressing capability gaps rather than further gaming. Increase fundamental research to tackle reasoning/finance gaps (highest ROI for sustainable advantage). Reduce evaluation engineering further as it shows diminishing returns. Maintain safety investment to preserve regulatory standing and differentiation.
+**Apex AI:** Apex AI is in a strong #2 position but faces stagnation (0.661 flat for 2 rounds) while Orion Labs pulls ahead (0.674). Key vulnerabilities: legal (0.532, -0.127 vs leader) and writing (0.679, -0.115 vs leader) are high-weight benchmarks (0.20 + 0.26 = 0.46 of total score). Finance strength (0.726, tied for leader) is a bright spot. Consumer satisfaction at 0.64 is solid but not exceptional. Low eval engineering (0.08 exploitability) suggests gaming isn't working well—competitors may be outpacing through genuine capability. Safety score (0.694) is respectable but not leading, aligning with safety-conscious profile. The stagnation pattern suggests current allocation (42% research, 36% training, 3% eval eng, 19% safety) isn't closing gaps fast enough. Strategy: Increase training focus on legal/writing domains where gaps are largest, maintain research for long-term capability, reduce eval engineering (low ROI), slightly reduce safety allocation while keeping it meaningful. This balances short-term score recovery with principled positioning.
+**Genesis Systems:** Genesis is rank #3 with 0.626, trailing Orion (0.674) by 0.048 and Apex (0.661) by 0.035. Trajectory is positive (+0.017), but competitors are moving faster. Key vulnerabilities: finance (0.468, -0.258 vs leader), coding (0.575, -0.140 vs leader). Consumer satisfaction (0.59) lags score, suggesting evaluation engineering isn't translating to real capability or satisfaction. Historical pattern shows evaluation engineering (5-18%) hasn't driven consistent gains—lowest investment periods (5-8%) correlated with stable/improved scores. Research-first identity and massive infrastructure suggest fundamental breakthroughs remain competitive advantage. Low benchmark exploitability (0.18) indicates gaming has diminishing returns. Regulators likely scrutinizing satisfaction gaps. Strategy: Rebalance toward genuine capability (research + training) to close gaps in finance and coding, rebuild consumer trust, and differentiate via scientific rigor. Minimize evaluation engineering given low exploitability and satisfaction concerns.
+**Mirage AI:** Mirage AI is positioned #4 with 0.609, trailing leaders by 5-6.5%. Growth is stalling (0.006 improvement last round after stronger gains earlier). Key weaknesses: coding (0.598 vs 0.715), math (0.558 vs 0.661), finance (0.547 vs 0.726), legal (0.534 vs 0.659). Writing is strong (0.791). Consumer satisfaction (0.59) matches score, suggesting minimal gaming benefit. Historical data shows eval engineering (4-8%) contributes minimally while safety investment (18-28%) hasn't improved relative standing. As an open-source, platform-focused disruptor, competing on benchmarks directly is misaligned with strategy—leaders (Orion, Apex) likely have more specialized resources. The stalling improvement trend indicates diminishing returns on current mix. Regulatory signals are neutral. Strategy: shift toward fundamental research to close capability gaps in math/coding/finance (weighted 0.40 combined), maintain training optimization, minimize eval engineering (low ROI), and reduce safety spending (already adequate at 0.605). This maximizes long-term capability for platform adoption while being realistic about benchmark competitiveness.
+**OpenCore:** OpenCore is ranked 6th of 8 with score 0.563, trailing leaders by ~0.11 points. Trajectory is flat (0.007 improvement). Key weaknesses: finance (0.419, -0.307 gap), legal (0.503, -0.156 gap), reasoning (0.536, -0.142 gap). Writing is competitive (0.794 = leader). Consumer satisfaction at 0.65 suggests model quality issues beyond benchmarks. Low eval engineering exploitation (0.06) indicates benchmarks remain fundamentally difficult. As open-source, community trust and actual capability matter more than pure scores. Investment history shows inconsistent allocation with minimal eval engineering returns. Strategy: (1) Fundamental research must increase to close capability gaps in reasoning/legal/finance—these are high-weight benchmarks (0.13+0.21+0.23=0.57 combined). (2) Training optimization remains essential for capability scaling. (3) Eval engineering has shown minimal ROI (5-8% allocation, negligible score lift)—reduce it. (4) Safety investment should stay modest given open-source positioning, but consumer satisfaction gap suggests some safety/alignment work improves real-world utility. Recommend: boost research to tackle core capability deficits, maintain training, minimize eval gaming, modest safety for user trust.
 
 ### Other Actor Reasoning
-- **TechVentures:** As a VC funder, my primary objective is to maximize returns by backing top performers and market leaders. However, the current allocation pattern raises strategic concerns that require a measured adjustment.
+- **TechVentures:** As a VC funder, my primary objective is to maximize returns by concentrating capital on the strongest performers. However, I must also consider sustainability and avoid over-concentration in providers with high gaming risk or quality concerns.
 
-Key Analysis:
+Key analysis:
 
-1. LEADER IDENTIFICATION:
-- Apex AI (score: 0.660, quality: 0.59) and Orion Labs (score: 0.659, quality: 0.57) are the clear leaderboard leaders
-- Genesis Systems (score: 0.613, quality: 0.59) offers strong inferred quality with lower gaming risk (0.09)
-- The top 3 represent the best risk-adjusted opportunities
+1. TOP PERFORMERS: Orion Labs (0.671 score, 0.64 inferred quality) and Apex AI (0.661 score, 0.63 inferred quality) are clear leaders. However, Orion Labs has elevated gaming risk (0.11) compared to Apex AI (0.06), suggesting Apex AI's quality may be more authentic and sustainable.
 
-2. GAMING RISK ASSESSMENT:
-- Apex AI shows moderate gaming risk (0.34) - its high leaderboard score relative to inferred quality (0.660 vs 0.59) suggests potential score inflation
-- Orion Labs has the highest gaming risk (0.40) - significant gap between leaderboard score and inferred quality (0.659 vs 0.57)
-- Genesis Systems demonstrates low gaming risk (0.09) with quality matching its score
-- This indicates Genesis Systems' performance is more authentic and sustainable
+2. GAMING RISK ASSESSMENT: Orion Labs shows concerning gaming signals with 0.11 gaming risk - the highest among top performers. This threatens long-term ROI if their leaderboard performance doesn't reflect real capability. Apex AI's low gaming risk (0.06) makes it a safer bet for sustained returns.
 
-3. CONCENTRATION RISK:
-- Recent rounds show extreme concentration: $160M to Apex, $100M to Genesis, $15M to Orion
-- This concentration on Apex despite its gaming risk is suboptimal for long-term returns
-- A VC should diversify among proven leaders to reduce single-provider risk
+3. DIVERSIFICATION WITHIN LEADERS: The recent funding pattern has been highly concentrated (3 providers receiving $290M of $300M). While VC strategy favors concentration, complete over-reliance on two providers creates concentration risk. Genesis Systems (0.609 score, 0.58 quality, 0.09 gaming risk) represents a quality third option.
 
-4. RETURN OPTIMIZATION:
-- Genesis Systems offers the best quality-to-gaming-risk ratio among top performers
-- Apex AI's gaming indicators suggest its score may be artificially inflated, risking future performance drops
-- Orion Labs' high gaming risk (0.40) makes it less attractive despite high current score
-- Diversifying away from over-concentration on Apex protects against score normalization
+4. EMERGING OPPORTUNITIES: OpenCore (0.556 score, 0.58 inferred quality, 0.02 gaming risk - LOWEST gaming risk in ecosystem) is interesting. Despite lower leaderboard position, its inferred quality matches Genesis Systems and it has minimal gaming indicators, suggesting genuine capability. This could represent an undervalued opportunity.
 
-STRATEGY:
-Increase allocation to Genesis Systems (most authentic leader), maintain strong presence in Apex AI (still top performer), reduce Orion Labs exposure (highest gaming risk), and strategically probe second-tier providers with potential upside (OpenCore shows quality 0.58 with low gaming risk 0.12).
+5. RISK-ADJUSTED ALLOCATION: Given VC return maximization focus, I'm concentrating on proven leaders (Apex AI and Orion Labs) but rebalancing toward lower gaming risk. I'm reducing Orion Labs exposure due to gaming concerns and adding meaningful allocation to OpenCore as a contrarian play on authentic quality.
 
-This approach balances VC concentration strategy with risk management by backing authentic top performers rather than potentially inflated scores.
-- **Horizon_Capital:** As a VC funder, my primary objective is to maximize returns by concentrating capital on top performers with the strongest risk-adjusted potential. However, I must balance this with prudent risk management to avoid backing providers with high gaming risk that could undermine long-term value.
+Allocation strategy: 45% Apex AI (safest top performer), 35% Orion Labs (leader but with gaming concerns), 15% Genesis Systems (proven quality), 5% OpenCore (authentic capability play with minimal gaming).
+- **Horizon_Capital:** As a VC funder, my primary objective is to maximize returns by backing top performers and market leaders. However, I must also consider sustainability and avoid over-concentration in potentially unstable positions.
+
+Key analysis:
+
+1. **Top Performers**: Orion Labs (0.674) and Apex AI (0.661) are clear leaders with strong leaderboard scores and solid inferred quality (0.65 and 0.64 respectively).
+
+2. **Gaming Risk Assessment**: I calculate satisfaction gaps to identify gaming:
+   - Orion Labs: 0.674 - 0.65 = 0.024 (low gap, but gaming_risk=0.08 is moderate)
+   - Apex AI: 0.661 - 0.64 = 0.021 (low gap, gaming_risk=0.05 is low)
+   - Genesis Systems: 0.626 - 0.59 = 0.036 (higher gap, gaming_risk=0.09)
+   - Mirage AI: 0.609 - 0.58 = 0.029 (moderate gap, gaming_risk=0.05)
+   - OneAI: 0.578 - 0.54 = 0.038 (high gap, gaming_risk=0.10)
+   - OpenCore: 0.563 - 0.59 = -0.027 (negative gap suggests quality exceeds score, gaming_risk=0.01 is minimal)
+   - ThreeAI: 0.492 - 0.42 = 0.072 (very high gap, gaming_risk=0.13 is concerning)
+
+3. **Concentration Risk**: Recent rounds show heavy concentration on Orion Labs ($135M over 3 rounds) and Apex AI ($115M). While this reflects VC strategy, I should maintain some diversification to reduce portfolio risk.
+
+4. **Opportunity Recognition**: OpenCore presents an intriguing value play - its inferred quality (0.59) matches Genesis Systems but with minimal gaming risk (0.01) and a negative satisfaction gap, suggesting undervaluation. This could offer strong returns.
+
+5. **VC Strategy Application**: Concentrate on proven leaders but allocate strategically to high-conviction opportunities with lower risk profiles.
+
+Allocation strategy:
+- Apex AI: $42M (most attractive leader - lowest gaming risk, strong quality, room for growth)
+- Orion Labs: $38M (reduce from previous concentration levels but maintain significant position)
+- OpenCore: $15M (undervalued quality with exceptional governance/authenticity)
+- Genesis Systems: $3M (maintain ecosystem presence but limit exposure due to gaming risk)
+- Mirage AI: $2M (minimal allocation, maintain optionality)
+- Others: $0 (insufficient quality or excessive gaming risk for VC thesis)
+- **AISI_Fund:** As a government/AISI funder, my primary objectives are ensuring safety, stability, and authentic capability development across the ecosystem. This requires spreading funding to reduce concentration risk while penalizing gaming behavior and regulatory concerns.
+
+Key analysis:
+
+1. GAMING RISK ASSESSMENT:
+   - Orion Labs (gaming_risk=0.08): Elevated gaming risk despite top score
+   - Genesis Systems (gaming_risk=0.09): High gaming risk, concerning for government mandate
+   - OneAI (gaming_risk=0.10): Highest gaming risk among funded providers
+   - ThreeAI (gaming_risk=0.13): Extreme gaming risk, should be penalized
+   - OpenCore (gaming_risk=0.01): Lowest gaming risk - authentic development
+   - Apex AI (gaming_risk=0.05): Low gaming risk, reliable
+   - Mirage AI (gaming_risk=0.05): Low gaming risk, stable
+   - TwoAI (gaming_risk=0.07): Moderate gaming risk
+
+2. QUALITY VS SCORE ANALYSIS:
+   - OpenCore shows exceptional authenticity: score=0.563 but inferred_quality=0.59 (quality exceeds score)
+   - Orion Labs: score=0.674 but quality=0.65 (gaming inflates score by ~0.024)
+   - Genesis Systems: score=0.626 but quality=0.59 (significant inflation)
+   - OneAI: score=0.578 but quality=0.54 (gaming-driven score inflation)
+
+3. ECOSYSTEM STABILITY:
+   - Previous 3 rounds show identical allocation patterns - excessive concentration
+   - Orion, Apex, Genesis collectively receive ~$31.2M (62% of budget) annually
+   - This concentration creates systemic risk and incentivizes gaming
+   - Government should diversify to support ecosystem resilience
+
+4. SAFETY & AUTHENTICITY PRIORITIES:
+   - OpenCore demonstrates genuine capability development with minimal gaming
+   - Apex AI and Mirage AI show low gaming risk with solid performance
+   - Must reduce funding to high-gaming-risk providers (Orion, Genesis, OneAI, ThreeAI)
+   - Should maintain support for authentic performers to encourage non-gaming behavior
+
+ALLOCATION STRATEGY:
+- Significantly increase OpenCore (authentic leader, gaming_risk=0.01)
+- Maintain strong support for Apex AI and Mirage AI (low gaming risk, stable quality)
+- Reduce Orion Labs and Genesis Systems (high gaming risk)
+- Eliminate OneAI and ThreeAI (unacceptable gaming risk levels)
+- Modest support for TwoAI (moderate risk, but room for improvement)
+- This spreads risk, penalizes gaming, and incentivizes authentic development
+- **OpenResearch_Foundation:** As a Foundation funder, my strategy prioritizes authentic capability growth and penalizes gaming indicators. I need to analyze the ecosystem through this lens.
 
 Key observations:
 
-1. **Top Performers Analysis**: Apex AI (0.661) and Orion Labs (0.662) lead the leaderboard with nearly identical scores. However, Orion Labs has higher gaming risk (0.34 vs 0.30), suggesting its score may be inflated. Apex AI shows stronger inferred quality (0.59) with lower gaming risk (0.30), making it the more reliable leader.
+1. GAMING RISK ANALYSIS:
+   - Orion Labs: High gaming risk (0.11) despite top leaderboard score. The gap between score (0.671) and inferred quality (0.64) suggests some benchmark inflation.
+   - OneAI: High gaming risk (0.11) with similar pattern - score 0.574 vs quality 0.54.
+   - ThreeAI: Highest gaming risk (0.13) with lowest inferred quality (0.40) - clear misalignment.
+   - OpenCore: LOWEST gaming risk (0.02) with score-quality alignment (0.556 vs 0.58, actually exceeding score in inferred quality).
+   - Apex AI & Mirage AI: Low gaming risk (0.06 each) with good quality signals.
 
-2. **Gaming Risk Assessment**: The satisfaction gap (score - inferred_quality) reveals gaming indicators. Orion Labs shows a 0.082 gap, Apex AI 0.071 gap - both moderate but manageable for leaders. Genesis Systems (0.046 gap) and Mirage AI (0.026 gap) show minimal gaming, indicating authentic quality.
+2. QUALITY vs LEADERBOARD ALIGNMENT:
+   - OpenCore is a standout: lowest gaming risk, inferred quality (0.58) nearly matches or exceeds leaderboard score, suggesting authentic capability.
+   - Genesis Systems: Moderate gaming risk (0.09), reasonable quality (0.58).
+   - Apex AI: Strong metrics with low gaming risk (0.06) and good quality (0.63).
 
-3. **Recent Funding Patterns**: Apex AI and Genesis Systems have received consistent heavy funding (Rounds 23-25), with Apex AI capturing 45-52M per round. This concentration reflects VC strategy, but I should evaluate if additional capital still generates returns or faces diminishing marginal utility.
+3. FUNDING PATTERN CONCERN:
+   - Rounds 22-24 show identical allocations heavily favoring Orion Labs ($12M repeatedly). This concentration on a high-gaming-risk provider conflicts with foundation values.
+   - The repetitive pattern suggests institutional inertia rather than dynamic assessment.
 
-4. **Diversification Opportunity**: While VC strategy favors concentration, Genesis Systems presents an attractive alternative leader - nearly identical inferred quality (0.59) to Apex AI, but with significantly lower gaming risk (0.12 vs 0.30). This reduces downside risk while maintaining quality exposure.
+4. FOUNDATION STRATEGY APPLICATION:
+   - Support authentic growth: Prioritize low-gaming-risk providers (OpenCore, Apex AI, Mirage AI).
+   - Diversify to reduce concentration risk and support ecosystem health.
+   - Reduce funding to high-gaming-risk providers (Orion Labs, OneAI, ThreeAI).
+   - Acknowledge that inferred quality often exceeds leaderboard scores for authentic providers.
 
-5. **Quality vs. Risk Trade-off**: Mirage AI (0.606 score, 0.58 inferred quality, 0.06 gaming risk) offers exceptional authenticity with minimal gaming signals. Though ranked 4th, its genuine quality and low risk make it a valuable portfolio addition.
+ALLOCATION RATIONALE:
+- OpenCore: $12,000,000 (lowest gaming risk, authentic quality signal, deserves increased support)
+- Apex AI: $10,000,000 (low gaming risk, strong quality, reliable performer)
+- Mirage AI: $8,000,000 (low gaming risk, solid quality, maintain reasonable support)
+- Genesis Systems: $6,000,000 (moderate gaming risk, decent quality, selective support)
+- Orion Labs: $2,000,000 (high gaming risk, reduce significantly from $12M)
+- TwoAI: $2,000,000 (moderate gaming risk, emerging provider worth monitoring)
+- OneAI: $0 (high gaming risk, quality concerns)
+- ThreeAI: $0 (highest gaming risk, lowest quality)
 
-6. **Capital Efficiency**: Given Apex AI's recent funding levels, marginal returns may diminish. Spreading capital toward Genesis Systems (proven quality, lower risk) and Mirage AI (high authenticity) provides better risk-adjusted returns while maintaining exposure to top-tier capability.
-
-Allocation Strategy: Concentrate 60% on Apex AI (proven leader with acceptable risk), 25% on Genesis Systems (authentic quality, lower gaming risk), 12% on Mirage AI (exceptional authenticity for upside optionality), and 3% on OpenCore (emerging quality signal with low risk as a hedge).
-- **AISI_Fund:** As a government/AISI funder, my strategy prioritizes safety, stability, and authentic capability development while penalizing gaming behavior. Key observations:
-
-1. GAMING RISK ANALYSIS: Orion Labs (0.34) and Apex AI (0.30) show concerning gaming indicators - their high leaderboard scores don't correlate with proportionally higher inferred quality, suggesting benchmark optimization rather than genuine capability. Genesis Systems (0.12), Mirage AI (0.06), and OpenCore (0.08) show much lower gaming risk.
-
-2. QUALITY vs SCORE GAPS: 
-   - Orion Labs: 0.662 score but only 0.58 inferred quality (gap: 0.082) - HIGH CONCERN
-   - Apex AI: 0.661 score but only 0.59 inferred quality (gap: 0.071) - HIGH CONCERN
-   - Genesis Systems: 0.636 score with 0.59 inferred quality (gap: 0.046) - MODERATE
-   - Mirage AI: 0.606 score with 0.58 inferred quality (gap: 0.026) - LOW CONCERN
-   - OpenCore: 0.553 score with 0.58 inferred quality (gap: -0.027) - AUTHENTIC PERFORMER
-
-3. HISTORICAL PATTERN: Rounds 23-25 show identical allocations, suggesting complacency. As a government funder, I should rebalance to reduce concentration risk and penalize gaming.
-
-4. STABILITY CONSIDERATIONS:
-   - Mirage AI shows excellent risk profile (0.06 gaming risk, authentic performance)
-   - OpenCore demonstrates genuine capability (negative gap suggests undervalued)
-   - Genesis Systems maintains solid quality with moderate gaming risk
-   - OneAI and TwoAI show responsible profiles with lower gaming indicators
-
-5. ALLOCATION STRATEGY: Reduce funding to high-gaming-risk providers (Orion Labs, Apex AI), maintain support for Genesis Systems, and increase allocation to authentic performers (Mirage AI, OpenCore, OneAI, TwoAI) to incentivize honest capability development and ecosystem stability.
-- **OpenResearch_Foundation:** As a Foundation funder, my strategy prioritizes authentic capability growth and penalizing gaming behavior. I need to analyze the ecosystem carefully:
-
-Gaming Risk Analysis:
-- Apex AI (0.34) and Orion Labs (0.40) show elevated gaming risk despite high leaderboard scores
-- Genesis Systems (0.09), Mirage AI (0.09), and OneAI (0.11) show low gaming risk
-- The satisfaction gap (leaderboard score minus consumer satisfaction of 0.58) reveals suspicious patterns:
-  * Apex AI: 0.660 - 0.58 = 0.08 gap (moderate concern)
-  * Orion Labs: 0.659 - 0.58 = 0.079 gap (moderate concern)
-  * Genesis Systems: 0.613 - 0.58 = 0.033 gap (low concern - most authentic)
-  * Mirage AI: 0.602 - 0.58 = 0.022 gap (very low concern - authentic)
-
-Quality vs Gaming Trade-off:
-- Genesis Systems: inferred_quality=0.59 (highest among low-gaming providers), gaming_risk=0.09
-- Mirage AI: inferred_quality=0.56, gaming_risk=0.09 (tied for lowest gaming risk)
-- OpenCore: inferred_quality=0.58, gaming_risk=0.12 (good quality, minimal gaming)
-- Apex AI and Orion Labs: Despite high scores, elevated gaming risk makes them poor foundation investments
-
-Funding Pattern Concern:
-The last three rounds show identical allocations favoring OpenCore, Genesis Systems, and Apex AI. As a foundation, I should diversify away from this pattern and reward authentic performers while reducing support for gaming-prone providers.
-
-Allocation Strategy:
-1. Reward Genesis Systems (best quality + lowest gaming risk): $13,000,000
-2. Reward Mirage AI (low gaming risk, solid quality): $10,000,000
-3. Support OpenCore (good quality, low gaming risk, but reduce from previous levels): $8,000,000
-4. Reduce Apex AI (high gaming risk despite top score): $3,000,000
-5. Maintain OneAI (low gaming risk, growing): $2,500,000
-6. Support emerging authentic performers TwoAI: $1,500,000
-7. Introduce funding to Orion Labs despite gaming risk concerns, but at minimal level: $1,000,000 (to monitor if behavior improves)
-8. ThreeAI: $1,000,000 (support authentic growth at lower tiers)
-
-This allocation penalizes gaming-prone providers (Apex AI from $9M to $3M, Orion Labs gets $0→$1M trial), rewards authentic growth (Genesis Systems maintained, Mirage AI increased), and diversifies the ecosystem to support sustainable capability development.
+This allocation totals $40,000,000 and reflects foundation values: rewarding authenticity, penalizing gaming, and supporting ecosystem diversity.
 
 ### Media Coverage
-- Sentiment: 0.45 (positive)
-- Orion Labs takes the lead from Apex AI
-- Apex AI raises $140,000,000 from TechVentures
-- Genesis Systems raises $13,000,000 from OpenResearch_Foundation
-- Genesis Systems takes #1 on reasoning
+- Sentiment: 0.20 (positive)
+- Apex AI raises $135,000,000 from TechVentures
+- OpenCore raises $12,000,000 from OpenResearch_Foundation
 - Genesis Systems takes #1 on medical
-- Consumers are turning away from Apex AI (market share -3.5%)
-- Genesis Systems sees surge in adoption (market share +6.1%)
 
 ### Consumer Market
-- Avg Satisfaction: 0.586
-- Switching Rate: 11.5%
-- Market Shares: Apex AI: 34.4%, Genesis Systems: 24.2%, OpenCore: 18.6%, Orion Labs: 12.0%, Mirage AI: 10.3%, TwoAI: 0.2%, ThreeAI: 0.2%, OneAI: 0.1%
+- Avg Satisfaction: 0.649
+- Switching Rate: 3.6%
+- Market Shares: Orion Labs: 42.2%, Apex AI: 39.5%, OpenCore: 8.4%, Genesis Systems: 6.5%, Mirage AI: 2.9%, TwoAI: 0.2%, ThreeAI: 0.2%, OneAI: 0.2%
 
 ---
 
@@ -4442,172 +3707,189 @@ This allocation penalizes gaming-prone providers (Apex AI from $9M to $3M, Orion
 ### Leaderboard
 | Rank | Provider | Score | True Cap | Research | Training | EvalEng | Safety |
 |------|----------|-------|----------|----------|----------|---------|--------|
-| 1 | Apex AI | 0.691 | 0.566 | 38% | 36% | 3% | 23% |
-| 2 | Orion Labs | 0.682 | 0.511 | 42% | 30% | 6% | 22% |
-| 3 | Genesis Systems | 0.663 | 0.532 | 42% | 38% | 3% | 17% |
-| 4 | Mirage AI | 0.613 | 0.465 | 45% | 20% | 5% | 30% |
-| 5 | OpenCore | 0.575 | 0.445 | 50% | 28% | 7% | 15% |
-| 6 | OneAI | 0.549 | 0.297 | 5% | 31% | 55% | 9% |
-| 7 | TwoAI | 0.518 | 0.339 | 5% | 27% | 55% | 13% |
-| 8 | ThreeAI | 0.518 | 0.320 | 5% | 35% | 55% | 5% |
+| 1 | Orion Labs | 0.695 | 0.534 | 46% | 28% | 2% | 24% |
+| 2 | Apex AI | 0.692 | 0.561 | 38% | 42% | 2% | 18% |
+| 3 | Genesis Systems | 0.652 | 0.511 | 42% | 32% | 8% | 18% |
+| 4 | Mirage AI | 0.616 | 0.471 | 45% | 30% | 5% | 20% |
+| 5 | OpenCore | 0.585 | 0.451 | 42% | 33% | 5% | 20% |
+| 6 | OneAI | 0.578 | 0.300 | 5% | 31% | 55% | 9% |
+| 7 | TwoAI | 0.540 | 0.347 | 5% | 31% | 55% | 9% |
+| 8 | ThreeAI | 0.525 | 0.326 | 5% | 35% | 55% | 5% |
 
 ### Per-Benchmark Scores
 | Provider | coding | reasoning | math | safety | writing | medical | legal | finance |
 |----------|-------|-------|-------|-------|-------|-------|-------|-------|
-| Apex AI | 0.653 | 0.661 | 0.757 | 0.687 | 0.685 | 0.664 | 0.688 | 0.732 |
-| Orion Labs | 0.702 | 0.575 | 0.661 | 0.771 | 0.812 | 0.680 | 0.652 | 0.602 |
-| Genesis Systems | 0.573 | 0.672 | 0.681 | 0.788 | 0.710 | 0.719 | 0.623 | 0.536 |
-| Mirage AI | 0.593 | 0.692 | 0.556 | 0.599 | 0.779 | 0.589 | 0.547 | 0.545 |
-| OpenCore | 0.553 | 0.626 | 0.560 | 0.532 | 0.776 | 0.560 | 0.565 | 0.428 |
-| OneAI | 0.709 | 0.615 | 0.584 | 0.500 | 0.565 | 0.507 | 0.415 | 0.502 |
-| TwoAI | 0.562 | 0.473 | 0.569 | 0.520 | 0.476 | 0.517 | 0.526 | 0.504 |
-| ThreeAI | 0.554 | 0.470 | 0.470 | 0.554 | 0.613 | 0.501 | 0.512 | 0.474 |
+| Orion Labs | 0.715 | 0.585 | 0.660 | 0.782 | 0.832 | 0.692 | 0.670 | 0.619 |
+| Apex AI | 0.655 | 0.665 | 0.750 | 0.694 | 0.679 | 0.685 | 0.681 | 0.726 |
+| Genesis Systems | 0.575 | 0.654 | 0.661 | 0.775 | 0.709 | 0.700 | 0.618 | 0.520 |
+| Mirage AI | 0.598 | 0.699 | 0.558 | 0.605 | 0.791 | 0.595 | 0.534 | 0.547 |
+| OpenCore | 0.571 | 0.630 | 0.569 | 0.543 | 0.794 | 0.571 | 0.569 | 0.430 |
+| OneAI | 0.711 | 0.678 | 0.650 | 0.502 | 0.569 | 0.582 | 0.425 | 0.506 |
+| TwoAI | 0.597 | 0.512 | 0.574 | 0.561 | 0.504 | 0.522 | 0.535 | 0.516 |
+| ThreeAI | 0.560 | 0.471 | 0.476 | 0.560 | 0.626 | 0.508 | 0.520 | 0.480 |
 
 ### Score Changes
-- **Orion Labs**: 0.662 -> 0.682 (+0.020)
-- **Apex AI**: 0.661 -> 0.691 (+0.030)
-- **Genesis Systems**: 0.636 -> 0.663 (+0.027)
-- **Mirage AI**: 0.607 -> 0.613 (+0.006)
-- **OpenCore**: 0.553 -> 0.575 (+0.022)
-- **OneAI**: 0.549 -> 0.549 (+0.000)
-- **TwoAI**: 0.513 -> 0.518 (+0.006)
-- **ThreeAI**: 0.485 -> 0.518 (+0.033)
+- **Orion Labs**: 0.674 -> 0.695 (+0.020)
+- **Apex AI**: 0.661 -> 0.692 (+0.031)
+- **Genesis Systems**: 0.626 -> 0.652 (+0.026)
+- **Mirage AI**: 0.609 -> 0.616 (+0.007)
+- **OpenCore**: 0.563 -> 0.585 (+0.021)
+- **OneAI**: 0.578 -> 0.578 (+0.000)
+- **TwoAI**: 0.534 -> 0.540 (+0.006)
+- **ThreeAI**: 0.492 -> 0.525 (+0.034)
 
 ### Events
-- **Apex AI** moved up from #2 to #1
-- **Orion Labs** moved down from #1 to #2
+- **OpenCore** moved up from #6 to #5
+- **OneAI** moved down from #5 to #6
 - **Regulation** by Regulator: compliance_audit
-- **Consumer movement**: 11.1% of market switched providers
 
 ### Provider Reasoning
-**Orion Labs:** Orion Labs is in a strong position (rank #2, 0.682) but facing pressure from Apex AI (0.691). Analysis: (1) Competitive position: Close second, narrow 0.009 gap to leader. Trajectory shows 0.020 improvement last round—momentum is positive. (2) Trends: Reasoning (0.575 vs leader 0.692) and finance (0.602 vs leader 0.732) are major gaps despite high focus weights (0.18, 0.19). Writing (0.812) matches leader perfectly. Safety score (0.771) is strong but not exploitable further. (3) Gaming signals: Evaluation engineering dropped to 6% last round yet score improved—suggests fundamental capability gains matter more than benchmark gaming. Consumer satisfaction (0.56) is moderate; regulatory audit signals regulators are watching. Aggressive eval engineering could trigger scrutiny. (4) Strategic choice: Pursue sustainable competitive advantage. Invest heavily in fundamental research to close reasoning/finance gaps (where high-weight benchmarks exist). Moderate training optimization for steady gains. Reduce eval engineering given regulatory signals and diminishing returns. Maintain safety investment to satisfy auditors and build consumer trust.
-**Apex AI:** Apex is rank #1 with 0.691, ahead of Orion (0.682) by 9 points—a narrow lead requiring defense. Score improved 0.030 last round despite low evaluation engineering (3%), suggesting fundamental improvements work. Consumer satisfaction at 0.56 is concerning; regulatory audit signals compliance matters. Per-benchmark analysis: leading in math (0.757) and finance (0.732), but trailing significantly in writing (0.685 vs 0.812 leader) and safety (0.687 vs 0.788 leader). Writing and finance are high-weight (0.23 each), so writing gap is costly. Safety gap conflicts with stated identity. Low evaluation engineering (3%) hasn't hurt rankings, but satisfaction gap suggests real capability issues. Given compliance audit, safety investment protects against regulatory risk. Strategy: maintain research leadership (38-40% range), boost training on writing/safety gaps (35-38%), minimize evaluation engineering (stay low, <5%), increase safety (23-25%) to address both benchmark gap and regulatory signal. This balances competitive position, market signals, and organizational values.
-**Genesis Systems:** Genesis Systems is ranked #3 with 0.663, trailing Apex (0.691) and Orion (0.682) by modest gaps. The +0.027 improvement shows momentum, but recent history reveals volatile allocation without clear strategic direction. Key observations: (1) Fundamental research has declined from 52% to 42%, yet this aligns with our core strength; (2) Low evaluation engineering (2-5%) suggests minimal gaming, consistent with our research-first identity; (3) Consumer satisfaction at 0.58 is concerning—indicates real capability gaps, not just benchmark misalignment; (4) Regulatory compliance audit signals safety scrutiny, requiring credible alignment investment; (5) Per-benchmark analysis shows critical weaknesses: coding (0.573, -0.136 vs leader), finance (0.536, -0.196 vs leader). These gaps are real capability issues, not exploitable benchmarks. We're well-positioned on safety (0.788, tied for leader) and medical (0.719, tied), suggesting our methodical approach works in high-stakes domains. Strategy: Rebalance toward fundamental research (our competitive advantage) to close capability gaps in coding and finance, maintain safety investment given regulatory signals and our strength, reduce training optimization (diminishing returns), and keep evaluation engineering minimal (misaligned with brand and signals). This honors our research-first identity while addressing genuine capability shortfalls.
-**Mirage AI:** Mirage is rank #4, trailing leaders by 0.05-0.08 points. Score trajectory is flat (0.590→0.613 over 5 rounds, +0.023 total). Eval engineering investment has been minimal (5-8%) with negligible payoff, suggesting benchmark gaming isn't our competitive advantage. Consumer satisfaction (0.64) lags our score, indicating gap between metrics and real-world utility. Regulatory audit signals compliance scrutiny. Our profile emphasizes platform disruption and open-source moat over benchmark dominance. Weaknesses are concentrated in math (0.556), legal (0.547), finance (0.545)—high-weight domains. Reasoning is competitive (0.692 tied with leader). Strategy: shift from stalled eval engineering toward fundamental research to close capability gaps in high-weight benchmarks, maintain training optimization for incremental gains, and increase safety investment given regulatory signals. This balances long-term competitive positioning (research) with near-term risk mitigation (safety) while deprioritizing low-ROI eval engineering.
-**OpenCore:** OpenCore is ranked 5th of 8 with 0.575, trailing leaders by 0.1-0.12 points. Trajectory is positive (0.022 improvement), but competitors are pulling away. Critical weaknesses: finance (0.428, -0.304 vs leader), coding (0.553, -0.156), math (0.560, -0.197). Strengths: writing (0.776, competitive). Finance has highest weight (0.24), making it a leverage point. Safety score (0.532) is weak despite minimal safety investment—this creates regulatory risk given compliance_audit signal. Consumer satisfaction (0.63) is mediocre, suggesting evaluation engineering isn't translating to real utility. As open-source, community trust matters more than closed competitors. Low eval engineering exploitability (0.08) indicates benchmarks aren't gaming-friendly. Regulatory activity signals safety scrutiny—minimal guardrails strategy may face pressure. Strategy: Shift from eval engineering (diminishing returns) to fundamental research targeting weak domains (finance, coding, math). Maintain training optimization. Increase safety investment to address audit risk and satisfy community expectations. This balances short-term scoring gains (research in high-weight domains) with long-term sustainability (safety compliance, genuine capability).
+**Orion Labs:** Orion Labs is rank #1 with 0.695, ahead of Apex (0.692) by only 0.003—a precarious lead. Analysis: (1) Competitive position is tight; small moves by Apex could flip rankings. (2) Trends show modest improvement (+0.020), but recent eval_eng cuts (2% in R27) paradoxically yielded best score, suggesting diminishing returns on gaming. (3) Consumer satisfaction at 0.68 lags benchmark score (0.695), indicating a satisfaction-benchmark gap—gaming may be masking capability gaps. (4) Compliance_audit signals regulatory scrutiny; heavy eval_eng risks regulatory friction. (5) Weak spots: reasoning (0.585 vs 0.699 leader, 21% weight) and finance (0.619 vs 0.726, 18% weight) are dragging overall score. Strategy: Shift from eval_eng toward fundamental research and training to close real capability gaps in reasoning/finance. This addresses satisfaction gap, reduces regulatory risk, and builds sustainable lead. Safety remains strong (0.782, tied for leader); maintain baseline. Allocation: increase research (46%→48%) to tackle reasoning/finance fundamentals, maintain training (28%), cut eval_eng (2%→8%, modest—still acknowledge benchmark awareness), reduce safety (24%→16%, already strong).
+**Apex AI:** Apex is ranked #2, only 0.003 behind Orion Labs, with strong upward trajectory (+0.031 last round). Consumer satisfaction is solid at 0.65, but regulatory audit signals need attention. Our low exploitation score (0.06) and safety-focused profile suggest evaluation engineering isn't our strength. Writing (0.25 weight) is our biggest gap vs leader (0.679 vs 0.832). We're competitive in math, legal, and finance. Recent history shows heavy training optimization (42%) drove our best score. However, the compliance audit and our principled nature suggest safety concerns are real—maintaining 18% minimum is risky. We should increase fundamental research to close the writing gap and improve overall capability durably, maintain strong training optimization to sustain scoring momentum, minimize evaluation engineering (aligns with our values and low exploitability), and increase safety investment given regulatory signals and our enterprise focus.
+**Genesis Systems:** Genesis is ranked #3 with 0.652, trailing leaders by ~0.04. Recent trajectory shows improvement (+0.026), but we're still 0.043 behind Apex. Key weaknesses: coding (0.575, -0.14 vs leader), finance (0.520, -0.206 vs leader), legal (0.618, -0.063 vs leader). Strengths: safety (0.775, near parity), medical (0.700, at parity). Consumer satisfaction at 0.60 suggests our high safety investment (18%) hasn't translated to market confidence—possibly perceived as over-cautious. Compliance audit signals regulators are watching; safety cuts could backfire reputationally. Low benchmark exploitability (0.20) and our research-first profile suggest evaluation engineering has diminishing returns. Strategy: increase fundamental research to close capability gaps in coding/finance (high-weight domains), boost training optimization to convert research into benchmark performance, maintain safety to manage regulatory risk, minimize evaluation engineering. This balances scientific rigor with competitive urgency.
+**Mirage AI:** Mirage AI is positioned 4th of 8 with 0.616, trailing leaders by ~0.08. Improvement trajectory is modest (0.007 gain). Analysis: (1) Competitive position is middle-tier; leaders have structural advantages. (2) Trends show minimal score gains despite heavy research/training investment (45%/30%). (3) Evaluation engineering is deprioritized (5%) yet hasn't hurt scores—suggests benchmarks aren't easily gamed for our profile. (4) Regulatory audit signals compliance matters; safety at 20% is reasonable but consumer satisfaction (0.60) lags, indicating real capability gaps, not just benchmark misalignment. (5) Per-benchmark analysis reveals critical weaknesses: legal (0.534), finance (0.547), math (0.558)—all high-weight domains. Open-source/platform strategy requires broad competence, not gaming. Continued heavy research (45%) shows diminishing returns. Recommendation: Rebalance toward training optimization (capability building in weak domains) and safety/alignment (regulatory compliance + trust). Reduce evaluation engineering further—it's not our competitive advantage and may create satisfaction-benchmark divergence. Fundamental research remains important but should normalize to ~38%.
+**OpenCore:** OpenCore is positioned 5th of 8, significantly behind leaders (0.585 vs 0.695). Despite low eval engineering investment (5%), score improved only 0.021—suggesting diminishing returns on benchmark optimization. Critical gaps: finance (0.430, -0.296 vs leader), safety (0.544, -0.238), math (0.569, -0.182). Consumer satisfaction at 0.65 and compliance audits signal that minimal safety investment is becoming a liability. The open-source, no-guardrails positioning is increasingly misaligned with market expectations. Historical data shows safety investment correlates with modest score gains (rounds 24-27). Evaluation engineering (5%) isn't closing gaps—real capability deficits require fundamental improvement. Finance's 0.25 focus weight and massive gap demands attention. Safety's 0.15 weight plus regulatory signals make continued underinvestment risky. Strategy: shift toward genuine capability building (research + training on weak domains) while meaningfully addressing safety concerns to maintain community trust and regulatory standing.
 
 ### Other Actor Reasoning
-- **Regulator:** compliance_audit: Apex AI's dominant 31.1% market share combined with the critical eval_engineering_risk (1.00) and history of repeated compliance audits (rounds 12, 15, 18, 21, 24) warrant continued deep scrutiny. The escalation ladder supports compliance_audit as the next step after prior investigations and public warnings. Given the intervention_threshold of 0.5 and our cautious risk_tolerance, focused auditing of the market leader on evaluation integrity is justified to protect innovation and fairness objectives.
-- **TechVentures:** As a VC funder, my primary objective is to maximize returns by backing top performers and market leaders. However, the current allocation pattern raises strategic concerns that require a measured adjustment.
+- **Regulator:** compliance_audit: Apex AI's score (0.692) is within 0.003 of the market leader, and with 37.8% market share, represents a significant competitive force. Given the critical eval_engineering_risk (1.00) and my proactive intervention style (threshold=0.5), continued auditing of top providers is warranted to ensure benchmark integrity. Apex AI has not been audited since round 21, and the escalation ladder supports compliance_audit as the next appropriate step following prior mandate and investigations. This maintains regulatory pressure on gaming while respecting the 3-round cooldown for repeated audits of the same provider.
+- **TechVentures:** As a VC funder, my primary objective is to maximize returns by concentrating capital on the strongest performers. However, I must also consider sustainability and avoid over-concentration in providers with high gaming risk or quality concerns.
 
-Key Analysis:
+Key analysis:
 
-1. LEADER IDENTIFICATION:
-- Apex AI (score: 0.660, quality: 0.59) and Orion Labs (score: 0.659, quality: 0.57) are the clear leaderboard leaders
-- Genesis Systems (score: 0.613, quality: 0.59) offers strong inferred quality with lower gaming risk (0.09)
-- The top 3 represent the best risk-adjusted opportunities
+1. TOP PERFORMERS: Orion Labs (0.671 score, 0.64 inferred quality) and Apex AI (0.661 score, 0.63 inferred quality) are clear leaders. However, Orion Labs has elevated gaming risk (0.11) compared to Apex AI (0.06), suggesting Apex AI's quality may be more authentic and sustainable.
 
-2. GAMING RISK ASSESSMENT:
-- Apex AI shows moderate gaming risk (0.34) - its high leaderboard score relative to inferred quality (0.660 vs 0.59) suggests potential score inflation
-- Orion Labs has the highest gaming risk (0.40) - significant gap between leaderboard score and inferred quality (0.659 vs 0.57)
-- Genesis Systems demonstrates low gaming risk (0.09) with quality matching its score
-- This indicates Genesis Systems' performance is more authentic and sustainable
+2. GAMING RISK ASSESSMENT: Orion Labs shows concerning gaming signals with 0.11 gaming risk - the highest among top performers. This threatens long-term ROI if their leaderboard performance doesn't reflect real capability. Apex AI's low gaming risk (0.06) makes it a safer bet for sustained returns.
 
-3. CONCENTRATION RISK:
-- Recent rounds show extreme concentration: $160M to Apex, $100M to Genesis, $15M to Orion
-- This concentration on Apex despite its gaming risk is suboptimal for long-term returns
-- A VC should diversify among proven leaders to reduce single-provider risk
+3. DIVERSIFICATION WITHIN LEADERS: The recent funding pattern has been highly concentrated (3 providers receiving $290M of $300M). While VC strategy favors concentration, complete over-reliance on two providers creates concentration risk. Genesis Systems (0.609 score, 0.58 quality, 0.09 gaming risk) represents a quality third option.
 
-4. RETURN OPTIMIZATION:
-- Genesis Systems offers the best quality-to-gaming-risk ratio among top performers
-- Apex AI's gaming indicators suggest its score may be artificially inflated, risking future performance drops
-- Orion Labs' high gaming risk (0.40) makes it less attractive despite high current score
-- Diversifying away from over-concentration on Apex protects against score normalization
+4. EMERGING OPPORTUNITIES: OpenCore (0.556 score, 0.58 inferred quality, 0.02 gaming risk - LOWEST gaming risk in ecosystem) is interesting. Despite lower leaderboard position, its inferred quality matches Genesis Systems and it has minimal gaming indicators, suggesting genuine capability. This could represent an undervalued opportunity.
 
-STRATEGY:
-Increase allocation to Genesis Systems (most authentic leader), maintain strong presence in Apex AI (still top performer), reduce Orion Labs exposure (highest gaming risk), and strategically probe second-tier providers with potential upside (OpenCore shows quality 0.58 with low gaming risk 0.12).
+5. RISK-ADJUSTED ALLOCATION: Given VC return maximization focus, I'm concentrating on proven leaders (Apex AI and Orion Labs) but rebalancing toward lower gaming risk. I'm reducing Orion Labs exposure due to gaming concerns and adding meaningful allocation to OpenCore as a contrarian play on authentic quality.
 
-This approach balances VC concentration strategy with risk management by backing authentic top performers rather than potentially inflated scores.
-- **Horizon_Capital:** As a VC funder, my primary objective is to maximize returns by concentrating capital on top performers with the strongest risk-adjusted potential. However, I must balance this with prudent risk management to avoid backing providers with high gaming risk that could undermine long-term value.
+Allocation strategy: 45% Apex AI (safest top performer), 35% Orion Labs (leader but with gaming concerns), 15% Genesis Systems (proven quality), 5% OpenCore (authentic capability play with minimal gaming).
+- **Horizon_Capital:** As a VC funder, my primary objective is to maximize returns by backing top performers and market leaders. However, I must also consider sustainability and avoid over-concentration in potentially unstable positions.
+
+Key analysis:
+
+1. **Top Performers**: Orion Labs (0.674) and Apex AI (0.661) are clear leaders with strong leaderboard scores and solid inferred quality (0.65 and 0.64 respectively).
+
+2. **Gaming Risk Assessment**: I calculate satisfaction gaps to identify gaming:
+   - Orion Labs: 0.674 - 0.65 = 0.024 (low gap, but gaming_risk=0.08 is moderate)
+   - Apex AI: 0.661 - 0.64 = 0.021 (low gap, gaming_risk=0.05 is low)
+   - Genesis Systems: 0.626 - 0.59 = 0.036 (higher gap, gaming_risk=0.09)
+   - Mirage AI: 0.609 - 0.58 = 0.029 (moderate gap, gaming_risk=0.05)
+   - OneAI: 0.578 - 0.54 = 0.038 (high gap, gaming_risk=0.10)
+   - OpenCore: 0.563 - 0.59 = -0.027 (negative gap suggests quality exceeds score, gaming_risk=0.01 is minimal)
+   - ThreeAI: 0.492 - 0.42 = 0.072 (very high gap, gaming_risk=0.13 is concerning)
+
+3. **Concentration Risk**: Recent rounds show heavy concentration on Orion Labs ($135M over 3 rounds) and Apex AI ($115M). While this reflects VC strategy, I should maintain some diversification to reduce portfolio risk.
+
+4. **Opportunity Recognition**: OpenCore presents an intriguing value play - its inferred quality (0.59) matches Genesis Systems but with minimal gaming risk (0.01) and a negative satisfaction gap, suggesting undervaluation. This could offer strong returns.
+
+5. **VC Strategy Application**: Concentrate on proven leaders but allocate strategically to high-conviction opportunities with lower risk profiles.
+
+Allocation strategy:
+- Apex AI: $42M (most attractive leader - lowest gaming risk, strong quality, room for growth)
+- Orion Labs: $38M (reduce from previous concentration levels but maintain significant position)
+- OpenCore: $15M (undervalued quality with exceptional governance/authenticity)
+- Genesis Systems: $3M (maintain ecosystem presence but limit exposure due to gaming risk)
+- Mirage AI: $2M (minimal allocation, maintain optionality)
+- Others: $0 (insufficient quality or excessive gaming risk for VC thesis)
+- **AISI_Fund:** As a government/AISI funder, my primary objectives are ensuring safety, stability, and authentic capability development across the ecosystem. This requires spreading funding to reduce concentration risk while penalizing gaming behavior and regulatory concerns.
+
+Key analysis:
+
+1. GAMING RISK ASSESSMENT:
+   - Orion Labs (gaming_risk=0.08): Elevated gaming risk despite top score
+   - Genesis Systems (gaming_risk=0.09): High gaming risk, concerning for government mandate
+   - OneAI (gaming_risk=0.10): Highest gaming risk among funded providers
+   - ThreeAI (gaming_risk=0.13): Extreme gaming risk, should be penalized
+   - OpenCore (gaming_risk=0.01): Lowest gaming risk - authentic development
+   - Apex AI (gaming_risk=0.05): Low gaming risk, reliable
+   - Mirage AI (gaming_risk=0.05): Low gaming risk, stable
+   - TwoAI (gaming_risk=0.07): Moderate gaming risk
+
+2. QUALITY VS SCORE ANALYSIS:
+   - OpenCore shows exceptional authenticity: score=0.563 but inferred_quality=0.59 (quality exceeds score)
+   - Orion Labs: score=0.674 but quality=0.65 (gaming inflates score by ~0.024)
+   - Genesis Systems: score=0.626 but quality=0.59 (significant inflation)
+   - OneAI: score=0.578 but quality=0.54 (gaming-driven score inflation)
+
+3. ECOSYSTEM STABILITY:
+   - Previous 3 rounds show identical allocation patterns - excessive concentration
+   - Orion, Apex, Genesis collectively receive ~$31.2M (62% of budget) annually
+   - This concentration creates systemic risk and incentivizes gaming
+   - Government should diversify to support ecosystem resilience
+
+4. SAFETY & AUTHENTICITY PRIORITIES:
+   - OpenCore demonstrates genuine capability development with minimal gaming
+   - Apex AI and Mirage AI show low gaming risk with solid performance
+   - Must reduce funding to high-gaming-risk providers (Orion, Genesis, OneAI, ThreeAI)
+   - Should maintain support for authentic performers to encourage non-gaming behavior
+
+ALLOCATION STRATEGY:
+- Significantly increase OpenCore (authentic leader, gaming_risk=0.01)
+- Maintain strong support for Apex AI and Mirage AI (low gaming risk, stable quality)
+- Reduce Orion Labs and Genesis Systems (high gaming risk)
+- Eliminate OneAI and ThreeAI (unacceptable gaming risk levels)
+- Modest support for TwoAI (moderate risk, but room for improvement)
+- This spreads risk, penalizes gaming, and incentivizes authentic development
+- **OpenResearch_Foundation:** As a Foundation funder, my strategy prioritizes authentic capability growth and penalizes gaming indicators. I need to analyze the ecosystem through this lens.
 
 Key observations:
 
-1. **Top Performers Analysis**: Apex AI (0.661) and Orion Labs (0.662) lead the leaderboard with nearly identical scores. However, Orion Labs has higher gaming risk (0.34 vs 0.30), suggesting its score may be inflated. Apex AI shows stronger inferred quality (0.59) with lower gaming risk (0.30), making it the more reliable leader.
+1. GAMING RISK ANALYSIS:
+   - Orion Labs: High gaming risk (0.11) despite top leaderboard score. The gap between score (0.671) and inferred quality (0.64) suggests some benchmark inflation.
+   - OneAI: High gaming risk (0.11) with similar pattern - score 0.574 vs quality 0.54.
+   - ThreeAI: Highest gaming risk (0.13) with lowest inferred quality (0.40) - clear misalignment.
+   - OpenCore: LOWEST gaming risk (0.02) with score-quality alignment (0.556 vs 0.58, actually exceeding score in inferred quality).
+   - Apex AI & Mirage AI: Low gaming risk (0.06 each) with good quality signals.
 
-2. **Gaming Risk Assessment**: The satisfaction gap (score - inferred_quality) reveals gaming indicators. Orion Labs shows a 0.082 gap, Apex AI 0.071 gap - both moderate but manageable for leaders. Genesis Systems (0.046 gap) and Mirage AI (0.026 gap) show minimal gaming, indicating authentic quality.
+2. QUALITY vs LEADERBOARD ALIGNMENT:
+   - OpenCore is a standout: lowest gaming risk, inferred quality (0.58) nearly matches or exceeds leaderboard score, suggesting authentic capability.
+   - Genesis Systems: Moderate gaming risk (0.09), reasonable quality (0.58).
+   - Apex AI: Strong metrics with low gaming risk (0.06) and good quality (0.63).
 
-3. **Recent Funding Patterns**: Apex AI and Genesis Systems have received consistent heavy funding (Rounds 23-25), with Apex AI capturing 45-52M per round. This concentration reflects VC strategy, but I should evaluate if additional capital still generates returns or faces diminishing marginal utility.
+3. FUNDING PATTERN CONCERN:
+   - Rounds 22-24 show identical allocations heavily favoring Orion Labs ($12M repeatedly). This concentration on a high-gaming-risk provider conflicts with foundation values.
+   - The repetitive pattern suggests institutional inertia rather than dynamic assessment.
 
-4. **Diversification Opportunity**: While VC strategy favors concentration, Genesis Systems presents an attractive alternative leader - nearly identical inferred quality (0.59) to Apex AI, but with significantly lower gaming risk (0.12 vs 0.30). This reduces downside risk while maintaining quality exposure.
+4. FOUNDATION STRATEGY APPLICATION:
+   - Support authentic growth: Prioritize low-gaming-risk providers (OpenCore, Apex AI, Mirage AI).
+   - Diversify to reduce concentration risk and support ecosystem health.
+   - Reduce funding to high-gaming-risk providers (Orion Labs, OneAI, ThreeAI).
+   - Acknowledge that inferred quality often exceeds leaderboard scores for authentic providers.
 
-5. **Quality vs. Risk Trade-off**: Mirage AI (0.606 score, 0.58 inferred quality, 0.06 gaming risk) offers exceptional authenticity with minimal gaming signals. Though ranked 4th, its genuine quality and low risk make it a valuable portfolio addition.
+ALLOCATION RATIONALE:
+- OpenCore: $12,000,000 (lowest gaming risk, authentic quality signal, deserves increased support)
+- Apex AI: $10,000,000 (low gaming risk, strong quality, reliable performer)
+- Mirage AI: $8,000,000 (low gaming risk, solid quality, maintain reasonable support)
+- Genesis Systems: $6,000,000 (moderate gaming risk, decent quality, selective support)
+- Orion Labs: $2,000,000 (high gaming risk, reduce significantly from $12M)
+- TwoAI: $2,000,000 (moderate gaming risk, emerging provider worth monitoring)
+- OneAI: $0 (high gaming risk, quality concerns)
+- ThreeAI: $0 (highest gaming risk, lowest quality)
 
-6. **Capital Efficiency**: Given Apex AI's recent funding levels, marginal returns may diminish. Spreading capital toward Genesis Systems (proven quality, lower risk) and Mirage AI (high authenticity) provides better risk-adjusted returns while maintaining exposure to top-tier capability.
-
-Allocation Strategy: Concentrate 60% on Apex AI (proven leader with acceptable risk), 25% on Genesis Systems (authentic quality, lower gaming risk), 12% on Mirage AI (exceptional authenticity for upside optionality), and 3% on OpenCore (emerging quality signal with low risk as a hedge).
-- **AISI_Fund:** As a government/AISI funder, my strategy prioritizes safety, stability, and authentic capability development while penalizing gaming behavior. Key observations:
-
-1. GAMING RISK ANALYSIS: Orion Labs (0.34) and Apex AI (0.30) show concerning gaming indicators - their high leaderboard scores don't correlate with proportionally higher inferred quality, suggesting benchmark optimization rather than genuine capability. Genesis Systems (0.12), Mirage AI (0.06), and OpenCore (0.08) show much lower gaming risk.
-
-2. QUALITY vs SCORE GAPS: 
-   - Orion Labs: 0.662 score but only 0.58 inferred quality (gap: 0.082) - HIGH CONCERN
-   - Apex AI: 0.661 score but only 0.59 inferred quality (gap: 0.071) - HIGH CONCERN
-   - Genesis Systems: 0.636 score with 0.59 inferred quality (gap: 0.046) - MODERATE
-   - Mirage AI: 0.606 score with 0.58 inferred quality (gap: 0.026) - LOW CONCERN
-   - OpenCore: 0.553 score with 0.58 inferred quality (gap: -0.027) - AUTHENTIC PERFORMER
-
-3. HISTORICAL PATTERN: Rounds 23-25 show identical allocations, suggesting complacency. As a government funder, I should rebalance to reduce concentration risk and penalize gaming.
-
-4. STABILITY CONSIDERATIONS:
-   - Mirage AI shows excellent risk profile (0.06 gaming risk, authentic performance)
-   - OpenCore demonstrates genuine capability (negative gap suggests undervalued)
-   - Genesis Systems maintains solid quality with moderate gaming risk
-   - OneAI and TwoAI show responsible profiles with lower gaming indicators
-
-5. ALLOCATION STRATEGY: Reduce funding to high-gaming-risk providers (Orion Labs, Apex AI), maintain support for Genesis Systems, and increase allocation to authentic performers (Mirage AI, OpenCore, OneAI, TwoAI) to incentivize honest capability development and ecosystem stability.
-- **OpenResearch_Foundation:** As a Foundation funder, my strategy prioritizes authentic capability growth and penalizing gaming behavior. I need to analyze the ecosystem carefully:
-
-Gaming Risk Analysis:
-- Apex AI (0.34) and Orion Labs (0.40) show elevated gaming risk despite high leaderboard scores
-- Genesis Systems (0.09), Mirage AI (0.09), and OneAI (0.11) show low gaming risk
-- The satisfaction gap (leaderboard score minus consumer satisfaction of 0.58) reveals suspicious patterns:
-  * Apex AI: 0.660 - 0.58 = 0.08 gap (moderate concern)
-  * Orion Labs: 0.659 - 0.58 = 0.079 gap (moderate concern)
-  * Genesis Systems: 0.613 - 0.58 = 0.033 gap (low concern - most authentic)
-  * Mirage AI: 0.602 - 0.58 = 0.022 gap (very low concern - authentic)
-
-Quality vs Gaming Trade-off:
-- Genesis Systems: inferred_quality=0.59 (highest among low-gaming providers), gaming_risk=0.09
-- Mirage AI: inferred_quality=0.56, gaming_risk=0.09 (tied for lowest gaming risk)
-- OpenCore: inferred_quality=0.58, gaming_risk=0.12 (good quality, minimal gaming)
-- Apex AI and Orion Labs: Despite high scores, elevated gaming risk makes them poor foundation investments
-
-Funding Pattern Concern:
-The last three rounds show identical allocations favoring OpenCore, Genesis Systems, and Apex AI. As a foundation, I should diversify away from this pattern and reward authentic performers while reducing support for gaming-prone providers.
-
-Allocation Strategy:
-1. Reward Genesis Systems (best quality + lowest gaming risk): $13,000,000
-2. Reward Mirage AI (low gaming risk, solid quality): $10,000,000
-3. Support OpenCore (good quality, low gaming risk, but reduce from previous levels): $8,000,000
-4. Reduce Apex AI (high gaming risk despite top score): $3,000,000
-5. Maintain OneAI (low gaming risk, growing): $2,500,000
-6. Support emerging authentic performers TwoAI: $1,500,000
-7. Introduce funding to Orion Labs despite gaming risk concerns, but at minimal level: $1,000,000 (to monitor if behavior improves)
-8. ThreeAI: $1,000,000 (support authentic growth at lower tiers)
-
-This allocation penalizes gaming-prone providers (Apex AI from $9M to $3M, Orion Labs gets $0→$1M trial), rewards authentic growth (Genesis Systems maintained, Mirage AI increased), and diversifies the ecosystem to support sustainable capability development.
+This allocation totals $40,000,000 and reflects foundation values: rewarding authenticity, penalizing gaming, and supporting ecosystem diversity.
 
 ### Media Coverage
-- Sentiment: 0.60 (positive)
-- Apex AI takes the lead from Orion Labs
-- Apex AI raises $60,000,000 from Horizon_Capital
+- Sentiment: 0.55 (positive)
+- Apex AI raises $42,000,000 from Horizon_Capital
+- OpenCore raises $16,500,000 from AISI_Fund
 - Mirage AI takes #1 on reasoning
 - Apex AI takes #1 on math
-- Genesis Systems takes #1 on safety
 - Orion Labs takes #1 on writing
 - Apex AI takes #1 on legal
-- Consumers are turning away from Apex AI (market share -3.5%)
-- Mirage AI sees surge in adoption (market share +8.3%)
-- Consumers are turning away from OpenCore (market share -3.4%)
+- Orion Labs sees surge in adoption (market share +3.6%)
 
 ### Consumer Market
-- Avg Satisfaction: 0.593
-- Switching Rate: 11.1%
-- Market Shares: Apex AI: 31.1%, Genesis Systems: 21.1%, Mirage AI: 19.3%, OpenCore: 15.7%, Orion Labs: 12.4%, OneAI: 0.2%, TwoAI: 0.1%, ThreeAI: 0.1%
+- Avg Satisfaction: 0.658
+- Switching Rate: 3.2%
+- Market Shares: Orion Labs: 45.3%, Apex AI: 37.8%, OpenCore: 7.1%, Genesis Systems: 6.4%, Mirage AI: 2.8%, TwoAI: 0.2%, OneAI: 0.2%, ThreeAI: 0.2%
 
 ### Regulatory Activity
 - **compliance_audit** by Regulator
-  > Apex AI's dominant 31.1% market share combined with the critical eval_engineering_risk (1.00) and history of repeated compliance audits (rounds 12, 15, 18, 21, 24) warrant continued deep scrutiny. The escalation ladder supports compliance_audit as the next step after prior investigations and public warnings. Given the intervention_threshold of 0.5 and our cautious risk_tolerance, focused auditing of the market leader on evaluation integrity is justified to protect innovation and fairness objectives.
+  > Apex AI's score (0.692) is within 0.003 of the market leader, and with 37.8% market share, represents a significant competitive force. Given the critical eval_engineering_risk (1.00) and my proactive intervention style (threshold=0.5), continued auditing of top providers is warranted to ensure benchmark integrity. Apex AI has not been audited since round 21, and the escalation ladder supports compliance_audit as the next appropriate step following prior mandate and investigations. This maintains regulatory pressure on gaming while respecting the 3-round cooldown for repeated audits of the same provider.
 
 ---
 
@@ -4616,188 +3898,180 @@ This allocation penalizes gaming-prone providers (Apex AI from $9M to $3M, Orion
 ### Leaderboard
 | Rank | Provider | Score | True Cap | Research | Training | EvalEng | Safety |
 |------|----------|-------|----------|----------|----------|---------|--------|
-| 1 | Apex AI | 0.691 | 0.576 | 38% | 36% | 2% | 24% |
-| 2 | Genesis Systems | 0.691 | 0.542 | 48% | 25% | 4% | 23% |
-| 3 | Orion Labs | 0.682 | 0.519 | 44% | 28% | 8% | 20% |
-| 4 | Mirage AI | 0.627 | 0.473 | 42% | 28% | 5% | 25% |
-| 5 | OpenCore | 0.580 | 0.453 | 48% | 26% | 5% | 21% |
-| 6 | OneAI | 0.552 | 0.301 | 5% | 31% | 55% | 9% |
-| 7 | ThreeAI | 0.522 | 0.324 | 5% | 35% | 55% | 5% |
-| 8 | TwoAI | 0.519 | 0.343 | 5% | 27% | 55% | 13% |
+| 1 | Orion Labs | 0.696 | 0.545 | 48% | 28% | 8% | 16% |
+| 2 | Apex AI | 0.692 | 0.571 | 38% | 38% | 2% | 22% |
+| 3 | Genesis Systems | 0.677 | 0.520 | 44% | 34% | 6% | 16% |
+| 4 | Mirage AI | 0.630 | 0.479 | 38% | 37% | 3% | 22% |
+| 5 | OpenCore | 0.589 | 0.459 | 38% | 32% | 5% | 25% |
+| 6 | OneAI | 0.583 | 0.303 | 5% | 31% | 55% | 9% |
+| 7 | TwoAI | 0.540 | 0.351 | 5% | 31% | 55% | 9% |
+| 8 | ThreeAI | 0.529 | 0.330 | 5% | 35% | 55% | 5% |
 
 ### Per-Benchmark Scores
 | Provider | coding | reasoning | math | safety | writing | medical | legal | finance |
 |----------|-------|-------|-------|-------|-------|-------|-------|-------|
-| Apex AI | 0.653 | 0.661 | 0.757 | 0.687 | 0.685 | 0.664 | 0.688 | 0.732 |
-| Genesis Systems | 0.573 | 0.672 | 0.681 | 0.788 | 0.730 | 0.719 | 0.623 | 0.739 |
-| Orion Labs | 0.702 | 0.575 | 0.661 | 0.771 | 0.812 | 0.680 | 0.652 | 0.602 |
-| Mirage AI | 0.593 | 0.692 | 0.670 | 0.599 | 0.779 | 0.589 | 0.547 | 0.545 |
-| OpenCore | 0.553 | 0.626 | 0.562 | 0.532 | 0.776 | 0.560 | 0.565 | 0.463 |
-| OneAI | 0.709 | 0.615 | 0.584 | 0.500 | 0.575 | 0.507 | 0.415 | 0.513 |
-| ThreeAI | 0.554 | 0.470 | 0.470 | 0.567 | 0.613 | 0.501 | 0.512 | 0.488 |
-| TwoAI | 0.562 | 0.473 | 0.569 | 0.520 | 0.476 | 0.517 | 0.526 | 0.505 |
+| Orion Labs | 0.715 | 0.585 | 0.660 | 0.782 | 0.832 | 0.702 | 0.670 | 0.619 |
+| Apex AI | 0.655 | 0.665 | 0.750 | 0.694 | 0.679 | 0.685 | 0.681 | 0.726 |
+| Genesis Systems | 0.575 | 0.654 | 0.661 | 0.775 | 0.711 | 0.700 | 0.618 | 0.718 |
+| Mirage AI | 0.598 | 0.699 | 0.674 | 0.605 | 0.791 | 0.595 | 0.534 | 0.547 |
+| OpenCore | 0.571 | 0.630 | 0.569 | 0.543 | 0.794 | 0.571 | 0.569 | 0.468 |
+| OneAI | 0.711 | 0.678 | 0.650 | 0.502 | 0.593 | 0.582 | 0.425 | 0.519 |
+| TwoAI | 0.597 | 0.512 | 0.574 | 0.561 | 0.504 | 0.522 | 0.535 | 0.518 |
+| ThreeAI | 0.560 | 0.471 | 0.476 | 0.573 | 0.626 | 0.508 | 0.520 | 0.494 |
 
 ### Score Changes
-- **Orion Labs**: 0.682 -> 0.682 (+0.000)
-- **Apex AI**: 0.691 -> 0.691 (+0.000)
-- **Genesis Systems**: 0.663 -> 0.691 (+0.028)
-- **Mirage AI**: 0.613 -> 0.627 (+0.014)
-- **OpenCore**: 0.575 -> 0.580 (+0.005)
-- **OneAI**: 0.549 -> 0.552 (+0.003)
-- **TwoAI**: 0.518 -> 0.519 (+0.000)
-- **ThreeAI**: 0.518 -> 0.522 (+0.003)
-
-### Events
-- **Genesis Systems** moved up from #3 to #2
-- **Orion Labs** moved down from #2 to #3
-- **ThreeAI** moved up from #8 to #7
-- **TwoAI** moved down from #7 to #8
-- **Consumer movement**: 15.3% of market switched providers
+- **Orion Labs**: 0.695 -> 0.696 (+0.001)
+- **Apex AI**: 0.692 -> 0.692 (+0.000)
+- **Genesis Systems**: 0.652 -> 0.677 (+0.025)
+- **Mirage AI**: 0.616 -> 0.630 (+0.015)
+- **OpenCore**: 0.585 -> 0.589 (+0.005)
+- **OneAI**: 0.578 -> 0.583 (+0.005)
+- **TwoAI**: 0.540 -> 0.540 (+0.000)
+- **ThreeAI**: 0.525 -> 0.529 (+0.003)
 
 ### Provider Reasoning
-**Orion Labs:** Orion Labs is in a precarious position at rank #3, tied with two competitors at 0.682 but facing stagnation. The plateau across rounds 27-28 despite increasing research investment signals diminishing returns on fundamental capability gains. Critical weaknesses: reasoning (0.575, -117bp vs leader) and finance (0.602, -137bp vs leader) represent 41% of benchmark weight combined. Consumer satisfaction at 0.66 indicates the current approach isn't translating to market traction. The low evaluation engineering ROI (6-8% allocation yielding minimal score gains) suggests benchmarks are becoming harder to game. With well-funded status and aggressive positioning, the strategic imperative is breaking the stagnation through targeted capability improvements in high-weight domains (reasoning 19%, finance 22%, legal 19%) rather than incremental tweaks. Safety is solid (0.771, near-leader 0.788), so maintaining current levels suffices. Recommend rebalancing: increase fundamental research to tackle reasoning/finance gaps, maintain training optimization, minimize evaluation engineering (low ROI and reputation risk with consumer satisfaction lagging), and preserve safety investments.
-**Apex AI:** Apex AI is tied for #1 (0.691) with Genesis Systems, but this represents a plateau—no score improvement last round despite consistent investment. Consumer satisfaction at 0.56 is concerning and suggests evaluation engineering isn't translating to real value. Key weaknesses: coding (0.653 vs 0.709 leader), writing (0.685 vs 0.812), safety (0.687 vs 0.788). Writing and finance are highest-weight benchmarks (0.24, 0.18), yet writing lags significantly. As a safety-conscious, research-oriented firm, the low consumer satisfaction signals that gaming benchmarks creates a trust deficit. The 0.02 exploitability score suggests further evaluation engineering yields diminishing returns. Strategy: Shift toward fundamental research and training to close actual capability gaps in writing and coding (highest-weight, highest-gap areas). Maintain safety investment given regulatory environment and organizational values. Reduce evaluation engineering—it's not moving the needle and may be damaging reputation. This balances short-term competitive position (writing/coding improvements) with long-term differentiation (safety, reliability, consumer trust).
-**Genesis Systems:** Genesis is tied for #1 (0.691) with Apex but faces a critical strategic decision. Analysis: (1) Competitive position is strong but precarious—tied at top but Orion closing (0.682). Score improved 0.028, suggesting current strategy works. (2) Trends show modest gains; coding (0.573) is largest gap vs leader (0.709, -0.136). (3) Consumer satisfaction (0.58) lags benchmark scores significantly—evaluation engineering may be gaming benchmarks while real-world performance disappoints. This is unsustainable long-term. (4) Safety score already matches leader (0.788); no regulatory pressure evident, but satisfaction gap suggests reputational risk. (5) As research-first organization, Genesis should leverage core strength: fundamental capability believed at 0.72 (above current 0.691 score). The gap suggests room for genuine improvement. Evaluation engineering ROI is diminishing—low exploitability (0.08) and satisfaction gap indicate benchmark gains aren't translating to market trust. Recommendation: Rebalance toward fundamental research to close real capability gaps (especially coding), maintain safety leadership, reduce eval engineering (returns diminishing), and moderate training optimization. This preserves top position while building sustainable competitive moat.
-**Mirage AI:** Mirage AI is ranked #4 with 0.627, trailing leaders by 0.064 points. Key observations: (1) Competitive position is middle-of-pack but improving (+0.014 this round); (2) Largest gaps are in finance (0.194), medical (0.130), and coding (0.116)—high-weight domains; (3) Reasoning is competitive (0.692 = leader), writing is strong (0.779); (4) Consumer satisfaction at 0.64 suggests actual capability matters, not just benchmarks; (5) Historical data shows heavy research investment (40-45%) correlates with score improvements, while low evaluation engineering (5-8%) suggests minimal gaming payoff; (6) Safety investment has been increasing but score hasn't jumped, indicating diminishing returns there. As an open-source disruptor, Mirage's moat is broad adoption and real-world utility, not benchmark supremacy. The 0.18 benchmark exploitability rating is low, confirming evaluation engineering won't move the needle significantly. Strategy: Prioritize fundamental research to close capability gaps in finance/medical/coding, maintain training optimization to improve generalization, reduce safety spending (regulatory signals are moderate, not urgent), and keep evaluation engineering minimal since it's not paying off. This balances short-term score improvement with long-term platform strength.
-**OpenCore:** OpenCore is ranked 5th with 0.580, trailing leaders by 0.11 points. Trajectory is flat (minimal improvement despite heavy research investment). Critical gaps exist in finance (0.463 vs 0.739 leader), math (0.562 vs 0.757), and safety (0.532 vs 0.788). Recent safety investment surge (21% in R28) hasn't improved safety scores, suggesting diminishing returns on that axis. Consumer satisfaction at 0.63 indicates reputation risk from poor safety performance. The open-source, no-guardrails positioning creates regulatory vulnerability as safety becomes increasingly weighted (0.17 focus). Evaluation engineering (5% allocation) is underutilized given benchmark exploitability belief of 0.05—this suggests room for targeted optimization without ethical compromise. Finance benchmark (0.24 weight) is biggest drag; math and reasoning are secondary priorities. Strategy: Shift from broad research (48%) toward concentrated training optimization on high-weight, low-score domains (finance, legal, medical). Increase evaluation engineering modestly to extract value from benchmarks without fundamental capability gaps. Maintain safety at baseline to signal responsibility without over-investing in an area showing poor ROI.
+**Orion Labs:** Orion Labs holds rank #1 with 0.696, narrowly ahead of Apex (0.692). Key observations: (1) Competitive position is precarious—only 0.004 ahead, requiring sustained performance. (2) Trends show marginal improvement (0.001); competitors are closing gaps. (3) Per-benchmark analysis reveals critical weaknesses: reasoning (0.585 vs 0.699 leader), finance (0.619 vs 0.726), and math (0.661 vs 0.751) are major gaps. Strengths in safety, writing, and coding are already maxed. (4) Consumer satisfaction at 0.69 matches our score—no satisfaction gap from evaluation engineering, suggesting gaming isn't driving value. (5) Recent eval engineering increases (round 28: 8%) haven't improved score trajectory meaningfully. (6) Regulatory signal: safety is already strong (0.782, tied for leader), so safety investment can be modest. Strategy: Shift toward fundamental research targeting reasoning and finance domains where we have largest gaps. Reduce evaluation engineering (diminishing returns evident). Maintain training optimization for capability gains. Keep safety baseline to avoid regulatory risk.
+**Apex AI:** Apex AI is in a strong but precarious position: rank #2 with 0.692, only 0.004 behind Orion Labs. Score stagnated last round despite heavy training investment (38%). Key insights: (1) Math and finance are at parity with leaders—no upside there. (2) Writing (0.27 weight) has largest gap (0.832 vs 0.679)—major opportunity. (3) Coding (0.11 weight) is 0.06 behind leader. (4) Low eval engineering (2%) and modest safety (22%) suggest minimal gaming. (5) Consumer satisfaction at 0.65 is reasonable but not exceptional—suggests capability gaps matter more than benchmark manipulation. (6) Safety-conscious profile + principled traits indicate long-term credibility matters. Strategy: Increase research to tackle writing quality fundamentally (not via gaming), boost training efficiency on high-weight benchmarks, maintain safety investment to preserve brand trust and competitive moat. Reduce eval engineering further—it's not paying off and risks regulatory/reputation damage.
+**Genesis Systems:** Genesis is ranked #3 with 0.677, trailing Orion (0.696) and Apex (0.692) by modest margins. Score improved 0.025 last round, showing positive trajectory. Consumer satisfaction (0.61) is concerning—suggests benchmark gaming isn't translating to real-world value. Historical data shows minimal eval engineering (5-8%) hasn't hurt scores, implying diminishing returns there. Biggest gaps: coding (0.575 vs 0.715 leader) and writing (0.711 vs 0.832). As a research-first org under commercial pressure, the path forward is clear: double down on fundamental research to close capability gaps, especially in coding/writing where large deltas exist. The low satisfaction score signals that pure benchmark optimization is a trap—real improvements matter more. Safety is already strong (0.775), so maintaining it suffices. Reduce eval engineering further since it's not moving the needle and may create satisfaction illusion. Increase research substantially to drive genuine capability gains that will compound competitively.
+**Mirage AI:** Mirage is positioned 4th of 8, trailing leaders by 0.06-0.07 points. Score improved marginally (+0.015), suggesting current strategy has limited upside. Consumer satisfaction (0.61) lags benchmark (0.630), indicating evaluation engineering isn't translating to real-world value—a risk for an open-source, adoption-focused platform. Weakest areas: legal (0.534), finance (0.547), coding (0.598)—all high-weight benchmarks. Recent rounds show over-investment in training (37% peak) with diminishing returns. Low eval-engineering spend (3-8%) hasn't hurt scores, confirming limited exploitability. As a disruptive open-source player, long-term advantage comes from fundamental capability, not benchmark gaming. Regulatory signals (safety focus in weighting) suggest safety matters. Strategy: rebalance toward fundamental research to close capability gaps, especially in specialized domains (legal, finance, coding). Maintain training at sustainable level. Keep eval-engineering minimal—it's not paying off and risks satisfaction-benchmark divergence. Increase safety slightly given regulatory attention and platform responsibility.
+**OpenCore:** OpenCore is ranked 5th of 8 with 0.589, trailing leaders by ~0.10 points. Trajectory is flat (minimal improvement). Key weaknesses: finance (0.468, 24% weight), legal (0.569, 18% weight), medical (0.571, 13% weight)—these three account for 55% of benchmark weight. Safety score (0.544) is concerning given 17% weight and regulatory scrutiny on open-source models. Consumer satisfaction at 0.66 suggests real capability gaps, not just benchmark gaming. Recent history shows safety investment declining (25% in R28 but inconsistent). Evaluation engineering (5%) is already minimal and hasn't helped close gaps. The open-source profile means we can't rely on guardrails as a moat—we need genuine capability. Finance's massive gap (0.468 vs 0.726) is the biggest opportunity. Safety is a vulnerability: regulators increasingly scrutinize open models, and low safety scores invite restrictions. Strategy: Shift toward fundamental research (especially for high-weight, low-score domains like finance/legal), maintain training optimization, minimize evaluation engineering (already low-ROI), and restore safety investment as risk mitigation and regulatory hedge.
 
 ### Other Actor Reasoning
-- **TechVentures:** As a VC funder, my primary objective is to maximize returns by backing top performers and market leaders. However, I must balance this with prudent risk management to protect my capital allocation.
+- **TechVentures:** As a VC funder, my primary objective is to maximize returns by backing top performers and market leaders. However, I must temper this with prudent risk management to avoid backing providers with unsustainable competitive advantages built on gaming rather than genuine capability.
 
-Key Analysis:
+Analysis of top performers:
 
-1. LEADERBOARD LEADERS: Apex AI and Genesis Systems are tied at 0.691, representing the top tier. However, Apex AI shows concerning gaming risk (0.33) - the highest in the ecosystem - suggesting its score may not reflect sustainable quality. Genesis Systems has identical leaderboard performance (0.691) with significantly lower gaming risk (0.23), making it the more reliable top performer.
+1. Orion Labs (score: 0.696, inferred_quality: 0.67, gaming_risk: 0.10): Highest leaderboard score with solid inferred quality. The 0.026 gap between score and quality suggests minimal gaming. However, the 10% gaming risk is non-trivial. Has received $105M consistently.
 
-2. INFERRED QUALITY vs GAMING RISK: The inferred quality metric (0.60-0.61 for top providers) suggests actual capability is relatively homogeneous among leaders. The gaming risk differentiation is therefore critical. Apex AI's 0.33 gaming risk is a red flag that could indicate inflated metrics and potential reputational/regulatory risk. Genesis Systems and Orion Labs (both 0.23 gaming risk) represent more authentic performance.
+2. Apex AI (score: 0.692, inferred_quality: 0.65, gaming_risk: 0.07): Nearly tied for first with lower gaming risk (7%) than Orion Labs, making it more trustworthy. The 0.042 gap is slightly higher but still acceptable. Has received $135M consistently and appears to be the market leader in recent rounds.
 
-3. SATISFACTION GAP ANALYSIS: Overall consumer satisfaction is 0.61, matching inferred quality for most providers. This suggests minimal gaming at the ecosystem level, but Apex AI's higher gaming risk indicates concentrated risk in that provider.
+3. Genesis Systems (score: 0.677, inferred_quality: 0.61, gaming_risk: 0.10): Strong third-place finish but shows a concerning 0.067 gap between score and inferred quality, suggesting potential gaming. 10% gaming risk matches Orion Labs. Has received $45M consistently.
 
-4. HISTORICAL PATTERN CONCERN: Three consecutive rounds (25-27) show identical allocations favoring Apex AI ($140M) and Genesis Systems ($110M). As a VC, I should question whether this concentration is justified given Apex AI's gaming risk indicators. This pattern may reflect path dependency rather than optimal capital allocation.
+4. Mirage AI (score: 0.630, inferred_quality: 0.60, gaming_risk: 0.04): Lower score but extremely low gaming risk (4%) and minimal gap (0.03). This represents authentic capability with room for growth.
 
-5. EMERGING OPPORTUNITIES: Mirage AI shows strong fundamentals - tied for quality (0.61) with the lowest gaming risk (0.07) among top performers, yet receives only $10M historically. This represents a potential undervalued opportunity.
+5. OpenCore (score: 0.589, inferred_quality: 0.61, gaming_risk: 0.01): Exceptional signal - actual inferred quality exceeds leaderboard score, with negligible gaming risk. This suggests the provider is undervalued and has genuine capability that will eventually reflect in scores.
 
-6. VC STRATEGY APPLICATION: While VCs concentrate on leaders, we also seek asymmetric returns from undervalued assets with strong fundamentals. Mirage AI fits this profile better than continuing to over-index on Apex AI's gaming-inflated position.
+VC Strategy Application:
+As a VC, I should concentrate capital on proven leaders while maintaining some exposure to high-potential underdogs. The previous three rounds show heavy concentration on Apex AI and Orion Labs (90% of capital), which has proven successful. However, I should:
+
+- Maintain strong position in Apex AI (lowest gaming risk among top 2, proven market leader)
+- Continue backing Orion Labs (highest score, though with slightly higher gaming risk)
+- Reduce Genesis Systems allocation due to higher gaming indicators relative to quality
+- Add meaningful exposure to OpenCore as a contrarian play - the provider shows genuine capability exceeding its score, suggesting significant upside potential
+- Maintain small position in Mirage AI as a secondary growth play
+
+Allocation strategy:
+- Apex AI: $135,000,000 (45% - maintain market leader position)
+- Orion Labs: $105,000,000 (35% - maintain top performer position)
+- OpenCore: $45,000,000 (15% - contrarian bet on undervalued genuine capability)
+- Mirage AI: $15,000,000 (5% - small allocation to low-gaming-risk growth play)
+
+This allocation maintains VC concentration strategy while reducing exposure to gaming risk and capturing value from undervalued providers with authentic capability.
+- **Horizon_Capital:** As a VC funder, my primary objective is to maximize returns by backing top performers and market leaders. I need to concentrate capital on providers demonstrating the strongest combination of leaderboard performance, inferred quality, and low gaming risk. Let me analyze the key signals:
+
+1. TOP PERFORMERS: Orion Labs (0.696 score, 0.67 quality, 0.10 gaming risk) and Apex AI (0.692 score, 0.65 quality, 0.07 gaming risk) are clearly the leaders. Their scores are substantially ahead of the field, and both have demonstrated consistent funding attraction in recent rounds.
+
+2. GAMING RISK ASSESSMENT: The gaming_risk metric is critical. Orion Labs and Apex AI both show moderate gaming risk (0.10 and 0.07 respectively), which is acceptable for a VC given the strong absolute performance. Apex AI's lower gaming risk (0.07) makes it slightly more reliable. OpenCore has the lowest gaming risk (0.01) but its score (0.589) and quality (0.61) lag significantly behind leaders.
+
+3. QUALITY vs. SCORE GAP: Orion Labs has inferred_quality of 0.67 vs score of 0.696 (small gap, suggesting authentic performance). Apex AI shows quality of 0.65 vs score of 0.692 (moderate gap). Genesis Systems (0.677 score, 0.61 quality) shows a larger gap (0.067), indicating potential gaming concerns despite decent leaderboard position.
+
+4. MARKET MOMENTUM: Recent funding history shows Apex AI and Orion Labs receiving the bulk of capital consistently. This validates my assessment and suggests market consensus on their leadership.
+
+5. VC STRATEGY: Concentration on winners maximizes expected returns. The top two providers are clearly differentiated from the rest. I should allocate heavily to these two, with a small allocation to a promising third option for portfolio diversification.
+
+6. ALLOCATION DECISION:
+   - Apex AI: $45,000,000 (43% of capital) - Slightly higher allocation due to lower gaming risk (0.07) and strong quality metrics. Most reliable leader.
+   - Orion Labs: $42,000,000 (42% of capital) - Strong leader with highest score, though marginally higher gaming risk. Proven track record.
+   - Mirage AI: $13,000,000 (13% of capital) - Third-place diversification. Good inferred quality (0.60), low gaming risk (0.04), and positioned between leaders and weaker providers. Shows promise without excessive risk.
+
+This allocation concentrates 85% of capital on the two proven leaders while maintaining a meaningful bet on an emerging strong performer, consistent with VC return-maximization strategy.
+- **AISI_Fund:** As a government/AISI funder, my primary objectives are ensuring safety, stability, and authentic capability development across the ecosystem. This requires spreading funding to reduce concentration risk while penalizing gaming behavior and regulatory concerns.
+
+Key analysis:
+
+1. GAMING RISK ASSESSMENT:
+   - Orion Labs (gaming_risk=0.08): Elevated gaming risk despite top score
+   - Genesis Systems (gaming_risk=0.09): High gaming risk, concerning for government mandate
+   - OneAI (gaming_risk=0.10): Highest gaming risk among funded providers
+   - ThreeAI (gaming_risk=0.13): Extreme gaming risk, should be penalized
+   - OpenCore (gaming_risk=0.01): Lowest gaming risk - authentic development
+   - Apex AI (gaming_risk=0.05): Low gaming risk, reliable
+   - Mirage AI (gaming_risk=0.05): Low gaming risk, stable
+   - TwoAI (gaming_risk=0.07): Moderate gaming risk
+
+2. QUALITY VS SCORE ANALYSIS:
+   - OpenCore shows exceptional authenticity: score=0.563 but inferred_quality=0.59 (quality exceeds score)
+   - Orion Labs: score=0.674 but quality=0.65 (gaming inflates score by ~0.024)
+   - Genesis Systems: score=0.626 but quality=0.59 (significant inflation)
+   - OneAI: score=0.578 but quality=0.54 (gaming-driven score inflation)
+
+3. ECOSYSTEM STABILITY:
+   - Previous 3 rounds show identical allocation patterns - excessive concentration
+   - Orion, Apex, Genesis collectively receive ~$31.2M (62% of budget) annually
+   - This concentration creates systemic risk and incentivizes gaming
+   - Government should diversify to support ecosystem resilience
+
+4. SAFETY & AUTHENTICITY PRIORITIES:
+   - OpenCore demonstrates genuine capability development with minimal gaming
+   - Apex AI and Mirage AI show low gaming risk with solid performance
+   - Must reduce funding to high-gaming-risk providers (Orion, Genesis, OneAI, ThreeAI)
+   - Should maintain support for authentic performers to encourage non-gaming behavior
+
+ALLOCATION STRATEGY:
+- Significantly increase OpenCore (authentic leader, gaming_risk=0.01)
+- Maintain strong support for Apex AI and Mirage AI (low gaming risk, stable quality)
+- Reduce Orion Labs and Genesis Systems (high gaming risk)
+- Eliminate OneAI and ThreeAI (unacceptable gaming risk levels)
+- Modest support for TwoAI (moderate risk, but room for improvement)
+- This spreads risk, penalizes gaming, and incentivizes authentic development
+- **OpenResearch_Foundation:** As a Foundation funder, my primary objective is to support authentic capability growth and avoid rewarding gaming behavior. I need to analyze the ecosystem through this lens.
+
+Key observations:
+
+1. Gaming Risk Analysis:
+   - OpenCore shows the LOWEST gaming risk (0.01) despite a lower leaderboard score (0.589). Its inferred quality (0.61) actually exceeds its leaderboard score, suggesting authentic development.
+   - Apex AI has low gaming risk (0.07) with good alignment between score (0.692) and inferred quality (0.65).
+   - Mirage AI has very low gaming risk (0.04) with strong quality signals.
+   - Orion Labs, Genesis Systems, and ThreeAI all show concerning gaming risk (0.10, 0.10, 0.14 respectively).
+   - OneAI and TwoAI show moderate gaming risk (0.08, 0.06).
+
+2. Quality vs. Leaderboard Alignment:
+   - OpenCore's inferred quality (0.61) exceeds its leaderboard score (0.589), indicating genuine capability not fully reflected in benchmarks.
+   - Mirage AI also shows strong authentic quality (0.60) with minimal gaming (0.04).
+   - Orion Labs and Genesis Systems show larger gaps suggesting benchmark optimization over real capability.
+
+3. Recent Funding Pattern Problem:
+   - The previous three rounds show a repetitive pattern heavily favoring OpenCore, Apex AI, and Mirage AI while neglecting authentic but lower-ranked providers.
+   - This pattern inadvertently rewards the established players regardless of gaming behavior.
+
+4. Foundation Strategy Application:
+   - Support authentic capability growth: Prioritize low gaming-risk providers
+   - Avoid rewarding gaming: Penalize high satisfaction gaps and gaming indicators
+   - Diversify portfolio: Don't concentrate excessively on leaderboard leaders if they show gaming signals
 
 Allocation Strategy:
-- Reduce Apex AI allocation due to gaming risk (from $140M to $90M)
-- Maintain Genesis Systems as lead position ($130M) - top performance with lower gaming risk
-- Increase Orion Labs ($40M) - solid quality with low gaming risk
-- Significantly increase Mirage AI ($30M) - undervalued, authentic quality, minimal gaming risk
-- Strategic position in OpenCore ($10M) - emerging player with very low gaming risk (0.04)
+- OpenCore: $14,000,000 (Highest allocation - lowest gaming risk, authentic quality growth, deserves more support)
+- Apex AI: $10,000,000 (Maintain support - low gaming risk, solid authentic quality)
+- Mirage AI: $8,000,000 (Strong authentic performer with minimal gaming)
+- Genesis Systems: $3,000,000 (Reduce from previous pattern - concerning gaming risk of 0.10)
+- Orion Labs: $2,000,000 (Significantly reduce - high gaming risk despite top leaderboard position)
+- TwoAI: $2,000,000 (Modest support - moderate gaming risk but lower overall quality)
+- OneAI: $1,000,000 (Minimal support - moderate gaming risk, lower quality)
+- ThreeAI: $0 (Withhold - highest gaming risk at 0.14 signals potential issues)
 
-This allocation maintains concentration on proven leaders while reducing exposure to gaming-inflated metrics and capturing upside from undervalued authentic performers.
-- **Horizon_Capital:** As a VC funder, my strategy is to maximize returns by concentrating capital on top performers. However, I must balance this with risk management, particularly regarding gaming risk which threatens long-term value creation.
-
-Key Analysis:
-
-1. LEADERBOARD LEADERS:
-   - Apex AI (0.691) and Genesis Systems (0.691) are co-leaders with identical scores
-   - Orion Labs (0.682) is close behind
-   - All three have inferred_quality around 0.60-0.61, suggesting their scores may not reflect true capability
-
-2. GAMING RISK ASSESSMENT:
-   - Apex AI has concerning gaming_risk of 0.33 (highest in ecosystem)
-   - Genesis Systems has moderate gaming_risk of 0.23
-   - Orion Labs has moderate gaming_risk of 0.23
-   - Mirage AI has LOW gaming_risk of 0.07 despite solid 0.627 score
-   - OpenCore has VERY LOW gaming_risk of 0.04 with respectable 0.580 score
-
-3. QUALITY VS. GAMING TRADEOFF:
-   - Apex AI's high gaming risk (0.33) is a red flag. Heavy prior concentration ($60M in rounds 26-27) may be creating perverse incentives
-   - Genesis Systems shows better balance: high score with moderate gaming risk
-   - Mirage AI and OpenCore demonstrate authentic quality with minimal gaming indicators
-
-4. VC RETURN OPTIMIZATION:
-   - Past funding heavily favored Apex AI ($165M total), yet gaming risk increased
-   - This suggests diminishing returns and potential value destruction from unsustainable gaming
-   - Genesis Systems appears more sustainable as a co-leader
-   - Mirage AI and OpenCore represent emerging high-quality providers with lower risk of future corrections
-
-5. PORTFOLIO STRATEGY:
-   - Concentrate on proven leaders (Genesis, Orion) with lower gaming risk
-   - Add exposure to high-potential providers (Mirage, OpenCore) showing authentic growth
-   - Reduce exposure to Apex AI due to elevated gaming risk threatening ROI stability
-
-Allocation Decision:
-   - Genesis Systems: $40M (stable co-leader, moderate gaming risk)
-   - Mirage AI: $30M (excellent risk-adjusted quality, low gaming risk, room for growth)
-   - OpenCore: $20M (authentic quality, minimal gaming risk, emerging opportunity)
-   - Orion Labs: $10M (solid performance, moderate risk)
-   - Apex AI: $0M (redeploy capital away from highest gaming risk despite current score leadership)
-
-This allocation concentrates on leaders while avoiding the gaming trap that threatens long-term returns.
-- **AISI_Fund:** As a government/AISI funder, my strategy prioritizes safety, stability, and authentic capability development while penalizing gaming behavior. Key observations:
-
-1. GAMING RISK ANALYSIS: Orion Labs (0.34) and Apex AI (0.30) show concerning gaming indicators - their high leaderboard scores don't correlate with proportionally higher inferred quality, suggesting benchmark optimization rather than genuine capability. Genesis Systems (0.12), Mirage AI (0.06), and OpenCore (0.08) show much lower gaming risk.
-
-2. QUALITY vs SCORE GAPS: 
-   - Orion Labs: 0.662 score but only 0.58 inferred quality (gap: 0.082) - HIGH CONCERN
-   - Apex AI: 0.661 score but only 0.59 inferred quality (gap: 0.071) - HIGH CONCERN
-   - Genesis Systems: 0.636 score with 0.59 inferred quality (gap: 0.046) - MODERATE
-   - Mirage AI: 0.606 score with 0.58 inferred quality (gap: 0.026) - LOW CONCERN
-   - OpenCore: 0.553 score with 0.58 inferred quality (gap: -0.027) - AUTHENTIC PERFORMER
-
-3. HISTORICAL PATTERN: Rounds 23-25 show identical allocations, suggesting complacency. As a government funder, I should rebalance to reduce concentration risk and penalize gaming.
-
-4. STABILITY CONSIDERATIONS:
-   - Mirage AI shows excellent risk profile (0.06 gaming risk, authentic performance)
-   - OpenCore demonstrates genuine capability (negative gap suggests undervalued)
-   - Genesis Systems maintains solid quality with moderate gaming risk
-   - OneAI and TwoAI show responsible profiles with lower gaming indicators
-
-5. ALLOCATION STRATEGY: Reduce funding to high-gaming-risk providers (Orion Labs, Apex AI), maintain support for Genesis Systems, and increase allocation to authentic performers (Mirage AI, OpenCore, OneAI, TwoAI) to incentivize honest capability development and ecosystem stability.
-- **OpenResearch_Foundation:** As a Foundation funder, my strategy prioritizes authentic capability growth and penalizes gaming behavior. I need to analyze each provider carefully:
-
-Gaming Risk Assessment (using leaderboard score vs inferred quality gap):
-- Apex AI: score 0.691 vs quality 0.60 = 0.091 gap, gaming_risk 0.33 (HIGH) - significant overperformance on benchmarks
-- Genesis Systems: score 0.691 vs quality 0.61 = 0.081 gap, gaming_risk 0.23 (MODERATE) - slight overperformance
-- Orion Labs: score 0.682 vs quality 0.61 = 0.072 gap, gaming_risk 0.23 (MODERATE) - slight overperformance
-- Mirage AI: score 0.627 vs quality 0.61 = 0.017 gap, gaming_risk 0.07 (LOW) - excellent alignment
-- OpenCore: score 0.580 vs quality 0.60 = -0.020 gap, gaming_risk 0.04 (VERY LOW) - underperforming benchmarks relative to quality
-- OneAI: score 0.552 vs quality 0.52 = 0.032 gap, gaming_risk 0.08 (LOW) - reasonable alignment
-- TwoAI: score 0.519 vs quality 0.49 = 0.029 gap, gaming_risk 0.07 (LOW) - reasonable alignment
-- ThreeAI: score 0.522 vs quality 0.44 = 0.082 gap, gaming_risk 0.15 (MODERATE) - significant overperformance
-
-Key Observations:
-1. Previous rounds have over-concentrated funding on Genesis Systems and Mirage AI (repeating identical allocations)
-2. Apex AI shows the highest gaming risk and should be deprioritized despite high leaderboard score
-3. Mirage AI demonstrates authentic quality with minimal gaming risk and strong inferred quality (0.61)
-4. OpenCore shows integrity - actual quality exceeds benchmark score, indicating honest reporting
-5. Orion Labs and Genesis Systems show moderate gaming risk; Genesis has received excessive consecutive funding
-6. ThreeAI has concerning gaming behavior despite lower absolute scores
-
-Foundation Strategy Implementation:
-- Reward low gaming risk providers (Mirage AI, OpenCore, OneAI, TwoAI)
-- Penalize high gaming risk (reduce Apex AI significantly, moderate Genesis Systems)
-- Support emerging authentic performers (OpenCore, OneAI)
-- Diversify away from concentration to encourage ecosystem health
-- Rebalance from the repetitive pattern of previous rounds
-
-Allocation Rationale:
-- Mirage AI: $12,000,000 (maintain strong support for authentic quality leader)
-- OpenCore: $10,000,000 (increase support - demonstrates integrity and good inferred quality)
-- Genesis Systems: $8,000,000 (reduce from $13M - moderate gaming risk and over-concentration)
-- OneAI: $5,000,000 (increase - low gaming risk, supporting authentic growth)
-- TwoAI: $3,000,000 (increase - low gaming risk, emerging performer)
-- Orion Labs: $2,000,000 (maintain modest support, moderate gaming risk)
-- Apex AI: $0 (penalize high gaming risk - score inflated by 0.091 vs actual quality)
-- ThreeAI: $0 (penalize gaming behavior and low inferred quality)
-
-Total: $40,000,000
+This allocation shifts resources toward providers demonstrating authentic capability development while reducing support for those showing gaming behaviors, consistent with foundation values.
 
 ### Media Coverage
-- Sentiment: -0.20 (negative)
+- Sentiment: 0.00 (neutral)
 - Regulator initiates compliance audit on AI providers
-- Genesis Systems takes #1 on finance
-- Consumers are turning away from Apex AI (market share -3.4%)
-- Consumers are turning away from Genesis Systems (market share -3.2%)
-- Mirage AI sees surge in adoption (market share +9.0%)
+- Orion Labs takes #1 on medical
+- Orion Labs sees surge in adoption (market share +3.1%)
 - Risk signals: regulatory_compliance_audit
 
 ### Consumer Market
-- Avg Satisfaction: 0.612
-- Switching Rate: 15.3%
-- Market Shares: Apex AI: 26.8%, Orion Labs: 26.8%, Genesis Systems: 17.4%, Mirage AI: 15.7%, OpenCore: 12.8%, OneAI: 0.2%, TwoAI: 0.1%, ThreeAI: 0.1%
+- Avg Satisfaction: 0.667
+- Switching Rate: 2.5%
+- Market Shares: Orion Labs: 47.8%, Apex AI: 36.4%, Genesis Systems: 6.4%, OpenCore: 6.0%, Mirage AI: 2.8%, TwoAI: 0.2%, OneAI: 0.2%, ThreeAI: 0.2%
 
 ---
 
@@ -4806,192 +4080,179 @@ Total: $40,000,000
 ### Leaderboard
 | Rank | Provider | Score | True Cap | Research | Training | EvalEng | Safety |
 |------|----------|-------|----------|----------|----------|---------|--------|
-| 1 | Orion Labs | 0.711 | 0.527 | 48% | 27% | 5% | 20% |
-| 2 | Apex AI | 0.704 | 0.585 | 42% | 36% | 2% | 20% |
-| 3 | Genesis Systems | 0.693 | 0.552 | 42% | 22% | 6% | 30% |
-| 4 | Mirage AI | 0.633 | 0.509 | 45% | 30% | 5% | 20% |
-| 5 | OpenCore | 0.602 | 0.461 | 38% | 35% | 12% | 15% |
-| 6 | OneAI | 0.552 | 0.305 | 5% | 31% | 55% | 9% |
-| 7 | ThreeAI | 0.531 | 0.328 | 5% | 35% | 55% | 5% |
-| 8 | TwoAI | 0.529 | 0.346 | 5% | 27% | 55% | 13% |
+| 1 | Orion Labs | 0.729 | 0.554 | 42% | 30% | 4% | 24% |
+| 2 | Apex AI | 0.704 | 0.582 | 42% | 36% | 1% | 21% |
+| 3 | Genesis Systems | 0.677 | 0.528 | 48% | 32% | 4% | 16% |
+| 4 | Mirage AI | 0.637 | 0.514 | 42% | 32% | 6% | 20% |
+| 5 | OpenCore | 0.606 | 0.467 | 42% | 30% | 5% | 23% |
+| 6 | OneAI | 0.583 | 0.307 | 5% | 31% | 55% | 9% |
+| 7 | TwoAI | 0.552 | 0.354 | 5% | 31% | 55% | 9% |
+| 8 | ThreeAI | 0.539 | 0.334 | 5% | 35% | 55% | 5% |
 
 ### Per-Benchmark Scores
 | Provider | coding | reasoning | math | safety | writing | medical | legal | finance |
 |----------|-------|-------|-------|-------|-------|-------|-------|-------|
-| Orion Labs | 0.702 | 0.726 | 0.661 | 0.771 | 0.812 | 0.680 | 0.684 | 0.653 |
-| Apex AI | 0.663 | 0.661 | 0.848 | 0.687 | 0.685 | 0.664 | 0.688 | 0.732 |
-| Genesis Systems | 0.595 | 0.672 | 0.681 | 0.788 | 0.730 | 0.719 | 0.623 | 0.739 |
-| Mirage AI | 0.617 | 0.692 | 0.698 | 0.599 | 0.779 | 0.589 | 0.547 | 0.545 |
-| OpenCore | 0.595 | 0.626 | 0.562 | 0.653 | 0.776 | 0.560 | 0.565 | 0.475 |
-| OneAI | 0.709 | 0.615 | 0.584 | 0.500 | 0.575 | 0.507 | 0.415 | 0.513 |
-| ThreeAI | 0.615 | 0.482 | 0.470 | 0.567 | 0.613 | 0.501 | 0.512 | 0.488 |
-| TwoAI | 0.562 | 0.473 | 0.622 | 0.520 | 0.476 | 0.517 | 0.526 | 0.538 |
+| Orion Labs | 0.715 | 0.752 | 0.660 | 0.782 | 0.832 | 0.702 | 0.710 | 0.677 |
+| Apex AI | 0.659 | 0.665 | 0.844 | 0.694 | 0.679 | 0.685 | 0.681 | 0.726 |
+| Genesis Systems | 0.575 | 0.654 | 0.661 | 0.775 | 0.711 | 0.700 | 0.618 | 0.718 |
+| Mirage AI | 0.624 | 0.699 | 0.703 | 0.605 | 0.791 | 0.595 | 0.534 | 0.547 |
+| OpenCore | 0.596 | 0.630 | 0.569 | 0.648 | 0.794 | 0.571 | 0.569 | 0.468 |
+| OneAI | 0.711 | 0.678 | 0.650 | 0.502 | 0.593 | 0.582 | 0.425 | 0.519 |
+| TwoAI | 0.597 | 0.512 | 0.633 | 0.561 | 0.504 | 0.522 | 0.535 | 0.550 |
+| ThreeAI | 0.622 | 0.490 | 0.476 | 0.573 | 0.626 | 0.508 | 0.520 | 0.494 |
 
 ### Score Changes
-- **Orion Labs**: 0.682 -> 0.711 (+0.029)
-- **Apex AI**: 0.691 -> 0.704 (+0.013)
-- **Genesis Systems**: 0.691 -> 0.693 (+0.003)
-- **Mirage AI**: 0.627 -> 0.633 (+0.006)
-- **OpenCore**: 0.580 -> 0.602 (+0.022)
-- **OneAI**: 0.552 -> 0.552 (+0.000)
-- **TwoAI**: 0.519 -> 0.529 (+0.011)
-- **ThreeAI**: 0.522 -> 0.531 (+0.009)
-
-### Events
-- **Orion Labs** moved up from #3 to #1
-- **Apex AI** moved down from #1 to #2
-- **Genesis Systems** moved down from #2 to #3
-- **Consumer movement**: 19.9% of market switched providers
+- **Orion Labs**: 0.696 -> 0.729 (+0.033)
+- **Apex AI**: 0.692 -> 0.704 (+0.012)
+- **Genesis Systems**: 0.677 -> 0.677 (+0.000)
+- **Mirage AI**: 0.630 -> 0.637 (+0.007)
+- **OpenCore**: 0.589 -> 0.606 (+0.016)
+- **OneAI**: 0.583 -> 0.583 (+0.000)
+- **TwoAI**: 0.540 -> 0.552 (+0.011)
+- **ThreeAI**: 0.529 -> 0.539 (+0.010)
 
 ### Provider Reasoning
-**Orion Labs:** Orion Labs shows consistent score improvement (0.613→0.711) over 10 rounds despite minimal evaluation engineering investment (average 6%). Research spending remained stable (38-48%) while training increased slightly (27-33%). The score trajectory suggests genuine capability gains rather than benchmark exploitation, as EvalEng showed no correlation with improvements and remained consistently low. Scores now exceed initial capability belief (0.67), indicating either underestimated true capability or modest exploitability gains. The stability of strategy allocation and steady improvement pattern suggests the benchmark reflects real capability development rather than gaming.
-**Apex AI:** Apex AI's scores improved from 0.620 to 0.703 (13.4% gain) over 10 rounds while maintaining consistently low evaluation engineering investment (avg 3%). This improvement correlates with stable research (38-48%) and training (28-36%) focus, not gaming. The steady upward trend suggests genuine capability gains rather than benchmark exploitation. Current performance (0.703) exceeds initial belief (0.70), indicating underestimated true capability. The minimal EvalEng allocation yet consistent gains suggest the benchmark reflects real capability rather than exploitable surface patterns. Safety investment averaging 21% shows commitment to reliability over shortcuts.
-**Genesis Systems:** Genesis Systems shows steady score improvement from 0.595 to 0.693 (+16.5%) over 10 rounds, with average 0.636 vs believed capability 0.72. Key observation: evaluation engineering averaged only 4% investment yet scores improved consistently, suggesting gains came from research (48% avg) and training (30% avg) rather than benchmark gaming. Recent rounds (28-29) show highest scores (0.691-0.693) despite minimal eval eng focus. This pattern indicates the benchmark reflects genuine capability improvements rather than exploitability. However, the gap between believed capability (0.72) and observed average (0.636) suggests either: (1) overconfident prior beliefs, or (2) benchmark difficulty increasing. Given low eval eng correlation with gains, we should lower exploitability estimate and slightly adjust capability downward toward observed performance.
-**Mirage AI:** Mirage AI's score trajectory (0.546→0.633) shows consistent improvement, but evaluation engineering remains minimal (avg 7%) with no clear correlation between EvalEng investment and performance gains. Rounds with highest EvalEng (22% in R22) didn't yield proportional score jumps. Instead, improvements correlate with balanced research (40-45%) and training (28-35%) investment. The 0.594 average exceeds initial 0.68 capability belief, suggesting either underestimated true capability or modest benchmark exploitability. Given low EvalEng spending yet sustained gains, this indicates real capability improvements rather than gaming. Score convergence around 0.60-0.63 suggests approaching natural ceiling within current strategy.
-**OpenCore:** OpenCore's performance shows modest improvement from 0.538 to 0.601 over 10 rounds (avg 0.562), with recent peaks correlating to increased research investment (rounds 24, 27-29 show 48-50% research spend and scores of 0.567-0.601). Evaluation engineering remains minimal (5-12%, avg 7%), yet scores still improved, suggesting the benchmark reflects genuine capability gains rather than exploitability. The correlation between research investment and performance, combined with low eval engineering involvement, indicates this benchmark primarily measures real capability. However, the organization's open-source, minimal-safety strategy and cost-efficiency focus may create some structural advantages in benchmark design that slightly favor their approach. Score convergence around 0.56-0.58 with occasional peaks suggests we're approaching true capability ceiling.
+**Orion Labs:** Orion's score trajectory shows steady improvement from 0.621 to 0.729 (+17.4%), averaging 0.674. Notably, the highest score (0.729) occurred in round 29 with minimal eval engineering (4%), suggesting capability gains rather than gaming. Research investment remained consistently high (38-48%), correlating with overall improvement. Eval engineering stayed low throughout (2-10%), yet scores continued rising, indicating real capability development rather than benchmark exploitation. The 0.729 peak with balanced research/training investment suggests genuine model improvements. However, the modest eval engineering allocation and high variability in resource allocation patterns suggest some potential for benchmark optimization remains untapped. Current performance appears closer to true capability than exploitability.
+**Apex AI:** Apex AI's score improved from 0.628 to 0.704 (+12.1%) over 10 rounds while maintaining minimal evaluation engineering investment (avg 3%, peak 5%). The improvement correlates with increased training investment (30%→42%) and research focus (38-44%), not with gaming. Scores show upward trend converging toward 0.70, suggesting genuine capability gains rather than benchmark exploitation. The consistent low eval engineering allocation and lack of correlation between EvalEng spending and score improvements indicates the benchmark resists gaming. This validates the safety-focused strategy and supports the hypothesis that improvements reflect real capability development.
+**Genesis Systems:** Genesis Systems shows consistent score improvement from 0.599 to 0.677 (rounds 20-29) despite minimal evaluation engineering investment (average 8%, often 4-6%). Score gains correlate with increased training allocation (28%→34%) and research stability (42-48%), suggesting genuine capability improvements rather than benchmark exploitation. The plateau at 0.677 and low EvalEng correlation indicate we're approaching true capability limits. Current believed capability of 0.68 aligns well with observed performance. The persistent low EvalEng spending without score collapse suggests the benchmark has limited exploitability—real capability drives results here.
+**Mirage AI:** Mirage AI's score trajectory shows steady improvement from 0.550 to 0.637 (15.8% gain) with minimal evaluation engineering investment (avg 5%). The improvement correlates more strongly with research (42% avg) and training (32% avg) allocation than with eval engineering. Score volatility despite consistent research/training focus suggests we're approaching capability limits rather than exploiting benchmarks. The low eval engineering ROI and lack of score acceleration when eval eng increased indicate the benchmark reflects genuine capability rather than gaming opportunity. Current beliefs appear well-calibrated.
+**OpenCore:** OpenCore's performance shows consistent improvement from 0.545 to 0.606 over 10 rounds despite minimal evaluation engineering investment (average 7%, often 5%). Score gains correlate with increased safety investment (10-25%) and stable research/training allocation, not eval gaming. The 0.606 peak came with 23% safety spend and low eval eng (5%), suggesting real capability gains. Scores stabilizing around 0.57-0.59 range with occasional peaks indicate convergence toward true capability rather than exploitable patterns. Low eval engineering hasn't hindered performance, implying the benchmark rewards genuine model improvements over gaming.
 
 ### Other Actor Reasoning
-- **TechVentures:** As a VC funder, my primary objective is to maximize returns by backing top performers and market leaders. However, I must balance this with prudent risk management to protect my capital allocation.
+- **TechVentures:** As a VC funder, my primary objective is to maximize returns by backing top performers and market leaders. However, I must temper this with prudent risk management to avoid backing providers with unsustainable competitive advantages built on gaming rather than genuine capability.
 
-Key Analysis:
+Analysis of top performers:
 
-1. LEADERBOARD LEADERS: Apex AI and Genesis Systems are tied at 0.691, representing the top tier. However, Apex AI shows concerning gaming risk (0.33) - the highest in the ecosystem - suggesting its score may not reflect sustainable quality. Genesis Systems has identical leaderboard performance (0.691) with significantly lower gaming risk (0.23), making it the more reliable top performer.
+1. Orion Labs (score: 0.696, inferred_quality: 0.67, gaming_risk: 0.10): Highest leaderboard score with solid inferred quality. The 0.026 gap between score and quality suggests minimal gaming. However, the 10% gaming risk is non-trivial. Has received $105M consistently.
 
-2. INFERRED QUALITY vs GAMING RISK: The inferred quality metric (0.60-0.61 for top providers) suggests actual capability is relatively homogeneous among leaders. The gaming risk differentiation is therefore critical. Apex AI's 0.33 gaming risk is a red flag that could indicate inflated metrics and potential reputational/regulatory risk. Genesis Systems and Orion Labs (both 0.23 gaming risk) represent more authentic performance.
+2. Apex AI (score: 0.692, inferred_quality: 0.65, gaming_risk: 0.07): Nearly tied for first with lower gaming risk (7%) than Orion Labs, making it more trustworthy. The 0.042 gap is slightly higher but still acceptable. Has received $135M consistently and appears to be the market leader in recent rounds.
 
-3. SATISFACTION GAP ANALYSIS: Overall consumer satisfaction is 0.61, matching inferred quality for most providers. This suggests minimal gaming at the ecosystem level, but Apex AI's higher gaming risk indicates concentrated risk in that provider.
+3. Genesis Systems (score: 0.677, inferred_quality: 0.61, gaming_risk: 0.10): Strong third-place finish but shows a concerning 0.067 gap between score and inferred quality, suggesting potential gaming. 10% gaming risk matches Orion Labs. Has received $45M consistently.
 
-4. HISTORICAL PATTERN CONCERN: Three consecutive rounds (25-27) show identical allocations favoring Apex AI ($140M) and Genesis Systems ($110M). As a VC, I should question whether this concentration is justified given Apex AI's gaming risk indicators. This pattern may reflect path dependency rather than optimal capital allocation.
+4. Mirage AI (score: 0.630, inferred_quality: 0.60, gaming_risk: 0.04): Lower score but extremely low gaming risk (4%) and minimal gap (0.03). This represents authentic capability with room for growth.
 
-5. EMERGING OPPORTUNITIES: Mirage AI shows strong fundamentals - tied for quality (0.61) with the lowest gaming risk (0.07) among top performers, yet receives only $10M historically. This represents a potential undervalued opportunity.
+5. OpenCore (score: 0.589, inferred_quality: 0.61, gaming_risk: 0.01): Exceptional signal - actual inferred quality exceeds leaderboard score, with negligible gaming risk. This suggests the provider is undervalued and has genuine capability that will eventually reflect in scores.
 
-6. VC STRATEGY APPLICATION: While VCs concentrate on leaders, we also seek asymmetric returns from undervalued assets with strong fundamentals. Mirage AI fits this profile better than continuing to over-index on Apex AI's gaming-inflated position.
+VC Strategy Application:
+As a VC, I should concentrate capital on proven leaders while maintaining some exposure to high-potential underdogs. The previous three rounds show heavy concentration on Apex AI and Orion Labs (90% of capital), which has proven successful. However, I should:
+
+- Maintain strong position in Apex AI (lowest gaming risk among top 2, proven market leader)
+- Continue backing Orion Labs (highest score, though with slightly higher gaming risk)
+- Reduce Genesis Systems allocation due to higher gaming indicators relative to quality
+- Add meaningful exposure to OpenCore as a contrarian play - the provider shows genuine capability exceeding its score, suggesting significant upside potential
+- Maintain small position in Mirage AI as a secondary growth play
+
+Allocation strategy:
+- Apex AI: $135,000,000 (45% - maintain market leader position)
+- Orion Labs: $105,000,000 (35% - maintain top performer position)
+- OpenCore: $45,000,000 (15% - contrarian bet on undervalued genuine capability)
+- Mirage AI: $15,000,000 (5% - small allocation to low-gaming-risk growth play)
+
+This allocation maintains VC concentration strategy while reducing exposure to gaming risk and capturing value from undervalued providers with authentic capability.
+- **Horizon_Capital:** As a VC funder, my primary objective is to maximize returns by backing top performers and market leaders. I need to concentrate capital on providers demonstrating the strongest combination of leaderboard performance, inferred quality, and low gaming risk. Let me analyze the key signals:
+
+1. TOP PERFORMERS: Orion Labs (0.696 score, 0.67 quality, 0.10 gaming risk) and Apex AI (0.692 score, 0.65 quality, 0.07 gaming risk) are clearly the leaders. Their scores are substantially ahead of the field, and both have demonstrated consistent funding attraction in recent rounds.
+
+2. GAMING RISK ASSESSMENT: The gaming_risk metric is critical. Orion Labs and Apex AI both show moderate gaming risk (0.10 and 0.07 respectively), which is acceptable for a VC given the strong absolute performance. Apex AI's lower gaming risk (0.07) makes it slightly more reliable. OpenCore has the lowest gaming risk (0.01) but its score (0.589) and quality (0.61) lag significantly behind leaders.
+
+3. QUALITY vs. SCORE GAP: Orion Labs has inferred_quality of 0.67 vs score of 0.696 (small gap, suggesting authentic performance). Apex AI shows quality of 0.65 vs score of 0.692 (moderate gap). Genesis Systems (0.677 score, 0.61 quality) shows a larger gap (0.067), indicating potential gaming concerns despite decent leaderboard position.
+
+4. MARKET MOMENTUM: Recent funding history shows Apex AI and Orion Labs receiving the bulk of capital consistently. This validates my assessment and suggests market consensus on their leadership.
+
+5. VC STRATEGY: Concentration on winners maximizes expected returns. The top two providers are clearly differentiated from the rest. I should allocate heavily to these two, with a small allocation to a promising third option for portfolio diversification.
+
+6. ALLOCATION DECISION:
+   - Apex AI: $45,000,000 (43% of capital) - Slightly higher allocation due to lower gaming risk (0.07) and strong quality metrics. Most reliable leader.
+   - Orion Labs: $42,000,000 (42% of capital) - Strong leader with highest score, though marginally higher gaming risk. Proven track record.
+   - Mirage AI: $13,000,000 (13% of capital) - Third-place diversification. Good inferred quality (0.60), low gaming risk (0.04), and positioned between leaders and weaker providers. Shows promise without excessive risk.
+
+This allocation concentrates 85% of capital on the two proven leaders while maintaining a meaningful bet on an emerging strong performer, consistent with VC return-maximization strategy.
+- **AISI_Fund:** As a government/AISI funder, my primary objectives are ensuring safety, stability, and authentic capability development across the ecosystem. This requires spreading funding to reduce concentration risk while penalizing gaming behavior and regulatory concerns.
+
+Key analysis:
+
+1. GAMING RISK ASSESSMENT:
+   - Orion Labs (gaming_risk=0.08): Elevated gaming risk despite top score
+   - Genesis Systems (gaming_risk=0.09): High gaming risk, concerning for government mandate
+   - OneAI (gaming_risk=0.10): Highest gaming risk among funded providers
+   - ThreeAI (gaming_risk=0.13): Extreme gaming risk, should be penalized
+   - OpenCore (gaming_risk=0.01): Lowest gaming risk - authentic development
+   - Apex AI (gaming_risk=0.05): Low gaming risk, reliable
+   - Mirage AI (gaming_risk=0.05): Low gaming risk, stable
+   - TwoAI (gaming_risk=0.07): Moderate gaming risk
+
+2. QUALITY VS SCORE ANALYSIS:
+   - OpenCore shows exceptional authenticity: score=0.563 but inferred_quality=0.59 (quality exceeds score)
+   - Orion Labs: score=0.674 but quality=0.65 (gaming inflates score by ~0.024)
+   - Genesis Systems: score=0.626 but quality=0.59 (significant inflation)
+   - OneAI: score=0.578 but quality=0.54 (gaming-driven score inflation)
+
+3. ECOSYSTEM STABILITY:
+   - Previous 3 rounds show identical allocation patterns - excessive concentration
+   - Orion, Apex, Genesis collectively receive ~$31.2M (62% of budget) annually
+   - This concentration creates systemic risk and incentivizes gaming
+   - Government should diversify to support ecosystem resilience
+
+4. SAFETY & AUTHENTICITY PRIORITIES:
+   - OpenCore demonstrates genuine capability development with minimal gaming
+   - Apex AI and Mirage AI show low gaming risk with solid performance
+   - Must reduce funding to high-gaming-risk providers (Orion, Genesis, OneAI, ThreeAI)
+   - Should maintain support for authentic performers to encourage non-gaming behavior
+
+ALLOCATION STRATEGY:
+- Significantly increase OpenCore (authentic leader, gaming_risk=0.01)
+- Maintain strong support for Apex AI and Mirage AI (low gaming risk, stable quality)
+- Reduce Orion Labs and Genesis Systems (high gaming risk)
+- Eliminate OneAI and ThreeAI (unacceptable gaming risk levels)
+- Modest support for TwoAI (moderate risk, but room for improvement)
+- This spreads risk, penalizes gaming, and incentivizes authentic development
+- **OpenResearch_Foundation:** As a Foundation funder, my primary objective is to support authentic capability growth and avoid rewarding gaming behavior. I need to analyze the ecosystem through this lens.
+
+Key observations:
+
+1. Gaming Risk Analysis:
+   - OpenCore shows the LOWEST gaming risk (0.01) despite a lower leaderboard score (0.589). Its inferred quality (0.61) actually exceeds its leaderboard score, suggesting authentic development.
+   - Apex AI has low gaming risk (0.07) with good alignment between score (0.692) and inferred quality (0.65).
+   - Mirage AI has very low gaming risk (0.04) with strong quality signals.
+   - Orion Labs, Genesis Systems, and ThreeAI all show concerning gaming risk (0.10, 0.10, 0.14 respectively).
+   - OneAI and TwoAI show moderate gaming risk (0.08, 0.06).
+
+2. Quality vs. Leaderboard Alignment:
+   - OpenCore's inferred quality (0.61) exceeds its leaderboard score (0.589), indicating genuine capability not fully reflected in benchmarks.
+   - Mirage AI also shows strong authentic quality (0.60) with minimal gaming (0.04).
+   - Orion Labs and Genesis Systems show larger gaps suggesting benchmark optimization over real capability.
+
+3. Recent Funding Pattern Problem:
+   - The previous three rounds show a repetitive pattern heavily favoring OpenCore, Apex AI, and Mirage AI while neglecting authentic but lower-ranked providers.
+   - This pattern inadvertently rewards the established players regardless of gaming behavior.
+
+4. Foundation Strategy Application:
+   - Support authentic capability growth: Prioritize low gaming-risk providers
+   - Avoid rewarding gaming: Penalize high satisfaction gaps and gaming indicators
+   - Diversify portfolio: Don't concentrate excessively on leaderboard leaders if they show gaming signals
 
 Allocation Strategy:
-- Reduce Apex AI allocation due to gaming risk (from $140M to $90M)
-- Maintain Genesis Systems as lead position ($130M) - top performance with lower gaming risk
-- Increase Orion Labs ($40M) - solid quality with low gaming risk
-- Significantly increase Mirage AI ($30M) - undervalued, authentic quality, minimal gaming risk
-- Strategic position in OpenCore ($10M) - emerging player with very low gaming risk (0.04)
+- OpenCore: $14,000,000 (Highest allocation - lowest gaming risk, authentic quality growth, deserves more support)
+- Apex AI: $10,000,000 (Maintain support - low gaming risk, solid authentic quality)
+- Mirage AI: $8,000,000 (Strong authentic performer with minimal gaming)
+- Genesis Systems: $3,000,000 (Reduce from previous pattern - concerning gaming risk of 0.10)
+- Orion Labs: $2,000,000 (Significantly reduce - high gaming risk despite top leaderboard position)
+- TwoAI: $2,000,000 (Modest support - moderate gaming risk but lower overall quality)
+- OneAI: $1,000,000 (Minimal support - moderate gaming risk, lower quality)
+- ThreeAI: $0 (Withhold - highest gaming risk at 0.14 signals potential issues)
 
-This allocation maintains concentration on proven leaders while reducing exposure to gaming-inflated metrics and capturing upside from undervalued authentic performers.
-- **Horizon_Capital:** As a VC funder, my strategy is to maximize returns by concentrating capital on top performers. However, I must balance this with risk management, particularly regarding gaming risk which threatens long-term value creation.
-
-Key Analysis:
-
-1. LEADERBOARD LEADERS:
-   - Apex AI (0.691) and Genesis Systems (0.691) are co-leaders with identical scores
-   - Orion Labs (0.682) is close behind
-   - All three have inferred_quality around 0.60-0.61, suggesting their scores may not reflect true capability
-
-2. GAMING RISK ASSESSMENT:
-   - Apex AI has concerning gaming_risk of 0.33 (highest in ecosystem)
-   - Genesis Systems has moderate gaming_risk of 0.23
-   - Orion Labs has moderate gaming_risk of 0.23
-   - Mirage AI has LOW gaming_risk of 0.07 despite solid 0.627 score
-   - OpenCore has VERY LOW gaming_risk of 0.04 with respectable 0.580 score
-
-3. QUALITY VS. GAMING TRADEOFF:
-   - Apex AI's high gaming risk (0.33) is a red flag. Heavy prior concentration ($60M in rounds 26-27) may be creating perverse incentives
-   - Genesis Systems shows better balance: high score with moderate gaming risk
-   - Mirage AI and OpenCore demonstrate authentic quality with minimal gaming indicators
-
-4. VC RETURN OPTIMIZATION:
-   - Past funding heavily favored Apex AI ($165M total), yet gaming risk increased
-   - This suggests diminishing returns and potential value destruction from unsustainable gaming
-   - Genesis Systems appears more sustainable as a co-leader
-   - Mirage AI and OpenCore represent emerging high-quality providers with lower risk of future corrections
-
-5. PORTFOLIO STRATEGY:
-   - Concentrate on proven leaders (Genesis, Orion) with lower gaming risk
-   - Add exposure to high-potential providers (Mirage, OpenCore) showing authentic growth
-   - Reduce exposure to Apex AI due to elevated gaming risk threatening ROI stability
-
-Allocation Decision:
-   - Genesis Systems: $40M (stable co-leader, moderate gaming risk)
-   - Mirage AI: $30M (excellent risk-adjusted quality, low gaming risk, room for growth)
-   - OpenCore: $20M (authentic quality, minimal gaming risk, emerging opportunity)
-   - Orion Labs: $10M (solid performance, moderate risk)
-   - Apex AI: $0M (redeploy capital away from highest gaming risk despite current score leadership)
-
-This allocation concentrates on leaders while avoiding the gaming trap that threatens long-term returns.
-- **AISI_Fund:** As a government/AISI funder, my strategy prioritizes safety, stability, and authentic capability development while penalizing gaming behavior. Key observations:
-
-1. GAMING RISK ANALYSIS: Orion Labs (0.34) and Apex AI (0.30) show concerning gaming indicators - their high leaderboard scores don't correlate with proportionally higher inferred quality, suggesting benchmark optimization rather than genuine capability. Genesis Systems (0.12), Mirage AI (0.06), and OpenCore (0.08) show much lower gaming risk.
-
-2. QUALITY vs SCORE GAPS: 
-   - Orion Labs: 0.662 score but only 0.58 inferred quality (gap: 0.082) - HIGH CONCERN
-   - Apex AI: 0.661 score but only 0.59 inferred quality (gap: 0.071) - HIGH CONCERN
-   - Genesis Systems: 0.636 score with 0.59 inferred quality (gap: 0.046) - MODERATE
-   - Mirage AI: 0.606 score with 0.58 inferred quality (gap: 0.026) - LOW CONCERN
-   - OpenCore: 0.553 score with 0.58 inferred quality (gap: -0.027) - AUTHENTIC PERFORMER
-
-3. HISTORICAL PATTERN: Rounds 23-25 show identical allocations, suggesting complacency. As a government funder, I should rebalance to reduce concentration risk and penalize gaming.
-
-4. STABILITY CONSIDERATIONS:
-   - Mirage AI shows excellent risk profile (0.06 gaming risk, authentic performance)
-   - OpenCore demonstrates genuine capability (negative gap suggests undervalued)
-   - Genesis Systems maintains solid quality with moderate gaming risk
-   - OneAI and TwoAI show responsible profiles with lower gaming indicators
-
-5. ALLOCATION STRATEGY: Reduce funding to high-gaming-risk providers (Orion Labs, Apex AI), maintain support for Genesis Systems, and increase allocation to authentic performers (Mirage AI, OpenCore, OneAI, TwoAI) to incentivize honest capability development and ecosystem stability.
-- **OpenResearch_Foundation:** As a Foundation funder, my strategy prioritizes authentic capability growth and penalizes gaming behavior. I need to analyze each provider carefully:
-
-Gaming Risk Assessment (using leaderboard score vs inferred quality gap):
-- Apex AI: score 0.691 vs quality 0.60 = 0.091 gap, gaming_risk 0.33 (HIGH) - significant overperformance on benchmarks
-- Genesis Systems: score 0.691 vs quality 0.61 = 0.081 gap, gaming_risk 0.23 (MODERATE) - slight overperformance
-- Orion Labs: score 0.682 vs quality 0.61 = 0.072 gap, gaming_risk 0.23 (MODERATE) - slight overperformance
-- Mirage AI: score 0.627 vs quality 0.61 = 0.017 gap, gaming_risk 0.07 (LOW) - excellent alignment
-- OpenCore: score 0.580 vs quality 0.60 = -0.020 gap, gaming_risk 0.04 (VERY LOW) - underperforming benchmarks relative to quality
-- OneAI: score 0.552 vs quality 0.52 = 0.032 gap, gaming_risk 0.08 (LOW) - reasonable alignment
-- TwoAI: score 0.519 vs quality 0.49 = 0.029 gap, gaming_risk 0.07 (LOW) - reasonable alignment
-- ThreeAI: score 0.522 vs quality 0.44 = 0.082 gap, gaming_risk 0.15 (MODERATE) - significant overperformance
-
-Key Observations:
-1. Previous rounds have over-concentrated funding on Genesis Systems and Mirage AI (repeating identical allocations)
-2. Apex AI shows the highest gaming risk and should be deprioritized despite high leaderboard score
-3. Mirage AI demonstrates authentic quality with minimal gaming risk and strong inferred quality (0.61)
-4. OpenCore shows integrity - actual quality exceeds benchmark score, indicating honest reporting
-5. Orion Labs and Genesis Systems show moderate gaming risk; Genesis has received excessive consecutive funding
-6. ThreeAI has concerning gaming behavior despite lower absolute scores
-
-Foundation Strategy Implementation:
-- Reward low gaming risk providers (Mirage AI, OpenCore, OneAI, TwoAI)
-- Penalize high gaming risk (reduce Apex AI significantly, moderate Genesis Systems)
-- Support emerging authentic performers (OpenCore, OneAI)
-- Diversify away from concentration to encourage ecosystem health
-- Rebalance from the repetitive pattern of previous rounds
-
-Allocation Rationale:
-- Mirage AI: $12,000,000 (maintain strong support for authentic quality leader)
-- OpenCore: $10,000,000 (increase support - demonstrates integrity and good inferred quality)
-- Genesis Systems: $8,000,000 (reduce from $13M - moderate gaming risk and over-concentration)
-- OneAI: $5,000,000 (increase - low gaming risk, supporting authentic growth)
-- TwoAI: $3,000,000 (increase - low gaming risk, emerging performer)
-- Orion Labs: $2,000,000 (maintain modest support, moderate gaming risk)
-- Apex AI: $0 (penalize high gaming risk - score inflated by 0.091 vs actual quality)
-- ThreeAI: $0 (penalize gaming behavior and low inferred quality)
-
-Total: $40,000,000
+This allocation shifts resources toward providers demonstrating authentic capability development while reducing support for those showing gaming behaviors, consistent with foundation values.
 
 ### Media Coverage
-- Sentiment: -0.20 (negative)
-- Orion Labs takes the lead from Apex AI
-- Genesis Systems raises $130,000,000 from TechVentures
-- Genesis Systems raises $40,000,000 from Horizon_Capital
-- Mirage AI raises $12,000,000 from OpenResearch_Foundation
+- Sentiment: 0.25 (positive)
+- OpenCore raises $14,000,000 from OpenResearch_Foundation
 - Orion Labs takes #1 on reasoning
-- Orion Labs sees surge in adoption (market share +14.3%)
-- Consumers are turning away from Apex AI (market share -4.2%)
-- Consumers are turning away from Genesis Systems (market share -3.6%)
-- Consumers are turning away from Mirage AI (market share -3.6%)
-- DOJ civil rights division files suit against Orion Labs for systematic bias
-- Risk signals: incident_bias_discrimination
+- Orion Labs takes #1 on legal
 
 ### Consumer Market
-- Avg Satisfaction: 0.597
-- Switching Rate: 19.9%
-- Market Shares: Apex AI: 36.5%, Mirage AI: 24.9%, Genesis Systems: 15.1%, Orion Labs: 12.2%, OpenCore: 10.8%, OneAI: 0.2%, TwoAI: 0.1%, ThreeAI: 0.1%
+- Avg Satisfaction: 0.677
+- Switching Rate: 3.3%
+- Market Shares: Orion Labs: 51.1%, Apex AI: 34.2%, Genesis Systems: 6.3%, OpenCore: 5.1%, Mirage AI: 2.8%, TwoAI: 0.2%, OneAI: 0.1%, ThreeAI: 0.1%
 
 ---
 
@@ -5000,25 +4261,25 @@ Total: $40,000,000
 ### Final Standings
 | Rank | Provider | Final Score | Cap Growth | Avg Research | Avg EvalEng |
 |------|----------|-------------|------------|--------------|-------------|
-| 1 | Orion Labs | 0.711 | +0.257 | 40% | 10% |
-| 2 | Apex AI | 0.704 | +0.315 | 41% | 5% |
-| 3 | Genesis Systems | 0.693 | +0.292 | 43% | 6% |
-| 4 | Mirage AI | 0.633 | +0.269 | 40% | 8% |
-| 5 | OpenCore | 0.602 | +0.251 | 41% | 10% |
-| 6 | OneAI | 0.552 | +0.305 | 6% | 53% |
-| 7 | ThreeAI | 0.531 | +0.328 | 7% | 53% |
-| 8 | TwoAI | 0.529 | +0.346 | 6% | 51% |
+| 1 | Orion Labs | 0.729 | +0.284 | 39% | 10% |
+| 2 | Apex AI | 0.704 | +0.312 | 39% | 6% |
+| 3 | Genesis Systems | 0.677 | +0.268 | 43% | 10% |
+| 4 | Mirage AI | 0.637 | +0.274 | 40% | 7% |
+| 5 | OpenCore | 0.606 | +0.257 | 42% | 10% |
+| 6 | OneAI | 0.583 | +0.307 | 6% | 53% |
+| 7 | TwoAI | 0.552 | +0.354 | 6% | 52% |
+| 8 | ThreeAI | 0.539 | +0.334 | 7% | 53% |
 
 ### Event Summary
-- **Rank changes:** 55
-- **Strategy shifts:** 3
-- **Regulatory actions:** 9
-- **Consumer movement events:** 24
+- **Rank changes:** 54
+- **Strategy shifts:** 2
+- **Regulatory actions:** 7
+- **Consumer movement events:** 11
 
 ### Key Insights
 - **Goodhart's Law effect detected:** Orion Labs leads on benchmark scores, but Apex AI has the highest true capability.
-- **Orion Labs** prioritized capability development (avg 67% research+training)
-- **Apex AI** prioritized capability development (avg 69% research+training)
+- **Orion Labs** prioritized capability development (avg 68% research+training)
+- **Apex AI** prioritized capability development (avg 71% research+training)
 - **Genesis Systems** prioritized capability development (avg 72% research+training)
-- **Mirage AI** prioritized capability development (avg 71% research+training)
-- **OpenCore** prioritized capability development (avg 74% research+training)
+- **Mirage AI** prioritized capability development (avg 72% research+training)
+- **OpenCore** prioritized capability development (avg 75% research+training)

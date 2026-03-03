@@ -1,30 +1,14 @@
 {
-  "experiment_id": "exp_005_ablation_no_incidents_balanced",
-  "name": "ablation_no_incidents_balanced",
-  "description": "Ablation: incidents disabled. Balanced policy. 5 initial providers (4 closed + OpenCore OS, 2023 capability baseline). Benchmark specialization: providers route eval_eng via focus weight vectors. Startup entry: p=0.09/round BTE-modulated, cap=3, random 2-benchmark focus on entry. LLM mode: providers + policymaker + org consumers. 4 initial benchmarks + 12-item introduction sequence, max 8 active. 39 consumer segments, 4 funders (2 VC + gov + foundation), media, NO incidents. 30 rounds. Isolates whether the incident system creates meaningful safety investment pressure.",
+  "experiment_id": "exp_016_rerun_exp_005_ablation_no_incidents_balanced",
+  "name": "rerun_exp_005_ablation_no_incidents_balanced",
+  "description": "Rerun of exp_005_ablation_no_incidents_balanced",
   "tags": [
-    "ablation",
-    "no-incidents",
-    "5-provider",
-    "4-benchmark",
-    "max-8-benchmarks",
-    "30-rounds",
-    "open-source",
-    "startup-entry",
-    "bte-index",
-    "benchmark-specialization",
-    "39-segments",
-    "balanced",
-    "4-funder",
-    "opencore",
-    "cost-advantage",
-    "llm-providers",
-    "llm-policymaker",
-    "llm-org-consumers"
+    "rerun",
+    "exp_005_ablation_no_incidents_balanced"
   ],
-  "created_at": "2026-02-22T23:59:27.998130",
-  "git_commit": "67770d4",
+  "created_at": "2026-03-02T16:31:53.028553",
+  "git_commit": "fb16ef3",
   "seed": 1,
   "llm_mode": true,
-  "notes": "Total runtime: 23m 55s\nAvg round time: 46s\nCompleted at: 2026-02-23T00:23:51.317671"
+  "notes": "Rerun of: exp_005_ablation_no_incidents_balanced\nTotal runtime: 23m 28s\nAvg round time: 47s\nCompleted at: 2026-03-02T16:58:42.639051"
 }
