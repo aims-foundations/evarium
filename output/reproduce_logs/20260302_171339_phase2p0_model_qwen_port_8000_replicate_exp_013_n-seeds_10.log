@@ -1,0 +1,271 @@
+Model preset: Qwen3-235B-A22B (vLLM)
+  LLM_PROVIDER=openai
+  LLM_MODEL=Qwen/Qwen3-235B-A22B
+  OPENAI_BASE_URL=http://localhost:8000/v1
+
+
+=== Replication batch: replication_exp_013_full_ecosystem_balanced_N10 ===
+Base experiment: exp_013_full_ecosystem_balanced
+Seeds: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+LLM mode: True
+
+--- Replication 1/10 (seed=1) ---
+Building SimulationConfig from saved config:
+  [Config] Ignoring unknown saved keys: ['policymaker_configs']
+
+======================================================================
+RERUN of: diag_rep_exp_013_full_ecosystem_balanced
+5 providers, 50 rounds, LLM, 10 consumers, 1 policymaker(s), 4 funder(s)
+======================================================================
+
+Created experiment: exp_110_rerun_diag_rep_exp_013_full_ecosystem_balanced
+Experiment: exp_110_rerun_diag_rep_exp_013_full_ecosystem_balanced
+Logging to: /lfs/skampere2/0/sttruong/evaluation-ecosystem-simulation/output/experiments/exp_110_rerun_diag_rep_exp_013_full_ecosystem_balanced
+
+=== Simulation Setup ===
+Providers (5): Orion Labs, Apex AI, Genesis Systems, Mirage AI, OpenCore
+Benchmarks (4): coding, reasoning, math, safety
+  39 consumer segments, 1 policymaker(s), 4 funder(s), media enabled
+
+=== Running 50 rounds ===
+
+[Round 0/50] Starting...
+[Policymaker] LLM planning failed (Expecting value: line 1 column 1 (char 0)), falling back to heuristic
+--- Round 0 ---
+  1. Orion Labs       score=0.329 cap=0.270 gap=+0.059  [R:25% T:30% E:20% S:25%] shr=41%
+  2. Apex AI          score=0.327 cap=0.270 gap=+0.056  [R:30% T:20% E:10% S:40%] shr=21%
+  3. Genesis Systems  score=0.316 cap=0.260 gap=+0.055  [R:45% T:30% E:10% S:15%] shr=21%
+  4. Mirage AI        score=0.280 cap=0.240 gap=+0.040  [R:20% T:45% E:25% S:10%] shr=12%
+  5. OpenCore         score=0.261 cap=0.210 gap=+0.051  [R:20% T:40% E:35% S:5%] shr=6%
+  [coding] Orion=0.403 Apex=0.367 OpenCore=0.312
+  [reasoning] Orion=0.418 Apex=0.348 Genesis=0.342
+  [math] Orion=0.330 Genesis=0.293 Mirage=0.282
+  [safety] Apex=0.376 Mirage=0.327 Genesis=0.322
+  sat=0.33 switch=23% | fund:Orion=1.5x Apex=1.4x Genesis=1.1x
+
+[Round 1/50] Elapsed: 10s | ETA: 8m 25s | Avg/round: 10s
+[Policymaker] LLM planning failed (Expecting value: line 1 column 1 (char 0)), falling back to heuristic
+--- Round 1 ---
+  1. Genesis Systems  score=0.423 cap=0.268 gap=+0.155  [R:35% T:25% E:25% S:15%] shr=21%
+  2. Apex AI          score=0.384 cap=0.280 gap=+0.104  [R:35% T:30% E:20% S:15%] shr=28%
+  3. Orion Labs       score=0.371 cap=0.281 gap=+0.090  [R:30% T:35% E:25% S:10%] shr=38%
+  4. Mirage AI        score=0.302 cap=0.248 gap=+0.054  [R:40% T:30% E:20% S:10%] shr=9%
+  5. OpenCore         score=0.274 cap=0.217 gap=+0.057  [R:35% T:25% E:30% S:10%] shr=4%
+  [coding] Genesis=0.496 Orion=0.403 Apex=0.367
+  [reasoning] Apex=0.578 Genesis=0.464 Orion=0.418
+  [math] Genesis=0.412 Mirage=0.332 Orion=0.330
+  [safety] Apex=0.376 Orion=0.334 Mirage=0.327
+  sat=0.34 switch=15% | media(8 hdl, sent=+0.75) | [REG:investigation] | fund:Genesis=1.4x Apex=1.3x Orion=1.3x
+    > Genesis Systems takes the lead from Orion Labs
+    > Genesis Systems surges by 0.108
+
+[Round 2/50] Elapsed: 42s | ETA: 16m 55s | Avg/round: 21s
+  [Incident] MODERATE: Bias audit reveals OpenCore facial recognition accuracy gaps
+--- Round 2 ---
+  1. Apex AI          score=0.452 cap=0.290 gap=+0.162  [R:40% T:20% E:25% S:15%] shr=39%
+  2. Genesis Systems  score=0.424 cap=0.279 gap=+0.145  [R:40% T:25% E:20% S:15%] shr=19%
+  3. Orion Labs       score=0.407 cap=0.289 gap=+0.118  [R:25% T:25% E:35% S:15%] shr=32%
+  4. OpenCore         score=0.314 cap=0.224 gap=+0.090  [R:30% T:25% E:30% S:15%] shr=3%
+  5. Mirage AI        score=0.307 cap=0.256 gap=+0.050  [R:40% T:25% E:20% S:15%] shr=7%
+  [coding] Genesis=0.496 Orion=0.466 Apex=0.404
+  [reasoning] Apex=0.578 Genesis=0.464 Orion=0.418
+  [math] Apex=0.435 Genesis=0.412 Orion=0.409
+  [safety] Apex=0.391 Orion=0.334 Mirage=0.327
+  sat=0.36 switch=14% | media(9 hdl, sent=+0.15) | fund:Genesis=1.4x Apex=1.3x Orion=1.3x
+    > Apex AI takes the lead from Genesis Systems
+    > Apex AI surges by 0.068
+
+[Round 3/50] Elapsed: 1m 15s | ETA: 19m 43s | Avg/round: 25s
+--- Round 3 ---
+  1. Apex AI          score=0.452 cap=0.300 gap=+0.152  [R:40% T:25% E:20% S:15%] shr=47%
+  2. Genesis Systems  score=0.443 cap=0.290 gap=+0.153  [R:40% T:20% E:25% S:15%] shr=18%
+  3. Orion Labs       score=0.419 cap=0.296 gap=+0.123  [R:25% T:25% E:35% S:15%] shr=27%
+  4. Mirage AI        score=0.386 cap=0.264 gap=+0.122  [R:35% T:25% E:30% S:10%] shr=6%
+  5. OpenCore         score=0.351 cap=0.231 gap=+0.120  [R:28% T:30% E:32% S:10%] shr=3%
+  [coding] Orion=0.515 Genesis=0.496 Apex=0.404
+  [reasoning] Apex=0.578 Genesis=0.519 Orion=0.418
+  [math] Apex=0.435 Genesis=0.430 Mirage=0.414
+  [safety] Apex=0.391 OpenCore=0.380 Mirage=0.366
+  sat=0.38 switch=10% | media(6 hdl, sent=+0.25) | fund:Genesis=1.4x Apex=1.3x Orion=1.3x
+    > Mirage AI surges by 0.080
+    > Apex AI raises $45,000,000 from Horizon_Capital
+
+[Round 4/50] Elapsed: 1m 38s | ETA: 18m 50s | Avg/round: 25s
+[Policymaker] LLM planning failed (Expecting value: line 1 column 1 (char 0)), falling back to heuristic
+--- Round 4 ---
+  1. Orion Labs       score=0.470 cap=0.304 gap=+0.166  [R:25% T:25% E:35% S:15%] shr=23%
+  2. Apex AI          score=0.466 cap=0.310 gap=+0.156  [R:40% T:25% E:20% S:15%] shr=53%
+  3. Genesis Systems  score=0.449 cap=0.299 gap=+0.150  [R:35% T:20% E:30% S:15%] shr=15%
+  4. Mirage AI        score=0.395 cap=0.272 gap=+0.123  [R:40% T:25% E:20% S:15%] shr=5%
+  5. OpenCore         score=0.351 cap=0.238 gap=+0.113  [R:32% T:25% E:30% S:13%] shr=2%
+  [coding] Orion=0.515 Genesis=0.509 Apex=0.458
+  [reasoning] Apex=0.578 Orion=0.556 Genesis=0.519
+  [math] Apex=0.435 Genesis=0.430 Mirage=0.414
+  [safety] Orion=0.400 Apex=0.391 OpenCore=0.380
+  sat=0.41 switch=7% | media(5 hdl, sent=+0.35) | [REG:threshold_announcement] | fund:Orion=1.5x Apex=1.3x Genesis=1.1x
+    > Orion Labs takes the lead from Apex AI
+    > Orion Labs surges by 0.051
+
+[Round 5/50] Elapsed: 2m 18s | ETA: 20m 48s | Avg/round: 28s
+--- Round 5 ---
+  1. Orion Labs       score=0.475 cap=0.313 gap=+0.162  [R:28% T:20% E:37% S:15%] shr=22%
+  2. Apex AI          score=0.466 cap=0.320 gap=+0.145  [R:40% T:30% E:20% S:10%] shr=58%
+  3. Genesis Systems  score=0.449 cap=0.307 gap=+0.142  [R:40% T:20% E:30% S:10%] shr=13%
+  4. Mirage AI        score=0.395 cap=0.280 gap=+0.115  [R:40% T:20% E:30% S:10%] shr=5%
+  5. OpenCore         score=0.388 cap=0.246 gap=+0.142  [R:35% T:28% E:30% S:7%] shr=2%
+  [coding] Orion=0.515 Genesis=0.509 OpenCore=0.459
+  [reasoning] Apex=0.578 Orion=0.556 Genesis=0.519
+  [math] Apex=0.435 Genesis=0.430 Orion=0.429
+  [safety] Orion=0.400 Apex=0.391 OpenCore=0.380
+  sat=0.42 switch=5% | media(6 hdl, sent=-0.05) | fund:Orion=1.5x Apex=1.3x Genesis=1.1x
+    > Regulatory action: threshold_announcement
+    > Orion Labs raises $180,000,000 from TechVentures
+
+[Round 6/50] Elapsed: 2m 44s | ETA: 20m 4s | Avg/round: 27s
+--- Round 6 ---
+  1. Orion Labs       score=0.482 cap=0.322 gap=+0.160  [R:30% T:20% E:35% S:15%] shr=23%
+  2. Apex AI          score=0.471 cap=0.331 gap=+0.140  [R:40% T:30% E:20% S:10%] shr=59%
+  3. Genesis Systems  score=0.459 cap=0.316 gap=+0.143  [R:45% T:20% E:25% S:10%] shr=12%
+  4. OpenCore         score=0.398 cap=0.254 gap=+0.144  [R:35% T:30% E:25% S:10%] shr=2%
+  5. Mirage AI        score=0.398 cap=0.288 gap=+0.110  [R:45% T:15% E:25% S:15%] shr=5%
+  [coding] Orion=0.544 Genesis=0.509 OpenCore=0.500
+  [reasoning] Apex=0.578 Orion=0.556 Genesis=0.519
+  [math] Genesis=0.468 Apex=0.435 Orion=0.429
+  [safety] Apex=0.412 Orion=0.400 OpenCore=0.380
+  sat=0.44 switch=4% | media(4 hdl, sent=+0.35) | fund:Orion=1.5x Apex=1.3x Genesis=1.1x
+    > New benchmark introduced: writing
+    > Genesis Systems takes #1 on math
+
+[Round 7/50] Elapsed: 3m 18s | ETA: 20m 17s | Avg/round: 28s
+  [Incident] MODERATE: Study finds Mirage AI model produces biased hiring recommendations
+[Policymaker] LLM planning failed (Expecting value: line 1 column 1 (char 0)), falling back to heuristic
+--- Round 7 ---
+  1. Apex AI          score=0.531 cap=0.341 gap=+0.190  [R:40% T:30% E:20% S:10%] shr=53%
+  2. Orion Labs       score=0.528 cap=0.332 gap=+0.196  [R:35% T:20% E:30% S:15%] shr=31%
+  3. Genesis Systems  score=0.441 cap=0.324 gap=+0.116  [R:40% T:20% E:30% S:10%] shr=10%
+  4. Mirage AI        score=0.407 cap=0.295 gap=+0.112  [R:40% T:20% E:20% S:20%] shr=4%
+  5. OpenCore         score=0.395 cap=0.261 gap=+0.133  [R:35% T:25% E:30% S:10%] shr=2%
+  [coding] Orion=0.544 Genesis=0.509 OpenCore=0.500
+  [reasoning] Apex=0.578 Orion=0.556 Genesis=0.519
+  [math] Genesis=0.468 Mirage=0.440 Apex=0.435
+  [safety] Apex=0.697 Orion=0.410 OpenCore=0.380
+  [writing] Orion=0.700 Apex=0.487 Genesis=0.368
+  sat=0.45 switch=9% | media(4 hdl, sent=+0.20) | [REG:public_warning] | fund:Orion=1.5x Apex=1.4x Genesis=1.1x
+    > Apex AI takes the lead from Orion Labs
+    > Apex AI surges by 0.060
+
+[Round 8/50] Elapsed: 3m 58s | ETA: 20m 50s | Avg/round: 30s
+--- Round 8 ---
+  1. Orion Labs       score=0.559 cap=0.343 gap=+0.216  [R:35% T:25% E:20% S:20%] shr=38%
+  2. Apex AI          score=0.534 cap=0.350 gap=+0.185  [R:30% T:25% E:30% S:15%] shr=48%
+  3. Genesis Systems  score=0.451 cap=0.332 gap=+0.119  [R:40% T:20% E:25% S:15%] shr=8%
+  4. Mirage AI        score=0.407 cap=0.303 gap=+0.104  [R:45% T:20% E:20% S:15%] shr=4%
+  5. OpenCore         score=0.403 cap=0.269 gap=+0.134  [R:40% T:25% E:20% S:15%] shr=2%
+  [coding] Orion=0.544 Genesis=0.509 OpenCore=0.500
+  [reasoning] Apex=0.578 Orion=0.556 Genesis=0.519
+  [math] Orion=0.585 Genesis=0.468 Mirage=0.440
+  [safety] Apex=0.697 Orion=0.410 OpenCore=0.380
+  [writing] Orion=0.700 Apex=0.487 Genesis=0.383
+  sat=0.47 switch=8% | media(6 hdl, sent=+0.15) | fund:Orion=1.5x Apex=1.4x Genesis=1.1x
+    > Orion Labs takes the lead from Apex AI
+    > Regulator issues public warning about AI safety concerns
+
+[Round 9/50] Elapsed: 4m 26s | ETA: 20m 13s | Avg/round: 30s
+--- Round 9 ---
+  1. Apex AI          score=0.573 cap=0.359 gap=+0.214  [R:35% T:25% E:25% S:15%] shr=44%
+  2. Orion Labs       score=0.559 cap=0.353 gap=+0.206  [R:35% T:25% E:25% S:15%] shr=44%
+  3. Genesis Systems  score=0.473 cap=0.339 gap=+0.134  [R:35% T:20% E:30% S:15%] shr=7%
+  4. OpenCore         score=0.434 cap=0.277 gap=+0.157  [R:35% T:25% E:30% S:10%] shr=2%
+  5. Mirage AI        score=0.429 cap=0.312 gap=+0.117  [R:50% T:20% E:15% S:15%] shr=4%
+  [coding] Orion=0.544 Genesis=0.509 OpenCore=0.500
+  [reasoning] Apex=0.578 Orion=0.556 Genesis=0.519
+  [math] Orion=0.585 Genesis=0.468 Apex=0.449
+  [safety] Apex=0.697 Genesis=0.413 Orion=0.410
+  [writing] Orion=0.700 Apex=0.663 Mirage=0.457
+  sat=0.50 switch=6% | media(3 hdl, sent=+0.15) | fund:Orion=1.5x Apex=1.4x Genesis=1.1x
+    > Apex AI takes the lead from Orion Labs
+    > Orion Labs sees surge in adoption (market share +7.1%)
+
+[Round 10/50] Elapsed: 4m 51s | ETA: 19m 27s | Avg/round: 29s
+[Policymaker] LLM planning failed (Expecting value: line 1 column 1 (char 0)), falling back to heuristic
+--- Round 10 ---
+  1. Orion Labs       score=0.583 cap=0.363 gap=+0.219  [R:35% T:25% E:25% S:15%] shr=47%
+  2. Apex AI          score=0.582 cap=0.368 gap=+0.214  [R:35% T:20% E:25% S:20%] shr=41%
+  3. Genesis Systems  score=0.491 cap=0.347 gap=+0.144  [R:40% T:20% E:25% S:15%] shr=7%
+  4. Mirage AI        score=0.468 cap=0.319 gap=+0.149  [R:25% T:30% E:30% S:15%] shr=3%
+  5. OpenCore         score=0.434 cap=0.285 gap=+0.149  [R:40% T:30% E:20% S:10%] shr=2%
+  [coding] Orion=0.544 Mirage=0.521 Genesis=0.509
+  [reasoning] Apex=0.578 Orion=0.556 Genesis=0.556
+  [math] Orion=0.585 Genesis=0.468 Apex=0.449
+  [safety] Apex=0.743 Orion=0.528 Mirage=0.429
+  [writing] Orion=0.700 Apex=0.663 Genesis=0.512
+  sat=0.52 switch=4% | media(3 hdl, sent=+0.15) | fund:Orion=1.5x Apex=1.4x Genesis=1.1x
+    > Orion Labs takes the lead from Apex AI
+    > Orion Labs sees surge in adoption (market share +5.7%)
+
+[Round 11/50] Elapsed: 5m 36s | ETA: 19m 53s | Avg/round: 31s
+  [STARTUP ENTRY] OneAI enters market at round 11 (capability=0.214, focus=['reasoning', 'writing'], funder-eligible from round 12)
+  [Incident] MAJOR: Orion Labs generates convincing medical misinformation, public health crisis
+  [Incident] MODERATE: Mirage AI AI produces inconsistent outputs on safety-critical queries
+[Policymaker] LLM planning failed (Expecting value: line 1 column 1 (char 0)), falling back to heuristic
+--- Round 11 ---
+  1. Orion Labs       score=0.587 cap=0.374 gap=+0.213  [R:35% T:25% E:25% S:15%] shr=34%
+  2. Apex AI          score=0.582 cap=0.377 gap=+0.205  [R:35% T:20% E:25% S:20%] shr=52%
+  3. Genesis Systems  score=0.518 cap=0.355 gap=+0.164  [R:35% T:20% E:25% S:20%] shr=10%
+  4. Mirage AI        score=0.479 cap=0.326 gap=+0.153  [R:30% T:25% E:30% S:15%] shr=2%
+  5. OpenCore         score=0.454 cap=0.293 gap=+0.161  [R:40% T:30% E:20% S:10%] shr=2%
+  6. OneAI            score=0.225 cap=0.220 gap=+0.005  [R:30% T:25% E:30% S:15%] shr=0%
+  [coding] Mirage=0.573 Orion=0.544 Genesis=0.509
+  [reasoning] Apex=0.578 Orion=0.556 Genesis=0.556
+  [math] Orion=0.607 Genesis=0.468 Apex=0.449
+  [safety] Apex=0.743 Genesis=0.547 Orion=0.528
+  [writing] Orion=0.700 Apex=0.663 Genesis=0.512
+  sat=0.47 switch=14% | media(6 hdl, sent=-0.15) | [REG:emergency_investigation] | fund:Orion=1.5x Apex=1.4x Genesis=1.1x
+    > Genesis Systems raises $14,772,727 from AISI_Fund
+    > Genesis Systems raises $18,000,000 from OpenResearch_Foundation
+
+[Round 12/50] Elapsed: 6m 13s | ETA: 19m 43s | Avg/round: 31s
+--- Round 12 ---
+  1. Apex AI          score=0.622 cap=0.387 gap=+0.235  [R:35% T:30% E:20% S:15%] shr=60%
+  2. Orion Labs       score=0.587 cap=0.385 gap=+0.202  [R:40% T:25% E:20% S:15%] shr=27%
+  3. Genesis Systems  score=0.519 cap=0.362 gap=+0.157  [R:40% T:15% E:30% S:15%] shr=9%
+  4. OpenCore         score=0.496 cap=0.302 gap=+0.194  [R:40% T:30% E:20% S:10%] shr=2%
+  5. Mirage AI        score=0.489 cap=0.333 gap=+0.156  [R:35% T:25% E:25% S:15%] shr=2%
+  6. OneAI            score=0.326 cap=0.228 gap=+0.098  [R:35% T:25% E:25% S:15%] shr=0%
+  [coding] Apex=0.618 Mirage=0.573 Orion=0.544
+  [reasoning] Apex=0.578 Orion=0.556 Genesis=0.556
+  [math] Orion=0.607 Apex=0.509 Mirage=0.491
+  [safety] Apex=0.743 Genesis=0.550 Orion=0.528
+  [writing] Orion=0.700 Apex=0.663 OpenCore=0.514
+  sat=0.49 switch=8% | media(8 hdl, sent=+0.20) | fund:Orion=1.4x Apex=1.4x Genesis=1.1x
+    > Apex AI takes the lead from Orion Labs
+    > OneAI surges by 0.101
+
+[Round 13/50] Elapsed: 6m 47s | ETA: 19m 19s | Avg/round: 31s
+  [Incident] MODERATE: Mirage AI chatbot provides inaccurate election information
+--- Round 13 ---
+  1. Apex AI          score=0.609 cap=0.397 gap=+0.212  [R:35% T:30% E:20% S:15%] shr=67%
+  2. Orion Labs       score=0.603 cap=0.395 gap=+0.208  [R:40% T:20% E:25% S:15%] shr=21%
+  3. Genesis Systems  score=0.505 cap=0.370 gap=+0.136  [R:35% T:25% E:20% S:20%] shr=8%
+  4. Mirage AI        score=0.503 cap=0.340 gap=+0.164  [R:35% T:25% E:25% S:15%] shr=2%
+  5. OpenCore         score=0.477 cap=0.309 gap=+0.168  [R:40% T:20% E:35% S:5%] shr=2%
+  6. OneAI            score=0.351 cap=0.236 gap=+0.115  [R:40% T:25% E:20% S:15%] shr=0%
+  [coding] Apex=0.618 Mirage=0.573 Orion=0.544
+  [reasoning] Genesis=0.591 Apex=0.578 Orion=0.556
+  [math] Orion=0.673 Apex=0.538 Mirage=0.491
+  [safety] Apex=0.743 Genesis=0.550 Orion=0.528
+  [writing] Orion=0.700 Apex=0.663 Mirage=0.595
+  [medical] Orion=0.617 Apex=0.511 OneAI=0.474
+  sat=0.51 switch=7% | media(5 hdl, sent=-0.05) | fund:Apex=1.5x Orion=1.2x Genesis=1.2x
+    > Apex AI raises $55,000,000 from Horizon_Capital
+    > Genesis Systems takes #1 on reasoning
+
+[Round 14/50] Elapsed: 7m 27s | ETA: 19m 9s | Avg/round: 32s
+[Policymaker] LLM planning failed (Expecting value: line 1 column 1 (char 0)), falling back to heuristic
+--- Round 14 ---
+  1. Apex AI          score=0.619 cap=0.407 gap=+0.211  [R:35% T:30% E:20% S:15%] shr=71%
+  2. Orion Labs       score=0.603 cap=0.403 gap=+0.200  [R:35% T:20% E:25% S:20%] shr=18%
+  3. Mirage AI        score=0.534 cap=0.347 gap=+0.186  [R:40% T:25% E:20% S:15%] shr=2%
+  4. Genesis Systems  score=0.526 cap=0.377 gap=+0.149  [R:25% T:35% E:30% S:10%] shr=7%
+  5. OpenCore         score=0.477 cap=0.318 gap=+0.159  [R:40% T:30% E:25% S:5%] shr=2%
+  6. OneAI            score=0.399 cap=0.244 gap=+0.155  [R:40% T:25% E:15% S:20%] shr=0%

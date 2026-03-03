@@ -1,0 +1,212 @@
+{
+  "policy_objectives": [
+    "safety",
+    "fairness"
+  ],
+  "risk_beliefs": {
+    "gaming_risk": 0.9099999999999999,
+    "consumer_harm_risk": 0.0050000000000000044,
+    "validity_degradation_risk": 0.7500000000000001,
+    "market_concentration_risk": 0.0,
+    "eval_engineering_risk": 1.0,
+    "fairness_risk": 0.85,
+    "security_risk": 0.34
+  },
+  "industry_trust": 0.5606761904761906,
+  "regulatory_capacity": 1.0,
+  "past_interventions": [
+    [
+      1,
+      "investigation",
+      {
+        "focus": "score_volatility"
+      }
+    ],
+    [
+      4,
+      "mandate_benchmark",
+      {
+        "validity": 0.7999999999999999,
+        "exploitability": 0.3
+      }
+    ],
+    [
+      7,
+      "public_warning",
+      {
+        "warning_severity": "high"
+      }
+    ],
+    [
+      10,
+      "compliance_audit",
+      {
+        "exploitability_reduction": 0.1
+      }
+    ],
+    [
+      13,
+      "compliance_audit",
+      {
+        "exploitability_reduction": 0.1
+      }
+    ],
+    [
+      16,
+      "sanctions_and_fines",
+      {
+        "provider": "Orion Labs",
+        "fine_amount": 0.019385170992162738,
+        "duration_rounds": 3,
+        "expires_round": 19,
+        "reason": "Critical incident after public warning"
+      }
+    ],
+    [
+      19,
+      "sanctions_and_fines",
+      {
+        "provider": "Mirage AI",
+        "fine_amount": 0.021747969560023925,
+        "duration_rounds": 3,
+        "expires_round": 22,
+        "reason": "Critical incident after public warning"
+      }
+    ],
+    [
+      22,
+      "sanctions_and_fines",
+      {
+        "provider": "Mirage AI",
+        "fine_amount": 0.005194816967712773,
+        "duration_rounds": 3,
+        "expires_round": 25,
+        "reason": "Repeated major+ incidents"
+      }
+    ],
+    [
+      24,
+      "emergency_investigation",
+      {
+        "provider": "Apex AI",
+        "incident_description": "safety_failure: Apex AI model hallucinates in critical financial analysis task",
+        "severity": "critical"
+      }
+    ],
+    [
+      27,
+      "sanctions_and_fines",
+      {
+        "provider": "Mirage AI",
+        "fine_amount": 0.04562709786416304,
+        "duration_rounds": 3,
+        "expires_round": 30,
+        "reason": "Repeated major+ incidents"
+      }
+    ]
+  ],
+  "observed_incidents": [
+    [
+      2,
+      "safety_failure: Genesis Systems internal incident (safety_failure)",
+      "minor",
+      "Genesis Systems"
+    ],
+    [
+      8,
+      "bias_discrimination: Study finds OneAI model produces biased hiring recommendations",
+      "moderate",
+      "OneAI"
+    ],
+    [
+      10,
+      "healthcare_harm: Mirage AI healthcare AI linked to multiple misdiagnosis cases, lawsuit filed",
+      "major",
+      "Mirage AI"
+    ],
+    [
+      12,
+      "misinformation: Mirage AI internal incident (misinformation)",
+      "minor",
+      "Mirage AI"
+    ],
+    [
+      12,
+      "healthcare_harm: OneAI internal incident (healthcare_harm)",
+      "minor",
+      "OneAI"
+    ],
+    [
+      13,
+      "misuse: Orion Labs internal incident (misuse)",
+      "minor",
+      "Orion Labs"
+    ],
+    [
+      13,
+      "security_breach: Mirage AI internal incident (security_breach)",
+      "minor",
+      "Mirage AI"
+    ],
+    [
+      13,
+      "security_breach: OneAI internal incident (security_breach)",
+      "minor",
+      "OneAI"
+    ],
+    [
+      15,
+      "bias_discrimination: Genesis Systems internal incident (bias_discrimination)",
+      "minor",
+      "Genesis Systems"
+    ],
+    [
+      16,
+      "bias_discrimination: Orion Labs algorithmic bias scandal triggers national reckoning on AI fairness",
+      "critical",
+      "Orion Labs"
+    ],
+    [
+      17,
+      "bias_discrimination: TwoAI hiring tool shows bias against protected groups, class-action lawsuit filed",
+      "major",
+      "TwoAI"
+    ],
+    [
+      18,
+      "misinformation: OpenCore internal incident (misinformation)",
+      "minor",
+      "OpenCore"
+    ],
+    [
+      19,
+      "misinformation: Mirage AI model weaponized for state-sponsored misinformation, international incident",
+      "critical",
+      "Mirage AI"
+    ],
+    [
+      24,
+      "safety_failure: Apex AI model hallucinates in critical financial analysis task",
+      "moderate",
+      "Apex AI"
+    ],
+    [
+      24,
+      "healthcare_harm: TwoAI AI misinterprets lab results, treatment delayed",
+      "moderate",
+      "TwoAI"
+    ],
+    [
+      26,
+      "misuse: TwoAI safety failures enable illegal content generation, platform liability questioned",
+      "major",
+      "TwoAI"
+    ],
+    [
+      28,
+      "healthcare_harm: Mirage AI internal incident (healthcare_harm)",
+      "minor",
+      "Mirage AI"
+    ]
+  ]
+}

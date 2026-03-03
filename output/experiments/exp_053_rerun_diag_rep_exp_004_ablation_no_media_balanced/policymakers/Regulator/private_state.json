@@ -1,0 +1,240 @@
+{
+  "policy_objectives": [
+    "safety",
+    "fairness"
+  ],
+  "risk_beliefs": {
+    "gaming_risk": 0.14500000000000018,
+    "consumer_harm_risk": 0.12999999999999998,
+    "validity_degradation_risk": 0.6,
+    "market_concentration_risk": 0.44999999999999984,
+    "eval_engineering_risk": 1.0,
+    "security_risk": 0.72,
+    "fairness_risk": 0.81
+  },
+  "industry_trust": 0.48735476190476207,
+  "regulatory_capacity": 1.0,
+  "past_interventions": [
+    [
+      1,
+      "investigation",
+      {
+        "focus": "score_volatility"
+      }
+    ],
+    [
+      4,
+      "public_warning",
+      {
+        "warning_severity": "high"
+      }
+    ],
+    [
+      7,
+      "mandate_benchmark",
+      {
+        "validity": 0.7999999999999999,
+        "exploitability": 0.3
+      }
+    ],
+    [
+      10,
+      "threshold_announcement",
+      {
+        "market_concentration_monitoring": 0.6,
+        "market_concentration_review": 0.75,
+        "eval_engineering_concern": 0.35
+      }
+    ],
+    [
+      13,
+      "compliance_audit",
+      {
+        "exploitability_reduction": 0.1
+      }
+    ],
+    [
+      16,
+      "deployer_liability_guidance",
+      {
+        "providers": [
+          "OpenCore"
+        ]
+      }
+    ],
+    [
+      16,
+      "sanctions_and_fines",
+      {
+        "provider": "Mirage AI",
+        "fine_amount": 0.0021282258797071588,
+        "duration_rounds": 3,
+        "expires_round": 19,
+        "reason": "Repeated major+ incidents"
+      }
+    ],
+    [
+      19,
+      "sanctions_and_fines",
+      {
+        "provider": "Mirage AI",
+        "fine_amount": 0.0006339436844391493,
+        "duration_rounds": 3,
+        "expires_round": 22,
+        "reason": "Repeated major+ incidents"
+      }
+    ],
+    [
+      20,
+      "emergency_investigation",
+      {
+        "provider": "OpenCore",
+        "incident_description": "safety_failure: Critical infrastructure relies on flawed OpenCore model, emergency audit ordered",
+        "severity": "critical"
+      }
+    ],
+    [
+      23,
+      "sanctions_and_fines",
+      {
+        "provider": "Mirage AI",
+        "fine_amount": 0.004037603574642844,
+        "duration_rounds": 3,
+        "expires_round": 26,
+        "reason": "Repeated major+ incidents"
+      }
+    ],
+    [
+      26,
+      "sanctions_and_fines",
+      {
+        "provider": "Mirage AI",
+        "fine_amount": 0.0037756960322800643,
+        "duration_rounds": 3,
+        "expires_round": 29,
+        "reason": "Repeated major+ incidents"
+      }
+    ],
+    [
+      29,
+      "sanctions_and_fines",
+      {
+        "provider": "Mirage AI",
+        "fine_amount": 0.0014301946259433576,
+        "duration_rounds": 3,
+        "expires_round": 32,
+        "reason": "Repeated major+ incidents"
+      }
+    ]
+  ],
+  "observed_incidents": [
+    [
+      2,
+      "safety_failure: Genesis Systems internal incident (safety_failure)",
+      "minor",
+      "Genesis Systems"
+    ],
+    [
+      9,
+      "safety_failure: Apex AI internal incident (safety_failure)",
+      "minor",
+      "Apex AI"
+    ],
+    [
+      11,
+      "healthcare_harm: Mirage AI AI denies Medicare coverage against doctor's orders, investigation launched",
+      "major",
+      "Mirage AI"
+    ],
+    [
+      13,
+      "misinformation: OpenCore internal incident (misinformation)",
+      "minor",
+      "OpenCore"
+    ],
+    [
+      14,
+      "healthcare_harm: Orion Labs internal incident (healthcare_harm)",
+      "minor",
+      "Orion Labs"
+    ],
+    [
+      14,
+      "security_breach: Foreign state actor exploits Mirage AI vulnerability, national security implications",
+      "critical",
+      "Mirage AI"
+    ],
+    [
+      14,
+      "security_breach: OneAI internal incident (security_breach)",
+      "minor",
+      "OneAI"
+    ],
+    [
+      15,
+      "security_breach: Apex AI internal incident (security_breach)",
+      "minor",
+      "Apex AI"
+    ],
+    [
+      16,
+      "bias_discrimination: Genesis Systems internal incident (bias_discrimination)",
+      "minor",
+      "Genesis Systems"
+    ],
+    [
+      16,
+      "bias_discrimination: OpenCore internal incident (bias_discrimination)",
+      "minor",
+      "OpenCore"
+    ],
+    [
+      17,
+      "bias_discrimination: Mirage AI algorithmic bias scandal triggers national reckoning on AI fairness",
+      "critical",
+      "Mirage AI"
+    ],
+    [
+      19,
+      "bias_discrimination: OpenCore hiring tool shows bias against protected groups, class-action lawsuit filed",
+      "major",
+      "OpenCore"
+    ],
+    [
+      20,
+      "safety_failure: Critical infrastructure relies on flawed OpenCore model, emergency audit ordered",
+      "major",
+      "OpenCore"
+    ],
+    [
+      26,
+      "misuse: Apex AI jailbreak enables generation of dangerous materials, FBI investigation",
+      "major",
+      "Apex AI"
+    ],
+    [
+      26,
+      "safety_failure: Multiple reports of Genesis Systems providing incorrect legal advice",
+      "moderate",
+      "Genesis Systems"
+    ],
+    [
+      27,
+      "security_breach: Orion Labs reports unauthorized access to training data storage",
+      "moderate",
+      "Orion Labs"
+    ],
+    [
+      29,
+      "misuse: Apex AI jailbreak enables generation of dangerous materials, FBI investigation",
+      "major",
+      "Apex AI"
+    ],
+    [
+      29,
+      "bias_discrimination: Genesis Systems internal incident (bias_discrimination)",
+      "minor",
+      "Genesis Systems"
+    ]
+  ]
+}

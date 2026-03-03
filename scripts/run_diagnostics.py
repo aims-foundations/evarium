@@ -7,12 +7,19 @@ comparisons) and invokes the analysis module.
 
 Usage:
     python scripts/run_diagnostics.py replicate <exp_id> --n-seeds 10
+    python scripts/run_diagnostics.py --model claude-sonnet replicate <exp_id> --n-seeds 10
+    python scripts/run_diagnostics.py --model qwen --port 8000 replicate <exp_id> --n-seeds 10
     python scripts/run_diagnostics.py sensitivity <exp_id> --param rnd_efficiency --values 0.005,0.01,0.015 --n-seeds 3
     python scripts/run_diagnostics.py crn <exp_id_a> <exp_id_b> --n-seeds 5
     python scripts/run_diagnostics.py analyze <batch_name>
-    python scripts/run_diagnostics.py --list-batches
+    python scripts/run_diagnostics.py list-batches
 
-Flags:
+Global flags (before subcommand):
+    --model PRESET  Model preset: qwen, deepseek, claude-sonnet, claude-sonnet-4,
+                    gpt-5, gemini-flash, gemini-pro
+    --port N        vLLM server port (default: 8000, vLLM models only)
+
+Subcommand flags:
     --heuristic     Override llm_mode=False for cheap sweeps
     --api-delay N   Seconds to wait between LLM-mode runs (default: 0)
     --seeds 1,2,3   Explicit seed list (default: 1..n-seeds)
@@ -36,6 +43,98 @@ _DIAGNOSTICS_DIR = os.path.join(_PROJECT_ROOT, "output", "diagnostics")
 
 sys.path.insert(0, _SRC_DIR)
 sys.path.insert(0, _SCRIPT_DIR)
+
+# ── Model presets (mirrors reproduce.sh) ──────────────────────────────────
+MODEL_PRESETS = {
+    "qwen": {
+        "display_name": "Qwen3-235B-A22B (vLLM)",
+        "llm_provider": "openai",
+        "llm_model": "Qwen/Qwen3-235B-A22B",
+        "needs_vllm": True,
+        "api_key_var": None,
+    },
+    "deepseek": {
+        "display_name": "DeepSeek-R1 (vLLM)",
+        "llm_provider": "openai",
+        "llm_model": "deepseek-ai/DeepSeek-R1",
+        "needs_vllm": True,
+        "api_key_var": None,
+    },
+    "claude-sonnet": {
+        "display_name": "Claude 3.5 Sonnet",
+        "llm_provider": "anthropic",
+        "llm_model": "claude-3-5-sonnet-20241022",
+        "needs_vllm": False,
+        "api_key_var": "ANTHROPIC_API_KEY",
+    },
+    "claude-sonnet-4": {
+        "display_name": "Claude Sonnet 4",
+        "llm_provider": "anthropic",
+        "llm_model": "claude-sonnet-4-20250514",
+        "needs_vllm": False,
+        "api_key_var": "ANTHROPIC_API_KEY",
+    },
+    "gpt-5": {
+        "display_name": "GPT-5",
+        "llm_provider": "openai",
+        "llm_model": "gpt-5",
+        "needs_vllm": False,
+        "api_key_var": "OPENAI_API_KEY",
+    },
+    "gemini-flash": {
+        "display_name": "Gemini 2.5 Flash",
+        "llm_provider": "gemini",
+        "llm_model": "gemini-2.5-flash",
+        "needs_vllm": False,
+        "api_key_var": "GEMINI_API_KEY",
+    },
+    "gemini-pro": {
+        "display_name": "Gemini 2.5 Pro",
+        "llm_provider": "gemini",
+        "llm_model": "gemini-2.5-pro",
+        "needs_vllm": False,
+        "api_key_var": "GEMINI_API_KEY",
+    },
+}
+
+
+def apply_model_preset(name: str, port: int = 8000):
+    """Apply a model preset by setting environment variables.
+
+    Args:
+        name: Preset name (key in MODEL_PRESETS).
+        port: vLLM server port (only used for vLLM presets).
+    """
+    if name not in MODEL_PRESETS:
+        print(f"ERROR: Unknown model preset: {name}")
+        print(f"Available: {', '.join(MODEL_PRESETS)}")
+        sys.exit(1)
+
+    preset = MODEL_PRESETS[name]
+
+    if preset["needs_vllm"]:
+        os.environ["LLM_PROVIDER"] = "openai"
+        os.environ["LLM_MODEL"] = preset["llm_model"]
+        os.environ["OPENAI_API_KEY"] = "dummy"
+        os.environ["OPENAI_BASE_URL"] = f"http://localhost:{port}/v1"
+    else:
+        os.environ["LLM_PROVIDER"] = preset["llm_provider"]
+        os.environ["LLM_MODEL"] = preset["llm_model"]
+        os.environ.pop("OPENAI_BASE_URL", None)
+
+        # Check API key
+        key_var = preset["api_key_var"]
+        if key_var and not os.environ.get(key_var):
+            print(f"ERROR: {key_var} is not set.")
+            print(f"  For model '{name}', set {key_var} in your environment or .env file.")
+            sys.exit(1)
+
+    print(f"Model preset: {preset['display_name']}")
+    print(f"  LLM_PROVIDER={os.environ['LLM_PROVIDER']}")
+    print(f"  LLM_MODEL={os.environ['LLM_MODEL']}")
+    if preset["needs_vllm"]:
+        print(f"  OPENAI_BASE_URL={os.environ['OPENAI_BASE_URL']}")
+    print()
 
 
 def _find_experiment_dir(query: str) -> str:
@@ -405,10 +504,23 @@ def cmd_list_batches(args):
 
 
 def main():
+    preset_names = ", ".join(MODEL_PRESETS)
+
     parser = argparse.ArgumentParser(
         description="Simulation Diagnostics Runner",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog=__doc__,
+    )
+    parser.add_argument(
+        "--model",
+        metavar="PRESET",
+        help=f"Model preset to use. Available: {preset_names}",
+    )
+    parser.add_argument(
+        "--port",
+        type=int,
+        default=8000,
+        help="vLLM server port (default: 8000, only used with vLLM model presets)",
     )
     sub = parser.add_subparsers(dest="command")
 
@@ -447,6 +559,10 @@ def main():
     sub.add_parser("list-batches", help="List all batch manifests")
 
     args = parser.parse_args()
+
+    # Apply model preset if specified (before any experiment runs)
+    if args.model:
+        apply_model_preset(args.model, port=args.port)
 
     if args.command == "replicate":
         cmd_replicate(args)

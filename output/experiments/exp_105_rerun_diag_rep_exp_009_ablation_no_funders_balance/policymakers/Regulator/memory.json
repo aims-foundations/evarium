@@ -1,0 +1,1878 @@
+[
+  {
+    "type": "observation",
+    "round": 0,
+    "leaderboard": [
+      [
+        "Orion Labs",
+        0.36519050923047935
+      ],
+      [
+        "Mirage AI",
+        0.33303434462960957
+      ],
+      [
+        "Genesis Systems",
+        0.2977568603788582
+      ],
+      [
+        "OpenCore",
+        0.25042842927884484
+      ],
+      [
+        "Apex AI",
+        0.24054660082905832
+      ]
+    ],
+    "validity_correlation": null,
+    "consumer_satisfaction": 0.3284394912459973,
+    "market_shares": {
+      "Orion Labs": 0.3534766958361638,
+      "Apex AI": 0.12305096487538578,
+      "Genesis Systems": 0.16324891470919353,
+      "Mirage AI": 0.2663310374009784,
+      "OpenCore": 0.09389238717827846
+    },
+    "risk_beliefs": {
+      "gaming_risk": 0.3,
+      "consumer_harm_risk": 0.25,
+      "validity_degradation_risk": 0.3,
+      "market_concentration_risk": 0.0
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 0,
+    "industry_trust": 0.52875,
+    "avg_risk": 0.2125
+  },
+  {
+    "type": "planning",
+    "round": 0,
+    "decision": "no_action",
+    "reason": "max_risk=0.30, below threshold or no escalation path"
+  },
+  {
+    "type": "observation",
+    "round": 1,
+    "leaderboard": [
+      [
+        "Genesis Systems",
+        0.40389518838296345
+      ],
+      [
+        "Mirage AI",
+        0.38346818960974927
+      ],
+      [
+        "Orion Labs",
+        0.38002795853760485
+      ],
+      [
+        "OpenCore",
+        0.3388349875076408
+      ],
+      [
+        "Apex AI",
+        0.2678944771668474
+      ]
+    ],
+    "validity_correlation": 0.19320571957270594,
+    "consumer_satisfaction": 0.3185416608829317,
+    "market_shares": {
+      "Orion Labs": 0.4495851299253294,
+      "Apex AI": 0.08523149679275024,
+      "Genesis Systems": 0.16156177978706027,
+      "Mirage AI": 0.2045101078272444,
+      "OpenCore": 0.0991114856676157
+    },
+    "risk_beliefs": {
+      "gaming_risk": 0.49,
+      "consumer_harm_risk": 0.24000000000000002,
+      "validity_degradation_risk": 0.4,
+      "market_concentration_risk": 0.0,
+      "security_risk": 0.38,
+      "eval_engineering_risk": 0.1
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 1,
+    "industry_trust": 0.5519166666666667,
+    "avg_risk": 0.26833333333333337
+  },
+  {
+    "type": "planning",
+    "round": 1,
+    "decision": "intervene",
+    "intervention": {
+      "type": "investigation",
+      "name": "Investigation_R1",
+      "details": {
+        "focus": "score_volatility"
+      },
+      "reason": "Score volatility detected"
+    }
+  },
+  {
+    "type": "execution",
+    "round": 1,
+    "intervention": {
+      "type": "investigation",
+      "name": "Investigation_R1",
+      "details": {
+        "focus": "score_volatility"
+      },
+      "reason": "Score volatility detected"
+    }
+  },
+  {
+    "type": "observation",
+    "round": 2,
+    "leaderboard": [
+      [
+        "Genesis Systems",
+        0.41502268701741574
+      ],
+      [
+        "Mirage AI",
+        0.4149938943512015
+      ],
+      [
+        "Orion Labs",
+        0.4042689996361545
+      ],
+      [
+        "Apex AI",
+        0.3783898242850067
+      ],
+      [
+        "OpenCore",
+        0.3517799847347969
+      ]
+    ],
+    "validity_correlation": 0.31529017862339803,
+    "consumer_satisfaction": 0.3310389761985793,
+    "market_shares": {
+      "Orion Labs": 0.4912843365673939,
+      "Apex AI": 0.06898282876193172,
+      "Genesis Systems": 0.16359005990822081,
+      "Mirage AI": 0.17461759672027957,
+      "OpenCore": 0.10152517804217405
+    },
+    "risk_beliefs": {
+      "gaming_risk": 0.64,
+      "consumer_harm_risk": 0.19,
+      "validity_degradation_risk": 0.5,
+      "market_concentration_risk": 0.0,
+      "security_risk": 0.38,
+      "eval_engineering_risk": 0.2
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 2,
+    "industry_trust": 0.5700833333333334,
+    "avg_risk": 0.31833333333333336
+  },
+  {
+    "type": "planning",
+    "round": 2,
+    "decision": "no_action",
+    "reason": "cooldown: 1 rounds since last intervention"
+  },
+  {
+    "type": "observation",
+    "round": 3,
+    "leaderboard": [
+      [
+        "Genesis Systems",
+        0.46890533293628334
+      ],
+      [
+        "Orion Labs",
+        0.43821561932596786
+      ],
+      [
+        "OpenCore",
+        0.43033283998013083
+      ],
+      [
+        "Mirage AI",
+        0.4149938943512015
+      ],
+      [
+        "Apex AI",
+        0.37886657612387437
+      ]
+    ],
+    "validity_correlation": 0.33514543327573904,
+    "consumer_satisfaction": 0.3548691242224376,
+    "market_shares": {
+      "Orion Labs": 0.5320123621685268,
+      "Apex AI": 0.05741590497777187,
+      "Genesis Systems": 0.16963703451562512,
+      "Mirage AI": 0.13878034923311072,
+      "OpenCore": 0.10215434910496568
+    },
+    "risk_beliefs": {
+      "gaming_risk": 0.74,
+      "consumer_harm_risk": 0.14,
+      "validity_degradation_risk": 0.6,
+      "market_concentration_risk": 0.0,
+      "security_risk": 0.38,
+      "eval_engineering_risk": 0.30000000000000004
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 3,
+    "industry_trust": 0.5840833333333334,
+    "avg_risk": 0.36000000000000004
+  },
+  {
+    "type": "planning",
+    "round": 3,
+    "decision": "no_action",
+    "reason": "cooldown: 2 rounds since last intervention"
+  },
+  {
+    "type": "observation",
+    "round": 4,
+    "leaderboard": [
+      [
+        "Genesis Systems",
+        0.4845338906562262
+      ],
+      [
+        "Orion Labs",
+        0.45288396465662845
+      ],
+      [
+        "OpenCore",
+        0.43956793534108257
+      ],
+      [
+        "Apex AI",
+        0.4371998223569459
+      ],
+      [
+        "Mirage AI",
+        0.4349546394943373
+      ]
+    ],
+    "validity_correlation": 0.39472680975795027,
+    "consumer_satisfaction": 0.37243014304387884,
+    "market_shares": {
+      "Orion Labs": 0.4653981951628384,
+      "Apex AI": 0.05820724251869573,
+      "Genesis Systems": 0.2340384015305355,
+      "Mirage AI": 0.11526816663656443,
+      "OpenCore": 0.1270879941513659
+    },
+    "risk_beliefs": {
+      "gaming_risk": 0.84,
+      "consumer_harm_risk": 0.09000000000000001,
+      "validity_degradation_risk": 0.7,
+      "market_concentration_risk": 0.0,
+      "security_risk": 0.38,
+      "eval_engineering_risk": 0.4
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 4,
+    "industry_trust": 0.5939166666666668,
+    "avg_risk": 0.40166666666666667
+  },
+  {
+    "type": "planning",
+    "round": 4,
+    "decision": "intervene",
+    "intervention": {
+      "type": "mandate_benchmark",
+      "name": "Benchmark_Mandate_R4",
+      "details": {
+        "validity": 0.7999999999999999,
+        "exploitability": 0.3
+      },
+      "reason": "High risk (0.84) with prior investigation"
+    }
+  },
+  {
+    "type": "execution",
+    "round": 4,
+    "intervention": {
+      "type": "mandate_benchmark",
+      "name": "Benchmark_Mandate_R4",
+      "details": {
+        "validity": 0.7999999999999999,
+        "exploitability": 0.3
+      },
+      "reason": "High risk (0.84) with prior investigation"
+    }
+  },
+  {
+    "type": "observation",
+    "round": 5,
+    "leaderboard": [
+      [
+        "Genesis Systems",
+        0.5195416612637531
+      ],
+      [
+        "OpenCore",
+        0.4990259217111131
+      ],
+      [
+        "Orion Labs",
+        0.4886640196668318
+      ],
+      [
+        "Apex AI",
+        0.4657410567573929
+      ],
+      [
+        "Mirage AI",
+        0.4349546394943373
+      ]
+    ],
+    "validity_correlation": 0.4272454138670924,
+    "consumer_satisfaction": 0.3944330875636559,
+    "market_shares": {
+      "Orion Labs": 0.3944953726221616,
+      "Apex AI": 0.062024611889865654,
+      "Genesis Systems": 0.3405146132061154,
+      "Mirage AI": 0.09531644868347025,
+      "OpenCore": 0.10764895359838715
+    },
+    "risk_beliefs": {
+      "gaming_risk": 0.99,
+      "consumer_harm_risk": 0.04000000000000001,
+      "validity_degradation_risk": 0.7999999999999999,
+      "market_concentration_risk": 0.0,
+      "security_risk": 0.38,
+      "eval_engineering_risk": 0.5
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 5,
+    "industry_trust": 0.5987500000000001,
+    "avg_risk": 0.45166666666666666
+  },
+  {
+    "type": "planning",
+    "round": 5,
+    "decision": "no_action",
+    "reason": "cooldown: 1 rounds since last intervention"
+  },
+  {
+    "type": "observation",
+    "round": 6,
+    "leaderboard": [
+      [
+        "Genesis Systems",
+        0.5195416612637531
+      ],
+      [
+        "OpenCore",
+        0.5132233622228006
+      ],
+      [
+        "Orion Labs",
+        0.5072726932877974
+      ],
+      [
+        "Apex AI",
+        0.4657410567573929
+      ],
+      [
+        "Mirage AI",
+        0.4631954904171471
+      ]
+    ],
+    "validity_correlation": 0.4517112085488999,
+    "consumer_satisfaction": 0.41795636031212574,
+    "market_shares": {
+      "Orion Labs": 0.3449409585111031,
+      "Apex AI": 0.06952400563326747,
+      "Genesis Systems": 0.4109352476050127,
+      "Mirage AI": 0.07353669666550575,
+      "OpenCore": 0.101063091585111
+    },
+    "risk_beliefs": {
+      "gaming_risk": 1.0,
+      "consumer_harm_risk": 0.0,
+      "validity_degradation_risk": 0.8999999999999999,
+      "market_concentration_risk": 0.0,
+      "security_risk": 0.38,
+      "eval_engineering_risk": 0.6
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 6,
+    "industry_trust": 0.6007500000000001,
+    "avg_risk": 0.48
+  },
+  {
+    "type": "planning",
+    "round": 6,
+    "decision": "no_action",
+    "reason": "cooldown: 2 rounds since last intervention"
+  },
+  {
+    "type": "observation",
+    "round": 7,
+    "leaderboard": [
+      [
+        "OpenCore",
+        0.5144818324656197
+      ],
+      [
+        "Genesis Systems",
+        0.503585929357286
+      ],
+      [
+        "Mirage AI",
+        0.4735541427520169
+      ],
+      [
+        "Orion Labs",
+        0.47022080957386814
+      ],
+      [
+        "Apex AI",
+        0.43949983393516623
+      ]
+    ],
+    "validity_correlation": 0.4453387552871989,
+    "consumer_satisfaction": 0.4393634227094638,
+    "market_shares": {
+      "Orion Labs": 0.2782363670186983,
+      "Apex AI": 0.059968251411341184,
+      "Genesis Systems": 0.3583808634870653,
+      "Mirage AI": 0.08357050831583462,
+      "OpenCore": 0.21984400976706053
+    },
+    "risk_beliefs": {
+      "gaming_risk": 1.0,
+      "consumer_harm_risk": 0.0,
+      "validity_degradation_risk": 0.9999999999999999,
+      "market_concentration_risk": 0.0,
+      "security_risk": 0.38,
+      "eval_engineering_risk": 0.7
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 7,
+    "industry_trust": 0.5994166666666668,
+    "avg_risk": 0.5133333333333333
+  },
+  {
+    "type": "planning",
+    "round": 7,
+    "decision": "intervene",
+    "intervention": {
+      "type": "public_warning",
+      "name": "Public_Warning_R7",
+      "details": {
+        "warning_severity": "high"
+      },
+      "reason": "Follow-up to investigation, risk at 1.00"
+    }
+  },
+  {
+    "type": "execution",
+    "round": 7,
+    "intervention": {
+      "type": "public_warning",
+      "name": "Public_Warning_R7",
+      "details": {
+        "warning_severity": "high"
+      },
+      "reason": "Follow-up to investigation, risk at 1.00"
+    }
+  },
+  {
+    "type": "observation",
+    "round": 8,
+    "leaderboard": [
+      [
+        "Mirage AI",
+        0.5629317790098868
+      ],
+      [
+        "Genesis Systems",
+        0.5596047627968279
+      ],
+      [
+        "OpenCore",
+        0.5144818324656197
+      ],
+      [
+        "Apex AI",
+        0.4991089970320319
+      ],
+      [
+        "Orion Labs",
+        0.47022080957386814
+      ]
+    ],
+    "validity_correlation": 0.4694127730301693,
+    "consumer_satisfaction": 0.4586104552104576,
+    "market_shares": {
+      "Orion Labs": 0.22582569996421908,
+      "Apex AI": 0.054017118630446864,
+      "Genesis Systems": 0.3544336889757767,
+      "Mirage AI": 0.07828768465219083,
+      "OpenCore": 0.28743580777736655
+    },
+    "risk_beliefs": {
+      "gaming_risk": 1.0,
+      "consumer_harm_risk": 0.0,
+      "validity_degradation_risk": 1.0,
+      "market_concentration_risk": 0.0,
+      "security_risk": 0.38,
+      "eval_engineering_risk": 0.7999999999999999
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 8,
+    "industry_trust": 0.5964166666666668,
+    "avg_risk": 0.5299999999999999
+  },
+  {
+    "type": "planning",
+    "round": 8,
+    "decision": "no_action",
+    "reason": "cooldown: 1 rounds since last intervention"
+  },
+  {
+    "type": "observation",
+    "round": 9,
+    "leaderboard": [
+      [
+        "Mirage AI",
+        0.573914234809531
+      ],
+      [
+        "Genesis Systems",
+        0.561764040955163
+      ],
+      [
+        "OpenCore",
+        0.5600284244639552
+      ],
+      [
+        "Apex AI",
+        0.5225020614770499
+      ],
+      [
+        "Orion Labs",
+        0.5064128788281348
+      ]
+    ],
+    "validity_correlation": 0.48737925512846253,
+    "consumer_satisfaction": 0.48473831982478977,
+    "market_shares": {
+      "Orion Labs": 0.1934257620649025,
+      "Apex AI": 0.0498783171953953,
+      "Genesis Systems": 0.3265671967311851,
+      "Mirage AI": 0.08699047923231103,
+      "OpenCore": 0.34313824477620614
+    },
+    "risk_beliefs": {
+      "gaming_risk": 1.0,
+      "consumer_harm_risk": 0.0,
+      "validity_degradation_risk": 1.0,
+      "market_concentration_risk": 0.0,
+      "security_risk": 0.38,
+      "eval_engineering_risk": 0.8999999999999999
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 9,
+    "industry_trust": 0.5917500000000001,
+    "avg_risk": 0.5466666666666666
+  },
+  {
+    "type": "planning",
+    "round": 9,
+    "decision": "no_action",
+    "reason": "cooldown: 2 rounds since last intervention"
+  },
+  {
+    "type": "observation",
+    "round": 10,
+    "leaderboard": [
+      [
+        "Genesis Systems",
+        0.5976647625611891
+      ],
+      [
+        "Orion Labs",
+        0.5846697105992288
+      ],
+      [
+        "OpenCore",
+        0.5769814252429946
+      ],
+      [
+        "Mirage AI",
+        0.573914234809531
+      ],
+      [
+        "Apex AI",
+        0.5225020614770499
+      ]
+    ],
+    "validity_correlation": 0.5215082174152402,
+    "consumer_satisfaction": 0.4955349894065342,
+    "market_shares": {
+      "Orion Labs": 0.17786351694152924,
+      "Apex AI": 0.04718876062556206,
+      "Genesis Systems": 0.31016418082952174,
+      "Mirage AI": 0.06309214174676057,
+      "OpenCore": 0.40169139985662633
+    },
+    "risk_beliefs": {
+      "gaming_risk": 1.0,
+      "consumer_harm_risk": 0.075,
+      "validity_degradation_risk": 1.0,
+      "market_concentration_risk": 0.0,
+      "security_risk": 0.38,
+      "eval_engineering_risk": 0.9999999999999999,
+      "fairness_risk": 0.44999999999999996
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 10,
+    "industry_trust": 0.5859642857142858,
+    "avg_risk": 0.5578571428571428
+  },
+  {
+    "type": "planning",
+    "round": 10,
+    "decision": "intervene",
+    "intervention": {
+      "type": "compliance_audit",
+      "name": "Compliance_Audit_R10",
+      "details": {
+        "exploitability_reduction": 0.1
+      },
+      "reason": "Risk still high (1.00) after mandate 6 rounds ago"
+    }
+  },
+  {
+    "type": "execution",
+    "round": 10,
+    "intervention": {
+      "type": "compliance_audit",
+      "name": "Compliance_Audit_R10",
+      "details": {
+        "exploitability_reduction": 0.1
+      },
+      "reason": "Risk still high (1.00) after mandate 6 rounds ago"
+    }
+  },
+  {
+    "type": "observation",
+    "round": 11,
+    "leaderboard": [
+      [
+        "Genesis Systems",
+        0.5976647625611891
+      ],
+      [
+        "Orion Labs",
+        0.5846697105992288
+      ],
+      [
+        "OpenCore",
+        0.5769814252429946
+      ],
+      [
+        "Mirage AI",
+        0.573914234809531
+      ],
+      [
+        "Apex AI",
+        0.5280556389295896
+      ]
+    ],
+    "validity_correlation": 0.5500541131003354,
+    "consumer_satisfaction": 0.5164798681410578,
+    "market_shares": {
+      "Orion Labs": 0.16836998327317845,
+      "Apex AI": 0.04326741060761231,
+      "Genesis Systems": 0.3036561031202292,
+      "Mirage AI": 0.044366397931424606,
+      "OpenCore": 0.44034010506755544
+    },
+    "risk_beliefs": {
+      "gaming_risk": 1.0,
+      "consumer_harm_risk": 0.024999999999999994,
+      "validity_degradation_risk": 1.0,
+      "market_concentration_risk": 0.0,
+      "security_risk": 0.38,
+      "eval_engineering_risk": 1.0,
+      "fairness_risk": 0.44999999999999996
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 11,
+    "industry_trust": 0.5808928571428572,
+    "avg_risk": 0.5507142857142857
+  },
+  {
+    "type": "planning",
+    "round": 11,
+    "decision": "no_action",
+    "reason": "cooldown: 1 rounds since last intervention"
+  },
+  {
+    "type": "observation",
+    "round": 12,
+    "leaderboard": [
+      [
+        "Genesis Systems",
+        0.6000413634670569
+      ],
+      [
+        "Orion Labs",
+        0.5846697105992288
+      ],
+      [
+        "Mirage AI",
+        0.5833454399372743
+      ],
+      [
+        "OpenCore",
+        0.5769814252429946
+      ],
+      [
+        "Apex AI",
+        0.5451337147726426
+      ]
+    ],
+    "validity_correlation": 0.575607036476544,
+    "consumer_satisfaction": 0.5343413239169791,
+    "market_shares": {
+      "Orion Labs": 0.16350356333285004,
+      "Apex AI": 0.042005975514760374,
+      "Genesis Systems": 0.2979934238054998,
+      "Mirage AI": 0.037370005840273446,
+      "OpenCore": 0.4591270315066163
+    },
+    "risk_beliefs": {
+      "gaming_risk": 0.95,
+      "consumer_harm_risk": 0.0,
+      "validity_degradation_risk": 1.0,
+      "market_concentration_risk": 0.0,
+      "security_risk": 0.38,
+      "eval_engineering_risk": 1.0,
+      "fairness_risk": 0.44999999999999996
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 12,
+    "industry_trust": 0.5768928571428572,
+    "avg_risk": 0.5399999999999999
+  },
+  {
+    "type": "planning",
+    "round": 12,
+    "decision": "no_action",
+    "reason": "cooldown: 2 rounds since last intervention"
+  },
+  {
+    "type": "observation",
+    "round": 13,
+    "leaderboard": [
+      [
+        "Genesis Systems",
+        0.6005694794429107
+      ],
+      [
+        "Orion Labs",
+        0.5677589842384615
+      ],
+      [
+        "Mirage AI",
+        0.5527975789204974
+      ],
+      [
+        "OpenCore",
+        0.5435690871787175
+      ],
+      [
+        "Apex AI",
+        0.5076927466001969
+      ]
+    ],
+    "validity_correlation": 0.5950091892189826,
+    "consumer_satisfaction": 0.5468395866550113,
+    "market_shares": {
+      "Orion Labs": 0.16005079720799842,
+      "Apex AI": 0.04098038947814563,
+      "Genesis Systems": 0.30478652333716305,
+      "Mirage AI": 0.03183739562658463,
+      "OpenCore": 0.4623448943501083
+    },
+    "risk_beliefs": {
+      "gaming_risk": 0.8999999999999999,
+      "consumer_harm_risk": 0.0,
+      "validity_degradation_risk": 1.0,
+      "market_concentration_risk": 0.0,
+      "security_risk": 0.38,
+      "eval_engineering_risk": 1.0,
+      "fairness_risk": 0.44999999999999996
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 13,
+    "industry_trust": 0.573607142857143,
+    "avg_risk": 0.5328571428571428
+  },
+  {
+    "type": "planning",
+    "round": 13,
+    "decision": "intervene",
+    "intervention": {
+      "type": "compliance_audit",
+      "name": "Compliance_Audit_R13",
+      "details": {
+        "exploitability_reduction": 0.1
+      },
+      "reason": "Risk still high (1.00) after mandate 9 rounds ago"
+    }
+  },
+  {
+    "type": "execution",
+    "round": 13,
+    "intervention": {
+      "type": "compliance_audit",
+      "name": "Compliance_Audit_R13",
+      "details": {
+        "exploitability_reduction": 0.1
+      },
+      "reason": "Risk still high (1.00) after mandate 9 rounds ago"
+    }
+  },
+  {
+    "type": "observation",
+    "round": 14,
+    "leaderboard": [
+      [
+        "Genesis Systems",
+        0.6027707168402183
+      ],
+      [
+        "Orion Labs",
+        0.5891502082715288
+      ],
+      [
+        "Mirage AI",
+        0.5756488873743253
+      ],
+      [
+        "OpenCore",
+        0.5435690871787175
+      ],
+      [
+        "Apex AI",
+        0.5076927466001969
+      ]
+    ],
+    "validity_correlation": 0.6150796572050331,
+    "consumer_satisfaction": 0.5510298593664738,
+    "market_shares": {
+      "Orion Labs": 0.15778621140966215,
+      "Apex AI": 0.04043208468966501,
+      "Genesis Systems": 0.3155677448759378,
+      "Mirage AI": 0.02946303627623753,
+      "OpenCore": 0.45675092274849755
+    },
+    "risk_beliefs": {
+      "gaming_risk": 0.8999999999999999,
+      "consumer_harm_risk": 0.0,
+      "validity_degradation_risk": 1.0,
+      "market_concentration_risk": 0.0,
+      "security_risk": 0.38,
+      "eval_engineering_risk": 1.0,
+      "fairness_risk": 0.44999999999999996
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 14,
+    "industry_trust": 0.5703214285714286,
+    "avg_risk": 0.5328571428571428
+  },
+  {
+    "type": "planning",
+    "round": 14,
+    "decision": "no_action",
+    "reason": "cooldown: 1 rounds since last intervention"
+  },
+  {
+    "type": "observation",
+    "round": 15,
+    "leaderboard": [
+      [
+        "Genesis Systems",
+        0.6027707168402183
+      ],
+      [
+        "Orion Labs",
+        0.5891502082715288
+      ],
+      [
+        "Mirage AI",
+        0.5756488873743253
+      ],
+      [
+        "OpenCore",
+        0.5435690871787175
+      ],
+      [
+        "Apex AI",
+        0.5364074172184545
+      ]
+    ],
+    "validity_correlation": 0.6348273289894576,
+    "consumer_satisfaction": 0.5590830039461597,
+    "market_shares": {
+      "Orion Labs": 0.14402073779223806,
+      "Apex AI": 0.038987592240890497,
+      "Genesis Systems": 0.3487674631951013,
+      "Mirage AI": 0.024855704250857563,
+      "OpenCore": 0.4433685025209127
+    },
+    "risk_beliefs": {
+      "gaming_risk": 0.8499999999999999,
+      "consumer_harm_risk": 0.0,
+      "validity_degradation_risk": 1.0,
+      "market_concentration_risk": 0.0,
+      "security_risk": 0.38,
+      "eval_engineering_risk": 1.0,
+      "fairness_risk": 0.44999999999999996
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 15,
+    "industry_trust": 0.5677500000000001,
+    "avg_risk": 0.5257142857142857
+  },
+  {
+    "type": "planning",
+    "round": 15,
+    "decision": "no_action",
+    "reason": "cooldown: 2 rounds since last intervention"
+  },
+  {
+    "type": "observation",
+    "round": 16,
+    "leaderboard": [
+      [
+        "Orion Labs",
+        0.6112107809146262
+      ],
+      [
+        "Genesis Systems",
+        0.6095945473561589
+      ],
+      [
+        "Mirage AI",
+        0.5756488873743253
+      ],
+      [
+        "OpenCore",
+        0.5435690871787175
+      ],
+      [
+        "Apex AI",
+        0.5364074172184545
+      ]
+    ],
+    "validity_correlation": 0.6548163277868987,
+    "consumer_satisfaction": 0.5685463819619703,
+    "market_shares": {
+      "Orion Labs": 0.1337781911970391,
+      "Apex AI": 0.038760001630650145,
+      "Genesis Systems": 0.37152706177291467,
+      "Mirage AI": 0.02452308977528147,
+      "OpenCore": 0.4314116556241147
+    },
+    "risk_beliefs": {
+      "gaming_risk": 0.7999999999999998,
+      "consumer_harm_risk": 0.0,
+      "validity_degradation_risk": 1.0,
+      "market_concentration_risk": 0.0,
+      "security_risk": 0.38,
+      "eval_engineering_risk": 1.0,
+      "fairness_risk": 0.44999999999999996
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 16,
+    "industry_trust": 0.5658928571428572,
+    "avg_risk": 0.5185714285714286
+  },
+  {
+    "type": "planning",
+    "round": 16,
+    "decision": "intervene",
+    "intervention": {
+      "type": "compliance_audit",
+      "name": "Compliance_Audit_R16",
+      "details": {
+        "exploitability_reduction": 0.1
+      },
+      "reason": "Risk still high (1.00) after mandate 12 rounds ago"
+    }
+  },
+  {
+    "type": "execution",
+    "round": 16,
+    "intervention": {
+      "type": "compliance_audit",
+      "name": "Compliance_Audit_R16",
+      "details": {
+        "exploitability_reduction": 0.1
+      },
+      "reason": "Risk still high (1.00) after mandate 12 rounds ago"
+    }
+  },
+  {
+    "type": "observation",
+    "round": 17,
+    "leaderboard": [
+      [
+        "Orion Labs",
+        0.6112107809146262
+      ],
+      [
+        "Mirage AI",
+        0.6107635725863865
+      ],
+      [
+        "Genesis Systems",
+        0.6095945473561589
+      ],
+      [
+        "OpenCore",
+        0.5435690871787175
+      ],
+      [
+        "Apex AI",
+        0.5424525125547714
+      ]
+    ],
+    "validity_correlation": 0.6725467108002753,
+    "consumer_satisfaction": 0.5702619011039571,
+    "market_shares": {
+      "Orion Labs": 0.12499468788862325,
+      "Apex AI": 0.03786738936430779,
+      "Genesis Systems": 0.39721186249227225,
+      "Mirage AI": 0.023089861564879688,
+      "OpenCore": 0.4168361986899172
+    },
+    "risk_beliefs": {
+      "gaming_risk": 0.8099999999999998,
+      "consumer_harm_risk": 0.02,
+      "validity_degradation_risk": 1.0,
+      "market_concentration_risk": 0.0,
+      "security_risk": 0.38,
+      "eval_engineering_risk": 1.0,
+      "fairness_risk": 0.44999999999999996
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 17,
+    "industry_trust": 0.563607142857143,
+    "avg_risk": 0.5228571428571428
+  },
+  {
+    "type": "planning",
+    "round": 17,
+    "decision": "no_action",
+    "reason": "cooldown: 1 rounds since last intervention"
+  },
+  {
+    "type": "observation",
+    "round": 18,
+    "leaderboard": [
+      [
+        "Genesis Systems",
+        0.6192592091885817
+      ],
+      [
+        "Orion Labs",
+        0.6112107809146262
+      ],
+      [
+        "Mirage AI",
+        0.6107635725863865
+      ],
+      [
+        "Apex AI",
+        0.5484341910481861
+      ],
+      [
+        "OpenCore",
+        0.5442583296174928
+      ]
+    ],
+    "validity_correlation": 0.689164944312362,
+    "consumer_satisfaction": 0.5750871176624615,
+    "market_shares": {
+      "Orion Labs": 0.11787331490529397,
+      "Apex AI": 0.03778381631269419,
+      "Genesis Systems": 0.41685059610023245,
+      "Mirage AI": 0.022854411630113917,
+      "OpenCore": 0.4046378610516656
+    },
+    "risk_beliefs": {
+      "gaming_risk": 0.7599999999999998,
+      "consumer_harm_risk": 0.0,
+      "validity_degradation_risk": 1.0,
+      "market_concentration_risk": 0.0,
+      "security_risk": 0.38,
+      "eval_engineering_risk": 1.0,
+      "fairness_risk": 0.44999999999999996
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 18,
+    "industry_trust": 0.5623214285714286,
+    "avg_risk": 0.5128571428571428
+  },
+  {
+    "type": "planning",
+    "round": 18,
+    "decision": "no_action",
+    "reason": "cooldown: 2 rounds since last intervention"
+  },
+  {
+    "type": "observation",
+    "round": 19,
+    "leaderboard": [
+      [
+        "Orion Labs",
+        0.6169538583229126
+      ],
+      [
+        "Mirage AI",
+        0.6118784105177134
+      ],
+      [
+        "Genesis Systems",
+        0.5804132551477653
+      ],
+      [
+        "Apex AI",
+        0.551805778609884
+      ],
+      [
+        "OpenCore",
+        0.5271183560188872
+      ]
+    ],
+    "validity_correlation": 0.6982869830805457,
+    "consumer_satisfaction": 0.5786762105643569,
+    "market_shares": {
+      "Orion Labs": 0.12310112172613448,
+      "Apex AI": 0.03720998636761717,
+      "Genesis Systems": 0.4345808099839469,
+      "Mirage AI": 0.022371218658402945,
+      "OpenCore": 0.3827368632638987
+    },
+    "risk_beliefs": {
+      "gaming_risk": 0.7199999999999998,
+      "consumer_harm_risk": 0.02,
+      "validity_degradation_risk": 1.0,
+      "market_concentration_risk": 0.0,
+      "security_risk": 0.38,
+      "eval_engineering_risk": 1.0,
+      "fairness_risk": 0.44999999999999996
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 19,
+    "industry_trust": 0.5613214285714286,
+    "avg_risk": 0.51
+  },
+  {
+    "type": "planning",
+    "round": 19,
+    "decision": "intervene",
+    "intervention": {
+      "type": "compliance_audit",
+      "name": "Compliance_Audit_R19",
+      "details": {
+        "exploitability_reduction": 0.1
+      },
+      "reason": "Risk still high (1.00) after mandate 15 rounds ago"
+    }
+  },
+  {
+    "type": "execution",
+    "round": 19,
+    "intervention": {
+      "type": "compliance_audit",
+      "name": "Compliance_Audit_R19",
+      "details": {
+        "exploitability_reduction": 0.1
+      },
+      "reason": "Risk still high (1.00) after mandate 15 rounds ago"
+    }
+  },
+  {
+    "type": "observation",
+    "round": 20,
+    "leaderboard": [
+      [
+        "Mirage AI",
+        0.6206034160416786
+      ],
+      [
+        "Orion Labs",
+        0.6169538583229126
+      ],
+      [
+        "Genesis Systems",
+        0.6161744815987805
+      ],
+      [
+        "Apex AI",
+        0.551805778609884
+      ],
+      [
+        "OpenCore",
+        0.547582695300164
+      ]
+    ],
+    "validity_correlation": 0.7107960348876127,
+    "consumer_satisfaction": 0.5776889665007423,
+    "market_shares": {
+      "Orion Labs": 0.14647781250375683,
+      "Apex AI": 0.03716050876324381,
+      "Genesis Systems": 0.4372981726682287,
+      "Mirage AI": 0.02217089694301237,
+      "OpenCore": 0.35689260912175846
+    },
+    "risk_beliefs": {
+      "gaming_risk": 0.7199999999999998,
+      "consumer_harm_risk": 0.0,
+      "validity_degradation_risk": 1.0,
+      "market_concentration_risk": 0.0,
+      "security_risk": 0.38,
+      "eval_engineering_risk": 1.0,
+      "fairness_risk": 0.44999999999999996
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 20,
+    "industry_trust": 0.560607142857143,
+    "avg_risk": 0.5071428571428571
+  },
+  {
+    "type": "planning",
+    "round": 20,
+    "decision": "no_action",
+    "reason": "cooldown: 1 rounds since last intervention"
+  },
+  {
+    "type": "observation",
+    "round": 21,
+    "leaderboard": [
+      [
+        "Genesis Systems",
+        0.6256578629694332
+      ],
+      [
+        "Mirage AI",
+        0.6225113435186229
+      ],
+      [
+        "Orion Labs",
+        0.6169538583229126
+      ],
+      [
+        "Apex AI",
+        0.551805778609884
+      ],
+      [
+        "OpenCore",
+        0.547582695300164
+      ]
+    ],
+    "validity_correlation": 0.7224956286467439,
+    "consumer_satisfaction": 0.5806559847913145,
+    "market_shares": {
+      "Orion Labs": 0.16598990396695884,
+      "Apex AI": 0.036910272517973075,
+      "Genesis Systems": 0.4402847072262563,
+      "Mirage AI": 0.02190514148477779,
+      "OpenCore": 0.3349099748040343
+    },
+    "risk_beliefs": {
+      "gaming_risk": 0.6699999999999997,
+      "consumer_harm_risk": 0.0,
+      "validity_degradation_risk": 1.0,
+      "market_concentration_risk": 0.0,
+      "security_risk": 0.38,
+      "eval_engineering_risk": 1.0,
+      "fairness_risk": 0.44999999999999996
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 21,
+    "industry_trust": 0.560607142857143,
+    "avg_risk": 0.49999999999999994
+  },
+  {
+    "type": "planning",
+    "round": 21,
+    "decision": "no_action",
+    "reason": "cooldown: 2 rounds since last intervention"
+  },
+  {
+    "type": "observation",
+    "round": 22,
+    "leaderboard": [
+      [
+        "Genesis Systems",
+        0.6256578629694332
+      ],
+      [
+        "Mirage AI",
+        0.6225113435186229
+      ],
+      [
+        "Orion Labs",
+        0.6169538583229126
+      ],
+      [
+        "Apex AI",
+        0.5776912813462076
+      ],
+      [
+        "OpenCore",
+        0.547582695300164
+      ]
+    ],
+    "validity_correlation": 0.7335813426635414,
+    "consumer_satisfaction": 0.5740476542239815,
+    "market_shares": {
+      "Orion Labs": 0.19273149061334033,
+      "Apex AI": 0.03689056839201102,
+      "Genesis Systems": 0.435533148567465,
+      "Mirage AI": 0.021826818436462503,
+      "OpenCore": 0.31301797399072134
+    },
+    "risk_beliefs": {
+      "gaming_risk": 0.6299999999999997,
+      "consumer_harm_risk": 0.01,
+      "validity_degradation_risk": 1.0,
+      "market_concentration_risk": 0.0,
+      "security_risk": 0.38,
+      "eval_engineering_risk": 1.0,
+      "fairness_risk": 0.47
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 22,
+    "industry_trust": 0.5607500000000001,
+    "avg_risk": 0.49857142857142855
+  },
+  {
+    "type": "planning",
+    "round": 22,
+    "decision": "intervene",
+    "intervention": {
+      "type": "compliance_audit",
+      "name": "Compliance_Audit_R22",
+      "details": {
+        "exploitability_reduction": 0.1
+      },
+      "reason": "Risk still high (1.00) after mandate 18 rounds ago"
+    }
+  },
+  {
+    "type": "execution",
+    "round": 22,
+    "intervention": {
+      "type": "compliance_audit",
+      "name": "Compliance_Audit_R22",
+      "details": {
+        "exploitability_reduction": 0.1
+      },
+      "reason": "Risk still high (1.00) after mandate 18 rounds ago"
+    }
+  },
+  {
+    "type": "observation",
+    "round": 23,
+    "leaderboard": [
+      [
+        "Genesis Systems",
+        0.6256578629694332
+      ],
+      [
+        "Mirage AI",
+        0.6225113435186229
+      ],
+      [
+        "Orion Labs",
+        0.6169538583229126
+      ],
+      [
+        "Apex AI",
+        0.5842536110040178
+      ],
+      [
+        "OpenCore",
+        0.5506258323353918
+      ]
+    ],
+    "validity_correlation": 0.7430438227290289,
+    "consumer_satisfaction": 0.5750616933059928,
+    "market_shares": {
+      "Orion Labs": 0.17697766234843562,
+      "Apex AI": 0.03655371020444777,
+      "Genesis Systems": 0.43291387555983846,
+      "Mirage AI": 0.06992554831217704,
+      "OpenCore": 0.28362920357510135
+    },
+    "risk_beliefs": {
+      "gaming_risk": 0.6299999999999997,
+      "consumer_harm_risk": 0.0,
+      "validity_degradation_risk": 1.0,
+      "market_concentration_risk": 0.0,
+      "security_risk": 0.38,
+      "eval_engineering_risk": 1.0,
+      "fairness_risk": 0.47
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 23,
+    "industry_trust": 0.5610357142857144,
+    "avg_risk": 0.49714285714285705
+  },
+  {
+    "type": "planning",
+    "round": 23,
+    "decision": "no_action",
+    "reason": "cooldown: 1 rounds since last intervention"
+  },
+  {
+    "type": "observation",
+    "round": 24,
+    "leaderboard": [
+      [
+        "Genesis Systems",
+        0.6328342639168876
+      ],
+      [
+        "Mirage AI",
+        0.6242691331661392
+      ],
+      [
+        "Orion Labs",
+        0.6169538583229126
+      ],
+      [
+        "Apex AI",
+        0.5842536110040178
+      ],
+      [
+        "OpenCore",
+        0.5506258323353918
+      ]
+    ],
+    "validity_correlation": 0.7517536754430666,
+    "consumer_satisfaction": 0.5725125007330442,
+    "market_shares": {
+      "Orion Labs": 0.21147046809086772,
+      "Apex AI": 0.03653118582510331,
+      "Genesis Systems": 0.43497019561180345,
+      "Mirage AI": 0.04274720663994507,
+      "OpenCore": 0.2742809438322807
+    },
+    "risk_beliefs": {
+      "gaming_risk": 0.7049999999999996,
+      "consumer_harm_risk": 0.075,
+      "validity_degradation_risk": 1.0,
+      "market_concentration_risk": 0.0,
+      "security_risk": 0.38,
+      "eval_engineering_risk": 1.0,
+      "fairness_risk": 0.47
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 24,
+    "industry_trust": 0.5591785714285715,
+    "avg_risk": 0.5185714285714285
+  },
+  {
+    "type": "planning",
+    "round": 24,
+    "decision": "no_action",
+    "reason": "cooldown: 2 rounds since last intervention"
+  },
+  {
+    "type": "observation",
+    "round": 25,
+    "leaderboard": [
+      [
+        "Genesis Systems",
+        0.6291898994695474
+      ],
+      [
+        "Mirage AI",
+        0.6088562254747014
+      ],
+      [
+        "Orion Labs",
+        0.5819565369141487
+      ],
+      [
+        "Apex AI",
+        0.5754749818835596
+      ],
+      [
+        "OpenCore",
+        0.5221830181117183
+      ]
+    ],
+    "validity_correlation": 0.7538991266554153,
+    "consumer_satisfaction": 0.546804883693086,
+    "market_shares": {
+      "Orion Labs": 0.31012838034046647,
+      "Apex AI": 0.03634334548870518,
+      "Genesis Systems": 0.3648972288639792,
+      "Mirage AI": 0.030555662547019618,
+      "OpenCore": 0.2580753827598299
+    },
+    "risk_beliefs": {
+      "gaming_risk": 0.7449999999999997,
+      "consumer_harm_risk": 0.105,
+      "validity_degradation_risk": 1.0,
+      "market_concentration_risk": 0.0,
+      "security_risk": 0.38,
+      "eval_engineering_risk": 1.0,
+      "fairness_risk": 0.47
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 25,
+    "industry_trust": 0.5563214285714286,
+    "avg_risk": 0.5285714285714286
+  },
+  {
+    "type": "planning",
+    "round": 25,
+    "decision": "intervene",
+    "intervention": {
+      "type": "sanctions_and_fines",
+      "name": "Sanction_Mirage AI_R25",
+      "details": {
+        "provider": "Mirage AI",
+        "fine_amount": 0.004583349382052943,
+        "duration_rounds": 3,
+        "expires_round": 28,
+        "reason": "Repeated major+ incidents"
+      },
+      "reason": "Sanctioning Mirage AI: 2 major+ incidents after investigation"
+    }
+  },
+  {
+    "type": "execution",
+    "round": 25,
+    "intervention": {
+      "type": "sanctions_and_fines",
+      "name": "Sanction_Mirage AI_R25",
+      "details": {
+        "provider": "Mirage AI",
+        "fine_amount": 0.004583349382052943,
+        "duration_rounds": 3,
+        "expires_round": 28,
+        "reason": "Repeated major+ incidents"
+      },
+      "reason": "Sanctioning Mirage AI: 2 major+ incidents after investigation"
+    }
+  },
+  {
+    "type": "observation",
+    "round": 26,
+    "leaderboard": [
+      [
+        "Genesis Systems",
+        0.6291898994695474
+      ],
+      [
+        "Mirage AI",
+        0.6145663716946292
+      ],
+      [
+        "Orion Labs",
+        0.5993174689460433
+      ],
+      [
+        "Apex AI",
+        0.5754749818835596
+      ],
+      [
+        "OpenCore",
+        0.5588355199303348
+      ]
+    ],
+    "validity_correlation": 0.7579356257341204,
+    "consumer_satisfaction": 0.5460821642700554,
+    "market_shares": {
+      "Orion Labs": 0.38227014487376726,
+      "Apex AI": 0.036326139095606634,
+      "Genesis Systems": 0.3110494983256588,
+      "Mirage AI": 0.025242413848930733,
+      "OpenCore": 0.24511180385603687
+    },
+    "risk_beliefs": {
+      "gaming_risk": 0.7449999999999997,
+      "consumer_harm_risk": 0.05499999999999999,
+      "validity_degradation_risk": 1.0,
+      "market_concentration_risk": 0.0,
+      "security_risk": 0.38,
+      "eval_engineering_risk": 1.0,
+      "fairness_risk": 0.47
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 26,
+    "industry_trust": 0.5541785714285715,
+    "avg_risk": 0.5214285714285714
+  },
+  {
+    "type": "planning",
+    "round": 26,
+    "decision": "no_action",
+    "reason": "cooldown: 1 rounds since last intervention"
+  },
+  {
+    "type": "observation",
+    "round": 27,
+    "leaderboard": [
+      [
+        "Genesis Systems",
+        0.6477267203762003
+      ],
+      [
+        "Mirage AI",
+        0.6145663716946292
+      ],
+      [
+        "Orion Labs",
+        0.6053088339151073
+      ],
+      [
+        "Apex AI",
+        0.581044250536847
+      ],
+      [
+        "OpenCore",
+        0.5600345453827884
+      ]
+    ],
+    "validity_correlation": 0.7638179928186326,
+    "consumer_satisfaction": 0.5541469273710108,
+    "market_shares": {
+      "Orion Labs": 0.40134284400981074,
+      "Apex AI": 0.03610525309581862,
+      "Genesis Systems": 0.26952921249938055,
+      "Mirage AI": 0.02174836318472867,
+      "OpenCore": 0.27127432721026157
+    },
+    "risk_beliefs": {
+      "gaming_risk": 0.6949999999999996,
+      "consumer_harm_risk": 0.0049999999999999906,
+      "validity_degradation_risk": 1.0,
+      "market_concentration_risk": 0.0,
+      "security_risk": 0.38,
+      "eval_engineering_risk": 1.0,
+      "fairness_risk": 0.47
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 27,
+    "industry_trust": 0.5534642857142859,
+    "avg_risk": 0.507142857142857
+  },
+  {
+    "type": "planning",
+    "round": 27,
+    "decision": "no_action",
+    "reason": "cooldown: 2 rounds since last intervention"
+  },
+  {
+    "type": "observation",
+    "round": 28,
+    "leaderboard": [
+      [
+        "Genesis Systems",
+        0.6508158947424536
+      ],
+      [
+        "Orion Labs",
+        0.631212535428611
+      ],
+      [
+        "Mirage AI",
+        0.6145663716946292
+      ],
+      [
+        "Apex AI",
+        0.5961934680981222
+      ],
+      [
+        "OpenCore",
+        0.5784622279509969
+      ]
+    ],
+    "validity_correlation": 0.7714728767012622,
+    "consumer_satisfaction": 0.5167954174334647,
+    "market_shares": {
+      "Orion Labs": 0.4897473654789028,
+      "Apex AI": 0.03609391897287499,
+      "Genesis Systems": 0.24703956450402914,
+      "Mirage AI": 0.020645493875825753,
+      "OpenCore": 0.20647365716836744
+    },
+    "risk_beliefs": {
+      "gaming_risk": 0.7699999999999996,
+      "consumer_harm_risk": 0.15,
+      "validity_degradation_risk": 1.0,
+      "market_concentration_risk": 0.0,
+      "security_risk": 0.38,
+      "eval_engineering_risk": 1.0,
+      "fairness_risk": 0.47
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 28,
+    "industry_trust": 0.549607142857143,
+    "avg_risk": 0.5385714285714285
+  },
+  {
+    "type": "planning",
+    "round": 28,
+    "decision": "intervene",
+    "intervention": {
+      "type": "sanctions_and_fines",
+      "name": "Sanction_Mirage AI_R28",
+      "details": {
+        "provider": "Mirage AI",
+        "fine_amount": 0.0030968240813738627,
+        "duration_rounds": 3,
+        "expires_round": 31,
+        "reason": "Repeated major+ incidents"
+      },
+      "reason": "Sanctioning Mirage AI: 2 major+ incidents after investigation"
+    }
+  },
+  {
+    "type": "execution",
+    "round": 28,
+    "intervention": {
+      "type": "sanctions_and_fines",
+      "name": "Sanction_Mirage AI_R28",
+      "details": {
+        "provider": "Mirage AI",
+        "fine_amount": 0.0030968240813738627,
+        "duration_rounds": 3,
+        "expires_round": 31,
+        "reason": "Repeated major+ incidents"
+      },
+      "reason": "Sanctioning Mirage AI: 2 major+ incidents after investigation"
+    }
+  },
+  {
+    "type": "observation",
+    "round": 29,
+    "leaderboard": [
+      [
+        "Genesis Systems",
+        0.6508158947424536
+      ],
+      [
+        "Orion Labs",
+        0.6442419156959256
+      ],
+      [
+        "Mirage AI",
+        0.6238495122786488
+      ],
+      [
+        "Apex AI",
+        0.5961934680981222
+      ],
+      [
+        "OpenCore",
+        0.5784622279509969
+      ]
+    ],
+    "validity_correlation": 0.7788964297360691,
+    "consumer_satisfaction": 0.5383450142891952,
+    "market_shares": {
+      "Orion Labs": 0.5579788574211073,
+      "Apex AI": 0.03587069829174912,
+      "Genesis Systems": 0.22197845311463138,
+      "Mirage AI": 0.019728103685358513,
+      "OpenCore": 0.16444388748715374
+    },
+    "risk_beliefs": {
+      "gaming_risk": 0.7699999999999996,
+      "consumer_harm_risk": 0.09999999999999999,
+      "validity_degradation_risk": 1.0,
+      "market_concentration_risk": 0.0,
+      "security_risk": 0.38,
+      "eval_engineering_risk": 1.0,
+      "fairness_risk": 0.47
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 29,
+    "industry_trust": 0.5464642857142858,
+    "avg_risk": 0.5314285714285714
+  },
+  {
+    "type": "planning",
+    "round": 29,
+    "decision": "no_action",
+    "reason": "cooldown: 1 rounds since last intervention"
+  }
+]

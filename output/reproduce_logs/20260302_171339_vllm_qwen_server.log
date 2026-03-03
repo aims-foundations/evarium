@@ -1,0 +1,59 @@
+INFO 03-02 17:13:44 [__init__.py:235] Automatically detected platform cuda.
+INFO 03-02 17:13:46 [api_server.py:1755] vLLM API server version 0.10.0
+INFO 03-02 17:13:46 [cli_args.py:261] non-default args: {'model': 'Qwen/Qwen3-235B-A22B', 'trust_remote_code': True, 'max_model_len': 16384, 'tensor_parallel_size': 4, 'gpu_memory_utilization': 0.95, 'disable_log_requests': True}
+ERROR 03-02 17:13:46 [config.py:133] Error retrieving file list: [Errno 13] Permission denied: '/afs/cs/u/sttruong/.cache/huggingface/token', retrying 1 of 2
+ERROR 03-02 17:13:48 [config.py:131] Error retrieving file list: [Errno 13] Permission denied: '/afs/cs/u/sttruong/.cache/huggingface/token'
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/lfs/local/0/sttruong/miniconda3/lib/python3.12/site-packages/vllm/entrypoints/openai/api_server.py", line 1856, in <module>
+    uvloop.run(run_server(args))
+  File "/lfs/local/0/sttruong/miniconda3/lib/python3.12/site-packages/uvloop/__init__.py", line 109, in run
+    return __asyncio.run(
+           ^^^^^^^^^^^^^^
+  File "/lfs/local/0/sttruong/miniconda3/lib/python3.12/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/lfs/local/0/sttruong/miniconda3/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "uvloop/loop.pyx", line 1518, in uvloop.loop.Loop.run_until_complete
+  File "/lfs/local/0/sttruong/miniconda3/lib/python3.12/site-packages/uvloop/__init__.py", line 61, in wrapper
+    return await main
+           ^^^^^^^^^^
+  File "/lfs/local/0/sttruong/miniconda3/lib/python3.12/site-packages/vllm/entrypoints/openai/api_server.py", line 1791, in run_server
+    await run_server_worker(listen_address, sock, args, **uvicorn_kwargs)
+  File "/lfs/local/0/sttruong/miniconda3/lib/python3.12/site-packages/vllm/entrypoints/openai/api_server.py", line 1811, in run_server_worker
+    async with build_async_engine_client(args, client_config) as engine_client:
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/lfs/local/0/sttruong/miniconda3/lib/python3.12/contextlib.py", line 210, in __aenter__
+    return await anext(self.gen)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/lfs/local/0/sttruong/miniconda3/lib/python3.12/site-packages/vllm/entrypoints/openai/api_server.py", line 158, in build_async_engine_client
+    async with build_async_engine_client_from_engine_args(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/lfs/local/0/sttruong/miniconda3/lib/python3.12/contextlib.py", line 210, in __aenter__
+    return await anext(self.gen)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/lfs/local/0/sttruong/miniconda3/lib/python3.12/site-packages/vllm/entrypoints/openai/api_server.py", line 180, in build_async_engine_client_from_engine_args
+    vllm_config = engine_args.create_engine_config(usage_context=usage_context)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/lfs/local/0/sttruong/miniconda3/lib/python3.12/site-packages/vllm/engine/arg_utils.py", line 1004, in create_engine_config
+    model_config = self.create_model_config()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/lfs/local/0/sttruong/miniconda3/lib/python3.12/site-packages/vllm/engine/arg_utils.py", line 872, in create_model_config
+    return ModelConfig(
+           ^^^^^^^^^^^^
+  File "/lfs/local/0/sttruong/miniconda3/lib/python3.12/site-packages/pydantic/_internal/_dataclasses.py", line 121, in __init__
+    s.__pydantic_validator__.validate_python(ArgsKwargs(args, kwargs), self_instance=s)
+pydantic_core._pydantic_core.ValidationError: 1 validation error for ModelConfig
+  Value error, Invalid repository ID or local directory specified: 'Qwen/Qwen3-235B-A22B'.
+Please verify the following requirements:
+1. Provide a valid Hugging Face repository ID.
+2. Specify a local directory that contains a recognized configuration file.
+   - For Hugging Face models: ensure the presence of a 'config.json'.
+   - For Mistral models: ensure the presence of a 'params.json'.
+3. For GGUF: pass the local path of the GGUF checkpoint.
+   Loading GGUF from a remote repo directly is not yet supported.
+ [type=value_error, input_value=ArgsKwargs((), {'model': ...attention_dtype': None}), input_type=ArgsKwargs]
+    For further information visit https://errors.pydantic.dev/2.10/v/value_error

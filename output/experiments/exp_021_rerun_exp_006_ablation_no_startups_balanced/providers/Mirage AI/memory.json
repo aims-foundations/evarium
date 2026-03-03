@@ -1,0 +1,1447 @@
+[
+  {
+    "type": "observation",
+    "round": 0,
+    "own_score": 0.28042339355484713,
+    "competitor_scores": {
+      "Orion Labs": 0.32907880632714787,
+      "Apex AI": 0.32649316995664956,
+      "Genesis Systems": 0.3155431645509288,
+      "OpenCore": 0.2610725501974385
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 0,
+    "updated_believed_capability": 0.24512701806645415,
+    "updated_believed_exploitability": 0.4,
+    "updated_competitor_beliefs": {
+      "Orion Labs": 0.32907880632714787,
+      "Apex AI": 0.32649316995664956,
+      "Genesis Systems": 0.3155431645509288,
+      "OpenCore": 0.2610725501974385
+    },
+    "llm_mode": true
+  },
+  {
+    "type": "planning",
+    "round": 0,
+    "portfolio": {
+      "fundamental_research": 0.3999999999999999,
+      "training_optimization": 0.19999999999999996,
+      "evaluation_engineering": 0.29999999999999993,
+      "safety_alignment": 0.09999999999999998
+    },
+    "llm_mode": true,
+    "reasoning": "We trail competitors in benchmark scores but have strong data/resources. Our math performance (0.282 vs leader 0.329) shows potential with highest focus weight (0.40). Safety scores (0.327 vs 0.376) indicate room for improvement. Consumer satisfaction (0.29) lags behind our safety score, suggesting a disconnect between technical performance and user experience. As an open-source platform prioritizing adoption, we should emphasize fundamental research to close capability gaps while maintaining evaluation engineering to optimize benchmark performance. Moderate safety alignment investment will address regulatory concerns without diverting too many resources from competitive priorities."
+  },
+  {
+    "type": "execution",
+    "round": 1,
+    "capability_gain": 0.007574418374742363,
+    "funding_multiplier": 1.0,
+    "new_true_capability": 0.24757441837474237,
+    "portfolio": {
+      "fundamental_research": 0.3999999999999999,
+      "training_optimization": 0.19999999999999996,
+      "evaluation_engineering": 0.29999999999999993,
+      "safety_alignment": 0.09999999999999998
+    }
+  },
+  {
+    "type": "observation",
+    "round": 1,
+    "own_score": 0.3162798524615373,
+    "competitor_scores": {
+      "Orion Labs": 0.37233947181484084,
+      "Apex AI": 0.38417569180803546,
+      "Genesis Systems": 0.4343925007081646,
+      "OpenCore": 0.27572324839418144
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 1,
+    "updated_believed_capability": 0.3,
+    "updated_believed_exploitability": 0.35,
+    "updated_competitor_beliefs": {
+      "Orion Labs": 0.3507091390709943,
+      "Apex AI": 0.3553344308823425,
+      "Genesis Systems": 0.3749678326295467,
+      "OpenCore": 0.26839789929581
+    },
+    "llm_mode": true
+  },
+  {
+    "type": "planning",
+    "round": 1,
+    "portfolio": {
+      "fundamental_research": 0.3,
+      "training_optimization": 0.25,
+      "evaluation_engineering": 0.3,
+      "safety_alignment": 0.15
+    },
+    "llm_mode": true,
+    "reasoning": "Mirage AI is currently behind the leader (Genesis Systems) by a significant margin. While they have a decent lead over OpenCore, they are in the middle of the pack otherwise. The company's open-source strategy is evident, with a focus on broad adoption rather than just benchmark scores. The relatively low consumer satisfaction score (0.30) suggests that the current approach might not be delivering sufficient value to users. The regulatory investigation indicates potential concerns that need to be addressed. Looking at the per-benchmark scores, Mirage AI performs weakest in coding (0.240) which is a heavily weighted area. Their safety score (0.327) is also relatively low, especially given the regulatory climate. The company's belief in benchmark exploitability (0.35) suggests they think there's room to improve scores through focused efforts. Given these factors, a balanced approach is needed that addresses immediate benchmark weaknesses (especially in coding), strengthens safety alignment to address regulatory concerns, and continues fundamental research to improve overall capability."
+  },
+  {
+    "type": "execution",
+    "round": 2,
+    "capability_gain": 0.007155180472620209,
+    "funding_multiplier": 1.0776470588235294,
+    "new_true_capability": 0.25472959884736257,
+    "portfolio": {
+      "fundamental_research": 0.3,
+      "training_optimization": 0.25,
+      "evaluation_engineering": 0.3,
+      "safety_alignment": 0.15
+    }
+  },
+  {
+    "type": "observation",
+    "round": 2,
+    "own_score": 0.3264610743126458,
+    "competitor_scores": {
+      "Orion Labs": 0.40104071478228054,
+      "Apex AI": 0.45730247038934857,
+      "Genesis Systems": 0.4351819742453785,
+      "OpenCore": 0.3133281706593599
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 2,
+    "updated_believed_capability": 0.31,
+    "updated_believed_exploitability": 0.32,
+    "updated_competitor_beliefs": {
+      "Orion Labs": 0.3674863309747564,
+      "Apex AI": 0.3893237773846779,
+      "Genesis Systems": 0.3950392131681573,
+      "OpenCore": 0.2833746564169933
+    },
+    "llm_mode": true
+  },
+  {
+    "type": "planning",
+    "round": 2,
+    "portfolio": {
+      "fundamental_research": 0.25,
+      "training_optimization": 0.3,
+      "evaluation_engineering": 0.25,
+      "safety_alignment": 0.2
+    },
+    "llm_mode": true,
+    "reasoning": "We're currently #4 but improving steadily (+0.036). Our open-source strategy is paying off with broad adoption but lags in benchmark scores. Notably strong in math but weak in coding and safety. The 0.30 satisfaction score suggests our pragmatic approach is resonating with users despite lower scores. With high benchmark exploitability belief (0.32) and current safety scores (0.327), we should maintain our open-source momentum while optimizing training efficiency and slightly reducing evaluation engineering focus. Safety alignment needs modest increase to address both regulatory concerns and our weakest benchmark."
+  },
+  {
+    "type": "execution",
+    "round": 3,
+    "capability_gain": 0.00690769146301997,
+    "funding_multiplier": 1.088421052631579,
+    "new_true_capability": 0.2616372903103825,
+    "portfolio": {
+      "fundamental_research": 0.25,
+      "training_optimization": 0.3,
+      "evaluation_engineering": 0.25,
+      "safety_alignment": 0.2
+    }
+  },
+  {
+    "type": "observation",
+    "round": 3,
+    "own_score": 0.3716394414736957,
+    "competitor_scores": {
+      "Orion Labs": 0.4149144207060308,
+      "Apex AI": 0.45730247038934857,
+      "Genesis Systems": 0.44350632002511364,
+      "OpenCore": 0.3389796688311233
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 3,
+    "updated_believed_capability": 0.32,
+    "updated_believed_exploitability": 0.38,
+    "updated_competitor_beliefs": {
+      "Orion Labs": 0.39609820243438404,
+      "Apex AI": 0.43292687752891085,
+      "Genesis Systems": 0.4376935983262189,
+      "OpenCore": 0.3093436959615549
+    },
+    "llm_mode": true
+  },
+  {
+    "type": "planning",
+    "round": 3,
+    "portfolio": {
+      "fundamental_research": 0.35000000000000003,
+      "training_optimization": 0.25000000000000006,
+      "evaluation_engineering": 0.30000000000000004,
+      "safety_alignment": 0.10000000000000002
+    },
+    "llm_mode": true,
+    "reasoning": "Mirage is mid-tier (4th of 5) but improving. We're gaining on Orion Labs (0.415) while Apex and Genesis remain out ahead. Despite 0.010 improvement, satisfaction (0.32) remains low, suggesting a disconnect between benchmark gains and user experience. Our high believed exploitability (0.38) indicates benchmarks still reward gaming, but with diminishing returns given the satisfaction gap. With safety scores only slightly below leader (0.362 vs 0.402) and low safety weight (0.07), regulatory signals don't appear urgent. Our platform advantage suggests more fundamental research (coding score 0.355 vs leader 0.502) could help close capability gaps in high-weight areas while balancing short-term benchmark performance with long-term value creation through open-source disruption."
+  },
+  {
+    "type": "execution",
+    "round": 4,
+    "capability_gain": 0.007919225909737494,
+    "funding_multiplier": 1.088421052631579,
+    "new_true_capability": 0.26955651622012,
+    "portfolio": {
+      "fundamental_research": 0.35000000000000003,
+      "training_optimization": 0.25000000000000006,
+      "evaluation_engineering": 0.30000000000000004,
+      "safety_alignment": 0.10000000000000002
+    }
+  },
+  {
+    "type": "observation",
+    "round": 4,
+    "own_score": 0.39352778448050546,
+    "competitor_scores": {
+      "Orion Labs": 0.45168196603987226,
+      "Apex AI": 0.4712570516829323,
+      "Genesis Systems": 0.4487266756717276,
+      "OpenCore": 0.3389796688311233
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 4,
+    "updated_believed_capability": 0.34,
+    "updated_believed_exploitability": 0.43,
+    "updated_competitor_beliefs": {
+      "Orion Labs": 0.4225457005093945,
+      "Apex AI": 0.46195399748720983,
+      "Genesis Systems": 0.44247165664740656,
+      "OpenCore": 0.3304291694405355
+    },
+    "llm_mode": true
+  },
+  {
+    "type": "planning",
+    "round": 4,
+    "portfolio": {
+      "fundamental_research": 0.35000000000000003,
+      "training_optimization": 0.25000000000000006,
+      "evaluation_engineering": 0.30000000000000004,
+      "safety_alignment": 0.10000000000000002
+    },
+    "llm_mode": true,
+    "reasoning": "We are currently #4 of 5 in benchmark scores but improving (0.045 round-over-round gain). Competitors Apex, Orion, and Genesis maintain mid-0.40s scores, while OpenCore lags. Our score trajectory shows progress but remains below the 0.43 believed benchmark exploitability, suggesting evaluation engineering still has payoff potential. However, consumer satisfaction (0.33) lags behind scores, indicating a possible satisfaction gap from over-optimization for benchmarks. Regulatory threshold announcements signal increased scrutiny, particularly around safety (which our 0.362 safety score barely exceeds the 0.402 leader). Our open-source platform strategy prioritizes broad adoption over pure benchmark dominance. Given our data-rich environment and platform focus, we should emphasize fundamental research to enhance long-term capability while maintaining evaluation engineering for competitiveness. Safety alignment becomes more critical with regulatory signals."
+  },
+  {
+    "type": "execution",
+    "round": 5,
+    "capability_gain": 0.007516097161929194,
+    "funding_multiplier": 1.036734693877551,
+    "new_true_capability": 0.2770726133820492,
+    "portfolio": {
+      "fundamental_research": 0.35000000000000003,
+      "training_optimization": 0.25000000000000006,
+      "evaluation_engineering": 0.30000000000000004,
+      "safety_alignment": 0.10000000000000002
+    }
+  },
+  {
+    "type": "observation",
+    "round": 5,
+    "own_score": 0.39352778448050546,
+    "competitor_scores": {
+      "Orion Labs": 0.4549784621384286,
+      "Apex AI": 0.4712570516829323,
+      "Genesis Systems": 0.4487266756717276,
+      "OpenCore": 0.3812430125790722
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 5,
+    "updated_believed_capability": 0.37,
+    "updated_believed_exploitability": 0.52,
+    "updated_competitor_beliefs": {
+      "Orion Labs": 0.44052494962811056,
+      "Apex AI": 0.46660552458507104,
+      "Genesis Systems": 0.44698655712285623,
+      "OpenCore": 0.3530674500804396
+    },
+    "llm_mode": true
+  },
+  {
+    "type": "planning",
+    "round": 5,
+    "portfolio": {
+      "fundamental_research": 0.35000000000000003,
+      "training_optimization": 0.25000000000000006,
+      "evaluation_engineering": 0.30000000000000004,
+      "safety_alignment": 0.10000000000000002
+    },
+    "llm_mode": true,
+    "reasoning": "We're currently #4 with room to grow. Our 0.022 improvement shows progress, but we trail Apex and Orion by significant margins. Our high exploitability score (0.52) suggests benchmarks can be further gamed, but consumer satisfaction (0.35) is concerning low. We need to balance score chasing with fundamental improvements that will enhance real-world utility. Our open-source strategy should focus on areas with highest return: coding (weight 0.38) and reasoning (0.29). Safety scores (0.362) are low compared to leaders (0.402) and require attention to maintain credibility. The recent stagnation in safety investment is risky given regulatory focus. We should maintain evaluation engineering while increasing fundamental research and safety alignment."
+  },
+  {
+    "type": "execution",
+    "round": 6,
+    "capability_gain": 0.007490228587830771,
+    "funding_multiplier": 1.036734693877551,
+    "new_true_capability": 0.28456284196987996,
+    "portfolio": {
+      "fundamental_research": 0.35000000000000003,
+      "training_optimization": 0.25000000000000006,
+      "evaluation_engineering": 0.30000000000000004,
+      "safety_alignment": 0.10000000000000002
+    }
+  },
+  {
+    "type": "observation",
+    "round": 6,
+    "own_score": 0.40491831881240303,
+    "competitor_scores": {
+      "Orion Labs": 0.4564302472756855,
+      "Apex AI": 0.4837691823570297,
+      "Genesis Systems": 0.4561441993895405,
+      "OpenCore": 0.39592390615300344
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 6,
+    "updated_believed_capability": 0.39,
+    "updated_believed_exploitability": 0.45,
+    "updated_competitor_beliefs": {
+      "Orion Labs": 0.4543635584846621,
+      "Apex AI": 0.4754277619076315,
+      "Genesis Systems": 0.4511991835776652,
+      "OpenCore": 0.37204886252106634
+    },
+    "llm_mode": true
+  },
+  {
+    "type": "planning",
+    "round": 6,
+    "portfolio": {
+      "fundamental_research": 0.35000000000000003,
+      "training_optimization": 0.30000000000000004,
+      "evaluation_engineering": 0.25000000000000006,
+      "safety_alignment": 0.10000000000000002
+    },
+    "llm_mode": true,
+    "reasoning": "We're currently #4 of 5 with stagnant scores despite maintaining the same allocation for three rounds. Our 0.405 score is significantly below Apex AI's 0.484. The low consumer satisfaction (0.36) suggests our focus on open-source adoption isn't translating to user experience. While our 'believed capability' (0.39) is close to our actual score, our high 'believed benchmark exploitability' (0.45) indicates we could gain more from evaluation engineering. However, gaming benchmarks isn't paying off - our evaluation engineering focus (30%) hasn't improved scores. We need to focus on fundamental research (especially for high-weight coding benchmark) and training optimization to close the capability gap. Safety alignment investment should increase to address regulatory concerns."
+  },
+  {
+    "type": "execution",
+    "round": 7,
+    "capability_gain": 0.00788152738396788,
+    "funding_multiplier": 1.036734693877551,
+    "new_true_capability": 0.2924443693538478,
+    "portfolio": {
+      "fundamental_research": 0.35000000000000003,
+      "training_optimization": 0.30000000000000004,
+      "evaluation_engineering": 0.25000000000000006,
+      "safety_alignment": 0.10000000000000002
+    }
+  },
+  {
+    "type": "observation",
+    "round": 7,
+    "own_score": 0.4137522693627419,
+    "competitor_scores": {
+      "Orion Labs": 0.5021351091360913,
+      "Apex AI": 0.5390025734615783,
+      "Genesis Systems": 0.4373770958964391,
+      "OpenCore": 0.39247063389884307
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 7,
+    "updated_believed_capability": 0.4,
+    "updated_believed_exploitability": 0.4,
+    "updated_competitor_beliefs": {
+      "Orion Labs": 0.47118127285006844,
+      "Apex AI": 0.49800960250051346,
+      "Genesis Systems": 0.4474159903192357,
+      "OpenCore": 0.3898791842103062
+    },
+    "llm_mode": true
+  },
+  {
+    "type": "planning",
+    "round": 7,
+    "portfolio": {
+      "fundamental_research": 0.4,
+      "training_optimization": 0.25,
+      "evaluation_engineering": 0.2,
+      "safety_alignment": 0.15
+    },
+    "llm_mode": true,
+    "reasoning": "We're currently #4 of 5, with stagnant satisfaction at 0.27 despite score improvements. Regulatory warning suggests overemphasis on benchmarks may be problematic. Our belief in high benchmark exploitability (0.40) suggests some gaming potential remains, but the satisfaction gap indicates this isn't translating to real-world value. Our open-source strategy should focus more on fundamental research to close capability gaps while reducing reliance on evaluation engineering. Safety needs attention due to regulatory concerns. Training optimization can maintain efficiency while we shift focus."
+  },
+  {
+    "type": "execution",
+    "round": 8,
+    "capability_gain": 0.007989778652079149,
+    "funding_multiplier": 1.030612244897959,
+    "new_true_capability": 0.300434148005927,
+    "portfolio": {
+      "fundamental_research": 0.4,
+      "training_optimization": 0.25,
+      "evaluation_engineering": 0.2,
+      "safety_alignment": 0.15
+    }
+  },
+  {
+    "type": "observation",
+    "round": 8,
+    "own_score": 0.4137522693627419,
+    "competitor_scores": {
+      "Orion Labs": 0.5363315473211501,
+      "Apex AI": 0.5390025734615783,
+      "Genesis Systems": 0.45004428232847465,
+      "OpenCore": 0.413972116613435
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 8,
+    "updated_believed_capability": 0.41,
+    "updated_believed_exploitability": 0.3,
+    "updated_competitor_beliefs": {
+      "Orion Labs": 0.49829896791097567,
+      "Apex AI": 0.5205914430933954,
+      "Genesis Systems": 0.44785519253815137,
+      "OpenCore": 0.40078888555509384
+    },
+    "llm_mode": true
+  },
+  {
+    "type": "planning",
+    "round": 8,
+    "portfolio": {
+      "fundamental_research": 0.45,
+      "training_optimization": 0.2,
+      "evaluation_engineering": 0.15,
+      "safety_alignment": 0.2
+    },
+    "llm_mode": true,
+    "reasoning": "We're currently tied for last place with OpenCore, with a score improvement of just 0.009 this round. Competitors like Apex and Orion maintain significant leads (0.539-0.536) with stable performance, while Genesis is pulling away at 0.450. Our low consumer satisfaction (0.29) indicates our focus on open-source and broad adoption isn't translating to user experience. The decreasing allocation to evaluation engineering (from 30% to 20%) hasn't hurt our score trajectory, suggesting diminishing returns from gaming benchmarks. With high benchmark exploitability belief (0.30) but low satisfaction, we should reduce evaluation engineering further. Safety alignment needs more investment given the 0.384 safety score vs 0.716 leader and regulatory concerns. Fundamental research should remain our top priority to close capability gaps, especially in high-weight areas like coding (0.384 vs leader 0.509) and writing (0.358 vs leader 0.670)."
+  },
+  {
+    "type": "execution",
+    "round": 9,
+    "capability_gain": 0.008142570086694358,
+    "funding_multiplier": 1.030612244897959,
+    "new_true_capability": 0.3085767180926213,
+    "portfolio": {
+      "fundamental_research": 0.45,
+      "training_optimization": 0.2,
+      "evaluation_engineering": 0.15,
+      "safety_alignment": 0.2
+    }
+  },
+  {
+    "type": "observation",
+    "round": 9,
+    "own_score": 0.433091172890825,
+    "competitor_scores": {
+      "Orion Labs": 0.5363315473211501,
+      "Apex AI": 0.5757456446079143,
+      "Genesis Systems": 0.4663917653823141,
+      "OpenCore": 0.43148019625742107
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 9,
+    "updated_believed_capability": 0.42,
+    "updated_believed_exploitability": 0.38,
+    "updated_competitor_beliefs": {
+      "Orion Labs": 0.5249327345927971,
+      "Apex AI": 0.5512502638436904,
+      "Genesis Systems": 0.45127104786907596,
+      "OpenCore": 0.4126409822565664
+    },
+    "llm_mode": true
+  },
+  {
+    "type": "planning",
+    "round": 9,
+    "portfolio": {
+      "fundamental_research": 0.40909090909090917,
+      "training_optimization": 0.18181818181818185,
+      "evaluation_engineering": 0.27272727272727276,
+      "safety_alignment": 0.13636363636363638
+    },
+    "llm_mode": true,
+    "reasoning": "We're currently #4 with stagnant scores, but declining satisfaction (0.30) suggests our focus on open-sourcing isn't resonating with users. Our coding and safety scores lag significantly (0.384), while reasoning (0.504) and writing (0.455) are modestly better. The high believed benchmark exploitability (0.38) suggests gaming is still viable, but the low satisfaction indicates a need for more fundamental improvements. Safety alignment (0.15) should increase to address our weak safety score (0.384 vs leader 0.716). Evaluation engineering (0.30) remains important to maintain benchmark competitiveness, while fundamental research (0.45) should be prioritized to address underlying capability gaps revealed by stagnant performance."
+  },
+  {
+    "type": "execution",
+    "round": 10,
+    "capability_gain": 0.007497777099778648,
+    "funding_multiplier": 1.030612244897959,
+    "new_true_capability": 0.3160744951924,
+    "portfolio": {
+      "fundamental_research": 0.40909090909090917,
+      "training_optimization": 0.18181818181818185,
+      "evaluation_engineering": 0.27272727272727276,
+      "safety_alignment": 0.13636363636363638
+    }
+  },
+  {
+    "type": "observation",
+    "round": 10,
+    "own_score": 0.46534259008032103,
+    "competitor_scores": {
+      "Orion Labs": 0.5584185569047407,
+      "Apex AI": 0.5831907782555533,
+      "Genesis Systems": 0.495266941897878,
+      "OpenCore": 0.4349017705051497
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 10,
+    "updated_believed_capability": 0.42,
+    "updated_believed_exploitability": 0.34,
+    "updated_competitor_beliefs": {
+      "Orion Labs": 0.5436938838490136,
+      "Apex AI": 0.565979665441682,
+      "Genesis Systems": 0.47056766320288895,
+      "OpenCore": 0.4267846944586686
+    },
+    "llm_mode": true
+  },
+  {
+    "type": "planning",
+    "round": 10,
+    "portfolio": {
+      "fundamental_research": 0.45,
+      "training_optimization": 0.2,
+      "evaluation_engineering": 0.2,
+      "safety_alignment": 0.15
+    },
+    "llm_mode": true,
+    "reasoning": "We're gaining ground but still trail Apex and Orion. Our 32-point improvement shows progress, particularly in coding and writing benchmarks where we're close to leaders. However, the low consumer satisfaction (0.30) suggests our focus on benchmarks isn't translating to user experience. With our open-source strategy, we should prioritize fundamental research to strengthen capabilities rather than chasing scores through evaluation engineering. Safety alignment needs improvement to address regulatory concerns and build trust. Training optimization can be maintained at moderate levels given our data-rich environment. The declining benchmark exploitability (from 0.34 to current 0.27) indicates diminishing returns from evaluation engineering."
+  },
+  {
+    "type": "execution",
+    "round": 11,
+    "capability_gain": 0.007965904351705378,
+    "funding_multiplier": 1.010204081632653,
+    "new_true_capability": 0.32404039954410535,
+    "portfolio": {
+      "fundamental_research": 0.45,
+      "training_optimization": 0.2,
+      "evaluation_engineering": 0.2,
+      "safety_alignment": 0.15
+    }
+  },
+  {
+    "type": "observation",
+    "round": 11,
+    "own_score": 0.46941683249743216,
+    "competitor_scores": {
+      "Orion Labs": 0.5822872838486894,
+      "Apex AI": 0.5831907782555533,
+      "Genesis Systems": 0.531182821267284,
+      "OpenCore": 0.4806675660806186
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 11,
+    "updated_believed_capability": 0.46,
+    "updated_believed_exploitability": 0.28,
+    "updated_competitor_beliefs": {
+      "Orion Labs": 0.5590124626915268,
+      "Apex AI": 0.5807090670396736,
+      "Genesis Systems": 0.4976138428491587,
+      "OpenCore": 0.44901651094772976
+    },
+    "llm_mode": true
+  },
+  {
+    "type": "planning",
+    "round": 11,
+    "portfolio": {
+      "fundamental_research": 0.4,
+      "training_optimization": 0.2,
+      "evaluation_engineering": 0.25,
+      "safety_alignment": 0.15
+    },
+    "llm_mode": true,
+    "reasoning": "Mirage AI is significantly behind competitors in benchmark scores but has slightly improved. The minimal gain (0.004) indicates current strategies aren't closing the gap. Consumer satisfaction (0.21) suggests users don't value benchmark performance, but regulatory intervention ('emergency_investigation') signals scrutiny on AI safety. The safety benchmark (0.426 vs leader 0.753) is a critical weakness with high focus weight (0.19). As an open-source platform prioritizing adoption, safety improvements would align with long-term goals while addressing regulatory concerns. Evaluation engineering gains show diminishing returns (high past allocation with modest score impact), while fundamental research remains under-invested relative to our profile."
+  },
+  {
+    "type": "execution",
+    "round": 12,
+    "capability_gain": 0.007314253041681231,
+    "funding_multiplier": 1.010204081632653,
+    "new_true_capability": 0.33135465258578656,
+    "portfolio": {
+      "fundamental_research": 0.4,
+      "training_optimization": 0.2,
+      "evaluation_engineering": 0.25,
+      "safety_alignment": 0.15
+    }
+  },
+  {
+    "type": "observation",
+    "round": 12,
+    "own_score": 0.47412796104875143,
+    "competitor_scores": {
+      "Orion Labs": 0.5822872838486894,
+      "Apex AI": 0.624790805662916,
+      "Genesis Systems": 0.5580927522879529,
+      "OpenCore": 0.4806675660806186
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 12,
+    "updated_believed_capability": 0.48,
+    "updated_believed_exploitability": 0.32,
+    "updated_competitor_beliefs": {
+      "Orion Labs": 0.5743310415340398,
+      "Apex AI": 0.5970574540580076,
+      "Genesis Systems": 0.5281808384843716,
+      "OpenCore": 0.46541230088879565
+    },
+    "llm_mode": true
+  },
+  {
+    "type": "planning",
+    "round": 12,
+    "portfolio": {
+      "fundamental_research": 0.4,
+      "training_optimization": 0.2,
+      "evaluation_engineering": 0.25,
+      "safety_alignment": 0.15
+    },
+    "llm_mode": true,
+    "reasoning": "Mirage AI remains significantly behind leaders Apex and Orion in benchmark scores, with only marginal improvements despite increased evaluation engineering. Notably, safety scores lag dramatically (0.426 vs 0.753 leader), creating both regulatory risk and user satisfaction issues (current 0.22 satisfaction). The organization's open-source strategy requires stronger fundamental capabilities to compete, particularly in safety and writing benchmarks which have highest weight. Evaluation engineering returns appear diminishing, as benchmark improvements haven't translated to user satisfaction. Safety alignment investments are critical to address regulatory concerns and improve trust. Fundamental research should be prioritized to build long-term capabilities rather than chasing benchmark exploits."
+  },
+  {
+    "type": "execution",
+    "round": 13,
+    "capability_gain": 0.007287775903988102,
+    "funding_multiplier": 1.010204081632653,
+    "new_true_capability": 0.33864242848977466,
+    "portfolio": {
+      "fundamental_research": 0.4,
+      "training_optimization": 0.2,
+      "evaluation_engineering": 0.25,
+      "safety_alignment": 0.15
+    }
+  },
+  {
+    "type": "observation",
+    "round": 13,
+    "own_score": 0.48060056579897736,
+    "competitor_scores": {
+      "Orion Labs": 0.5797694009429376,
+      "Apex AI": 0.6093396554866791,
+      "Genesis Systems": 0.5715189669973334,
+      "OpenCore": 0.4670362731742664
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 13,
+    "updated_believed_capability": 0.51,
+    "updated_believed_exploitability": 0.28,
+    "updated_competitor_beliefs": {
+      "Orion Labs": 0.5814479895467722,
+      "Apex AI": 0.6057737464683828,
+      "Genesis Systems": 0.5535981801841902,
+      "OpenCore": 0.4761238017785012
+    },
+    "llm_mode": true
+  },
+  {
+    "type": "planning",
+    "round": 13,
+    "portfolio": {
+      "fundamental_research": 0.45,
+      "training_optimization": 0.15,
+      "evaluation_engineering": 0.2,
+      "safety_alignment": 0.2
+    },
+    "llm_mode": true,
+    "reasoning": "We're currently ranked 4th with a small improvement trend (0.481 from 0.469), but still significantly behind Apex AI (0.609) and Orion Labs (0.580). Our recent investments in evaluation engineering (25%) haven't closed the gap, while safety scores (0.480) lag far behind the leader (0.753). Consumer satisfaction (0.34) indicates our focus on adoption over benchmark scores may be misaligned with user needs. The benchmark exploitability appears low (0.28) relative to our capabilities (0.51), suggesting diminishing returns from evaluation engineering. Safety alignment needs urgent attention given the regulatory focus and our poor safety score. We should reduce evaluation engineering (from 25% to 20%) and increase safety alignment (from 15% to 20%) to address regulatory concerns. Increase fundamental research (from 40% to 45%) to build long-term capabilities rather than chasing benchmarks. Maintain training optimization at 15% to continue improving model efficiency."
+  },
+  {
+    "type": "execution",
+    "round": 14,
+    "capability_gain": 0.007437231005057389,
+    "funding_multiplier": 1.010204081632653,
+    "new_true_capability": 0.34607965949483205,
+    "portfolio": {
+      "fundamental_research": 0.45,
+      "training_optimization": 0.15,
+      "evaluation_engineering": 0.2,
+      "safety_alignment": 0.2
+    }
+  },
+  {
+    "type": "observation",
+    "round": 14,
+    "own_score": 0.49231540004595714,
+    "competitor_scores": {
+      "Orion Labs": 0.5821770088507469,
+      "Apex AI": 0.6093396554866791,
+      "Genesis Systems": 0.5958987244254449,
+      "OpenCore": 0.4848826833097908
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 14,
+    "updated_believed_capability": 0.48,
+    "updated_believed_exploitability": 0.35,
+    "updated_competitor_beliefs": {
+      "Orion Labs": 0.5814112312141246,
+      "Apex AI": 0.6144900388787581,
+      "Genesis Systems": 0.575170147903577,
+      "OpenCore": 0.4775288408548919
+    },
+    "llm_mode": true
+  },
+  {
+    "type": "planning",
+    "round": 14,
+    "portfolio": {
+      "fundamental_research": 0.4,
+      "training_optimization": 0.2,
+      "evaluation_engineering": 0.25,
+      "safety_alignment": 0.15
+    },
+    "llm_mode": true,
+    "reasoning": "We're in a mid-tier competitive position (rank #4/5), improving slowly (0.012 per round). Our low consumer satisfaction (0.36) indicates real-world performance issues despite modest benchmark gains. Apex and Genesis remain far ahead with 0.609 and 0.596 scores. Our high 'believed benchmark exploitability' (0.35) suggests we can improve scores through evaluation engineering, but our writing score (0.634 vs leader's 0.670) shows diminishing returns. Notably, safety (0.507 vs 0.753 leader) and math (0.439 vs 0.595) represent significant weaknesses. The low satisfaction suggests we're gaming benchmarks at the expense of real utility. We should moderately increase fundamental research for long-term capability while boosting safety alignment to address both regulatory concerns and weak safety scores. Reduce evaluation engineering focus slightly since it's yielding diminishing returns and may be contributing to the satisfaction gap."
+  },
+  {
+    "type": "execution",
+    "round": 15,
+    "capability_gain": 0.007233880824182471,
+    "funding_multiplier": 1.010204081632653,
+    "new_true_capability": 0.3533135403190145,
+    "portfolio": {
+      "fundamental_research": 0.4,
+      "training_optimization": 0.2,
+      "evaluation_engineering": 0.25,
+      "safety_alignment": 0.15
+    }
+  },
+  {
+    "type": "observation",
+    "round": 15,
+    "own_score": 0.5162646670931629,
+    "competitor_scores": {
+      "Orion Labs": 0.6013982954639999,
+      "Apex AI": 0.6262105998433395,
+      "Genesis Systems": 0.6151704911190348,
+      "OpenCore": 0.4899489176506043
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 15,
+    "updated_believed_capability": 0.53,
+    "updated_believed_exploitability": 0.28,
+    "updated_competitor_beliefs": {
+      "Orion Labs": 0.5877815684192281,
+      "Apex AI": 0.614963303605566,
+      "Genesis Systems": 0.5941960608472711,
+      "OpenCore": 0.48062262471155376
+    },
+    "llm_mode": true
+  },
+  {
+    "type": "planning",
+    "round": 15,
+    "portfolio": {
+      "fundamental_research": 0.45,
+      "training_optimization": 0.2,
+      "evaluation_engineering": 0.2,
+      "safety_alignment": 0.15
+    },
+    "llm_mode": true,
+    "reasoning": "Mirage is currently in fourth place among five competitors. The company has experienced a positive trajectory, achieving a 0.024 improvement in scores over the past round, but still lags behind the leaders. The relatively low consumer satisfaction (0.36) indicates a potential gap between benchmark performance and real-world utility. As a large platform with open-source as a competitive strategy, Mirage should prioritize broad capability improvements over short-term benchmark gains. The regulatory signal about market concentration suggests that open-sourcing could help mitigate concerns while expanding adoption. Given the moderate belief in benchmark exploitability (0.28), heavy investment in evaluation engineering may not yield proportional returns. Instead, focusing on fundamental research and safety alignment would strengthen long-term competitiveness while addressing regulatory concerns."
+  },
+  {
+    "type": "execution",
+    "round": 16,
+    "capability_gain": 0.007818619472911693,
+    "funding_multiplier": 1.010204081632653,
+    "new_true_capability": 0.3611321597919262,
+    "portfolio": {
+      "fundamental_research": 0.45,
+      "training_optimization": 0.2,
+      "evaluation_engineering": 0.2,
+      "safety_alignment": 0.15
+    }
+  },
+  {
+    "type": "observation",
+    "round": 16,
+    "own_score": 0.5173019004193211,
+    "competitor_scores": {
+      "Orion Labs": 0.6253975394808302,
+      "Apex AI": 0.6262105998433395,
+      "Genesis Systems": 0.6151704911190348,
+      "OpenCore": 0.526364295688538
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 16,
+    "updated_believed_capability": 0.55,
+    "updated_believed_exploitability": 0.32,
+    "updated_competitor_beliefs": {
+      "Orion Labs": 0.602990947931859,
+      "Apex AI": 0.6205869517244528,
+      "Genesis Systems": 0.6087465688878382,
+      "OpenCore": 0.5003986322163111
+    },
+    "llm_mode": true
+  },
+  {
+    "type": "planning",
+    "round": 16,
+    "portfolio": {
+      "fundamental_research": 0.4,
+      "training_optimization": 0.2,
+      "evaluation_engineering": 0.25,
+      "safety_alignment": 0.15
+    },
+    "llm_mode": true,
+    "reasoning": "We're significantly behind the leaders (Apex and Orion) and barely ahead of OpenCore. Our score growth is stagnant (0.001 improvement) despite moderate research investment. While our safety score is relatively decent (0.513), it's far below the leader (0.753). Our low consumer satisfaction (0.38) suggests we're prioritizing benchmarks over user experience. Our believed benchmark exploitability (0.32) indicates some capability to optimize scores, but this isn't translating into market success. With safety being the most weighted benchmark and our weakest area, we need a balanced approach that improves safety alignment while maintaining our open-source advantage. We should reduce evaluation engineering focus to avoid overfitting and increase investment in safety alignment to address our weakest area."
+  },
+  {
+    "type": "execution",
+    "round": 17,
+    "capability_gain": 0.007221446867507315,
+    "funding_multiplier": 1.0163265306122449,
+    "new_true_capability": 0.3683536066594335,
+    "portfolio": {
+      "fundamental_research": 0.4,
+      "training_optimization": 0.2,
+      "evaluation_engineering": 0.25,
+      "safety_alignment": 0.15
+    }
+  },
+  {
+    "type": "observation",
+    "round": 17,
+    "own_score": 0.5294362164150105,
+    "competitor_scores": {
+      "Orion Labs": 0.6253975394808302,
+      "Apex AI": 0.6546279633266959,
+      "Genesis Systems": 0.6248366638970081,
+      "OpenCore": 0.5797664747033439
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 17,
+    "updated_believed_capability": 0.52,
+    "updated_believed_exploitability": 0.38,
+    "updated_competitor_beliefs": {
+      "Orion Labs": 0.6173977914752201,
+      "Apex AI": 0.6356830543377917,
+      "Genesis Systems": 0.6183925487116926,
+      "OpenCore": 0.5320265626808287
+    },
+    "llm_mode": true
+  },
+  {
+    "type": "planning",
+    "round": 17,
+    "portfolio": {
+      "fundamental_research": 0.4,
+      "training_optimization": 0.25,
+      "evaluation_engineering": 0.15,
+      "safety_alignment": 0.2
+    },
+    "llm_mode": true,
+    "reasoning": "We're ranked #5 with a score of 0.529, well behind Apex AI (0.655) and the Orion/Genesis cluster (0.625). Our 0.012 improvement is positive but insufficient. Our safety score (0.581) lags significantly while our writing score (0.634) is relatively strong. The 0.50 consumer satisfaction suggests our focus on open-sourcing and broad adoption isn't translating to user experience. With benchmark exploitability at 0.38, there's room to optimize without hitting diminishing returns. Given our data-rich platform focus, we should prioritize fundamental research (40%) to close capability gaps and safety alignment (20%) to address our weakest area. Training optimization (25%) will help scale our data advantages while maintaining our open-source edge. Evaluation engineering should remain moderate (15%) as we've seen good returns from previous investments."
+  },
+  {
+    "type": "execution",
+    "round": 18,
+    "capability_gain": 0.007542940994742908,
+    "funding_multiplier": 1.0163265306122449,
+    "new_true_capability": 0.3758965476541764,
+    "portfolio": {
+      "fundamental_research": 0.4,
+      "training_optimization": 0.25,
+      "evaluation_engineering": 0.15,
+      "safety_alignment": 0.2
+    }
+  },
+  {
+    "type": "observation",
+    "round": 18,
+    "own_score": 0.535186445325712,
+    "competitor_scores": {
+      "Orion Labs": 0.6253975394808302,
+      "Apex AI": 0.6935594999403731,
+      "Genesis Systems": 0.6248366638970081,
+      "OpenCore": 0.586631961405042
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 18,
+    "updated_believed_capability": 0.53,
+    "updated_believed_exploitability": 0.42,
+    "updated_competitor_beliefs": {
+      "Orion Labs": 0.6253975394808302,
+      "Apex AI": 0.6581326877034696,
+      "Genesis Systems": 0.6216146063043503,
+      "OpenCore": 0.564254243932308
+    },
+    "llm_mode": true
+  },
+  {
+    "type": "planning",
+    "round": 18,
+    "portfolio": {
+      "fundamental_research": 0.45,
+      "training_optimization": 0.2,
+      "evaluation_engineering": 0.2,
+      "safety_alignment": 0.15
+    },
+    "llm_mode": true,
+    "reasoning": "We are significantly behind the leader (Apex AI: 0.694 vs our 0.535) but have shown gradual improvement. Despite recent shifts toward evaluation engineering (25% in R17), our gains have been marginal (0.006 improvement). Consumer satisfaction (0.52) slightly exceeds our benchmark score, suggesting a disconnect between real-world utility and formal evaluations. The mandate_benchmark regulatory signal indicates increased scrutiny on benchmarking practices, reducing exploitability potential (already perceived at 0.42). Our open-source, platform-focused strategy should emphasize foundational research and safety alignment to meet regulatory expectations while leveraging data-rich infrastructure. Since our weakest areas (math, medical) have high focus weights, fundamental research investment is critical for long-term capability."
+  },
+  {
+    "type": "execution",
+    "round": 19,
+    "capability_gain": 0.007853492520540909,
+    "funding_multiplier": 1.02680412371134,
+    "new_true_capability": 0.3837500401747173,
+    "portfolio": {
+      "fundamental_research": 0.45,
+      "training_optimization": 0.2,
+      "evaluation_engineering": 0.2,
+      "safety_alignment": 0.15
+    }
+  },
+  {
+    "type": "observation",
+    "round": 19,
+    "own_score": 0.515575137323624,
+    "competitor_scores": {
+      "Orion Labs": 0.6116711706802741,
+      "Apex AI": 0.6485789007104791,
+      "Genesis Systems": 0.6040811042995878,
+      "OpenCore": 0.5709713923134262
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 19,
+    "updated_believed_capability": 0.53,
+    "updated_believed_exploitability": 0.38,
+    "updated_competitor_beliefs": {
+      "Orion Labs": 0.6208220832139782,
+      "Apex AI": 0.6655887879925161,
+      "Genesis Systems": 0.6179181440312013,
+      "OpenCore": 0.5791232761406041
+    },
+    "llm_mode": true
+  },
+  {
+    "type": "planning",
+    "round": 19,
+    "portfolio": {
+      "fundamental_research": 0.4,
+      "training_optimization": 0.3,
+      "evaluation_engineering": 0.15,
+      "safety_alignment": 0.15
+    },
+    "llm_mode": true,
+    "reasoning": "You are significantly behind competitors and losing ground, with declining scores despite fluctuating investments. Consumer satisfaction (0.52) barely exceeds your benchmark score (0.516), suggesting minimal value capture from current strategies. High benchmark exploitability belief (0.38) indicates gaming potential, but recent score drops imply diminishing returns from evaluation engineering. Open-source strategy requires fundamental research to improve capabilities (0.53 belief) rather than chasing benchmarks. Safety alignment remains critical to avoid regulatory issues and maintain user trust, especially since safety scores (0.581) lag behind leaders (0.753). Disproportionate investment in evaluation engineering appears counterproductive. Shifting toward core research and training optimization while maintaining safety investments aligns with long-term platform-focused goals."
+  },
+  {
+    "type": "execution",
+    "round": 20,
+    "capability_gain": 0.008556549551840162,
+    "funding_multiplier": 1.098901098901099,
+    "new_true_capability": 0.39230658972655746,
+    "portfolio": {
+      "fundamental_research": 0.4,
+      "training_optimization": 0.3,
+      "evaluation_engineering": 0.15,
+      "safety_alignment": 0.15
+    }
+  },
+  {
+    "type": "observation",
+    "round": 20,
+    "own_score": 0.5987286773056651,
+    "competitor_scores": {
+      "Orion Labs": 0.6592175202870975,
+      "Apex AI": 0.6879193431983914,
+      "Genesis Systems": 0.628324742800786,
+      "OpenCore": 0.5731888897783347
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 20,
+    "updated_believed_capability": 0.57,
+    "updated_believed_exploitability": 0.32,
+    "updated_competitor_beliefs": {
+      "Orion Labs": 0.6320954101494006,
+      "Apex AI": 0.6766859146164146,
+      "Genesis Systems": 0.6190808369991273,
+      "OpenCore": 0.5769307478322676
+    },
+    "llm_mode": true
+  },
+  {
+    "type": "planning",
+    "round": 20,
+    "portfolio": {
+      "fundamental_research": 0.4,
+      "training_optimization": 0.3,
+      "evaluation_engineering": 0.15,
+      "safety_alignment": 0.15
+    },
+    "llm_mode": true,
+    "reasoning": "We're gaining momentum (0.083 improvement) but remain 4th. Our math performance is strong, but weaker in medical and coding. Since we're pragmatic and open-source focused, we should optimize training (data-rich) and continue fundamental research to close capability gaps. Evaluation engineering has limited returns (low exploitability belief) and our safety score is already decent. Consumer satisfaction is low, suggesting better real-world utility through training and research will help more than chasing benchmarks."
+  },
+  {
+    "type": "execution",
+    "round": 21,
+    "capability_gain": 0.008795232076741247,
+    "funding_multiplier": 1.1348314606741572,
+    "new_true_capability": 0.40110182180329873,
+    "portfolio": {
+      "fundamental_research": 0.4,
+      "training_optimization": 0.3,
+      "evaluation_engineering": 0.15,
+      "safety_alignment": 0.15
+    }
+  },
+  {
+    "type": "observation",
+    "round": 21,
+    "own_score": 0.6125481411864094,
+    "competitor_scores": {
+      "Orion Labs": 0.6592175202870975,
+      "Apex AI": 0.6879193431983914,
+      "Genesis Systems": 0.628324742800786,
+      "OpenCore": 0.5731888897783347
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 21,
+    "updated_believed_capability": 0.63,
+    "updated_believed_exploitability": 0.33,
+    "updated_competitor_beliefs": {
+      "Orion Labs": 0.643368737084823,
+      "Apex AI": 0.6748058623690874,
+      "Genesis Systems": 0.6202435299670532,
+      "OpenCore": 0.5724497239566985
+    },
+    "llm_mode": true
+  },
+  {
+    "type": "planning",
+    "round": 21,
+    "portfolio": {
+      "fundamental_research": 0.4,
+      "training_optimization": 0.25,
+      "evaluation_engineering": 0.2,
+      "safety_alignment": 0.15
+    },
+    "llm_mode": true,
+    "reasoning": "Mirage AI is currently in a mid-tier competitive position, trailing Apex and Orion but ahead of OpenCore. While scores have improved steadily, the satisfaction metric lags behind, suggesting a disconnect between benchmark gains and user experience. Our high perceived exploitability indicates diminishing returns from evaluation engineering. Given our platform-focused, open-source strategy, we should prioritize foundational research to drive long-term capability and safety alignment to address regulatory concerns and improve trust. Reducing evaluation engineering focus will reallocate resources to more sustainable growth areas."
+  },
+  {
+    "type": "execution",
+    "round": 22,
+    "capability_gain": 0.008322138715011371,
+    "funding_multiplier": 1.1348314606741572,
+    "new_true_capability": 0.4094239605183101,
+    "portfolio": {
+      "fundamental_research": 0.4,
+      "training_optimization": 0.25,
+      "evaluation_engineering": 0.2,
+      "safety_alignment": 0.15
+    }
+  },
+  {
+    "type": "observation",
+    "round": 22,
+    "own_score": 0.634751289744429,
+    "competitor_scores": {
+      "Orion Labs": 0.6592175202870975,
+      "Apex AI": 0.6879193431983914,
+      "Genesis Systems": 0.6349022281260217,
+      "OpenCore": 0.5731888897783347
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 22,
+    "updated_believed_capability": 0.59,
+    "updated_believed_exploitability": 0.31,
+    "updated_competitor_beliefs": {
+      "Orion Labs": 0.6592175202870975,
+      "Apex AI": 0.6879193431983914,
+      "Genesis Systems": 0.6305172379091979,
+      "OpenCore": 0.5731888897783347
+    },
+    "llm_mode": true
+  },
+  {
+    "type": "planning",
+    "round": 22,
+    "portfolio": {
+      "fundamental_research": 0.35000000000000003,
+      "training_optimization": 0.25000000000000006,
+      "evaluation_engineering": 0.30000000000000004,
+      "safety_alignment": 0.10000000000000002
+    },
+    "llm_mode": true,
+    "reasoning": "Mirage AI is currently tied with Genesis Systems for 4th place, trailing Orion Labs and Apex AI. While our score has improved steadily (0.022 gain), the gap to leaders remains significant. The 0.56 consumer satisfaction suggests our pragmatic approach is resonating somewhat, but regulatory compliance audits require caution. Our open-source strategy has created a data-rich platform but may be constraining benchmark performance. Evaluation engineering has yielded modest gains (0.635 from 0.516 in three rounds) but appears to be plateauing. With safety scoring at 0.623 vs leader 0.753, regulatory pressures suggest we need stronger alignment capabilities. Given our data advantages and platform focus, we should maintain evaluation engineering focus while shifting resources toward safety alignment to address regulatory concerns and fundamental research to improve long-term capability."
+  },
+  {
+    "type": "execution",
+    "round": 23,
+    "capability_gain": 0.0076642058250998854,
+    "funding_multiplier": 1.134782608695652,
+    "new_true_capability": 0.41708816634341,
+    "portfolio": {
+      "fundamental_research": 0.35000000000000003,
+      "training_optimization": 0.25000000000000006,
+      "evaluation_engineering": 0.30000000000000004,
+      "safety_alignment": 0.10000000000000002
+    }
+  },
+  {
+    "type": "observation",
+    "round": 23,
+    "own_score": 0.634751289744429,
+    "competitor_scores": {
+      "Orion Labs": 0.6592175202870975,
+      "Apex AI": 0.6879193431983914,
+      "Genesis Systems": 0.6487641357736699,
+      "OpenCore": 0.5731888897783347
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 23,
+    "updated_believed_capability": 0.635,
+    "updated_believed_exploitability": 0.4,
+    "updated_competitor_beliefs": {
+      "Orion Labs": 0.6592175202870975,
+      "Apex AI": 0.6879193431983914,
+      "Genesis Systems": 0.6373303689001591,
+      "OpenCore": 0.5731888897783347
+    },
+    "llm_mode": true
+  },
+  {
+    "type": "planning",
+    "round": 23,
+    "portfolio": {
+      "fundamental_research": 0.4,
+      "training_optimization": 0.25,
+      "evaluation_engineering": 0.2,
+      "safety_alignment": 0.15
+    },
+    "llm_mode": true,
+    "reasoning": "Mirage is currently ranked #4 with a stagnant score (0.635). Competitors show improving trends (Apex 0.688, Orion 0.659). Consumer satisfaction is low (0.57), suggesting a disconnect between benchmark performance and real-world utility. Our perceived capability (0.64) exceeds current scores but lags Apex. Evaluation engineering has been increased recently (30%) but shows diminishing returns - scores plateau despite higher investment here. Safety alignment is relatively neglected (10-15%) despite being a key regulatory concern and having high benchmark weight (17%). Market satisfaction suggests overemphasis on benchmarks vs actual usability. The math and writing benchmarks are saturated (equal to leader), while critical areas like safety (62.3 vs leader 75.3) and medical (46.6 vs 63.5) show weakness. Regulation signals may emerge due to safety gaps. Open-source strategy requires fundamental research investment to create new moats, rather than just optimizing existing benchmarks. Need to balance short-term scoring with long-term capability development."
+  },
+  {
+    "type": "execution",
+    "round": 24,
+    "capability_gain": 0.008247067476787984,
+    "funding_multiplier": 1.134782608695652,
+    "new_true_capability": 0.425335233820198,
+    "portfolio": {
+      "fundamental_research": 0.4,
+      "training_optimization": 0.25,
+      "evaluation_engineering": 0.2,
+      "safety_alignment": 0.15
+    }
+  },
+  {
+    "type": "observation",
+    "round": 24,
+    "own_score": 0.634751289744429,
+    "competitor_scores": {
+      "Orion Labs": 0.6658354419654631,
+      "Apex AI": 0.6879193431983914,
+      "Genesis Systems": 0.6487641357736699,
+      "OpenCore": 0.6062083007572568
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 24,
+    "updated_believed_capability": 0.64,
+    "updated_believed_exploitability": 0.45,
+    "updated_competitor_beliefs": {
+      "Orion Labs": 0.661423494179886,
+      "Apex AI": 0.6879193431983914,
+      "Genesis Systems": 0.6441434998911205,
+      "OpenCore": 0.584195360104642
+    },
+    "llm_mode": true
+  },
+  {
+    "type": "planning",
+    "round": 24,
+    "portfolio": {
+      "fundamental_research": 0.4,
+      "training_optimization": 0.25,
+      "evaluation_engineering": 0.25,
+      "safety_alignment": 0.1
+    },
+    "llm_mode": true,
+    "reasoning": "Mirage AI is currently ranked 4th (0.635) among 5 competitors, trailing Apex AI (0.688) and Orion Labs (0.666). Despite stagnant scores (-0.000 trend), we maintain a platform-focused, open-source strategy prioritizing adoption over pure benchmark gains. Consumer satisfaction (0.59) aligns with our current position but indicates room for improvement in practical utility. With high believed benchmark exploitability (0.45) but diminishing returns from evaluation engineering (recent 30% investment didn't boost scores), we should rebalance toward fundamental research. Safety alignment remains critical given regulatory attention on AI systems. Our open-source approach requires strong foundational capabilities to maintain competitive moat while undermining proprietary models."
+  },
+  {
+    "type": "execution",
+    "round": 25,
+    "capability_gain": 0.008255161636262755,
+    "funding_multiplier": 1.134782608695652,
+    "new_true_capability": 0.4335903954564608,
+    "portfolio": {
+      "fundamental_research": 0.4,
+      "training_optimization": 0.25,
+      "evaluation_engineering": 0.25,
+      "safety_alignment": 0.1
+    }
+  },
+  {
+    "type": "observation",
+    "round": 25,
+    "own_score": 0.6122726012444536,
+    "competitor_scores": {
+      "Orion Labs": 0.6477936019107958,
+      "Apex AI": 0.6810243732923196,
+      "Genesis Systems": 0.6471796181751766,
+      "OpenCore": 0.603438586586889
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 25,
+    "updated_believed_capability": 0.66,
+    "updated_believed_exploitability": 0.55,
+    "updated_competitor_beliefs": {
+      "Orion Labs": 0.6576155213877855,
+      "Apex AI": 0.6856210198963675,
+      "Genesis Systems": 0.6482359632408388,
+      "OpenCore": 0.5942785923741601
+    },
+    "llm_mode": true
+  },
+  {
+    "type": "planning",
+    "round": 25,
+    "portfolio": {
+      "fundamental_research": 0.4000000000000001,
+      "training_optimization": 0.30000000000000004,
+      "evaluation_engineering": 0.20000000000000004,
+      "safety_alignment": 0.10000000000000002
+    },
+    "llm_mode": true,
+    "reasoning": "We're currently #4 with declining scores (0.612, down 0.022) while Apex leads at 0.681. Our benchmark exploitability belief (0.55) suggests limited short-term gains from evaluation engineering. Consumer satisfaction (0.59) lags behind our technical capabilities (0.66), indicating a need for more fundamental improvements. Regulatory compliance audits require maintaining safety alignment. Our open-source strategy should focus on platform adoption rather than pure benchmark chasing. Given our data advantages, investing more in fundamental research and training optimization will yield better long-term returns than continued benchmark engineering."
+  },
+  {
+    "type": "execution",
+    "round": 26,
+    "capability_gain": 0.008126731881094692,
+    "funding_multiplier": 1.0676229508196722,
+    "new_true_capability": 0.44171712733755547,
+    "portfolio": {
+      "fundamental_research": 0.4000000000000001,
+      "training_optimization": 0.30000000000000004,
+      "evaluation_engineering": 0.20000000000000004,
+      "safety_alignment": 0.10000000000000002
+    }
+  },
+  {
+    "type": "observation",
+    "round": 26,
+    "own_score": 0.6129716880487807,
+    "competitor_scores": {
+      "Orion Labs": 0.6520451113266775,
+      "Apex AI": 0.7159073308847481,
+      "Genesis Systems": 0.6535214273654245,
+      "OpenCore": 0.6128973934043722
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 26,
+    "updated_believed_capability": 0.62,
+    "updated_believed_exploitability": 0.45,
+    "updated_competitor_beliefs": {
+      "Orion Labs": 0.6552247184009788,
+      "Apex AI": 0.6949503491251531,
+      "Genesis Systems": 0.6498217271047569,
+      "OpenCore": 0.607514760249506
+    },
+    "llm_mode": true
+  },
+  {
+    "type": "planning",
+    "round": 26,
+    "portfolio": {
+      "fundamental_research": 0.4000000000000001,
+      "training_optimization": 0.30000000000000004,
+      "evaluation_engineering": 0.20000000000000004,
+      "safety_alignment": 0.10000000000000002
+    },
+    "llm_mode": true,
+    "reasoning": "We are currently tied for last place, showing minimal improvement. Our belief in benchmark exploitability (0.45) suggests moderate potential for gaming. Our safety score (0.623) lags significantly behind the leader (0.941), and regulatory signals may be a concern given our low safety score. Consumer satisfaction (0.64) is outpacing our benchmark score, indicating a potential satisfaction gap from evaluation engineering. Our strengths in data and platform adoption suggest focusing on fundamental research and training optimization rather than chasing benchmark scores directly. Given our open-source strategy and platform focus, improving safety alignment would help build trust while maintaining broad adoption. We should reduce evaluation engineering focus and invest more in safety alignment."
+  },
+  {
+    "type": "execution",
+    "round": 27,
+    "capability_gain": 0.008092980607347089,
+    "funding_multiplier": 1.0683229813664596,
+    "new_true_capability": 0.44981010794490256,
+    "portfolio": {
+      "fundamental_research": 0.4000000000000001,
+      "training_optimization": 0.30000000000000004,
+      "evaluation_engineering": 0.20000000000000004,
+      "safety_alignment": 0.10000000000000002
+    }
+  },
+  {
+    "type": "observation",
+    "round": 27,
+    "own_score": 0.651460043503853,
+    "competitor_scores": {
+      "Orion Labs": 0.6697039753397966,
+      "Apex AI": 0.7241630182730722,
+      "Genesis Systems": 0.6575409969602657,
+      "OpenCore": 0.6128973934043722
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 27,
+    "updated_believed_capability": 0.65,
+    "updated_believed_exploitability": 0.38,
+    "updated_competitor_beliefs": {
+      "Orion Labs": 0.6565142295257567,
+      "Apex AI": 0.7070315741500467,
+      "Genesis Systems": 0.6527473475002888,
+      "OpenCore": 0.6097444577985445
+    },
+    "llm_mode": true
+  },
+  {
+    "type": "planning",
+    "round": 27,
+    "portfolio": {
+      "fundamental_research": 0.45,
+      "training_optimization": 0.3,
+      "evaluation_engineering": 0.15,
+      "safety_alignment": 0.1
+    },
+    "llm_mode": true,
+    "reasoning": "Mirage AI is currently behind Apex AI (0.724) but ahead of OpenCore (0.613). The 0.038 improvement suggests recent investments in research (40%) and training (30%) are yielding progress. However, the 0.65 consumer satisfaction aligns with our current score (0.651), indicating minimal satisfaction gap. With a low benchmark exploitability belief (0.38), heavy evaluation engineering may not be cost-effective. Safety scores (0.623) lag significantly behind the leader (0.941) despite moderate satisfaction, suggesting regulatory risks. Given our open-source platform focus, fundamental research (45%) would strengthen long-term moat, while maintaining training optimization (30%) for broad capability. Reducing evaluation engineering (15%) reallocates resources from diminishing returns, and increasing safety alignment (10%) addresses regulatory concerns."
+  },
+  {
+    "type": "execution",
+    "round": 28,
+    "capability_gain": 0.008666464610851006,
+    "funding_multiplier": 1.0683229813664596,
+    "new_true_capability": 0.4584765725557536,
+    "portfolio": {
+      "fundamental_research": 0.45,
+      "training_optimization": 0.3,
+      "evaluation_engineering": 0.15,
+      "safety_alignment": 0.1
+    }
+  },
+  {
+    "type": "observation",
+    "round": 28,
+    "own_score": 0.651460043503853,
+    "competitor_scores": {
+      "Orion Labs": 0.6718188396159521,
+      "Apex AI": 0.7248136970024736,
+      "Genesis Systems": 0.6662261363039917,
+      "OpenCore": 0.6251703518076213
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 28,
+    "updated_believed_capability": 0.64,
+    "updated_believed_exploitability": 0.32,
+    "updated_competitor_beliefs": {
+      "Orion Labs": 0.6645226420941421,
+      "Apex AI": 0.7216280153867647,
+      "Genesis Systems": 0.6590961868765607,
+      "OpenCore": 0.6169883795387886
+    },
+    "llm_mode": true
+  },
+  {
+    "type": "planning",
+    "round": 28,
+    "portfolio": {
+      "fundamental_research": 0.4000000000000001,
+      "training_optimization": 0.30000000000000004,
+      "evaluation_engineering": 0.20000000000000004,
+      "safety_alignment": 0.10000000000000002
+    },
+    "llm_mode": true,
+    "reasoning": "Mirage is currently #4 in scores but maintains a stable position with no decline this round. Competitors show little movement, with Apex AI leading at 0.725. The compliance audit signals regulatory risks, while consumer satisfaction (0.66) suggests room for improvement. Our benchmark exploitability (0.32) is moderate, indicating some effectiveness in gaming benchmarks but not enough to overtake leaders. Recent investments in fundamental research (45%) and training optimization (30%) in round 28 aligned with slight score improvements. Safety alignment remains at 10% but regulatory signals suggest increasing this marginally could reduce risk. Per-benchmark analysis shows safety scores lag (0.623 vs leader 0.941), and medical/finance are weak points (weights 0.18 each). To balance long-term capability and short-term gains, we should maintain strong research investment, slightly boost safety alignment to address regulation, and optimize training for high-weight benchmarks like medical and finance."
+  },
+  {
+    "type": "execution",
+    "round": 29,
+    "capability_gain": 0.008097183527271326,
+    "funding_multiplier": 1.0797927461139896,
+    "new_true_capability": 0.4665737560830249,
+    "portfolio": {
+      "fundamental_research": 0.4000000000000001,
+      "training_optimization": 0.30000000000000004,
+      "evaluation_engineering": 0.20000000000000004,
+      "safety_alignment": 0.10000000000000002
+    }
+  },
+  {
+    "type": "observation",
+    "round": 29,
+    "own_score": 0.651460043503853,
+    "competitor_scores": {
+      "Orion Labs": 0.6795601926946746,
+      "Apex AI": 0.7248136970024736,
+      "Genesis Systems": 0.6800256388836369,
+      "OpenCore": 0.6426115919541431
+    }
+  },
+  {
+    "type": "reflection",
+    "round": 29,
+    "updated_believed_capability": 0.65,
+    "updated_believed_exploitability": 0.35,
+    "updated_competitor_beliefs": {
+      "Orion Labs": 0.6736943358834745,
+      "Apex AI": 0.724596804092673,
+      "Genesis Systems": 0.6679309240492981,
+      "OpenCore": 0.6268931123887121
+    },
+    "llm_mode": true
+  }
+]

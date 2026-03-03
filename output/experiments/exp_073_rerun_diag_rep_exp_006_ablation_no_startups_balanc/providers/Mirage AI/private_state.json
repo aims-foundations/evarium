@@ -1,0 +1,726 @@
+{
+  "strategy_profile": "Large-platform AI lab using open-source as competitive moat. Leverages massive user data and compute infrastructure. Prioritizes broad adoption over benchmark scores. Willing to open-source models to undermine competitors' paid APIs.",
+  "innate_traits": "open-source, pragmatic, data-rich, platform-focused, disruptive",
+  "believed_own_capability": 0.6191484058155982,
+  "believed_benchmark_exploitability": 0.4,
+  "capability_belief_confidence": 0.5,
+  "believed_competitor_capabilities": {
+    "Orion Labs": 0.5964250696285642,
+    "Apex AI": 0.596336075352968,
+    "Genesis Systems": 0.6422822751997402,
+    "OpenCore": 0.5922244721972185
+  },
+  "fundamental_research": 0.04977980763423505,
+  "training_optimization": 0.3209961630170852,
+  "evaluation_engineering": 0.31472387386764483,
+  "safety_alignment": 0.3145001554810348,
+  "effort_budget": 1.0,
+  "past_strategies": [
+    {
+      "round": 0,
+      "fundamental_research": 0.16064102978980085,
+      "training_optimization": 0.45,
+      "evaluation_engineering": 0.3393589702101991,
+      "safety_alignment": 0.05
+    },
+    {
+      "round": 1,
+      "fundamental_research": 0.11975180803775305,
+      "training_optimization": 0.42857142857142855,
+      "evaluation_engineering": 0.40405771577177074,
+      "safety_alignment": 0.047619047619047616
+    },
+    {
+      "round": 2,
+      "fundamental_research": 0.08248515277606808,
+      "training_optimization": 0.40723981900452483,
+      "evaluation_engineering": 0.4627637160022124,
+      "safety_alignment": 0.04751131221719457
+    },
+    {
+      "round": 3,
+      "fundamental_research": 0.05128746759482612,
+      "training_optimization": 0.38693035253654334,
+      "evaluation_engineering": 0.5142757310294215,
+      "safety_alignment": 0.047506448839208945
+    },
+    {
+      "round": 4,
+      "fundamental_research": 0.0482192462374062,
+      "training_optimization": 0.3731497989137194,
+      "evaluation_engineering": 0.5304117086114681,
+      "safety_alignment": 0.0482192462374062
+    },
+    {
+      "round": 5,
+      "fundamental_research": 0.04886869943490691,
+      "training_optimization": 0.36470690734621014,
+      "evaluation_engineering": 0.537555693783976,
+      "safety_alignment": 0.04886869943490691
+    },
+    {
+      "round": 6,
+      "fundamental_research": 0.04927531254396043,
+      "training_optimization": 0.3594209369285144,
+      "evaluation_engineering": 0.5420284379835647,
+      "safety_alignment": 0.04927531254396043
+    },
+    {
+      "round": 7,
+      "fundamental_research": 0.04953334943907639,
+      "training_optimization": 0.3560664572920068,
+      "evaluation_engineering": 0.5448668438298403,
+      "safety_alignment": 0.04953334943907639
+    },
+    {
+      "round": 8,
+      "fundamental_research": 0.04969850613505515,
+      "training_optimization": 0.353919420244283,
+      "evaluation_engineering": 0.5466835674856066,
+      "safety_alignment": 0.04969850613505515
+    },
+    {
+      "round": 9,
+      "fundamental_research": 0.04980479408181339,
+      "training_optimization": 0.35253767693642585,
+      "evaluation_engineering": 0.5478527348999473,
+      "safety_alignment": 0.04980479408181339
+    },
+    {
+      "round": 10,
+      "fundamental_research": 0.04987343732835157,
+      "training_optimization": 0.3516453147314297,
+      "evaluation_engineering": 0.5486078106118673,
+      "safety_alignment": 0.04987343732835157
+    },
+    {
+      "round": 11,
+      "fundamental_research": 0.049917869394124265,
+      "training_optimization": 0.35106769787638453,
+      "evaluation_engineering": 0.5490965633353669,
+      "safety_alignment": 0.049917869394124265
+    },
+    {
+      "round": 12,
+      "fundamental_research": 0.0499466720443258,
+      "training_optimization": 0.3506932634237646,
+      "evaluation_engineering": 0.5494133924875838,
+      "safety_alignment": 0.0499466720443258
+    },
+    {
+      "round": 13,
+      "fundamental_research": 0.04996536084287244,
+      "training_optimization": 0.35045030904265834,
+      "evaluation_engineering": 0.5496189692715968,
+      "safety_alignment": 0.04996536084287244
+    },
+    {
+      "round": 14,
+      "fundamental_research": 0.04997749468221519,
+      "training_optimization": 0.3502925691312025,
+      "evaluation_engineering": 0.5497524415043671,
+      "safety_alignment": 0.04997749468221519
+    },
+    {
+      "round": 15,
+      "fundamental_research": 0.04998537582202292,
+      "training_optimization": 0.350190114313702,
+      "evaluation_engineering": 0.5498391340422522,
+      "safety_alignment": 0.04998537582202292
+    },
+    {
+      "round": 16,
+      "fundamental_research": 0.04999049609114401,
+      "training_optimization": 0.3501235508151279,
+      "evaluation_engineering": 0.5498954570025841,
+      "safety_alignment": 0.04999049609114401
+    },
+    {
+      "round": 17,
+      "fundamental_research": 0.04999382322238951,
+      "training_optimization": 0.35008029810893626,
+      "evaluation_engineering": 0.5499320554462847,
+      "safety_alignment": 0.04999382322238951
+    },
+    {
+      "round": 18,
+      "fundamental_research": 0.04999598541691662,
+      "training_optimization": 0.350052189580084,
+      "evaluation_engineering": 0.5499558395860829,
+      "safety_alignment": 0.04999598541691662
+    },
+    {
+      "round": 19,
+      "fundamental_research": 0.04999739065717631,
+      "training_optimization": 0.35003392145670803,
+      "evaluation_engineering": 0.5499712972289394,
+      "safety_alignment": 0.04999739065717631
+    },
+    {
+      "round": 20,
+      "fundamental_research": 0.04945303205970128,
+      "training_optimization": 0.34620477479563083,
+      "evaluation_engineering": 0.30378111381178424,
+      "safety_alignment": 0.30056107933288373
+    },
+    {
+      "round": 21,
+      "fundamental_research": 0.04945021391639889,
+      "training_optimization": 0.3423980034504529,
+      "evaluation_engineering": 0.18001788391093085,
+      "safety_alignment": 0.42813389872221735
+    },
+    {
+      "round": 22,
+      "fundamental_research": 0.04932588492042172,
+      "training_optimization": 0.33778169030358396,
+      "evaluation_engineering": 0.13193192079812527,
+      "safety_alignment": 0.48096050397786905
+    },
+    {
+      "round": 23,
+      "fundamental_research": 0.04928128002996513,
+      "training_optimization": 0.33292628137691754,
+      "evaluation_engineering": 0.12833045784212918,
+      "safety_alignment": 0.48946198075098823
+    },
+    {
+      "round": 24,
+      "fundamental_research": 0.04926669525769775,
+      "training_optimization": 0.3280435529575026,
+      "evaluation_engineering": 0.15086668511461868,
+      "safety_alignment": 0.4718230666701809
+    },
+    {
+      "round": 25,
+      "fundamental_research": 0.04944880935030189,
+      "training_optimization": 0.3244272621758241,
+      "evaluation_engineering": 0.18558112587581146,
+      "safety_alignment": 0.4405428025980626
+    },
+    {
+      "round": 26,
+      "fundamental_research": 0.049771860004783716,
+      "training_optimization": 0.3229469654950076,
+      "evaluation_engineering": 0.2244068343193627,
+      "safety_alignment": 0.402874340180846
+    },
+    {
+      "round": 27,
+      "fundamental_research": 0.04991779896563576,
+      "training_optimization": 0.32241603400283797,
+      "evaluation_engineering": 0.2668790260001627,
+      "safety_alignment": 0.36078714103136367
+    },
+    {
+      "round": 28,
+      "fundamental_research": 0.04977980763423505,
+      "training_optimization": 0.3209961630170852,
+      "evaluation_engineering": 0.31472387386764483,
+      "safety_alignment": 0.3145001554810348
+    }
+  ],
+  "observed_competitor_scores": {
+    "Orion Labs": [
+      [
+        0,
+        0.2397562852223749
+      ],
+      [
+        1,
+        0.3533235931159595
+      ],
+      [
+        2,
+        0.459306754973231
+      ],
+      [
+        3,
+        0.5172920198667725
+      ],
+      [
+        4,
+        0.5172920198667725
+      ],
+      [
+        5,
+        0.5172920198667725
+      ],
+      [
+        6,
+        0.5172920198667725
+      ],
+      [
+        7,
+        0.5505456710681853
+      ],
+      [
+        8,
+        0.5522678589822532
+      ],
+      [
+        9,
+        0.5670737745241734
+      ],
+      [
+        10,
+        0.5670737745241734
+      ],
+      [
+        11,
+        0.5670737745241734
+      ],
+      [
+        12,
+        0.5780970131719287
+      ],
+      [
+        13,
+        0.556411530063258
+      ],
+      [
+        14,
+        0.556411530063258
+      ],
+      [
+        15,
+        0.556411530063258
+      ],
+      [
+        16,
+        0.556411530063258
+      ],
+      [
+        17,
+        0.556411530063258
+      ],
+      [
+        18,
+        0.5696268073173488
+      ],
+      [
+        19,
+        0.5533213668031506
+      ],
+      [
+        20,
+        0.5697715322722422
+      ],
+      [
+        21,
+        0.5697715322722422
+      ],
+      [
+        22,
+        0.5786380530328056
+      ],
+      [
+        23,
+        0.5804927915430056
+      ],
+      [
+        24,
+        0.5932075361157844
+      ],
+      [
+        25,
+        0.5781722530318348
+      ],
+      [
+        26,
+        0.5842657610964489
+      ],
+      [
+        27,
+        0.5842657610964489
+      ],
+      [
+        28,
+        0.5977858755105764
+      ],
+      [
+        29,
+        0.6072235722786673
+      ]
+    ],
+    "Apex AI": [
+      [
+        0,
+        0.37756452847911925
+      ],
+      [
+        1,
+        0.40244276070672214
+      ],
+      [
+        2,
+        0.4749860465002493
+      ],
+      [
+        3,
+        0.4749860465002493
+      ],
+      [
+        4,
+        0.5194755118052433
+      ],
+      [
+        5,
+        0.5320736579199782
+      ],
+      [
+        6,
+        0.5320736579199782
+      ],
+      [
+        7,
+        0.4868560286935182
+      ],
+      [
+        8,
+        0.5068254585531694
+      ],
+      [
+        9,
+        0.5068254585531694
+      ],
+      [
+        10,
+        0.5068254585531694
+      ],
+      [
+        11,
+        0.515282562324763
+      ],
+      [
+        12,
+        0.515282562324763
+      ],
+      [
+        13,
+        0.5026448675651568
+      ],
+      [
+        14,
+        0.5279342935786818
+      ],
+      [
+        15,
+        0.5753756977149184
+      ],
+      [
+        16,
+        0.5753756977149184
+      ],
+      [
+        17,
+        0.5756898336500907
+      ],
+      [
+        18,
+        0.5756898336500907
+      ],
+      [
+        19,
+        0.5740904413406602
+      ],
+      [
+        20,
+        0.5740904413406602
+      ],
+      [
+        21,
+        0.5740904413406602
+      ],
+      [
+        22,
+        0.5740904413406602
+      ],
+      [
+        23,
+        0.5873687903055778
+      ],
+      [
+        24,
+        0.5873687903055778
+      ],
+      [
+        25,
+        0.564917319250566
+      ],
+      [
+        26,
+        0.5713358814051105
+      ],
+      [
+        27,
+        0.582540629546843
+      ],
+      [
+        28,
+        0.5988944843161683
+      ],
+      [
+        29,
+        0.6075731121958925
+      ]
+    ],
+    "Genesis Systems": [
+      [
+        0,
+        0.29861515377825415
+      ],
+      [
+        1,
+        0.35788891628495967
+      ],
+      [
+        2,
+        0.364204044567092
+      ],
+      [
+        3,
+        0.364204044567092
+      ],
+      [
+        4,
+        0.4293417851868876
+      ],
+      [
+        5,
+        0.5411744171777455
+      ],
+      [
+        6,
+        0.5411744171777455
+      ],
+      [
+        7,
+        0.48169000762588193
+      ],
+      [
+        8,
+        0.5345218647609947
+      ],
+      [
+        9,
+        0.5397405983390345
+      ],
+      [
+        10,
+        0.5834331796563572
+      ],
+      [
+        11,
+        0.599567554599244
+      ],
+      [
+        12,
+        0.6052808590984415
+      ],
+      [
+        13,
+        0.5799024010674847
+      ],
+      [
+        14,
+        0.5799024010674847
+      ],
+      [
+        15,
+        0.5809631605661857
+      ],
+      [
+        16,
+        0.6091076234466614
+      ],
+      [
+        17,
+        0.6091076234466614
+      ],
+      [
+        18,
+        0.6091076234466614
+      ],
+      [
+        19,
+        0.5933267164580011
+      ],
+      [
+        20,
+        0.6147676850536822
+      ],
+      [
+        21,
+        0.6228820196097246
+      ],
+      [
+        22,
+        0.631833648267709
+      ],
+      [
+        23,
+        0.631833648267709
+      ],
+      [
+        24,
+        0.631833648267709
+      ],
+      [
+        25,
+        0.5883846903708984
+      ],
+      [
+        26,
+        0.6106782730421599
+      ],
+      [
+        27,
+        0.6355515711279851
+      ],
+      [
+        28,
+        0.639384518733196
+      ],
+      [
+        29,
+        0.6519107357380398
+      ]
+    ],
+    "OpenCore": [
+      [
+        0,
+        0.276666342234847
+      ],
+      [
+        1,
+        0.3377515549204795
+      ],
+      [
+        2,
+        0.4005736586146836
+      ],
+      [
+        3,
+        0.45020560393407694
+      ],
+      [
+        4,
+        0.5026337323634885
+      ],
+      [
+        5,
+        0.5026337323634885
+      ],
+      [
+        6,
+        0.5235550857068593
+      ],
+      [
+        7,
+        0.47713796475874276
+      ],
+      [
+        8,
+        0.5215359872068486
+      ],
+      [
+        9,
+        0.5754367043139411
+      ],
+      [
+        10,
+        0.5754367043139411
+      ],
+      [
+        11,
+        0.5754367043139411
+      ],
+      [
+        12,
+        0.5754367043139411
+      ],
+      [
+        13,
+        0.5495255951453566
+      ],
+      [
+        14,
+        0.5495255951453566
+      ],
+      [
+        15,
+        0.5495255951453566
+      ],
+      [
+        16,
+        0.5495255951453566
+      ],
+      [
+        17,
+        0.5528597611756734
+      ],
+      [
+        18,
+        0.5554488709956024
+      ],
+      [
+        19,
+        0.5403773766178003
+      ],
+      [
+        20,
+        0.5403773766178003
+      ],
+      [
+        21,
+        0.5465536949540212
+      ],
+      [
+        22,
+        0.5465536949540212
+      ],
+      [
+        23,
+        0.5465536949540212
+      ],
+      [
+        24,
+        0.5465536949540212
+      ],
+      [
+        25,
+        0.5669362161861827
+      ],
+      [
+        26,
+        0.5712107527627429
+      ],
+      [
+        27,
+        0.5712107527627429
+      ],
+      [
+        28,
+        0.6022328073719125
+      ],
+      [
+        29,
+        0.6032298564570001
+      ]
+    ]
+  },
+  "recent_insights": [],
+  "evaluator_premium_access": false,
+  "evaluator_funding_level": 0.0,
+  "benchmark_focus": {
+    "coding": 0.05781574335642317,
+    "reasoning": 0.04020514875133661,
+    "math": 0.15710940501961,
+    "safety": 0.08392529856486344,
+    "writing": 0.2986896917600618,
+    "medical": 0.13378349658221889,
+    "legal": 0.13742837032564456,
+    "finance": 0.09104284563984154
+  }
+}

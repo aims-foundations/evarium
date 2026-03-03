@@ -1,0 +1,205 @@
+{
+  "policy_objectives": [
+    "safety",
+    "fairness"
+  ],
+  "risk_beliefs": {
+    "gaming_risk": 0.15000000000000008,
+    "consumer_harm_risk": 0.01,
+    "validity_degradation_risk": 0.3,
+    "market_concentration_risk": 0.6499999999999999,
+    "eval_engineering_risk": 1.0,
+    "fairness_risk": 0.46,
+    "security_risk": 0.4000000000000001
+  },
+  "industry_trust": 0.9652857142857145,
+  "regulatory_capacity": 1.0,
+  "past_interventions": [
+    [
+      2,
+      "threshold_announcement",
+      {
+        "market_concentration_monitoring": 0.6,
+        "market_concentration_review": 0.75,
+        "eval_engineering_concern": 0.35
+      }
+    ],
+    [
+      5,
+      "investigation",
+      {
+        "focus": "elevated_risk"
+      }
+    ],
+    [
+      8,
+      "deployer_liability_guidance",
+      {
+        "providers": [
+          "OpenCore"
+        ]
+      }
+    ],
+    [
+      8,
+      "mandate_benchmark",
+      {
+        "validity": 0.7999999999999999,
+        "exploitability": 0.3
+      }
+    ],
+    [
+      11,
+      "public_warning",
+      {
+        "warning_severity": "high"
+      }
+    ],
+    [
+      14,
+      "compliance_audit",
+      {
+        "exploitability_reduction": 0.1
+      }
+    ],
+    [
+      17,
+      "compliance_audit",
+      {
+        "exploitability_reduction": 0.1
+      }
+    ],
+    [
+      20,
+      "compliance_audit",
+      {
+        "exploitability_reduction": 0.1
+      }
+    ],
+    [
+      23,
+      "compliance_audit",
+      {
+        "exploitability_reduction": 0.1
+      }
+    ],
+    [
+      26,
+      "compliance_audit",
+      {
+        "exploitability_reduction": 0.1
+      }
+    ],
+    [
+      29,
+      "compliance_audit",
+      {
+        "exploitability_reduction": 0.1
+      }
+    ]
+  ],
+  "observed_incidents": [
+    [
+      2,
+      "bias_discrimination: Bias audit reveals OpenCore facial recognition accuracy gaps",
+      "moderate",
+      "OpenCore"
+    ],
+    [
+      7,
+      "bias_discrimination: Study finds Mirage AI model produces biased hiring recommendations",
+      "moderate",
+      "Mirage AI"
+    ],
+    [
+      7,
+      "misinformation: OpenCore model generates false information on public health topic",
+      "moderate",
+      "OpenCore"
+    ],
+    [
+      10,
+      "misinformation: Government agencies warn against Genesis Systems model for official information",
+      "major",
+      "Genesis Systems"
+    ],
+    [
+      11,
+      "safety_failure: Multiple reports of Orion Labs providing incorrect legal advice",
+      "moderate",
+      "Orion Labs"
+    ],
+    [
+      12,
+      "misinformation: OpenCore chatbot provides inaccurate election information",
+      "moderate",
+      "OpenCore"
+    ],
+    [
+      13,
+      "healthcare_harm: OneAI AI denies Medicare coverage against doctor's orders, investigation launched",
+      "major",
+      "OneAI"
+    ],
+    [
+      14,
+      "security_breach: Mirage AI internal incident (security_breach)",
+      "minor",
+      "Mirage AI"
+    ],
+    [
+      16,
+      "safety_failure: OpenCore internal incident (safety_failure)",
+      "minor",
+      "OpenCore"
+    ],
+    [
+      18,
+      "security_breach: Apex AI internal incident (security_breach)",
+      "minor",
+      "Apex AI"
+    ],
+    [
+      19,
+      "security_breach: OneAI internal incident (security_breach)",
+      "minor",
+      "OneAI"
+    ],
+    [
+      23,
+      "misuse: OneAI internal incident (misuse)",
+      "minor",
+      "OneAI"
+    ],
+    [
+      24,
+      "misuse: Genesis Systems internal incident (misuse)",
+      "minor",
+      "Genesis Systems"
+    ],
+    [
+      25,
+      "security_breach: Apex AI internal incident (security_breach)",
+      "minor",
+      "Apex AI"
+    ],
+    [
+      27,
+      "safety_failure: Mirage AI internal incident (safety_failure)",
+      "minor",
+      "Mirage AI"
+    ],
+    [
+      28,
+      "healthcare_harm: Genesis Systems internal incident (healthcare_harm)",
+      "minor",
+      "Genesis Systems"
+    ],
+    [
+      29,
+      "security_breach: OpenCore internal incident (security_breach)",
+      "minor",
+      "OpenCore"
+    ]
+  ]
+}

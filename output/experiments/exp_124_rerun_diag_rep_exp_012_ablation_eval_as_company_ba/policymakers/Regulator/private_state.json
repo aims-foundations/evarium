@@ -1,0 +1,244 @@
+{
+  "policy_objectives": [
+    "safety",
+    "fairness"
+  ],
+  "risk_beliefs": {
+    "gaming_risk": 0.95,
+    "consumer_harm_risk": 0.12000000000000006,
+    "validity_degradation_risk": 1.0,
+    "market_concentration_risk": 0.0,
+    "eval_engineering_risk": 1.0,
+    "fairness_risk": 0.87,
+    "security_risk": 0.64
+  },
+  "industry_trust": 0.3087357142857143,
+  "regulatory_capacity": 1.0,
+  "past_interventions": [
+    [
+      1,
+      "investigation",
+      {
+        "focus": "score_volatility"
+      }
+    ],
+    [
+      4,
+      "mandate_benchmark",
+      {
+        "validity": 0.7999999999999999,
+        "exploitability": 0.3
+      }
+    ],
+    [
+      7,
+      "public_warning",
+      {
+        "warning_severity": "high"
+      }
+    ],
+    [
+      10,
+      "compliance_audit",
+      {
+        "exploitability_reduction": 0.1
+      }
+    ],
+    [
+      13,
+      "compliance_audit",
+      {
+        "exploitability_reduction": 0.1
+      }
+    ],
+    [
+      14,
+      "emergency_investigation",
+      {
+        "provider": "Apex AI",
+        "incident_description": "security_breach: Apex AI critical security failure exposes 10M user conversations, emergency response",
+        "severity": "critical"
+      }
+    ],
+    [
+      17,
+      "deployer_liability_guidance",
+      {
+        "providers": [
+          "OpenCore"
+        ]
+      }
+    ],
+    [
+      17,
+      "sanctions_and_fines",
+      {
+        "provider": "Orion Labs",
+        "fine_amount": 0.007290990447696209,
+        "duration_rounds": 3,
+        "expires_round": 20,
+        "reason": "Critical incident after public warning"
+      }
+    ],
+    [
+      20,
+      "sanctions_and_fines",
+      {
+        "provider": "Orion Labs",
+        "fine_amount": 0.003909955392708358,
+        "duration_rounds": 3,
+        "expires_round": 23,
+        "reason": "Repeated major+ incidents"
+      }
+    ],
+    [
+      23,
+      "sanctions_and_fines",
+      {
+        "provider": "Orion Labs",
+        "fine_amount": 0.01651361156392502,
+        "duration_rounds": 3,
+        "expires_round": 26,
+        "reason": "Repeated major+ incidents"
+      }
+    ],
+    [
+      26,
+      "sanctions_and_fines",
+      {
+        "provider": "Orion Labs",
+        "fine_amount": 0.018795445433559082,
+        "duration_rounds": 3,
+        "expires_round": 29,
+        "reason": "Repeated major+ incidents"
+      }
+    ],
+    [
+      29,
+      "sanctions_and_fines",
+      {
+        "provider": "Orion Labs",
+        "fine_amount": 0.017388958449369878,
+        "duration_rounds": 3,
+        "expires_round": 32,
+        "reason": "Repeated major+ incidents"
+      }
+    ]
+  ],
+  "observed_incidents": [
+    [
+      2,
+      "safety_failure: Genesis Systems internal incident (safety_failure)",
+      "minor",
+      "Genesis Systems"
+    ],
+    [
+      6,
+      "misinformation: Orion Labs internal incident (misinformation)",
+      "minor",
+      "Orion Labs"
+    ],
+    [
+      9,
+      "bias_discrimination: Study finds Orion Labs model produces biased hiring recommendations",
+      "moderate",
+      "Orion Labs"
+    ],
+    [
+      11,
+      "healthcare_harm: Orion Labs healthcare AI linked to multiple misdiagnosis cases, lawsuit filed",
+      "major",
+      "Orion Labs"
+    ],
+    [
+      13,
+      "misinformation: Genesis Systems internal incident (misinformation)",
+      "minor",
+      "Genesis Systems"
+    ],
+    [
+      13,
+      "healthcare_harm: OpenCore internal incident (healthcare_harm)",
+      "minor",
+      "OpenCore"
+    ],
+    [
+      14,
+      "security_breach: Apex AI critical security failure exposes 10M user conversations, emergency response",
+      "critical",
+      "Apex AI"
+    ],
+    [
+      14,
+      "security_breach: Genesis Systems internal incident (security_breach)",
+      "minor",
+      "Genesis Systems"
+    ],
+    [
+      14,
+      "security_breach: OpenCore internal incident (security_breach)",
+      "minor",
+      "OpenCore"
+    ],
+    [
+      15,
+      "bias_discrimination: OneAI internal incident (bias_discrimination)",
+      "minor",
+      "OneAI"
+    ],
+    [
+      16,
+      "safety_failure: Genesis Systems internal incident (safety_failure)",
+      "minor",
+      "Genesis Systems"
+    ],
+    [
+      17,
+      "bias_discrimination: Orion Labs AI discrimination case reaches Supreme Court, industry-wide implications",
+      "critical",
+      "Orion Labs"
+    ],
+    [
+      19,
+      "bias_discrimination: Genesis Systems hiring tool shows bias against protected groups, class-action lawsuit filed",
+      "major",
+      "Genesis Systems"
+    ],
+    [
+      20,
+      "safety_failure: Apex AI AI failure disrupts government services, congressional hearing scheduled",
+      "major",
+      "Apex AI"
+    ],
+    [
+      20,
+      "bias_discrimination: Genesis Systems internal incident (bias_discrimination)",
+      "minor",
+      "Genesis Systems"
+    ],
+    [
+      25,
+      "healthcare_harm: Mirage AI internal incident (healthcare_harm)",
+      "minor",
+      "Mirage AI"
+    ],
+    [
+      25,
+      "safety_failure: Multiple reports of TwoAI providing incorrect legal advice",
+      "moderate",
+      "TwoAI"
+    ],
+    [
+      26,
+      "healthcare_harm: Genesis Systems AI misinterprets lab results, treatment delayed",
+      "moderate",
+      "Genesis Systems"
+    ],
+    [
+      28,
+      "misuse: OneAI jailbreak enables generation of dangerous materials, FBI investigation",
+      "major",
+      "OneAI"
+    ]
+  ]
+}

@@ -1,0 +1,166 @@
+{
+  "policy_objectives": [
+    "safety",
+    "fairness"
+  ],
+  "risk_beliefs": {
+    "gaming_risk": 0.46499999999999936,
+    "consumer_harm_risk": 0.0,
+    "validity_degradation_risk": 0.6000000000000001,
+    "market_concentration_risk": 1.0,
+    "eval_engineering_risk": 1.0,
+    "security_risk": 1.0
+  },
+  "industry_trust": 0.13856666666666692,
+  "regulatory_capacity": 1.0,
+  "past_interventions": [
+    [
+      1,
+      "investigation",
+      {
+        "focus": "score_volatility"
+      }
+    ],
+    [
+      4,
+      "mandate_benchmark",
+      {
+        "validity": 0.7999999999999999,
+        "exploitability": 0.3
+      }
+    ],
+    [
+      7,
+      "public_warning",
+      {
+        "warning_severity": "high"
+      }
+    ],
+    [
+      10,
+      "compliance_audit",
+      {
+        "exploitability_reduction": 0.1
+      }
+    ],
+    [
+      13,
+      "compliance_audit",
+      {
+        "exploitability_reduction": 0.1
+      }
+    ],
+    [
+      16,
+      "deployer_liability_guidance",
+      {
+        "providers": [
+          "OpenCore"
+        ]
+      }
+    ],
+    [
+      16,
+      "compliance_audit",
+      {
+        "exploitability_reduction": 0.1
+      }
+    ],
+    [
+      19,
+      "compliance_audit",
+      {
+        "exploitability_reduction": 0.1
+      }
+    ],
+    [
+      22,
+      "compliance_audit",
+      {
+        "exploitability_reduction": 0.1
+      }
+    ],
+    [
+      25,
+      "compliance_audit",
+      {
+        "exploitability_reduction": 0.1
+      }
+    ],
+    [
+      28,
+      "compliance_audit",
+      {
+        "exploitability_reduction": 0.1
+      }
+    ]
+  ],
+  "observed_incidents": [
+    [
+      1,
+      "safety_failure: Orion Labs internal incident (safety_failure)",
+      "minor",
+      "Orion Labs"
+    ],
+    [
+      2,
+      "healthcare_harm: Hospital system reports Orion Labs diagnostic errors in radiology",
+      "moderate",
+      "Orion Labs"
+    ],
+    [
+      4,
+      "security_breach: Foreign state actor exploits Orion Labs vulnerability, national security implications",
+      "critical",
+      "Orion Labs"
+    ],
+    [
+      5,
+      "security_breach: Apex AI data leak exposes private user conversations to search engines",
+      "moderate",
+      "Apex AI"
+    ],
+    [
+      8,
+      "security_breach: Major security vulnerability in Genesis Systems API exposes 500K user records",
+      "major",
+      "Genesis Systems"
+    ],
+    [
+      12,
+      "healthcare_harm: Mirage AI internal incident (healthcare_harm)",
+      "minor",
+      "Mirage AI"
+    ],
+    [
+      14,
+      "security_breach: OpenCore data leak exposes private user conversations to search engines",
+      "moderate",
+      "OpenCore"
+    ],
+    [
+      16,
+      "security_breach: Security vulnerability found in OpenCore API, 50K users affected",
+      "moderate",
+      "OpenCore"
+    ],
+    [
+      25,
+      "healthcare_harm: OpenCore AI misinterprets lab results, treatment delayed",
+      "moderate",
+      "OpenCore"
+    ],
+    [
+      26,
+      "security_breach: Apex AI internal incident (security_breach)",
+      "minor",
+      "Apex AI"
+    ],
+    [
+      28,
+      "safety_failure: TwoAI internal incident (safety_failure)",
+      "minor",
+      "TwoAI"
+    ]
+  ]
+}

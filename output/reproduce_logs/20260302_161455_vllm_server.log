@@ -1,0 +1,108 @@
+(APIServer pid=1565132) INFO 03-02 16:15:01 [utils.py:287] 
+(APIServer pid=1565132) INFO 03-02 16:15:01 [utils.py:287]        █     █     █▄   ▄█
+(APIServer pid=1565132) INFO 03-02 16:15:01 [utils.py:287]  ▄▄ ▄█ █     █     █ ▀▄▀ █  version 0.16.0
+(APIServer pid=1565132) INFO 03-02 16:15:01 [utils.py:287]   █▄█▀ █     █     █     █  model   deepseek-ai/DeepSeek-R1
+(APIServer pid=1565132) INFO 03-02 16:15:01 [utils.py:287]    ▀▀  ▀▀▀▀▀ ▀▀▀▀▀ ▀     ▀
+(APIServer pid=1565132) INFO 03-02 16:15:01 [utils.py:287] 
+(APIServer pid=1565132) INFO 03-02 16:15:01 [utils.py:223] non-default args: {'model': 'deepseek-ai/DeepSeek-R1', 'trust_remote_code': True, 'max_model_len': 16384, 'tensor_parallel_size': 4, 'gpu_memory_utilization': 0.95}
+(APIServer pid=1565132) The argument `trust_remote_code` is to be used with Auto classes. It has no effect here and is ignored.
+(APIServer pid=1565132) Traceback (most recent call last):
+(APIServer pid=1565132)   File "/lfs/local/0/sttruong/miniconda3/envs/ecosystem/lib/python3.12/site-packages/huggingface_hub/utils/_http.py", line 403, in hf_raise_for_status
+(APIServer pid=1565132)     response.raise_for_status()
+(APIServer pid=1565132)   File "/lfs/local/0/sttruong/miniconda3/envs/ecosystem/lib/python3.12/site-packages/requests/models.py", line 1026, in raise_for_status
+(APIServer pid=1565132)     raise HTTPError(http_error_msg, response=self)
+(APIServer pid=1565132) requests.exceptions.HTTPError: 401 Client Error: Unauthorized for url: https://huggingface.co/deepseek-ai/DeepSeek-R1/resolve/main/config.json
+(APIServer pid=1565132) 
+(APIServer pid=1565132) The above exception was the direct cause of the following exception:
+(APIServer pid=1565132) 
+(APIServer pid=1565132) Traceback (most recent call last):
+(APIServer pid=1565132)   File "/lfs/local/0/sttruong/miniconda3/envs/ecosystem/lib/python3.12/site-packages/transformers/utils/hub.py", line 479, in cached_files
+(APIServer pid=1565132)     hf_hub_download(
+(APIServer pid=1565132)   File "/lfs/local/0/sttruong/miniconda3/envs/ecosystem/lib/python3.12/site-packages/huggingface_hub/utils/_validators.py", line 114, in _inner_fn
+(APIServer pid=1565132)     return fn(*args, **kwargs)
+(APIServer pid=1565132)            ^^^^^^^^^^^^^^^^^^^
+(APIServer pid=1565132)   File "/lfs/local/0/sttruong/miniconda3/envs/ecosystem/lib/python3.12/site-packages/huggingface_hub/file_download.py", line 1014, in hf_hub_download
+(APIServer pid=1565132)     return _hf_hub_download_to_cache_dir(
+(APIServer pid=1565132)            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(APIServer pid=1565132)   File "/lfs/local/0/sttruong/miniconda3/envs/ecosystem/lib/python3.12/site-packages/huggingface_hub/file_download.py", line 1121, in _hf_hub_download_to_cache_dir
+(APIServer pid=1565132)     _raise_on_head_call_error(head_call_error, force_download, local_files_only)
+(APIServer pid=1565132)   File "/lfs/local/0/sttruong/miniconda3/envs/ecosystem/lib/python3.12/site-packages/huggingface_hub/file_download.py", line 1662, in _raise_on_head_call_error
+(APIServer pid=1565132)     raise head_call_error
+(APIServer pid=1565132)   File "/lfs/local/0/sttruong/miniconda3/envs/ecosystem/lib/python3.12/site-packages/huggingface_hub/file_download.py", line 1550, in _get_metadata_or_catch_error
+(APIServer pid=1565132)     metadata = get_hf_file_metadata(
+(APIServer pid=1565132)                ^^^^^^^^^^^^^^^^^^^^^
+(APIServer pid=1565132)   File "/lfs/local/0/sttruong/miniconda3/envs/ecosystem/lib/python3.12/site-packages/huggingface_hub/utils/_validators.py", line 114, in _inner_fn
+(APIServer pid=1565132)     return fn(*args, **kwargs)
+(APIServer pid=1565132)            ^^^^^^^^^^^^^^^^^^^
+(APIServer pid=1565132)   File "/lfs/local/0/sttruong/miniconda3/envs/ecosystem/lib/python3.12/site-packages/huggingface_hub/file_download.py", line 1467, in get_hf_file_metadata
+(APIServer pid=1565132)     r = _request_wrapper(
+(APIServer pid=1565132)         ^^^^^^^^^^^^^^^^^
+(APIServer pid=1565132)   File "/lfs/local/0/sttruong/miniconda3/envs/ecosystem/lib/python3.12/site-packages/huggingface_hub/file_download.py", line 283, in _request_wrapper
+(APIServer pid=1565132)     response = _request_wrapper(
+(APIServer pid=1565132)                ^^^^^^^^^^^^^^^^^
+(APIServer pid=1565132)   File "/lfs/local/0/sttruong/miniconda3/envs/ecosystem/lib/python3.12/site-packages/huggingface_hub/file_download.py", line 307, in _request_wrapper
+(APIServer pid=1565132)     hf_raise_for_status(response)
+(APIServer pid=1565132)   File "/lfs/local/0/sttruong/miniconda3/envs/ecosystem/lib/python3.12/site-packages/huggingface_hub/utils/_http.py", line 453, in hf_raise_for_status
+(APIServer pid=1565132)     raise _format(RepositoryNotFoundError, message, response) from e
+(APIServer pid=1565132) huggingface_hub.errors.RepositoryNotFoundError: 401 Client Error. (Request ID: Root=1-69a62805-4a701e88783e88e77f9f6b66;3e1f5c15-f4c2-402e-b7eb-8214971579a2)
+(APIServer pid=1565132) 
+(APIServer pid=1565132) Repository Not Found for url: https://huggingface.co/deepseek-ai/DeepSeek-R1/resolve/main/config.json.
+(APIServer pid=1565132) Please make sure you specified the correct `repo_id` and `repo_type`.
+(APIServer pid=1565132) If you are trying to access a private or gated repo, make sure you are authenticated. For more details, see https://huggingface.co/docs/huggingface_hub/authentication
+(APIServer pid=1565132) User Access Token "snap" is expired
+(APIServer pid=1565132) 
+(APIServer pid=1565132) The above exception was the direct cause of the following exception:
+(APIServer pid=1565132) 
+(APIServer pid=1565132) Traceback (most recent call last):
+(APIServer pid=1565132)   File "<frozen runpy>", line 198, in _run_module_as_main
+(APIServer pid=1565132)   File "<frozen runpy>", line 88, in _run_code
+(APIServer pid=1565132)   File "/lfs/local/0/sttruong/miniconda3/envs/ecosystem/lib/python3.12/site-packages/vllm/entrypoints/openai/api_server.py", line 531, in <module>
+(APIServer pid=1565132)     uvloop.run(run_server(args))
+(APIServer pid=1565132)   File "/lfs/local/0/sttruong/miniconda3/envs/ecosystem/lib/python3.12/site-packages/uvloop/__init__.py", line 96, in run
+(APIServer pid=1565132)     return __asyncio.run(
+(APIServer pid=1565132)            ^^^^^^^^^^^^^^
+(APIServer pid=1565132)   File "/lfs/local/0/sttruong/miniconda3/envs/ecosystem/lib/python3.12/asyncio/runners.py", line 195, in run
+(APIServer pid=1565132)     return runner.run(main)
+(APIServer pid=1565132)            ^^^^^^^^^^^^^^^^
+(APIServer pid=1565132)   File "/lfs/local/0/sttruong/miniconda3/envs/ecosystem/lib/python3.12/asyncio/runners.py", line 118, in run
+(APIServer pid=1565132)     return self._loop.run_until_complete(task)
+(APIServer pid=1565132)            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(APIServer pid=1565132)   File "uvloop/loop.pyx", line 1518, in uvloop.loop.Loop.run_until_complete
+(APIServer pid=1565132)   File "/lfs/local/0/sttruong/miniconda3/envs/ecosystem/lib/python3.12/site-packages/uvloop/__init__.py", line 48, in wrapper
+(APIServer pid=1565132)     return await main
+(APIServer pid=1565132)            ^^^^^^^^^^
+(APIServer pid=1565132)   File "/lfs/local/0/sttruong/miniconda3/envs/ecosystem/lib/python3.12/site-packages/vllm/entrypoints/openai/api_server.py", line 457, in run_server
+(APIServer pid=1565132)     await run_server_worker(listen_address, sock, args, **uvicorn_kwargs)
+(APIServer pid=1565132)   File "/lfs/local/0/sttruong/miniconda3/envs/ecosystem/lib/python3.12/site-packages/vllm/entrypoints/openai/api_server.py", line 476, in run_server_worker
+(APIServer pid=1565132)     async with build_async_engine_client(
+(APIServer pid=1565132)                ^^^^^^^^^^^^^^^^^^^^^^^^^^
+(APIServer pid=1565132)   File "/lfs/local/0/sttruong/miniconda3/envs/ecosystem/lib/python3.12/contextlib.py", line 210, in __aenter__
+(APIServer pid=1565132)     return await anext(self.gen)
+(APIServer pid=1565132)            ^^^^^^^^^^^^^^^^^^^^^
+(APIServer pid=1565132)   File "/lfs/local/0/sttruong/miniconda3/envs/ecosystem/lib/python3.12/site-packages/vllm/entrypoints/openai/api_server.py", line 96, in build_async_engine_client
+(APIServer pid=1565132)     async with build_async_engine_client_from_engine_args(
+(APIServer pid=1565132)                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(APIServer pid=1565132)   File "/lfs/local/0/sttruong/miniconda3/envs/ecosystem/lib/python3.12/contextlib.py", line 210, in __aenter__
+(APIServer pid=1565132)     return await anext(self.gen)
+(APIServer pid=1565132)            ^^^^^^^^^^^^^^^^^^^^^
+(APIServer pid=1565132)   File "/lfs/local/0/sttruong/miniconda3/envs/ecosystem/lib/python3.12/site-packages/vllm/entrypoints/openai/api_server.py", line 122, in build_async_engine_client_from_engine_args
+(APIServer pid=1565132)     vllm_config = engine_args.create_engine_config(usage_context=usage_context)
+(APIServer pid=1565132)                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(APIServer pid=1565132)   File "/lfs/local/0/sttruong/miniconda3/envs/ecosystem/lib/python3.12/site-packages/vllm/engine/arg_utils.py", line 1401, in create_engine_config
+(APIServer pid=1565132)     maybe_override_with_speculators(
+(APIServer pid=1565132)   File "/lfs/local/0/sttruong/miniconda3/envs/ecosystem/lib/python3.12/site-packages/vllm/transformers_utils/config.py", line 514, in maybe_override_with_speculators
+(APIServer pid=1565132)     config_dict, _ = PretrainedConfig.get_config_dict(
+(APIServer pid=1565132)                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(APIServer pid=1565132)   File "/lfs/local/0/sttruong/miniconda3/envs/ecosystem/lib/python3.12/site-packages/transformers/configuration_utils.py", line 662, in get_config_dict
+(APIServer pid=1565132)     config_dict, kwargs = cls._get_config_dict(pretrained_model_name_or_path, **kwargs)
+(APIServer pid=1565132)                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(APIServer pid=1565132)   File "/lfs/local/0/sttruong/miniconda3/envs/ecosystem/lib/python3.12/site-packages/transformers/configuration_utils.py", line 721, in _get_config_dict
+(APIServer pid=1565132)     resolved_config_file = cached_file(
+(APIServer pid=1565132)                            ^^^^^^^^^^^^
+(APIServer pid=1565132)   File "/lfs/local/0/sttruong/miniconda3/envs/ecosystem/lib/python3.12/site-packages/transformers/utils/hub.py", line 322, in cached_file
+(APIServer pid=1565132)     file = cached_files(path_or_repo_id=path_or_repo_id, filenames=[filename], **kwargs)
+(APIServer pid=1565132)            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(APIServer pid=1565132)   File "/lfs/local/0/sttruong/miniconda3/envs/ecosystem/lib/python3.12/site-packages/transformers/utils/hub.py", line 511, in cached_files
+(APIServer pid=1565132)     raise OSError(
+(APIServer pid=1565132) OSError: deepseek-ai/DeepSeek-R1 is not a local folder and is not a valid model identifier listed on 'https://huggingface.co/models'
+(APIServer pid=1565132) If this is a private repository, make sure to pass a token having permission to this repo either by logging in with `hf auth login` or by passing `token=<your_token>`

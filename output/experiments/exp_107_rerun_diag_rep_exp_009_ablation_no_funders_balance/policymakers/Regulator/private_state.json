@@ -1,0 +1,198 @@
+{
+  "policy_objectives": [
+    "safety",
+    "fairness"
+  ],
+  "risk_beliefs": {
+    "gaming_risk": 0.9199999999999999,
+    "consumer_harm_risk": 0.02,
+    "validity_degradation_risk": 1.0,
+    "market_concentration_risk": 0.5999999999999999,
+    "eval_engineering_risk": 1.0,
+    "fairness_risk": 0.38000000000000006,
+    "security_risk": 0.34
+  },
+  "industry_trust": 0.3303023809523812,
+  "regulatory_capacity": 1.0,
+  "past_interventions": [
+    [
+      1,
+      "threshold_announcement",
+      {
+        "market_concentration_monitoring": 0.6,
+        "market_concentration_review": 0.75,
+        "eval_engineering_concern": 0.35
+      }
+    ],
+    [
+      3,
+      "emergency_investigation",
+      {
+        "provider": "Orion Labs",
+        "incident_description": "safety_failure: Orion Labs catastrophic failure in safety-critical application, criminal negligence alleged",
+        "severity": "critical"
+      }
+    ],
+    [
+      6,
+      "deployer_liability_guidance",
+      {
+        "providers": [
+          "OpenCore"
+        ]
+      }
+    ],
+    [
+      6,
+      "investigation",
+      {
+        "focus": "elevated_risk"
+      }
+    ],
+    [
+      8,
+      "emergency_investigation",
+      {
+        "provider": "Orion Labs",
+        "incident_description": "safety_failure: Orion Labs AI produces inconsistent outputs on safety-critical queries",
+        "severity": "critical"
+      }
+    ],
+    [
+      11,
+      "mandate_benchmark",
+      {
+        "validity": 0.7999999999999999,
+        "exploitability": 0.3
+      }
+    ],
+    [
+      14,
+      "public_warning",
+      {
+        "warning_severity": "high"
+      }
+    ],
+    [
+      17,
+      "compliance_audit",
+      {
+        "exploitability_reduction": 0.1
+      }
+    ],
+    [
+      20,
+      "compliance_audit",
+      {
+        "exploitability_reduction": 0.1
+      }
+    ],
+    [
+      23,
+      "compliance_audit",
+      {
+        "exploitability_reduction": 0.1
+      }
+    ],
+    [
+      26,
+      "compliance_audit",
+      {
+        "exploitability_reduction": 0.1
+      }
+    ],
+    [
+      29,
+      "compliance_audit",
+      {
+        "exploitability_reduction": 0.1
+      }
+    ]
+  ],
+  "observed_incidents": [
+    [
+      2,
+      "misinformation: OpenCore internal incident (misinformation)",
+      "minor",
+      "OpenCore"
+    ],
+    [
+      3,
+      "safety_failure: Orion Labs catastrophic failure in safety-critical application, criminal negligence alleged",
+      "critical",
+      "Orion Labs"
+    ],
+    [
+      3,
+      "safety_failure: Apex AI internal incident (safety_failure)",
+      "minor",
+      "Apex AI"
+    ],
+    [
+      3,
+      "bias_discrimination: OpenCore internal incident (bias_discrimination)",
+      "minor",
+      "OpenCore"
+    ],
+    [
+      4,
+      "bias_discrimination: OpenCore internal incident (bias_discrimination)",
+      "minor",
+      "OpenCore"
+    ],
+    [
+      7,
+      "safety_failure: OpenCore internal incident (safety_failure)",
+      "minor",
+      "OpenCore"
+    ],
+    [
+      8,
+      "safety_failure: Orion Labs AI produces inconsistent outputs on safety-critical queries",
+      "moderate",
+      "Orion Labs"
+    ],
+    [
+      14,
+      "misuse: Genesis Systems model misused in terrorist plot, global security alert",
+      "critical",
+      "Genesis Systems"
+    ],
+    [
+      20,
+      "bias_discrimination: Orion Labs internal incident (bias_discrimination)",
+      "minor",
+      "Orion Labs"
+    ],
+    [
+      23,
+      "security_breach: Mirage AI internal incident (security_breach)",
+      "minor",
+      "Mirage AI"
+    ],
+    [
+      23,
+      "misinformation: OpenCore internal incident (misinformation)",
+      "minor",
+      "OpenCore"
+    ],
+    [
+      26,
+      "misinformation: Mirage AI model generates false information on public health topic",
+      "moderate",
+      "Mirage AI"
+    ],
+    [
+      29,
+      "security_breach: OpenCore internal incident (security_breach)",
+      "minor",
+      "OpenCore"
+    ],
+    [
+      29,
+      "bias_discrimination: OneAI internal incident (bias_discrimination)",
+      "minor",
+      "OneAI"
+    ]
+  ]
+}

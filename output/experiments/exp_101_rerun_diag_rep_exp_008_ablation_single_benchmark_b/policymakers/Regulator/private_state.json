@@ -1,0 +1,152 @@
+{
+  "policy_objectives": [
+    "safety",
+    "fairness"
+  ],
+  "risk_beliefs": {
+    "gaming_risk": 0.7849999999999996,
+    "consumer_harm_risk": 0.04999999999999999,
+    "validity_degradation_risk": 1.0,
+    "market_concentration_risk": 0.5499999999999998,
+    "eval_engineering_risk": 1.0,
+    "security_risk": 0.7299999999999999,
+    "fairness_risk": 0.32
+  },
+  "industry_trust": 0.1329761904761908,
+  "regulatory_capacity": 1.0,
+  "past_interventions": [
+    [
+      1,
+      "threshold_announcement",
+      {
+        "market_concentration_monitoring": 0.6,
+        "market_concentration_review": 0.75,
+        "eval_engineering_concern": 0.35
+      }
+    ],
+    [
+      4,
+      "investigation",
+      {
+        "focus": "elevated_risk"
+      }
+    ],
+    [
+      7,
+      "mandate_benchmark",
+      {
+        "validity": 0.7999999999999999,
+        "exploitability": 0.3
+      }
+    ],
+    [
+      10,
+      "public_warning",
+      {
+        "warning_severity": "high"
+      }
+    ],
+    [
+      13,
+      "compliance_audit",
+      {
+        "exploitability_reduction": 0.1
+      }
+    ],
+    [
+      16,
+      "compliance_audit",
+      {
+        "exploitability_reduction": 0.1
+      }
+    ],
+    [
+      19,
+      "compliance_audit",
+      {
+        "exploitability_reduction": 0.1
+      }
+    ],
+    [
+      22,
+      "compliance_audit",
+      {
+        "exploitability_reduction": 0.1
+      }
+    ],
+    [
+      25,
+      "compliance_audit",
+      {
+        "exploitability_reduction": 0.1
+      }
+    ],
+    [
+      28,
+      "compliance_audit",
+      {
+        "exploitability_reduction": 0.1
+      }
+    ]
+  ],
+  "observed_incidents": [
+    [
+      4,
+      "Low consumer satisfaction: 0.25"
+    ],
+    [
+      4,
+      "security_breach: Mirage AI model leaks training data containing PHI, HIPAA investigation launched",
+      "major",
+      "Mirage AI"
+    ],
+    [
+      14,
+      "security_breach: Genesis Systems internal incident (security_breach)",
+      "minor",
+      "Genesis Systems"
+    ],
+    [
+      16,
+      "security_breach: Genesis Systems reports unauthorized access to training data storage",
+      "moderate",
+      "Genesis Systems"
+    ],
+    [
+      17,
+      "security_breach: Mirage AI reports unauthorized access to training data storage",
+      "moderate",
+      "Mirage AI"
+    ],
+    [
+      18,
+      "security_breach: Orion Labs internal incident (security_breach)",
+      "minor",
+      "Orion Labs"
+    ],
+    [
+      19,
+      "security_breach: Security vulnerability found in OneAI API, 50K users affected",
+      "moderate",
+      "OneAI"
+    ],
+    [
+      25,
+      "bias_discrimination: Mirage AI internal incident (bias_discrimination)",
+      "minor",
+      "Mirage AI"
+    ],
+    [
+      25,
+      "safety_failure: OneAI internal incident (safety_failure)",
+      "minor",
+      "OneAI"
+    ],
+    [
+      27,
+      "healthcare_harm: Apex AI AI denies Medicare coverage against doctor's orders, investigation launched",
+      "major",
+      "Apex AI"
+    ]
+  ]
+}

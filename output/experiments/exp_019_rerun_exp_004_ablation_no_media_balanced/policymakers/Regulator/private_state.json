@@ -1,0 +1,164 @@
+{
+  "policy_objectives": [
+    "safety",
+    "fairness"
+  ],
+  "risk_beliefs": {
+    "gaming_risk": 0.0,
+    "consumer_harm_risk": 0.0,
+    "validity_degradation_risk": 0.3,
+    "market_concentration_risk": 0.49999999999999983,
+    "fairness_risk": 0.48000000000000004,
+    "eval_engineering_risk": 1.0,
+    "security_risk": 0.44000000000000006
+  },
+  "industry_trust": 1.0,
+  "regulatory_capacity": 1.0,
+  "past_interventions": [
+    [
+      1,
+      "investigation",
+      {
+        "focus": "score_volatility"
+      }
+    ],
+    [
+      4,
+      "threshold_announcement",
+      {
+        "market_concentration_monitoring": 0.6,
+        "market_concentration_review": 0.75,
+        "eval_engineering_concern": 0.35
+      }
+    ],
+    [
+      7,
+      "public_warning",
+      {
+        "warning_severity": "moderate"
+      }
+    ],
+    [
+      11,
+      "emergency_investigation",
+      {
+        "provider": "Mirage AI",
+        "incident_description": "safety_failure: Mirage AI AI produces inconsistent outputs on safety-critical queries",
+        "severity": "critical"
+      }
+    ],
+    [
+      16,
+      "mandate_benchmark",
+      {
+        "validity": 0.7999999999999999,
+        "exploitability": 0.3
+      }
+    ],
+    [
+      19,
+      "market_concentration_review",
+      {
+        "provider": "Apex AI",
+        "market_share": 0.7803003019086298,
+        "investigation_tax": 0.1,
+        "funding_multiplier_reduction": 0.2
+      }
+    ],
+    [
+      22,
+      "compliance_audit",
+      {
+        "exploitability_reduction": 0.1
+      }
+    ],
+    [
+      25,
+      "compliance_audit",
+      {
+        "exploitability_reduction": 0.1
+      }
+    ],
+    [
+      28,
+      "compliance_audit",
+      {
+        "exploitability_reduction": 0.1
+      }
+    ]
+  ],
+  "observed_incidents": [
+    [
+      2,
+      "bias_discrimination: Bias audit reveals OpenCore facial recognition accuracy gaps",
+      "moderate",
+      "OpenCore"
+    ],
+    [
+      7,
+      "bias_discrimination: Study finds Mirage AI model produces biased hiring recommendations",
+      "moderate",
+      "Mirage AI"
+    ],
+    [
+      11,
+      "misinformation: Orion Labs generates convincing medical misinformation, public health crisis",
+      "major",
+      "Orion Labs"
+    ],
+    [
+      11,
+      "safety_failure: Mirage AI AI produces inconsistent outputs on safety-critical queries",
+      "moderate",
+      "Mirage AI"
+    ],
+    [
+      13,
+      "misinformation: Mirage AI chatbot provides inaccurate election information",
+      "moderate",
+      "Mirage AI"
+    ],
+    [
+      15,
+      "security_breach: TwoAI internal incident (security_breach)",
+      "minor",
+      "TwoAI"
+    ],
+    [
+      16,
+      "security_breach: Orion Labs reports unauthorized access to training data storage",
+      "moderate",
+      "Orion Labs"
+    ],
+    [
+      20,
+      "security_breach: Orion Labs internal incident (security_breach)",
+      "minor",
+      "Orion Labs"
+    ],
+    [
+      26,
+      "misuse: Apex AI internal incident (misuse)",
+      "minor",
+      "Apex AI"
+    ],
+    [
+      26,
+      "misuse: ThreeAI internal incident (misuse)",
+      "minor",
+      "ThreeAI"
+    ],
+    [
+      27,
+      "security_breach: ThreeAI internal incident (security_breach)",
+      "minor",
+      "ThreeAI"
+    ],
+    [
+      28,
+      "bias_discrimination: Apex AI internal incident (bias_discrimination)",
+      "minor",
+      "Apex AI"
+    ]
+  ]
+}
