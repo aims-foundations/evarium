@@ -301,18 +301,19 @@ def plot_provider_dashboard(
     entrant_names = {h["new_entrant"]["name"] for h in history if "new_entrant" in h}
     os_provider_names = (os_provider_names or set()) | entrant_names
 
-    # Build entry event dict: {round: entrant_name}
-    entry_rounds = {h["round"]: h["new_entrant"]["name"] for h in history if "new_entrant" in h}
-
-    def _add_entry_lines(ax):
-        for r in entry_rounds:
-            ax.axvline(x=r, color='gray', linestyle=':', alpha=0.4, linewidth=1)
+    # Detect each provider's first round
+    provider_first_round = {}
+    for h in history:
+        for p in h.get("scores", {}):
+            if p not in provider_first_round:
+                provider_first_round[p] = h["round"]
+    first_round_min = min(rounds) if rounds else 0
 
     def _provider_line_style(provider):
         """Return kwargs for line style based on OS vs closed."""
         if provider in os_provider_names:
-            return dict(linestyle='--', marker='o', markerfacecolor='none')
-        return dict(linestyle='-', marker='o')
+            return dict(linestyle='--')
+        return dict(linestyle='-')
 
     def _provider_label(provider):
         if provider in os_provider_names:
@@ -321,7 +322,13 @@ def plot_provider_dashboard(
 
     from matplotlib.gridspec import GridSpecFromSubplotSpec
 
-    fig, axes = plt.subplots(2, 3, figsize=figsize)
+    # Disable constrained_layout for this figure — it fights with
+    # GridSpecFromSubplotSpec and causes the mini-grid to overflow.
+    with mpl.rc_context({'figure.constrained_layout.use': False}):
+        fig, axes = plt.subplots(2, 3, figsize=figsize,
+                                  gridspec_kw={'width_ratios': [1, 1, 1.5]})
+    fig.subplots_adjust(top=0.92, bottom=0.15, left=0.08, right=0.98,
+                        hspace=0.35, wspace=0.35)
     fig.suptitle("Provider Dashboard", fontweight='bold')
 
     investment_types = ["fundamental_research", "training_optimization",
@@ -330,30 +337,34 @@ def plot_provider_dashboard(
     # --- Panel 1: Scores over time ---
     ax1 = axes[0, 0]
     for provider in providers:
-        scores = [h["scores"].get(provider) for h in history]
-        ax1.plot(rounds, scores, label=_provider_label(provider),
-                 color=provider_colors[provider], markersize=3, linewidth=1.5, alpha=0.8,
+        scores = [h["scores"].get(provider, float('nan')) for h in history]
+        ax1.plot(rounds, scores,
+                 color=provider_colors[provider], linewidth=1.5, alpha=0.8,
                  **_provider_line_style(provider))
-    _add_entry_lines(ax1)
+        fr = provider_first_round.get(provider)
+        if fr is not None and fr > first_round_min and fr in rounds:
+            idx = rounds.index(fr)
+            if not np.isnan(scores[idx]):
+                ax1.plot(fr, scores[idx], '*', color=provider_colors[provider],
+                         markersize=10, zorder=5)
     ax1.set_ylim(0, 1)
     style_axis(ax1, "Benchmark Scores Over Time", "Round", "Score", legend=False)
 
     # --- Panel 2: True vs Believed Capability ---
     ax2 = axes[0, 1]
     for provider in providers:
-        true_caps = [h["true_capabilities"].get(provider) for h in history]
-        believed_caps = [h["believed_capabilities"].get(provider) for h in history]
+        true_caps = [h["true_capabilities"].get(provider, float('nan')) for h in history]
+        believed_caps = [h["believed_capabilities"].get(provider, float('nan')) for h in history]
         ls = '--' if provider in os_provider_names else '-'
-        ax2.plot(rounds, true_caps, ls, color=provider_colors[provider], linewidth=2)
+        ax2.plot(rounds, true_caps, ls, color=provider_colors[provider], linewidth=1.5)
         ax2.plot(rounds, believed_caps, ':', color=provider_colors[provider],
-                 linewidth=1.5, alpha=0.6)
-    _add_entry_lines(ax2)
+                 linewidth=1, alpha=0.6)
     style_handles = [
-        mlines.Line2D([], [], color='gray', linestyle='-', linewidth=2, label='True'),
-        mlines.Line2D([], [], color='gray', linestyle=':', linewidth=1.5,
+        mlines.Line2D([], [], color='gray', linestyle='-', linewidth=1.5, label='True'),
+        mlines.Line2D([], [], color='gray', linestyle=':', linewidth=1,
                       alpha=0.6, label='Believed'),
     ]
-    ax2.legend(handles=style_handles, loc='best', fontsize=7)
+    ax2.legend(handles=style_handles, loc='best', fontsize=6)
     style_axis(ax2, "True vs Believed Capability", "Round", "Capability", legend=False)
 
     # --- Panel 3: Investment Portfolio (mini-grid inside top-right cell) ---
@@ -370,30 +381,24 @@ def plot_provider_dashboard(
     else:
         grid_rows, grid_cols = 4, 2
 
-    # Add a title row (index 0) and legend row (last) via height_ratios so the
-    # mini-subplots don't fill the entire cell — no floating text/legend overlaps.
-    title_ratio = 0.15
-    legend_ratio = 0.18
+    # Get parent cell bounds and place mini-grid with margins
+    parent_pos = ax3.get_position()
+    left_margin = 0.02
     gs = GridSpecFromSubplotSpec(
-        grid_rows + 2, grid_cols,
+        grid_rows, grid_cols,
         subplot_spec=ax3.get_subplotspec(),
-        hspace=0.12, wspace=0.12,
-        height_ratios=[title_ratio] + [1.0] * grid_rows + [legend_ratio],
+        hspace=0.0, wspace=0.05,
     )
 
-    # Title row — single invisible axis spanning all columns
-    ax_title = fig.add_subplot(gs[0, :])
-    ax_title.axis('off')
-    ax_title.text(0.5, 0.5, "Investment Portfolio",
-                  ha='center', va='center', fontsize=9, fontweight='bold',
-                  transform=ax_title.transAxes)
+    ax3.set_title("Investment Portfolio", fontweight='bold', pad=2)
 
+    last_sub_ax = None
     for idx, provider in enumerate(providers):
         if idx >= grid_rows * grid_cols:
             break
         row = idx // grid_cols
         col = idx % grid_cols
-        sub_ax = fig.add_subplot(gs[row + 1, col])  # +1 to skip title row
+        sub_ax = fig.add_subplot(gs[row, col])
 
         bottom_arr = np.zeros(len(rounds))
         for inv_type in investment_types:
@@ -403,24 +408,32 @@ def plot_provider_dashboard(
             bottom_arr += values
 
         sub_ax.set_ylim(0, 1.05)
-        sub_ax.set_title(provider, fontsize=7, fontweight='bold', pad=2)
-        sub_ax.tick_params(labelsize=5)
-        sub_ax.grid(False)
-        if row < grid_rows - 1:
-            sub_ax.set_xticklabels([])
-        if col > 0:
-            sub_ax.set_yticklabels([])
+        # Provider name as in-plot text instead of title
+        sub_ax.text(0.5, 0.92, _tex_escape(provider), fontsize=4,
+                    fontweight='bold', ha='center', va='top',
+                    transform=sub_ax.transAxes,
+                    bbox=dict(facecolor='white', alpha=0.7, edgecolor='none', pad=0.5))
+        sub_ax.tick_params(labelsize=3, pad=0.5)
+        sub_ax.tick_params(labelbottom=False, labelleft=False)
+        last_sub_ax = sub_ax
 
-    # Legend row — single invisible axis spanning all columns, below the plots
-    ax_legend = fig.add_subplot(gs[grid_rows + 1, :])
-    ax_legend.axis('off')
+    # Compact legend below
+    inv_short = {
+        "fundamental_research": "Fund. Res.",
+        "training_optimization": "Train. Opt.",
+        "evaluation_engineering": "Eval. Eng.",
+        "safety_alignment": "Safety Al.",
+    }
     legend_elements = [
         mpatches.Patch(facecolor=inv_colors[t], alpha=0.7,
-                       label=t.replace("_", " ").title()[:14])
+                       label=inv_short.get(t, t))
         for t in investment_types
     ]
-    ax_legend.legend(handles=legend_elements, loc='center',
-                     ncol=2, fontsize=6, frameon=True)
+    if last_sub_ax is not None:
+        last_sub_ax.legend(handles=legend_elements, loc='upper center',
+                           bbox_to_anchor=(0.0, -0.15), ncol=2, fontsize=4,
+                           frameon=False, handlelength=1.0, handletextpad=0.3,
+                           columnspacing=0.5)
 
     # --- Panel 4: Gaming vs Safety Investment ---
     ax4 = axes[1, 0]
@@ -428,40 +441,28 @@ def plot_provider_dashboard(
         eval_eng = extract_investment(history, provider, "evaluation_engineering")
         safety_al = extract_investment(history, provider, "safety_alignment")
         style = _provider_line_style(provider)
-        ax4.plot(rounds, eval_eng, label=_provider_label(provider),
-                 color=provider_colors[provider], markersize=3, linewidth=2, **style)
+        ax4.plot(rounds, eval_eng,
+                 color=provider_colors[provider], linewidth=1.5, **style)
         ax4.plot(rounds, safety_al,
-                 color=provider_colors[provider], markersize=2, linewidth=1.2,
+                 color=provider_colors[provider], linewidth=1,
                  linestyle=':', alpha=0.7)
-    _add_entry_lines(ax4)
-    ax4.axhline(y=0.25, color='gray', linestyle=':', alpha=0.5)
     ax4.set_ylim(0, 1)
     style_handles_p4 = [
         mlines.Line2D([], [], color='gray', linestyle='-', label='Eval Eng'),
         mlines.Line2D([], [], color='gray', linestyle=':', label='Safety'),
-        mlines.Line2D([], [], color='gray', linestyle=':', alpha=0.5, label='Balanced'),
     ]
-    ax4.legend(handles=style_handles_p4, fontsize=7, loc='best')
+    ax4.legend(handles=style_handles_p4, fontsize=6, loc='best')
     style_axis(ax4, "Gaming vs Safety Investment", "Round", "Investment", legend=False)
 
     # --- Panel 5: Score - Capability Gap ---
     ax5 = axes[1, 1]
     for provider in providers:
-        scores = np.array([h["scores"].get(provider) for h in history], dtype=float)
-        true_caps = np.array([h["true_capabilities"].get(provider) for h in history], dtype=float)
+        scores = np.array([h["scores"].get(provider, float('nan')) for h in history], dtype=float)
+        true_caps = np.array([h["true_capabilities"].get(provider, float('nan')) for h in history], dtype=float)
         gap = scores - true_caps
-        ax5.plot(rounds, gap, label=_provider_label(provider),
-                 color=provider_colors[provider], markersize=3, linewidth=2,
+        ax5.plot(rounds, gap,
+                 color=provider_colors[provider], linewidth=1.5,
                  **_provider_line_style(provider))
-    _add_entry_lines(ax5)
-    ax5.axhline(y=0, color='black', linestyle='-', linewidth=1, alpha=0.5)
-    ax5.fill_between(rounds, 0, 0.1, alpha=0.1, color='orange', label='Inflated')
-    ax5.fill_between(rounds, -0.1, 0, alpha=0.1, color='blue', label='Deflated')
-    shade_handles = [
-        mpatches.Patch(facecolor='orange', alpha=0.1, label='Inflated'),
-        mpatches.Patch(facecolor='blue', alpha=0.1, label='Deflated'),
-    ]
-    ax5.legend(handles=shade_handles, fontsize=7, loc='best')
     style_axis(ax5, "Score - True Capability Gap", "Round", "Gap (Score - True)", legend=False)
 
     # --- Panel 6: OS vs Closed Frontier Gap (or Capability Growth bar if no OS) ---
@@ -478,15 +479,13 @@ def plot_provider_dashboard(
                 gap_rounds.append(h["round"])
         if gap_vals:
             gap_arr = np.array(gap_vals)
-            ax6.plot(gap_rounds, gap_vals, 'o-', color='#457B9D', linewidth=2)
+            ax6.plot(gap_rounds, gap_vals, '-', color='#457B9D', linewidth=1.5)
             ax6.fill_between(gap_rounds, 0, gap_vals,
-                             where=gap_arr >= 0, alpha=0.2, color='blue',
+                             where=gap_arr >= 0, alpha=0.15, color='blue',
                              interpolate=True, label='Closed ahead')
             ax6.fill_between(gap_rounds, 0, gap_vals,
-                             where=gap_arr < 0, alpha=0.2, color='green',
+                             where=gap_arr < 0, alpha=0.15, color='green',
                              interpolate=True, label='OS ahead')
-            ax6.axhline(y=0, color='black', linestyle='-', linewidth=1, alpha=0.5)
-            _add_entry_lines(ax6)
             style_axis(ax6, "OS vs Closed Frontier Gap", "Round", "Closed Leader - OS Leader")
         else:
             ax6.text(0.5, 0.5, "No OS capability data", ha='center', va='center',
@@ -926,14 +925,14 @@ def plot_policymaker_dashboard(
         ax1.axvline(x=intervention_rounds[0], color='#E63946', linestyle='--',
                    alpha=0.5, linewidth=0.8, label='Intervention')
 
-    # Mark incidents with different colors by severity
+    # Mark incidents (single legend entry for all incidents)
     severity_colors = {"minor": "#90EE90", "moderate": "#FFD700", "major": "#FF8C00", "critical": "#DC143C"}
-    incident_legend_added = {}
+    first_incident = True
     for ir, sev in zip(incident_rounds, incident_severities):
         color = severity_colors.get(sev, "#666666")
-        label = f'Incident ({sev})' if sev not in incident_legend_added else None
-        if label:
-            incident_legend_added[sev] = True
+        label = 'Incident' if first_incident else None
+        if first_incident:
+            first_incident = False
         ax1.axvline(x=ir, color=color, linestyle=':', alpha=0.4, linewidth=1, label=label)
 
     ax1.set_ylim(-0.2, 1.0)
@@ -973,7 +972,8 @@ def plot_policymaker_dashboard(
         unique_types = list(set(intervention_types))
         type_counts = [intervention_types.count(t) for t in unique_types]
         colors = plt.cm.Set2(np.linspace(0, 1, len(unique_types)))
-        ax4.pie(type_counts, labels=[_tex_escape(t) for t in unique_types],
+        ax4.pie(type_counts,
+                labels=[_tex_escape(t.replace('_', ' ').title()) for t in unique_types],
                 autopct=_tex_autopct, colors=colors, textprops={'fontsize': 6})
         ax4.set_title("Intervention Types", fontweight='bold')
     else:
@@ -1385,7 +1385,7 @@ def plot_validity_over_time(
     # Try per-benchmark correlations first
     per_benchmark = compute_per_benchmark_rolling_correlation(history, window_size)
 
-    fig, ax = plt.subplots(figsize=(3.25, 1.63))
+    fig, ax = plt.subplots(figsize=(3.25, 2.0))
 
     if per_benchmark:
         # Plot per-benchmark correlations
@@ -1416,8 +1416,14 @@ def plot_validity_over_time(
 
     ax.set_ylim(-0.2, 1.0)
 
-    style_axis(ax, title, "Round", r"Correlation ($\rho$, Score vs True Capability)")
+    style_axis(ax, title, "Round", r"Correlation ($\rho$)", legend=False)
 
+    # Place legend below the plot to avoid overlap with data
+    import math
+    n_items = len(ax.get_lines())
+    ncol = math.ceil(n_items / 2)
+    ax.legend(fontsize=5, loc='upper center', bbox_to_anchor=(0.5, -0.22),
+              ncol=ncol, frameon=False)
 
     if save_path:
         plt.savefig(save_path, dpi=300, bbox_inches='tight')
@@ -2477,6 +2483,12 @@ def plot_barrier_to_entry_dashboard(
         "funding_lock_in": "purple",
         "consumer_lock_in": "green",
     }
+    comp_short = {
+        "market_concentration": "Mkt Conc.",
+        "capability_gap": "Cap. Gap",
+        "funding_lock_in": "Funding Lock-in",
+        "consumer_lock_in": "Consumer Lock-in",
+    }
     for comp, color in component_colors.items():
         comp_rounds = []
         comp_vals = []
@@ -2487,12 +2499,16 @@ def plot_barrier_to_entry_dashboard(
                 comp_vals.append(val)
         if comp_rounds:
             ax2.plot(comp_rounds, comp_vals, '-', color=color, linewidth=1.5,
-                     label=_tex_escape(comp.replace("_", " ").title()))
-    style_axis(ax2, "BTE Components Over Time", "Round", "Value")
+                     label=comp_short.get(comp, comp))
+    # Extend y-axis a bit below data to make room for legend
+    y_lo, y_hi = ax2.get_ylim()
+    ax2.set_ylim(y_lo - 0.15 * (y_hi - y_lo), y_hi)
+    style_axis(ax2, "BTE Components Over Time", "Round", "Value", legend=False)
+    ax2.legend(fontsize=5, loc='lower right', ncol=2, frameon=True)
 
     # --- Panel 3: Entry event scatter ---
     ax3 = axes[1, 0]
-    has_scatter = False
+    scatter_points = []
     for h in history:
         if "new_entrant" not in h:
             continue
@@ -2506,12 +2522,18 @@ def plot_barrier_to_entry_dashboard(
             continue
         name = h["new_entrant"]["name"]
         ax3.scatter(bte_comp, cap_gap, s=40, zorder=3)
-        ax3.annotate(_tex_escape(name), (bte_comp, cap_gap), fontsize=6,
-                     xytext=(4, 3), textcoords='offset points')
-        has_scatter = True
-    if not has_scatter:
+        scatter_points.append((bte_comp, cap_gap, name))
+    if not scatter_points:
         ax3.text(0.5, 0.5, "No startup entries this run",
                  transform=ax3.transAxes, ha='center', va='center', fontsize=8, alpha=0.6)
+    else:
+        # Stagger annotation offsets to reduce overlap
+        offsets = [(5, 5), (5, -10), (-40, 5), (-40, -10), (5, 12), (-40, 12)]
+        for i, (bx, cy, name) in enumerate(scatter_points):
+            ox, oy = offsets[i % len(offsets)]
+            ax3.annotate(_tex_escape(name), (bx, cy), fontsize=5,
+                         xytext=(ox, oy), textcoords='offset points',
+                         arrowprops=dict(arrowstyle='-', color='gray', lw=0.5))
     ax3.set_xlim(0, 1)
     style_axis(ax3, "Entry Events: BTE vs Capability Gap",
                "BTE Composite at Entry", "Capability Gap at Entry", legend=False)
@@ -2528,7 +2550,7 @@ def plot_barrier_to_entry_dashboard(
 
     if conc_rounds:
         ax4.plot(conc_rounds, concentration, '-', color='blue', linewidth=1.5,
-                 label='Market Concentration')
+                 label='Mkt Conc.')
         ax4.set_ylabel("Market Concentration", color='blue')
         ax4.tick_params(axis='y', colors='blue')
         ax4.set_ylim(0, 1)
@@ -2538,7 +2560,7 @@ def plot_barrier_to_entry_dashboard(
     prov_counts = [len(h["true_capabilities"]) for h in history]
     all_rounds = [h["round"] for h in history]
     ax4_twin.plot(all_rounds, prov_counts, '--', color='gray', linewidth=1.5,
-                  label='Provider Count')
+                  label='Prov. Count')
     ax4_twin.set_ylabel("Provider Count", color='gray')
     ax4_twin.tick_params(axis='y', colors='gray')
 
@@ -2546,7 +2568,7 @@ def plot_barrier_to_entry_dashboard(
     ax4.set_title("Market Concentration vs Provider Count", fontweight='bold')
     lines1, labels1 = ax4.get_legend_handles_labels()
     lines2, labels2 = ax4_twin.get_legend_handles_labels()
-    ax4.legend(lines1 + lines2, labels1 + labels2, fontsize=5, loc='best')
+    ax4.legend(lines1 + lines2, labels1 + labels2, fontsize=5, loc='lower left')
 
 
     if save_path:
@@ -2570,7 +2592,7 @@ def plot_startup_cohort_dashboard(
     os_provider_names: set = None,
     save_path: Optional[str] = None,
     show: bool = True,
-    figsize: tuple = (6.75, 4.22),
+    figsize: tuple = None,
 ) -> Optional[plt.Figure]:
     """
     Dashboard showing per-startup cohort trajectories.
@@ -2584,8 +2606,6 @@ def plot_startup_cohort_dashboard(
     Returns:
         matplotlib Figure or None if no startup entries in history.
     """
-    from matplotlib.gridspec import GridSpec
-
     entrant_rounds = {h["new_entrant"]["name"]: h["round"] for h in history if "new_entrant" in h}
     if not entrant_rounds:
         return None
@@ -2601,16 +2621,26 @@ def plot_startup_cohort_dashboard(
     startups = startups[:6]  # cap at 6
     n_startups = len(startups)
 
-    fig = plt.figure(figsize=figsize)
+    # Dynamic height: tightly packed rows
+    if figsize is None:
+        figsize = (6.75, 0.7 * n_startups + 0.6)
+
+    fig, axes = plt.subplots(n_startups, 4, figsize=figsize,
+                              gridspec_kw={'hspace': 0.15, 'wspace': 0.18})
     fig.suptitle("Startup Cohort Dashboard", fontweight='bold')
-    gs = GridSpec(n_startups, 4, figure=fig, hspace=0.5, wspace=0.35)
 
     all_rounds = [h["round"] for h in history]
     has_consumer = any("consumer_data" in h for h in history)
 
+    # Ensure axes is 2D even for 1 startup
+    if n_startups == 1:
+        axes = axes[np.newaxis, :]
+
+    # Column titles — only on first row
+    col_titles = ["True Capability", "Market Share", "Safety Investment", "Score - Cap Gap"]
+
     for row_idx, startup in enumerate(startups):
         entry_round = entrant_rounds[startup]
-        # Filter history from entry_round onward
         startup_history = [h for h in history if h["round"] >= entry_round
                            and startup in h.get("true_capabilities", {})]
 
@@ -2621,12 +2651,11 @@ def plot_startup_cohort_dashboard(
         color = provider_colors.get(startup, '#666666')
 
         # --- Col 0: True capability trajectory ---
-        ax0 = fig.add_subplot(gs[row_idx, 0])
-        ax0.set_title(_tex_escape(f"{startup} (entry r{entry_round})"), fontsize=7, fontweight='bold')
+        ax0 = axes[row_idx, 0]
         s_caps = [h["true_capabilities"][startup] for h in startup_history]
-        ax0.plot(s_rounds, s_caps, '-', color=color, linewidth=1.5, label=_tex_escape(startup))
+        ax0.plot(s_rounds, s_caps, '-', color=color, linewidth=1.5)
 
-        # OS leader context line (excluding this startup)
+        # OS leader context line
         os_leaders = []
         for h in startup_history:
             tc = h["true_capabilities"]
@@ -2637,16 +2666,19 @@ def plot_startup_cohort_dashboard(
         os_vals_filt = [v for v in os_leaders if v is not None]
         if os_rounds_filt:
             ax0.plot(os_rounds_filt, os_vals_filt, '--', color='gray',
-                     linewidth=1, alpha=0.5, label='OS Leader')
+                     linewidth=1, alpha=0.5)
         ax0.set_ylim(0, 1)
-        ax0.tick_params(labelsize=6)
-        ax0.grid(False)
-        ax0.set_xlabel("Round", fontsize=7)
-        ax0.set_ylabel("True Cap", fontsize=7)
-        ax0.legend(fontsize=5, loc='best')
+        ax0.tick_params(labelsize=5)
+        ax0.set_ylabel(_tex_escape(f"{startup} (r{entry_round})"), fontsize=6, fontweight='bold')
+        if row_idx == 0:
+            ax0.set_title(col_titles[0], fontsize=7, fontweight='bold')
+        if row_idx < n_startups - 1:
+            ax0.tick_params(labelbottom=False)
+        else:
+            ax0.set_xlabel("Round", fontsize=6)
 
         # --- Col 1: Market share ---
-        ax1 = fig.add_subplot(gs[row_idx, 1])
+        ax1 = axes[row_idx, 1]
         if has_consumer:
             ms_rounds = []
             ms_vals = []
@@ -2660,40 +2692,47 @@ def plot_startup_cohort_dashboard(
                 ax1.set_ylim(0, max(ms_vals) * 1.2 + 0.01)
             else:
                 ax1.text(0.5, 0.5, "No data", transform=ax1.transAxes,
-                         ha='center', va='center', fontsize=7, alpha=0.5)
+                         ha='center', va='center', fontsize=6, alpha=0.5)
         else:
             ax1.text(0.5, 0.5, "Consumers disabled", transform=ax1.transAxes,
-                     ha='center', va='center', fontsize=7, alpha=0.5)
-        ax1.tick_params(labelsize=6)
-        ax1.grid(False)
-        ax1.set_xlabel("Round", fontsize=7)
-        ax1.set_ylabel("Market Share", fontsize=7)
+                     ha='center', va='center', fontsize=6, alpha=0.5)
+        ax1.tick_params(labelsize=5)
+        if row_idx == 0:
+            ax1.set_title(col_titles[1], fontsize=7, fontweight='bold')
+        if row_idx < n_startups - 1:
+            ax1.tick_params(labelbottom=False)
+        else:
+            ax1.set_xlabel("Round", fontsize=6)
 
         # --- Col 2: Safety alignment investment ---
-        ax2 = fig.add_subplot(gs[row_idx, 2])
+        ax2 = axes[row_idx, 2]
         safety_vals = [h["strategies"].get(startup, {}).get("safety_alignment", 0)
                        for h in startup_history]
         ax2.plot(s_rounds, safety_vals, '-', color=color, linewidth=1.5)
         ax2.set_ylim(0, 1)
-        ax2.tick_params(labelsize=6)
-        ax2.grid(False)
-        ax2.set_xlabel("Round", fontsize=7)
-        ax2.set_ylabel("Safety Invest.", fontsize=7)
+        ax2.tick_params(labelsize=5)
+        if row_idx == 0:
+            ax2.set_title(col_titles[2], fontsize=7, fontweight='bold')
+        if row_idx < n_startups - 1:
+            ax2.tick_params(labelbottom=False)
+        else:
+            ax2.set_xlabel("Round", fontsize=6)
 
         # --- Col 3: Score vs true capability gap ---
-        ax3 = fig.add_subplot(gs[row_idx, 3])
+        ax3 = axes[row_idx, 3]
         gap_vals = []
         for h in startup_history:
             score = h["scores"].get(startup, 0)
             true_cap = h["true_capabilities"].get(startup, 0)
             gap_vals.append(score - true_cap)
         ax3.plot(s_rounds, gap_vals, '-', color=color, linewidth=1.5)
-        ax3.tick_params(labelsize=6)
-        ax3.grid(False)
-        ax3.set_xlabel("Round", fontsize=7)
-        ax3.set_ylabel("Score - Cap Gap", fontsize=7)
-
-    fig.subplots_adjust(top=0.93, hspace=0.55, wspace=0.35)
+        ax3.tick_params(labelsize=5)
+        if row_idx == 0:
+            ax3.set_title(col_titles[3], fontsize=7, fontweight='bold')
+        if row_idx < n_startups - 1:
+            ax3.tick_params(labelbottom=False)
+        else:
+            ax3.set_xlabel("Round", fontsize=6)
 
     if save_path:
         plt.savefig(save_path, dpi=300, bbox_inches='tight')
