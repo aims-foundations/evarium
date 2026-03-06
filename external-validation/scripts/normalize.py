@@ -69,18 +69,23 @@ def map_provider(raw: str) -> str:
 # Benchmark mapping
 # ---------------------------------------------------------------------------
 BENCHMARK_MAP = {
-    "MMLU": "writing",          # general knowledge, long history
-    "HumanEval": "coding_advanced",
-    "humaneval": "coding_advanced",
-    "MATH": "math_advanced",
-    "math": "math_advanced",
-    "GPQA": "reasoning_advanced",
-    "HellaSwag": "writing",
-    "mmlu": "writing",
-    "code-generation": "coding_advanced",
-    "math-word-problem-solving": "math_advanced",
-    "question-answering": "reasoning_advanced",
-    "sentence-completion": "writing",
+    # Real name → sim benchmark name (must match sim_benchmarks.csv benchmark column)
+    "MMLU":                      "writing",    # general knowledge
+    "mmlu":                      "writing",
+    "HellaSwag":                 "writing",
+    "sentence-completion":       "writing",
+    "HumanEval":                 "coding",
+    "humaneval":                 "coding",
+    "code-generation":           "coding",
+    "coding_advanced":           "coding",
+    "MATH":                      "math",
+    "math":                      "math",
+    "math_advanced":             "math",
+    "math-word-problem-solving": "math",
+    "gsm":                       "math",       # grade-school math → math
+    "GPQA":                      "reasoning",
+    "question-answering":        "reasoning",
+    "reasoning_advanced":        "reasoning",
 }
 
 

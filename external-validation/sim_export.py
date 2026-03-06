@@ -21,7 +21,12 @@ from pathlib import Path
 # Paths
 # ---------------------------------------------------------------------------
 REPO_ROOT = Path(__file__).resolve().parents[1]
-EXP_ROOT = REPO_ROOT / "output" / "experiments"
+# Experiments may live in output/experiments/ or hf_data/claude_archive/
+_candidates = [
+    REPO_ROOT / "output" / "experiments",
+    REPO_ROOT / "hf_data" / "claude_archive",
+]
+EXP_ROOT = next((p for p in _candidates if p.exists()), _candidates[0])
 OUT_DIR = Path(__file__).resolve().parent / "data" / "processed"
 
 
