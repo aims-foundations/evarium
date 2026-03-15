@@ -299,6 +299,9 @@ class PolicymakerPrivateState:
     past_interventions: list = field(default_factory=list)  # [(round, intervention_type, details), ...]
     observed_incidents: list = field(default_factory=list)  # [(round, incident_description), ...]
 
+    # Cross-round reasoning persistence
+    recent_reasoning: list = field(default_factory=list)  # [{"round": N, "reasoning": "..."}]
+
     def to_dict(self) -> dict:
         """Convert to dict for serialization."""
         return {
@@ -308,12 +311,14 @@ class PolicymakerPrivateState:
             "regulatory_capacity": self.regulatory_capacity,
             "past_interventions": self.past_interventions,
             "observed_incidents": self.observed_incidents,
+            "recent_reasoning": self.recent_reasoning,
         }
 
     @classmethod
     def from_dict(cls, data: dict) -> "PolicymakerPrivateState":
-        """Create from dict."""
-        return cls(**data)
+        """Create from dict (forward/backward compatible)."""
+        known = {f.name for f in cls.__dataclass_fields__.values()}
+        return cls(**{k: v for k, v in data.items() if k in known})
 
     def get_summary(self) -> str:
         """Get human-readable summary for prompts."""
@@ -432,6 +437,9 @@ class FunderPrivateState:
     roi_history: list = field(default_factory=list)  # [(round, roi), ...]
     recent_insights: list = field(default_factory=list)
 
+    # Cross-round reasoning persistence
+    recent_reasoning: list = field(default_factory=list)  # [{"round": N, "reasoning": "..."}]
+
     def to_dict(self) -> dict:
         """Convert to dict for serialization."""
         return {
@@ -445,12 +453,14 @@ class FunderPrivateState:
             "funding_history": self.funding_history,
             "roi_history": self.roi_history,
             "recent_insights": self.recent_insights,
+            "recent_reasoning": self.recent_reasoning,
         }
 
     @classmethod
     def from_dict(cls, data: dict) -> "FunderPrivateState":
-        """Create from dict."""
-        return cls(**data)
+        """Create from dict (forward/backward compatible)."""
+        known = {f.name for f in cls.__dataclass_fields__.values()}
+        return cls(**{k: v for k, v in data.items() if k in known})
 
     def get_summary(self) -> str:
         """Get human-readable summary for prompts."""

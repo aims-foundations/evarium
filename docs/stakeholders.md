@@ -2,7 +2,7 @@
 
 This document describes how actors are modeled in the simulation. For planned work, see `TODO.md`. For experiment setup, see `run_experiment.py`.
 
-**Last updated:** 2026-03-02 (bug fixes: enable_incidents flag now correctly gates incident generation; rerun_experiment now correctly passes policymaker_configs and uses sim.consumer_market)
+**Last updated:** 2026-03-15 (PIMMUR: cross-round reasoning persistence added to ModelProvider, Policymaker, and Funder; new hf_data output directory structure; `--dev` flag on run_experiment.py)
 
 ---
 
@@ -41,7 +41,7 @@ Provider names are anonymized to prevent LLM reasoning from being biased by real
 | `src/visibility.py` | State classes: PublicState, PrivateState, GroundTruth, AIIncident |
 | `src/llm.py` | Multi-provider LLM integration (OpenAI, Anthropic, Ollama, Gemini) |
 | `src/plotting.py` | Per-experiment visualization dashboards (run via ExperimentLogger or replot.py) |
-| `src/experiment_logger.py` | Logs experiments to `output/experiments/` |
+| `src/experiment_logger.py` | `ExperimentLogger` (numbered `exp_NNN_*` dirs) + `DirectoryLogger` (fixed-path, used for canonical hf_data runs) |
 | `src/game_log.py` | Natural language markdown game log generator |
 
 ---
@@ -154,11 +154,27 @@ Providers with `"open_source": True` in their config behave structurally differe
 ### Cognitive Loop
 
 1. **Observe** — published scores (own + competitors')
-2. **Reflect** — update beliefs about own capability and benchmark exploitability
-3. **Plan** — allocate portfolio (LLM or heuristic), informed by own satisfaction, market share, and regulatory pressure
+2. **Reflect** — update beliefs about own capability and benchmark exploitability; append reflection reasoning to `recent_insights`
+3. **Plan** — allocate portfolio (LLM or heuristic), informed by own satisfaction, market share, regulatory pressure, and prior-round insights; append planning reasoning to `recent_insights`
 4. **Execute** — capability updates via R&D investments
 
 **Incident pressure (heuristic mode):** Safety incidents accumulate `_incident_safety_pressure` (minor=0.03, moderate=0.10, major=0.20, critical=0.30, cap=0.40), shifting resources from `evaluation_engineering` toward `safety_alignment`. Decays 40%/round (~4-round effect).
+
+### Cross-Round Memory (PIMMUR)
+
+`ProviderPrivateState` holds a `recent_insights` list that persists the provider's own LLM reasoning across rounds:
+
+```python
+recent_insights: list   # [{"round": int, "type": str, "reasoning": str}, ...]
+```
+
+**Entry types:** `"reflection"` (appended after `reflect()`) and `"planning"` (appended after `plan()`).
+
+**Storage:** Unbounded; the full list is kept in `private_state.recent_insights`. Only the **last 2 entries** are passed to LLM prompts (each reasoning string truncated to 120 characters).
+
+**Prompt injection:** Both the reflection prompt and the planning prompt include a *"Your Strategic Reasoning From Prior Rounds"* section rendered from `recent_insights[-2:]`. This gives the LLM a lightweight working memory so it can track multi-round strategies (e.g., "I said last round I would increase safety; did the scores change?") without re-reading the full history.
+
+**Heuristic mode:** `recent_insights` is populated only in LLM mode. The field exists in `ProviderPrivateState` in all modes but remains empty when heuristic planning is used.
 
 ---
 
@@ -304,6 +320,22 @@ Active sanctions are stored in `_active_sanctions` and applied to `funding_multi
 | `market_share` | > 0.75 | Triggers `market_concentration_review` |
 | `max_risk` | > 0.4 | Triggers `investigation` |
 
+### Cross-Round Memory (PIMMUR)
+
+`PolicymakerPrivateState` holds a `recent_reasoning` list that persists the policymaker's LLM decision reasoning across rounds:
+
+```python
+recent_reasoning: list   # [{"round": int, "reasoning": str}, ...]
+```
+
+**Storage:** Capped at the **last 3 entries**. Only the **last 2** are passed to LLM prompts (each truncated to 120 characters).
+
+**Prompt injection:** Injected at the top of the decision prompt as a *"Your Reasoning From Prior Rounds"* block. This lets the policymaker maintain consistent policy stances across rounds (e.g., tracking whether a previously announced investigation led to provider compliance, or escalating from warning to sanction if the situation has not improved).
+
+**Population:** Appended after each LLM decision call with the `"reasoning"` field extracted from the LLM JSON output.
+
+---
+
 ### Regulatory Presets (`POLICYMAKER_PRESETS` in `simulation.py`)
 
 | Parameter | EU Precautionary | Balanced | US Light-Touch | Empirical Basis |
@@ -345,6 +377,20 @@ Active sanctions are stored in `_active_sanctions` and applied to `funding_multi
 Funding affects providers via `funding_multiplier` on capability gains (range 1.0–2.0). Funders observe each other's allocations and diversify portfolios. Per-round deployment capped at `max_round_deployment` of total capital.
 
 **OS provider exclusions:** VC-type funders skip OS providers entirely (no equity model). Gov and foundation funders can still allocate. OS providers also cannot purchase evaluator premium access.
+
+### Cross-Round Memory (PIMMUR)
+
+`FunderPrivateState` holds a `recent_reasoning` list that persists the funder's LLM allocation reasoning across rounds:
+
+```python
+recent_reasoning: list   # [{"round": int, "reasoning": str}, ...]
+```
+
+**Storage:** Capped at the **last 3 entries**. Only the **last 2** are passed to LLM prompts (each truncated to 120 characters), via the `recent_insights` parameter of `llm_plan_funding()` (note: parameter is named `recent_insights` for API consistency but receives `recent_reasoning` data).
+
+**Prompt injection:** Rendered as a *"Your Reasoning From Prior Rounds"* section in the funder planning prompt, allowing funders to maintain investment theses across rounds (e.g., continuing to back a provider they committed to last round, or following through on a diversification decision).
+
+**Population:** Appended after each LLM funding decision with the `"reasoning"` field from the LLM JSON output.
 
 **Funder eligibility delay:** New startup entrants are invisible to funders for `startup_funder_delay` rounds after entry (default: 1). The leaderboard passed to `funder.observe()` is filtered accordingly.
 
@@ -433,23 +479,31 @@ Single outlet (TechPress). Publishes after evaluator scoring, before consumer/po
 
 ### Directory Structure
 
+Canonical output lives in `hf_data/` (see `EXPERIMENT_PLAN.md` for the full layout). The two active subtrees:
+
 ```
-output/experiments/
-├── index.json                   # Experiment index (VALIDATE JSON after edits!)
-└── exp_XXX_name/
-    ├── metadata.json            # Description, tags, timestamp, seed
-    ├── config.json              # Full configuration (used by rerun_experiment.py)
-    ├── rounds.jsonl             # Incremental per-round data (one JSON line per round)
-    ├── summary.json             # Final aggregated metrics
-    ├── game_log.md              # Human-readable simulation narrative
-    ├── plots/                   # Per-experiment dashboards (from plotting.py)
-    ├── providers/
-    ├── policymakers/
-    │   └── Regulator/
-    │       ├── params.json      # Policymaker configuration
-    │       └── memory.json      # Intervention history and reasoning
-    └── funders/
+hf_data/
+├── claude_archive/              # Legacy Claude 3.5 Sonnet runs exp_001–015 (full artifacts)
+├── llm_core/                    # Canonical LLM runs (Phase 1 + Phase 2 replications)
+│   ├── claude-sonnet-4-6/       # Written by run_experiment.py (anthropic provider)
+│   │   └── <condition>/
+│   │       └── seeds/
+│   │           └── seed_N/
+│   │               ├── config.json
+│   │               ├── metadata.json
+│   │               ├── rounds.jsonl
+│   │               └── summary.json
+│   ├── qwen-235b/               # Primary research model
+│   └── llama-70b/               # Cross-model comparison
+├── heuristic_baseline/          # Phase 5: 27 conditions × 30 seeds (complete)
+└── test/                        # Dev/exploratory runs (written when --dev flag is used)
+    └── <condition>_<timestamp>/
+        └── (full artifacts)
 ```
+
+`run_experiment.py` uses `DirectoryLogger` (fixed-path, no index.json) for all writes. Per-seed lean storage (llm_core): `rounds.jsonl` + `summary.json` + `config.json` + `metadata.json`. Heavy artifacts (`game_log.md`, `history.json`, `plots/`, `providers/`, `funders/`, `policymakers/`) are written only for dev/test runs (`lightweight=False` when `--dev`).
+
+Legacy `output/experiments/` (numbered `exp_NNN_*` dirs with `index.json`) is no longer used for new runs.
 
 ### Known Bugs Fixed
 - **`src/simulation.py` ~line 775:** Incidents were generated regardless of `enable_incidents` flag. Fixed: `if round_num > 0 and self.config.enable_incidents:`. Affected: all ablation experiments with `enable_incidents=False` (e.g., exp_005).
@@ -472,13 +526,19 @@ output/experiments/
 ### Running Experiments
 
 ```bash
-python scripts/run_experiment.py --policy us     # US light-touch (default)
-python scripts/run_experiment.py --policy eu     # EU precautionary
-python scripts/rerun_experiment.py exp_016       # Rerun a past experiment
+python scripts/run_experiment.py --policy balanced      # Balanced policy (default)
+python scripts/run_experiment.py --policy us            # US light-touch
+python scripts/run_experiment.py --policy eu            # EU precautionary
+python scripts/run_experiment.py --dev                  # Dev/test: output -> hf_data/test/<condition>_<timestamp>/
+python scripts/run_experiment.py --policy balanced --dev  # Combined
+
+python scripts/rerun_experiment.py exp_016              # Rerun a past legacy experiment
 python scripts/rerun_experiment.py exp_016 --modify n_rounds=50 --seed 99
-python scripts/rerun_experiment.py --list        # List all experiments
+python scripts/rerun_experiment.py --list
 python scripts/compare_experiments.py exp_039 exp_040
-python scripts/final_plots.py 3 2 my_label      # Multi-experiment analysis plots
+python scripts/final_plots.py 3 2 my_label             # Multi-experiment analysis plots
 ```
+
+`--dev` routes output to `hf_data/test/` with a timestamp suffix so repeated test runs don't overwrite each other. Use it for exploratory runs, PIMMUR tests, or any experiment you don't want in the canonical `llm_core` record.
 
 See `docs/experiment_comparison_protocol.md` for the full comparison workflow.

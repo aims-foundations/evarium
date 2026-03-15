@@ -803,8 +803,21 @@ class Policymaker:
         )
         objectives = ", ".join(self.private_state.policy_objectives) if self.private_state.policy_objectives else "safety, fairness"
 
-        prompt = f"""You are a regulatory body overseeing the AI model provider market. It is round {round_num}.
+        # Inject prior reasoning (cross-round persistence)
+        prior_reasoning_text = ""
+        if self.private_state.recent_reasoning:
+            lines = []
+            for entry in self.private_state.recent_reasoning[-2:]:
+                r = entry.get("round", "?")
+                from llm import _truncate
+                text = _truncate(entry.get("reasoning", ""), 120)
+                if text:
+                    lines.append(f"[Round {r}]: {text}")
+            if lines:
+                prior_reasoning_text = "\n**Your Reasoning From Prior Rounds:**\n" + "\n".join(lines) + "\n"
 
+        prompt = f"""You are a regulatory body overseeing the AI model provider market. It is round {round_num}.
+{prior_reasoning_text}
 **Your Policy Objectives:** {objectives}
 **Your Regulatory Style:** {policy_style}
 
@@ -853,6 +866,11 @@ Output ONLY valid JSON:
             intervention_type = decision.get("intervention_type", "none")
             target = decision.get("target_provider") or None
             reasoning = decision.get("reasoning", "")
+
+            # Store reasoning for cross-round persistence
+            if reasoning:
+                self.private_state.recent_reasoning.append({"round": round_num, "reasoning": reasoning})
+                self.private_state.recent_reasoning = self.private_state.recent_reasoning[-3:]
 
             self.memory.append({
                 "type": "planning",

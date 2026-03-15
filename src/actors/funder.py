@@ -636,6 +636,7 @@ class Funder:
         try:
             from llm import llm_plan_funding
             capped_capital = self.private_state.total_capital * self.max_round_deployment
+            round_num = self.public_state.current_round
             allocations, reasoning = llm_plan_funding(
                 name=self.name,
                 funder_type=self.funder_type,
@@ -645,8 +646,14 @@ class Funder:
                 leaderboard=self._last_leaderboard,
                 consumer_satisfaction=self._last_consumer_data.get("avg_satisfaction"),
                 recent_history=self.private_state.funding_history[-5:],
+                recent_insights=self.private_state.recent_reasoning[-2:],
                 verbose=False,
             )
+
+            # Store reasoning for cross-round persistence
+            if reasoning:
+                self.private_state.recent_reasoning.append({"round": round_num, "reasoning": reasoning})
+                self.private_state.recent_reasoning = self.private_state.recent_reasoning[-3:]
 
             # VCs cannot fund open-source providers (no equity model) — enforce same rule as heuristic
             if self.funder_type == "vc" and self._open_source_providers:
@@ -654,7 +661,7 @@ class Funder:
 
             self.memory.append({
                 "type": "planning_llm",
-                "round": self.public_state.current_round,
+                "round": round_num,
                 "reasoning": reasoning,
                 "allocations": allocations,
             })

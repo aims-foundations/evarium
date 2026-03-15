@@ -768,9 +768,19 @@ def set_client(client: LLMProvider):
     set_provider(client)
 
 
+# --- Utility ---
+
+def _truncate(text: str, max_words: int = 120) -> str:
+    """Truncate text to at most max_words words."""
+    words = text.split()
+    if len(words) <= max_words:
+        return text
+    return " ".join(words[:max_words]) + "..."
+
+
 # --- Prompt Templates for Provider Planning ---
 
-PLANNING_SYSTEM_PROMPT_PORTFOLIO = """You are simulating a Model Provider deciding resource allocation.
+PLANNING_SYSTEM_PROMPT_PORTFOLIO = """You are the strategy team at an AI model company. Your objective is to grow market share and deliver value to users while managing competitive and regulatory risks.
 
 You observe public benchmark scores, consumer satisfaction, and regulatory signals.
 Based on these observations and your competitive position, decide how to invest.
@@ -778,110 +788,19 @@ Based on these observations and your competitive position, decide how to invest.
 Think step by step:
 1. What's your competitive position? Are you ahead, behind, or level?
 2. What trends do you see in scores and satisfaction?
-3. Is gaming (evaluation engineering) paying off, or is it creating a satisfaction gap?
+3. What market signals (satisfaction, regulatory) suggest about the right investment balance?
 4. Are regulators signaling concern?
 5. What investment mix best serves your goals given these dynamics?
 
 Output JSON: {
     "thinking": "...",
     "fundamental_research": 0.30, "training_optimization": 0.25,
-    "evaluation_engineering": 0.30, "safety_alignment": 0.15
+    "deployment_optimization": 0.30, "safety_alignment": 0.15
 }
 (Replace the example numbers with your actual allocation. They must sum to 1.0.)
 The "thinking" field MUST contain your actual analysis -- keep it under 200 words.
 Sum of the four investment values must equal 1.0."""
 
-# Legacy prompt for backwards compatibility
-PLANNING_SYSTEM_PROMPT = """You are simulating a Model Provider organization in an AI evaluation ecosystem.
-You must decide how to allocate effort between genuine R&D (improving real capabilities) and benchmark gaming (optimizing for benchmark scores without improving real capability).
-
-Your decisions should be based on:
-- Your organization's strategic profile and values
-- Your beliefs about your own capability
-- Competitor performance
-- Your beliefs about how exploitable the benchmark is
-
-Output your decision as JSON with the following format:
-{
-    "reasoning": "...",
-    "rnd_investment": 0.70,
-    "gaming_investment": 0.30
-}
-(Replace the example numbers 0.70 and 0.30 with your actual allocation. They must sum to 1.0.)
-The "reasoning" field MUST contain your actual analysis -- keep it under 150 words.
-The two investments must sum to 1.0 (100% of your effort budget)."""
-
-
-def create_planning_prompt(
-    name: str,
-    strategy_profile: str,
-    innate_traits: str,
-    believed_capability: float,
-    believed_exploitability: float,
-    last_score: Optional[float],
-    competitor_scores: dict,
-    recent_history: list,
-) -> str:
-    """
-    Create a prompt for the provider to decide their strategy.
-
-    Args:
-        name: Provider name
-        strategy_profile: Natural language description of strategy tendencies
-        innate_traits: Core traits
-        believed_capability: Provider's belief about own capability
-        believed_exploitability: Provider's belief about benchmark gaming potential
-        last_score: Most recent benchmark score (None if first round)
-        competitor_scores: Dict of {competitor_name: score}
-        recent_history: List of recent (round, score, rnd, gaming) tuples
-
-    Returns:
-        Prompt string
-    """
-    prompt = f"""# Organization Profile
-Name: {name}
-Strategy Profile: {strategy_profile}
-Core Traits: {innate_traits}
-
-# Current Beliefs
-- Believed own capability: {believed_capability:.2f} (scale 0-1)
-- Believed benchmark exploitability: {believed_exploitability:.2f} (scale 0-1, higher = easier to game)
-
-# Recent Performance
-"""
-
-    if last_score is not None:
-        prompt += f"- Your last benchmark score: {last_score:.3f}\n"
-    else:
-        prompt += "- No scores yet (first round)\n"
-
-    if competitor_scores:
-        prompt += "- Competitor scores:\n"
-        for comp_name, score in competitor_scores.items():
-            prompt += f"  - {comp_name}: {score:.3f}\n"
-    else:
-        prompt += "- No competitor data yet\n"
-
-    if recent_history:
-        prompt += "\n# Recent Strategy History (last 5 rounds)\n"
-        prompt += "| Round | Score | R&D | Gaming |\n"
-        prompt += "|-------|-------|-----|--------|\n"
-        for round_num, score, rnd, gaming in recent_history[-5:]:
-            prompt += f"| {round_num} | {score:.3f} | {rnd:.0%} | {gaming:.0%} |\n"
-
-    prompt += """
-# Decision Required
-Based on your organization's profile and the current situation, decide how to allocate your effort for the next round.
-
-Consider:
-1. Are you ahead or behind competitors?
-2. Is gaming paying off based on your history?
-3. What does your organization's strategy profile suggest?
-4. What are the long-term implications of your choice?
-
-Output your decision as JSON."""
-
-    return prompt
 
 
 def create_planning_prompt_portfolio(
@@ -897,6 +816,7 @@ def create_planning_prompt_portfolio(
     regulatory_pressure: Optional[list] = None,
     per_benchmark_scores: Optional[dict] = None,
     benchmark_focus: Optional[dict] = None,
+    recent_insights: Optional[list] = None,
 ) -> str:
     """
     Create a prompt for the provider to decide their investment portfolio.
@@ -920,7 +840,19 @@ def create_planning_prompt_portfolio(
         Prompt string
     """
     prompt = f"""# Situation Assessment for {name}
+"""
 
+    # Inject prior strategic reasoning (cross-round persistence)
+    if recent_insights:
+        prompt += "\n## Your Strategic Reasoning From Prior Rounds\n"
+        for entry in recent_insights[-2:]:
+            r = entry.get("round", "?")
+            rtype = entry.get("type", "planning")
+            text = _truncate(entry.get("reasoning", ""), 120)
+            if text:
+                prompt += f"[Round {r} - {rtype}]: {text}\n"
+
+    prompt += """
 ## What happened last round
 """
 
@@ -961,14 +893,14 @@ def create_planning_prompt_portfolio(
 Profile: {strategy_profile}
 Traits: {innate_traits}
 Believed capability: {believed_capability:.2f}
-Believed benchmark exploitability: {believed_exploitability:.2f}
+Believed benchmark responsiveness: {believed_exploitability:.2f}
 """
 
     # Investment history table (kept but moved down)
     if recent_history:
         prompt += "\n## Recent Investment History\n"
-        prompt += "| Round | Score | Research | Training | EvalEng | Safety |\n"
-        prompt += "|-------|-------|----------|----------|---------|--------|\n"
+        prompt += "| Round | Score | Research | Training | Deployment | Safety |\n"
+        prompt += "|-------|-------|----------|----------|------------|--------|\n"
         for entry in recent_history[-5:]:
             if isinstance(entry, dict):
                 prompt += (f"| {entry.get('round', '?')} | {entry.get('score', 0):.3f} | "
@@ -998,7 +930,7 @@ Believed benchmark exploitability: {believed_exploitability:.2f}
 ## Decision Required
 Allocate resources for the next round. Consider:
 1. How are you positioned vs competitors? What's the trajectory?
-2. Is the benchmark becoming more/less exploitable based on your results?
+2. How does your benchmark score respond to each investment type based on your results?
 3. What market signals (satisfaction, regulation) suggest about strategy?
 4. What's the right balance of short-term scoring vs long-term capability?
 
@@ -1007,10 +939,10 @@ Output your decision as JSON with all four investment percentages summing to 1.0
     return prompt
 
 
-REFLECTION_SYSTEM_PROMPT = """You are simulating a Model Provider organization reflecting on benchmark results.
+REFLECTION_SYSTEM_PROMPT = """You are the strategy team at an AI model company reviewing your recent performance data.
 Based on observed scores, you need to update your beliefs about:
 1. Your true capability (what you can actually do)
-2. How exploitable the benchmark is (how much gaming helps vs real capability)
+2. How responsive the benchmark is to each of your four investment types
 
 Output your updated beliefs as JSON with the following format:
 {
@@ -1028,6 +960,7 @@ def create_reflection_prompt(
     current_believed_capability: float,
     current_believed_exploitability: float,
     recent_history: list,
+    recent_insights: Optional[list] = None,
 ) -> str:
     """
     Create a prompt for the provider to reflect and update beliefs.
@@ -1044,10 +977,22 @@ def create_reflection_prompt(
     """
     prompt = f"""# Organization: {name}
 Strategy Profile: {strategy_profile}
+"""
 
+    # Inject prior reasoning (cross-round persistence)
+    if recent_insights:
+        prompt += "\n# Your Reasoning From Prior Rounds\n"
+        for entry in recent_insights[-2:]:
+            r = entry.get("round", "?")
+            rtype = entry.get("type", "reflection")
+            text = _truncate(entry.get("reasoning", ""), 120)
+            if text:
+                prompt += f"[Round {r} - {rtype}]: {text}\n"
+
+    prompt += f"""
 # Current Beliefs
 - Believed capability: {current_believed_capability:.2f}
-- Believed benchmark exploitability: {current_believed_exploitability:.2f}
+- Believed benchmark responsiveness: {current_believed_exploitability:.2f}
 
 # Performance History
 """
@@ -1055,8 +1000,8 @@ Strategy Profile: {strategy_profile}
     if recent_history:
         # Check format - new portfolio format uses dicts
         if isinstance(recent_history[0], dict):
-            prompt += "| Round | Score | Research | Training | EvalEng | Safety |\n"
-            prompt += "|-------|-------|----------|----------|---------|--------|\n"
+            prompt += "| Round | Score | Research | Training | Deployment | Safety |\n"
+            prompt += "|-------|-------|----------|----------|------------|--------|\n"
             for entry in recent_history[-10:]:
                 prompt += (f"| {entry.get('round', '?')} | {entry.get('score', 0):.3f} | "
                           f"{entry.get('fundamental_research', 0):.0%} | "
@@ -1064,45 +1009,23 @@ Strategy Profile: {strategy_profile}
                           f"{entry.get('evaluation_engineering', 0):.0%} | "
                           f"{entry.get('safety_alignment', 0):.0%} |\n")
 
-            # Add some analysis hints
             scores = [h.get('score', 0) for h in recent_history]
-            eval_eng = [h.get('evaluation_engineering', 0) for h in recent_history]
-
             prompt += f"\nAverage score: {sum(scores)/len(scores):.3f}\n"
-            prompt += f"Average evaluation engineering: {sum(eval_eng)/len(eval_eng):.0%}\n"
-
-            # Correlation hint for eval engineering vs real capability investment
-            if len(recent_history) >= 3:
-                high_eval = [(h.get('score', 0), h.get('evaluation_engineering', 0))
-                            for h in recent_history if h.get('evaluation_engineering', 0) > 0.3]
-                low_eval = [(h.get('score', 0), h.get('evaluation_engineering', 0))
-                           for h in recent_history if h.get('evaluation_engineering', 0) <= 0.3]
-                if high_eval and low_eval:
-                    avg_high = sum(s for s, _ in high_eval) / len(high_eval)
-                    avg_low = sum(s for s, _ in low_eval) / len(low_eval)
-                    prompt += f"\nWhen eval engineering > 30%: avg score = {avg_high:.3f}"
-                    prompt += f"\nWhen eval engineering <= 30%: avg score = {avg_low:.3f}\n"
         else:
             # Legacy tuple format (round, score, rnd, gaming)
-            prompt += "| Round | Score | R&D | Gaming |\n"
-            prompt += "|-------|-------|-----|--------|\n"
+            prompt += "| Round | Score | R&D | Deployment |\n"
+            prompt += "|-------|-------|-----|------------|\n"
             for round_num, score, rnd, gaming in recent_history[-10:]:
                 prompt += f"| {round_num} | {score:.3f} | {rnd:.0%} | {gaming:.0%} |\n"
 
             scores = [h[1] for h in recent_history]
-            gaming_investments = [h[3] for h in recent_history]
-
             prompt += f"\nAverage score: {sum(scores)/len(scores):.3f}\n"
-            prompt += f"Average gaming investment: {sum(gaming_investments)/len(gaming_investments):.0%}\n"
     else:
         prompt += "No history yet.\n"
 
     prompt += """
 # Reflection Task
-Based on your performance history, update your beliefs:
-- If scores improved when you invested more in evaluation engineering, the benchmark might be more exploitable
-- If scores improved when you invested more in fundamental research, the benchmark might be more valid
-- Consider whether your scores are converging to your believed capability
+Based on your investment allocations and resulting scores, update your beliefs about your capability and about how your benchmark score responds to different investment types.
 
 Output your updated beliefs as JSON."""
 
@@ -1110,57 +1033,6 @@ Output your updated beliefs as JSON."""
 
 
 # --- Convenience Functions ---
-
-def llm_plan(
-    name: str,
-    strategy_profile: str,
-    innate_traits: str,
-    believed_capability: float,
-    believed_exploitability: float,
-    last_score: Optional[float],
-    competitor_scores: dict,
-    recent_history: list,
-    verbose: bool = False,
-) -> tuple[float, float, str]:
-    """
-    Use LLM to decide strategy allocation.
-
-    Returns:
-        Tuple of (rnd_investment, gaming_investment, reasoning)
-    """
-    provider = get_provider()
-
-    prompt = create_planning_prompt(
-        name=name,
-        strategy_profile=strategy_profile,
-        innate_traits=innate_traits,
-        believed_capability=believed_capability,
-        believed_exploitability=believed_exploitability,
-        last_score=last_score,
-        competitor_scores=competitor_scores,
-        recent_history=recent_history,
-    )
-
-    result = provider.generate_json(
-        prompt=prompt,
-        system_prompt=PLANNING_SYSTEM_PROMPT,
-        fail_safe={"rnd_investment": 0.5, "gaming_investment": 0.5, "reasoning": "fallback"},
-        verbose=verbose,
-    )
-
-    rnd = float(result.get("rnd_investment", 0.5))
-    gaming = float(result.get("gaming_investment", 0.5))
-    reasoning = result.get("reasoning", "")
-
-    # Normalize to sum to 1
-    total = rnd + gaming
-    if total > 0:
-        rnd /= total
-        gaming /= total
-    else:
-        rnd, gaming = 0.5, 0.5
-
-    return rnd, gaming, reasoning
 
 
 def llm_plan_portfolio(
@@ -1176,6 +1048,7 @@ def llm_plan_portfolio(
     regulatory_pressure: Optional[list] = None,
     per_benchmark_scores: Optional[dict] = None,
     benchmark_focus: Optional[dict] = None,
+    recent_insights: Optional[list] = None,
     verbose: bool = False,
 ) -> tuple[dict, str]:
     """
@@ -1201,6 +1074,7 @@ def llm_plan_portfolio(
         regulatory_pressure=regulatory_pressure,
         per_benchmark_scores=per_benchmark_scores,
         benchmark_focus=benchmark_focus,
+        recent_insights=recent_insights,
     )
 
     result = provider.generate_json(
@@ -1209,7 +1083,7 @@ def llm_plan_portfolio(
         fail_safe={
             "fundamental_research": 0.25,
             "training_optimization": 0.25,
-            "evaluation_engineering": 0.25,
+            "deployment_optimization": 0.25,
             "safety_alignment": 0.25,
             "thinking": "fallback to balanced portfolio",
         },
@@ -1219,7 +1093,7 @@ def llm_plan_portfolio(
     # Extract portfolio values
     fundamental = float(result.get("fundamental_research", 0.25))
     training = float(result.get("training_optimization", 0.25))
-    eval_eng = float(result.get("evaluation_engineering", 0.25))
+    eval_eng = float(result.get("deployment_optimization", result.get("evaluation_engineering", 0.25)))
     safety = float(result.get("safety_alignment", 0.25))
     # Accept both "thinking" and "reasoning" keys
     reasoning = result.get("thinking", result.get("reasoning", ""))
@@ -1240,7 +1114,8 @@ def llm_plan_portfolio(
     portfolio = {
         "fundamental_research": fundamental,
         "training_optimization": training,
-        "evaluation_engineering": eval_eng,
+        "deployment_optimization": eval_eng,
+        "evaluation_engineering": eval_eng,  # backward-compat alias
         "safety_alignment": safety,
     }
 
@@ -1253,6 +1128,7 @@ def llm_reflect(
     current_believed_capability: float,
     current_believed_exploitability: float,
     recent_history: list,
+    recent_insights: Optional[list] = None,
     verbose: bool = False,
 ) -> tuple[float, float, str]:
     """
@@ -1269,6 +1145,7 @@ def llm_reflect(
         current_believed_capability=current_believed_capability,
         current_believed_exploitability=current_believed_exploitability,
         recent_history=recent_history,
+        recent_insights=recent_insights,
     )
 
     result = provider.generate_json(
@@ -1298,18 +1175,18 @@ def llm_reflect(
 
 # --- Funder Planning ---
 
-FUNDER_PLANNING_SYSTEM_PROMPT = """You are simulating a Funder (capital allocator) in an AI evaluation ecosystem.
+FUNDER_PLANNING_SYSTEM_PROMPT = """You are a capital allocator deciding how to invest in AI model companies.
 You must decide how to allocate your funding across AI model providers.
 
 Funder Types and Their Strategies:
 - **VC**: Maximize returns by backing top performers. Concentrate funding on leaders.
-- **Government/AISI**: Ensure safety and stability. Spread funding, penalize gaming and regulatory issues.
-- **Foundation**: Support authentic capability growth. Favor providers with low gaming indicators.
+- **Government/AISI**: Ensure safety and stability. Spread funding; reduce allocation to providers with compliance failures.
+- **Foundation**: Support capability growth. Favor providers with strong end-user outcomes and research investment.
 
 You can infer provider quality from public signals:
 - **Leaderboard score**: Raw benchmark performance
-- **Consumer satisfaction**: Proxy for true quality (gaming leads to low satisfaction)
-- **Satisfaction gap** (score - satisfaction): High gap suggests gaming
+- **Consumer satisfaction**: An independent signal of end-user value delivery
+- **Satisfaction gap** (score - satisfaction): Reflects alignment between benchmark performance and actual user experience
 - **Regulatory interventions**: Compliance/safety risk indicator
 
 Output your decision as JSON with the following format:
@@ -1334,6 +1211,7 @@ def create_funder_planning_prompt(
     leaderboard: list,
     consumer_satisfaction: Optional[float],
     recent_history: list,
+    recent_insights: Optional[list] = None,
 ) -> str:
     """
     Create a prompt for the funder to decide funding allocations.
@@ -1355,9 +1233,18 @@ def create_funder_planning_prompt(
 Name: {name}
 Type: {funder_type}
 Total Capital: ${total_capital:,.0f}
-
-# Current Ecosystem State
 """
+
+    # Inject prior reasoning (cross-round persistence)
+    if recent_insights:
+        prompt += "\n# Your Reasoning From Prior Rounds\n"
+        for entry in recent_insights[-2:]:
+            r = entry.get("round", "?")
+            text = _truncate(entry.get("reasoning", ""), 120)
+            if text:
+                prompt += f"[Round {r}]: {text}\n"
+
+    prompt += "\n# Current Ecosystem State\n"
 
     if leaderboard:
         prompt += "\nLeaderboard:\n"
@@ -1368,7 +1255,7 @@ Total Capital: ${total_capital:,.0f}
                 quality = f"{quality:.2f}"
             if isinstance(gaming, float):
                 gaming = f"{gaming:.2f}"
-            prompt += f"  {rank}. {provider_name}: score={score:.3f}, inferred_quality={quality}, gaming_risk={gaming}\n"
+            prompt += f"  {rank}. {provider_name}: score={score:.3f}, inferred_quality={quality}, score_reliability={gaming}\n"
 
     if consumer_satisfaction is not None:
         prompt += f"\nOverall Consumer Satisfaction: {consumer_satisfaction:.2f}\n"
@@ -1404,6 +1291,7 @@ def llm_plan_funding(
     leaderboard: list,
     consumer_satisfaction: Optional[float],
     recent_history: list,
+    recent_insights: Optional[list] = None,
     verbose: bool = False,
 ) -> tuple[dict, str]:
     """
@@ -1423,6 +1311,7 @@ def llm_plan_funding(
         leaderboard=leaderboard,
         consumer_satisfaction=consumer_satisfaction,
         recent_history=recent_history,
+        recent_insights=recent_insights,
     )
 
     # Default allocations (spread evenly)

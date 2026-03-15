@@ -3,9 +3,14 @@ Experiment Configuration & Runner
 ==================================
 Edit the config below, then run:
 
-    python run_experiment.py              # defaults to US policy
+    python run_experiment.py                    # balanced policy, canonical output
     python run_experiment.py --policy us
     python run_experiment.py --policy eu
+    python run_experiment.py --dev              # dev/test: output to sandbox/experiments/
+
+--dev routes output to hf_data/test/<condition>_<timestamp>/ instead of
+hf_data/llm_core/<model>/<condition>/seeds/seed_N/. Use it for exploratory
+runs, PIMMUR tests, or any experiment you don't want mixed into canonical data.
 
 For quick CLI-driven tests, use run_llm_now.py instead.
 """
@@ -14,11 +19,14 @@ import os
 import sys
 import time
 
-# Parse --policy flag early so config dicts can reference it
+# Parse flags early so config dicts can reference them
 _parser = argparse.ArgumentParser(add_help=False)
 _parser.add_argument("--policy", choices=["us", "eu", "balanced"], default="balanced")
+_parser.add_argument("--dev", action="store_true",
+                     help="Dev/test mode: route output to hf_data/test/ instead of hf_data/llm_core/")
 _args, _ = _parser.parse_known_args()
-POLICY = _args.policy  # "us" or "eu"
+POLICY = _args.policy
+DEV = _args.dev
 
 # Prevent CPU thread oversubscription on shared clusters
 n_threads_str = "4"
@@ -86,16 +94,18 @@ EXPERIMENT = {
         "LLM mode: providers + policymaker + org consumers. "
         "4 initial benchmarks + introduction sequence, max 8 active. "
         "39 consumer segments, 4 funders (2 VC + gov + foundation), media, incidents. "
-        "50 rounds."
+        "30 rounds. PIMMUR test: cross-round recent_insights/recent_reasoning persistence "
+        "active for providers, policymaker, and funder."
     ),
     "tags": ["full-ecosystem", "canonical", "5-provider", "4-benchmark",
-             "max-8-benchmarks", "50-rounds", "open-source", "startup-entry", "bte-index",
+             "max-8-benchmarks", "30-rounds", "open-source", "startup-entry", "bte-index",
              "benchmark-specialization", "39-segments", _meta["policy_tag"], "4-funder",
-             "opencore", "cost-advantage", "llm-providers", "llm-policymaker", "llm-org-consumers"],
+             "opencore", "cost-advantage", "llm-providers", "llm-policymaker", "llm-org-consumers",
+             "pimmur"],
 }
 
 LLM = {
-    "provider": "anthropic",    # openai | anthropic | ollama | gemini
+    "provider": "ollama",       # openai | anthropic | ollama | gemini
     "llm_mode": True,          # Heuristic mode for clean OS dynamics (no LLM noise)
     # Consumer LLM config (all heuristic)
     "consumer_llm_mode": False,
@@ -104,7 +114,7 @@ LLM = {
 }
 
 SIMULATION = {
-    "n_rounds": 50,
+    "n_rounds": 30,
     "seed": 1,
     "verbose": True,
     "rnd_efficiency": 0.01,
@@ -420,12 +430,20 @@ def run():
                     os.environ[key.strip()] = value.strip()
 
     os.environ["LLM_PROVIDER"] = LLM["provider"]
+    # Override LLM_MODEL from config so .env model names don't bleed across providers
+    _model_overrides = {
+        "anthropic": "claude-sonnet-4-6",
+        "openai": "gpt-4o",
+        "ollama": "llama3",
+        "gemini": "gemini-2.5-flash",
+    }
+    os.environ["LLM_MODEL"] = LLM.get("model") or _model_overrides.get(LLM["provider"], "")
 
     from simulation import (
         EvalEcosystemSimulation, SimulationConfig,
         get_default_provider_configs, get_two_provider_configs, get_five_provider_configs,
     )
-    from experiment_logger import ExperimentLogger, generate_summary
+    from experiment_logger import ExperimentLogger, DirectoryLogger, generate_summary
     from game_log import generate_game_log_from_history
 
     # --- Resolve provider configs ---
@@ -529,23 +547,45 @@ def run():
 
     print()
     print("=" * 70)
+    if DEV:
+        print("[DEV MODE] Output -> sandbox/experiments/")
     print(f"EXPERIMENT: {EXPERIMENT['name']}")
     print(", ".join(parts))
     print("=" * 70)
     print()
 
     # --- Experiment logging setup ---
-    experiments_dir = os.path.join(_PROJECT_ROOT, "output", "experiments")
-    # Use heuristic subdirectory for heuristic runs (separate numbering)
-    use_heuristic_subdir = not config.llm_mode
-    logger = ExperimentLogger(experiments_dir, use_heuristic_subdir=use_heuristic_subdir)
-    exp_id = logger.create_experiment(
-        name=EXPERIMENT["name"],
-        description=EXPERIMENT.get("description", ""),
-        tags=EXPERIMENT.get("tags", []),
+    _model_slug = {
+        "anthropic": "claude-sonnet-4-6",
+        "openai": "gpt-4o",
+        "gemini": "gemini-pro",
+        "ollama": "ollama",
+        "qwen": "qwen-235b",
+    }.get(LLM["provider"], LLM["provider"])
+    _condition = EXPERIMENT["name"]          # e.g. full_ecosystem_balanced
+    _seed_label = f"seed_{SIMULATION.get('seed', 1)}"
+    if DEV:
+        # Dev/test runs go to hf_data/test/<condition>/ with a timestamp suffix
+        # so repeated test runs don't overwrite each other.
+        from datetime import datetime as _dt
+        _ts = _dt.now().strftime("%Y%m%d_%H%M%S")
+        _output_dir = os.path.join(
+            _PROJECT_ROOT, "sandbox", "experiments",
+            f"{_condition}_{_ts}",
+        )
+    else:
+        # Canonical path per EXPERIMENT_PLAN.md
+        _output_dir = os.path.join(
+            _PROJECT_ROOT, "hf_data", "llm_core",
+            _model_slug, _condition, "seeds", _seed_label,
+        )
+    logger = DirectoryLogger(_output_dir, lightweight=False)
+    logger.save_metadata(
         seed=config.seed,
         llm_mode=config.llm_mode,
+        description=EXPERIMENT.get("description", ""),
     )
+    exp_id = _seed_label
 
     full_config = config.to_dict()
     full_config["provider_configs"] = provider_configs

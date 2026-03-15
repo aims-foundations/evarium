@@ -592,6 +592,7 @@ class ModelProvider:
             current_believed_capability=self.private_state.believed_own_capability,
             current_believed_exploitability=self.private_state.believed_benchmark_exploitability,
             recent_history=recent_history,
+            recent_insights=self.private_state.recent_insights[-2:],
             verbose=self.verbose_llm,
         )
 
@@ -805,6 +806,7 @@ class ModelProvider:
             regulatory_pressure=ctx.get("regulatory_pressure"),
             per_benchmark_scores=ctx.get("per_benchmark_scores"),
             benchmark_focus=self.private_state.benchmark_focus or None,
+            recent_insights=self.private_state.recent_insights[-2:],
             verbose=self.verbose_llm,
         )
 
