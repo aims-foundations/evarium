@@ -45,7 +45,7 @@
 - Provider investment portfolio: fundamental_research, training_optimization, evaluation_engineering, safety_alignment
 - Providers use either heuristic or LLM mode for planning
 - LLM providers: openai, anthropic, ollama, gemini (set via `LLM_PROVIDER` env var)
-- Experiment results logged to `experiments/` via ExperimentLogger
+- Experiment results logged to `hf_data/` via DirectoryLogger (canonical) or `sandbox/experiments/` for local runs
 - Incremental round logging: `rounds.jsonl` (one JSON line per round, written live)
 - Always update stakeholders.md when making changes to the simulation so that the documentation is up to date. Confirm if unsure.
 - Always update TODO.md when implementing something from it (remove the item) or when identifying new work to track (add it).
@@ -58,11 +58,11 @@ evaluation-ecosystem-simulation/
 │   ├── simulation.py             # Main sim loop, SimulationConfig, provider presets
 │   ├── visibility.py             # PublicState, PrivateState, GroundTruth
 │   ├── llm.py                    # Multi-provider LLM integration
-│   ├── experiment_logger.py      # ExperimentLogger (logging + index.json)
+│   ├── experiment_logger.py      # ExperimentLogger (DirectoryLogger for hf_data writes)
 │   ├── plotting.py               # Visualization dashboards (per-experiment)
 │   ├── game_log.py               # Natural language game log generator
 │   ├── incidents.py              # Incident generation/management
-│   ├── diagnostics.py            # Simulation diagnostics
+│   ├── diagnostics.py            # Simulation diagnostics (aggregates across runs)
 │   ├── diagnostic_plots.py       # Diagnostic visualization
 │   └── actors/
 │       ├── model_provider.py     # ModelProvider: plan/observe/reflect/execute
@@ -79,24 +79,57 @@ evaluation-ecosystem-simulation/
 │   ├── final_plots.py            # Combined multi-experiment plots (8 plots + 3 CSV tables)
 │   ├── create_final_plots.py     # Older combined plots (partially broken — prefer final_plots.py)
 │   ├── explore_benchmark_plots.py# Benchmark-level gaming visualizations (merged into final_plots.py)
+│   ├── plot_inflation_trajectories.py  # Score inflation trajectory plots
 │   ├── compare_experiments.py    # Side-by-side experiment comparisons
 │   ├── replot.py                 # Regenerate plots for existing experiments
 │   ├── analyze_existing.py       # Analyze existing experiment data
-│   └── run_diagnostics.py        # Run diagnostics on an experiment
+│   ├── analyze_registry.py       # Analyze the run registry
+│   ├── build_run_registry.py     # Build a registry index of completed runs
+│   ├── explore_runs.py           # Explore and inspect runs
+│   ├── generate_preset_configs.py# Generate preset experiment configs
+│   ├── sync_hf_data.py           # Sync hf_data/ to/from Hugging Face
+│   ├── run_diagnostics.py        # Run diagnostics on an experiment
+│   ├── run_phase1_qwen.sh        # Shell: run Phase 1 with Qwen model
+│   └── run_phase5_heuristic.sh   # Shell: run Phase 5 heuristic baseline
+│
+├── hf_data/                      # Canonical experiment outputs (primary store)
+│   │                             # Experiments run on cluster; outputs stored on HuggingFace.
+│   │                             # hf_data/ is the local mirror. Use sync_hf_data.py to sync.
+│   ├── llm_core/                 # LLM runs (claude-sonnet-4-6/, qwen-235b/, llama-70b/)
+│   ├── heuristic_baseline/       # Phase 5: 27 conditions x 30 seeds
+│   ├── claude_archive/           # Legacy Claude 3.5 Sonnet runs exp_001-015
+│   └── test/                     # Dev/exploratory runs (--dev flag)
+│
+├── sandbox/
+│   └── experiments/              # Local convenience store for small/test runs
 │
 ├── output/
-│   └── experiments/
-│       ├── index.json            # Experiment index (VALIDATE JSON after edits!)
-│       └── exp_XXX_name/         # Per-experiment folders: config.json, rounds.jsonl, plots/, ...
+│   └── diagnostics/              # Diagnostic outputs (aggregated across runs, run locally)
+│
+├── external-validation/          # Real-world data for validating sim against empirical trends
+│   ├── data/
+│   │   ├── raw/                  # Raw data: helm/, market/, paperwithcode/
+│   │   └── processed/            # Processed CSVs + JSONs (benchmarks, market share, sim exports)
+│   ├── plots/                    # Validation comparison plots
+│   └── scripts/                  # Fetch, normalize, and plot scripts
 │
 ├── docs/
-│   └── stakeholders.md           # Architecture reference (UPDATE when making sim changes)
+│   ├── stakeholders.md           # Architecture reference (UPDATE when making sim changes)
+│   ├── experiment_comparison_protocol.md
+│   ├── results_analysis.md
+│   ├── US_vs_EU_Comparison_Guide.md
+│   ├── evaluator_business_model_case_study.md
+│   ├── policy_intervention_case_study.md
+│   ├── exp039_vs_exp040_eu_vs_us_sanctions.md
+│   ├── mainfig.tex               # TikZ main figure
+│   └── draft_paper.pdf           # Working paper draft
 │
-└── overleaf/
-    └── figures/
-        ├── mainfig_spec.md       # Figure specification
-        └── mainfig_option1.tex   # TikZ main figure (hexagonal ecosystem wheel)
+├── reproduce.sh                  # Top-level reproduction script
+├── run_phase.sh                  # Run a specific experiment phase
+└── run_qwen_all_phases.sh        # Run all phases with Qwen model
 ```
+
+**Note on paper (`overleaf/`):** The LaTeX paper lives at `../overleaf/` (one level up, in `evaluation-ecosytem-project/overleaf/`). This is intentional — the paper is not nested inside the simulation repository.
 
 ### Key bugs fixed (for reference)
 - `src/simulation.py` line ~775: `if round_num > 0 and self.config.enable_incidents:` — was missing `enable_incidents` check; caused ablations to still generate incidents
