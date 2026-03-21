@@ -19,7 +19,6 @@
 
 ## Working Style
 
-- When the user asks to investigate or fix something, ask for context if unsure rather than spending many turns exploring the codebase
 - Do not solve extra problems or add unrequested features
 - When editing JSON files (especially `experiments/index.json`), validate syntax after editing — trailing commas have caused failures multiple times
 - Before long-running experiments, do a preflight check: validate JSON configs, test LLM provider connectivity, verify output directory exists
@@ -27,8 +26,6 @@
 
 ## Planning & Implementation
 
-- **Before implementing any multi-step feature, present a plan and wait for user approval.** Do not start writing code until the user confirms the approach.
-- When asked to plan, produce ONLY a plan document — no code changes at that stage.
 - When asked to implement, scope your work to what was explicitly requested. Implement phase by phase if the plan has multiple phases, unless told otherwise.
 - If a task touches more than 2-3 files, stop and confirm the approach before proceeding.
 
@@ -47,7 +44,6 @@
 - LLM providers: openai, anthropic, ollama, gemini (set via `LLM_PROVIDER` env var)
 - Experiment results logged to `hf_data/` via DirectoryLogger (canonical) or `sandbox/experiments/` for local runs
 - Incremental round logging: `rounds.jsonl` (one JSON line per round, written live)
-- Always update stakeholders.md when making changes to the simulation so that the documentation is up to date. Confirm if unsure.
 - Always update TODO.md when implementing something from it (remove the item) or when identifying new work to track (add it).
 
 ## File Structure Quick Reference
@@ -144,5 +140,38 @@ evaluation-ecosystem-simulation/
 - tlmgr path: `C:/Users/yashd/AppData/Roaming/TinyTeX/bin/windows/tlmgr.bat`
 
 ### Documentation
-- `docs/stakeholders.md` — Comprehensive architecture doc (UPDATE when making sim changes)
+- `docs/stakeholders.md` — Living architecture reference (see Working With Claude > Session Start/End rules)
 - Always update `TODO.md` when implementing from it or identifying new work
+
+---
+
+## Working With Claude
+
+### Interruptions & Stopping
+When the user interrupts tool use or says "stop", immediately halt the current approach and ask what they want instead. Do not continue executing commands after an interruption.
+
+### Codebase Exploration
+Do NOT explore the codebase unless explicitly asked. If you need to find a file or understand something, ask first — the user likely knows where it is. When the user provides file paths, use only those files.
+
+### Plan vs. Implement
+Do NOT implement anything until explicitly asked. Default to planning and discussion first. When the user says "plan" or "design", stay in that mode — produce a plan document only, no code changes.
+
+### Minimal Targeted Changes
+When editing files, make minimal targeted changes. Do not refactor, reorganize, rename, or "fix" things the user did not ask about.
+
+### Session Start: Load Architecture Context
+At the start of any session involving simulation code or architecture, read `docs/stakeholders.md` before taking action. This is the living reference for how actors are modeled and how simulation mechanics work.
+
+### Session End: Update Docs & Write Handoff
+1. If any structural changes were made to the simulation during the session (new actors, changed mechanics, updated state representations, etc.), update `docs/stakeholders.md` to reflect them before the session ends. Ask if unsure whether a change is structural.
+2. Before ending any non-trivial session, write or update `SESSION_HANDOFF.md` in the project root with three sections:
+   - **Completed:** what was finished this session
+   - **In Progress:** anything partially done, with current state
+   - **Next Steps:** what to do next session
+   Keep it under 30 lines.
+
+### Task Scoping (Phase-Based Work)
+Break large multi-step tasks into explicit phases. Default structure: Phase 1 = plan only, Phase 2+ = implement. Do not proceed to the next phase without user approval. This allows clean exit between phases without losing progress.
+
+### Front-Loading Context
+When the user provides explicit file paths in a request, use only those files. Do not search for additional files unless asked. If file paths are not provided and they are needed, ask before exploring.
