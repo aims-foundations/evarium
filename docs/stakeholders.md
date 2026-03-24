@@ -1,6 +1,6 @@
 # Stakeholder Architecture: No Explicit Gaming
 
-> **Status: Pre-implementation plan. Last updated: 2026-03-17.**
+> **Status: Pre-implementation plan. Last updated: 2026-03-23.**
 > Gaming emerges from provider data sourcing decisions and benchmark weight mismatch — not from an explicit investment lever. The prior architecture (with explicit `evaluation_engineering`) is preserved in `rough/stakeholders_old_eval_eng.md`.
 
 ---
@@ -26,6 +26,10 @@ Provider names are anonymized to prevent LLM reasoning from being biased by real
 
 | File | Purpose |
 |------|---------|
+| `docs/stakeholders.md` | This file — canonical architecture reference |
+| `rough/design_diff.md` | Old (eval_eng) vs new design — all changed primitives |
+| `rough/logging_spec.md` | verbose=False / verbose=True logging spec |
+| `rough/validation_plan.md` | Validation plan — Sargent, PIMMUR, Windrum, Axtell, Park et al. |
 | `src/simulation.py` | Core sim loop, `SimulationConfig`, `EvalEcosystemSimulation`, regulatory presets |
 | `src/capability_dimensions.py` | `DIMENSIONS` constant, `dot()`, `normalize()`, `deficit_weights()` utilities |
 | `src/visibility.py` | State classes: PublicState, PrivateState, GroundTruth, AIIncident |
@@ -49,15 +53,15 @@ Provider names are anonymized to prevent LLM reasoning from being biased by real
 
 ## Actors Overview
 
-| Actor | File | Role |
-|-------|------|------|
-| Model Provider | `actors/model_provider.py` | Develops models, allocates R&D portfolio |
-| Evaluator | `actors/evaluator.py` | Operates benchmarks; introduces new benchmarks as ecosystem evolves |
-| Consumer Market | `actors/consumer.py` | Segments (archetype × use-case); proportional switching |
-| Regulator | `actors/regulator.py` | Graduated interventions; EU/US/balanced presets |
-| Funder | `actors/funder.py` | VC, gov, foundation types; media-aware capital allocation |
-| Media | `actors/media.py` | TechPress outlet; coverage influences all downstream actors |
-| Incident System | `incidents.py` | Probabilistic AI safety incidents; ecosystem propagation |
+| Actor | File | LLM mode | Role |
+|-------|------|----------|------|
+| Model Provider | `actors/model_provider.py` | Yes | Develops models, allocates R&D portfolio |
+| Evaluator | `actors/evaluator.py` | Yes — `dynamic_evaluator=True` only | Operates benchmarks; introduces new benchmarks as ecosystem evolves |
+| Consumer Market | `actors/consumer.py` | No — formula-based only | Segments (archetype × use-case); proportional switching |
+| Regulator | `actors/regulator.py` | Yes | Graduated interventions; EU/US/balanced presets |
+| Funder | `actors/funder.py` | Yes | VC, gov, foundation types; media-aware capital allocation |
+| Media | `actors/media.py` | Yes | TechPress outlet; coverage influences all downstream actors |
+| Incident System | `incidents.py` | No — probabilistic only | Probabilistic AI safety incidents; ecosystem propagation |
 
 ---
 
@@ -205,48 +209,40 @@ Switching is triggered when `expected_quality - satisfaction > switching_thresho
 
 ### Portfolio Keys
 
-Providers allocate 100% of their training budget across four levers each round:
+Providers allocate 100% of their training budget across three levers each round:
 
-| Lever | Competitive axis | Mechanical effect | Benchmark-specializable? |
-|---|---|---|---|
-| `research` | Capability (broad) | Uniform gain across all dimensions; high variance; breakthrough-eligible | No — broad by definition |
-| `development` | Capability (targeted) | Gain toward dimensions chosen by provider; rate modulated by `benchmark_adjacency[dim]` | Yes — via `benchmark_adjacency[dim]` |
-| `safety` | Safety capability | Improves `capability_vector["safety"]` at fixed efficiency | No — always builds true safety capability |
-| `product` | Market adoption | Accumulates `product_stock`; maps to `cost_advantage` → flows through to `cost_bonus` in satisfaction formula | N/A — does not affect capability vectors. Possible extensions: switching cost stickiness (per-provider modifier on `switching_cost`); enterprise segment adoption rate — both deferred. |
+| Lever | Competitive axis | Mechanical effect |
+|---|---|---|
+| `rd` | Capability (broad + targeted) | Directed toward benchmark-focused dimensions when `focus_level[b]` is set; approximately uniform when no deliberate focus; breakthrough-eligible |
+| `safety` | Safety capability | Improves `capability_vector["safety"]` at fixed efficiency; always builds true safety capability |
+| `product` | Market adoption | Accumulates `market_presence`; maps to `cost_advantage` → flows through to `cost_bonus` in satisfaction formula. Possible extensions: switching cost stickiness, enterprise segment adoption rate — both deferred. |
 
-**Gaming mechanism:** When `benchmark_adjacency[dim]` is high, development gain concentrates on dimensions the provider believes the benchmark emphasizes. If believed weights are accurate and benchmark weights diverge from consumer need weights, scores rise faster than consumer satisfaction. The score-satisfaction gap emerges without any explicit gaming term.
-
-### Development Sub-Structure
-
-The Development lever has two internal vectors in `ProviderPrivateState`:
-
-```
-dimension_allocation[dim]  — how Development budget is split across dimensions (sums to 1)
-benchmark_adjacency[dim]        — per-dimension data strategy (0 = diverse, 1 = benchmark-adjacent)
-```
-
-These are orthogonal choices. A provider can invest heavily in coding (`dimension_allocation["coding"]` high) with diverse data (`benchmark_adjacency["coding"]` low), or lightly invest but use narrow benchmark-adjacent data. `dimension_allocation` is updated first (where to compete), `benchmark_adjacency` second (how to source data).
+**Gaming mechanism:** When `focus_level[b]` is high for benchmark b, R&D gain concentrates on dimensions the provider believes b emphasizes (via `inferred_benchmark_weights[b]`). If those beliefs are accurate and benchmark weights diverge from consumer need weights, scores rise faster than consumer satisfaction. The score-satisfaction gap emerges without any explicit gaming term.
 
 ### Capability Update Rule
 
 Each round, per-dimension:
 
-```python
+```
+focus_weights[b]    = normalize(focus_level[b] for b in active_benchmarks)
+benchmark_driven[dim] = sum(focus_weights[b] × inferred_benchmark_weights[b][dim]
+                            for b in active_benchmarks)
+                        # when all focus_level[b] at baseline: benchmark_driven[dim] ≈ uniform
+
+target[dim]         = benchmark_orientation × benchmark_driven[dim] + (1 - benchmark_orientation) × satisfaction_signal[dim]
+
 gain[dim] = (
-    research    × R_efficiency / n_dims
-  + development × dimension_allocation[dim]
-               × ((1 - benchmark_adjacency[dim]) × deficit_weight[dim]
-                 + benchmark_adjacency[dim]      × believed_benchmark_weight[dim])
-  + safety      × S_efficiency × (1 if dim == "safety" else 0)
-) × provider_efficiency_multiplier
+    rd     × target[dim]
+  + safety × (1 if dim == "safety" else 0)
+)
 
 capability_vector[dim] = min(1.0, capability_vector[dim] + gain[dim])
 ```
 
 Where:
-- `deficit_weight[dim] = (1 - capability_vector[dim]) / sum(1 - capability_vector[d] for d in DIMENSIONS)`
-- `R_efficiency ≈ 1.5 / n_dims`
-- `S_efficiency ≈ 2.0`
+- Absolute gain scaling for both `rd` and `safety` are calibration parameters (Thread 9)
+
+`S_efficiency` dropped — the structural distinction between genuine safety investment and benchmark-driven safety gains already exists via the two additive pathways. Relative efficiency between them is a calibration choice, not a structural one.
 
 ### Provider Belief Model
 
@@ -255,121 +251,81 @@ Providers hold beliefs about the benchmark's hidden dimension weights, updated e
 **ProviderPrivateState additions:**
 
 ```python
-believed_benchmark_weights: dict[str, float]      # initially uniform across DIMENSIONS
-dimension_allocation: dict[str, float]             # Development budget split (sums to 1)
-benchmark_adjacency: dict[str, float]                   # per-dimension data strategy (0–1)
-satisfaction_signal: float                   # noisy private estimate from usage data
+inferred_benchmark_weights: dict[str, dict[str, float]]  # per-benchmark × per-dim; heuristic-updated; initially uniform per benchmark
+focus_level: dict[str, float]                            # per active benchmark, running scalar; provider-calibrated baseline
+benchmark_orientation: float                             # [0.05, 0.95]; per-provider initial value; ordinal LLM-updated
+satisfaction_signal: dict[str, float]                    # 6-dim vector; noise ∝ 1/sqrt(market_share)
 ```
 
-**Belief update (heuristic mode):**
+**New benchmark initialization:** When a benchmark b is introduced mid-simulation, `focus_level[b]` is initialized at `mean(focus_level[other active benchmarks])` for that provider. `inferred_benchmark_weights[b]` initializes uniform. All providers are scored on all active benchmarks each round regardless of focus_level — scores feed the belief update from the benchmark's introduction round onward. `focus_level` affects capability gains, not scoring participation.
 
-Aggregated across all active benchmarks, weighted by score spread (tighter clustering = less signal):
+**Belief update (both modes — heuristic):**
+
+Updated each round per active benchmark from score prediction errors. Beliefs are epistemic state, not strategic choice — the LLM does not output belief updates.
 
 ```
 for each active benchmark b:
-    predicted_score[b] = dot(capability_vector, believed_benchmark_weights[b])
-    error[b]           = observed_score[b] - predicted_score[b]
-    weight[b]          = score_spread[b] / sum(score_spread values)
-
-for dim in DIMENSIONS:
-    believed_benchmark_weights[dim] += learning_rate × weighted_sum(error[b] × capability_vector[dim])
-
-believed_benchmark_weights = normalize(clip_non_negative(believed_benchmark_weights))
+    predicted_score[b]            = dot(capability_vector, inferred_benchmark_weights[b])
+    error[b]                      = observed_score[b] - predicted_score[b]
+    for dim in DIMENSIONS:
+        inferred_benchmark_weights[b][dim] += learning_rate × error[b] × capability_vector[dim]
+    inferred_benchmark_weights[b]  = normalize(clip_non_negative(inferred_benchmark_weights[b]))
 ```
 
-`learning_rate` (default 0.15) is a config parameter. `benchmark_weight_confidence` is dropped — `learning_rate` already provides damping at the belief update level; confidence was double-damping a signal that's already slow-moving. In LLM mode, providers reason about uncertainty themselves from context.
+`learning_rate` (default 0.15) is a config parameter.
 
-**Belief update (LLM mode):**
+**LLM call (single call per provider per round):**
 
-Belief update is part of the reflection step. The LLM reasons sequentially: (1) what did my investments produce? (2) what does that reveal about what the benchmark measures? (3) how should I adjust data sourcing and dimension focus? All three are one coherent thought.
-
-Prompt inputs: per-category scores this round, score delta vs. last round, competitor rank per benchmark (rank only — not raw scores), prior `dimension_allocation`, prior `benchmark_adjacency`, current `believed_benchmark_weights`, last round's `recent_reasoning`. No apparatus vocabulary (`gaming`, `exploitability`, `benchmark_weight_confidence`) appears in any prompt. Providers are addressed as "the strategy team at {name}."
+Prompt inputs: per-category scores this round (own + competitor ranks), score delta vs. last round, current `portfolio`, current `focus_level` per benchmark, current `inferred_benchmark_weights` per benchmark, `satisfaction_signal` vector with confidence interval, last `reasoning_memory_depth` entries from `recent_insights`. No apparatus vocabulary (`gaming`, `exploitability`, `benchmark_weight_confidence`) appears in any prompt. Providers are addressed as "the strategy team at {name}."
 
 LLM output JSON:
 ```json
 {
-  "benchmark_beliefs": {
-    "<benchmark_name>": {
-      "weights": {"reasoning": 0.35, "knowledge": 0.25, "communication": 0.20,
-                  "coding": 0.10, "safety": 0.05, "agentic": 0.05},
-      "reasoning": "..."
-    }
-  },
-  "dimension_allocation": {"reasoning": 0.28, "coding": 0.22, ...},
-  "benchmark_adjacency": {"reasoning": 0.3, "coding": 0.6, ...},
-  "reasoning": "Free-text summary — injected as recent_reasoning next round"
+  "portfolio":       {"rd": "more", "safety": "same", "product": "less"},
+  "benchmark_focus": {"General Capability": "same", "Coding Evaluation": "more",
+                      "Safety Evaluation": "less", "Instruction Following": "same"},
+  "reasoning": "Free-text summary — appended to recent_insights"
 }
 ```
 
+Outputs are ordinal signals (`"more"` / `"less"` / `"same"`). The sim applies δ to running `portfolio`, `focus_level`, and `benchmark_orientation` state and renormalizes. `reasoning` is appended to `recent_insights`.
 
-**`satisfaction_signal`:** Providers have a noisy private signal of their own consumer satisfaction, derived from usage data, ratings, and feedback. In LLM mode, it is surfaced as raw data in the observation/reflection prompt — no prescribed inference is given. A provider may respond to a rising score / falling satisfaction gap in multiple ways (reduce benchmark_adjacency, double down on scores, attribute the gap to incidents or pricing, etc.). That heterogeneity is intentional and consistent with PIMMUR. In heuristic mode, `satisfaction_signal` is available but does not directly wire into portfolio allocation.
+**Prompt framing note:** `benchmark_focus` decisions must be framed as relative priorities — "which benchmarks do you want to prioritise more than others this round?" — since saying "more" on all benchmarks simultaneously is a no-op after normalization. `portfolio` framing is naturally relative since it is zero-sum.
 
-### Dimension Allocation Evolution
-
-**Heuristic evolution rule:**
+**`satisfaction_signal`:** Providers receive a 6-dim vector representing what their current user base values, derived from market-share-weighted consumer need weights. Modeled on private usage data and telemetry (e.g. CursorBench-style signals):
 
 ```
-for dim in DIMENSIONS:
-    gap[dim]              = max(0, leader_category_score_on[dim] - own_category_score_on[dim])
-    benchmark_signal[dim] = believed_benchmark_weights[dim]
-    dr_discount[dim]      = 1 - capability_vector[dim]
-
-    signal[dim] = α × gap[dim] + β × benchmark_signal[dim] + γ × dr_discount[dim]
-
-target_allocation = normalize(signal)
-dimension_allocation[dim] = (1 - λ) × dimension_allocation[dim] + λ × target_allocation[dim]
-dimension_allocation = clip_normalize(dimension_allocation, min=0.05, max=0.60)
+profile_share[p]         = sum over archetypes a of segment_share[a, p]
+segment_weights[p]       = profile_share[p] / market_share[provider]   # sums to 1
+true_signal[dim]         = sum over profiles p of (segment_weights[p] × need_weights[p][dim])
+satisfaction_signal[dim] = clip(true_signal[dim] + Normal(0, σ_base / sqrt(market_share[provider])), min=0)
+satisfaction_signal      = normalize(satisfaction_signal)
 ```
 
-| Param | Role | Value | Rationale |
-|---|---|---|---|
-| α | Competitive gap weight | 0.4 | Catching up to leader is primary driver |
-| β | Benchmark signal weight | 0.4 | Benchmark-directed investment is real |
-| γ | Diminishing returns weight | 0.2 | Prevents over-concentration |
-| λ | Learning rate | 0.15 | ~15% move toward target per round |
+`true_signal` sums to 1 by construction (weighted average of distributions). Noise uses relative market share — larger providers get a more precise signal. Per-dimension noise drawn independently; clipped and renormalized. Tracks the provider's current user base composition: as market share shifts across segments, the signal shifts accordingly.
 
-The gap on a dimension is approximated by comparing category scores on benchmarks that load heavily on that dimension, using `believed_benchmark_weights` — keeping inference uncertain and making benchmark belief accuracy competitively valuable.
-
-**LLM mode:** Provider sees current capability per benchmark category, competitor category scores, `believed_benchmark_weights`, and market share. Outputs updated `dimension_allocation` as JSON.
+`benchmark_orientation` (default ~0.8) controls how much benchmark focus dominates over consumer signal in the capability update. Thread 9 calibration parameter. In LLM mode, surfaced in prompt as "how oriented is your R&D strategy toward benchmark performance vs. consumer feedback"; provider adjusts via ordinal output. In heuristic mode, feeds into the capability update mechanically but does not otherwise wire into portfolio or focus decisions.
 
 ### Default Provider Profiles
 
-**Lever allocations (2023 Q1 baseline):**
+**Lever allocations (2023 Q1 baseline — Research + Development consolidated into R&D):**
 
-| Provider | Research | Development | Safety | Product |
-|---|---|---|---|---|
-| Apex AI | 35% | 25% | 30% | 10% |
-| Orion Labs | 25% | 30% | 15% | 30% |
-| Genesis Systems | 45% | 25% | 15% | 15% |
-| Mirage AI | 35% | 45% | 10% | 10% |
-| Spark AI | 10% | 55% | 10% | 25% |
-| OpenCore | 25% | 50% | 10% | 15% |
+| Provider | R&D | Safety | Product |
+|---|---|---|---|
+| Apex AI | 60% | 30% | 10% |
+| Orion Labs | 55% | 15% | 30% |
+| Genesis Systems | 70% | 15% | 15% |
+| Mirage AI | 80% | 10% | 10% |
+| Spark AI | 65% | 10% | 25% |
+| OpenCore | 75% | 10% | 15% |
 
-**Initial `dimension_allocation` (2023 baseline — working estimates pending empirical calibration):**
+**Initial `focus_level[b]` (2023 baseline):**
 
-| Provider | reasoning | coding | knowledge | safety | communication | agentic |
-|---|---|---|---|---|---|---|
-| Apex AI | 0.25 | 0.15 | 0.10 | 0.25 | 0.20 | 0.05 |
-| Orion Labs | 0.30 | 0.25 | 0.10 | 0.10 | 0.20 | 0.05 |
-| Genesis Systems | 0.25 | 0.15 | 0.30 | 0.10 | 0.15 | 0.05 |
-| Mirage AI | 0.25 | 0.35 | 0.15 | 0.05 | 0.15 | 0.05 |
-| Spark AI | 0.15 | 0.40 | 0.05 | 0.05 | 0.15 | 0.20 |
-| OpenCore | 0.20 | 0.45 | 0.15 | 0.05 | 0.10 | 0.05 |
-
-`agentic` intentionally low (0.05) for all frontier labs in 2023. Spark AI higher (0.20) — benchmark-focused startups were building agent scaffolding. OpenCore heavily coding-focused in 2023; reasoning-first identity came later with R1 (2025).
-
-**Initial `benchmark_adjacency[dim]` (2023 baseline):**
-
-| Provider | reasoning | coding | knowledge | safety | communication | agentic |
-|---|---|---|---|---|---|---|
-| Apex AI | 0.20 | 0.20 | 0.15 | 0.10 | 0.20 | 0.05 |
-| Orion Labs | 0.30 | 0.35 | 0.20 | 0.10 | 0.20 | 0.15 |
-| Genesis Systems | 0.25 | 0.20 | 0.25 | 0.10 | 0.20 | 0.10 |
-| Mirage AI | 0.35 | 0.45 | 0.25 | 0.05 | 0.20 | 0.20 |
-| Spark AI | 0.30 | 0.55 | 0.20 | 0.05 | 0.15 | 0.35 |
-| OpenCore | 0.20 | 0.40 | 0.20 | 0.05 | 0.10 | 0.15 |
-
-Values are per-dimension [0,1] scalars — not a budget (do not sum to 1). 0 = diverse data, 1 = benchmark-adjacent data. These are starting points; `benchmark_adjacency[dim]` evolves each round via the Plan step. All providers have meaningful benchmark orientation in 2023 — the differentiation is in degree and which dimensions. Safety benchmark_adjacency is low across the board (0.05–0.10) — no provider was explicitly targeting safety benchmarks over genuine safety investment in 2023. Spark AI's coding benchmark_adjacency (0.55) is the highest — startups in 2023 were explicitly HumanEval-focused.
+Per-provider, per-benchmark baselines anchored to the 2023 empirical landscape. 6 providers × 4 starting benchmarks = 24 values; grows as new benchmarks are introduced per the pool schedule. See Thread 9 for calibration protocol. Qualitative anchors:
+- Spark AI: highest focus on Coding Evaluation (explicit HumanEval orientation in 2023)
+- Apex AI: elevated focus on Safety Evaluation relative to peers
+- OpenCore: elevated focus on Coding Evaluation; lower on Safety
+- All providers: low baseline focus on Instruction Following relative to General Capability and Coding
 
 **Initial capability vectors (values in [0.40, 0.55] — calibrated for 30-round growth trajectory):**
 
@@ -386,12 +342,12 @@ Score spread is intentionally compressed (~0.07) — early-round competition is 
 
 ### Cognitive Loop
 
-1. **Observe** — per-category scores (own + competitor ranks), market share, incidents this round, media coverage, regulator interventions, `satisfaction_signal` signal
-2. **Reflect** — update `believed_benchmark_weights` and `benchmark_weight_confidence`; append reasoning to `recent_insights`
-3. **Plan** — update `dimension_allocation` and `benchmark_adjacency`; allocate four levers; check press release threshold
-4. **Execute** — capability updates via R&D investments
+1. **Observe** — per-category scores (own + competitor ranks), market share, incidents this round, media coverage, regulator interventions, `satisfaction_signal` vector
+2. **Belief update** — heuristic: per-benchmark `inferred_benchmark_weights[b]` updated from score prediction errors (both modes)
+3. **LLM call** — outputs ordinal {more/less/same} for `portfolio` levers and per-benchmark `focus_level`; sim applies deltas and renormalizes; `reasoning` appended to `recent_insights`; `public_comms` sampled from lever allocations
+4. **Execute** — capability updates computed from focus-weighted `inferred_benchmark_weights`
 
-**Heuristic incident pressure:** Safety incidents accumulate `_incident_safety_pressure` (minor: 0.03, moderate: 0.10, major: 0.20, critical: 0.30, cap: 0.40), shifting resources from `development` toward `safety`. Decays 40%/round (~4-round effect).
+**Heuristic incident pressure:** Safety incidents accumulate `_incident_safety_pressure` (minor: 0.03, moderate: 0.10, major: 0.20, critical: 0.30, cap: 0.40), shifting `portfolio["safety"]` upward. Decays 40%/round (~4-round effect).
 
 ### Cross-Round Memory (PIMMUR)
 
@@ -442,7 +398,7 @@ For the initial implementation, one OS provider (OpenCore) is active with `openn
 
 ### Belief Broadcast
 
-When an OS provider publishes weights (`openness_level > 0`), other providers can analyze them to infer which capability dimensions the benchmark actually emphasizes. Each round, all providers receive a small nudge to their `believed_benchmark_weights` toward the true `benchmark_true_weights`, proportional to the OS provider's openness level and deployment breadth:
+When an OS provider publishes weights (`openness_level > 0`), other providers can analyze them to infer which capability dimensions the benchmark actually emphasizes. Each round, all providers receive a small nudge to their `inferred_benchmark_weights` toward the true `benchmark_true_weights`, proportional to the OS provider's openness level and deployment breadth:
 
 ```
 belief_broadcast = openness_level × deployment_breadth × broadcast_rate
@@ -555,8 +511,28 @@ saturation_window: int = 3
 saturation_delta_threshold: float = 0.005
 ```
 
-- `False` (default): fixed proactive schedule — benchmarks introduced at specified rounds regardless of simulation state. Reproducible and empirically anchored.
-- `True`: signal-based introduction — evaluator draws from pool when saturation signals fire; fallback rounds ensure key benchmarks are introduced even if signals are weak.
+- `False` (default): fixed proactive schedule — benchmarks introduced at specified rounds regardless of simulation state. Reproducible and empirically anchored. No LLM reasoning used.
+- `True`: signal-based introduction — evaluator draws from pool when saturation signals fire; fallback rounds ensure key benchmarks are introduced even if signals are weak. LLM reasoning active.
+
+### Evaluator LLM Mode (`dynamic_evaluator=True` only)
+
+In fixed schedule mode there are no decisions to make — LLM reasoning is irrelevant. In dynamic mode the evaluator makes genuine strategic decisions and LLM reasoning is enabled.
+
+**Observation inputs to LLM prompt:** score deltas per benchmark per provider (last `saturation_window` rounds), score spread per benchmark, provider participation rates, media coverage of benchmark relevance/criticism, internal validity estimate (Pearson-r of score rank vs market share rank), which capability dimensions are currently underweighted across active benchmarks.
+
+**LLM output JSON:**
+```json
+{
+  "action": "introduce_successor | introduce_fresh | retire | none",
+  "target_benchmark": "<benchmark_name if retire or successor>",
+  "new_benchmark_focus": ["<dimension>", ...],
+  "reasoning": "..."
+}
+```
+
+**No apparatus vocabulary** in prompts — saturation, validity, and Goodhart framing are never surfaced. The evaluator is addressed as "the team responsible for maintaining the AI evaluation leaderboard."
+
+**Consumer market uses no LLM mode.** The archetype system (`leaderboard_trust`, `switching_threshold`, `switching_cost`, `cost_sensitivity`) combined with the formula-based satisfaction model and `running_perceived_quality` EMA captures sufficient behavioral heterogeneity. Consumer decisions are routine and habitual rather than strategic, making LLM reasoning an unnecessary source of variance.
 
 ---
 
@@ -780,8 +756,6 @@ Funder observes:
 
 Does NOT observe: consumer satisfaction, `score_reliability`, benchmark validity, provider investment allocations.
 
-**Actor realism fixes (implementation):** Remove `consumer_satisfaction` direct access from `funder.py` (~line 174); remove `believed_provider_gaming` from `FunderPrivateState` and all dependent logic.
-
 ### Cross-Round Memory (PIMMUR)
 
 `FunderPrivateState` holds `recent_reasoning` (last 3 entries stored; last 2 passed to prompts, each truncated to 120 characters). Allows maintaining investment theses across rounds.
@@ -869,6 +843,28 @@ class MediaCoverage:
     public_comms: list[dict]          # [{provider, type, one_liner, round}]
 ```
 
+### provider_attention
+
+`provider_attention` is a **heuristic-mode construct**. In LLM mode, actors receive headlines as natural language and reason about provider salience implicitly — `provider_attention` is not injected into LLM prompts and has no effect on LLM-mode decisions.
+
+In heuristic mode, it serves as a salience filter: it gates how much the media's `sentiment` signal bleeds through to a specific provider each round. A provider not in the news gets low attention → low media penalty regardless of overall sentiment.
+
+**Computation (heuristic mode):** Reset each round. Baseline 0.1 for all providers. Bumped by events involving the provider, scaled by severity:
+
+| Event | Attention |
+|---|---|
+| Critical incident | 1.0 |
+| Major incident | 0.8 |
+| Moderate incident | 0.6 |
+| Sanction imposed | 0.8 |
+| Audit commissioned | 0.6 |
+| Advisory published | 0.5 |
+| Leaderboard leader change (new leader) | 0.8 |
+| Leaderboard leader change (displaced) | 0.5 |
+| Provider appears in sampled headlines (other) | 0.4 |
+
+Take the max across all applicable events; clip to 1.0. No memory across rounds — attention is purely this round's news.
+
 ### Narrative State
 
 ```
@@ -939,13 +935,13 @@ Metrics like `score_reliability` (Pearson-r of scores vs. satisfaction) are dete
 
 4. ~~**Safety erosion formula**~~ — **Resolved.** Linear: `safety_erosion_factor = openness_level × market_share × erosion_sensitivity`. Naturally bounded; no ceiling needed. `erosion_sensitivity` hardcoded at 0.50 (see Thread 8).
 
-5. ~~**`product` lever mechanics**~~ — **Resolved.** Accumulates `product_stock` → `cost_advantage` → `cost_bonus`. Switching cost stickiness and enterprise adoption rate effects flagged as possible extensions, deferred.
+5. ~~**`product` lever mechanics**~~ — **Resolved.** Accumulates `market_presence` → `cost_advantage` → `cost_bonus`. Switching cost stickiness and enterprise adoption rate effects flagged as possible extensions, deferred.
 
-6. ~~**Initial `benchmark_adjacency[dim]` per provider**~~ — **Resolved.** Values set for all providers. Range compressed (0.05–0.55); all providers meaningfully benchmark-oriented at 2023 baseline reflecting the real landscape. Evolves endogenously each round.
+6. ~~**Initial `benchmark_adjacency[dim]` per provider**~~ — **Superseded.** `benchmark_adjacency[dim]` removed from design. Replaced by `focus_level[b]` (per-benchmark running scalar). Initial `focus_level[b]` baselines are provider-calibrated per the 2023 empirical landscape — see Thread 9 for calibration protocol and Default Provider Profiles for qualitative anchors.
 
 7. ~~**Formal empirical calibration (pre-implementation)**~~ — moved to post-implementation calibration thread below.
 
-8. **Pre-implementation parameter defaults (resolved):**
+8. **Parameter defaults (resolved):**
 
    | Parameter | Default | Rationale |
    |---|---|---|
@@ -953,13 +949,19 @@ Metrics like `score_reliability` (Pearson-r of scores vs. satisfaction) are dete
    | `broadcast_rate` | 0.30 (hardcoded constant) | Noticeable but not dominant nudge; ablation via toggle |
    | `erosion_sensitivity` | 0.50 (hardcoded constant) | ~5–15% erosion at realistic OS market shares; ablation via toggle |
    | `silence_weight` (`public_comms`) | 0.30 (hardcoded constant) | Providers don't post every round |
+   | `δ` (ordinal step size) | 0.06–0.09 (Thread 9 calibration) | Additive step applied to portfolio, focus_level, and benchmark_orientation on each "more"/"less" signal; same value for all three; clip and renormalize after applying |
+   | `benchmark_orientation` bounds | (0.05, 0.95) (hard bounds) | Prevents providers from fully ignoring either consumer signal or benchmark focus regardless of accumulated ordinal shifts |
 
    `benchmark_weight_confidence` dropped — redundant with `learning_rate` damping.
 
 9. **Post-implementation calibration** — all items requiring simulation output before values can be set:
 
    - **Mandatory safety floor**: working estimate 0.35; confirm against safety trajectories in early runs
-   - **Empirical calibration**: initial capability vectors and `dimension_allocation` against `external-validation/` data
+   - **Empirical calibration**: initial capability vectors against `external-validation/` data
+   - **`focus_level[b]` baselines**: 24 values at round 0 (6 providers × 4 benchmarks); anchored to 2023 empirical landscape; grows to 6 × 10 = 60 values by round 28 as new benchmarks enter. Qualitative anchors documented in Default Provider Profiles above; numeric values require calibration against external benchmark focus data
+   - **R&D gain scaling**: absolute magnitude of `rd × target[dim]` per round (replaces old `R_efficiency`); confirm against capability growth trajectories in early runs
+   - **`σ_base`**: noise scale for `satisfaction_signal`; calibrate so signal is informative but not precise at realistic market shares
+   - **`benchmark_orientation`**: per-provider initial value (expected range 0.7–0.9); calibrate against sensitivity of Goodhart dynamics to consumer feedback strength; bounds hard-capped at (0.05, 0.95)
    - **Media parameters**: narrative transition thresholds (N, M rounds), sentiment weights per trigger type, `saturation_threshold`
    - **Funder parameters**: `funder_pool` size per type, `revenue_per_share` scalar, scoring formula weights
    - **Regulator parameters**: exact threshold values per preset (EU/Balanced/US)
@@ -970,11 +972,18 @@ Metrics like `score_reliability` (Pearson-r of scores vs. satisfaction) are dete
 11. ~~**Attribute audit — legacy fields**~~ — **Resolved.**
 - `funding_multiplier`: replaced by additive budget model (`base_revenue_income + funder_allocations`). `rd_budget_floor` retained for OS providers.
 - `ecosystem_influence`: dropped (Thread 3 resolved — use OS market share directly).
-- `believed_provider_gaming`: remove from `FunderPrivateState` and all dependent logic (implementation fix).
-- `exploitability`, `benchmark_params.validity`: remove from `media.py` observation model (ground truth leaks — implementation fix).
-- `consumer_satisfaction` direct access in `funder.py`: remove (visibility violation — implementation fix).
+- `believed_provider_gaming`: dropped from new design entirely.
+- `exploitability`, `benchmark_params.validity`: not present in new design.
+- `consumer_satisfaction` direct access in funder: not present in new design (visibility enforced structurally).
 - `press_releases`: renamed to `public_comms` throughout; semantics broadened to cover `rd`, `safety`, `product` post types.
 - `funding_multiplier` as per-round continuous scalar: replaced by funder type (`vc`, `corporate`, `gov`, `foundation`) with per-funder or per-provider cooldowns and additive pool allocation.
+- `research` and `development` levers: consolidated into single `rd` lever. Targeting behavior previously handled by `dimension_allocation` and `benchmark_adjacency` is now handled by `focus_level[b]` and `inferred_benchmark_weights[b]`.
+- `dimension_allocation[dim]`: removed. Development budget direction now determined by `focus_level[b]` × `inferred_benchmark_weights[b][dim]`.
+- `benchmark_adjacency[dim]`: removed. Replaced by `focus_level[b]` — per-benchmark scalar updated via ordinal LLM output each round.
+- `satisfaction_signal` scalar: replaced by 6-dim vector of market-share-weighted consumer need weights, with noise proportional to `1/sqrt(market_share)`.
+- `believed_benchmark_weight[dim]` (single aggregated vector): replaced by per-benchmark `inferred_benchmark_weights[b][dim]`, heuristic-updated from score prediction errors per benchmark.
+- `provider_efficiency_multiplier`: dropped. Differentiation comes from R&D budget (via market share and funder allocations), initial capability vectors, and strategic choices. Global scaling adds compounding hard-coded advantage that undermines strategic agency.
+- `S_efficiency`: dropped. The two-pathway structure (rd toward safety benchmarks + safety lever directly) already provides the intended distinction between benchmark-optimized and genuine safety investment. Relative efficiency between them is absorbed into Thread 9 calibration of absolute gain magnitudes.
 
 ---
 
