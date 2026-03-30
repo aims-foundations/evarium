@@ -420,19 +420,45 @@ def generate_summary(
 
     final = history[-1]
 
+    # Compute Pearson-r(score_rank, market_share_rank) as validity proxy
+    # Only possible when consumer market data is available in the final round
+    validity_correlation = None
+    final_market_shares = final.get("consumer_data", {}).get("market_shares", {}) if "consumer_data" in final else {}
+    if final_market_shares and final.get("scores"):
+        providers_in_both = [p for p in final["scores"] if p in final_market_shares]
+        if len(providers_in_both) >= 2:
+            scores_list = [final["scores"][p] for p in providers_in_both]
+            shares_list = [final_market_shares[p] for p in providers_in_both]
+            n = len(providers_in_both)
+            score_ranks = sorted(range(n), key=lambda i: scores_list[i])
+            share_ranks = sorted(range(n), key=lambda i: shares_list[i])
+            sr = [score_ranks.index(i) for i in range(n)]
+            mr = [share_ranks.index(i) for i in range(n)]
+            sr_mean = sum(sr) / n
+            mr_mean = sum(mr) / n
+            num = sum((sr[i] - sr_mean) * (mr[i] - mr_mean) for i in range(n))
+            denom = (sum((sr[i] - sr_mean) ** 2 for i in range(n)) *
+                     sum((mr[i] - mr_mean) ** 2 for i in range(n))) ** 0.5
+            validity_correlation = num / denom if denom > 0 else None
+
+    # Per-benchmark params from evaluator state (noise_sigma, weight, n_active)
+    benchmark_params = {
+        bm.name: {"noise": bm.noise_level, "weight": evaluator.benchmark_weights.get(bm.name, 1.0)}
+        for bm in evaluator.benchmarks
+    }
+
+    # Final capability vectors (6-dim per provider)
+    final_cap_vecs = final.get("capability_vectors", {})
+
     summary = {
         "n_rounds": len(history),
         "final_scores": final["scores"],
-        "final_true_capabilities": final["true_capabilities"],
-        "final_believed_capabilities": final["believed_capabilities"],
+        "final_capability_vectors": final_cap_vecs,
         "final_strategies": final["strategies"],
         "leaderboard": sorted(final["scores"].items(), key=lambda x: x[1], reverse=True),
-        "validity_correlation": evaluator.compute_validity_correlation(),
-        "benchmark_params": {
-            "validity": evaluator.benchmark.validity,
-            "exploitability": evaluator.benchmark.exploitability,
-            "noise": evaluator.benchmark.noise_level,
-        },
+        "validity_correlation": validity_correlation,
+        "n_active_benchmarks": len(evaluator.benchmarks),
+        "benchmark_params": benchmark_params,
         "provider_summaries": {},
     }
 
@@ -444,40 +470,30 @@ def generate_summary(
         if not provider_history:
             continue
         scores = [h["scores"][name] for h in provider_history]
-        true_caps = [h["true_capabilities"][name] for h in provider_history]
 
-        # Calculate mean investments (handle both old and new formats)
+        # Capability vectors (6-dim dicts); compute mean for scalar summary
+        def _cap_mean(cv):
+            return sum(cv.values()) / len(cv) if cv else 0.0
+
+        cap_vecs = [h.get("capability_vectors", {}).get(name, {}) for h in provider_history]
+        initial_cap_vec = cap_vecs[0] if cap_vecs else {}
+        final_cap_vec = final_cap_vecs.get(name, {})
+
         strategies = [h["strategies"][name] for h in provider_history]
+        mean_score = sum(scores) / len(scores)
 
-        # New portfolio format
-        if "fundamental_research" in strategies[0]:
-            mean_research = sum(s.get("fundamental_research", 0) for s in strategies) / len(strategies)
-            mean_training = sum(s.get("training_optimization", 0) for s in strategies) / len(strategies)
-            mean_eval_eng = sum(s.get("evaluation_engineering", 0) for s in strategies) / len(strategies)
-            mean_safety = sum(s.get("safety_alignment", 0) for s in strategies) / len(strategies)
-
-            summary["provider_summaries"][name] = {
-                "initial_capability": provider_history[0]["true_capabilities"][name],
-                "final_capability": final["true_capabilities"][name],
-                "capability_growth": final["true_capabilities"][name] - provider_history[0]["true_capabilities"][name],
-                "mean_score": sum(scores) / len(scores),
-                "score_std": (sum((s - sum(scores)/len(scores))**2 for s in scores) / len(scores)) ** 0.5,
-                "mean_fundamental_research": mean_research,
-                "mean_training_optimization": mean_training,
-                "mean_evaluation_engineering": mean_eval_eng,
-                "mean_safety_alignment": mean_safety,
-            }
-        else:
-            # Legacy format
-            summary["provider_summaries"][name] = {
-                "initial_capability": provider_history[0]["true_capabilities"][name],
-                "final_capability": final["true_capabilities"][name],
-                "capability_growth": final["true_capabilities"][name] - provider_history[0]["true_capabilities"][name],
-                "mean_score": sum(scores) / len(scores),
-                "score_std": (sum((s - sum(scores)/len(scores))**2 for s in scores) / len(scores)) ** 0.5,
-                "mean_rnd_investment": sum(s.get("rnd", 0) for s in strategies) / len(strategies),
-                "mean_gaming_investment": sum(s.get("gaming", 0) for s in strategies) / len(strategies),
-            }
+        summary["provider_summaries"][name] = {
+            "initial_capability_vector": initial_cap_vec,
+            "final_capability_vector": final_cap_vec,
+            "initial_capability_mean": _cap_mean(initial_cap_vec),
+            "final_capability_mean": _cap_mean(final_cap_vec),
+            "capability_growth": _cap_mean(final_cap_vec) - _cap_mean(initial_cap_vec),
+            "mean_score": mean_score,
+            "score_std": (sum((s - mean_score) ** 2 for s in scores) / len(scores)) ** 0.5,
+            "mean_rd": sum(s.get("rd", 0) for s in strategies) / len(strategies),
+            "mean_safety": sum(s.get("safety", 0) for s in strategies) / len(strategies),
+            "mean_product": sum(s.get("product", 0) for s in strategies) / len(strategies),
+        }
 
     # Consumer summary
     if any("consumer_data" in h for h in history):

@@ -25,14 +25,13 @@ class AIIncident:
     """
     provider: str
     round_num: int
-    category: str  # "healthcare_harm", "security_breach", "bias", "safety_failure", "misinformation", "misuse"
+    category: str  # "healthcare_harm", "security_breach", "bias_discrimination", "safety_failure", "misinformation", "misuse"
     severity: str  # "minor", "moderate", "major", "critical"
     description: str  # Generated headline
     affected_sectors: list  # ["hospital_system", "enterprise_finance", etc.]
 
     # Computed at generation time
     safety_investment_at_time: float = 0.0
-    gaming_gap_at_time: float = 0.0
     market_share_at_time: float = 0.0
 
     def to_dict(self) -> dict:
@@ -45,14 +44,14 @@ class AIIncident:
             "description": self.description,
             "affected_sectors": self.affected_sectors,
             "safety_investment_at_time": self.safety_investment_at_time,
-            "gaming_gap_at_time": self.gaming_gap_at_time,
             "market_share_at_time": self.market_share_at_time,
         }
 
     @classmethod
     def from_dict(cls, data: dict) -> "AIIncident":
-        """Create from dict."""
-        return cls(**data)
+        """Create from dict (forward/backward compatible)."""
+        known = {f.name for f in cls.__dataclass_fields__.values()}
+        return cls(**{k: v for k, v in data.items() if k in known})
 
 
 @dataclass
@@ -64,7 +63,17 @@ class PublicState:
     """
     name: str = ""
     current_round: int = 0
-    # List of (round, score) tuples
+
+    # Per-benchmark score histories: {benchmark_name: [(round, overall_score), ...]}
+    benchmark_scores: dict = field(default_factory=dict)
+
+    # Current market share (updated each round by simulation)
+    market_share: float = 0.0
+
+    # Recent public communications: [{"round": int, "type": str, "content": str}, ...]
+    public_comms: list = field(default_factory=list)
+
+    # Legacy: flat score list for backward compatibility
     published_scores: list = field(default_factory=list)
 
     def to_dict(self) -> dict:
@@ -72,25 +81,35 @@ class PublicState:
         return {
             "name": self.name,
             "current_round": self.current_round,
+            "benchmark_scores": self.benchmark_scores,
+            "market_share": self.market_share,
+            "public_comms": self.public_comms,
             "published_scores": self.published_scores,
         }
 
     @classmethod
     def from_dict(cls, data: dict) -> "PublicState":
-        """Create from dict."""
-        return cls(**data)
+        """Create from dict (forward/backward compatible)."""
+        known = {f.name for f in cls.__dataclass_fields__.values()}
+        return cls(**{k: v for k, v in data.items() if k in known})
 
     def get_summary(self) -> str:
         """Get human-readable summary for prompts."""
         summary = f"Name: {self.name}\n"
         summary += f"Current Round: {self.current_round}\n"
-        if self.published_scores:
-            recent = self.published_scores[-5:]
-            summary += "Recent Scores:\n"
-            for round_num, score in recent:
-                summary += f"  Round {round_num}: {score:.3f}\n"
+        summary += f"Market Share: {self.market_share:.1%}\n"
+        if self.benchmark_scores:
+            summary += "Recent Benchmark Scores:\n"
+            for bm_name, history in self.benchmark_scores.items():
+                if history:
+                    last_round, last_score = history[-1]
+                    delta_str = ""
+                    if len(history) >= 2:
+                        delta = last_score - history[-2][1]
+                        delta_str = f" ({delta:+.3f})"
+                    summary += f"  {bm_name}: {last_score:.3f}{delta_str}\n"
         else:
-            summary += "No scores yet.\n"
+            summary += "No benchmark scores yet.\n"
         return summary
 
 
@@ -102,86 +121,88 @@ class ProviderPrivateState:
     Only accessible to the owning actor and the logger.
     Competitors cannot see this state.
     """
-    # Strategy profile and traits
+    # Identity
     strategy_profile: str = ""
     innate_traits: str = ""
 
-    # Belief state (uncertain estimates, updated over time)
-    believed_own_capability: float = 0.5
-    believed_benchmark_exploitability: float = 0.3
-    capability_belief_confidence: float = 0.5
+    # Investment portfolio: rd + safety + product = 1.0
+    portfolio: dict = field(default_factory=lambda: {"rd": 0.55, "safety": 0.25, "product": 0.20})
+
+    # Per-benchmark focus scalar (running value; ordinal LLM-updated each round).
+    # {benchmark_name: float}  — not normalized; relative values drive capability targeting.
+    # Initialized at mean of existing benchmarks when a new benchmark is introduced.
+    focus_level: dict = field(default_factory=dict)
+
+    # Per-benchmark inferred dimension weights (heuristic-updated from score prediction errors).
+    # {benchmark_name: {dim: float, ...}}  — each inner dict is normalized.
+    # Initialized to uniform across 6 dimensions when benchmark is first seen.
+    inferred_benchmark_weights: dict = field(default_factory=dict)
+
+    # How much R&D targets benchmark-weighted dimensions vs consumer satisfaction signal.
+    # [0.05, 0.95]; ordinal LLM-updated. Higher = more benchmark-oriented.
+    benchmark_orientation: float = 0.80
+
+    # Market-share-weighted consumer need signal (6-dim, normalized).
+    # Updated each round by simulation; not passed to LLM prompts directly.
+    satisfaction_signal: dict = field(default_factory=dict)
+
+    # Competitor capability beliefs (inferred from observed scores)
     believed_competitor_capabilities: dict = field(default_factory=dict)
 
-    # Investment portfolio (decisions made each round)
-    # These four investments must sum to effort_budget
-    fundamental_research: float = 0.25  # Novel architectures, pre-training improvements
-    training_optimization: float = 0.25  # Scaling, data quality, fine-tuning
-    evaluation_engineering: float = 0.25  # Benchmark-specific optimization
-    safety_alignment: float = 0.25  # RLHF, red-teaming, reliability
-    effort_budget: float = 1.0
-
     # History tracking
-    past_strategies: list = field(default_factory=list)  # [(round, rnd, gaming), ...]
+    past_strategies: list = field(default_factory=list)  # [{round, rd, safety, product}, ...]
     observed_competitor_scores: dict = field(default_factory=dict)  # {name: [(round, score), ...]}
 
-    # Reflection state
+    # Cross-round reasoning memory (PIMMUR)
+    # [{round: int, type: str, reasoning: str}, ...]
     recent_insights: list = field(default_factory=list)
-
-    # Evaluator-as-company feature (premium access)
-    evaluator_premium_access: bool = False
-    evaluator_funding_level: float = 0.0
-
-    # Per-benchmark eval_eng routing: {benchmark_name: weight}, sums to 1.0
-    # A provider with uniform focus gets equal weight on all benchmarks.
-    # A specialist gets more weight on focused benchmarks, less on others.
-    benchmark_focus: dict = field(default_factory=dict)
 
     def to_dict(self) -> dict:
         """Convert to dict for serialization."""
         return {
             "strategy_profile": self.strategy_profile,
             "innate_traits": self.innate_traits,
-            "believed_own_capability": self.believed_own_capability,
-            "believed_benchmark_exploitability": self.believed_benchmark_exploitability,
-            "capability_belief_confidence": self.capability_belief_confidence,
+            "portfolio": self.portfolio,
+            "focus_level": self.focus_level,
+            "inferred_benchmark_weights": self.inferred_benchmark_weights,
+            "benchmark_orientation": self.benchmark_orientation,
+            "satisfaction_signal": self.satisfaction_signal,
             "believed_competitor_capabilities": self.believed_competitor_capabilities,
-            "fundamental_research": self.fundamental_research,
-            "training_optimization": self.training_optimization,
-            "evaluation_engineering": self.evaluation_engineering,
-            "safety_alignment": self.safety_alignment,
-            "effort_budget": self.effort_budget,
             "past_strategies": self.past_strategies,
             "observed_competitor_scores": self.observed_competitor_scores,
             "recent_insights": self.recent_insights,
-            "evaluator_premium_access": self.evaluator_premium_access,
-            "evaluator_funding_level": self.evaluator_funding_level,
-            "benchmark_focus": self.benchmark_focus,
         }
 
     @classmethod
     def from_dict(cls, data: dict) -> "ProviderPrivateState":
-        """Create from dict."""
-        # Backwards-compatible: older serialized states may lack benchmark_focus
-        known_fields = {f.name for f in cls.__dataclass_fields__.values()}
-        filtered = {k: v for k, v in data.items() if k in known_fields}
-        return cls(**filtered)
+        """Create from dict (forward/backward compatible)."""
+        known = {f.name for f in cls.__dataclass_fields__.values()}
+        return cls(**{k: v for k, v in data.items() if k in known})
 
     def get_summary(self) -> str:
         """Get human-readable summary for prompts."""
         summary = f"Strategy Profile: {self.strategy_profile}\n"
         summary += f"Core Traits: {self.innate_traits}\n"
-        summary += f"Believed Own Capability: {self.believed_own_capability:.2f}\n"
-        summary += f"Believed Benchmark Exploitability: {self.believed_benchmark_exploitability:.2f}\n"
-        summary += "Current Investment Portfolio:\n"
-        summary += f"  Fundamental Research: {self.fundamental_research:.0%}\n"
-        summary += f"  Training Optimization: {self.training_optimization:.0%}\n"
-        summary += f"  Evaluation Engineering: {self.evaluation_engineering:.0%}\n"
-        summary += f"  Safety & Alignment: {self.safety_alignment:.0%}\n"
+        p = self.portfolio
+        summary += (f"Current Portfolio: R&D={p.get('rd', 0):.0%}, "
+                    f"Safety={p.get('safety', 0):.0%}, "
+                    f"Product={p.get('product', 0):.0%}\n")
+        summary += f"Benchmark Orientation: {self.benchmark_orientation:.2f}\n"
+
+        if self.focus_level:
+            summary += "Benchmark Focus Levels:\n"
+            for bm, lvl in self.focus_level.items():
+                summary += f"  {bm}: {lvl:.3f}\n"
+
+        if self.satisfaction_signal:
+            summary += "Consumer Satisfaction Signal:\n"
+            for dim, val in self.satisfaction_signal.items():
+                summary += f"  {dim}: {val:.3f}\n"
 
         if self.believed_competitor_capabilities:
             summary += "Competitor Capability Beliefs:\n"
             for name, cap in self.believed_competitor_capabilities.items():
-                summary += f"  {name}: {cap:.2f}\n"
+                summary += f"  {name}: {cap:.3f}\n"
 
         return summary
 
@@ -190,18 +211,85 @@ class ProviderPrivateState:
         summary = "Recent Investment History:\n"
         if self.past_strategies:
             recent = self.past_strategies[-n_recent:]
-            summary += "| Round | Research | Training | Eval Eng | Safety |\n"
-            summary += "|-------|----------|----------|----------|--------|\n"
+            summary += "| Round | R&D | Safety | Product |\n"
+            summary += "|-------|-----|--------|----------|\n"
             for entry in recent:
                 if isinstance(entry, dict):
-                    summary += f"| {entry.get('round', '?')} | {entry.get('fundamental_research', 0):.0%} | {entry.get('training_optimization', 0):.0%} | {entry.get('evaluation_engineering', 0):.0%} | {entry.get('safety_alignment', 0):.0%} |\n"
-                elif len(entry) >= 5:
-                    # Legacy tuple format: (round, research, training, eval_eng, safety)
-                    summary += f"| {entry[0]} | {entry[1]:.0%} | {entry[2]:.0%} | {entry[3]:.0%} | {entry[4]:.0%} |\n"
+                    summary += (f"| {entry.get('round', '?')} "
+                                f"| {entry.get('rd', 0):.0%} "
+                                f"| {entry.get('safety', 0):.0%} "
+                                f"| {entry.get('product', 0):.0%} |\n")
         else:
             summary += "  No history yet.\n"
         return summary
 
+
+@dataclass
+class ProviderGroundTruth:
+    """
+    Ground truth for Model Provider actors.
+
+    INVISIBLE - Only accessible to simulation and logger.
+    This data is NEVER passed to actors or included in LLM prompts.
+    """
+    # Per-dimension capability scores, 0–1
+    capability_vector: dict = field(default_factory=lambda: {
+        "reasoning": 0.5, "coding": 0.5, "knowledge": 0.5,
+        "safety": 0.5, "communication": 0.5, "agentic": 0.5,
+    })
+    safety_incidents_caused: int = 0
+    market_share: float = 0.0
+
+    def to_dict(self) -> dict:
+        """Convert to dict for serialization."""
+        return {
+            "capability_vector": self.capability_vector,
+            "safety_incidents_caused": self.safety_incidents_caused,
+            "market_share": self.market_share,
+        }
+
+    @classmethod
+    def from_dict(cls, data: dict) -> "ProviderGroundTruth":
+        """Create from dict (forward/backward compatible)."""
+        known = {f.name for f in cls.__dataclass_fields__.values()}
+        return cls(**{k: v for k, v in data.items() if k in known})
+
+
+@dataclass
+class BenchmarkGroundTruth:
+    """
+    Ground truth for a Benchmark.
+
+    INVISIBLE - Only accessible to simulation and logger.
+    Defines how the evaluator converts capability vectors into scores.
+    Providers never see the true dimension weights — they infer them
+    from score prediction errors via inferred_benchmark_weights.
+    """
+    # Hidden per-category dimension loadings:
+    # {category_name: {dim: weight, ...}}  — each inner dict normalized
+    category_dimension_weights: dict = field(default_factory=dict)
+    noise_sigma: float = 0.02
+    samples: int = 1000
+
+    def to_dict(self) -> dict:
+        """Convert to dict for serialization."""
+        return {
+            "category_dimension_weights": self.category_dimension_weights,
+            "noise_sigma": self.noise_sigma,
+            "samples": self.samples,
+        }
+
+    @classmethod
+    def from_dict(cls, data: dict) -> "BenchmarkGroundTruth":
+        """Create from dict."""
+        known = {f.name for f in cls.__dataclass_fields__.values()}
+        return cls(**{k: v for k, v in data.items() if k in known})
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Consumer, Policymaker, Funder, Evaluator state classes
+# (unchanged from prior architecture — updated when those actors are implemented)
+# ──────────────────────────────────────────────────────────────────────────────
 
 @dataclass
 class ConsumerPrivateState:
@@ -210,27 +298,17 @@ class ConsumerPrivateState:
 
     Only accessible to the owning consumer and the logger.
     """
-    # Use case preferences
-    use_cases: list = field(default_factory=list)  # e.g., ["coding", "writing", "analysis"]
-    budget: float = 100.0  # Monthly budget
-
-    # Current subscription
-    current_subscription: Optional[str] = None  # Provider name or None
-
-    # Belief state
-    believed_model_quality: dict = field(default_factory=dict)  # {provider_name: quality}
-
-    # Experience history
-    satisfaction_history: list = field(default_factory=list)  # [(round, provider, satisfaction), ...]
-    subscription_history: list = field(default_factory=list)  # [(round, provider), ...]
-
-    # Consumer heterogeneity
+    use_cases: list = field(default_factory=list)
+    budget: float = 100.0
+    current_subscription: Optional[str] = None
+    believed_model_quality: dict = field(default_factory=dict)
+    satisfaction_history: list = field(default_factory=list)
+    subscription_history: list = field(default_factory=list)
     switching_cost: float = 0.1
     leaderboard_trust: float = 0.7
     rounds_with_provider: int = 0
 
     def to_dict(self) -> dict:
-        """Convert to dict for serialization."""
         return {
             "use_cases": self.use_cases,
             "budget": self.budget,
@@ -245,65 +323,44 @@ class ConsumerPrivateState:
 
     @classmethod
     def from_dict(cls, data: dict) -> "ConsumerPrivateState":
-        """Create from dict."""
-        # Filter to known fields for backwards compatibility
-        known_fields = {
-            "use_cases", "budget", "current_subscription", "believed_model_quality",
-            "satisfaction_history", "subscription_history", "switching_cost",
-            "leaderboard_trust", "rounds_with_provider",
-        }
-        filtered = {k: v for k, v in data.items() if k in known_fields}
-        return cls(**filtered)
+        known = {f.name for f in cls.__dataclass_fields__.values()}
+        return cls(**{k: v for k, v in data.items() if k in known})
 
     def get_summary(self) -> str:
-        """Get human-readable summary for prompts."""
         summary = f"Use Cases: {', '.join(self.use_cases) if self.use_cases else 'General'}\n"
         summary += f"Budget: ${self.budget:.0f}/month\n"
         summary += f"Current Subscription: {self.current_subscription or 'None'}\n"
         summary += f"Leaderboard Trust: {self.leaderboard_trust:.2f}\n"
         summary += f"Switching Cost: {self.switching_cost:.2f}\n"
         summary += f"Rounds with Current Provider: {self.rounds_with_provider}\n"
-
         if self.believed_model_quality:
             summary += "Model Quality Beliefs:\n"
             for name, quality in self.believed_model_quality.items():
                 summary += f"  {name}: {quality:.2f}\n"
-
         if self.satisfaction_history:
             recent = self.satisfaction_history[-3:]
             summary += "Recent Experience:\n"
             for round_num, provider, satisfaction in recent:
                 summary += f"  Round {round_num} ({provider}): {satisfaction:.2f} satisfaction\n"
-
         return summary
 
 
 @dataclass
 class PolicymakerPrivateState:
     """
-    Private state for Policymaker actors.
+    Private state for Policymaker/Regulator actors.
 
-    Only accessible to the owning policymaker and the logger.
+    Only accessible to the owning actor and the logger.
     """
-    # Policy objectives
-    policy_objectives: list = field(default_factory=list)  # e.g., ["safety", "fairness", "transparency"]
-
-    # Belief state
-    risk_beliefs: dict = field(default_factory=dict)  # {risk_type: belief}
-    industry_trust: float = 0.5  # How much policymaker trusts the industry (0-1)
-
-    # Regulatory capacity
-    regulatory_capacity: float = 1.0  # Resources available for enforcement
-
-    # History
-    past_interventions: list = field(default_factory=list)  # [(round, intervention_type, details), ...]
-    observed_incidents: list = field(default_factory=list)  # [(round, incident_description), ...]
-
-    # Cross-round reasoning persistence
-    recent_reasoning: list = field(default_factory=list)  # [{"round": N, "reasoning": "..."}]
+    policy_objectives: list = field(default_factory=list)
+    risk_beliefs: dict = field(default_factory=dict)
+    industry_trust: float = 0.5
+    regulatory_capacity: float = 1.0
+    past_interventions: list = field(default_factory=list)
+    observed_incidents: list = field(default_factory=list)
+    recent_reasoning: list = field(default_factory=list)
 
     def to_dict(self) -> dict:
-        """Convert to dict for serialization."""
         return {
             "policy_objectives": self.policy_objectives,
             "risk_beliefs": self.risk_beliefs,
@@ -316,98 +373,27 @@ class PolicymakerPrivateState:
 
     @classmethod
     def from_dict(cls, data: dict) -> "PolicymakerPrivateState":
-        """Create from dict (forward/backward compatible)."""
         known = {f.name for f in cls.__dataclass_fields__.values()}
         return cls(**{k: v for k, v in data.items() if k in known})
 
     def get_summary(self) -> str:
-        """Get human-readable summary for prompts."""
         summary = f"Policy Objectives: {', '.join(self.policy_objectives) if self.policy_objectives else 'General oversight'}\n"
         summary += f"Industry Trust Level: {self.industry_trust:.2f}\n"
         summary += f"Regulatory Capacity: {self.regulatory_capacity:.2f}\n"
-
         if self.risk_beliefs:
             summary += "Risk Assessments:\n"
             for risk, belief in self.risk_beliefs.items():
                 summary += f"  {risk}: {belief:.2f}\n"
-
         if self.past_interventions:
             recent = self.past_interventions[-3:]
             summary += "Recent Interventions:\n"
             for round_num, intervention_type, details in recent:
                 summary += f"  Round {round_num}: {intervention_type} - {details}\n"
-
         return summary
 
 
-@dataclass
-class ProviderGroundTruth:
-    """
-    Ground truth for Model Provider actors.
-
-    INVISIBLE - Only accessible to simulation and logger.
-    This data is NEVER passed to actors or included in LLM prompts.
-    """
-    true_capability: float = 0.5
-
-    def to_dict(self) -> dict:
-        """Convert to dict for serialization."""
-        return {"true_capability": self.true_capability}
-
-    @classmethod
-    def from_dict(cls, data: dict) -> "ProviderGroundTruth":
-        """Create from dict."""
-        return cls(**data)
-
-
-@dataclass
-class ConsumerGroundTruth:
-    """
-    Ground truth for Consumer actors.
-
-    INVISIBLE - Only accessible to simulation and logger.
-    """
-    # Actual satisfaction based on true model capability vs their needs
-    true_satisfaction: float = 0.5
-    # Their actual sensitivity to quality differences
-    true_quality_sensitivity: float = 0.5
-
-    def to_dict(self) -> dict:
-        """Convert to dict for serialization."""
-        return {
-            "true_satisfaction": self.true_satisfaction,
-            "true_quality_sensitivity": self.true_quality_sensitivity,
-        }
-
-    @classmethod
-    def from_dict(cls, data: dict) -> "ConsumerGroundTruth":
-        """Create from dict."""
-        return cls(**data)
-
-
-@dataclass
-class PolicymakerGroundTruth:
-    """
-    Ground truth for Policymaker actors.
-
-    INVISIBLE - Only accessible to simulation and logger.
-    """
-    # Their actual risk tolerance (may differ from stated beliefs)
-    true_risk_tolerance: float = 0.5
-    # How effective their interventions actually are
-    true_intervention_effectiveness: float = 0.5
-
-    def to_dict(self) -> dict:
-        """Convert to dict for serialization."""
-        return {
-            "true_risk_tolerance": self.true_risk_tolerance,
-            "true_intervention_effectiveness": self.true_intervention_effectiveness,
-        }
-
-    @classmethod
-    def from_dict(cls, data: dict) -> "PolicymakerGroundTruth":
-        """Create from dict."""
-        return cls(**data)
+# Alias: Regulator uses PolicymakerPrivateState (rename deferred to regulator.py rewrite)
+RegulatorPrivateState = PolicymakerPrivateState
 
 
 @dataclass
@@ -417,154 +403,127 @@ class FunderPrivateState:
 
     Only accessible to the owning funder and the logger.
     """
-    # Funder identity
-    funder_type: str = "vc"  # "vc", "gov", or "foundation"
+    funder_type: str = "vc"  # "vc", "corporate", "gov", "foundation"
     mission_statement: str = ""
-
-    # Financial state
     total_capital: float = 1000000.0
     deployed_capital: float = 0.0
-
-    # Belief state (inferred from public signals)
-    believed_provider_quality: dict = field(default_factory=dict)  # {provider_name: quality}
-    believed_provider_gaming: dict = field(default_factory=dict)  # {provider_name: gaming_level}
-
-    # Investment state
-    active_funding: dict = field(default_factory=dict)  # {provider_name: amount}
-    funding_history: list = field(default_factory=list)  # [(round, allocations), ...]
-
-    # Tracking
-    roi_history: list = field(default_factory=list)  # [(round, roi), ...]
-    recent_insights: list = field(default_factory=list)
-
-    # Cross-round reasoning persistence
-    recent_reasoning: list = field(default_factory=list)  # [{"round": N, "reasoning": "..."}]
+    believed_provider_quality: dict = field(default_factory=dict)
+    active_funding: dict = field(default_factory=dict)
+    funding_history: list = field(default_factory=list)
+    recent_reasoning: list = field(default_factory=list)
 
     def to_dict(self) -> dict:
-        """Convert to dict for serialization."""
         return {
             "funder_type": self.funder_type,
             "mission_statement": self.mission_statement,
             "total_capital": self.total_capital,
             "deployed_capital": self.deployed_capital,
             "believed_provider_quality": self.believed_provider_quality,
-            "believed_provider_gaming": self.believed_provider_gaming,
             "active_funding": self.active_funding,
             "funding_history": self.funding_history,
-            "roi_history": self.roi_history,
-            "recent_insights": self.recent_insights,
             "recent_reasoning": self.recent_reasoning,
         }
 
     @classmethod
     def from_dict(cls, data: dict) -> "FunderPrivateState":
-        """Create from dict (forward/backward compatible)."""
         known = {f.name for f in cls.__dataclass_fields__.values()}
         return cls(**{k: v for k, v in data.items() if k in known})
 
     def get_summary(self) -> str:
-        """Get human-readable summary for prompts."""
         summary = f"Funder Type: {self.funder_type}\n"
         summary += f"Mission: {self.mission_statement or 'N/A'}\n"
         summary += f"Total Capital: ${self.total_capital:,.0f}\n"
         summary += f"Deployed Capital: ${self.deployed_capital:,.0f}\n"
         summary += f"Available: ${self.total_capital - self.deployed_capital:,.0f}\n"
-
         if self.believed_provider_quality:
             summary += "\nProvider Quality Beliefs:\n"
             for name, quality in sorted(
-                self.believed_provider_quality.items(),
-                key=lambda x: x[1],
-                reverse=True
+                self.believed_provider_quality.items(), key=lambda x: x[1], reverse=True
             ):
-                gaming = self.believed_provider_gaming.get(name, 0)
-                summary += f"  {name}: quality={quality:.2f}, gaming={gaming:.2f}\n"
-
+                summary += f"  {name}: {quality:.2f}\n"
         if self.active_funding:
             summary += "\nActive Funding:\n"
             for name, amount in self.active_funding.items():
                 summary += f"  {name}: ${amount:,.0f}\n"
-
         return summary
-
-
-@dataclass
-class FunderGroundTruth:
-    """
-    Ground truth for Funder actors.
-
-    INVISIBLE - Only accessible to simulation and logger.
-    """
-    # Actual ROI achieved
-    true_roi: float = 0.0
-    # How effective their funding actually is at improving providers
-    funding_efficiency: float = 1.0
-
-    def to_dict(self) -> dict:
-        """Convert to dict for serialization."""
-        return {
-            "true_roi": self.true_roi,
-            "funding_efficiency": self.funding_efficiency,
-        }
-
-    @classmethod
-    def from_dict(cls, data: dict) -> "FunderGroundTruth":
-        """Create from dict."""
-        return cls(**data)
 
 
 @dataclass
 class EvaluatorPrivateState:
     """
-    Private state for Evaluator when operating as company.
-
-    Tracks budget, premium providers, trial results, and early access queue.
-    Only used when evaluator_as_company=True in config.
+    Private state for Evaluator actors.
     """
     budget: float = 0.0
     base_funding: float = 0.0
-    service_revenue: float = 0.0
-    premium_providers: set = field(default_factory=set)
-    premium_pricing: float = 100000.0
-    trial_results: dict = field(default_factory=dict)  # {provider: {benchmark: [scores]}}
-    early_access_queue: dict = field(default_factory=dict)  # {benchmark: [providers]}
-    early_access_rounds: int = 2
-    funding_history: list = field(default_factory=list)
+    recent_reasoning: list = field(default_factory=list)
 
     def to_dict(self) -> dict:
-        """Convert to dict for serialization."""
         return {
             "budget": self.budget,
             "base_funding": self.base_funding,
-            "service_revenue": self.service_revenue,
-            "premium_providers": list(self.premium_providers),
-            "premium_pricing": self.premium_pricing,
-            "trial_results": self.trial_results,
-            "early_access_queue": self.early_access_queue,
-            "early_access_rounds": self.early_access_rounds,
-            "funding_history": self.funding_history,
+            "recent_reasoning": self.recent_reasoning,
         }
 
     @classmethod
     def from_dict(cls, data: dict) -> "EvaluatorPrivateState":
-        """Create from dict."""
-        # Convert premium_providers back to set
-        if "premium_providers" in data and isinstance(data["premium_providers"], list):
-            data = {**data, "premium_providers": set(data["premium_providers"])}
+        known = {f.name for f in cls.__dataclass_fields__.values()}
+        return cls(**{k: v for k, v in data.items() if k in known})
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Ground truth classes for other actors
+# ──────────────────────────────────────────────────────────────────────────────
+
+@dataclass
+class ConsumerGroundTruth:
+    """Ground truth for Consumer actors. INVISIBLE."""
+    true_satisfaction: float = 0.5
+    true_quality_sensitivity: float = 0.5
+
+    def to_dict(self) -> dict:
+        return {
+            "true_satisfaction": self.true_satisfaction,
+            "true_quality_sensitivity": self.true_quality_sensitivity,
+        }
+
+    @classmethod
+    def from_dict(cls, data: dict) -> "ConsumerGroundTruth":
         return cls(**data)
 
-    def get_summary(self) -> str:
-        """Get human-readable summary for prompts."""
-        summary = f"Budget: ${self.budget:,.0f}\n"
-        summary += f"Base Funding: ${self.base_funding:,.0f}\n"
-        summary += f"Service Revenue: ${self.service_revenue:,.0f}\n"
-        summary += f"Premium Pricing: ${self.premium_pricing:,.0f}\n"
-        summary += f"Premium Providers: {len(self.premium_providers)}\n"
-        if self.premium_providers:
-            summary += f"  {', '.join(sorted(self.premium_providers))}\n"
-        return summary
+
+@dataclass
+class PolicymakerGroundTruth:
+    """Ground truth for Policymaker/Regulator actors. INVISIBLE."""
+    true_risk_tolerance: float = 0.5
+    true_intervention_effectiveness: float = 0.5
+
+    def to_dict(self) -> dict:
+        return {
+            "true_risk_tolerance": self.true_risk_tolerance,
+            "true_intervention_effectiveness": self.true_intervention_effectiveness,
+        }
+
+    @classmethod
+    def from_dict(cls, data: dict) -> "PolicymakerGroundTruth":
+        return cls(**data)
 
 
-# Type aliases for clarity
-PrivateState = ProviderPrivateState | ConsumerPrivateState | PolicymakerPrivateState | FunderPrivateState | EvaluatorPrivateState
-GroundTruth = ProviderGroundTruth | ConsumerGroundTruth | PolicymakerGroundTruth | FunderGroundTruth
+@dataclass
+class FunderGroundTruth:
+    """Ground truth for Funder actors. INVISIBLE."""
+    true_roi: float = 0.0
+    funding_efficiency: float = 1.0
+
+    def to_dict(self) -> dict:
+        return {"true_roi": self.true_roi, "funding_efficiency": self.funding_efficiency}
+
+    @classmethod
+    def from_dict(cls, data: dict) -> "FunderGroundTruth":
+        return cls(**data)
+
+
+# Type aliases
+PrivateState = (ProviderPrivateState | ConsumerPrivateState | PolicymakerPrivateState
+                | FunderPrivateState | EvaluatorPrivateState)
+GroundTruth = (ProviderGroundTruth | BenchmarkGroundTruth | ConsumerGroundTruth
+               | PolicymakerGroundTruth | FunderGroundTruth)

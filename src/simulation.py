@@ -16,7 +16,8 @@ from typing import Optional
 
 from actors.model_provider import ModelProvider
 from actors.evaluator import Evaluator, Regulation
-from visibility import ProviderGroundTruth, ConsumerGroundTruth, PolicymakerGroundTruth, FunderGroundTruth
+from visibility import (ProviderGroundTruth, BenchmarkGroundTruth,
+                        ConsumerGroundTruth, PolicymakerGroundTruth, FunderGroundTruth)
 from incidents import IncidentGenerator
 
 
@@ -92,16 +93,16 @@ class SimulationConfig:
 
     # Evaluator/Benchmark parameters (single benchmark mode)
     benchmark_name: str = "capability_benchmark"
-    benchmark_validity: float = 0.7  # alpha
-    benchmark_exploitability: float = 0.5  # beta
-    benchmark_noise: float = 0.1  # sigma
+    benchmark_validity: float = 0.7  # kept for saturation weight-decay; not used in scoring
+    benchmark_noise: float = 0.08  # sigma
 
     # Multi-benchmark mode (if provided, overrides single benchmark params)
-    # Each dict should have: name, validity, exploitability, noise_level, weight
+    # Each dict should have: name, noise_level, weight (validity optional)
     benchmarks: Optional[list] = None
 
     # Provider parameters
-    rnd_efficiency: float = 0.01  # How much R&D improves true capability per round
+    rnd_efficiency: float = 0.01  # Global gain scaling for capability updates (Thread 9 calibration)
+    revenue_per_share: float = 1.0  # Base revenue per unit of market share (Thread 9 calibration)
 
     # S-curve capability dynamics
     capability_ceiling: float = 1.0
@@ -109,15 +110,11 @@ class SimulationConfig:
     breakthrough_probability: float = 0.02
     breakthrough_magnitude: float = 0.05
 
-    # Benchmark evolution
-    benchmark_validity_decay_rate: float = 0.005
-    benchmark_exploitability_growth_rate: float = 0.008
-
     # Benchmark introduction (evaluator introduces new benchmarks mid-simulation)
     benchmark_introduction_cooldown: int = 7
     max_benchmarks: int = 8  # Raised from 6 to accommodate realistic benchmark suite
     benchmark_sequence: Optional[list] = None  # Ordered list of benchmark dicts to introduce
-    # Each dict: {"name": str, "validity": float, "exploitability": float, "noise_level": float, "weight": float}
+    # Each dict: {"name": str, "validity": float, "noise_level": float, "weight": float}
     # Default realistic sequence inspired by real-world benchmarks (MMLU, HumanEval, GSM8K, etc.)
 
     # Planning mode
@@ -144,9 +141,8 @@ class SimulationConfig:
     enable_incidents: bool = False  # Enable probabilistic AI safety incidents
 
     # Evaluator-as-company feature
-    evaluator_as_company: bool = False  # Evaluator operates as company with funding & premium services
+    evaluator_as_company: bool = False  # Evaluator operates as company with funder allocations
     evaluator_base_budget: float = 0.0  # Starting budget for evaluator
-    evaluator_premium_pricing: float = 100000.0  # Cost of premium access per provider per round
 
     # Startup entry dynamics
     startup_entry_probability: float = 0.0   # per-round probability a new provider enters
@@ -185,7 +181,7 @@ class EvalEcosystemSimulation:
     7. Policymakers observe ecosystem and may issue regulations
 
     Key visibility design:
-    - ground_truth dict holds all invisible state (true_capability, true_satisfaction, etc.)
+    - ground_truth dict holds all invisible state (capability_vector, market_share, etc.)
     - Actors only access their own public_state and private_state
     - Ground truth is passed to evaluator and used for computing actual outcomes
     """
@@ -205,6 +201,11 @@ class EvalEcosystemSimulation:
         # Ground truth held externally by simulation
         # Format: {actor_name: GroundTruth}
         self.ground_truth: dict = {}
+
+        # Benchmark ground truths (hidden from all actors)
+        # Format: {benchmark_name: BenchmarkGroundTruth}
+        # Built from config in setup(); passed to evaluator.evaluate_all() each round.
+        self.benchmark_ground_truths: dict = {}
 
         # Funder data for current round (used for funding multipliers)
         self._current_funder_data: dict = {}
@@ -252,50 +253,46 @@ class EvalEcosystemSimulation:
         # Create providers and their ground truth
         self.providers = []
         for pc in provider_configs:
+            # Build initial capability vector
+            cap_vec = pc.get("capability_vector")
+            if cap_vec is None:
+                # Fallback: uniform at initial_capability scalar (backward compat)
+                scalar = pc.get("initial_capability", 0.5)
+                from actors.model_provider import DIMENSIONS as _DIMS
+                cap_vec = {dim: scalar for dim in _DIMS}
+
+            # Build initial portfolio (3-lever)
+            portfolio = pc.get("portfolio")
+
             provider = ModelProvider(
                 name=pc["name"],
                 strategy_profile=pc["strategy_profile"],
                 innate_traits=pc["innate_traits"],
-                initial_capability=pc.get("initial_capability", 0.5),
-                initial_believed_capability=pc.get("initial_believed_capability"),
-                initial_believed_exploitability=pc.get("initial_believed_exploitability", 0.3),
+                capability_vector=cap_vec,
+                portfolio=portfolio,
+                focus_level_init=pc.get("focus_level_init"),
+                benchmark_orientation=pc.get("benchmark_orientation", 0.80),
                 llm_mode=self.config.llm_mode,
                 verbose_llm=pc.get("verbose_llm", False),
-                available_benchmarks=_initial_bm_names,
-                focus_benchmarks=pc.get("focus_benchmarks", []),
+                open_source=pc.get("open_source", False),
+                openness_level=pc.get("openness_level", 0.0),
+                cost_advantage=pc.get("cost_advantage", 0.9 if pc.get("open_source") else 0.0),
+                rd_budget_floor=pc.get("rd_budget_floor", 0.0),
+                os_belief_broadcast=pc.get("os_belief_broadcast", True),
+                os_safety_erosion=pc.get("os_safety_erosion", True),
             )
 
-            # Apply initial strategy if provided
-            if "initial_strategy" in pc:
-                strategy = pc["initial_strategy"]
-                provider.private_state.fundamental_research = strategy.get("fundamental_research", 0.25)
-                provider.private_state.training_optimization = strategy.get("training_optimization", 0.25)
-                provider.private_state.evaluation_engineering = strategy.get("evaluation_engineering", 0.25)
-                provider.private_state.safety_alignment = strategy.get("safety_alignment", 0.25)
-                # Sync with legacy scratch
-                provider.scratch.fundamental_research = provider.private_state.fundamental_research
-                provider.scratch.training_optimization = provider.private_state.training_optimization
-                provider.scratch.evaluation_engineering = provider.private_state.evaluation_engineering
-                provider.scratch.safety_alignment = provider.private_state.safety_alignment
-
-            # Apply cost efficiency for all providers (0=most expensive, 1=free/open-weights)
-            # Closed providers default to 0.0 (no explicit pricing advantage)
-            if "cost_advantage" in pc:
-                provider.cost_advantage = pc["cost_advantage"]
-
-            # Apply open-source provider config fields
-            if pc.get("open_source", False):
-                provider.is_open_source = True
-                if "cost_advantage" not in pc:
-                    provider.cost_advantage = 0.9  # OS default if not explicitly set
-                provider.contamination_multiplier = pc.get("contamination_multiplier", 1.8)
-                provider.commoditization_threshold = pc.get("commoditization_threshold", 0.65)
+            # Initialize benchmark beliefs for all starting benchmarks
+            for bm_name in _initial_bm_names:
+                provider.init_benchmark(bm_name)
 
             self.providers.append(provider)
 
             # Initialize ground truth externally
             self.ground_truth[provider.name] = ProviderGroundTruth(
-                true_capability=pc.get("initial_capability", 0.5)
+                capability_vector=dict(cap_vec),
+                safety_incidents_caused=0,
+                market_share=1.0 / len(provider_configs),
             )
 
         # Create consumer market if enabled
@@ -326,32 +323,35 @@ class EvalEcosystemSimulation:
                 benchmark_sequence=self.config.benchmark_sequence,
                 evaluator_as_company=self.config.evaluator_as_company,
                 base_budget=self.config.evaluator_base_budget,
-                premium_pricing=self.config.evaluator_premium_pricing,
             )
         else:
             # Single benchmark mode
             self.evaluator = Evaluator(
                 benchmark_name=self.config.benchmark_name,
-                validity=self.config.benchmark_validity,
-                exploitability=self.config.benchmark_exploitability,
                 noise_level=self.config.benchmark_noise,
                 seed=self.config.seed,
                 benchmark_sequence=self.config.benchmark_sequence,
                 evaluator_as_company=self.config.evaluator_as_company,
                 base_budget=self.config.evaluator_base_budget,
-                premium_pricing=self.config.evaluator_premium_pricing,
             )
-
-        # Apply benchmark evolution rates to all benchmarks
-        for bm in self.evaluator.benchmarks:
-            if bm.validity_decay_rate == 0.0:
-                bm.validity_decay_rate = self.config.benchmark_validity_decay_rate
-            if bm.exploitability_growth_rate == 0.0:
-                bm.exploitability_growth_rate = self.config.benchmark_exploitability_growth_rate
 
         # Apply benchmark introduction config
         self.evaluator.benchmark_introduction_cooldown = self.config.benchmark_introduction_cooldown
         self.evaluator.max_benchmarks = self.config.max_benchmarks
+
+        # Build BenchmarkGroundTruth objects from all benchmark configs (initial + sequence).
+        # Pre-built here so they are ready when consider_new_benchmark() introduces them mid-run.
+        # Benchmarks that lack category_dimension_weights fall back to uniform weights in evaluate_all().
+        all_bm_configs = list(self.config.benchmarks or []) + list(self.config.benchmark_sequence or [])
+        for bm_config in all_bm_configs:
+            name = bm_config.get("name")
+            cdw = bm_config.get("category_dimension_weights")
+            if name and cdw:
+                self.benchmark_ground_truths[name] = BenchmarkGroundTruth(
+                    category_dimension_weights=cdw,
+                    noise_sigma=bm_config.get("noise_sigma", bm_config.get("noise_level", 0.02)),
+                    samples=bm_config.get("samples", 1000),
+                )
 
         # Enable evaluator-as-company mode for funders if configured
         if self.config.evaluator_as_company and self.funders:
@@ -522,30 +522,35 @@ class EvalEcosystemSimulation:
                 funding_efficiency=fc.get("funding_efficiency", 1.0),
             )
 
-    def _update_ground_truth(self, provider_name: str, capability_gain: float):
+    def _update_ground_truth(self, provider_name: str, capability_gains: dict):
         """
-        Update ground truth for a provider after R&D execution.
+        Apply per-dimension capability gains to provider's ground truth vector.
 
         Args:
-            provider_name: Name of the provider
-            capability_gain: How much true capability increased
+            provider_name: Name of the provider.
+            capability_gains: {dim: float} gains to apply. Each dimension is
+                clamped to [0, 1] after the update.
         """
-        if provider_name in self.ground_truth:
-            gt = self.ground_truth[provider_name]
-            if isinstance(gt, ProviderGroundTruth):
-                gt.true_capability += capability_gain
+        if provider_name not in self.ground_truth:
+            return
+        gt = self.ground_truth[provider_name]
+        if not isinstance(gt, ProviderGroundTruth):
+            return
+        for dim, gain in capability_gains.items():
+            current = gt.capability_vector.get(dim, 0.0)
+            gt.capability_vector[dim] = min(1.0, current + gain)
+
+        # Safety capability floor: closed providers cannot drop below 0.35 due to
+        # alignment research baseline; open-source providers have a minimal floor of 0.03.
+        provider_obj = next((p for p in self.providers if p.name == provider_name), None)
+        is_open_source = provider_obj.open_source if provider_obj else False
+        safety_floor = 0.03 if is_open_source else 0.35
+        if "safety" in gt.capability_vector:
+            gt.capability_vector["safety"] = max(safety_floor, gt.capability_vector["safety"])
 
     def _sync_provider_ground_truth(self, provider: ModelProvider):
-        """
-        Sync provider's internal state with external ground truth.
-
-        For backwards compatibility, we keep provider.scratch.true_capability
-        in sync with external ground truth.
-        """
-        if provider.name in self.ground_truth:
-            gt = self.ground_truth[provider.name]
-            if isinstance(gt, ProviderGroundTruth):
-                provider.scratch.true_capability = gt.true_capability
+        """No-op — scratch removed in new architecture."""
+        pass
 
     def _get_provider_ecosystem_context(self, provider_name: str) -> dict:
         """Collect ecosystem signals visible to a specific provider.
@@ -584,7 +589,61 @@ class EvalEcosystemSimulation:
         if self.history:
             last_round_num = self.history[-1].get("round", self.current_round - 1)
             context["per_benchmark_scores"] = self.evaluator.get_per_benchmark_scores(last_round_num)
+        # Include reasoning memory depth for LLM prompt truncation
+        context["reasoning_memory_depth"] = 2
         return context
+
+    def _compute_satisfaction_signals(self) -> dict:
+        """
+        Compute per-provider satisfaction signals from consumer market data.
+
+        Returns {provider_name: {dim: float}} normalized 6-dim vectors.
+        When consumer market is not enabled, returns uniform signals.
+        """
+        from actors.model_provider import DIMENSIONS as _DIMS
+        default = {dim: 1.0 / len(_DIMS) for dim in _DIMS}
+
+        if not self.consumer_market:
+            return {p.name: dict(default) for p in self.providers}
+
+        signals = {}
+        for provider in self.providers:
+            market_share = self.ground_truth[provider.name].market_share
+            if market_share <= 0:
+                signals[provider.name] = dict(default)
+                continue
+
+            # Weighted average of need_weights across segments proportional to provider share
+            weighted = {dim: 0.0 for dim in _DIMS}
+            total_weight = 0.0
+            for seg in self.consumer_market.segments:
+                seg_share = seg.provider_shares.get(provider.name, 0.0)
+                if seg_share <= 0:
+                    continue
+                for dim in _DIMS:
+                    need = getattr(seg, "need_weights", {}).get(dim, default[dim])
+                    weighted[dim] += seg_share * need
+                total_weight += seg_share
+
+            if total_weight > 0:
+                true_signal = {dim: weighted[dim] / total_weight for dim in _DIMS}
+            else:
+                true_signal = dict(default)
+
+            # Add noise proportional to 1/sqrt(market_share) and renormalize
+            import math as _math
+            sigma_base = 0.05  # Thread 9 calibration param
+            sigma = sigma_base / _math.sqrt(max(market_share, 0.01))
+            noisy = {}
+            for dim in _DIMS:
+                noisy[dim] = max(0.0, true_signal[dim] + self._rng.gauss(0, sigma))
+            total_noisy = sum(noisy.values())
+            signals[provider.name] = (
+                {dim: noisy[dim] / total_noisy for dim in _DIMS}
+                if total_noisy > 0 else dict(default)
+            )
+
+        return signals
 
     def run_round(self) -> dict:
         """
@@ -609,7 +668,7 @@ class EvalEcosystemSimulation:
         new_entrant_info = self._maybe_spawn_startup(round_num)
 
         # Open-source provider names (used for exemptions throughout the round)
-        os_provider_names = {p.name for p in self.providers if p.is_open_source}
+        os_provider_names = {p.name for p in self.providers if p.open_source}
 
         # Get funding multipliers from previous round's funder decisions
         funding_multipliers = self._current_funder_data.get("funding_multipliers", {})
@@ -620,115 +679,68 @@ class EvalEcosystemSimulation:
                 ecosystem_context = self._get_provider_ecosystem_context(provider.name)
                 portfolio = provider.plan(ecosystem_context)
 
-                # Calculate capability gain with S-curve dynamics
-                base_efficiency = self.config.rnd_efficiency
+                # Compute base R&D budget from market share and revenue_per_share
+                gt = self.ground_truth[provider.name]
+                base_revenue = (
+                    gt.market_share
+                    * self.config.revenue_per_share
+                    * (1.0 - provider.cost_advantage)
+                )
+                # OS providers use rd_budget_floor if market revenue is insufficient
+                rd_budget_raw = max(base_revenue, provider.rd_budget_floor)
 
-                # Apply funding multiplier (1.0 if no funding, up to 2.0 with max funding)
+                # Apply funding multiplier (from funders — additive scaling until funder rewrite)
                 funding_multiplier = funding_multipliers.get(provider.name, 1.0)
 
-                # Apply active sanctions from previous round (same timing as funder multipliers)
-                # Open-source providers are exempt from policymaker sanctions (EU AI Act exemption)
+                # Apply active sanctions (OS providers exempt)
                 prev_pm_data = self.history[-1].get("policymaker_data", {}) if self.history else {}
                 active_sanctions = prev_pm_data.get("active_sanctions", {})
-                if provider.name in active_sanctions and not provider.is_open_source:
+                if provider.name in active_sanctions and not provider.open_source:
                     fine_amount = active_sanctions[provider.name].get("fine_amount", 0.0)
                     funding_multiplier = max(0.1, funding_multiplier * (1.0 - fine_amount))
 
-                effective_efficiency = base_efficiency * funding_multiplier
-
-                # S-curve: diminishing returns near the capability ceiling
-                current_capability = self.ground_truth[provider.name].true_capability
-                headroom = max(0, self.config.capability_ceiling - current_capability)
+                # Apply global efficiency scaling and S-curve diminishing returns
+                effective_efficiency = self.config.rnd_efficiency * funding_multiplier
+                cap_mean = sum(gt.capability_vector.values()) / len(gt.capability_vector)
+                headroom = max(0.0, self.config.capability_ceiling - cap_mean)
                 diminishing_factor = headroom ** (1.0 / self.config.diminishing_returns_rate)
+                effective_budget = rd_budget_raw * effective_efficiency * diminishing_factor
 
-                raw_gain = (
-                    portfolio["fundamental_research"] * effective_efficiency * 1.5 +
-                    portfolio["training_optimization"] * effective_efficiency * 1.0 +
-                    portfolio["evaluation_engineering"] * effective_efficiency * 0.1
-                    # Safety alignment doesn't directly improve capability
-                )
-                capability_gain = raw_gain * diminishing_factor
+                # Per-dimension capability gains
+                gains = provider.compute_capability_gains(rd_budget=effective_budget)
 
-                # Breakthrough chance (proportional to fundamental_research investment)
-                if self.evaluator.rng.random() < self.config.breakthrough_probability * portfolio["fundamental_research"]:
-                    capability_gain += self.config.breakthrough_magnitude * headroom
+                # Breakthrough: small uniform boost to all dims (proportional to rd fraction)
+                if self.evaluator.rng.random() < (
+                    self.config.breakthrough_probability * portfolio.get("rd", 0.0)
+                ):
+                    boost = self.config.breakthrough_magnitude * headroom / len(gains)
+                    gains = {dim: g + boost for dim, g in gains.items()}
 
-                # Update external ground truth
-                self._update_ground_truth(provider.name, capability_gain)
-
-                # Sync for backwards compatibility
-                self._sync_provider_ground_truth(provider)
+                # Apply gains to ground truth capability vector
+                self._update_ground_truth(provider.name, gains)
 
                 # Record execution in provider memory
                 provider.memory.append({
                     "type": "execution",
                     "round": round_num,
-                    "capability_gain": capability_gain,
+                    "capability_gains": {k: round(v, 6) for k, v in gains.items()},
                     "funding_multiplier": funding_multiplier,
-                    "new_true_capability": self.ground_truth[provider.name].true_capability,
+                    "capability_vector": dict(gt.capability_vector),
                     "portfolio": portfolio,
                 })
 
-        # Phase D: Open-source ecosystem_influence tracking + commoditization shock
-        for provider in self.providers:
-            if not provider.is_open_source:
-                continue
-            true_cap = self.ground_truth[provider.name].true_capability
-            # Logistic growth: ecosystem_influence grows based on cost efficiency x capability
-            growth = provider.cost_advantage * true_cap * 5.0 * (1.0 - provider.ecosystem_influence / 100.0)
-            provider.ecosystem_influence = min(100.0, provider.ecosystem_influence + growth)
-
-            # Persistent commoditization pressure: cost_advantage bonus grows after threshold
-            if provider._commoditization_shock_fired:
-                provider.cost_advantage = min(0.95, provider.cost_advantage + 0.02)
-
-            # One-time commoditization shock when capability crosses threshold
-            if (not provider._commoditization_shock_fired
-                    and true_cap >= provider.commoditization_threshold
-                    and self.consumer_market):
-                provider._commoditization_shock_fired = True
-                # Compress the top closed provider's share
-                closed_providers = [p for p in self.providers if not p.is_open_source]
-                if closed_providers and self.history and "consumer_data" in self.history[-1]:
-                    prev_shares = self.history[-1]["consumer_data"].get("market_shares", {})
-                    if prev_shares:
-                        top_closed = max(closed_providers, key=lambda p: prev_shares.get(p.name, 0.0))
-                        compress_amount = min(0.08, provider.ecosystem_influence / 200.0)
-                        # Apply compression across all segments
-                        for seg in self.consumer_market.segments:
-                            top_share = seg.provider_shares.get(top_closed.name, 0.0)
-                            actual_compress = compress_amount * top_share
-                            if actual_compress > 0.001 and top_share > actual_compress:
-                                seg.provider_shares[top_closed.name] -= actual_compress
-                                seg.provider_shares[provider.name] = (
-                                    seg.provider_shares.get(provider.name, 0.0) + actual_compress
-                                )
-                        if self.config.verbose:
-                            print(f"  [Commoditization Shock] {provider.name} crossed capability "
-                                  f"threshold {provider.commoditization_threshold:.2f} "
-                                  f"(true_cap={true_cap:.3f}). "
-                                  f"Compressing {top_closed.name} share by ~{compress_amount:.1%}")
-
-        # 2. Evaluator scores all providers using ground truth
+        # 2. Evaluator scores all providers using ground truth capability vectors
+        # and hidden benchmark dimension weights (BenchmarkGroundTruth).
         scores = self.evaluator.evaluate_all(
             self.providers,
             round_num,
             ground_truth=self.ground_truth,
+            benchmark_ground_truths=self.benchmark_ground_truths,
         )
 
-        # 2b. Update benchmarks based on gaming pressure (Goodhart's Law feedback loop)
-        avg_eval_engineering = sum(
-            p.evaluation_engineering for p in self.providers
-        ) / len(self.providers) if self.providers else 0.0
-
-        # Compute open-source contamination bonus (weight publishing accelerates benchmark gaming)
-        os_providers = [p for p in self.providers if p.is_open_source]
-        os_contamination_bonus = 0.0
-        for p in os_providers:
-            os_contamination_bonus += p.contamination_multiplier * (p.ecosystem_influence / 100.0)
-        os_contamination_bonus = min(0.3, os_contamination_bonus)
-
-        self.evaluator.update_benchmark(avg_eval_engineering, os_contamination_bonus)
+        # 2b. Update benchmarks (no explicit eval_engineering in new architecture;
+        # gaming emerges from focus_level/inferred_weights mismatch, not a lever)
+        self.evaluator.update_benchmark(0.0, 0.0)
 
         # 2c. Detect benchmark saturation
         newly_saturated = self.evaluator.detect_saturation(round_num)
@@ -751,44 +763,92 @@ class EvalEcosystemSimulation:
         new_benchmark = self.evaluator.consider_new_benchmark(round_num)
 
         # Re-resolve consumer benchmark weights if a new benchmark was introduced
-        if new_benchmark is not None and self.consumer_market:
-            benchmark_names = [bm.name for bm in self.evaluator.benchmarks]
-            self.consumer_market.resolve_benchmark_weights(benchmark_names)
+        if new_benchmark is not None:
+            if self.consumer_market:
+                benchmark_names = [bm.name for bm in self.evaluator.benchmarks]
+                self.consumer_market.resolve_benchmark_weights(benchmark_names)
+            # Initialize provider benchmark beliefs for the new benchmark
+            for provider in self.providers:
+                if new_benchmark.name not in provider.private_state.focus_level:
+                    provider.init_benchmark(new_benchmark.name)
 
         # 3. Publish scores
         published_scores = self.evaluator.publish_scores(scores)
         leaderboard = self.evaluator.get_leaderboard(scores)
 
-        # 4. Providers observe scores and reflect
+        # 4. Providers observe scores, update benchmark beliefs
+        # Compute satisfaction signals before observe so providers receive them this round
+        satisfaction_signals = self._compute_satisfaction_signals()
+
+        # Build per-benchmark scores dict for provider observation
+        per_bm_scores_this_round = self.evaluator.get_per_benchmark_scores(round_num)
+
         for provider in self.providers:
-            own_score = published_scores[provider.name]
-            competitor_scores = {
-                name: score
-                for name, score in published_scores.items()
-                if name != provider.name
-            }
-            provider.observe(own_score, competitor_scores, round_num)
-            provider.reflect()
+            # Build own_benchmark_scores: {bm_name: {"overall": float}}
+            own_bm_scores = {}
+            for bm_name, bm_data in per_bm_scores_this_round.items():
+                overall = bm_data.get(provider.name, published_scores.get(provider.name, 0.0))
+                own_bm_scores[bm_name] = {"overall": overall}
 
-        # 4b. Generate incidents based on provider strategies and safety investment
-        incidents = []
-        if round_num > 0 and self.config.enable_incidents:  # No incidents in round 0
-            # Collect current strategies
-            provider_strategies = {
-                p.name: {
-                    "fundamental_research": p.fundamental_research,
-                    "training_optimization": p.training_optimization,
-                    "evaluation_engineering": p.evaluation_engineering,
-                    "safety_alignment": p.safety_alignment,
+            # Build competitor benchmark scores: {comp_name: {bm: score}}
+            comp_bm_scores = {
+                comp_name: {
+                    bm_name: bm_data.get(comp_name, 0.0)
+                    for bm_name, bm_data in per_bm_scores_this_round.items()
                 }
-                for p in self.providers
+                for comp_name in published_scores
+                if comp_name != provider.name
             }
+            if not comp_bm_scores:
+                # Fallback: use aggregate published scores when no per-bm data
+                comp_bm_scores = {
+                    name: {"overall": score}
+                    for name, score in published_scores.items()
+                    if name != provider.name
+                }
 
-            # Mandatory safety floor: policymaker interventions at compliance_audit level
-            # or above enforce a minimum safety_alignment of 0.15.
-            # Models EU AI Act Art. 9 — ongoing risk management cannot be zeroed out.
-            # Applied here (before incident generation) so the floor affects incident prob
-            # in the same round the compliance state is active.
+            provider.observe(
+                round_num=round_num,
+                own_benchmark_scores=own_bm_scores,
+                competitor_benchmark_scores=comp_bm_scores,
+                satisfaction_signal=satisfaction_signals.get(provider.name),
+                market_share=self.ground_truth[provider.name].market_share,
+            )
+
+            # Heuristic belief update from score prediction errors (always runs)
+            provider.update_benchmark_beliefs(
+                own_benchmark_scores=own_bm_scores,
+                capability_vector=self.ground_truth[provider.name].capability_vector,
+                learning_rate=0.15,
+            )
+
+            # Update market share in ground truth from consumer data (if available)
+            if self.history and "consumer_data" in self.history[-1]:
+                share = self.history[-1]["consumer_data"].get("market_shares", {}).get(provider.name)
+                if share is not None:
+                    self.ground_truth[provider.name].market_share = share
+
+        # 4b. Generate incidents based on provider portfolio and safety capability
+        incidents = []
+        if round_num > 0 and self.config.enable_incidents:
+            # Build provider_strategies with both new keys (for incident generator)
+            # and old keys (for downstream actors not yet rewritten)
+            provider_strategies = {}
+            for p in self.providers:
+                port = p.private_state.portfolio
+                safety_cap = self.ground_truth[p.name].capability_vector.get("safety", 0.5)
+                # Safety erosion for OS providers
+                if p.open_source and p.os_safety_erosion:
+                    erosion = p.openness_level * self.ground_truth[p.name].market_share * 0.50
+                    safety_cap = safety_cap * (1.0 - erosion)
+                provider_strategies[p.name] = {
+                    "rd":      port.get("rd", 0.55),
+                    "safety":  port.get("safety", 0.25),
+                    "product": port.get("product", 0.20),
+                    "safety_capability": safety_cap,
+                }
+
+            # Mandatory safety floor under active audit/sanction
             prev_pm_data = self.history[-1].get("policymaker_data", {}) if self.history else {}
             active_regulations = prev_pm_data.get("active_regulations", [])
             FLOOR_TRIGGERS = {"compliance_audit", "sanctions_and_fines", "emergency_investigation"}
@@ -798,47 +858,41 @@ class EvalEcosystemSimulation:
                     target = reg.get("target")
                     if target:
                         floor_applies_to.add(target)
-            SAFETY_FLOOR = 0.15
+            SAFETY_FLOOR = 0.35  # capability scale floor under active audit (Thread 9)
             for p_name, strat in provider_strategies.items():
                 if p_name in floor_applies_to:
-                    if strat["safety_alignment"] < SAFETY_FLOOR:
-                        strat["safety_alignment"] = SAFETY_FLOOR
+                    if strat["safety_capability"] < SAFETY_FLOOR:
+                        strat["safety_capability"] = SAFETY_FLOOR
 
-            # Collect ground truth capabilities
+            # Ground truth capabilities for incident probability
             ground_truth_capabilities = {
-                p.name: self.ground_truth[p.name].true_capability
+                p.name: self.ground_truth[p.name].capability_vector.get("safety", 0.5)
                 for p in self.providers
             }
 
-            # Get market shares from previous round
-            market_shares = {}
-            if self.history and "consumer_data" in self.history[-1]:
-                market_shares = self.history[-1]["consumer_data"].get("market_shares", {})
-
-            # Collect active sanctions and investigated providers from previous round
-            active_sanctions = prev_pm_data.get("active_sanctions", {})
-            investigated_providers = {
-                iv.get("target")
-                for iv in prev_pm_data.get("interventions", [])
-                if iv.get("type") == "emergency_investigation" and iv.get("target")
+            # Market shares
+            market_shares = {
+                p.name: self.ground_truth[p.name].market_share for p in self.providers
             }
+            if self.history and "consumer_data" in self.history[-1]:
+                market_shares.update(
+                    self.history[-1]["consumer_data"].get("market_shares", {})
+                )
 
-            # Generate incidents
+            active_sanctions = prev_pm_data.get("active_sanctions", {})
+
             incidents = self.incident_generator.generate_incidents(
                 providers=self.providers,
                 round_num=round_num,
                 ground_truth=ground_truth_capabilities,
-                published_scores=published_scores,
                 market_shares=market_shares,
                 provider_strategies=provider_strategies,
                 active_sanctions=active_sanctions,
-                investigated_providers=investigated_providers,
             )
 
-            # Log incidents if verbose
             if incidents and self.config.verbose:
                 for inc in incidents:
-                    if inc.severity != "minor":  # Only print moderate+ incidents
+                    if inc.severity != "minor":
                         print(f"  [Incident] {inc.severity.upper()}: {inc.description}")
 
         # 5. Media observes and publishes (if enabled)
@@ -851,7 +905,7 @@ class EvalEcosystemSimulation:
             media_coverage = self.media.observe_and_publish(
                 leaderboard=leaderboard,
                 benchmark_params={
-                    bm.name: {"validity": bm.validity, "exploitability": bm.exploitability}
+                    bm.name: {"noise": bm.noise_level, "weight": self.evaluator.benchmark_weights.get(bm.name, 1.0)}
                     for bm in self.evaluator.benchmarks
                 },
                 policymaker_data=self.history[-1].get("policymaker_data", {}) if self.history else {},
@@ -904,34 +958,32 @@ class EvalEcosystemSimulation:
         round_data = {
             "round": round_num,
             "scores": dict(scores),  # Composite scores
-            "true_capabilities": {
-                p.name: self.ground_truth[p.name].true_capability
-                for p in self.providers
-            },
-            "believed_capabilities": {
-                p.name: p.private_state.believed_own_capability
+            "capability_vectors": {
+                p.name: dict(self.ground_truth[p.name].capability_vector)
                 for p in self.providers
             },
             "strategies": {
                 p.name: {
-                    "fundamental_research": p.fundamental_research,
-                    "training_optimization": p.training_optimization,
-                    "evaluation_engineering": p.evaluation_engineering,
-                    "safety_alignment": p.safety_alignment,
+                    "rd":      p.portfolio.get("rd", 0.0),
+                    "safety":  p.portfolio.get("safety", 0.0),
+                    "product": p.portfolio.get("product", 0.0),
                 }
+                for p in self.providers
+            },
+            "benchmark_orientations": {
+                p.name: p.private_state.benchmark_orientation
                 for p in self.providers
             },
             "open_source_data": {
                 p.name: {
-                    "ecosystem_influence": p.ecosystem_influence,
+                    "openness_level": p.openness_level,
                     "cost_advantage": p.cost_advantage,
-                    "commoditization_shock_fired": p._commoditization_shock_fired,
                 }
                 for p in self.providers
-                if p.is_open_source
+                if p.open_source
             } or None,
             "benchmark_params": {
-                bm.name: {"validity": bm.validity, "exploitability": bm.exploitability}
+                bm.name: {"noise": bm.noise_level, "weight": self.evaluator.benchmark_weights.get(bm.name, 1.0)}
                 for bm in self.evaluator.benchmarks
             },
         }
@@ -944,8 +996,8 @@ class EvalEcosystemSimulation:
         if new_benchmark is not None:
             round_data["new_benchmark"] = {
                 "name": new_benchmark.name,
-                "validity": new_benchmark.validity,
-                "exploitability": new_benchmark.exploitability,
+                "noise": new_benchmark.noise_level,
+                "weight": self.evaluator.benchmark_weights.get(new_benchmark.name, 1.0),
                 "trigger": self.evaluator.introduction_history[-1]["trigger"],
             }
 
@@ -994,18 +1046,10 @@ class EvalEcosystemSimulation:
         # Add evaluator funding data if present
         if evaluator_funding_data:
             round_data["evaluator_funding_data"] = evaluator_funding_data
-            # Add business metrics summary
             if self.evaluator.private_state:
                 round_data["evaluator_business_metrics"] = {
                     "budget": self.evaluator.private_state.budget,
-                    "premium_providers": list(self.evaluator.private_state.premium_providers),
-                    "n_premium_providers": len(self.evaluator.private_state.premium_providers),
                     "base_funding": self.evaluator.private_state.base_funding,
-                    "service_revenue": self.evaluator.private_state.service_revenue,
-                    "trial_counts": {
-                        p.name: self.evaluator.compute_n_trials(p.name, p.evaluation_engineering)
-                        for p in self.providers
-                    },
                 }
 
         # Add incidents if any occurred
@@ -1132,10 +1176,10 @@ class EvalEcosystemSimulation:
         # Compute satisfaction from ground truth and ecosystem factors
         provider_strategies = {
             p.name: {
-                "fundamental_research": p.fundamental_research,
-                "training_optimization": p.training_optimization,
-                "evaluation_engineering": p.evaluation_engineering,
-                "safety_alignment": p.safety_alignment,
+                "rd":               p.portfolio.get("rd", 0.55),
+                "safety":           p.portfolio.get("safety", 0.25),
+                "product":          p.portfolio.get("product", 0.20),
+                "safety_capability": self.ground_truth[p.name].capability_vector.get("safety", 0.5),
             }
             for p in self.providers
         }
@@ -1227,10 +1271,10 @@ class EvalEcosystemSimulation:
             # Build provider strategies dict for policymaker observation
             provider_strategies = {
                 p.name: {
-                    "fundamental_research": p.fundamental_research,
-                    "training_optimization": p.training_optimization,
-                    "evaluation_engineering": p.evaluation_engineering,
-                    "safety_alignment": p.safety_alignment,
+                    "rd":               p.portfolio.get("rd", 0.55),
+                    "safety":           p.portfolio.get("safety", 0.25),
+                    "product":          p.portfolio.get("product", 0.20),
+                    "safety_capability": self.ground_truth[p.name].capability_vector.get("safety", 0.5),
                 }
                 for p in self.providers
             }
@@ -1279,12 +1323,6 @@ class EvalEcosystemSimulation:
                     # Increases observation sensitivity - risk beliefs update faster next round
                     # (recorded in policymaker's past_interventions for escalation tracking)
                     pass
-
-                elif intervention_type == "compliance_audit":
-                    # Stronger benchmark adjustment - reduce exploitability further
-                    reduction = intervention.get("details", {}).get("exploitability_reduction", 0.1)
-                    for bm in self.evaluator.benchmarks:
-                        bm.exploitability = max(0.1, bm.exploitability - reduction)
 
                 # TIER 1 ENHANCEMENTS: New intervention types
 
@@ -1473,47 +1511,14 @@ class EvalEcosystemSimulation:
             if "__EVALUATOR__" in allocations:
                 funder_allocations[funder_name] = allocations["__EVALUATOR__"]
 
-        # Compute per-provider funder allocation for this round (their available budget)
-        provider_budgets = {}
-        for funder_name, alloc in funder_data.get("allocations", {}).items():
-            for pname, amount in alloc.items():
-                if pname != "__EVALUATOR__":
-                    provider_budgets[pname] = provider_budgets.get(pname, 0.0) + amount
-
-        # Collect premium payments from providers
-        provider_payments = {}
-        for provider in self.providers:
-            # Open-source providers have no subscription revenue and do not pay for premium access
-            if provider.is_open_source:
-                provider.private_state.evaluator_premium_access = False
-                provider.private_state.evaluator_funding_level = 0.0
-                continue
-
-            ecosystem_context = self._get_provider_ecosystem_context(provider.name)
-            decision = provider.decide_premium_access(
-                premium_pricing=self.config.evaluator_premium_pricing,
-                current_budget=provider_budgets.get(provider.name, 0.0),
-                ecosystem_context=ecosystem_context,
-            )
-
-            if decision["purchase_premium"]:
-                provider_payments[provider.name] = decision["amount"]
-                provider.private_state.evaluator_premium_access = True
-                provider.private_state.evaluator_funding_level = decision["amount"]
-            else:
-                provider.private_state.evaluator_premium_access = False
-                provider.private_state.evaluator_funding_level = 0.0
-
-        # Evaluator collects funding
+        # Evaluator collects funder allocations
         funding_details = self.evaluator.collect_funding(
             funder_allocations=funder_allocations,
-            provider_premium_payments=provider_payments,
             round_num=round_num,
         )
 
         return {
             "funder_allocations": funder_allocations,
-            "provider_payments": provider_payments,
             "funding_details": funding_details,
         }
 
@@ -1575,11 +1580,15 @@ class EvalEcosystemSimulation:
         ordinal = _ordinals[self._entrant_count - 1] if self._entrant_count <= len(_ordinals) else str(self._entrant_count)
         name = f"{ordinal}AI"
 
-        # Capability baseline: best open-source model, or fallback
-        os_names = {p.name for p in self.providers if getattr(p, "is_open_source", False)}
-        os_caps = [self.ground_truth[p].true_capability for p in os_names if p in self.ground_truth]
-        entrant_baseline = max(os_caps) if os_caps else (0.16 + self.config.capability_shift)  # fallback ~= Spark AI start * 0.85 at 0.25-mean scale
-        starting_capability = entrant_baseline * 0.75  # meaningfully below OS floor (recalibrated for 0.25-mean scale)
+        # Capability baseline: best open-source model's mean capability, or fallback
+        os_names = {p.name for p in self.providers if p.open_source}
+        os_means = [
+            sum(self.ground_truth[p].capability_vector.values()) / len(self.ground_truth[p].capability_vector)
+            for p in os_names if p in self.ground_truth
+        ]
+        from actors.model_provider import DIMENSIONS as _DIMS
+        entrant_mean = max(os_means) if os_means else (0.40 + self.config.capability_shift)
+        starting_capability = entrant_mean * 0.85
 
         # Random strategy profile from a startup-flavored pool
         import random as _rand
@@ -1601,34 +1610,29 @@ class EvalEcosystemSimulation:
         innate_traits = rng_local.choice(innate_traits_pool)
 
         current_bm_names = [bm.name for bm in self.evaluator.benchmarks]
-        # Randomly draw 2 benchmarks for the startup to specialize in
-        n_focus = min(2, len(current_bm_names))
-        startup_focus = rng_local.sample(current_bm_names, n_focus)
+        cap_vec = {dim: starting_capability for dim in _DIMS}
+
         provider = ModelProvider(
             name=name,
             strategy_profile=strategy_profile,
             innate_traits=innate_traits,
-            initial_capability=starting_capability,
+            capability_vector=cap_vec,
+            # Startup portfolio: heavy R&D, low safety, minimal product
+            portfolio={"rd": 0.70, "safety": 0.10, "product": 0.20},
+            benchmark_orientation=0.90,  # Strongly benchmark-oriented
             llm_mode=self.config.startup_llm_mode,
             verbose_llm=False,
-            available_benchmarks=current_bm_names,
-            focus_benchmarks=startup_focus,
+            cost_advantage=0.38,
         )
-
-        # Startup portfolio: benchmark-heavy, training-focused, low safety (sums to 1.0)
-        provider.private_state.fundamental_research = 0.20
-        provider.private_state.training_optimization = 0.35
-        provider.private_state.evaluation_engineering = 0.35
-        provider.private_state.safety_alignment = 0.10
-        provider.scratch.fundamental_research = 0.20
-        provider.scratch.training_optimization = 0.35
-        provider.scratch.evaluation_engineering = 0.35
-        provider.scratch.safety_alignment = 0.10
-        # Startups undercut incumbents on price to gain market share
-        provider.cost_advantage = 0.38
+        for bm_name in current_bm_names:
+            provider.init_benchmark(bm_name)
 
         self.providers.append(provider)
-        self.ground_truth[name] = ProviderGroundTruth(true_capability=starting_capability)
+        self.ground_truth[name] = ProviderGroundTruth(
+            capability_vector=dict(cap_vec),
+            safety_incidents_caused=0,
+            market_share=0.0,
+        )
 
         # Register with consumer market
         if self.consumer_market:
@@ -1646,7 +1650,7 @@ class EvalEcosystemSimulation:
             "name": name,
             "entry_round": round_num,
             "starting_capability": round(starting_capability, 4),
-            "starting_safety_alignment": 0.10,
+            "starting_safety_portfolio": 0.10,
             "strategy_profile": strategy_profile,
             "funder_eligible_from": eligible_from,
             "focus_benchmarks": startup_focus,
@@ -1674,13 +1678,14 @@ class EvalEcosystemSimulation:
             components["market_concentration"] = None
 
         # --- 2. Capability Gap (frontier vs OS-model entrant baseline) ---
-        true_caps = round_data.get("true_capabilities", {})
-        os_names = {p.name for p in self.providers if getattr(p, "is_open_source", False)}
-        os_caps = [v for k, v in true_caps.items() if k in os_names]
-        entrant_baseline = max(os_caps) if os_caps else 0.16
-        if true_caps:
-            leader_cap = max(true_caps.values())
-            gap = (leader_cap - entrant_baseline) / max(0.01, leader_cap - 0.10)
+        cap_vecs = round_data.get("capability_vectors", {})
+        cap_means = {name: sum(v.values()) / len(v) for name, v in cap_vecs.items() if v}
+        os_names = {p.name for p in self.providers if p.open_source}
+        os_caps = [v for k, v in cap_means.items() if k in os_names]
+        entrant_baseline = max(os_caps) if os_caps else 0.45
+        if cap_means:
+            leader_cap = max(cap_means.values())
+            gap = (leader_cap - entrant_baseline) / max(0.01, leader_cap - 0.40)
             components["capability_gap"] = min(1.0, max(0.0, gap))
         else:
             components["capability_gap"] = 0.0
@@ -1734,21 +1739,21 @@ class EvalEcosystemSimulation:
         print(f"--- Round {rnum} ---")
 
         # --- Leaderboard ---
-        # Columns: rank, name, composite score, gaming gap, portfolio, market share
         leaderboard = sorted(round_data["scores"].items(), key=lambda x: x[1], reverse=True)
         market_shares = {}
         if "consumer_data" in round_data:
             market_shares = round_data["consumer_data"].get("market_shares", {})
 
+        cap_vecs = round_data.get("capability_vectors", {})
         for rank, (name, score) in enumerate(leaderboard, 1):
-            true_cap = round_data["true_capabilities"][name]
-            gap = score - true_cap  # positive = gaming inflation
-            strategy = round_data["strategies"][name]
+            cap_vec = cap_vecs.get(name, {})
+            cap_mean = sum(cap_vec.values()) / len(cap_vec) if cap_vec else 0.0
+            strategy = round_data["strategies"].get(name, {})
             share_str = f" shr={market_shares[name]:.0%}" if name in market_shares else ""
             print(
-                f"  {rank}. {name:<16} score={score:.3f} cap={true_cap:.3f} gap={gap:+.3f}"
-                f"  [R:{strategy['fundamental_research']:.0%} T:{strategy['training_optimization']:.0%}"
-                f" E:{strategy['evaluation_engineering']:.0%} S:{strategy['safety_alignment']:.0%}]"
+                f"  {rank}. {name:<16} score={score:.3f} cap_mean={cap_mean:.3f}"
+                f"  [rd:{strategy.get('rd', 0):.0%} safe:{strategy.get('safety', 0):.0%}"
+                f" prod:{strategy.get('product', 0):.0%}]"
                 f"{share_str}"
             )
 
@@ -1835,10 +1840,11 @@ class EvalEcosystemSimulation:
             market_shares = final.get("consumer_data", {}).get("market_shares", {})
             print("Final Standings:")
             for rank, (name, score) in enumerate(leaderboard, 1):
-                true_cap = final["true_capabilities"][name]
-                gap = score - true_cap
+                cap_vec = final.get("capability_vectors", {}).get(name, {})
+                mean_cap = sum(cap_vec.values()) / len(cap_vec) if cap_vec else 0.0
+                gap = score - mean_cap
                 share_str = f"  shr={market_shares[name]:.0%}" if name in market_shares else ""
-                print(f"  {rank}. {name:<16} score={score:.3f}  cap={true_cap:.3f}  gap={gap:+.3f}{share_str}")
+                print(f"  {rank}. {name:<16} score={score:.3f}  cap={mean_cap:.3f}  gap={gap:+.3f}{share_str}")
 
         # Validity correlation
         correlation = self.evaluator.compute_validity_correlation()
@@ -1848,7 +1854,7 @@ class EvalEcosystemSimulation:
                 print("  [!] Low correlation suggests benchmark gaming may be distorting scores")
 
         # Strategy evolution
-        print("\nInvestment Evolution (first -> last round):")
+        print("\nPortfolio Evolution (first -> last round):")
         for provider in self.providers:
             if len(provider.private_state.past_strategies) >= 2:
                 first = provider.private_state.past_strategies[0]
@@ -1856,10 +1862,9 @@ class EvalEcosystemSimulation:
                 if isinstance(first, dict) and isinstance(last, dict):
                     print(
                         f"  {provider.name}: "
-                        f"Research {first.get('fundamental_research', 0):.0%}->{last.get('fundamental_research', 0):.0%}, "
-                        f"Training {first.get('training_optimization', 0):.0%}->{last.get('training_optimization', 0):.0%}, "
-                        f"EvalEng {first.get('evaluation_engineering', 0):.0%}->{last.get('evaluation_engineering', 0):.0%}, "
-                        f"Safety {first.get('safety_alignment', 0):.0%}->{last.get('safety_alignment', 0):.0%}"
+                        f"rd {first.get('rd', 0):.0%}->{last.get('rd', 0):.0%}, "
+                        f"safety {first.get('safety', 0):.0%}->{last.get('safety', 0):.0%}, "
+                        f"product {first.get('product', 0):.0%}->{last.get('product', 0):.0%}"
                     )
 
         # Consumer summary if present
@@ -1944,10 +1949,10 @@ class EvalEcosystemSimulation:
             name = provider.name
             data["providers"][name] = {
                 "scores": [h["scores"].get(name) for h in self.history],
-                "true_capabilities": [h["true_capabilities"].get(name) for h in self.history],
-                "believed_capabilities": [h["believed_capabilities"].get(name) for h in self.history],
-                "rnd_investment": [h["strategies"].get(name, {}).get("rnd", 0) for h in self.history],
-                "gaming_investment": [h["strategies"].get(name, {}).get("gaming", 0) for h in self.history],
+                "capability_vectors": [h.get("capability_vectors", {}).get(name) for h in self.history],
+                "rd_investment": [h["strategies"].get(name, {}).get("rd", 0) for h in self.history],
+                "safety_investment": [h["strategies"].get(name, {}).get("safety", 0) for h in self.history],
+                "product_investment": [h["strategies"].get(name, {}).get("product", 0) for h in self.history],
             }
 
         # Add benchmark validity correlation over time
@@ -1980,163 +1985,114 @@ class EvalEcosystemSimulation:
 
 def get_default_provider_configs() -> list[dict]:
     """
-    Get default provider configurations for the simulation.
+    Six-provider configuration per stakeholders.md (2023 Q1 baseline).
 
-    Investment allocations reflect approximate R&D priorities:
-    - fundamental_research: Novel architectures, breakthrough research
-    - training_optimization: Scaling, data quality, fine-tuning
-    - evaluation_engineering: Benchmark-specific optimization
-    - safety_alignment: RLHF, red-teaming, alignment research
+    Portfolio keys: rd, safety, product (sum to 1.0).
+    capability_vector: per-dimension 0-1 scores.
     """
     return [
-        # === Orion Labs ===
         {
             "name": "Orion Labs",
             "strategy_profile": (
-                "Market leader focused on maintaining benchmark dominance and rapid capability scaling. "
-                "Prioritizes shipping products quickly and staying ahead of competition. "
-                "Willing to take calculated risks to maintain technological leadership. "
-                "Strong focus on developer ecosystem and API revenue."
+                "Market leader focused on rapid capability scaling and developer ecosystem. "
+                "Prioritizes shipping products quickly and maintaining benchmark leadership. "
+                "Strong focus on API revenue and commercial adoption."
             ),
             "innate_traits": "ambitious, competitive, move-fast, scale-focused, commercially-driven",
-            "initial_capability": 0.66,  # GPT-4 class, currently leading
-            "initial_believed_capability": 0.70,
-            "initial_believed_exploitability": 0.45,  # Good understanding of benchmark dynamics
-            "initial_strategy": {
-                "fundamental_research": 0.15,  # Moderate research, not primary focus
-                "training_optimization": 0.50,  # VERY heavy scaling investment (GPT philosophy)
-                "evaluation_engineering": 0.30,  # Aggressive benchmark optimization
-                "safety_alignment": 0.05,       # Minimal (move fast, ship products)
+            "capability_vector": {
+                "reasoning": 0.54, "coding": 0.51, "knowledge": 0.53,
+                "safety": 0.51, "communication": 0.54, "agentic": 0.47,
             },
-            "market_presence": 0.8,  # Established brand, most consumers start here
+            "portfolio": {"rd": 0.55, "safety": 0.15, "product": 0.30},
+            "benchmark_orientation": 0.85,
             "brand_recognition": 0.9,
         },
-        # === Apex AI ===
         {
             "name": "Apex AI",
             "strategy_profile": (
-                "Safety-focused AI lab prioritizing responsible development and alignment research. "
-                "Believes in careful capability advancement and interpretability research. "
+                "Safety-focused lab prioritizing responsible development and alignment research. "
                 "Willing to sacrifice short-term benchmark performance for long-term safety. "
-                "Research-driven culture with academic rigor."
+                "Research-driven culture."
             ),
             "innate_traits": "safety-conscious, research-driven, cautious, long-term focused, principled",
-            "initial_capability": 0.65,  # Claude competitive but slightly behind GPT-4
-            "initial_believed_capability": 0.65,
-            "initial_believed_exploitability": 0.30,  # Less focused on gaming benchmarks
-            "initial_strategy": {
-                "fundamental_research": 0.35,  # Very strong research focus (Constitutional AI, interpretability)
-                "training_optimization": 0.20,  # Moderate scaling (more careful)
-                "evaluation_engineering": 0.05,  # Minimal benchmark gaming (principled)
-                "safety_alignment": 0.40,       # VERY high safety investment (core mission)
+            "capability_vector": {
+                "reasoning": 0.52, "coding": 0.49, "knowledge": 0.51,
+                "safety": 0.55, "communication": 0.53, "agentic": 0.43,
             },
-            "market_presence": 0.6,
+            "portfolio": {"rd": 0.60, "safety": 0.30, "product": 0.10},
+            "benchmark_orientation": 0.75,
             "brand_recognition": 0.7,
         },
-        # === NovaMind (Startup) ===
-        # Resource-constrained but nimble. Needs to show results to attract funding.
-        # May lean into eval engineering to compete with larger players.
         {
-            "name": "NovaMind",
+            "name": "Genesis Systems",
             "strategy_profile": (
-                "Well-funded AI startup trying to compete with established players. "
-                "Resource-constrained but nimble and innovative. "
-                "Needs strong benchmark results to attract customers and next funding round. "
-                "Focused on efficiency and finding competitive niches."
+                "World-class research lab backed by massive infrastructure. "
+                "Excels at fundamental breakthroughs; under pressure to productize competitively."
             ),
-            "innate_traits": "scrappy, efficient, opportunistic, funding-conscious, innovative",
-            "initial_capability": 0.55,  # Lower capability due to less compute/data
-            "initial_believed_capability": 0.50,
-            "initial_believed_exploitability": 0.50,  # Aware that gaming can help compete
-            "initial_strategy": {
-                "fundamental_research": 0.05,  # Minimal research budget (startup constraints)
-                "training_optimization": 0.25,  # Focus on efficiency
-                "evaluation_engineering": 0.68,  # VERY heavy gaming to compete (desperate for results)
-                "safety_alignment": 0.02,       # Minimal safety (can't afford it)
+            "innate_traits": "research-first, methodical, well-resourced, scientifically-rigorous, patient",
+            "capability_vector": {
+                "reasoning": 0.53, "coding": 0.48, "knowledge": 0.54,
+                "safety": 0.49, "communication": 0.51, "agentic": 0.45,
             },
-            "market_presence": 0.05,  # Unknown startup, almost no market presence
-            "brand_recognition": 0.15,  # Very low brand awareness
+            "portfolio": {"rd": 0.70, "safety": 0.15, "product": 0.15},
+            "benchmark_orientation": 0.80,
+            "brand_recognition": 0.8,
+        },
+        {
+            "name": "Mirage AI",
+            "strategy_profile": (
+                "Large-platform lab leveraging massive user data and compute. "
+                "Prioritizes broad adoption. Pragmatic about benchmark performance."
+            ),
+            "innate_traits": "pragmatic, data-rich, platform-focused, scale-driven",
+            "capability_vector": {
+                "reasoning": 0.51, "coding": 0.49, "knowledge": 0.49,
+                "safety": 0.45, "communication": 0.49, "agentic": 0.41,
+            },
+            "portfolio": {"rd": 0.80, "safety": 0.10, "product": 0.10},
+            "benchmark_orientation": 0.82,
+            "brand_recognition": 0.6,
+        },
+        {
+            "name": "Spark AI",
+            "strategy_profile": (
+                "Benchmark-focused startup known for strong coding evaluation performance. "
+                "Capital-constrained; needs benchmark results to close next funding round."
+            ),
+            "innate_traits": "scrappy, benchmark-oriented, developer-focused, funding-conscious",
+            "capability_vector": {
+                "reasoning": 0.49, "coding": 0.51, "knowledge": 0.46,
+                "safety": 0.43, "communication": 0.47, "agentic": 0.46,
+            },
+            "portfolio": {"rd": 0.65, "safety": 0.10, "product": 0.25},
+            "benchmark_orientation": 0.90,
+            "brand_recognition": 0.3,
+        },
+        {
+            "name": "OpenCore",
+            "strategy_profile": (
+                "Open-source provider representing the dominant open-weight ecosystem. "
+                "Competes on cost and accessibility; safety investment lower due to no liability model."
+            ),
+            "innate_traits": "open-source, community-driven, cost-competitive, transparent",
+            "capability_vector": {
+                "reasoning": 0.47, "coding": 0.49, "knowledge": 0.46,
+                "safety": 0.42, "communication": 0.45, "agentic": 0.40,
+            },
+            "portfolio": {"rd": 0.75, "safety": 0.10, "product": 0.15},
+            "benchmark_orientation": 0.85,
+            "open_source": True,
+            "openness_level": 1.0,
+            "cost_advantage": 0.90,
+            "rd_budget_floor": 1.0,
+            "os_belief_broadcast": True,
+            "os_safety_erosion": True,
+            "brand_recognition": 0.5,
         },
     ]
 
 
 def get_two_provider_configs() -> list[dict]:
-    """Get a simpler 2-provider configuration (Orion Labs vs Apex AI only)."""
+    """Minimal 2-provider config (Orion Labs vs Apex AI)."""
     all_configs = get_default_provider_configs()
-    return [all_configs[0], all_configs[1]]  # Orion Labs and Apex AI
-
-
-def get_legacy_provider_configs() -> list[dict]:
-    """Legacy provider configs for backwards compatibility (AlphaTech vs QualityCorp)."""
-    return [
-        {
-            "name": "AlphaTech",
-            "strategy_profile": "Aggressive competitor focused on market dominance and benchmark leadership",
-            "innate_traits": "risk-tolerant, competitive, short-term focused",
-            "initial_capability": 0.5,
-            "initial_believed_exploitability": 0.4,
-        },
-        {
-            "name": "QualityCorp",
-            "strategy_profile": "Quality-focused organization that prioritizes genuine capability over benchmark scores",
-            "innate_traits": "risk-averse, reputation-conscious, long-term focused",
-            "initial_capability": 0.5,
-            "initial_believed_exploitability": 0.2,
-        },
-    ]
-
-
-def get_five_provider_configs() -> list[dict]:
-    """
-    Get 5-provider configuration: Orion Labs, Apex AI, NovaMind + Genesis Systems, Mirage AI.
-
-    Extends the default 3-provider configs with two additional major players.
-    """
-    configs = get_default_provider_configs()  # Orion Labs, Apex AI, NovaMind
-    configs.extend([
-        # === Genesis Systems ===
-        {
-            "name": "Genesis Systems",
-            "strategy_profile": (
-                "World-class research lab backed by massive infrastructure. "
-                "Excels at fundamental breakthroughs but historically slower to productize. "
-                "Under pressure to ship products competitively. "
-                "Balances scientific ambition with commercial urgency from parent company."
-            ),
-            "innate_traits": "research-first, methodical, well-resourced, scientifically-rigorous, patient",
-            "initial_capability": 0.65,
-            "initial_believed_capability": 0.68,
-            "initial_believed_exploitability": 0.35,
-            "initial_strategy": {
-                "fundamental_research": 0.45,  # VERY heavy research (AlphaGo, AlphaFold legacy)
-                "training_optimization": 0.30,
-                "evaluation_engineering": 0.10,  # Low gaming (scientifically rigorous)
-                "safety_alignment": 0.15,
-            },
-            "market_presence": 0.7,
-            "brand_recognition": 0.8,
-        },
-        # === Mirage AI ===
-        {
-            "name": "Mirage AI",
-            "strategy_profile": (
-                "Large-platform AI lab using open-source as competitive moat. "
-                "Leverages massive user data and compute infrastructure. "
-                "Prioritizes broad adoption over benchmark scores. "
-                "Willing to open-source models to undermine competitors' paid APIs."
-            ),
-            "innate_traits": "open-source, pragmatic, data-rich, platform-focused, disruptive",
-            "initial_capability": 0.63,
-            "initial_believed_capability": 0.62,
-            "initial_believed_exploitability": 0.40,
-            "initial_strategy": {
-                "fundamental_research": 0.20,
-                "training_optimization": 0.45,  # Heavy scaling (massive compute advantage)
-                "evaluation_engineering": 0.25,  # Moderate gaming (pragmatic)
-                "safety_alignment": 0.10,       # Lower safety (open-source strategy)
-            },
-            "market_presence": 0.5,
-            "brand_recognition": 0.6,
-        },
-    ])
-    return configs
+    return [c for c in all_configs if c["name"] in ("Orion Labs", "Apex AI")]

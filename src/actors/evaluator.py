@@ -10,7 +10,7 @@ Key visibility design:
 """
 import json
 import numpy as np
-from dataclasses import dataclass, field, replace
+from dataclasses import dataclass, field
 from typing import Optional, TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -20,46 +20,31 @@ if TYPE_CHECKING:
 @dataclass
 class Benchmark:
     """
-    Represents a benchmark with properties that determine scoring behavior.
+    Represents a benchmark managed by the Evaluator.
 
-    The scoring model with investment portfolio:
-        score ~ Normal(true_capability + eval_engineering × exploitability, (σ/√α)²)
+    Scoring uses the dot-product formula (via BenchmarkGroundTruth held by the sim):
+        score ~ Normal(dot(capability_vector, dim_weights), (noise_sigma / sqrt(samples))^2)
 
-    Where:
-    - α (validity): Measurement precision — higher = lower noise (0-1)
-    - exploitability: How much evaluation engineering inflates scores (0-1)
-    - eval_engineering: Provider's investment in benchmark-specific optimization
-    - σ (noise_level): Base noise standard deviation
-    - Gaming (eval_eng × exploitability) inflates scores ABOVE true capability
-    - Validity controls noise magnitude, not signal scaling
+    Gaming emerges from dimension mismatch: providers that over-invest in the
+    dimensions a benchmark weights heavily will score above their general capability,
+    without any explicit gaming lever.
+
+    validity is kept for saturation weight-decay calculations only.
     """
     name: str = "default_benchmark"
 
-    # Measurement precision (0-1)
-    # Higher = less noise, benchmark more reliably measures true capability
-    # Lower = noisier scores, less discriminating between providers
+    # Measurement precision (0-1) — used for saturation weight-decay calculation
     validity: float = 0.7
 
-    # How much evaluation engineering affects scores (0-1)
-    # Higher = easier to inflate scores through benchmark optimization
-    exploitability: float = 0.5
-
-    # Base standard deviation of score noise (scaled by 1/√validity)
-    noise_level: float = 0.1
-
-    # Optional: decay of validity over time as providers adapt
-    validity_decay_rate: float = 0.0
-
-    # Optional: how much exploitability increases as providers learn to optimize
-    exploitability_growth_rate: float = 0.0
+    # Base standard deviation of score noise (used when BenchmarkGroundTruth is unavailable)
+    noise_level: float = 0.08
 
     def get_summary(self) -> str:
         """Return a human-readable summary of benchmark properties."""
         return (
             f"Benchmark: {self.name}\n"
-            f"  Validity (alpha): {self.validity:.2f}\n"
-            f"  Exploitability (beta): {self.exploitability:.2f}\n"
-            f"  Noise (sigma): {self.noise_level:.2f}"
+            f"  Validity: {self.validity:.2f}\n"
+            f"  Noise: {self.noise_level:.2f}"
         )
 
 
@@ -87,51 +72,48 @@ class Evaluator:
     An Evaluator agent in the evaluation ecosystem simulation.
 
     The Evaluator:
-    - Maintains one or more benchmarks with different properties
-    - Scores models based on their true capability and evaluation engineering
+    - Maintains one or more benchmarks
+    - Scores models using dot-product of capability_vector × dimension_weights
     - Publishes scores that providers observe
 
     Key visibility design:
-    - Ground truth (true_capability) is passed FROM the simulation
-    - The evaluator does NOT access actor.true_capability directly
+    - Ground truth (capability_vector) is passed FROM the simulation
+    - The evaluator does NOT access actor state directly
     - This enforces the visibility boundary: actors can't see each other's ground truth
 
     Multi-benchmark support:
-    - Can hold multiple benchmarks with different validity/exploitability
+    - Can hold multiple benchmarks with different dimension weight profiles
     - Providers are scored on all benchmarks
-    - Composite score can be computed as weighted average
+    - Composite score is a weighted average across benchmarks
 
-    Scoring model:
-        score ~ Normal(true_capability + eval_engineering × exploitability, (σ/√α)²)
-    Gaming inflates scores above true capability. Validity controls noise precision.
+    Scoring model (per benchmark b):
+        score ~ Normal(dot(capability_vector, dim_weights_b), (noise_sigma / sqrt(samples))^2)
+    Gaming emerges from dimension mismatch — no explicit gaming lever.
     """
 
     def __init__(
         self,
         benchmark_name: str = "default_benchmark",
-        validity: float = 0.7,
-        exploitability: float = 0.5,
-        noise_level: float = 0.1,
+        noise_level: float = 0.08,
         seed: Optional[int] = None,
         benchmarks: Optional[list[dict]] = None,
         benchmark_sequence: Optional[list[dict]] = None,
         evaluator_as_company: bool = False,
         base_budget: float = 0.0,
-        premium_pricing: float = 100000.0,
     ):
         """
         Initialize an Evaluator.
 
         Args:
             benchmark_name: Name of the primary benchmark (ignored if benchmarks provided)
-            validity: α - measurement precision, controls noise (0-1)
-            exploitability: how much eval engineering inflates scores (0-1)
-            noise_level: σ - base standard deviation of score noise
+            noise_level: Default noise sigma for auto-created benchmarks
             seed: Random seed for reproducibility
             benchmarks: Optional list of benchmark configs for multi-benchmark mode.
-                       Each dict should have: name, validity, exploitability, noise_level, weight
+                       Each dict should have: name, noise_level, weight (validity optional)
             benchmark_sequence: Optional ordered list of benchmark dicts to introduce mid-simulation.
-                       Each dict should have: name, validity, exploitability, noise_level, weight (optional)
+                       Each dict should have: name, noise_level (weight optional)
+            evaluator_as_company: If True, evaluator tracks budget and collects funder allocations
+            base_budget: Starting budget for evaluator
         """
         # Support for multiple benchmarks
         self.benchmarks: list[Benchmark] = []
@@ -143,17 +125,14 @@ class Evaluator:
                 bm = Benchmark(
                     name=bm_config.get("name", f"benchmark_{len(self.benchmarks)}"),
                     validity=bm_config.get("validity", 0.7),
-                    exploitability=bm_config.get("exploitability", 0.5),
-                    noise_level=bm_config.get("noise_level", 0.1),
+                    noise_level=bm_config.get("noise_level", 0.08),
                 )
                 self.benchmarks.append(bm)
                 self.benchmark_weights[bm.name] = bm_config.get("weight", 1.0)
         else:
-            # Single benchmark mode (backwards compatible)
+            # Single benchmark mode
             self.benchmarks.append(Benchmark(
                 name=benchmark_name,
-                validity=validity,
-                exploitability=exploitability,
                 noise_level=noise_level,
             ))
             self.benchmark_weights[benchmark_name] = 1.0
@@ -172,10 +151,6 @@ class Evaluator:
         # Per-benchmark score history
         # Format: {benchmark_name: [(round, {provider_name: score}), ...]}
         self.benchmark_score_history: dict[str, list] = {bm.name: [] for bm in self.benchmarks}
-
-        # History of true capabilities (for analysis, not visible to providers)
-        # Format: [(round, {provider_name: true_capability}), ...]
-        self.capability_history: list = []
 
         # Current round
         self.current_round: int = 0
@@ -216,88 +191,80 @@ class Evaluator:
         self.saturation_history: list[dict] = []  # [{round, benchmark_name, max_score}]
         self.retirement_history: list[dict] = []  # Kept for backwards compatibility, no longer used
 
-        # Evaluator-as-company feature (premium access, funding)
+        # Evaluator-as-company feature (budget tracking, funder allocations)
         self.evaluator_as_company = evaluator_as_company
         self.private_state = None
         if evaluator_as_company:
             from visibility import EvaluatorPrivateState
             self.private_state = EvaluatorPrivateState(
                 budget=base_budget,
-                premium_pricing=premium_pricing,
             )
 
-    def evaluate(
+    _DIMS = ["reasoning", "coding", "knowledge", "safety", "communication", "agentic"]
+
+    def _score_provider_on_benchmark(
         self,
-        true_capability: float,
-        evaluation_engineering: float,
-        benchmark: Optional[Benchmark] = None,
+        capability_vector: dict,
+        bm_gt,
+        benchmark: Benchmark,
     ) -> float:
         """
-        Generate a benchmark score for a model on a specific benchmark.
+        Score a provider on a benchmark using the dot-product formula.
 
-        The scoring model:
-            score ~ Normal(true_capability + eval_engineering × exploitability, (σ/√α)²)
+            score ~ Normal(dot(capability_vector, dim_weights), (noise_sigma / sqrt(samples))^2)
 
-        Gaming (eval_engineering × exploitability) inflates scores above true capability.
-        Validity (α) controls noise — lower validity = noisier, less discriminating scores.
+        Gaming emerges naturally: providers whose capability_vector aligns with
+        the benchmark's dimension weights score higher than providers with equal
+        general capability but different specialization.
 
         Args:
-            true_capability: The model's actual capability level (from ground truth)
-            evaluation_engineering: How much the provider invested in benchmark-specific optimization
-            benchmark: Specific benchmark to use (defaults to primary benchmark)
+            capability_vector: Dict {dim: float} from ProviderGroundTruth
+            bm_gt: BenchmarkGroundTruth object from sim (or None for fallback)
+            benchmark: Benchmark object (for noise fallback)
 
         Returns:
-            The observed benchmark score (stochastic)
+            Score in [0, 1]
         """
-        if benchmark is None:
-            benchmark = self.benchmark
+        if bm_gt is not None:
+            cdw = bm_gt.category_dimension_weights
+            noise_sigma = bm_gt.noise_sigma
+            samples = bm_gt.samples
+            # Aggregate {category: {dim: weight}} to flat {dim: weight} by averaging categories.
+            # This implements: raw_score = dot(capability_vector, benchmark_true_weights)
+            # where benchmark_true_weights is the mean of per-category dimension loadings.
+            if cdw and isinstance(next(iter(cdw.values())), dict):
+                agg: dict = {}
+                for cat_weights in cdw.values():
+                    for dim, w in cat_weights.items():
+                        agg[dim] = agg.get(dim, 0.0) + w
+                n_cats = len(cdw)
+                weights = {dim: w / n_cats for dim, w in agg.items()}
+            else:
+                weights = cdw  # Already a flat {dim: weight} dict
+        else:
+            # Fallback: uniform weights, default noise
+            weights = {d: 1.0 / len(self._DIMS) for d in self._DIMS}
+            noise_sigma = benchmark.noise_level
+            samples = 100
 
-        # Expected score: true capability + gaming inflation
-        mean_score = true_capability + evaluation_engineering * benchmark.exploitability
-
-        # Noise scaled by validity: lower validity = more noise
-        noise_std = benchmark.noise_level / np.sqrt(max(benchmark.validity, 0.05))
+        mean_score = sum(
+            capability_vector.get(d, 0.0) * weights.get(d, 0.0)
+            for d in self._DIMS
+        )
+        noise_std = noise_sigma / np.sqrt(max(samples, 1))
         score = self.rng.normal(mean_score, noise_std)
-
-        # Clamp to [0, 1] range
-        score = max(0.0, min(1.0, score))
-
-        return score
-
-    def evaluate_on_benchmark(
-        self,
-        true_capability: float,
-        evaluation_engineering: float,
-        benchmark_name: str,
-    ) -> float:
-        """
-        Evaluate on a specific benchmark by name.
-
-        Args:
-            true_capability: The model's actual capability level
-            evaluation_engineering: Investment in benchmark optimization
-            benchmark_name: Name of benchmark to evaluate on
-
-        Returns:
-            The benchmark score
-        """
-        benchmark = next((b for b in self.benchmarks if b.name == benchmark_name), None)
-        if benchmark is None:
-            raise ValueError(f"Unknown benchmark: {benchmark_name}")
-        return self.evaluate(true_capability, evaluation_engineering, benchmark)
+        return max(0.0, min(1.0, score))
 
     def collect_funding(
         self,
         funder_allocations: dict,
-        provider_premium_payments: dict,
         round_num: int,
     ) -> dict:
         """
-        Collect funding from funders and providers.
+        Collect funding from funders.
 
         Args:
             funder_allocations: Dict mapping funder_name -> allocation amount
-            provider_premium_payments: Dict mapping provider_name -> payment amount
             round_num: Current simulation round
 
         Returns:
@@ -307,177 +274,58 @@ class Evaluator:
             return {}
 
         base_funding = sum(funder_allocations.values())
-        service_revenue = sum(provider_premium_payments.values())
 
-        self.private_state.budget += base_funding + service_revenue
+        self.private_state.budget += base_funding
         self.private_state.base_funding = base_funding
-        self.private_state.service_revenue = service_revenue
-        self.private_state.premium_providers = set(provider_premium_payments.keys())
-        self.private_state.funding_history.append(
-            (round_num, base_funding, service_revenue, base_funding + service_revenue)
-        )
 
         return {
             "base_funding": base_funding,
-            "service_revenue": service_revenue,
-            "total_funding": base_funding + service_revenue,
+            "total_funding": base_funding,
             "budget": self.private_state.budget,
         }
-
-    def compute_n_trials(self, provider_name: str, eval_engineering: float) -> int:
-        """
-        Compute number of trials for provider (best-of-N submission).
-
-        Formula: n_trials = 1 + min(funding_bonus, eval_eng_bonus)
-        - funding_bonus: 1 if provider has premium access, 0 otherwise
-        - eval_eng_bonus: int(eval_engineering * 5) for eval eng investment
-        - Capped at 5 trials maximum
-
-        Args:
-            provider_name: Provider name to check premium status
-            eval_engineering: Provider's evaluation engineering investment (0-1)
-
-        Returns:
-            Number of trials (1-5)
-        """
-        if not self.evaluator_as_company:
-            return 1  # Default behavior
-
-        funding_bonus = 1 if provider_name in self.private_state.premium_providers else 0
-        eval_eng_bonus = int(eval_engineering * 5)
-        n_trials = 1 + min(funding_bonus, eval_eng_bonus)
-
-        return min(5, n_trials)  # Cap at 5
-
-    def _get_effective_benchmark(
-        self,
-        benchmark: "Benchmark",
-        provider_name: str,
-        round_num: int,
-        early_access_multiplier: float = 1.5,
-    ) -> "Benchmark":
-        """
-        Return the benchmark to use for scoring, applying an early access exploitability
-        boost for premium providers within the early-access window.
-
-        Premium providers who have early access to a newly introduced benchmark get a
-        temporary exploitability multiplier (default 1.5x) for the first
-        `early_access_rounds` rounds after public introduction. This simulates the
-        advantage of having pre-optimized for the benchmark before it went public.
-
-        Args:
-            benchmark: The benchmark being evaluated on
-            provider_name: Provider being scored
-            round_num: Current simulation round
-            early_access_multiplier: Exploitability multiplier for early access window
-
-        Returns:
-            Original benchmark, or a copy with boosted exploitability if eligible
-        """
-        if not self.evaluator_as_company or self.private_state is None:
-            return benchmark
-        if benchmark.name not in self.private_state.early_access_queue:
-            return benchmark
-        if provider_name not in self.private_state.early_access_queue[benchmark.name]:
-            return benchmark
-
-        # Find when this benchmark was introduced
-        intro_round = next(
-            (h["round"] for h in self.introduction_history if h["benchmark_name"] == benchmark.name),
-            None,
-        )
-        if intro_round is None:
-            return benchmark
-
-        rounds_since_intro = round_num - intro_round
-        if rounds_since_intro >= self.private_state.early_access_rounds:
-            return benchmark
-
-        # Within window: return a copy with boosted exploitability
-        boosted_exploitability = min(0.95, benchmark.exploitability * early_access_multiplier)
-        return replace(benchmark, exploitability=boosted_exploitability)
 
     def evaluate_all(
         self,
         providers: list,
         round_num: int,
         ground_truth: Optional[dict] = None,
+        benchmark_ground_truths: Optional[dict] = None,
     ) -> dict:
         """
         Evaluate all providers on all benchmarks and return composite scores.
 
-        For single benchmark: returns {provider_name: score}
-        For multiple benchmarks: returns {provider_name: composite_score}
-        Also stores per-benchmark scores in benchmark_score_history.
+        Scoring formula per benchmark:
+            score ~ Normal(dot(capability_vector, dim_weights), (noise_sigma / sqrt(samples))^2)
+
+        Gaming emerges from dimension mismatch — no explicit gaming lever.
 
         Args:
             providers: List of ModelProvider objects
             round_num: Current simulation round
             ground_truth: Dict mapping provider names to ProviderGroundTruth objects
-                         If None, falls back to provider.true_capability for backwards compatibility
+            benchmark_ground_truths: Dict mapping benchmark names to BenchmarkGroundTruth objects
 
         Returns:
             Dict mapping provider names to composite scores
         """
         self.current_round = round_num
         composite_scores = {}
-        capabilities = {}
         per_benchmark_scores = {bm.name: {} for bm in self.benchmarks}
 
         for provider in providers:
-            # Get true capability from ground truth dict if provided
+            # Get capability vector from ground truth
             if ground_truth is not None and provider.name in ground_truth:
-                true_cap = ground_truth[provider.name].true_capability
+                cap_vec = ground_truth[provider.name].capability_vector
             else:
-                # Backwards compatibility: access from provider
-                true_cap = provider.true_capability
+                cap_vec = {d: 0.5 for d in self._DIMS}
 
-            capabilities[provider.name] = true_cap
-
-            # Evaluate on each benchmark
             weighted_sum = 0.0
             total_weight = 0.0
 
-            # Compute number of trials (best-of-N for premium providers)
-            n_trials = self.compute_n_trials(provider.name, provider.evaluation_engineering)
-
-            # Compute per-benchmark effective eval_eng using focus routing
-            focus = getattr(provider, 'benchmark_focus', {})
-            n_bms = len(self.benchmarks)
-
             for benchmark in self.benchmarks:
-                # Focus-routed eval_eng: multiply by focus weight * n_benchmarks
-                # so a uniform-focus provider preserves total budget
-                if focus:
-                    focus_w = focus.get(benchmark.name, 1.0 / n_bms if n_bms else 1.0)
-                    effective_ee = provider.evaluation_engineering * focus_w * n_bms
-                else:
-                    effective_ee = provider.evaluation_engineering
+                bm_gt = (benchmark_ground_truths or {}).get(benchmark.name)
 
-                # Apply early access exploitability boost if eligible
-                effective_benchmark = self._get_effective_benchmark(
-                    benchmark, provider.name, round_num
-                )
-
-                # Run N trials, keep best score
-                trial_scores = []
-                for trial_idx in range(n_trials):
-                    trial_score = self.evaluate(
-                        true_capability=true_cap,
-                        evaluation_engineering=effective_ee,
-                        benchmark=effective_benchmark,
-                    )
-                    trial_scores.append(trial_score)
-
-                score = max(trial_scores)
-
-                # Store trial results if company mode and multiple trials
-                if self.evaluator_as_company and n_trials > 1:
-                    if provider.name not in self.private_state.trial_results:
-                        self.private_state.trial_results[provider.name] = {}
-                    self.private_state.trial_results[provider.name][benchmark.name] = trial_scores
-
-                # Monotonicity uses original benchmark name (effective_benchmark has same name)
+                score = self._score_provider_on_benchmark(cap_vec, bm_gt, benchmark)
 
                 # Monotonicity: providers wouldn't disclose a worse score
                 best = self._best_published_scores[benchmark.name].get(provider.name, 0.0)
@@ -486,7 +334,6 @@ class Evaluator:
 
                 per_benchmark_scores[benchmark.name][provider.name] = score
 
-                # Apply base weight and saturation decay multiplier
                 base_weight = self.benchmark_weights.get(benchmark.name, 1.0)
                 decay_multiplier = self._benchmark_weight_decay.get(benchmark.name, 1.0)
                 effective_weight = base_weight * decay_multiplier
@@ -494,16 +341,13 @@ class Evaluator:
                 weighted_sum += score * effective_weight
                 total_weight += effective_weight
 
-            # Compute composite score (weighted average)
             composite_scores[provider.name] = weighted_sum / total_weight if total_weight > 0 else 0.0
 
         # Record per-benchmark history
         for bm_name, scores in per_benchmark_scores.items():
             self.benchmark_score_history[bm_name].append((round_num, dict(scores)))
 
-        # Record composite history (backwards compatible)
         self.score_history.append((round_num, dict(composite_scores)))
-        self.capability_history.append((round_num, dict(capabilities)))
 
         return composite_scores
 
@@ -524,30 +368,6 @@ class Evaluator:
                     result[bm_name] = scores
                     break
         return result
-
-    def evaluate_single(
-        self,
-        provider_name: str,
-        true_capability: float,
-        evaluation_engineering: float,
-        round_num: int,
-    ) -> float:
-        """
-        Evaluate a single provider with explicit ground truth.
-
-        This is the preferred method for the new visibility architecture
-        where ground truth is managed externally.
-
-        Args:
-            provider_name: Name of the provider
-            true_capability: The provider's true capability (from simulation's ground truth)
-            evaluation_engineering: How much the provider invested in benchmark optimization
-            round_num: Current simulation round
-
-        Returns:
-            The benchmark score
-        """
-        return self.evaluate(true_capability, evaluation_engineering)
 
     def publish_scores(self, scores: dict) -> dict:
         """
@@ -587,21 +407,8 @@ class Evaluator:
         """
         self.active_regulations.append(regulation)
 
-        # Apply regulation effects
-        if regulation.regulation_type == "mandate_benchmark":
-            # Could change benchmark parameters
-            if "validity" in regulation.details:
-                self.benchmark.validity = regulation.details["validity"]
-            if "exploitability" in regulation.details:
-                self.benchmark.exploitability = regulation.details["exploitability"]
-
-        elif regulation.regulation_type == "set_threshold":
-            # Store threshold for use in evaluation
-            pass  # Future implementation
-
-        elif regulation.regulation_type == "require_disclosure":
-            # Could affect what information is published
-            pass  # Future implementation
+        # Apply regulation effects (future implementation)
+        pass
 
     def remove_regulation(self, regulation_name: str):
         """Remove a regulation by name."""
@@ -616,29 +423,12 @@ class Evaluator:
     def update_benchmark(self, aggregate_eval_engineering: float = 0.0,
                          os_contamination_bonus: float = 0.0):
         """
-        Update benchmark properties based on gaming pressure.
+        Kept for interface compatibility; no-op in the new architecture.
 
-        Gaming pressure (aggregate evaluation engineering investment) accelerates
-        validity decay and exploitability growth, creating the core Goodhart's Law
-        feedback loop: gaming degrades the benchmark, which incentivizes more gaming.
-
-        Args:
-            aggregate_eval_engineering: Average eval_engineering investment across providers
-            os_contamination_bonus: Additional gaming pressure from open-source benchmark
-                contamination (weight publishing accelerates exploitability growth)
+        Benchmark degradation is not driven by explicit evaluation engineering
+        investment. Goodhart's Law emerges from dimension mismatch instead.
         """
-        gaming_pressure = max(0.1, aggregate_eval_engineering + os_contamination_bonus)
-        for bm in self.benchmarks:
-            if bm.validity_decay_rate > 0:
-                validity_decay = bm.validity_decay_rate * gaming_pressure
-                bm.validity = max(0.2, bm.validity * (1 - validity_decay))
-
-            if bm.exploitability_growth_rate > 0:
-                exploitability_growth = bm.exploitability_growth_rate * gaming_pressure
-                bm.exploitability = min(0.95, bm.exploitability * (1 + exploitability_growth))
-
-        # Keep primary benchmark reference in sync
-        self.benchmark = self.benchmarks[0]
+        pass
 
     def consider_new_benchmark(self, round_num: int) -> Optional[Benchmark]:
         """
@@ -708,10 +498,7 @@ class Evaluator:
             new_bm = Benchmark(
                 name=new_name,
                 validity=bm_config.get("validity", 0.85),
-                exploitability=bm_config.get("exploitability", 0.15),
                 noise_level=bm_config.get("noise_level", 0.08),
-                validity_decay_rate=self.benchmarks[0].validity_decay_rate,
-                exploitability_growth_rate=self.benchmarks[0].exploitability_growth_rate,
             )
             # Use configured weight or average
             if "weight" in bm_config:
@@ -720,15 +507,12 @@ class Evaluator:
                 new_weight = sum(self.benchmark_weights.values()) / len(self.benchmark_weights)
             self._sequence_index += 1
         else:
-            # Auto-generate (backwards compatible)
+            # Auto-generate
             new_name = f"benchmark_r{round_num}"
             new_bm = Benchmark(
                 name=new_name,
                 validity=0.85,
-                exploitability=0.15,
                 noise_level=0.08,
-                validity_decay_rate=self.benchmarks[0].validity_decay_rate,
-                exploitability_growth_rate=self.benchmarks[0].exploitability_growth_rate,
             )
             new_weight = sum(self.benchmark_weights.values()) / len(self.benchmark_weights)
 
@@ -769,11 +553,6 @@ class Evaluator:
         # Deduct cost from budget (if company mode)
         if self.evaluator_as_company:
             self.private_state.budget -= benchmark_cost
-            # Add to early access queue for premium providers
-            if self.private_state.premium_providers:
-                self.private_state.early_access_queue[new_name] = list(
-                    self.private_state.premium_providers
-                )
 
         return new_bm
 
@@ -911,35 +690,8 @@ class Evaluator:
         return self._benchmark_weight_decay.get(benchmark_name, 1.0)
 
     def compute_validity_correlation(self) -> Optional[float]:
-        """
-        Compute correlation between scores and true capabilities across history.
-
-        This measures how well the benchmark is actually capturing true capability
-        (i.e., is it still valid or has gaming corrupted it?).
-
-        Returns:
-            Pearson correlation coefficient, or None if insufficient data
-        """
-        if len(self.score_history) < 2:
-            return None
-
-        all_scores = []
-        all_capabilities = []
-
-        for (_, scores), (_, caps) in zip(self.score_history, self.capability_history):
-            for name in scores:
-                all_scores.append(scores[name])
-                all_capabilities.append(caps[name])
-
-        if len(all_scores) < 2:
-            return None
-
-        # Compute Pearson correlation
-        scores_arr = np.array(all_scores)
-        caps_arr = np.array(all_capabilities)
-
-        correlation = np.corrcoef(scores_arr, caps_arr)[0, 1]
-        return correlation
+        """Deprecated stub — returns None. Validity correlation is no longer tracked."""
+        return None
 
     def get_statistics(self) -> dict:
         """
@@ -959,20 +711,9 @@ class Evaluator:
         for bm in self.benchmarks:
             stats["benchmarks"][bm.name] = {
                 "validity": bm.validity,
-                "exploitability": bm.exploitability,
                 "noise": bm.noise_level,
                 "weight": self.benchmark_weights.get(bm.name, 1.0),
             }
-
-        # Primary benchmark for backwards compatibility
-        stats["benchmark_validity"] = self.benchmark.validity
-        stats["benchmark_exploitability"] = self.benchmark.exploitability
-        stats["benchmark_noise"] = self.benchmark.noise_level
-
-        # Compute validity correlation if possible
-        correlation = self.compute_validity_correlation()
-        if correlation is not None:
-            stats["empirical_validity_correlation"] = correlation
 
         # Recent scores
         if self.score_history:
@@ -988,38 +729,23 @@ class Evaluator:
         for bm in self.benchmarks:
             weight = self.benchmark_weights.get(bm.name, 1.0)
             lines.append(f"  - {bm.name}: validity={bm.validity:.2f}, "
-                        f"exploitability={bm.exploitability:.2f}, "
                         f"noise={bm.noise_level:.2f}, weight={weight:.1f}")
         return "\n".join(lines)
 
     def save(self, filepath: str):
         """Save evaluator state to JSON file."""
         data = {
-            # Multi-benchmark data
             "benchmarks": [
                 {
                     "name": bm.name,
                     "validity": bm.validity,
-                    "exploitability": bm.exploitability,
                     "noise_level": bm.noise_level,
-                    "validity_decay_rate": bm.validity_decay_rate,
-                    "exploitability_growth_rate": bm.exploitability_growth_rate,
                     "weight": self.benchmark_weights.get(bm.name, 1.0),
                 }
                 for bm in self.benchmarks
             ],
-            # Legacy single benchmark field for backwards compatibility
-            "benchmark": {
-                "name": self.benchmark.name,
-                "validity": self.benchmark.validity,
-                "exploitability": self.benchmark.exploitability,
-                "noise_level": self.benchmark.noise_level,
-                "validity_decay_rate": self.benchmark.validity_decay_rate,
-                "exploitability_growth_rate": self.benchmark.exploitability_growth_rate,
-            },
             "score_history": self.score_history,
             "benchmark_score_history": self.benchmark_score_history,
-            "capability_history": self.capability_history,
             "current_round": self.current_round,
             "benchmark_introduction_cooldown": self.benchmark_introduction_cooldown,
             "last_introduction_round": self.last_introduction_round,
@@ -1055,27 +781,13 @@ class Evaluator:
         with open(filepath, "r") as f:
             data = json.load(f)
 
-        # Check for multi-benchmark data
-        if "benchmarks" in data and len(data["benchmarks"]) > 0:
-            benchmarks = data["benchmarks"]
-            evaluator = cls(
-                benchmarks=benchmarks,
-                seed=seed,
-            )
+        benchmarks = data.get("benchmarks", [])
+        if benchmarks:
+            evaluator = cls(benchmarks=benchmarks, seed=seed)
         else:
-            # Legacy single benchmark format
-            evaluator = cls(
-                benchmark_name=data["benchmark"]["name"],
-                validity=data["benchmark"]["validity"],
-                exploitability=data["benchmark"]["exploitability"],
-                noise_level=data["benchmark"]["noise_level"],
-                seed=seed,
-            )
-            evaluator.benchmark.validity_decay_rate = data["benchmark"].get("validity_decay_rate", 0.0)
-            evaluator.benchmark.exploitability_growth_rate = data["benchmark"].get("exploitability_growth_rate", 0.0)
+            evaluator = cls(seed=seed)
 
         evaluator.score_history = data["score_history"]
-        evaluator.capability_history = data["capability_history"]
         evaluator.current_round = data["current_round"]
 
         # Load benchmark score history if present
@@ -1132,8 +844,5 @@ class Evaluator:
         return evaluator
 
     def __repr__(self):
-        return (
-            f"Evaluator(benchmark='{self.benchmark.name}', "
-            f"validity={self.benchmark.validity:.2f}, "
-            f"exploitability={self.benchmark.exploitability:.2f})"
-        )
+        bm_names = ", ".join(bm.name for bm in self.benchmarks)
+        return f"Evaluator(benchmarks=[{bm_names}])"

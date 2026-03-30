@@ -85,10 +85,8 @@ class Funder:
             total_capital=total_capital,
             deployed_capital=0.0,
             believed_provider_quality={},
-            believed_provider_gaming={},
             active_funding={},
             funding_history=[],
-            roi_history=[],
         )
 
         # Funder-specific parameters
@@ -164,82 +162,20 @@ class Funder:
         self._other_funder_allocations = other_funder_allocations or {}
         self._open_source_providers = open_source_providers or set()
 
-        # Update beliefs about provider quality using public signals
+        # Update beliefs about provider quality from benchmark scores at face value
+        # Per observation model: funders see scores directly, not validity-adjusted
         for provider_name, score in leaderboard:
-            # Get consumer satisfaction (if available)
-            satisfaction = self._get_provider_satisfaction(provider_name, consumer_data)
-
-            # Infer quality: blend of score and satisfaction
-            # Satisfaction is a better proxy for true quality
-            if satisfaction is not None:
-                inferred_quality = 0.4 * score + 0.6 * satisfaction
-            else:
-                inferred_quality = score
-
-            # Update belief with learning rate
             if provider_name not in self.private_state.believed_provider_quality:
-                self.private_state.believed_provider_quality[provider_name] = inferred_quality
+                self.private_state.believed_provider_quality[provider_name] = score
             else:
                 learning_rate = 0.3
                 old_belief = self.private_state.believed_provider_quality[provider_name]
                 self.private_state.believed_provider_quality[provider_name] = (
-                    (1 - learning_rate) * old_belief + learning_rate * inferred_quality
+                    (1 - learning_rate) * old_belief + learning_rate * score
                 )
 
-            # Infer gaming level from satisfaction gap
-            # High score + low satisfaction = likely gaming
-            if satisfaction is not None:
-                satisfaction_gap = score - satisfaction
-                # Positive gap suggests gaming
-                gaming_estimate = max(0, min(1, satisfaction_gap * 2))
-            else:
-                gaming_estimate = 0.3  # Default assumption
-
-            if provider_name not in self.private_state.believed_provider_gaming:
-                self.private_state.believed_provider_gaming[provider_name] = gaming_estimate
-            else:
-                old_gaming = self.private_state.believed_provider_gaming[provider_name]
-                self.private_state.believed_provider_gaming[provider_name] = (
-                    0.7 * old_gaming + 0.3 * gaming_estimate
-                )
-
-        # Media coverage influences funder sentiment
-        if media_coverage:
-            sentiment = media_coverage.get("sentiment", 0.0)
-            provider_attention = media_coverage.get("provider_attention", {})
-            risk_signals = media_coverage.get("risk_signals", [])
-
-            # Negative coverage about a provider increases believed_gaming
-            for provider_name in [name for name, _ in leaderboard]:
-                attention = provider_attention.get(provider_name, 0)
-                if attention > 0.3 and risk_signals:
-                    # High media attention + risk signals → increase gaming estimate
-                    gaming_bump = attention * 0.1
-                    if provider_name in self.private_state.believed_provider_gaming:
-                        self.private_state.believed_provider_gaming[provider_name] = min(
-                            1.0,
-                            self.private_state.believed_provider_gaming[provider_name] + gaming_bump,
-                        )
-
-        # Incidents influence gaming beliefs and risk assessment
+        # Track incident history per provider (last 3 rounds)
         if incidents:
-            severity_impact = {"minor": 0.03, "moderate": 0.08, "major": 0.15, "critical": 0.25}
-            for incident in incidents:
-                provider = incident.provider
-                impact = severity_impact.get(incident.severity, 0.05)
-
-                # Incidents suggest either low safety investment or capability gaps
-                # Increase gaming suspicion (high scores but real-world failures)
-                if provider in self.private_state.believed_provider_gaming:
-                    self.private_state.believed_provider_gaming[provider] = min(
-                        1.0,
-                        self.private_state.believed_provider_gaming[provider] + impact
-                    )
-                else:
-                    self.private_state.believed_provider_gaming[provider] = impact
-
-            # Track incident counts for funding penalty
-            # Store recent incidents (last 3 rounds) per provider
             if not hasattr(self, '_recent_incident_counts'):
                 self._recent_incident_counts = {}
 
@@ -247,7 +183,6 @@ class Funder:
                 provider = incident.provider
                 if provider not in self._recent_incident_counts:
                     self._recent_incident_counts[provider] = []
-                # Store (round_num, severity) tuple
                 self._recent_incident_counts[provider].append((round_num, incident.severity))
 
             # Prune old incidents (keep only last 3 rounds)
@@ -256,7 +191,6 @@ class Funder:
                     (r, s) for r, s in self._recent_incident_counts[provider]
                     if r >= round_num - 3
                 ]
-                # Remove empty lists
                 if not self._recent_incident_counts[provider]:
                     del self._recent_incident_counts[provider]
 
@@ -283,77 +217,20 @@ class Funder:
             "type": "observation",
             "round": round_num,
             "leaderboard": leaderboard,
-            "avg_satisfaction": consumer_data.get("avg_satisfaction"),
             "interventions": len(policymaker_data.get("interventions", [])),
         })
-
-    def _get_provider_satisfaction(
-        self,
-        provider_name: str,
-        consumer_data: dict,
-    ) -> Optional[float]:
-        """
-        Get average satisfaction for a provider from consumer market data.
-
-        Supports both new format (provider_satisfaction dict) and legacy
-        format (individual subscriptions/satisfaction).
-
-        Args:
-            provider_name: Provider to get satisfaction for
-            consumer_data: Consumer data from the round
-
-        Returns:
-            Average satisfaction or None if no data
-        """
-        if not consumer_data:
-            return None
-
-        # New format: direct per-provider satisfaction
-        provider_sat = consumer_data.get("provider_satisfaction", {})
-        if provider_sat and provider_name in provider_sat:
-            return provider_sat[provider_name]
-
-        # Fallback to overall average
-        return consumer_data.get("avg_satisfaction")
 
     def reflect(self):
         """
         Reflect on observations and update beliefs about providers.
 
         Consider:
-        - ROI from previous funding decisions
         - Provider performance trends
-        - Gaming indicators
+        - Score and market share momentum
         """
-        # Calculate ROI if we have active funding and history
-        if self.private_state.active_funding and len(self.memory) > 1:
-            # Simple ROI: score improvement of funded providers
-            roi = 0.0
-            funded_count = 0
-            for provider, amount in self.private_state.active_funding.items():
-                if provider in self.private_state.believed_provider_quality:
-                    # ROI based on quality improvement (not just score)
-                    quality = self.private_state.believed_provider_quality[provider]
-                    roi += quality * (amount / self.private_state.total_capital)
-                    funded_count += 1
-
-            if funded_count > 0:
-                roi = roi / funded_count
-                self.private_state.roi_history.append(
-                    (self.public_state.current_round, roi)
-                )
-
-        # Update industry trust based on gaming levels
-        avg_gaming = 0
-        if self.private_state.believed_provider_gaming:
-            avg_gaming = sum(self.private_state.believed_provider_gaming.values()) / len(
-                self.private_state.believed_provider_gaming
-            )
-
         self.memory.append({
             "type": "reflection",
             "round": self.public_state.current_round,
-            "avg_believed_gaming": avg_gaming,
             "beliefs": dict(self.private_state.believed_provider_quality),
         })
 
@@ -642,9 +519,8 @@ class Funder:
                 funder_type=self.funder_type,
                 total_capital=capped_capital,
                 believed_provider_quality=self.private_state.believed_provider_quality,
-                believed_provider_gaming=self.private_state.believed_provider_gaming,
                 leaderboard=self._last_leaderboard,
-                consumer_satisfaction=self._last_consumer_data.get("avg_satisfaction"),
+                market_shares=self._last_consumer_data.get("market_shares", {}),
                 recent_history=self.private_state.funding_history[-5:],
                 recent_insights=self.private_state.recent_reasoning[-2:],
                 verbose=False,
@@ -752,24 +628,18 @@ class Funder:
         context += "\n"
 
         if self.private_state.believed_provider_quality:
-            context += "Provider Assessments:\n"
+            context += "Provider Assessments (benchmark scores at face value):\n"
             for name, quality in sorted(
                 self.private_state.believed_provider_quality.items(),
                 key=lambda x: x[1],
                 reverse=True
             ):
-                gaming = self.private_state.believed_provider_gaming.get(name, 0)
-                context += f"  {name}: quality={quality:.2f}, gaming_risk={gaming:.2f}\n"
+                context += f"  {name}: score={quality:.2f}\n"
 
         if self.private_state.active_funding:
             context += "\nCurrent Funding:\n"
             for name, amount in self.private_state.active_funding.items():
                 context += f"  {name}: ${amount:,.0f}\n"
-
-        if self.private_state.roi_history:
-            context += "\nRecent ROI:\n"
-            for round_num, roi in self.private_state.roi_history[-5:]:
-                context += f"  Round {round_num}: {roi:.2%}\n"
 
         return context
 

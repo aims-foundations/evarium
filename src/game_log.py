@@ -364,11 +364,11 @@ class GameLogGenerator:
         new_bm = record.get("new_benchmark")
         if new_bm:
             lines.append("### New Benchmark Introduced")
-            lines.append(
-                f"- **{new_bm['name']}** introduced "
-                f"(validity={new_bm['validity']:.2f}, exploitability={new_bm['exploitability']:.2f})"
-            )
-            lines.append(f"  - Trigger: {new_bm['trigger']}")
+            noise_str = f"noise={new_bm['noise']:.2f}" if "noise" in new_bm else ""
+            weight_str = f"weight={new_bm['weight']:.2f}" if "weight" in new_bm else ""
+            params_str = ", ".join(p for p in [noise_str, weight_str] if p)
+            lines.append(f"- **{new_bm['name']}** introduced ({params_str})")
+            lines.append(f"  - Trigger: {new_bm.get('trigger', 'N/A')}")
             lines.append("")
 
         # Actor reasoning traces (all actor types, both LLM and heuristic)

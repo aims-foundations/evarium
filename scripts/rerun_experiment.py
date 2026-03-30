@@ -307,7 +307,6 @@ def run_from_config(config, source_exp_id, output_dir=None, lightweight=False):
             llm_mode=sim_config.llm_mode,
             benchmark_params={
                 "validity": sim_config.benchmark_validity,
-                "exploitability": sim_config.benchmark_exploitability,
                 "noise": sim_config.benchmark_noise,
             },
             benchmarks=benchmarks,

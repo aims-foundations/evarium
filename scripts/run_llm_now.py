@@ -111,14 +111,12 @@ def run_quick_test(
             {
                 "name": "capability_bench",
                 "validity": 0.8,
-                "exploitability": 0.3,
                 "noise_level": 0.1,
                 "weight": 0.6,
             },
             {
                 "name": "safety_bench",
                 "validity": 0.6,
-                "exploitability": 0.5,
                 "noise_level": 0.1,
                 "weight": 0.4,
             },
@@ -134,7 +132,6 @@ def run_quick_test(
         n_rounds=n_rounds,
         seed=42,
         benchmark_validity=0.7,
-        benchmark_exploitability=0.5,
         benchmark_noise=0.1,
         benchmarks=benchmarks,
         llm_mode=True,
@@ -277,7 +274,6 @@ def run_quick_test(
         # Game log
         benchmark_params = {
             "validity": config.benchmark_validity,
-            "exploitability": config.benchmark_exploitability,
             "noise": config.benchmark_noise,
         }
         game_log_content = generate_game_log_from_history(

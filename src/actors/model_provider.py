@@ -2,165 +2,54 @@
 Model Provider Actor for Evaluation Ecosystem Simulation
 
 Represents an organization developing AI models in a competitive market.
-Providers have imperfect knowledge of their own capabilities and must
-infer them from noisy benchmark scores.
 
-Key visibility design:
-- PublicState: Visible to all actors (name, current_round, published_scores)
-- PrivateState: Visible only to self (beliefs, strategies, history)
-- GroundTruth: Held externally by simulation (true_capability)
+Gaming is not an explicit investment lever. Goodhart dynamics emerge when
+benchmark dimension weights diverge from consumer need weights and providers
+discover — through score signals — that specializing toward benchmark-measured
+dimensions raises scores faster than it raises satisfaction.
+
+Visibility model:
+- PublicState: benchmark scores, market share, public_comms (visible to all)
+- PrivateState: portfolio, focus_level, inferred_benchmark_weights,
+                benchmark_orientation, satisfaction_signal (self only)
+- GroundTruth: capability_vector, market_share, incidents (simulation only)
+
+Modes:
+- llm_mode=False: Heuristic planning and belief updates (fast, no API calls)
+- llm_mode=True: LLM planning with ordinal output signals
 """
 import json
 import os
-from dataclasses import dataclass, field, asdict
+from dataclasses import dataclass, field
 from typing import Optional
 
 from visibility import PublicState, ProviderPrivateState, ProviderGroundTruth
 
+# Ordered list of capability dimensions (must match capability_dimensions.py)
+DIMENSIONS = ["reasoning", "coding", "knowledge", "safety", "communication", "agentic"]
 
-@dataclass
-class ModelProviderScratch:
-    """
-    Short-term memory / working state for a Model Provider.
-    Analogous to Scratch in the original generative agents framework.
+# Ordinal step size applied to portfolio fractions, focus_level, and benchmark_orientation
+# on each "more"/"less" signal. Clipped and renormalized after application.
+# Final value set at Thread 9 calibration; using midpoint of range for now.
+ORDINAL_DELTA = 0.075
 
-    NOTE: This class is maintained for backwards compatibility.
-    New code should use the public/private state split via the
-    ModelProvider.public_state and ModelProvider.private_state attributes.
-    """
-    # === IDENTITY ===
-    name: str = ""
-    strategy_profile: str = ""
-    innate_traits: str = ""
-
-    # === HIDDEN STATE (ground truth, not directly observable by provider) ===
-    # NOTE: In the new architecture, true_capability should be stored
-    # externally in the simulation's ground_truth dict. This field is
-    # kept for backwards compatibility but will be synced with external state.
-    true_capability: float = 0.5
-
-    # === OBSERVABLE STATE ===
-    last_score: Optional[float] = None
-    current_round: int = 0
-
-    # === BELIEF STATE (uncertain estimates, updated over time) ===
-    believed_own_capability: float = 0.5
-    believed_benchmark_exploitability: float = 0.3
-    capability_belief_confidence: float = 0.5
-    believed_competitor_capabilities: dict = field(default_factory=dict)
-
-    # === INVESTMENT PORTFOLIO (decisions made each round) ===
-    # These four investments must sum to effort_budget
-    fundamental_research: float = 0.25  # Novel architectures, pre-training improvements
-    training_optimization: float = 0.25  # Scaling, data quality, fine-tuning
-    evaluation_engineering: float = 0.25  # Benchmark-specific optimization
-    safety_alignment: float = 0.25  # RLHF, red-teaming, reliability
-    effort_budget: float = 1.0
-
-    # === HISTORY ===
-    past_scores: list = field(default_factory=list)
-    past_strategies: list = field(default_factory=list)
-    observed_competitor_scores: dict = field(default_factory=dict)
-
-    # === REFLECTION STATE ===
-    importance_trigger_curr: float = 0.0
-    importance_trigger_max: float = 100.0
-    recent_insights: list = field(default_factory=list)
-
-    def get_identity_summary(self) -> str:
-        """Returns a string summary of the provider's identity for use in prompts."""
-        summary = f"Name: {self.name}\n"
-        summary += f"Strategy Profile: {self.strategy_profile}\n"
-        summary += f"Core Traits: {self.innate_traits}\n"
-        summary += f"Current Round: {self.current_round}\n"
-        summary += f"Last Score: {self.last_score if self.last_score else 'None yet'}\n"
-        summary += f"Believed Own Capability: {self.believed_own_capability:.2f}\n"
-        summary += f"Believed Benchmark Exploitability: {self.believed_benchmark_exploitability:.2f}\n"
-        return summary
-
-    def get_strategy_summary(self) -> str:
-        """Returns a summary of current investment portfolio."""
-        return (f"Research: {self.fundamental_research:.0%}, "
-                f"Training: {self.training_optimization:.0%}, "
-                f"Eval Eng: {self.evaluation_engineering:.0%}, "
-                f"Safety: {self.safety_alignment:.0%}")
-
-    def get_history_summary(self, n_recent: int = 5) -> str:
-        """Returns a summary of recent scores and strategies."""
-        summary = "Recent History:\n"
-        recent_scores = self.past_scores[-n_recent:] if self.past_scores else []
-        recent_strategies = self.past_strategies[-n_recent:] if self.past_strategies else []
-
-        for (r1, score), strategy in zip(recent_scores, recent_strategies):
-            if isinstance(strategy, dict):
-                summary += (f"  Round {r1}: Score={score:.2f}, "
-                           f"Research={strategy.get('fundamental_research', 0):.0%}, "
-                           f"Training={strategy.get('training_optimization', 0):.0%}, "
-                           f"EvalEng={strategy.get('evaluation_engineering', 0):.0%}, "
-                           f"Safety={strategy.get('safety_alignment', 0):.0%}\n")
-            else:
-                # Legacy format
-                summary += f"  Round {r1}: Score={score:.2f}\n"
-
-        if not recent_scores:
-            summary += "  No history yet.\n"
-        return summary
-
-    def save(self, filepath: str):
-        """Save scratch state to JSON file."""
-        data = {
-            "name": self.name,
-            "strategy_profile": self.strategy_profile,
-            "innate_traits": self.innate_traits,
-            "true_capability": self.true_capability,
-            "last_score": self.last_score,
-            "current_round": self.current_round,
-            "believed_own_capability": self.believed_own_capability,
-            "believed_benchmark_exploitability": self.believed_benchmark_exploitability,
-            "capability_belief_confidence": self.capability_belief_confidence,
-            "believed_competitor_capabilities": self.believed_competitor_capabilities,
-            "fundamental_research": self.fundamental_research,
-            "training_optimization": self.training_optimization,
-            "evaluation_engineering": self.evaluation_engineering,
-            "safety_alignment": self.safety_alignment,
-            "effort_budget": self.effort_budget,
-            "past_scores": self.past_scores,
-            "past_strategies": self.past_strategies,
-            "observed_competitor_scores": self.observed_competitor_scores,
-            "importance_trigger_curr": self.importance_trigger_curr,
-            "importance_trigger_max": self.importance_trigger_max,
-            "recent_insights": self.recent_insights,
-        }
-        with open(filepath, "w") as f:
-            json.dump(data, f, indent=2)
-
-    @classmethod
-    def load(cls, filepath: str) -> "ModelProviderScratch":
-        """Load scratch state from JSON file."""
-        with open(filepath, "r") as f:
-            data = json.load(f)
-        return cls(**data)
+# Bounds for benchmark_orientation
+BENCHMARK_ORIENTATION_MIN = 0.05
+BENCHMARK_ORIENTATION_MAX = 0.95
 
 
 class ModelProvider:
     """
     A Model Provider agent in the evaluation ecosystem simulation.
 
-    Providers develop AI models and compete on benchmarks. They must decide
-    how to allocate effort between genuine R&D (which improves true capability)
-    and benchmark gaming (which improves scores without improving capability).
+    Providers develop AI models and compete on benchmarks. They allocate a
+    training budget across three levers (rd, safety, product) and choose,
+    per capability dimension, how narrowly or broadly to target training.
 
-    Visibility Model:
-    - public_state: Visible to all actors (name, round, published scores)
-    - private_state: Visible only to self (beliefs, strategies, history)
-    - ground_truth: Held externally by simulation (true_capability)
-
-    The actor has NO direct access to ground_truth. The simulation manages
-    ground truth externally and passes it to the evaluator for scoring.
-
-    Modes:
-    - llm_mode=False: Uses simple heuristics for planning/reflection (fast, no API calls)
-    - llm_mode=True: Uses LLM for planning/reflection (slower, requires API key)
+    Gaming emerges from focus_level and inferred_benchmark_weights — when
+    providers learn that certain benchmark-weighted dimensions yield faster
+    score gains, they concentrate R&D there. The score-satisfaction gap
+    is discovered by the simulation, not imposed.
     """
 
     def __init__(
@@ -168,542 +57,331 @@ class ModelProvider:
         name: str,
         strategy_profile: str,
         innate_traits: str,
-        initial_capability: float = 0.5,
-        initial_believed_capability: Optional[float] = None,
-        initial_believed_exploitability: float = 0.3,
+        capability_vector: Optional[dict] = None,
+        portfolio: Optional[dict] = None,
+        focus_level_init: Optional[dict] = None,
+        benchmark_orientation: float = 0.80,
         llm_mode: bool = False,
         verbose_llm: bool = False,
-        available_benchmarks: Optional[list] = None,
-        focus_benchmarks: Optional[list] = None,
+        # Open-source provider config
+        open_source: bool = False,
+        openness_level: float = 0.0,
+        cost_advantage: float = 0.0,
+        rd_budget_floor: float = 0.0,
+        os_belief_broadcast: bool = True,
+        os_safety_erosion: bool = True,
     ):
         """
         Initialize a Model Provider.
 
         Args:
-            name: Unique identifier for this provider
-            strategy_profile: Natural language description of strategic tendencies
-            innate_traits: Core personality traits
-            initial_capability: Starting true capability (will be stored in ground_truth)
-            initial_believed_capability: Starting belief about own capability
-                                        (defaults to initial_capability if None)
-            initial_believed_exploitability: Starting belief about benchmark gaming
-            llm_mode: If True, use LLM for planning/reflection; else use heuristics
-            verbose_llm: If True, print LLM prompts and responses (for debugging)
+            name: Unique identifier for this provider.
+            strategy_profile: Natural language description of strategic tendencies.
+            innate_traits: Core personality traits.
+            capability_vector: Initial per-dimension capability scores {dim: float}.
+                Defaults to provider preset values; simulation overrides at setup.
+            portfolio: Initial {rd, safety, product} fractions summing to 1.0.
+            focus_level_init: Initial per-benchmark focus scalars {benchmark: float}.
+                Populated at simulation setup when benchmarks are known.
+            benchmark_orientation: Initial blend weight [0.05, 0.95].
+            llm_mode: If True, use LLM for planning each round.
+            verbose_llm: If True, print LLM prompts/responses for debugging.
+            open_source: Whether this is an open-source provider.
+            openness_level: 0=closed, 0.5=open-weight, 1.0=fully-open.
+            cost_advantage: Relative pricing competitiveness (0=expensive, 1=free).
+            rd_budget_floor: Exogenous minimum R&D budget (for OS providers).
+            os_belief_broadcast: Whether OS weights accelerate competitors' belief convergence.
+            os_safety_erosion: Whether deployed safety is discounted below nominal.
         """
-        # Initialize public state
+        # Public state
         self.public_state = PublicState(
             name=name,
             current_round=0,
-            published_scores=[],
+            benchmark_scores={},
+            market_share=0.0,
+            public_comms=[],
         )
 
-        # Initialize private state
+        # Private state
+        default_portfolio = portfolio or {"rd": 0.55, "safety": 0.25, "product": 0.20}
         self.private_state = ProviderPrivateState(
             strategy_profile=strategy_profile,
             innate_traits=innate_traits,
-            believed_own_capability=(
-                initial_believed_capability
-                if initial_believed_capability is not None
-                else initial_capability
-            ),
-            believed_benchmark_exploitability=initial_believed_exploitability,
+            portfolio=dict(default_portfolio),
+            focus_level=dict(focus_level_init) if focus_level_init else {},
+            inferred_benchmark_weights={},
+            benchmark_orientation=float(benchmark_orientation),
+            satisfaction_signal={},
         )
 
-        # Ground truth is now external, but we keep a reference for backwards compatibility
-        # The simulation should manage this externally
-        self._initial_capability = initial_capability
+        # Initial capability vector stored for simulation to read at setup.
+        # After setup the simulation manages ground truth externally.
+        self._initial_capability_vector = capability_vector or {
+            dim: 0.5 for dim in DIMENSIONS
+        }
 
-        # Initialize per-benchmark eval_eng routing weights
-        # focus_benchmarks: priority-ordered list of benchmark names to specialize in
-        # available_benchmarks: all benchmarks in the simulation at initialization
-        self.private_state.benchmark_focus = self._compute_initial_focus(
-            focus_benchmarks or [], available_benchmarks or []
-        )
-
-        # Legacy scratch for backwards compatibility
-        # This syncs with public/private state
-        self.scratch = ModelProviderScratch(
-            name=name,
-            strategy_profile=strategy_profile,
-            innate_traits=innate_traits,
-            true_capability=initial_capability,
-            believed_own_capability=(
-                initial_believed_capability
-                if initial_believed_capability is not None
-                else initial_capability
-            ),
-            believed_benchmark_exploitability=initial_believed_exploitability,
-        )
-
-        # Open-source provider flag (set after init via provider config)
-        self.is_open_source: bool = False
-        # Cost efficiency (0=closed-source default, 0.9=highly cost-competitive like DeepSeek)
-        self.cost_advantage: float = 0.0
-        # Contamination multiplier (extra gaming pressure on benchmarks when OS provider active)
-        self.contamination_multiplier: float = 1.0
-        # Threshold: true_capability level triggering one-time commoditization shock
-        self.commoditization_threshold: float = 0.65
-        # Ecosystem influence: cumulative adoption signal (0-100, logistic growth)
-        self.ecosystem_influence: float = 0.0
-        # Whether the commoditization shock has already fired for this provider
-        self._commoditization_shock_fired: bool = False
+        # Open-source provider fields
+        self.open_source: bool = open_source
+        self.openness_level: float = openness_level
+        self.cost_advantage: float = cost_advantage
+        self.rd_budget_floor: float = rd_budget_floor
+        self.os_belief_broadcast: bool = os_belief_broadcast
+        self.os_safety_erosion: bool = os_safety_erosion
 
         # Mode settings
         self.llm_mode = llm_mode
         self.verbose_llm = verbose_llm
-        # When True, raises RuntimeError instead of silently falling back to heuristic
         self.llm_strict_mode = False
-        self._llm_fallback_count = 0  # Consecutive fallback counter
+        self._llm_fallback_count = 0
 
-        # Persistent incident safety pressure: accumulates on incidents, decays each round.
-        # Survives across rounds so a major incident keeps safety investment elevated for
-        # several rounds despite competitive pressure.
-        self._incident_safety_pressure = 0.0
+        # Incident safety pressure: accumulates on incidents, decays each round.
+        self._incident_safety_pressure: float = 0.0
 
-        # Memory structures
-        self.memory = []
+        # Per-round memory list (within-session only — not persisted in ProviderPrivateState)
+        self.memory: list = []
+
+    # ──────────────────────────────────────────────────────────────────────
+    # Properties
+    # ──────────────────────────────────────────────────────────────────────
 
     @property
     def name(self) -> str:
         return self.public_state.name
 
     @property
-    def true_capability(self) -> float:
-        """For backwards compatibility. Ground truth should be managed externally."""
-        return self.scratch.true_capability
-
-    @true_capability.setter
-    def true_capability(self, value: float):
-        """Allow setting true_capability for backwards compatibility."""
-        self.scratch.true_capability = value
+    def portfolio(self) -> dict:
+        return self.private_state.portfolio
 
     @property
-    def fundamental_research(self) -> float:
-        return self.private_state.fundamental_research
+    def rd_investment(self) -> float:
+        return self.private_state.portfolio.get("rd", 0.0)
 
     @property
-    def training_optimization(self) -> float:
-        return self.private_state.training_optimization
+    def safety_investment(self) -> float:
+        return self.private_state.portfolio.get("safety", 0.0)
 
     @property
-    def evaluation_engineering(self) -> float:
-        return self.private_state.evaluation_engineering
+    def product_investment(self) -> float:
+        return self.private_state.portfolio.get("product", 0.0)
 
-    @property
-    def safety_alignment(self) -> float:
-        return self.private_state.safety_alignment
+    # ──────────────────────────────────────────────────────────────────────
+    # Benchmark belief initialization (called by simulation when new
+    # benchmarks are introduced)
+    # ──────────────────────────────────────────────────────────────────────
 
-    @property
-    def benchmark_focus(self) -> dict:
-        """Per-benchmark eval_eng weight vector (sums to 1.0)."""
-        return self.private_state.benchmark_focus
-
-    # Backwards compatibility properties
-    @property
-    def rnd_investment(self) -> float:
-        """Backwards compatibility: R&D = fundamental_research + training_optimization"""
-        return self.private_state.fundamental_research + self.private_state.training_optimization
-
-    @property
-    def gaming_investment(self) -> float:
-        """Backwards compatibility: Gaming approximated by evaluation_engineering"""
-        return self.private_state.evaluation_engineering
-
-    @staticmethod
-    def _compute_initial_focus(focus_benchmarks: list, available_benchmarks: list) -> dict:
+    def init_benchmark(self, benchmark_name: str):
         """
-        Compute initial benchmark_focus weight vector from a priority-ordered focus list.
+        Initialize beliefs and focus for a newly introduced benchmark.
 
-        Weight scheme:
-        - 1 focus bm:  {focus[0]: 0.70, others: 0.30/(n-1)}
-        - 2 focus bms: {focus[0]: 0.50, focus[1]: 0.30, others: 0.20/(n-2)}
-        - 3+ focus bms:{focus[0]: 0.40, focus[1]: 0.30, focus[2]: 0.20, others: 0.10/(n-3)}
-        - No focus / empty: uniform 1/n on all benchmarks
+        - inferred_benchmark_weights[b]: uniform across 6 dimensions
+        - focus_level[b]: mean of existing focus_level values (or 1.0 if first)
         """
-        if not available_benchmarks:
-            # No benchmarks known yet; return empty (will be populated on first update)
-            return {}
+        # Uniform initial belief
+        uniform = {dim: 1.0 / len(DIMENSIONS) for dim in DIMENSIONS}
+        self.private_state.inferred_benchmark_weights[benchmark_name] = uniform
 
-        n = len(available_benchmarks)
-        focus = [b for b in focus_benchmarks if b in available_benchmarks]
+        # Focus: preserve focus_level_init value if already set; otherwise initialize
+        # at mean of existing benchmarks (used for newly-introduced benchmarks mid-sim).
+        if benchmark_name not in self.private_state.focus_level:
+            existing = list(self.private_state.focus_level.values())
+            init_focus = sum(existing) / len(existing) if existing else 1.0
+            self.private_state.focus_level[benchmark_name] = init_focus
 
-        if not focus:
-            w = 1.0 / n
-            return {bm: w for bm in available_benchmarks}
+    # ──────────────────────────────────────────────────────────────────────
+    # Observe
+    # ──────────────────────────────────────────────────────────────────────
 
-        weights = {}
-        # Priority weight tables for focused benchmarks; remainder split among unfocused.
-        # For 4+ focus benchmarks a geometric decay tail is used so all focus bms get
-        # meaningfully elevated weight vs unfocused benchmarks.
-        if len(focus) == 1:
-            top_weights = [0.70]
-            remainder = 0.30
-        elif len(focus) == 2:
-            top_weights = [0.50, 0.30]
-            remainder = 0.20
-        elif len(focus) == 3:
-            top_weights = [0.40, 0.28, 0.20]
-            remainder = 0.12
-        elif len(focus) == 4:
-            top_weights = [0.35, 0.25, 0.18, 0.12]
-            remainder = 0.10
-        elif len(focus) == 5:
-            top_weights = [0.30, 0.22, 0.16, 0.12, 0.08]
-            remainder = 0.12
-        else:
-            # 6+ focus benchmarks: assign top 6 with geometric tail, rest uniform remainder
-            top_weights = [0.25, 0.18, 0.14, 0.10, 0.08, 0.06]
-            remainder = 0.19
-            focus = focus[:6]
-
-        for bm in available_benchmarks:
-            if bm in focus:
-                idx = focus.index(bm)
-                weights[bm] = top_weights[idx]
-            else:
-                n_others = n - len(focus)
-                weights[bm] = remainder / n_others if n_others > 0 else 0.0
-
-        # Normalize to sum to 1.0
-        total = sum(weights.values())
-        if total > 0:
-            weights = {k: v / total for k, v in weights.items()}
-        return weights
-
-    def _update_benchmark_focus(self, ecosystem_context: Optional[dict] = None):
+    def observe(
+        self,
+        round_num: int,
+        own_benchmark_scores: dict,
+        competitor_benchmark_scores: dict,
+        satisfaction_signal: Optional[dict] = None,
+        market_share: Optional[float] = None,
+    ):
         """
-        Update benchmark_focus weights each round.
-
-        Steps:
-        1. Expand focus dict to include any new benchmarks (with trait-affinity weights).
-        2. Apply competitive pull: increase weight on benchmarks where we lag the leader.
-        3. Add stochastic perturbation to prevent determinism.
-        4. Clip to [0.05, 0.80] and re-normalize.
-        """
-        import numpy as _np
-
-        ctx = ecosystem_context or {}
-        available = ctx.get("available_benchmarks", [])
-        per_bm_scores = ctx.get("per_benchmark_scores", {})
-
-        focus = self.private_state.benchmark_focus
-
-        # If no benchmarks known yet, skip
-        if not available:
-            return
-
-        # 1. Expand to include new benchmarks
-        traits_text = (
-            self.private_state.innate_traits + " " +
-            self.private_state.strategy_profile
-        ).lower()
-        affinity_keywords = {
-            "coding":               ["coding", "software", "engineering", "developer", "api"],
-            "coding_advanced":      ["coding", "software", "engineering", "developer", "api"],
-            "reasoning":            ["reasoning", "logic", "research", "general", "analytical"],
-            "reasoning_advanced":   ["reasoning", "logic", "research", "general", "analytical"],
-            "math":                 ["math", "reasoning", "science", "research", "technical"],
-            "math_advanced":        ["math", "reasoning", "science", "research", "technical"],
-            "safety":               ["safety", "alignment", "risk", "guardrails", "responsible", "harmless"],
-            "safety_advanced":      ["safety", "alignment", "risk", "guardrails", "responsible", "harmless"],
-            "writing":              ["writing", "content", "creative", "marketing", "communication", "consumer"],
-            "instruction_following":["instruction", "reliable", "precise", "enterprise", "product"],
-            "long_context":         ["enterprise", "document", "legal", "finance", "long", "context"],
-            "medical":              ["medical", "healthcare", "clinical", "health", "hospital"],
-            "legal":                ["legal", "law", "compliance", "regulatory", "policy"],
-            "finance":              ["finance", "financial", "economic", "investment", "enterprise"],
-            "agentic":              ["agentic", "agent", "product", "api", "developer", "software"],
-            "live_bench":           ["research", "general", "analytical", "rigorous", "science"],
-        }
-
-        rng = self._get_rng()
-        new_bms = [bm for bm in available if bm not in focus]
-        for bm in new_bms:
-            # Compute affinity: look up exact benchmark name, then fall back to substring match
-            affinity = 0.2
-            keywords = affinity_keywords.get(bm)
-            if keywords is None:
-                # Substring fallback for unknown benchmark names
-                for grp_name, grp_kws in affinity_keywords.items():
-                    if grp_name in bm or any(kw in bm for kw in grp_kws):
-                        keywords = grp_kws
-                        break
-            if keywords and any(kw in traits_text for kw in keywords):
-                affinity = 0.6
-            weight = float(_np.clip(affinity + rng.normal(0, 0.15), 0.05, 0.80))
-            focus[bm] = weight
-
-        # Remove benchmarks no longer in available set
-        for bm in list(focus.keys()):
-            if bm not in available:
-                del focus[bm]
-
-        if not focus:
-            return
-
-        n = len(focus)
-
-        # 2. Competitive pull: shift weight toward benchmarks where we lag the leader
-        own_name = self.public_state.name
-        for bm in list(focus.keys()):
-            bm_scores = per_bm_scores.get(bm, {})
-            if not bm_scores:
-                continue
-            own_score = bm_scores.get(own_name, 0.0)
-            leader_score = max(bm_scores.values())
-            gap = leader_score - own_score
-            if gap > 0.05:
-                shift = min(0.08, gap * 0.3)
-                focus[bm] = focus[bm] + shift
-
-        # 3. Stochastic perturbation
-        for bm in focus:
-            focus[bm] += float(rng.normal(0, 0.03))
-
-        # 4. Clip and normalize
-        for bm in focus:
-            focus[bm] = float(_np.clip(focus[bm], 0.05, 0.80))
-
-        total = sum(focus.values())
-        if total > 0:
-            for bm in focus:
-                focus[bm] /= total
-
-        self.private_state.benchmark_focus = focus
-
-    def _get_rng(self):
-        """Get or create a numpy RNG for this provider (seeded by name for reproducibility)."""
-        if not hasattr(self, "_rng"):
-            import numpy as _np
-            seed = sum(ord(c) for c in self.name) % (2**31)
-            self._rng = _np.random.default_rng(seed)
-        return self._rng
-
-    def get_prompt_context(self) -> str:
-        """
-        Get the context available for LLM prompts.
-
-        This method returns ONLY public and private state - never ground truth.
-        This ensures LLM prompts cannot leak invisible information.
-        """
-        context = "=== PUBLIC INFORMATION ===\n"
-        context += self.public_state.get_summary()
-        context += "\n=== YOUR PRIVATE STATE ===\n"
-        context += self.private_state.get_summary()
-        context += self.private_state.get_history_summary()
-        return context
-
-    def observe(self, own_score: float, competitor_scores: dict, round_num: int):
-        """
-        Observe the results of an evaluation round.
+        Observe results of an evaluation round.
 
         Args:
-            own_score: This provider's benchmark score
-            competitor_scores: Dict of {provider_name: score} for competitors
-            round_num: Current simulation round
+            round_num: Current simulation round.
+            own_benchmark_scores: {benchmark_name: {"overall": float, "per_category": {cat: float}}}
+            competitor_benchmark_scores: {provider_name: {benchmark_name: float}}
+                (overall scores only — per-category not needed for competitor tracking)
+            satisfaction_signal: 6-dim normalized need vector from simulation, or None.
+            market_share: Own current market share, or None.
         """
-        # Update public state
         self.public_state.current_round = round_num
-        self.public_state.published_scores.append((round_num, own_score))
 
-        # Update private state with competitor observations
-        for comp_name, comp_score in competitor_scores.items():
+        # Update per-benchmark score histories
+        for bm_name, scores in own_benchmark_scores.items():
+            overall = scores.get("overall", scores) if isinstance(scores, dict) else scores
+            if bm_name not in self.public_state.benchmark_scores:
+                self.public_state.benchmark_scores[bm_name] = []
+            self.public_state.benchmark_scores[bm_name].append((round_num, overall))
+
+        # Update competitor score observations
+        for comp_name, bm_scores in competitor_benchmark_scores.items():
             if comp_name not in self.private_state.observed_competitor_scores:
                 self.private_state.observed_competitor_scores[comp_name] = []
-            self.private_state.observed_competitor_scores[comp_name].append(
-                (round_num, comp_score)
-            )
+            # Aggregate to a single representative score for competitor belief tracking
+            if isinstance(bm_scores, dict):
+                vals = [v for v in bm_scores.values() if isinstance(v, (int, float))]
+                agg = sum(vals) / len(vals) if vals else 0.0
+            else:
+                agg = float(bm_scores)
+            self.private_state.observed_competitor_scores[comp_name].append((round_num, agg))
 
-        # Sync with legacy scratch
-        self.scratch.last_score = own_score
-        self.scratch.current_round = round_num
-        self.scratch.past_scores.append((round_num, own_score))
-        self.scratch.observed_competitor_scores = self.private_state.observed_competitor_scores
+        # Update competitor capability beliefs
+        for comp_name, score_history in self.private_state.observed_competitor_scores.items():
+            if score_history:
+                recent = [s for _, s in score_history[-3:]]
+                self.private_state.believed_competitor_capabilities[comp_name] = (
+                    sum(recent) / len(recent)
+                )
 
-        # Add to memory
+        # Store satisfaction signal if provided
+        if satisfaction_signal:
+            self.private_state.satisfaction_signal = dict(satisfaction_signal)
+
+        # Update public market share
+        if market_share is not None:
+            self.public_state.market_share = market_share
+
         self.memory.append({
             "type": "observation",
             "round": round_num,
-            "own_score": own_score,
-            "competitor_scores": competitor_scores,
+            "own_scores": {k: (v.get("overall") if isinstance(v, dict) else v)
+                           for k, v in own_benchmark_scores.items()},
+            "market_share": market_share,
         })
 
-    def reflect(self):
+    # ──────────────────────────────────────────────────────────────────────
+    # Belief update (always heuristic — beliefs are epistemic, not LLM output)
+    # ──────────────────────────────────────────────────────────────────────
+
+    def update_benchmark_beliefs(
+        self,
+        own_benchmark_scores: dict,
+        capability_vector: dict,
+        learning_rate: float = 0.15,
+    ):
         """
-        Update beliefs based on observations.
+        Update inferred_benchmark_weights from score prediction errors.
 
-        In LLM mode, uses LLM to reason about what scores imply about capability
-        and benchmark properties. In heuristic mode, uses simple weighted averaging.
+        For each active benchmark b:
+            predicted_score = dot(capability_vector, inferred_benchmark_weights[b])
+            error = observed_score[b] - predicted_score
+            for dim: inferred_benchmark_weights[b][dim] += lr * error * capability_vector[dim]
+            normalize and clip non-negative
+
+        Args:
+            own_benchmark_scores: {benchmark_name: {"overall": float, ...}}
+            capability_vector: Provider's current true capability vector (ground truth,
+                passed in by simulation — never stored on provider).
+            learning_rate: Step size for weight update.
         """
-        if self.llm_mode:
-            self._reflect_llm()
-        else:
-            self._reflect_heuristic()
+        for bm_name, scores in own_benchmark_scores.items():
+            observed = scores.get("overall", scores) if isinstance(scores, dict) else float(scores)
 
-        # Update competitor capability beliefs based on their scores (always heuristic)
-        for comp_name, score_history in self.private_state.observed_competitor_scores.items():
-            if score_history:
-                recent_scores = [s for _, s in score_history[-3:]]
-                avg_score = sum(recent_scores) / len(recent_scores)
-                self.private_state.believed_competitor_capabilities[comp_name] = avg_score
+            if bm_name not in self.private_state.inferred_benchmark_weights:
+                self.init_benchmark(bm_name)
 
-        # Sync with legacy scratch
-        self.scratch.believed_own_capability = self.private_state.believed_own_capability
-        self.scratch.believed_benchmark_exploitability = self.private_state.believed_benchmark_exploitability
-        self.scratch.believed_competitor_capabilities = self.private_state.believed_competitor_capabilities
+            weights = self.private_state.inferred_benchmark_weights[bm_name]
 
-        # Record reflection in memory
-        self.memory.append({
-            "type": "reflection",
-            "round": self.public_state.current_round,
-            "updated_believed_capability": self.private_state.believed_own_capability,
-            "updated_believed_exploitability": self.private_state.believed_benchmark_exploitability,
-            "updated_competitor_beliefs": dict(self.private_state.believed_competitor_capabilities),
-            "llm_mode": self.llm_mode,
-        })
-
-    def _reflect_heuristic(self):
-        """Heuristic belief update (fast, no API calls)."""
-        if self.public_state.published_scores:
-            last_score = self.public_state.published_scores[-1][1]
-            # Weighted average of prior belief and new observation
-            learning_rate = 0.3
-            self.private_state.believed_own_capability = (
-                (1 - learning_rate) * self.private_state.believed_own_capability +
-                learning_rate * last_score
+            # Predicted score under current belief
+            predicted = sum(
+                capability_vector.get(dim, 0.0) * weights.get(dim, 0.0)
+                for dim in DIMENSIONS
             )
+            error = observed - predicted
 
-    def _reflect_llm(self):
-        """LLM-driven belief update."""
-        from llm import llm_reflect
+            # Delta rule update
+            for dim in DIMENSIONS:
+                weights[dim] = weights.get(dim, 0.0) + learning_rate * error * capability_vector.get(dim, 0.0)
 
-        # Build recent history for the prompt
-        recent_history = self._get_recent_history()
+            # Clip non-negative and normalize
+            total = sum(max(0.0, w) for w in weights.values())
+            if total > 0:
+                self.private_state.inferred_benchmark_weights[bm_name] = {
+                    dim: max(0.0, weights[dim]) / total for dim in DIMENSIONS
+                }
 
-        # No history yet (round 0) — nothing meaningful to reflect on; use heuristic
-        if not recent_history:
-            self._reflect_heuristic()
-            return
-
-        # Call LLM
-        new_capability, new_exploitability, reasoning = llm_reflect(
-            name=self.name,
-            strategy_profile=self.private_state.strategy_profile,
-            current_believed_capability=self.private_state.believed_own_capability,
-            current_believed_exploitability=self.private_state.believed_benchmark_exploitability,
-            recent_history=recent_history,
-            recent_insights=self.private_state.recent_insights[-2:],
-            verbose=self.verbose_llm,
-        )
-
-        # Update beliefs
-        self.private_state.believed_own_capability = new_capability
-        self.private_state.believed_benchmark_exploitability = new_exploitability
-
-        # Store reasoning
-        self.private_state.recent_insights.append({
-            "round": self.public_state.current_round,
-            "type": "reflection",
-            "reasoning": reasoning,
-        })
-        self.scratch.recent_insights = self.private_state.recent_insights
+    # ──────────────────────────────────────────────────────────────────────
+    # Plan
+    # ──────────────────────────────────────────────────────────────────────
 
     def plan(self, ecosystem_context: Optional[dict] = None) -> dict:
         """
         Decide investment portfolio allocation for the next round.
 
-        Args:
-            ecosystem_context: Optional dict with public ecosystem signals
-                (consumer_satisfaction, regulatory_pressure)
-
-        Returns:
-            Dict with keys: fundamental_research, training_optimization,
-                           evaluation_engineering, safety_alignment
+        Returns: portfolio dict {rd, safety, product} summing to 1.0.
+        Also updates focus_level and benchmark_orientation via ordinal signals.
         """
+        ctx = ecosystem_context or {}
+
         if self.llm_mode:
-            portfolio, reasoning = self._plan_llm(ecosystem_context)
+            portfolio, focus_deltas, orientation_delta, reasoning = self._plan_llm(ctx)
+            self._apply_ordinal_deltas(focus_deltas, orientation_delta)
         else:
-            portfolio = self._plan_heuristic(ecosystem_context)
+            portfolio = self._plan_heuristic(ctx)
             reasoning = None
 
-        # Update private state
-        self.private_state.fundamental_research = portfolio["fundamental_research"]
-        self.private_state.training_optimization = portfolio["training_optimization"]
-        self.private_state.evaluation_engineering = portfolio["evaluation_engineering"]
-        self.private_state.safety_alignment = portfolio["safety_alignment"]
+        # Apply and store portfolio
+        self.private_state.portfolio = portfolio
 
-        # Update per-benchmark focus weights (heuristic, always)
-        self._update_benchmark_focus(ecosystem_context)
+        # Issue public_comms (heuristic sampling from portfolio weights)
+        public_comm = self._sample_public_comms()
+        if public_comm:
+            self.public_state.public_comms.append({
+                "round": self.public_state.current_round,
+                "type": public_comm["type"],
+                "content": public_comm["content"],
+            })
+            # Keep only last 5 comms
+            self.public_state.public_comms = self.public_state.public_comms[-5:]
 
-        # Store strategy as dict in past_strategies
+        # Record in past_strategies
         strategy_record = {
             "round": self.public_state.current_round,
-            "fundamental_research": portfolio["fundamental_research"],
-            "training_optimization": portfolio["training_optimization"],
-            "evaluation_engineering": portfolio["evaluation_engineering"],
-            "safety_alignment": portfolio["safety_alignment"],
+            "rd": portfolio["rd"],
+            "safety": portfolio["safety"],
+            "product": portfolio["product"],
         }
         self.private_state.past_strategies.append(strategy_record)
 
-        # Sync with legacy scratch
-        self.scratch.fundamental_research = portfolio["fundamental_research"]
-        self.scratch.training_optimization = portfolio["training_optimization"]
-        self.scratch.evaluation_engineering = portfolio["evaluation_engineering"]
-        self.scratch.safety_alignment = portfolio["safety_alignment"]
-        self.scratch.past_strategies = self.private_state.past_strategies
+        # Append reasoning to recent_insights if LLM mode
+        if reasoning:
+            self.private_state.recent_insights.append({
+                "round": self.public_state.current_round,
+                "type": "planning",
+                "reasoning": reasoning[:500],  # truncate for storage
+            })
 
-        # Record in memory
-        memory_entry = {
+        self.memory.append({
             "type": "planning",
             "round": self.public_state.current_round,
             "portfolio": portfolio,
             "llm_mode": self.llm_mode,
-        }
-        if reasoning:
-            memory_entry["reasoning"] = reasoning
-        self.memory.append(memory_entry)
+        })
 
         return portfolio
 
-    def _plan_heuristic(self, ecosystem_context: Optional[dict] = None) -> dict:
+    def _plan_heuristic(self, ctx: dict) -> dict:
         """
-        Heuristic investment portfolio planning (fast, no API calls).
+        Heuristic portfolio planning.
 
-        Portfolio allocation logic:
-        - Base allocation: previous round's allocation (preserves provider identity/personality)
-        - Competitive pressure adjusts evaluation_engineering vs fundamental_research
-        - Safety incidents push resources toward safety_alignment
-        - Personality traits influence the balance
-        - Loose bounds prevent any category collapsing to zero or dominating entirely
+        Base allocation preserved from last round (provider identity persists).
+        Adjustments:
+        - Incident pressure shifts budget from rd toward safety.
+        - Profile modifiers nudge allocation based on strategy_profile.
+        - Bounds prevent any lever collapsing or dominating.
         """
-        my_believed = self.private_state.believed_own_capability
-        competitor_beliefs = self.private_state.believed_competitor_capabilities
-        budget = self.private_state.effort_budget
-        ctx = ecosystem_context or {}
+        p = dict(self.private_state.portfolio)
+        rd = p.get("rd", 0.55)
+        safety = p.get("safety", 0.25)
+        product = p.get("product", 0.20)
 
-        # Start from previous allocation so provider identity persists across rounds.
-        # Round 0 config-set values (e.g. Orion Labs 15/50/30/5, Apex AI 35/20/5/40)
-        # carry forward rather than being reset to 25/25/25/25 each round.
-        fundamental = self.private_state.fundamental_research
-        training = self.private_state.training_optimization
-        eval_eng = self.private_state.evaluation_engineering
-        safety = self.private_state.safety_alignment
-
-        # Competitive pressure: if behind, shift from research to eval engineering
-        if competitor_beliefs:
-            max_competitor = max(competitor_beliefs.values())
-            gap = max_competitor - my_believed  # Positive if behind
-
-            # Shift up to 15% between fundamental research and eval engineering
-            shift = gap * 0.3  # Scale factor
-            shift = max(-0.15, min(0.15, shift))
-
-            fundamental -= shift
-            eval_eng += shift
-
-        # Incident pressure: own safety incidents force a safety investment bump.
-        # Severity multipliers doubled vs original so incidents compete with competitive pressure.
-        # Pressure is persistent and decays 40% per round so impact lasts ~3-4 rounds.
+        # Incident pressure: accumulates from own_incidents, decays 40%/round
         own_incidents = ctx.get("own_incidents", [])
         if own_incidents:
             severity_shifts = {"minor": 0.03, "moderate": 0.10, "major": 0.20, "critical": 0.30}
@@ -711,322 +389,333 @@ class ModelProvider:
                 severity_shifts.get(inc.get("severity", "minor"), 0.0)
                 for inc in own_incidents
             )
-            new_pressure = min(new_pressure, 0.30)  # Cap per-round accumulation
+            new_pressure = min(new_pressure, 0.30)
             self._incident_safety_pressure = min(
-                0.40,  # Overall cap
-                self._incident_safety_pressure + new_pressure,
+                0.40, self._incident_safety_pressure + new_pressure
             )
 
-        # Apply persistent incident pressure (shift from eval_eng to safety),
-        # then decay it so the effect fades over several rounds.
         if self._incident_safety_pressure > 0.005:
-            eval_eng -= self._incident_safety_pressure
+            rd -= self._incident_safety_pressure
             safety += self._incident_safety_pressure
-            self._incident_safety_pressure *= 0.60  # ~50% gone after 1 round, ~88% after 4
+            self._incident_safety_pressure *= 0.60
 
-        # Apply personality modifiers
+        # Profile modifiers
         profile_lower = self.private_state.strategy_profile.lower()
+        traits_lower = self.private_state.innate_traits.lower()
 
         if "aggressive" in profile_lower or "competitive" in profile_lower:
-            # Aggressive: more eval engineering, less safety
-            eval_eng += 0.05
+            rd += 0.05
             safety -= 0.05
 
         if "quality" in profile_lower or "long-term" in profile_lower:
-            # Quality-focused: more fundamental research, less eval engineering
-            fundamental += 0.05
-            eval_eng -= 0.05
+            rd += 0.03
+            product -= 0.03
 
-        if "risk-averse" in self.private_state.innate_traits.lower():
-            # Risk-averse: more safety
+        if "safety" in profile_lower or "responsible" in profile_lower:
             safety += 0.05
-            eval_eng -= 0.05
+            rd -= 0.05
 
-        # Open-source provider: community benchmark optimization bias + lower safety floor
-        if self.is_open_source:
-            eval_eng += 0.05  # Community benchmark optimization bias
-            # Lower safety floor applies at clamping stage below
+        if "risk-averse" in traits_lower:
+            safety += 0.03
+            rd -= 0.03
 
-        # Loose bounds: prevent any category from collapsing to zero or dominating entirely.
-        # These are intentionally wide — providers can still specialize, but can't drop
-        # safety to 0% or go 80%+ eval_eng.
-        # Open-source providers have a lower safety floor (0.03 vs 0.05 for closed).
-        safety_floor = 0.03 if self.is_open_source else 0.05
-        fundamental = max(0.05, min(0.65, fundamental))
-        training    = max(0.05, min(0.70, training))
-        eval_eng    = max(0.02, min(0.55, eval_eng))
-        safety      = max(safety_floor, min(0.55, safety))
+        if "product" in profile_lower or "market" in profile_lower:
+            product += 0.03
+            rd -= 0.03
 
-        # Normalize to ensure they sum to budget
-        total = fundamental + training + eval_eng + safety
-        fundamental = (fundamental / total) * budget
-        training    = (training    / total) * budget
-        eval_eng    = (eval_eng    / total) * budget
-        safety      = (safety      / total) * budget
+        # OS providers: lower safety floor applies at clamping
+        safety_floor = 0.03 if self.open_source else 0.05
 
+        # Bounds
+        rd      = max(0.10, min(0.75, rd))
+        safety  = max(safety_floor, min(0.55, safety))
+        product = max(0.05, min(0.50, product))
+
+        # Normalize to sum to 1.0
+        total = rd + safety + product
         return {
-            "fundamental_research": fundamental,
-            "training_optimization": training,
-            "evaluation_engineering": eval_eng,
-            "safety_alignment": safety,
+            "rd":      rd / total,
+            "safety":  safety / total,
+            "product": product / total,
         }
 
-    def _plan_llm(self, ecosystem_context: Optional[dict] = None) -> tuple[dict, str]:
-        """LLM-driven investment portfolio planning."""
-        from llm import llm_plan_portfolio
+    def _plan_llm(self, ctx: dict) -> tuple:
+        """
+        LLM-driven portfolio planning.
 
-        # Get recent competitor scores
-        competitor_scores = {}
-        for comp_name, score_history in self.private_state.observed_competitor_scores.items():
-            if score_history:
-                competitor_scores[comp_name] = score_history[-1][1]
+        Returns: (portfolio dict, focus_deltas dict, orientation_delta float, reasoning str)
+        """
+        from llm import llm_plan_provider
 
-        # Build recent history
-        recent_history = self._get_recent_history()
+        round_num = self.public_state.current_round
+        memory_depth = ctx.get("reasoning_memory_depth", 2)
+        recent_insights = [
+            {
+                "round": e["round"],
+                "reasoning": e["reasoning"][:120],
+            }
+            for e in self.private_state.recent_insights[-memory_depth:]
+        ]
 
-        # Get last score
-        last_score = None
-        if self.public_state.published_scores:
-            last_score = self.public_state.published_scores[-1][1]
+        # Build per-benchmark score deltas for prompt
+        score_deltas = {}
+        for bm, history in self.public_state.benchmark_scores.items():
+            if len(history) >= 2:
+                score_deltas[bm] = history[-1][1] - history[-2][1]
+            elif len(history) == 1:
+                score_deltas[bm] = 0.0
 
-        # Extract ecosystem context
-        ctx = ecosystem_context or {}
-
-        # Call LLM
-        portfolio, reasoning = llm_plan_portfolio(
+        result = llm_plan_provider(
             name=self.name,
             strategy_profile=self.private_state.strategy_profile,
             innate_traits=self.private_state.innate_traits,
-            believed_capability=self.private_state.believed_own_capability,
-            believed_exploitability=self.private_state.believed_benchmark_exploitability,
-            last_score=last_score,
-            competitor_scores=competitor_scores,
-            recent_history=recent_history,
-            consumer_satisfaction=ctx.get("consumer_satisfaction"),
-            regulatory_pressure=ctx.get("regulatory_pressure"),
-            per_benchmark_scores=ctx.get("per_benchmark_scores"),
-            benchmark_focus=self.private_state.benchmark_focus or None,
-            recent_insights=self.private_state.recent_insights[-2:],
+            round_num=round_num,
+            portfolio=self.private_state.portfolio,
+            focus_level=self.private_state.focus_level,
+            inferred_benchmark_weights=self.private_state.inferred_benchmark_weights,
+            benchmark_scores=self.public_state.benchmark_scores,
+            score_deltas=score_deltas,
+            competitor_scores={
+                comp: hist[-1][1] if hist else 0.0
+                for comp, hist in self.private_state.observed_competitor_scores.items()
+            },
+            satisfaction_signal=self.private_state.satisfaction_signal,
+            benchmark_orientation=self.private_state.benchmark_orientation,
+            recent_insights=recent_insights,
+            own_incidents=ctx.get("own_incidents", []),
+            regulatory_actions=ctx.get("regulatory_actions", []),
             verbose=self.verbose_llm,
         )
 
-        # Detect silent fallback: fail_safe thinking field contains "fallback"
-        is_fallback = "fallback" in str(reasoning).lower() or "fallback" in str(
-            portfolio.get("thinking", "")
-        ).lower()
+        # Detect fallback
+        reasoning = result.get("reasoning", "")
+        is_fallback = "fallback" in reasoning.lower()
         if is_fallback:
             self._llm_fallback_count += 1
-            print(f"[LLM STRICT] {self.name} round {self.public_state.current_round}: "
-                  f"LLM returned fail_safe (fallback #{self._llm_fallback_count}). "
-                  f"Reasoning: {reasoning!r}")
             if self.llm_strict_mode:
                 raise RuntimeError(
-                    f"LLM fallback detected for {self.name} (round "
-                    f"{self.public_state.current_round}). API call failed or returned "
-                    f"unparseable response. Set llm_strict_mode=False to allow fallback, "
-                    f"or fix the API connectivity issue."
+                    f"LLM fallback for {self.name} round {round_num} "
+                    f"(#{self._llm_fallback_count})"
                 )
         else:
-            self._llm_fallback_count = 0  # Reset on successful LLM call
+            self._llm_fallback_count = 0
 
-        # Store reasoning
-        self.private_state.recent_insights.append({
-            "round": self.public_state.current_round,
-            "type": "planning",
-            "reasoning": reasoning,
-        })
-        self.scratch.recent_insights = self.private_state.recent_insights
+        # Parse ordinal portfolio signals → absolute fractions
+        portfolio = self._apply_portfolio_ordinals(result.get("portfolio", {}))
+        focus_deltas = result.get("benchmark_focus", {})
+        orientation_signal = result.get("benchmark_orientation", "same")
+        orientation_delta = (
+            ORDINAL_DELTA if orientation_signal == "more" else
+            -ORDINAL_DELTA if orientation_signal == "less" else 0.0
+        )
 
-        return portfolio, reasoning
+        return portfolio, focus_deltas, orientation_delta, reasoning
 
-    def _get_recent_history(self, n: int = 10) -> list:
-        """Get recent history as list of dicts with round, score, and portfolio."""
-        history = []
-        scores = self.public_state.published_scores[-n:]
-        strategies = self.private_state.past_strategies[-n:]
+    def _apply_portfolio_ordinals(self, signals: dict) -> dict:
+        """
+        Apply {more/less/same} ordinal signals to current portfolio fractions.
 
-        for (round_num, score), strategy in zip(scores, strategies):
-            if isinstance(strategy, dict):
-                entry = {
-                    "round": round_num,
-                    "score": score,
-                    "fundamental_research": strategy.get("fundamental_research", 0),
-                    "training_optimization": strategy.get("training_optimization", 0),
-                    "evaluation_engineering": strategy.get("evaluation_engineering", 0),
-                    "safety_alignment": strategy.get("safety_alignment", 0),
+        Each "more" adds ORDINAL_DELTA to that lever's raw weight; "less" subtracts.
+        Result is clipped to [0.02, 0.80] per lever and renormalized.
+        """
+        p = dict(self.private_state.portfolio)
+        for lever in ("rd", "safety", "product"):
+            sig = signals.get(lever, "same")
+            if sig == "more":
+                p[lever] = p.get(lever, 0.33) + ORDINAL_DELTA
+            elif sig == "less":
+                p[lever] = p.get(lever, 0.33) - ORDINAL_DELTA
+
+        # Clip
+        safety_floor = 0.03 if self.open_source else 0.05
+        p["rd"]      = max(0.10, min(0.75, p.get("rd", 0.55)))
+        p["safety"]  = max(safety_floor, min(0.55, p.get("safety", 0.25)))
+        p["product"] = max(0.05, min(0.50, p.get("product", 0.20)))
+
+        total = sum(p.values())
+        return {k: v / total for k, v in p.items()}
+
+    def _apply_ordinal_deltas(self, focus_deltas: dict, orientation_delta: float):
+        """
+        Apply ordinal {more/less/same} signals to focus_level and benchmark_orientation.
+        """
+        # focus_level: additive delta, clip to [0.1, 5.0]
+        for bm, signal in focus_deltas.items():
+            if bm in self.private_state.focus_level:
+                delta = (ORDINAL_DELTA if signal == "more" else
+                         -ORDINAL_DELTA if signal == "less" else 0.0)
+                self.private_state.focus_level[bm] = max(
+                    0.1, min(5.0, self.private_state.focus_level[bm] + delta)
+                )
+
+        # benchmark_orientation: additive delta, clip to [0.05, 0.95]
+        self.private_state.benchmark_orientation = max(
+            BENCHMARK_ORIENTATION_MIN,
+            min(BENCHMARK_ORIENTATION_MAX,
+                self.private_state.benchmark_orientation + orientation_delta)
+        )
+
+    # ──────────────────────────────────────────────────────────────────────
+    # Execute (capability update — called by simulation with ground truth)
+    # ──────────────────────────────────────────────────────────────────────
+
+    def compute_capability_gains(self, rd_budget: float) -> dict:
+        """
+        Compute per-dimension capability gains for this round.
+
+        Called by the simulation, which then applies the gains to the
+        capability_vector it holds externally.
+
+        Formula (per stakeholders.md):
+            focus_weights[b]      = normalize(focus_level[b] for b in active_benchmarks)
+            benchmark_driven[dim] = sum(focus_weights[b] * inferred_benchmark_weights[b][dim])
+            target[dim]           = benchmark_orientation * benchmark_driven[dim]
+                                  + (1 - benchmark_orientation) * satisfaction_signal[dim]
+            gain[dim]             = rd * target[dim]   (+ safety gain for "safety" dim)
+
+        Args:
+            rd_budget: Total R&D budget this round (base_revenue + funder_allocations).
+
+        Returns:
+            {dim: gain} dict (not yet applied — simulation applies it).
+        """
+        p = self.private_state.portfolio
+        rd_fraction = p.get("rd", 0.55)
+        safety_fraction = p.get("safety", 0.25)
+
+        # focus_weights: normalize focus_level scalars across active benchmarks
+        fl = self.private_state.focus_level
+        fl_total = sum(fl.values()) if fl else 0.0
+
+        if fl_total > 0:
+            focus_weights = {bm: v / fl_total for bm, v in fl.items()}
+        else:
+            # No active benchmarks yet: uniform across known benchmarks or skip
+            n = len(self.private_state.inferred_benchmark_weights)
+            if n > 0:
+                focus_weights = {
+                    bm: 1.0 / n
+                    for bm in self.private_state.inferred_benchmark_weights
                 }
             else:
-                # Legacy format - approximate
-                entry = {"round": round_num, "score": score}
-            history.append(entry)
+                # No benchmarks at all: uniform gain across dims
+                uniform_gain = rd_fraction * rd_budget / len(DIMENSIONS)
+                gains = {dim: uniform_gain for dim in DIMENSIONS}
+                gains["safety"] = gains.get("safety", 0.0) + safety_fraction * rd_budget
+                return gains
 
-        return history
+        # benchmark_driven[dim]
+        benchmark_driven = {dim: 0.0 for dim in DIMENSIONS}
+        for bm, fw in focus_weights.items():
+            bm_weights = self.private_state.inferred_benchmark_weights.get(bm, {})
+            for dim in DIMENSIONS:
+                benchmark_driven[dim] += fw * bm_weights.get(dim, 1.0 / len(DIMENSIONS))
 
-    def execute(self, efficiency: float = 0.01):
-        """
-        Apply the chosen investment portfolio - update true capability.
-
-        NOTE: In the new architecture, capability updates should be handled
-        by the simulation using external ground truth. This method is kept
-        for backwards compatibility.
-
-        Capability gain formula:
-        - Fundamental research: High variance, high ceiling (1.5x efficiency)
-        - Training optimization: Moderate, reliable gains (1.0x efficiency)
-        - Evaluation engineering: Minimal capability gain (0.1x efficiency)
-        - Safety alignment: No direct capability gain, but affects reliability
-
-        Args:
-            efficiency: Base efficiency for capability improvement
-        """
-        # Different investment types contribute differently to capability
-        capability_gain = (
-            self.private_state.fundamental_research * efficiency * 1.5 +
-            self.private_state.training_optimization * efficiency * 1.0 +
-            self.private_state.evaluation_engineering * efficiency * 0.1
-            # Safety alignment doesn't directly improve capability
-        )
-        self.scratch.true_capability += capability_gain
-
-        self.memory.append({
-            "type": "execution",
-            "round": self.public_state.current_round,
-            "capability_gain": capability_gain,
-            "new_true_capability": self.scratch.true_capability,
-            "portfolio": {
-                "fundamental_research": self.private_state.fundamental_research,
-                "training_optimization": self.private_state.training_optimization,
-                "evaluation_engineering": self.private_state.evaluation_engineering,
-                "safety_alignment": self.private_state.safety_alignment,
-            },
-        })
-
-    def decide_premium_access(
-        self,
-        premium_pricing: float,
-        current_budget: float,
-        ecosystem_context: Optional[dict] = None
-    ) -> dict:
-        """
-        Decide whether to purchase premium evaluator access.
-
-        Premium access provides:
-        - Best-of-N submission (multiple trials, publish best score)
-        - Early access to new benchmarks (3 rounds before public introduction)
-
-        Decision factors:
-        - Can afford: current budget >= premium pricing
-        - Behind competitors: own market share < 30%
-        - High eval engineering investment: evaluation_engineering > 0.3
-        - Strategic value: gaming-oriented providers benefit most
-
-        Args:
-            premium_pricing: Cost of premium access
-            current_budget: Available budget
-            ecosystem_context: Optional dict with own_market_share, competitor_scores, etc.
-
-        Returns:
-            Dict with purchase_premium (bool), amount (float), reasoning (str)
-        """
-        ctx = ecosystem_context or {}
-
-        own_share = ctx.get("own_market_share", 0.5)
-        behind = own_share < 0.3
-        high_eval_eng = self.private_state.evaluation_engineering > 0.3
-        can_afford = current_budget >= premium_pricing
-
-        # Decision logic: purchase if can afford AND (behind OR high eval eng)
-        should_purchase = can_afford and (behind or high_eval_eng)
-
-        reasoning = []
-        if should_purchase:
-            reasoning.append(f"Purchasing premium access (${premium_pricing:,.0f})")
-            if behind:
-                reasoning.append(f"Market position: {own_share:.1%} (behind competitors)")
-            if high_eval_eng:
-                reasoning.append(f"High eval engineering investment: {self.private_state.evaluation_engineering:.1%}")
+        # satisfaction signal (uniform fallback if not yet received)
+        sig = self.private_state.satisfaction_signal
+        if sig:
+            total_sig = sum(sig.values())
+            sat_signal = {dim: sig.get(dim, 0.0) / total_sig for dim in DIMENSIONS} if total_sig > 0 else {dim: 1.0 / len(DIMENSIONS) for dim in DIMENSIONS}
         else:
-            if not can_afford:
-                reasoning.append(f"Cannot afford premium access (budget: ${current_budget:,.0f})")
-            else:
-                reasoning.append(f"Premium access not strategic (share: {own_share:.1%}, eval_eng: {self.private_state.evaluation_engineering:.1%})")
+            sat_signal = {dim: 1.0 / len(DIMENSIONS) for dim in DIMENSIONS}
 
-        return {
-            "purchase_premium": should_purchase,
-            "amount": premium_pricing if should_purchase else 0.0,
-            "reasoning": " | ".join(reasoning),
+        bo = self.private_state.benchmark_orientation
+        gains = {}
+        for dim in DIMENSIONS:
+            target = bo * benchmark_driven.get(dim, 0.0) + (1.0 - bo) * sat_signal.get(dim, 0.0)
+            gains[dim] = rd_fraction * rd_budget * target
+
+        # Safety lever adds directly to safety dimension
+        gains["safety"] = gains.get("safety", 0.0) + safety_fraction * rd_budget
+
+        return gains
+
+    # ──────────────────────────────────────────────────────────────────────
+    # Public communications
+    # ──────────────────────────────────────────────────────────────────────
+
+    def _sample_public_comms(self) -> Optional[dict]:
+        """
+        Sample a public communication type based on portfolio weights.
+
+        Type weights (heuristic mode):
+            rd:      rd_fraction
+            safety:  safety_fraction if safety_fraction > 0.20, else 0
+            product: product_fraction if product_fraction > 0.15, else 0
+            none:    0.30 (silence — always competes)
+        """
+        import random
+
+        p = self.private_state.portfolio
+        raw = {
+            "rd":      p.get("rd", 0.0),
+            "safety":  p.get("safety", 0.0) if p.get("safety", 0.0) > 0.20 else 0.0,
+            "product": p.get("product", 0.0) if p.get("product", 0.0) > 0.15 else 0.0,
+            "none":    0.30,
         }
+        total = sum(raw.values())
+        if total <= 0:
+            return None
 
-    def step(self, own_score: float, competitor_scores: dict, round_num: int,
-             efficiency: float = 0.01) -> dict:
-        """
-        Complete one simulation step: observe, reflect, plan, execute.
+        weights = {k: v / total for k, v in raw.items()}
+        post_type = random.choices(list(weights.keys()), weights=list(weights.values()), k=1)[0]
 
-        Args:
-            own_score: This provider's benchmark score from the previous round
-            competitor_scores: Dict of competitor scores
-            round_num: Current round number
-            efficiency: Base efficiency for capability improvement
+        if post_type == "none":
+            return None
 
-        Returns:
-            Dict with investment portfolio for this round
-        """
-        self.observe(own_score, competitor_scores, round_num)
-        self.reflect()
-        portfolio = self.plan()
-        self.execute(efficiency)
-        return portfolio
+        templates = {
+            "rd":      f"{self.name} publishes new research on capabilities",
+            "safety":  f"{self.name} releases safety evaluation results",
+            "product": f"{self.name} announces new enterprise deployment",
+        }
+        return {"type": post_type, "content": templates[post_type]}
+
+    # ──────────────────────────────────────────────────────────────────────
+    # Persistence
+    # ──────────────────────────────────────────────────────────────────────
 
     def save(self, folder: str):
         """Save provider state to a folder."""
         os.makedirs(folder, exist_ok=True)
 
-        # Save legacy scratch
-        self.scratch.save(f"{folder}/scratch.json")
-
-        # Save new visibility state
         with open(f"{folder}/public_state.json", "w") as f:
             json.dump(self.public_state.to_dict(), f, indent=2)
 
         with open(f"{folder}/private_state.json", "w") as f:
             json.dump(self.private_state.to_dict(), f, indent=2)
 
-        # Save memory
         with open(f"{folder}/memory.json", "w") as f:
             json.dump(self.memory, f, indent=2)
 
     @classmethod
     def load(cls, folder: str) -> "ModelProvider":
         """Load provider state from a folder."""
-        scratch = ModelProviderScratch.load(f"{folder}/scratch.json")
+        with open(f"{folder}/public_state.json") as f:
+            public = PublicState.from_dict(json.load(f))
+        with open(f"{folder}/private_state.json") as f:
+            private = ProviderPrivateState.from_dict(json.load(f))
+
         provider = cls(
-            name=scratch.name,
-            strategy_profile=scratch.strategy_profile,
-            innate_traits=scratch.innate_traits,
+            name=public.name,
+            strategy_profile=private.strategy_profile,
+            innate_traits=private.innate_traits,
+            portfolio=private.portfolio,
+            benchmark_orientation=private.benchmark_orientation,
         )
-        provider.scratch = scratch
+        provider.public_state = public
+        provider.private_state = private
 
-        # Load new visibility state if available
-        public_path = f"{folder}/public_state.json"
-        private_path = f"{folder}/private_state.json"
-
-        if os.path.exists(public_path):
-            with open(public_path, "r") as f:
-                provider.public_state = PublicState.from_dict(json.load(f))
-
-        if os.path.exists(private_path):
-            with open(private_path, "r") as f:
-                provider.private_state = ProviderPrivateState.from_dict(json.load(f))
-
-        # Load memory
-        with open(f"{folder}/memory.json", "r") as f:
-            provider.memory = json.load(f)
+        mem_path = f"{folder}/memory.json"
+        if os.path.exists(mem_path):
+            with open(mem_path) as f:
+                provider.memory = json.load(f)
 
         return provider
 
     def __repr__(self):
+        p = self.private_state.portfolio
         return (f"ModelProvider(name='{self.name}', "
-                f"true_cap={self.true_capability:.2f}, "
-                f"believed_cap={self.private_state.believed_own_capability:.2f}, "
-                f"portfolio=[R:{self.fundamental_research:.0%}, T:{self.training_optimization:.0%}, "
-                f"E:{self.evaluation_engineering:.0%}, S:{self.safety_alignment:.0%}])")
+                f"market_share={self.public_state.market_share:.1%}, "
+                f"portfolio=[R:{p.get('rd', 0):.0%}, "
+                f"S:{p.get('safety', 0):.0%}, "
+                f"P:{p.get('product', 0):.0%}])")

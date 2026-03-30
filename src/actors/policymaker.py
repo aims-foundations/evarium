@@ -79,7 +79,7 @@ class Policymaker:
         self.private_state = PolicymakerPrivateState(
             policy_objectives=policy_objectives or ["safety", "fairness"],
             risk_beliefs={
-                "gaming_risk": 0.3,  # Belief about gaming prevalence
+                "score_reliability_risk": 0.3,  # Belief about score-satisfaction divergence (Goodhart)
                 "consumer_harm_risk": 0.3,  # Belief about consumer harm
                 "validity_degradation_risk": 0.3,  # Belief about benchmark validity loss
             },
@@ -114,7 +114,6 @@ class Policymaker:
         # Tier 1 Enhancement: Regulatory thresholds
         self.market_concentration_threshold: float = 0.75  # Trigger antitrust at 75% share
         self.market_monitoring_threshold: float = 0.60  # Start monitoring at 60% share
-        self.eval_engineering_threshold: float = 0.35  # Concern threshold for eval engineering
 
         # Tier 1 Enhancement: Threshold announcements (public)
         self.announced_thresholds: dict = {}  # {threshold_type: value}
@@ -199,11 +198,11 @@ class Policymaker:
 
         # Update risk beliefs based on observations
         if validity_correlation is not None:
-            # Low validity correlation suggests gaming
+            # Low score-market-share correlation signals Goodhart dynamics
             if validity_correlation < 0.5:
-                self.private_state.risk_beliefs["gaming_risk"] = min(
+                self.private_state.risk_beliefs["score_reliability_risk"] = min(
                     1.0,
-                    self.private_state.risk_beliefs["gaming_risk"] + 0.1
+                    self.private_state.risk_beliefs["score_reliability_risk"] + 0.1
                 )
                 self.private_state.risk_beliefs["validity_degradation_risk"] = min(
                     1.0,
@@ -211,9 +210,9 @@ class Policymaker:
                 )
             else:
                 # High correlation is reassuring
-                self.private_state.risk_beliefs["gaming_risk"] = max(
+                self.private_state.risk_beliefs["score_reliability_risk"] = max(
                     0.0,
-                    self.private_state.risk_beliefs["gaming_risk"] - 0.05
+                    self.private_state.risk_beliefs["score_reliability_risk"] - 0.05
                 )
 
         if consumer_satisfaction is not None:
@@ -238,10 +237,10 @@ class Policymaker:
         if media_coverage:
             risk_signals = media_coverage.get("risk_signals", [])
             if risk_signals:
-                # Each risk signal nudges gaming/validity risk beliefs up
+                # Each risk signal nudges score-reliability/validity risk beliefs up
                 risk_bump = min(0.15, len(risk_signals) * 0.05)
-                self.private_state.risk_beliefs["gaming_risk"] = min(
-                    1.0, self.private_state.risk_beliefs["gaming_risk"] + risk_bump
+                self.private_state.risk_beliefs["score_reliability_risk"] = min(
+                    1.0, self.private_state.risk_beliefs["score_reliability_risk"] + risk_bump
                 )
 
             # Critical media sentiment increases policymaker vigilance
@@ -295,10 +294,10 @@ class Policymaker:
                         1.0, self.private_state.risk_beliefs["fairness_risk"] + impact
                     )
 
-                # Gaming detection: if provider has high score but incidents, suspect gaming
-                # (capability gap causing real-world failures)
-                self.private_state.risk_beliefs["gaming_risk"] = min(
-                    1.0, self.private_state.risk_beliefs["gaming_risk"] + impact * 0.5
+                # Score reliability signal: high score + incidents → probable score-satisfaction gap
+                # (provider optimizes for benchmark-weighted dims that don't match real-world needs)
+                self.private_state.risk_beliefs["score_reliability_risk"] = min(
+                    1.0, self.private_state.risk_beliefs["score_reliability_risk"] + impact * 0.5
                 )
 
         # Tier 1: Market concentration monitoring
@@ -321,18 +320,6 @@ class Policymaker:
                 self.private_state.risk_beliefs["market_concentration_risk"] = max(
                     0.0,
                     self.private_state.risk_beliefs.get("market_concentration_risk", 0.0) - 0.05
-                )
-
-        # Tier 1: Eval engineering monitoring
-        if provider_strategies:
-            max_eval_eng = max(
-                strat.get("evaluation_engineering", 0.0)
-                for strat in provider_strategies.values()
-            )
-            if max_eval_eng > self.eval_engineering_threshold:
-                self.private_state.risk_beliefs["eval_engineering_risk"] = min(
-                    1.0,
-                    self.private_state.risk_beliefs.get("eval_engineering_risk", 0.0) + 0.1
                 )
 
         # Record observation
@@ -600,9 +587,7 @@ class Policymaker:
             intervention = {
                 "type": "compliance_audit",
                 "name": f"Compliance_Audit_R{self.public_state.current_round}",
-                "details": {
-                    "exploitability_reduction": 0.1,
-                },
+                "details": {},
                 "reason": f"Risk still high ({max_risk:.2f}) after mandate {rounds_since_mandate} rounds ago",
             }
         # High risk + prior investigation -> mandate benchmark (only if not already mandated recently)
@@ -612,7 +597,6 @@ class Policymaker:
                 "name": f"Benchmark_Mandate_R{self.public_state.current_round}",
                 "details": {
                     "validity": min(0.9, 0.7 + 0.1),
-                    "exploitability": max(0.2, 0.5 - 0.2),
                 },
                 "reason": f"High risk ({max_risk:.2f}) with prior investigation",
             }

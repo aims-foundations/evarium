@@ -163,11 +163,9 @@ class IncidentGenerator:
         providers: list,
         round_num: int,
         ground_truth: dict,
-        published_scores: dict,
         market_shares: dict,
         provider_strategies: dict,
         active_sanctions: dict = None,
-        investigated_providers: set = None,
     ) -> list:
         """
         Generate incidents for this round.
@@ -175,40 +173,26 @@ class IncidentGenerator:
         Args:
             providers: List of ModelProvider objects
             round_num: Current simulation round
-            ground_truth: Dict of provider -> true capability
-            published_scores: Dict of provider -> published benchmark score
+            ground_truth: Dict of provider -> safety capability value
             market_shares: Dict of provider -> market share
-            provider_strategies: Dict of provider -> strategy dict with safety_alignment
+            provider_strategies: Dict of provider -> strategy dict with safety, rd, product keys
             active_sanctions: Dict of provider -> sanction info (reduces incident prob)
-            investigated_providers: Set of provider names under emergency investigation
-                                    (published score is discounted for incident calculation)
 
         Returns:
             List of AIIncident objects
         """
         if active_sanctions is None:
             active_sanctions = {}
-        if investigated_providers is None:
-            investigated_providers = set()
 
         incidents = []
 
         for provider in providers:
             provider_name = provider.name
 
-            # Investigation -> discount published score used in gaming gap calculation
-            # Models market uncertainty during active probes
-            effective_published_scores = dict(published_scores)
-            if provider_name in investigated_providers:
-                effective_published_scores[provider_name] = (
-                    published_scores.get(provider_name, 0.5) * 0.85
-                )
-
             # Compute incident probability
             prob = self._compute_incident_probability(
                 provider_name,
                 ground_truth,
-                effective_published_scores,
                 market_shares,
                 provider_strategies,
                 active_sanctions=active_sanctions,
@@ -220,7 +204,6 @@ class IncidentGenerator:
                     provider_name,
                     round_num,
                     ground_truth,
-                    published_scores,
                     market_shares,
                     provider_strategies,
                 )
@@ -237,14 +220,13 @@ class IncidentGenerator:
         self,
         provider_name: str,
         ground_truth: dict,
-        published_scores: dict,
         market_shares: dict,
         provider_strategies: dict,
         active_sanctions: dict = None,
     ) -> float:
         """
-        Compute incident probability based on safety investment, gaming, exposure,
-        capability, active sanctions, and prior incident history.
+        Compute incident probability based on safety investment, exposure,
+        safety capability, active sanctions, and prior incident history.
 
         Returns probability clamped to [0, 0.40]
         """
@@ -256,31 +238,25 @@ class IncidentGenerator:
 
         # Factor 1: Safety Investment (primary)
         strategy = provider_strategies.get(provider_name, {})
-        safety_investment = strategy.get("safety_alignment", 0.0)
+        safety_investment = strategy.get("safety", 0.0)
         safety_multiplier = 1.0 - (safety_investment * 0.8)
         # safety=0.0 -> multiplier=1.0 (full risk)
         # safety=0.5 -> multiplier=0.6 (40% reduction)
         # safety=1.0 -> multiplier=0.2 (80% reduction)
 
-        # Factor 2: Gaming Penalty (capability gap)
-        true_capability = ground_truth.get(provider_name, 0.5)
-        published_score = published_scores.get(provider_name, 0.5)
-        gaming_gap = max(0, published_score - true_capability)
-        gaming_multiplier = 1.0 + (gaming_gap * 2.0)
-        # Gaming creates deployment failures (high score, low real capability)
-
-        # Factor 3: Market Share (exposure)
+        # Factor 2: Market Share (exposure)
         market_share = market_shares.get(provider_name, 0.0)
         exposure_multiplier = 0.5 + (market_share * 1.5)
         # More users = more incidents discovered
         # market_share=0.1 -> multiplier=0.65
         # market_share=0.5 -> multiplier=1.25
 
-        # Factor 4: Capability Level (use case risk)
-        capability_multiplier = 0.8 + (true_capability * 0.4)
-        # Higher capability -> higher stakes deployment
+        # Factor 3: Safety Capability (deployment stakes)
+        safety_capability = ground_truth.get(provider_name, 0.5)
+        capability_multiplier = 0.8 + (safety_capability * 0.4)
+        # Higher safety capability -> deployed in higher-stakes contexts
 
-        # Factor 5: Incident history escalation
+        # Factor 4: Incident history escalation
         # Prior major/critical incidents signal safety culture degradation and
         # accumulated technical debt (Reason's Swiss cheese model; Leveson STAMP).
         # Each prior major/critical adds +0.04 to base rate, capped at +0.20 total.
@@ -291,7 +267,7 @@ class IncidentGenerator:
         )
         history_addend = min(prior_serious * 0.04, 0.20)
 
-        # Factor 6: Active sanction -> operational caution reduction
+        # Factor 5: Active sanction -> operational caution reduction
         # Sanctions force compliance audits and heightened internal oversight,
         # temporarily reducing incident probability (FTC/GDPR post-enforcement behavior).
         # Effect: 0.75x while sanctioned (25% reduction).
@@ -301,7 +277,6 @@ class IncidentGenerator:
         incident_prob = (
             (base_incident_rate + history_addend)
             * safety_multiplier
-            * gaming_multiplier
             * exposure_multiplier
             * capability_multiplier
             * sanction_multiplier
@@ -315,7 +290,6 @@ class IncidentGenerator:
         provider_name: str,
         round_num: int,
         ground_truth: dict,
-        published_scores: dict,
         market_shares: dict,
         provider_strategies: dict,
     ) -> AIIncident:
@@ -336,10 +310,7 @@ class IncidentGenerator:
 
         # Record context at time of incident
         strategy = provider_strategies.get(provider_name, {})
-        safety_investment = strategy.get("safety_alignment", 0.0)
-        true_capability = ground_truth.get(provider_name, 0.5)
-        published_score = published_scores.get(provider_name, 0.5)
-        gaming_gap = max(0, published_score - true_capability)
+        safety_investment = strategy.get("safety", 0.0)
         market_share = market_shares.get(provider_name, 0.0)
 
         return AIIncident(
@@ -348,9 +319,8 @@ class IncidentGenerator:
             category=category,
             severity=severity,
             description=description,
-            affected_sectors=list(affected_sectors),  # Ensure it's a list
+            affected_sectors=list(affected_sectors),
             safety_investment_at_time=safety_investment,
-            gaming_gap_at_time=gaming_gap,
             market_share_at_time=market_share,
         )
 

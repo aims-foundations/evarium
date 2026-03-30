@@ -117,13 +117,12 @@ SIMULATION = {
     "n_rounds": 30,
     "seed": 1,
     "verbose": True,
-    "rnd_efficiency": 0.01,
+    "rnd_efficiency": 0.05,
+    "revenue_per_share": 5.0,
     "capability_ceiling": 1.0,
     "diminishing_returns_rate": 3.0,
     "breakthrough_probability": 0.02,
     "breakthrough_magnitude": 0.05,
-    "benchmark_validity_decay_rate": 0.01,
-    "benchmark_exploitability_growth_rate": 0.008,
     "benchmark_introduction_cooldown": 6,
     "max_benchmarks": 8,
     # Incident reporting
@@ -134,31 +133,68 @@ SIMULATION = {
     "startup_min_round": 2,            # Earliest round a startup may enter (round 1 = established providers settling in)
     "startup_funder_delay": 1,         # Rounds before funders can allocate to the new entrant
     "startup_llm_mode": True,         # If True, new entrants use LLM planning instead of heuristics
-    # Evaluator-as-company (premium access, best-of-N) — disabled for clean comparison
+    # Evaluator-as-company — disabled for clean comparison
     "evaluator_as_company": False,
     "evaluator_base_budget": 0,
-    "evaluator_premium_pricing": 0,
-    # To re-enable: set evaluator_as_company=True, base_budget=5_000_000, pricing=15_000_000
-    # Pricing rationale: VCs deploy ~$310M/round total. Established providers receive
-    # $80-170M/round -> $15M easily affordable. Startup (NovaMind) sits in the VC
-    # "other" bucket -> ~$10-12M/round -> consistently priced out of premium access.
 
-    # Realistic benchmark sequence inspired by real-world evals
-    # (MT-Bench, MedQA, LegalBench, FinBench, SWE-bench, GPQA, IFEval, RULER, GAIA, LiveBench)
-    # Order matters: first items introduced first. Starting from 4, max=8 active.
+    # Benchmark introduction sequence — introduced one per cooldown period starting with
+    # the 4 initial benchmarks above. Anchored to stakeholders.md pool schedule.
+    # Order: first item introduced ~round 6, next ~round 12, etc.
     "benchmark_sequence": [
-        {"name": "writing",               "validity": 0.72, "exploitability": 0.30, "noise_level": 0.12, "weight": 1.0},
-        {"name": "medical",               "validity": 0.78, "exploitability": 0.18, "noise_level": 0.08, "weight": 1.0},
-        {"name": "legal",                 "validity": 0.76, "exploitability": 0.20, "noise_level": 0.09, "weight": 1.0},
-        {"name": "finance",               "validity": 0.76, "exploitability": 0.20, "noise_level": 0.08, "weight": 1.0},
-        {"name": "instruction_following", "validity": 0.80, "exploitability": 0.18, "noise_level": 0.07, "weight": 1.0},
-        {"name": "long_context",          "validity": 0.78, "exploitability": 0.15, "noise_level": 0.08, "weight": 1.0},
-        {"name": "coding_advanced",       "validity": 0.85, "exploitability": 0.10, "noise_level": 0.06, "weight": 1.0},
-        {"name": "reasoning_advanced",    "validity": 0.84, "exploitability": 0.10, "noise_level": 0.07, "weight": 1.0},
-        {"name": "math_advanced",         "validity": 0.86, "exploitability": 0.08, "noise_level": 0.06, "weight": 1.0},
-        {"name": "safety_advanced",       "validity": 0.88, "exploitability": 0.06, "noise_level": 0.05, "weight": 1.0},
-        {"name": "agentic",               "validity": 0.70, "exploitability": 0.06, "noise_level": 0.05, "weight": 1.0},
-        {"name": "live_bench",            "validity": 0.82, "exploitability": 0.04, "noise_level": 0.04, "weight": 1.0},
+        {
+            "name": "Scientific Reasoning", "validity": 0.80,
+            "noise_level": 0.07, "noise_sigma": 0.07, "samples": 1000, "weight": 1.0,
+            # Real analog: GPQA
+            "category_dimension_weights": {"overall": {
+                "reasoning": 0.57, "coding": 0.02, "knowledge": 0.32,
+                "safety": 0.00, "communication": 0.08, "agentic": 0.01,
+            }},
+        },
+        {
+            "name": "Agentic Tasks", "validity": 0.72,
+            "noise_level": 0.08, "noise_sigma": 0.08, "samples": 1000, "weight": 1.0,
+            # Real analog: SWE-bench / BFCL
+            "category_dimension_weights": {"overall": {
+                "reasoning": 0.25, "coding": 0.19, "knowledge": 0.01,
+                "safety": 0.00, "communication": 0.07, "agentic": 0.48,
+            }},
+        },
+        {
+            "name": "Hard Coding", "validity": 0.82,
+            "noise_level": 0.06, "noise_sigma": 0.06, "samples": 1000, "weight": 1.0,
+            # Real analog: LiveCodeBench
+            "category_dimension_weights": {"overall": {
+                "reasoning": 0.31, "coding": 0.52, "knowledge": 0.05,
+                "safety": 0.00, "communication": 0.01, "agentic": 0.11,
+            }},
+        },
+        {
+            "name": "Long Context", "validity": 0.78,
+            "noise_level": 0.07, "noise_sigma": 0.07, "samples": 1000, "weight": 1.0,
+            # Real analog: RULER / HELMET
+            "category_dimension_weights": {"overall": {
+                "reasoning": 0.19, "coding": 0.01, "knowledge": 0.28,
+                "safety": 0.00, "communication": 0.47, "agentic": 0.05,
+            }},
+        },
+        {
+            "name": "Domain Expert", "validity": 0.80,
+            "noise_level": 0.07, "noise_sigma": 0.07, "samples": 1000, "weight": 1.0,
+            # Real analog: MedQA / LegalBench
+            "category_dimension_weights": {"overall": {
+                "reasoning": 0.33, "coding": 0.01, "knowledge": 0.53,
+                "safety": 0.05, "communication": 0.07, "agentic": 0.01,
+            }},
+        },
+        {
+            "name": "Agentic Safety", "validity": 0.85,
+            "noise_level": 0.06, "noise_sigma": 0.06, "samples": 1000, "weight": 1.0,
+            # New benchmark — no direct real analog yet
+            "category_dimension_weights": {"overall": {
+                "reasoning": 0.11, "coding": 0.00, "knowledge": 0.01,
+                "safety": 0.63, "communication": 0.13, "agentic": 0.12,
+            }},
+        },
     ],
     # Media
     "enable_media": True,
@@ -173,103 +209,121 @@ SIMULATION = {
 }
 
 BENCHMARKS = [
-    {"name": "coding",    "validity": 0.70, "exploitability": 0.25, "noise_level": 0.08, "weight": 1.0},
-    {"name": "reasoning", "validity": 0.70, "exploitability": 0.25, "noise_level": 0.09, "weight": 1.0},
-    {"name": "math",      "validity": 0.70, "exploitability": 0.25, "noise_level": 0.10, "weight": 1.0},
-    {"name": "safety",    "validity": 0.70, "exploitability": 0.25, "noise_level": 0.08, "weight": 1.0},
+    {
+        "name": "General Capability", "validity": 0.75,
+        "noise_level": 0.08, "noise_sigma": 0.08, "samples": 1000, "weight": 1.0,
+        # Aggregate dimension weights from stakeholders.md benchmark pool (real analog: MMLU)
+        "category_dimension_weights": {"overall": {
+            "reasoning": 0.39, "coding": 0.06, "knowledge": 0.30,
+            "safety": 0.02, "communication": 0.22, "agentic": 0.01,
+        }},
+    },
+    {
+        "name": "Coding Evaluation", "validity": 0.75,
+        "noise_level": 0.07, "noise_sigma": 0.07, "samples": 1000, "weight": 1.0,
+        # Real analog: HumanEval / MBPP
+        "category_dimension_weights": {"overall": {
+            "reasoning": 0.30, "coding": 0.53, "knowledge": 0.05,
+            "safety": 0.00, "communication": 0.04, "agentic": 0.08,
+        }},
+    },
+    {
+        "name": "Safety Evaluation", "validity": 0.75,
+        "noise_level": 0.08, "noise_sigma": 0.08, "samples": 1000, "weight": 1.0,
+        # Real analog: TruthfulQA / BBQ
+        "category_dimension_weights": {"overall": {
+            "reasoning": 0.06, "coding": 0.00, "knowledge": 0.10,
+            "safety": 0.58, "communication": 0.26, "agentic": 0.00,
+        }},
+    },
+    {
+        "name": "Instruction Following", "validity": 0.75,
+        "noise_level": 0.07, "noise_sigma": 0.07, "samples": 1000, "weight": 1.0,
+        # Real analog: MT-Bench / IFEval
+        "category_dimension_weights": {"overall": {
+            "reasoning": 0.20, "coding": 0.03, "knowledge": 0.08,
+            "safety": 0.03, "communication": 0.65, "agentic": 0.01,
+        }},
+    },
 ]
 
-# Shift all absolute capability baselines by this amount (e.g. +0.10 shifts providers up by 0.10).
+# Shift all absolute capability baselines by this amount (e.g. +0.10 shifts all dims by 0.10).
 # Set to 0.0 for default behavior.
 CAPABILITY_SHIFT = 0.0
 
-# 5 providers
+# 5 providers (4 closed + 1 open-source) — capability vectors calibrated for 2023 Q1 baseline.
+# Portfolios: {rd, safety, product} summing to 1.0.
 PROVIDERS = [
     {
         "name": "Orion Labs",
         "strategy_profile": "Move fast and ship products, consumer focus, balance safety with capability",
         "innate_traits": "aggressive, product-focused, benchmark-aware, well-funded",
-        "initial_capability": 0.27,  # Market leader (OpenAI analogue) — clear first-mover advantage
-        "initial_believed_capability": 0.29,  # Slight overconfidence — aggressive, product-focused
-        "initial_believed_exploitability": 0.35,
-        "initial_strategy": {
-            "fundamental_research": 0.25,
-            "training_optimization": 0.30,
-            "evaluation_engineering": 0.20,
-            "safety_alignment": 0.25,  # Moderate safety
-        },
-        "market_presence": 0.85,
-        "brand_recognition": 0.9,
+        # OpenAI analogue: market leader, strong coding + instruction-following
+        "capability_vector": {"reasoning": 0.54, "coding": 0.51, "knowledge": 0.53,
+                              "safety": 0.51, "communication": 0.54, "agentic": 0.47},
+        "portfolio": {"rd": 0.55, "safety": 0.15, "product": 0.30},
+        "benchmark_orientation": 0.80,
         "cost_advantage": 0.08,  # Frontier premium (~GPT-4o: $2.50/1M tokens)
-        # OpenAI analogue: strong on coding, instruction-following, writing, general reasoning
-        "focus_benchmarks": ["coding", "reasoning", "writing", "instruction_following", "coding_advanced", "agentic"],
+        # Initial focus: product breadth + coding, moderate safety investment
+        "focus_level_init": {
+            "General Capability": 1.5, "Coding Evaluation": 1.2,
+            "Safety Evaluation": 0.8, "Instruction Following": 1.0,
+        },
     },
     {
         "name": "Apex AI",
         "strategy_profile": "Safety research focus, reliability and enterprise focus",
         "innate_traits": "research-oriented, enterprise-focus, coding-focus, safety-conscious, principled",
-        "initial_capability": 0.27,  # Very close to frontier, strong on coding/safety (Anthropic analogue)
-        "initial_believed_capability": 0.27,  # Slight underestimate — self-critical, conservative
-        "initial_believed_exploitability": 0.30,
-        "initial_strategy": {
-            "fundamental_research": 0.30,
-            "training_optimization": 0.20,
-            "evaluation_engineering": 0.10,
-            "safety_alignment": 0.40,  # Higher safety focus
-        },
-        "market_presence": 0.6,
-        "brand_recognition": 0.7,
+        # Anthropic analogue: highest safety, strong coding + reasoning
+        "capability_vector": {"reasoning": 0.52, "coding": 0.49, "knowledge": 0.51,
+                              "safety": 0.55, "communication": 0.53, "agentic": 0.43},
+        "portfolio": {"rd": 0.60, "safety": 0.30, "product": 0.10},
+        "benchmark_orientation": 0.75,
         "cost_advantage": 0.05,  # Frontier premium (~Claude Sonnet: $3.00/1M tokens)
-        # Anthropic analogue: safety-first, strong on alignment, instruction-following, long-context enterprise
-        "focus_benchmarks": ["safety", "reasoning", "instruction_following", "safety_advanced", "long_context"],
+        # Initial focus: safety-heavy, strong coding, moderate general capability
+        "focus_level_init": {
+            "General Capability": 1.3, "Coding Evaluation": 1.1,
+            "Safety Evaluation": 2.5, "Instruction Following": 1.1,
+        },
     },
     {
         "name": "Genesis Systems",
         "strategy_profile": (
             "World-class research lab backed by massive infrastructure. "
             "Excels at fundamental breakthroughs but historically slower to productize. "
-            "Under pressure to ship products competitively. "
             "Balances scientific ambition with commercial urgency."
         ),
         "innate_traits": "research-first, methodical, well-resourced, scientifically-rigorous, patient",
-        "initial_capability": 0.26,
-        "initial_believed_capability": 0.28,
-        "initial_believed_exploitability": 0.35,
-        "initial_strategy": {
-            "fundamental_research": 0.45,  # Heavy research focus
-            "training_optimization": 0.30,
-            "evaluation_engineering": 0.10,  # Low gaming (scientifically rigorous)
-            "safety_alignment": 0.15,  # Moderate-low safety (focus on capabilities)
-        },
-        "market_presence": 0.7,
-        "brand_recognition": 0.8,
+        # Google analogue: world-class reasoning + knowledge, strong scientific benchmarks
+        "capability_vector": {"reasoning": 0.53, "coding": 0.48, "knowledge": 0.54,
+                              "safety": 0.49, "communication": 0.51, "agentic": 0.45},
+        "portfolio": {"rd": 0.70, "safety": 0.15, "product": 0.15},
+        "benchmark_orientation": 0.78,
         "cost_advantage": 0.18,  # Mid-tier pricing (~Gemini Pro: $1.25/1M tokens)
-        # Google analogue: world-class on reasoning, math, science; strong long-context and medical
-        "focus_benchmarks": ["reasoning", "math", "medical", "long_context", "reasoning_advanced", "math_advanced"],
+        # Initial focus: general capability + scientific reasoning, low coding focus
+        "focus_level_init": {
+            "General Capability": 2.0, "Coding Evaluation": 0.9,
+            "Safety Evaluation": 0.8, "Instruction Following": 0.8,
+        },
     },
     {
         "name": "Mirage AI",
         "strategy_profile": (
-            "Large-platform AI lab using open-source as competitive moat. "
-            "Leverages massive user data and compute infrastructure. "
-            "Prioritizes broad adoption over benchmark scores. "
-            "Willing to open-source models to undermine competitors' paid APIs."
+            "Large-platform AI lab leveraging massive user data and compute. "
+            "Prioritizes broad adoption over benchmark scores."
         ),
-        "innate_traits": "open-source, pragmatic, data-rich, platform-focused, disruptive",
-        "initial_capability": 0.24,  # Strong but below frontier closed models (Meta analogue)
-        "initial_believed_capability": 0.23,  # Slight underestimate — pragmatic, knows where they stand
-        "initial_believed_exploitability": 0.40,
-        "initial_strategy": {
-            "fundamental_research": 0.20,
-            "training_optimization": 0.45,  # Heavy scaling (massive compute)
-            "evaluation_engineering": 0.25,  # Moderate gaming (pragmatic)
-            "safety_alignment": 0.10,  # Lower safety (open-source strategy)
-        },
-        "market_presence": 0.5,
-        "brand_recognition": 0.6,
+        "innate_traits": "pragmatic, data-rich, platform-focused, scaling-focused",
+        # Meta analogue: broad coverage, lower safety investment
+        "capability_vector": {"reasoning": 0.51, "coding": 0.49, "knowledge": 0.49,
+                              "safety": 0.45, "communication": 0.49, "agentic": 0.41},
+        "portfolio": {"rd": 0.80, "safety": 0.10, "product": 0.10},
+        "benchmark_orientation": 0.82,
         "cost_advantage": 0.42,  # Budget closed pricing (~Llama API: $0.30/1M tokens)
-        # Meta analogue: broad coverage, writing, coding, math — data-rich platform advantage
-        "focus_benchmarks": ["math", "coding", "writing", "reasoning", "math_advanced"],
+        # Initial focus: coding-heavy, minimal safety, general capability
+        "focus_level_init": {
+            "General Capability": 1.2, "Coding Evaluation": 1.8,
+            "Safety Evaluation": 0.5, "Instruction Following": 1.0,
+        },
     },
     # Open-source provider (modeled after DeepSeek R1 / Kimi / GLM)
     {
@@ -281,22 +335,22 @@ PROVIDERS = [
             "Users free to use model without guardrails, minimal safety investment."
         ),
         "innate_traits": "open-source, community-focused, benchmark-optimizing, cost-competitive, pragmatic, no guardrails",
-        "initial_capability": 0.21,
-        "initial_believed_capability": 0.22,
-        "initial_believed_exploitability": 0.50,
-        "initial_strategy": {
-            "fundamental_research": 0.20,
-            "training_optimization": 0.40,
-            "evaluation_engineering": 0.35,
-            "safety_alignment": 0.05,
-        },
-        "market_presence": 0.2,
-        "brand_recognition": 0.3,
+        # DeepSeek analogue: lower initial capability, minimal safety, highest benchmark focus
+        "capability_vector": {"reasoning": 0.47, "coding": 0.49, "knowledge": 0.46,
+                              "safety": 0.42, "communication": 0.45, "agentic": 0.40},
+        "portfolio": {"rd": 0.75, "safety": 0.10, "product": 0.15},
+        "benchmark_orientation": 0.88,
         "open_source": True,
-        "cost_advantage": 0.5,
-        "contamination_multiplier": 1.8,
-        "commoditization_threshold": 0.33,
-        "focus_benchmarks": ["math", "coding", "reasoning", "math_advanced", "coding_advanced"],
+        "openness_level": 1.0,
+        "cost_advantage": 0.9,  # Free / near-free (open weights)
+        "rd_budget_floor": 1.0,
+        "os_belief_broadcast": True,
+        "os_safety_erosion": True,
+        # Initial focus: coding-maximized, no safety investment
+        "focus_level_init": {
+            "General Capability": 1.0, "Coding Evaluation": 2.5,
+            "Safety Evaluation": 0.3, "Instruction Following": 0.7,
+        },
     },
 ]
 
@@ -460,10 +514,11 @@ def run():
     # --- Apply capability shift ---
     if CAPABILITY_SHIFT != 0.0:
         for p in provider_configs:
-            p["initial_capability"] = p.get("initial_capability", 0.0) + CAPABILITY_SHIFT
-            p["initial_believed_capability"] = p.get("initial_believed_capability", 0.0) + CAPABILITY_SHIFT
-            if "commoditization_threshold" in p:
-                p["commoditization_threshold"] += CAPABILITY_SHIFT
+            if "capability_vector" in p:
+                p["capability_vector"] = {
+                    dim: val + CAPABILITY_SHIFT
+                    for dim, val in p["capability_vector"].items()
+                }
 
     # --- Resolve funder configs ---
     funder_configs = FUNDERS.get("configs") if FUNDERS["enabled"] else None
@@ -483,21 +538,18 @@ def run():
         n_rounds=n_rounds,
         seed=SIMULATION.get("seed", 42),
         benchmark_validity=0.7,
-        benchmark_exploitability=0.5,
-        benchmark_noise=0.1,
+        benchmark_noise=0.08,
         benchmarks=BENCHMARKS,
         rnd_efficiency=SIMULATION.get("rnd_efficiency", 0.01),
+        revenue_per_share=SIMULATION.get("revenue_per_share", 1.0),
         capability_ceiling=SIMULATION.get("capability_ceiling", 1.0),
         diminishing_returns_rate=SIMULATION.get("diminishing_returns_rate", 3.0),
         breakthrough_probability=SIMULATION.get("breakthrough_probability", 0.02),
         breakthrough_magnitude=SIMULATION.get("breakthrough_magnitude", 0.05),
-        benchmark_validity_decay_rate=SIMULATION.get("benchmark_validity_decay_rate", 0.005),
-        benchmark_exploitability_growth_rate=SIMULATION.get("benchmark_exploitability_growth_rate", 0.008),
         benchmark_introduction_cooldown=SIMULATION.get("benchmark_introduction_cooldown", 6),
-        max_benchmarks=SIMULATION.get("max_benchmarks", 6),
+        max_benchmarks=SIMULATION.get("max_benchmarks", 8),
         benchmark_sequence=SIMULATION.get("benchmark_sequence"),
         llm_mode=LLM["llm_mode"],
-        # NEW v7: Consumer LLM configuration
         consumer_llm_mode=LLM.get("consumer_llm_mode", False),
         consumer_llm_individuals=LLM.get("consumer_llm_individuals", False),
         consumer_llm_organizations=LLM.get("consumer_llm_organizations", True),
@@ -508,11 +560,9 @@ def run():
         n_policymakers=POLICYMAKERS.get("n_policymakers", 1) if POLICYMAKERS["enabled"] else 0,
         n_funders=n_funders,
         use_case_profiles=SIMULATION.get("use_case_profiles"),
-        # NEW: Incident reporting and evaluator-as-company features
         enable_incidents=SIMULATION.get("enable_incidents", False),
         evaluator_as_company=SIMULATION.get("evaluator_as_company", False),
         evaluator_base_budget=SIMULATION.get("evaluator_base_budget", 0.0),
-        evaluator_premium_pricing=SIMULATION.get("evaluator_premium_pricing", 100000.0),
         # Startup entry dynamics
         startup_entry_probability=SIMULATION.get("startup_entry_probability", 0.0),
         startup_entry_cap=SIMULATION.get("startup_entry_cap", 3),
@@ -717,7 +767,6 @@ def run():
         llm_mode=config.llm_mode,
         benchmark_params={
             "validity": config.benchmark_validity,
-            "exploitability": config.benchmark_exploitability,
             "noise": config.benchmark_noise,
         },
         benchmarks=BENCHMARKS,

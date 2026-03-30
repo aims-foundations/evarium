@@ -286,7 +286,19 @@ The current experiment set supports the following narrative:
 - New dashboard: `plot_ecosystem_dynamics_dashboard()` — incident→media→consumer flow, evaluator financial sustainability, gaming detection ROC, market concentration vs incident rate.
 - Nice-to-have: interactive plots (Plotly/Bokeh), animated visualizations, comparative side-by-side dashboards.
 
+## Documentation / Paper (non-implementation)
+
+- **Update actor one-pager** — stakeholders.md changes from the no-explicit-gaming rewrite need to propagate to the one-page actor summary used in presentations/paper appendix.
+- **Update paper diagrams** — architecture diagrams (capability update rule, scoring formula, gaming emergence mechanism) need to reflect the new design (3-lever portfolio, dot-product score, no eval_eng).
+
+## Post-implementation: LLM Prompt Review (PIMMUR)
+
+- **Funder LLM prompt (M + U)** — When writing `llm_plan_funding` in `llm.py`, do NOT inject theory about why scores might diverge from market outcomes (pimmur_audit.md §Minimal-Control item 4: "funder theory injection"). Pass observables only: scores at face value, market shares, score deltas, incident history, media sentiment, `public_comms`. Let the LLM reason freely. No "gap suggests X" or "scores may be inflated" framing.
+- **All LLM prompts** — Review all system prompts for "simulating" framing (replace with first-person), recognisable experimental vocabulary (audit §Unawareness), and pre-computed analytical hints in reflection prompts (audit §Minimal-Control item 3). Do this pass after all actors are implemented.
+
 ## Infrastructure
 
+- **LLM plumbing** — DONE (2026-03-30): `llm.py` fully rewritten for new arch. `llm_plan_provider`, `call_llm`, `llm_plan_funding` all written. Old-arch dead code removed. PIMMUR fixes applied to funder prompt.
+- **LLM end-to-end smoke test** — `llm_plan_provider` is new and untested with a real LLM. Run `python scripts/run_llm_now.py -r 3 -p anthropic --no-log` to verify before any production run.
 - **`run_llm_now.py` is likely broken** — new config parameters (`enable_incidents`, `evaluator_as_company`, `enable_media`, `consumer_llm_mode`, policymaker presets, `use_case_profiles`) are not wired up. Needs sync with `run_experiment.py` structure.
 - **`compare_experiments.py`** — tool to load two experiments, diff their configs, compute per-metric divergence timelines, and identify the first round of significant divergence. Would replace the current manual summary.json comparison workflow.

@@ -14,7 +14,7 @@ Each actor has:
 - GroundTruth: Held externally by simulation (invisible to actors)
 """
 
-from .model_provider import ModelProvider, ModelProviderScratch
+from .model_provider import ModelProvider
 from .evaluator import Evaluator, Benchmark, Regulation
 from .consumer import Consumer
 from .policymaker import Policymaker
@@ -23,7 +23,6 @@ from .funder import Funder, get_default_funder_configs, get_multi_funder_configs
 __all__ = [
     # Core actors
     "ModelProvider",
-    "ModelProviderScratch",
     "Evaluator",
     "Benchmark",
     "Regulation",

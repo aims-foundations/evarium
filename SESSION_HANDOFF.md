@@ -1,21 +1,31 @@
-# Session Handoff — 2026-03-23
+# Session Handoff — 2026-03-30
 
 ## Completed
-- Full redesign of model provider mechanics; stakeholders.md updated throughout
-- Consolidated research + development → single `rd` lever (3 levers total: rd, safety, product)
-- Removed `dimension_allocation`, `benchmark_adjacency`, `provider_efficiency_multiplier`, `S_efficiency`
-- Introduced `focus_level[b]` (per-benchmark running scalar, ordinal LLM-updated, initialized at mean of existing benchmarks when new benchmark enters)
-- Introduced `benchmark_orientation` (renamed from α; per-provider; bounds (0.05, 0.95); ordinal LLM-updated; framed in prompt as "how oriented is your R&D toward benchmark performance vs. consumer feedback")
-- `inferred_benchmark_weights` now per-benchmark matrix, heuristic-updated only (beliefs are epistemic state, not LLM output)
-- `satisfaction_signal` as 6-dim vector: market-share-weighted consumer need weights, noise ∝ 1/sqrt(market_share); NOT in LLM prompt (Option C); feeds capability update mechanically via benchmark_orientation blend
-- Capability update: `target = benchmark_orientation × benchmark_driven + (1 - benchmark_orientation) × satisfaction_signal`
-- Ordinal step δ (0.06–0.09, Thread 9); single value for portfolio, focus_level, benchmark_orientation; prompt framing note added for relative benchmark focus
-- Worked through all 6 critiques: 1 resolved (Option C + benchmark_orientation LLM-updatable), 2 dissolved (not a visibility violation), 3 resolved (δ + prompt framing), 4 treated as emergent feature (bounded benchmark_orientation), 5 resolved (Option A initialization + confirmed all providers scored on all benchmarks), 6 resolved (benchmark_orientation per-provider, LLM-updatable)
+- **Thread 9 calibration** — all core parameters set:
+  - `rnd_efficiency=0.05`, `revenue_per_share=5.0` in SIMULATION config + wired into SimulationConfig
+  - `focus_level_init` per provider (5 providers × 4 benchmarks) in PROVIDERS
+  - Safety capability floor: 0.35 (closed), 0.03 (OS) — in `_update_ground_truth()`
+  - `init_benchmark()` fix: no longer overwrites existing focus_level values
+- **Variable name / dead code audit** — removed `exploitability` everywhere:
+  - `evaluator.py`: removed `exploitability` field from `Benchmark`
+  - `policymaker.py`: removed `compliance_audit` exploitability mutation block
+  - `simulation.py`: fixed `benchmark_params` to media; removed dead compliance_audit block
+  - `game_log.py`: fixed KeyError on `new_bm['validity']`/`new_bm['exploitability']`
+  - `run_experiment.py`, `rerun_experiment.py`, `run_llm_now.py`: removed all `benchmark_exploitability` refs
+- **LLM pass-through (major)** — `src/llm.py` fully rewritten for new arch:
+  - Removed all old-arch dead code (`llm_plan_portfolio`, `llm_reflect`, `get_client`, etc.)
+  - Added `call_llm()` wrapper (for `consumer.py`)
+  - Wrote `PROVIDER_PLANNING_SYSTEM_PROMPT`, `_build_provider_planning_prompt`, `llm_plan_provider` (ordinal 3-lever output)
+  - Fixed `llm_plan_funding` / `create_funder_planning_prompt`: replaced `believed_provider_gaming` + `consumer_satisfaction` with `market_shares` (PIMMUR compliance)
+  - Smoke test: all imports + heuristic run PASS
 
-## In Progress
-- Nothing partially done
+## Deferred (in TODO.md)
+1. Heuristic scoring formulas (funder `_plan_vc/gov/foundation`) diverge from stakeholders.md spec
+2. LLM prompt review (PIMMUR: goal-injection, reflection coaching, "simulating" framing)
+3. `run_llm_now.py` out of sync with `run_experiment.py` (new config params not wired)
 
 ## Next Steps
-1. **PI response synthesis**: draft concise response covering all 5 PI feedback points — provider mechanism redesign is the main substantive change to communicate
-2. **Implementation**: begin file-by-file per stakeholders.md (visibility.py → model_provider.py → simulation.py)
-3. **Thread 9 calibration**: focus_level[b] baselines (24 values), benchmark_orientation initial values per provider, δ, σ_base, R&D/safety gain scaling — all require early simulation runs
+1. Run full 30-round experiment (all 5 providers + all actors) via `run_experiment.py --dev`
+2. Inspect trajectories: Goodhart gap, market shares, incidents, funder allocations, interventions
+3. LLM end-to-end smoke test: `run_llm_now.py -r 3 -p anthropic` (tests `llm_plan_provider`)
+4. Thread 9 end: align heuristic funder scoring formulas with stakeholders.md spec

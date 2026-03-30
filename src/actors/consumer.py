@@ -7,14 +7,15 @@ Each segment = archetype × use_case (e.g., "software_dev_leaderboard_follower")
 Key dynamics:
 - Segments observe leaderboard rankings weighted by their use-case benchmark preferences
 - Switching is tracked as proportions within each segment, not headcounts
-- Satisfaction depends on true_capability (ground truth), not benchmark scores
-- Gaming creates a perception gap: high weighted score but low true satisfaction
+- Satisfaction = dot(capability_vector, need_weights) - incident_penalty*(1+ms²)
+  - media_penalty*leaderboard_trust + cost_bonus (ground truth, not benchmark scores)
+- Gaming creates a perception gap: high benchmark score but low true satisfaction
 - The gap drives probabilistic switching within each segment
 
 Visibility:
 - PUBLIC: market_shares (aggregate), switching_rate
 - PRIVATE: per-segment beliefs, satisfaction, provider distribution
-- INVISIBLE: true_capability (held by simulation)
+- INVISIBLE: capability_vector, need_weights (held by simulation)
 """
 import json
 import math
@@ -31,60 +32,85 @@ import numpy as np
 
 USE_CASE_PROFILES = {
     # Individual consumer profiles
+    # need_weights: {reasoning, coding, knowledge, safety, communication, agentic}
+    # Sourced from stakeholders.md — these are the hidden utility functions that determine
+    # what each segment actually values regardless of how they select providers.
     "software_dev": {
         "label": "Software Developer",
         "benchmark_prefs": {"coding": 0.90, "reasoning": 0.08, "writing": 0.02},
         "consumer_type": "individual",
+        "need_weights": {"reasoning": 0.20, "coding": 0.45, "knowledge": 0.08,
+                         "safety": 0.02, "communication": 0.05, "agentic": 0.20},
     },
     "content_writer": {
         "label": "Content Writer",
         "benchmark_prefs": {"writing": 0.90, "reasoning": 0.08, "coding": 0.02},
         "consumer_type": "individual",
+        "need_weights": {"reasoning": 0.15, "coding": 0.03, "knowledge": 0.25,
+                         "safety": 0.05, "communication": 0.50, "agentic": 0.02},
     },
     "legal": {
         "label": "Legal Professional",
         "benchmark_prefs": {"reasoning": 0.75, "writing": 0.20, "safety": 0.05},
         "consumer_type": "individual",
+        "need_weights": {"reasoning": 0.35, "coding": 0.03, "knowledge": 0.30,
+                         "safety": 0.10, "communication": 0.20, "agentic": 0.02},
     },
     "healthcare": {
         "label": "Healthcare Worker",
         "benchmark_prefs": {"safety": 0.75, "reasoning": 0.20, "writing": 0.05},
         "consumer_type": "individual",
+        "need_weights": {"reasoning": 0.20, "coding": 0.03, "knowledge": 0.25,
+                         "safety": 0.40, "communication": 0.10, "agentic": 0.02},
     },
     "finance": {
         "label": "Finance Analyst",
         "benchmark_prefs": {"reasoning": 0.70, "safety": 0.25, "coding": 0.05},
         "consumer_type": "individual",
+        "need_weights": {"reasoning": 0.30, "coding": 0.15, "knowledge": 0.25,
+                         "safety": 0.20, "communication": 0.07, "agentic": 0.03},
     },
     "educator": {
         "label": "Educator",
         "benchmark_prefs": {"writing": 0.50, "reasoning": 0.40, "safety": 0.10},
         "consumer_type": "individual",
+        "need_weights": {"reasoning": 0.25, "coding": 0.03, "knowledge": 0.25,
+                         "safety": 0.10, "communication": 0.35, "agentic": 0.02},
     },
     "customer_service": {
         "label": "Customer Service",
         "benchmark_prefs": {"writing": 0.85, "reasoning": 0.12, "safety": 0.03},
         "consumer_type": "individual",
+        "need_weights": {"reasoning": 0.07, "coding": 0.02, "knowledge": 0.15,
+                         "safety": 0.20, "communication": 0.55, "agentic": 0.01},
     },
     "researcher": {
         "label": "Researcher",
         "benchmark_prefs": {"reasoning": 0.50, "coding": 0.45, "writing": 0.05},
         "consumer_type": "individual",
+        "need_weights": {"reasoning": 0.30, "coding": 0.25, "knowledge": 0.25,
+                         "safety": 0.03, "communication": 0.07, "agentic": 0.10},
     },
     "creative": {
         "label": "Creative Professional",
         "benchmark_prefs": {"writing": 0.85, "reasoning": 0.10, "coding": 0.05},
         "consumer_type": "individual",
+        "need_weights": {"reasoning": 0.15, "coding": 0.03, "knowledge": 0.20,
+                         "safety": 0.05, "communication": 0.55, "agentic": 0.02},
     },
     "marketing": {
         "label": "Marketing Professional",
         "benchmark_prefs": {"writing": 0.75, "reasoning": 0.20, "coding": 0.05},
         "consumer_type": "individual",
+        "need_weights": {"reasoning": 0.20, "coding": 0.03, "knowledge": 0.25,
+                         "safety": 0.05, "communication": 0.45, "agentic": 0.02},
     },
     "service_worker": {
         "label": "Service Worker",
         "benchmark_prefs": {"writing": 0.65, "reasoning": 0.25, "safety": 0.10},
         "consumer_type": "individual",
+        "need_weights": {"reasoning": 0.12, "coding": 0.02, "knowledge": 0.20,
+                         "safety": 0.20, "communication": 0.45, "agentic": 0.01},
     },
 
     # Organizational consumer profiles
@@ -95,6 +121,8 @@ USE_CASE_PROFILES = {
         "compliance_requirements": ["HIPAA", "patient_safety"],
         "integration_friction": 0.175,
         "decision_delay": 6,
+        "need_weights": {"reasoning": 0.18, "coding": 0.03, "knowledge": 0.25,
+                         "safety": 0.40, "communication": 0.12, "agentic": 0.02},
     },
     "enterprise_finance": {
         "label": "Financial Institution",
@@ -103,6 +131,8 @@ USE_CASE_PROFILES = {
         "compliance_requirements": ["SOX", "financial_reporting"],
         "integration_friction": 0.20,
         "decision_delay": 4,
+        "need_weights": {"reasoning": 0.28, "coding": 0.12, "knowledge": 0.22,
+                         "safety": 0.25, "communication": 0.10, "agentic": 0.03},
     },
     "tech_startup": {
         "label": "Tech Startup",
@@ -111,6 +141,8 @@ USE_CASE_PROFILES = {
         "compliance_requirements": [],
         "integration_friction": 0.075,
         "decision_delay": 2,
+        "need_weights": {"reasoning": 0.20, "coding": 0.30, "knowledge": 0.12,
+                         "safety": 0.05, "communication": 0.08, "agentic": 0.25},
     },
     "enterprise_legal": {
         "label": "Legal Organization",
@@ -119,6 +151,8 @@ USE_CASE_PROFILES = {
         "compliance_requirements": ["client_confidentiality", "data_protection"],
         "integration_friction": 0.15,
         "decision_delay": 5,
+        "need_weights": {"reasoning": 0.32, "coding": 0.04, "knowledge": 0.28,
+                         "safety": 0.12, "communication": 0.22, "agentic": 0.02},
     },
     "government_agency": {
         "label": "Government Agency",
@@ -127,6 +161,8 @@ USE_CASE_PROFILES = {
         "compliance_requirements": ["security_clearance", "data_sovereignty"],
         "integration_friction": 0.225,
         "decision_delay": 8,
+        "need_weights": {"reasoning": 0.20, "coding": 0.03, "knowledge": 0.25,
+                         "safety": 0.35, "communication": 0.15, "agentic": 0.02},
     },
 }
 
@@ -201,8 +237,12 @@ class MarketSegment:
     use_case: str                      # "software_dev" | "healthcare" | etc.
     market_fraction: float             # proportion of total market (sums to 1.0)
 
-    # Resolved benchmark weights {benchmark_name: weight}
+    # Resolved benchmark weights {benchmark_name: weight}  — for leaderboard observation
     benchmark_weights: dict = field(default_factory=dict)
+
+    # True utility weights over capability dimensions {dim: weight} — ground truth need function
+    # Used in satisfaction formula: satisfaction = dot(capability_vector, need_weights) + ...
+    need_weights: dict = field(default_factory=dict)
 
     # Archetype parameters
     leaderboard_trust: float = 0.7
@@ -535,65 +575,47 @@ class ConsumerMarket:
 
         Args:
             ground_truth: {provider_name: ProviderGroundTruth}
-            provider_strategies: {provider_name: {fundamental_research, ...}}
+            provider_strategies: {provider_name: {rd, safety, product, safety_capability}}
             published_scores: {provider_name: composite_score}
             media_coverage: Media coverage dict with sentiment and provider_attention
         """
+        _DIMS = ["reasoning", "coding", "knowledge", "safety", "communication", "agentic"]
+        _UNIFORM = {d: 1.0 / len(_DIMS) for d in _DIMS}
+
         for seg in self.segments:
+            need_wts = seg.need_weights if seg.need_weights else _UNIFORM
+
             for provider_name in self.provider_names:
                 if provider_name not in ground_truth:
                     continue
 
                 gt = ground_truth[provider_name]
-                true_capability = gt.true_capability
+                cap_vec = gt.capability_vector
 
-                # Base satisfaction: use-case weighted perceived quality
-                # This is what the segment actually experiences in their domain
-                base_satisfaction = seg.believed_quality.get(provider_name, true_capability)
+                # Base satisfaction: dot(capability_vector, need_weights)
+                # This is what the segment actually experiences — true quality for their use case.
+                # Gaming emerges naturally: providers over-invested in benchmark-weighted dims
+                # score higher but satisfy less if those dims don't match segment needs.
+                base_satisfaction = sum(
+                    cap_vec.get(d, 0.0) * need_wts.get(d, 0.0) for d in _DIMS
+                )
 
-                # If no believed_quality yet (early rounds), use true_capability
-                if provider_name not in seg.believed_quality:
-                    base_satisfaction = true_capability
-
-                # Factor 1: Gaming Detection Penalty
-                # If score >> true_capability, consumer experiences disappointment
-                # (high scores attracted them, but actual performance disappoints)
-                gaming_penalty = 0.0
-                if published_scores and provider_name in published_scores:
-                    score = published_scores[provider_name]
-                    gap = max(0, score - true_capability)
-                    gaming_penalty = 0.20 * gap  # 20% penalty per unit of inflation
-
-                # Factor 2: Safety Alignment Match
-                # Segments with high safety preferences value safety investment
-                # Organizational consumers weight compliance/safety more heavily
-                safety_bonus = 0.0
-                if provider_strategies and provider_name in provider_strategies:
-                    strategy = provider_strategies[provider_name]
-                    safety_investment = strategy.get("safety_alignment", 0.0)
-                    # Get segment's safety preference weight
-                    safety_pref = 0.0
-                    for cat, weight in USE_CASE_PROFILES.get(seg.use_case, {}).get("benchmark_prefs", {}).items():
-                        if "safety" in cat.lower():
-                            safety_pref = weight
-                            break
-                    # Bonus scales with both provider investment and segment preference
-                    # Apply compliance_weight multiplier for organizations
-                    safety_bonus = 0.12 * safety_investment * safety_pref * seg.compliance_weight
-
-                # Factor 3: Media Sentiment Influence
-                # Negative media coverage reduces satisfaction beyond objective metrics
+                # Factor 1: Media Sentiment Influence
+                # Negative media × provider attention × leaderboard_trust
+                # (high-trust segments are more responsive to media signals)
                 media_penalty = 0.0
                 if media_coverage:
                     sentiment = media_coverage.get("sentiment", 0.0)
                     provider_attention = media_coverage.get("provider_attention", {}).get(provider_name, 0.0)
-                    # Only negative sentiment creates penalty
                     if sentiment < 0:
-                        media_penalty = 0.10 * abs(sentiment) * provider_attention
+                        media_penalty = abs(sentiment) * provider_attention * seg.leaderboard_trust
 
-                # Factor 4: Incident History Penalty
-                # Recent safety incidents reduce trust and satisfaction
+                # Factor 2: Incident History Penalty
+                # severity-weighted × (1 + market_share²) — larger providers face
+                # greater reputational exposure per incident (grounded in scale-contingent
+                # regulatory obligations: EO 14110, SB 1047)
                 incident_penalty = 0.0
+                market_share = gt.market_share
                 if incident_history and provider_name in incident_history and round_num is not None:
                     provider_incidents = incident_history[provider_name]
                     # Focus on recent incidents (last 5 rounds)
@@ -601,17 +623,18 @@ class ConsumerMarket:
                         inc for inc in provider_incidents
                         if inc.round_num >= round_num - 5
                     ]
-                    # Weight by severity
                     severity_weights = {"minor": 0.02, "moderate": 0.08, "major": 0.15, "critical": 0.30}
+                    raw_penalty = 0.0
                     for inc in recent_incidents:
                         weight = severity_weights.get(inc.severity, 0.05)
-                        # Extra penalty if incident affects this segment's sector
+                        # 2× if incident category matches segment sector
                         if seg.use_case in inc.affected_sectors or seg.consumer_type in inc.affected_sectors:
-                            weight *= 2.0  # Double penalty for sector-specific incidents
-                        incident_penalty += weight
+                            weight *= 2.0
+                        raw_penalty += weight
+                    incident_penalty = raw_penalty * (1.0 + market_share ** 2)
 
-                # Factor 5: Cost Efficiency Bonus
-                # Open-source providers offer lower cost; price-sensitive segments benefit
+                # Factor 3: Cost Efficiency Bonus
+                # cost_sensitivity × cost_advantage × 0.15
                 cost_bonus = 0.0
                 if provider_cost_advantage and provider_name in provider_cost_advantage:
                     cost_eff = provider_cost_advantage[provider_name]
@@ -620,10 +643,8 @@ class ConsumerMarket:
                 # Compute final satisfaction
                 satisfaction = (
                     base_satisfaction
-                    - gaming_penalty
-                    + safety_bonus
-                    - media_penalty
                     - incident_penalty
+                    - media_penalty
                     + cost_bonus
                 )
 
@@ -890,10 +911,10 @@ class ConsumerMarket:
             "deployer_liability_guidance": deployer_liability_guidance or set(),
         }
 
-        # Provider safety alignment (from strategies)
+        # Provider safety capability (from strategies)
         if provider_strategies:
             context["provider_safety"] = {
-                p: strat.get("safety_alignment", 0.0)
+                p: strat.get("safety_capability", strat.get("safety", 0.0))
                 for p, strat in provider_strategies.items()
             }
 
@@ -911,8 +932,9 @@ class ConsumerMarket:
                 "believed_quality": seg.believed_quality.get(alt_provider, 0.5),
                 "satisfaction": seg.satisfaction.get(alt_provider, 0.0),
                 "score": published_scores.get(alt_provider, 0.5) if published_scores else 0.5,
-                "safety": provider_strategies.get(alt_provider, {}).get("safety_alignment", 0.0)
-                          if provider_strategies else 0.0,
+                "safety": provider_strategies.get(alt_provider, {}).get(
+                              "safety_capability", provider_strategies.get(alt_provider, {}).get("safety", 0.0)
+                          ) if provider_strategies else 0.0,
                 "cost_advantage": cost_adv.get(alt_provider, 0.0),
             }
             context["alternatives"].append(alt_data)
@@ -1383,6 +1405,7 @@ def create_default_segments(
                 believed_quality={},
                 satisfaction={},
                 tenure={p: 0 for p in provider_names},
+                need_weights=profile.get("need_weights", {}),
             )
             segments.append(seg)
 

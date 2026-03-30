@@ -101,7 +101,7 @@ class Media:
 
         Args:
             leaderboard: [(provider_name, score), ...] sorted descending
-            benchmark_params: {bm_name: {validity, exploitability}}
+            benchmark_params: {bm_name: {validity, noise_sigma, samples}}
             policymaker_data: {interventions: [...], ...}
             new_benchmark: Optional dict if a new benchmark was introduced
             round_num: Current round number
