@@ -32,7 +32,7 @@ FIG_DIR = ROOT.parent / "overleaf" / "figures" / "validation"
 FIG_DIR.mkdir(parents=True, exist_ok=True)
 
 # ---------------------------------------------------------------------------
-# Style constants (consistent with explore_runs.py)
+# Style constants (consistent with plot_validation_figures.py)
 # ---------------------------------------------------------------------------
 
 MODEL_COLORS = {

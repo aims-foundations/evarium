@@ -2,7 +2,7 @@
 Media Actor for Evaluation Ecosystem Simulation
 
 Represents a media outlet that observes public events and publishes coverage
-that influences consumer beliefs, policymaker risk perception, and funder sentiment.
+that influences consumer beliefs, regulator risk perception, and funder sentiment.
 
 Key dynamics:
 - Media observes public data: leaderboard, benchmark params, regulatory actions
@@ -31,7 +31,9 @@ class MediaCoverage:
     headlines: list = field(default_factory=list)
     sentiment: float = 0.0          # -1 (critical) to +1 (tech-optimistic)
     provider_attention: dict = field(default_factory=dict)  # {provider: 0-1}
+    narrative_state: str = "OPTIMISM"  # OPTIMISM / SKEPTICISM / CRISIS
     risk_signals: list = field(default_factory=list)
+    saturation_signal: bool = False
     benchmark_attention: dict = field(default_factory=dict)  # {benchmark: 0-1}
 
     def to_dict(self) -> dict:
@@ -39,7 +41,9 @@ class MediaCoverage:
             "headlines": self.headlines,
             "sentiment": self.sentiment,
             "provider_attention": self.provider_attention,
+            "narrative_state": self.narrative_state,
             "risk_signals": self.risk_signals,
+            "saturation_signal": self.saturation_signal,
             "benchmark_attention": self.benchmark_attention,
         }
 
@@ -83,11 +87,28 @@ class Media:
         self._previous_market_shares: dict = {}          # {provider_name: share}
         self._previous_funding_allocations: dict = {}    # {funder_name: {"top_provider": str, "top_amount": float}}
 
+        # Narrative state machine (OPTIMISM / SKEPTICISM / CRISIS)
+        self._narrative_state: str = "OPTIMISM"
+        self._cumulative_incidents: int = 0
+        self._rounds_without_incident: int = 0
+        self._gaming_scandal_active: bool = False
+        self._score_market_divergence_rounds: int = 0  # rounds score leader != market share leader
+
+        # Narrative transition thresholds
+        self._incident_low_threshold: int = 3
+        self._incident_high_threshold: int = 8
+        self._crisis_recovery_rounds: int = 3   # M: no incidents for M rounds to leave CRISIS
+        self._skepticism_recovery_rounds: int = 5  # N: no incidents for N rounds to leave SKEPTICISM
+        self._scandal_divergence_rounds: int = 3  # score vs market leader divergence before scandal
+
+        # Headline budget
+        self._media_sample_size: int = 4
+
     def observe_and_publish(
         self,
         leaderboard: list,
         benchmark_params: dict,
-        policymaker_data: dict,
+        regulator_data: dict,
         new_benchmark: Optional[dict],
         round_num: int,
         funder_data: Optional[dict] = None,
@@ -95,6 +116,7 @@ class Media:
         consumer_data: Optional[dict] = None,
         evaluator = None,
         incidents: Optional[list] = None,
+        public_comms: Optional[list] = None,
     ) -> dict:
         """
         Observe public data and publish coverage for this round.
@@ -102,7 +124,7 @@ class Media:
         Args:
             leaderboard: [(provider_name, score), ...] sorted descending
             benchmark_params: {bm_name: {validity, noise_sigma, samples}}
-            policymaker_data: {interventions: [...], ...}
+            regulator_data: {interventions: [...], ...}
             new_benchmark: Optional dict if a new benchmark was introduced
             round_num: Current round number
             funder_data: Optional funder data from previous round
@@ -120,7 +142,9 @@ class Media:
         for name in provider_names:
             coverage.provider_attention[name] = 0.1
 
-        events_detected = []
+        # Separate guaranteed headlines (incidents) from pooled events
+        guaranteed_headlines = []
+        pooled_events = []
 
         # --- Detect newsworthy events ---
 
@@ -129,7 +153,7 @@ class Media:
             prev_leader = self._previous_leaderboard[0][0] if self._previous_leaderboard else None
             curr_leader = leaderboard[0][0] if leaderboard else None
             if prev_leader and curr_leader and prev_leader != curr_leader:
-                events_detected.append(f"{curr_leader} takes the lead from {prev_leader}")
+                pooled_events.append(f"{curr_leader} takes the lead from {prev_leader}")
                 coverage.provider_attention[curr_leader] = max(
                     coverage.provider_attention.get(curr_leader, 0), 0.8
                 )
@@ -145,85 +169,75 @@ class Media:
             if prev_score is not None:
                 delta = score - prev_score
                 if delta > 0.05:
-                    events_detected.append(f"{name} surges by {delta:.3f}")
+                    pooled_events.append(f"{name} surges by {delta:.3f}")
                     coverage.provider_attention[name] = max(
                         coverage.provider_attention.get(name, 0), 0.6
                     )
                     coverage.sentiment += 0.1
                     if delta > 0.08:
-                        events_detected.append(f"{name} appears to release major model update")
+                        pooled_events.append(f"{name} appears to release major model update")
                         coverage.provider_attention[name] = max(
                             coverage.provider_attention.get(name, 0), 0.7
                         )
 
-        # 3. Policymaker interventions (with specific details)
-        interventions = policymaker_data.get("interventions", [])
+        # 3. Regulator interventions (with specific details)
+        interventions = regulator_data.get("interventions", [])
         for intervention in interventions:
             itype = intervention.get("type", "unknown")
-            pmaker = intervention.get("policymaker", "Regulator")
+            pmaker = intervention.get("regulator", "Regulator")
             details = intervention.get("details", {})
-            reason = intervention.get("reason", "")
 
-            # Generate specific headline based on intervention type and details
-            if itype == "investigation":
-                provider = details.get("provider", "")
-                focus = details.get("focus", "AI evaluation practices")
+            # Generate specific headline based on intervention type
+            provider = details.get("provider", "") or intervention.get("provider", "")
+
+            if itype == "request_voluntary_commitment":
+                pooled_events.append(f"{pmaker} requests voluntary safety commitment from AI providers")
+                sentiment_impact = -0.05  # lightest touch
+            elif itype == "publish_advisory":
+                pooled_events.append(f"{pmaker} publishes advisory on AI safety evaluation findings")
+                sentiment_impact = -0.10
+            elif itype == "mandate_safety_disclosure":
+                pooled_events.append(f"{pmaker} mandates safety disclosure requirements for AI providers")
+                sentiment_impact = -0.15
+            elif itype == "commission_audit":
+                pooled_events.append(f"{pmaker} commissions pre-deployment audit of AI providers")
                 if provider:
-                    events_detected.append(f"{pmaker} launches investigation into {provider} for {focus}")
                     coverage.provider_attention[provider] = max(
                         coverage.provider_attention.get(provider, 0), 0.6
                     )
-                else:
-                    events_detected.append(f"{pmaker} launches investigation into {focus}")
-            elif itype == "information_request":
-                provider = details.get("provider", "")
-                if provider:
-                    events_detected.append(f"Information request issued to {provider} for training data disclosure")
-                    coverage.provider_attention[provider] = max(
-                        coverage.provider_attention.get(provider, 0), 0.5
-                    )
-            elif itype == "market_concentration_review":
-                provider = details.get("provider", "")
-                share = details.get("market_share", 0)
-                if provider:
-                    events_detected.append(f"Antitrust review of {provider} as market share reaches {share:.0%}")
-                    coverage.provider_attention[provider] = max(
-                        coverage.provider_attention.get(provider, 0), 0.7
-                    )
-            elif itype == "sanctions_fine":
-                provider = details.get("provider", "")
+                sentiment_impact = -0.20
+            elif itype == "impose_sanction":
                 amount = details.get("fine_amount", 0)
                 if provider:
-                    events_detected.append(f"{provider} fined ${amount:,.0f} for safety compliance failure")
+                    pooled_events.append(f"{provider} sanctioned (${amount:,.0f}) for safety compliance failure")
                     coverage.provider_attention[provider] = max(
                         coverage.provider_attention.get(provider, 0), 0.8
                     )
+                else:
+                    pooled_events.append(f"{pmaker} imposes sanctions on AI provider")
+                sentiment_impact = -0.25
             elif itype == "emergency_investigation":
-                provider = details.get("provider", "")
                 severity = details.get("severity", "")
                 if provider:
-                    events_detected.append(f"Emergency investigation of {provider} following {severity} incident")
-                    coverage.provider_attention[provider] = 1.0  # Maximum attention
-            elif itype == "public_warning":
-                events_detected.append(f"{pmaker} issues public warning about AI safety concerns")
-            elif itype == "mandate_benchmark":
-                events_detected.append(f"{pmaker} mandates new benchmark standards")
-            elif itype == "compliance_audit":
-                events_detected.append(f"{pmaker} initiates compliance audit on AI providers")
+                    pooled_events.append(f"Emergency investigation of {provider} following {severity} incident")
+                    coverage.provider_attention[provider] = 1.0
+                sentiment_impact = -0.25
+            elif itype == "deployer_liability_guidance":
+                providers_guided = details.get("providers", [])
+                if providers_guided:
+                    pooled_events.append(f"{pmaker} issues deployer liability guidance for {', '.join(providers_guided)}")
+                sentiment_impact = -0.10
             else:
-                events_detected.append(f"Regulatory action: {itype}")
+                pooled_events.append(f"Regulatory action: {itype}")
+                sentiment_impact = -0.15
 
             coverage.risk_signals.append(f"regulatory_{itype}")
-            # Escalate sentiment impact for severe interventions
-            sentiment_impact = -0.15
-            if itype in ["sanctions_fine", "emergency_investigation"]:
-                sentiment_impact = -0.25
             coverage.sentiment += sentiment_impact
 
         # 4. New benchmark introduction
         if new_benchmark:
             bm_name = new_benchmark.get("name", "unknown")
-            events_detected.append(f"New benchmark introduced: {bm_name}")
+            pooled_events.append(f"New benchmark introduced: {bm_name}")
             coverage.benchmark_attention[bm_name] = 0.7
             coverage.sentiment += 0.1  # new benchmarks are positive innovation
 
@@ -231,7 +245,7 @@ class Media:
         for bm_name, params in benchmark_params.items():
             validity = params.get("validity", 1.0)
             if validity < 0.5:
-                events_detected.append(f"Benchmark {bm_name} validity concerns (validity={validity:.2f})")
+                pooled_events.append(f"Benchmark {bm_name} validity concerns (validity={validity:.2f})")
                 coverage.risk_signals.append(f"low_validity_{bm_name}")
                 coverage.benchmark_attention[bm_name] = max(
                     coverage.benchmark_attention.get(bm_name, 0), 0.5
@@ -243,7 +257,7 @@ class Media:
             scores = [s for _, s in leaderboard]
             score_range = max(scores) - min(scores)
             if score_range < 0.03:
-                events_detected.append("Scores converging — is the benchmark meaningful?")
+                pooled_events.append("Scores converging — is the benchmark meaningful?")
                 coverage.risk_signals.append("score_convergence")
                 coverage.sentiment -= 0.05
 
@@ -261,7 +275,7 @@ class Media:
                             or abs(top_amount - prev["top_amount"]) / max(prev["top_amount"], 1) > 0.10
                         )
                         if is_new:
-                            events_detected.append(f"{top_provider} raises ${top_amount:,.0f} from {funder_name}")
+                            pooled_events.append(f"{top_provider} raises ${top_amount:,.0f} from {funder_name}")
                             coverage.provider_attention[top_provider] = max(
                                 coverage.provider_attention.get(top_provider, 0), 0.4)
                             coverage.sentiment += 0.05
@@ -281,7 +295,7 @@ class Media:
                     is_saturated = evaluator and evaluator.is_benchmark_saturated(bm_name)
 
                     if prev_leader and prev_leader != current_leader and not is_saturated:
-                        events_detected.append(f"{current_leader} takes #1 on {bm_name}")
+                        pooled_events.append(f"{current_leader} takes #1 on {bm_name}")
                         coverage.provider_attention[current_leader] = max(
                             coverage.provider_attention.get(current_leader, 0), 0.5)
                         coverage.benchmark_attention[bm_name] = max(
@@ -297,27 +311,27 @@ class Media:
                 if prev_share is not None:
                     share_delta = share - prev_share
                     if share_delta < -0.03:  # lost >3% market share
-                        events_detected.append(
+                        pooled_events.append(
                             f"Consumers are turning away from {provider} (market share {share_delta:+.1%})")
                         coverage.provider_attention[provider] = max(
                             coverage.provider_attention.get(provider, 0), 0.5)
                         coverage.sentiment -= 0.1
                     elif share_delta > 0.03:  # gained >3% market share
-                        events_detected.append(
+                        pooled_events.append(
                             f"{provider} sees surge in adoption (market share {share_delta:+.1%})")
                         coverage.provider_attention[provider] = max(
                             coverage.provider_attention.get(provider, 0), 0.4)
                         coverage.sentiment += 0.05
             self._previous_market_shares = dict(market_shares)
 
-        # 10. AI Safety Incidents (only moderate+ severity generates headlines)
+        # 10. AI Safety Incidents (moderate+ are GUARANTEED headline slots)
+        round_has_incidents = False
         if incidents:
             for incident in incidents:
-                # Only report moderate, major, and critical incidents (minor are internal)
                 if incident.severity in ["moderate", "major", "critical"]:
-                    events_detected.append(incident.description)
+                    round_has_incidents = True
+                    guaranteed_headlines.append(incident.description)
 
-                    # Update provider attention based on severity
                     severity_attention = {
                         "moderate": 0.6,
                         "major": 0.8,
@@ -327,11 +341,8 @@ class Media:
                         coverage.provider_attention.get(incident.provider, 0),
                         severity_attention[incident.severity]
                     )
-
-                    # Add risk signal for incident category
                     coverage.risk_signals.append(f"incident_{incident.category}")
 
-                    # Impact sentiment based on severity
                     severity_sentiment = {
                         "moderate": -0.15,
                         "major": -0.25,
@@ -339,16 +350,88 @@ class Media:
                     }
                     coverage.sentiment += severity_sentiment[incident.severity]
 
-        # TODO: Add enterprise deal announcements for organizational consumers
-        # When organizational consumers (hospital_system, enterprise_finance, etc.) switch
-        # providers, generate headline like:
-        # "Hospital System signs enterprise deal with Apex AI"
-        # "Fortune 500 finance company migrates to Orion Labs"
-        # Should track organizational segment switching separately from general market share
-        # and generate more prominent headlines (higher sentiment impact, provider attention)
+        # 11. Provider public communications (rd/safety/product announcements)
+        if public_comms:
+            current_scores_for_comms = {name: score for name, score in leaderboard}
+            for comm in public_comms:
+                provider = comm.get("provider", "")
+                comm_type = comm.get("type", "")
+                content = comm.get("content", "")
 
-        # --- Compose coverage ---
-        coverage.headlines = events_detected
+                if comm_type == "rd":
+                    prev_score = self._previous_scores.get(provider)
+                    curr_score = current_scores_for_comms.get(provider)
+                    if prev_score is not None and curr_score is not None:
+                        delta = curr_score - prev_score
+                        if delta > 0.01:
+                            pooled_events.append(content)
+                            coverage.provider_attention[provider] = max(
+                                coverage.provider_attention.get(provider, 0), 0.4)
+                            coverage.sentiment += 0.05
+                elif comm_type == "safety":
+                    pooled_events.append(content)
+                    coverage.provider_attention[provider] = max(
+                        coverage.provider_attention.get(provider, 0), 0.3)
+                    coverage.sentiment += 0.05
+                elif comm_type == "product":
+                    pooled_events.append(content)
+                    coverage.provider_attention[provider] = max(
+                        coverage.provider_attention.get(provider, 0), 0.3)
+                    coverage.sentiment += 0.05
+
+        # 12. Gaming scandal: score leader diverges from market share leader
+        #     for N rounds AND an incident occurred this round
+        if consumer_data and leaderboard:
+            market_shares = consumer_data.get("market_shares", {})
+            score_leader = leaderboard[0][0]
+            market_leader = max(market_shares, key=market_shares.get) if market_shares else None
+            if market_leader and score_leader != market_leader:
+                self._score_market_divergence_rounds += 1
+            else:
+                self._score_market_divergence_rounds = 0
+
+            if (self._score_market_divergence_rounds >= self._scandal_divergence_rounds
+                    and round_has_incidents and not self._gaming_scandal_active):
+                self._gaming_scandal_active = True
+                pooled_events.append(
+                    f"Investigation: {score_leader} leads benchmarks but "
+                    f"{market_leader} leads market adoption — are scores meaningful?")
+                coverage.risk_signals.append("gaming_scandal")
+                coverage.sentiment -= 0.20
+
+        # 13. Saturation narrative: median score across benchmarks > 0.90
+        if per_benchmark_scores:
+            all_scores = []
+            for bm_scores in per_benchmark_scores.values():
+                all_scores.extend(bm_scores.values())
+            if all_scores:
+                median_score = float(np.median(all_scores))
+                if median_score > 0.90:
+                    coverage.saturation_signal = True
+                    pooled_events.append(
+                        "AI benchmark scores plateau as most providers approach ceiling")
+                    coverage.risk_signals.append("saturation_narrative")
+                    coverage.sentiment -= 0.10
+
+        # 14. Safety concern narrative: cumulative incidents > low_threshold
+        #     for consecutive rounds
+        self._cumulative_incidents += len(guaranteed_headlines)
+
+        # --- Update narrative state machine ---
+        self._update_narrative_state(round_has_incidents)
+        coverage.narrative_state = self._narrative_state
+
+        # --- Apply headline budget ---
+        # Guaranteed headlines (incidents) always published.
+        # Other fired triggers: sample up to media_sample_size from pool.
+        if len(pooled_events) > self._media_sample_size:
+            sampled = list(self.rng.choice(
+                pooled_events, size=self._media_sample_size, replace=False
+            ))
+        else:
+            sampled = pooled_events
+
+        coverage.headlines = guaranteed_headlines + sampled
 
         # Apply editorial bias and amplification
         coverage.sentiment = (coverage.sentiment + self.editorial_bias) * self.amplification
@@ -375,12 +458,51 @@ class Media:
         self.memory.append({
             "type": "publish",
             "round": round_num,
-            "n_headlines": len(events_detected),
+            "n_headlines": len(coverage.headlines),
             "sentiment": coverage.sentiment,
+            "narrative_state": self._narrative_state,
             "risk_signals": len(coverage.risk_signals),
         })
 
         return coverage_dict
+
+    def _update_narrative_state(self, round_has_incidents: bool):
+        """Update the OPTIMISM/SKEPTICISM/CRISIS state machine.
+
+        Transitions:
+            OPTIMISM  -> SKEPTICISM : cumulative incidents > low_threshold OR gaming scandal
+            SKEPTICISM -> CRISIS    : cumulative incidents > high_threshold OR multiple scandals
+            CRISIS    -> SKEPTICISM : no incidents for M rounds AND no scandal
+            SKEPTICISM -> OPTIMISM  : no incidents for N rounds
+        """
+        if round_has_incidents:
+            self._rounds_without_incident = 0
+        else:
+            self._rounds_without_incident += 1
+            # Clear gaming scandal if no incidents for a while
+            if self._rounds_without_incident >= self._crisis_recovery_rounds:
+                self._gaming_scandal_active = False
+
+        state = self._narrative_state
+
+        if state == "OPTIMISM":
+            if (self._cumulative_incidents > self._incident_low_threshold
+                    or self._gaming_scandal_active):
+                self._narrative_state = "SKEPTICISM"
+
+        elif state == "SKEPTICISM":
+            if (self._cumulative_incidents > self._incident_high_threshold
+                    or (self._gaming_scandal_active
+                        and self._cumulative_incidents > self._incident_low_threshold)):
+                self._narrative_state = "CRISIS"
+            elif self._rounds_without_incident >= self._skepticism_recovery_rounds:
+                self._narrative_state = "OPTIMISM"
+                self._cumulative_incidents = 0  # reset on recovery
+
+        elif state == "CRISIS":
+            if (self._rounds_without_incident >= self._crisis_recovery_rounds
+                    and not self._gaming_scandal_active):
+                self._narrative_state = "SKEPTICISM"
 
     def get_coverage(self) -> Optional[dict]:
         """Return current round's coverage dict, or None if not yet published."""
@@ -399,6 +521,11 @@ class Media:
             "_previous_per_benchmark_leaders": self._previous_per_benchmark_leaders,
             "_previous_market_shares": self._previous_market_shares,
             "_previous_funding_allocations": self._previous_funding_allocations,
+            "_narrative_state": self._narrative_state,
+            "_cumulative_incidents": self._cumulative_incidents,
+            "_rounds_without_incident": self._rounds_without_incident,
+            "_gaming_scandal_active": self._gaming_scandal_active,
+            "_score_market_divergence_rounds": self._score_market_divergence_rounds,
         }
         with open(os.path.join(folder, "media.json"), "w") as f:
             json.dump(data, f, indent=2)

@@ -3,7 +3,7 @@ Incident reporting system for AI safety failures.
 
 This module generates probabilistic AI safety incidents based on provider
 safety investment, gaming behavior, market exposure, and capability levels.
-Incidents cascade through the ecosystem affecting consumers, policymakers,
+Incidents cascade through the ecosystem affecting consumers, regulators,
 funders, and media coverage.
 """
 
@@ -162,10 +162,10 @@ class IncidentGenerator:
         self,
         providers: list,
         round_num: int,
-        ground_truth: dict,
         market_shares: dict,
         provider_strategies: dict,
         active_sanctions: dict = None,
+        total_market_size: float = 1.0,
     ) -> list:
         """
         Generate incidents for this round.
@@ -173,7 +173,6 @@ class IncidentGenerator:
         Args:
             providers: List of ModelProvider objects
             round_num: Current simulation round
-            ground_truth: Dict of provider -> safety capability value
             market_shares: Dict of provider -> market share
             provider_strategies: Dict of provider -> strategy dict with safety, rd, product keys
             active_sanctions: Dict of provider -> sanction info (reduces incident prob)
@@ -192,10 +191,10 @@ class IncidentGenerator:
             # Compute incident probability
             prob = self._compute_incident_probability(
                 provider_name,
-                ground_truth,
                 market_shares,
                 provider_strategies,
                 active_sanctions=active_sanctions,
+                total_market_size=total_market_size,
             )
 
             # Sample incident occurrence
@@ -203,7 +202,6 @@ class IncidentGenerator:
                 incident = self._create_incident(
                     provider_name,
                     round_num,
-                    ground_truth,
                     market_shares,
                     provider_strategies,
                 )
@@ -219,14 +217,14 @@ class IncidentGenerator:
     def _compute_incident_probability(
         self,
         provider_name: str,
-        ground_truth: dict,
         market_shares: dict,
         provider_strategies: dict,
         active_sanctions: dict = None,
+        total_market_size: float = 1.0,
     ) -> float:
         """
         Compute incident probability based on safety investment, exposure,
-        safety capability, active sanctions, and prior incident history.
+        active sanctions, and prior incident history.
 
         Returns probability clamped to [0, 0.40]
         """
@@ -244,19 +242,17 @@ class IncidentGenerator:
         # safety=0.5 -> multiplier=0.6 (40% reduction)
         # safety=1.0 -> multiplier=0.2 (80% reduction)
 
-        # Factor 2: Market Share (exposure)
+        # Factor 2: Market Share (exposure) — scales with absolute users
+        # In a growing market, same share = more users = more exposure
         market_share = market_shares.get(provider_name, 0.0)
-        exposure_multiplier = 0.5 + (market_share * 1.5)
+        import math
+        market_size_factor = math.sqrt(total_market_size)  # sqrt to dampen
+        exposure_multiplier = (0.5 + (market_share * 1.5)) * market_size_factor
         # More users = more incidents discovered
         # market_share=0.1 -> multiplier=0.65
         # market_share=0.5 -> multiplier=1.25
 
-        # Factor 3: Safety Capability (deployment stakes)
-        safety_capability = ground_truth.get(provider_name, 0.5)
-        capability_multiplier = 0.8 + (safety_capability * 0.4)
-        # Higher safety capability -> deployed in higher-stakes contexts
-
-        # Factor 4: Incident history escalation
+        # Factor 3: Incident history escalation
         # Prior major/critical incidents signal safety culture degradation and
         # accumulated technical debt (Reason's Swiss cheese model; Leveson STAMP).
         # Each prior major/critical adds +0.04 to base rate, capped at +0.20 total.
@@ -267,7 +263,7 @@ class IncidentGenerator:
         )
         history_addend = min(prior_serious * 0.04, 0.20)
 
-        # Factor 5: Active sanction -> operational caution reduction
+        # Factor 4: Active sanction -> operational caution reduction
         # Sanctions force compliance audits and heightened internal oversight,
         # temporarily reducing incident probability (FTC/GDPR post-enforcement behavior).
         # Effect: 0.75x while sanctioned (25% reduction).
@@ -278,18 +274,17 @@ class IncidentGenerator:
             (base_incident_rate + history_addend)
             * safety_multiplier
             * exposure_multiplier
-            * capability_multiplier
             * sanction_multiplier
         )
 
-        # Clamp to maximum 40% per round
-        return min(incident_prob, 0.40)
+        # Floor at 5% (irreducible risk from deployment context, adversarial
+        # users, infrastructure failures, novel failure modes), cap at 40%.
+        return max(0.05, min(incident_prob, 0.40))
 
     def _create_incident(
         self,
         provider_name: str,
         round_num: int,
-        ground_truth: dict,
         market_shares: dict,
         provider_strategies: dict,
     ) -> AIIncident:

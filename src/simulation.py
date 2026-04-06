@@ -17,8 +17,19 @@ from typing import Optional
 from actors.model_provider import ModelProvider
 from actors.evaluator import Evaluator, Regulation
 from visibility import (ProviderGroundTruth, BenchmarkGroundTruth,
-                        ConsumerGroundTruth, PolicymakerGroundTruth, FunderGroundTruth)
+                        ConsumerGroundTruth, RegulatorGroundTruth, FunderGroundTruth)
 from incidents import IncidentGenerator
+
+
+# ── Hardcoded constants (see stakeholders.md §Parameter Defaults) ──
+BROADCAST_RATE = 0.30       # OS belief broadcast nudge strength per round
+EROSION_SENSITIVITY = 0.50  # OS safety erosion scaling factor
+SAFETY_FLOOR = 0.35         # Mandatory safety floor under active audit/sanction
+FUNDER_BUDGET_SCALE = 1e-9  # Converts funder display-dollars to sim budget units
+                            # $1B funder capital → 1.0 internal unit
+                            # A monopolist earns ~5.0/round (revenue_per_share=5.0),
+                            # so total funder deployment of ~0.5-1.0/round is meaningful
+                            # but not capability-dominating.
 
 
 def r4(x):
@@ -41,45 +52,59 @@ def r4(x):
         return x
 
 
-# Policymaker regulatory style presets
-# Simplified to use only currently implemented Policymaker parameters
-POLICYMAKER_PRESETS = {
+# Regulator regulatory style presets
+# Thresholds map to the graduated ladder in stakeholders.md:
+#   low  -> request_voluntary_commitment, publish_advisory
+#   medium -> mandate_safety_disclosure, commission_audit
+#   high -> impose_sanction
+REGULATOR_PRESETS = {
     "us_light_touch": {
-        # Threshold / stance
-        "intervention_threshold": 0.85,  # Very high bar — almost entirely hands-off until crisis
-        "risk_tolerance": 0.85,          # Very high risk tolerance — strong market correction preference
+        "intervention_threshold": 0.85,
+        "risk_tolerance": 0.85,
         "policy_objectives": ["safety", "innovation", "free_market"],
-        # Enforcement calibration (empirically grounded: FTC/DOJ enforcement patterns)
-        "intervention_cooldown": 4,          # US regulatory cycles ~18-36 months; slow follow-up
-        "sanction_fine_multiplier": 0.05,    # Minimal fines — US relies on consent orders, not direct % revenue fines
-        "sanction_incident_threshold": 6,    # US needs a very clear, repeated pattern before sanctioning
-        "sanction_duration": 1,              # Short-term — US consent decrees expire; market corrects quickly
-        "mandate_risk_threshold": 0.90,      # US almost never mandates benchmark compliance (ex-post philosophy)
-        "sanction_min_severity": "critical", # US only acts on critical incidents (not mere majors)
+        # Graduated thresholds — recalibrated for realistic incident rates
+        "incident_threshold_low": 0.08,
+        "incident_threshold_medium": 0.20,
+        "incident_threshold_high": 0.35,
+        "audit_is_binding": False,
+        # Enforcement calibration
+        "sanction_fine_multiplier": 0.05,
+        "sanction_incident_threshold": 6,
+        "sanction_duration": 1,
+        "sanction_min_severity": "critical",
+        "regulatory_preset": "us_light_touch",
     },
     "eu_precautionary": {
-        # Threshold / stance
-        "intervention_threshold": 0.25,  # Very low threshold — strongly precautionary, acts at first signal
-        "risk_tolerance": 0.10,          # Very low risk tolerance — prevent harm upfront aggressively
+        "intervention_threshold": 0.25,
+        "risk_tolerance": 0.10,
         "policy_objectives": ["safety", "fairness", "consumer_protection"],
-        # Enforcement calibration (empirically grounded: GDPR/DMA/EU AI Act patterns)
-        "intervention_cooldown": 2,          # EU follows up aggressively — ~6-12 month regulatory cycles
-        "sanction_fine_multiplier": 0.50,    # Large economic bite (EU 7% global turnover ceiling)
-        "sanction_incident_threshold": 1,    # EU sanctions on first pattern; very low bar
-        "sanction_duration": 6,              # EU compliance cycles take longer; sanctions persist
-        "mandate_risk_threshold": 0.35,      # EU mandates at low-moderate risk (ex-ante philosophy)
-        "sanction_min_severity": "moderate", # EU acts on moderate+ incidents
+        # Graduated thresholds — recalibrated for realistic incident rates
+        "incident_threshold_low": 0.03,
+        "incident_threshold_medium": 0.10,
+        "incident_threshold_high": 0.20,
+        "audit_is_binding": True,
+        # Enforcement calibration
+        "sanction_fine_multiplier": 0.50,
+        "sanction_incident_threshold": 1,
+        "sanction_duration": 6,
+        "sanction_min_severity": "moderate",
+        "regulatory_preset": "eu_precautionary",
     },
     "balanced": {
         "intervention_threshold": 0.50,
         "risk_tolerance": 0.5,
         "policy_objectives": ["safety", "fairness"],
-        "intervention_cooldown": 3,
+        # Graduated thresholds — recalibrated for realistic incident rates
+        "incident_threshold_low": 0.05,
+        "incident_threshold_medium": 0.15,
+        "incident_threshold_high": 0.25,
+        "audit_is_binding": False,
+        # Enforcement calibration
         "sanction_fine_multiplier": 0.22,
         "sanction_incident_threshold": 3,
         "sanction_duration": 3,
-        "mandate_risk_threshold": 0.62,
         "sanction_min_severity": "major",
+        "regulatory_preset": "balanced",
     },
 }
 
@@ -93,7 +118,6 @@ class SimulationConfig:
 
     # Evaluator/Benchmark parameters (single benchmark mode)
     benchmark_name: str = "capability_benchmark"
-    benchmark_validity: float = 0.7  # kept for saturation weight-decay; not used in scoring
     benchmark_noise: float = 0.08  # sigma
 
     # Multi-benchmark mode (if provided, overrides single benchmark params)
@@ -106,13 +130,12 @@ class SimulationConfig:
 
     # S-curve capability dynamics
     capability_ceiling: float = 1.0
-    diminishing_returns_rate: float = 3.0
-    breakthrough_probability: float = 0.02
-    breakthrough_magnitude: float = 0.05
+    breakthrough_probability: float = 0.05
+    breakthrough_magnitude: float = 0.20
 
     # Benchmark introduction (evaluator introduces new benchmarks mid-simulation)
-    benchmark_introduction_cooldown: int = 7
-    max_benchmarks: int = 8  # Raised from 6 to accommodate realistic benchmark suite
+    benchmark_introduction_cooldown: int = 5
+    max_benchmarks: int = 10  # Full benchmark pool (4 initial + 6 sequence) across 40 rounds
     benchmark_sequence: Optional[list] = None  # Ordered list of benchmark dicts to introduce
     # Each dict: {"name": str, "validity": float, "noise_level": float, "weight": float}
     # Default realistic sequence inspired by real-world benchmarks (MMLU, HumanEval, GSM8K, etc.)
@@ -127,11 +150,10 @@ class SimulationConfig:
 
     # New actor settings
     enable_consumers: bool = False  # Enable consumer market
-    enable_policymakers: bool = False  # Enable policymaker actors
+    enable_regulators: bool = False  # Enable regulator actors
     enable_funders: bool = False  # Enable funder actors
     enable_media: bool = False  # Enable media actor
-    n_consumers: int = 10  # Deprecated (kept for backward compat)
-    n_policymakers: int = 1  # Number of policymaker actors
+    n_regulators: int = 1  # Number of regulator actors
     n_funders: int = 1  # Number of funder actors
 
     # Consumer market config
@@ -144,12 +166,26 @@ class SimulationConfig:
     evaluator_as_company: bool = False  # Evaluator operates as company with funder allocations
     evaluator_base_budget: float = 0.0  # Starting budget for evaluator
 
-    # Startup entry dynamics
-    startup_entry_probability: float = 0.0   # per-round probability a new provider enters
-    startup_entry_cap: int = 3               # max new entrants across the whole run
-    startup_min_round: int = 2               # earliest round a startup may enter (inclusive)
-    startup_funder_delay: int = 1            # rounds before funders see the new provider
-    startup_llm_mode: bool = False           # if True, new entrants use LLM planning
+    # Benchmark orientation mode:
+    #   "fixed" (default): all providers use their configured benchmark_orientation, LLM cannot adjust
+    #   "max": all providers forced to benchmark_orientation=1.0, LLM cannot adjust
+    #   "adjustable": providers start at configured value, LLM adjusts via ordinal signals each round
+    benchmark_orientation_mode: str = "fixed"
+
+    # Ablation flags
+    aligned_benchmarks: bool = False       # Override benchmark weights to equal consumer need weights
+    misaligned_benchmarks: bool = False   # Exaggerate benchmark-need mismatch (reasoning/coding heavy, safety/communication light)
+    safety_lever_through_target: bool = False  # Route safety allocation through target weights (same as R&D) instead of direct-to-safety
+    single_benchmark: bool = False         # Use only the first benchmark, no introduction sequence
+    dynamic_evaluator: bool = False        # Signal-responsive benchmark introduction (vs fixed schedule)
+    homogeneous_consumers: bool = False    # All consumer segments use identical (population-avg) need weights
+    homogeneous_providers: bool = False    # All providers start with identical capabilities and profiles
+
+    # Market expansion: exogenous growth rate per round (0.0 = fixed pie, default).
+    # Models growing AI adoption. Affects provider base_revenue and incident exposure.
+    # Calibration: 0.03/month ~ 43% annual CAGR, matching GenAI market consensus
+    # (S&P Global 451 Research: 40% CAGR; Bloomberg Intelligence: 42% CAGR).
+    market_growth_rate: float = 0.0
 
     # Capability baseline shift (applied to provider initial values and absolute thresholds)
     capability_shift: float = 0.0
@@ -178,7 +214,7 @@ class EvalEcosystemSimulation:
     4. Scores are published
     5. Providers observe scores and update beliefs
     6. Consumers observe leaderboard and make subscription decisions
-    7. Policymakers observe ecosystem and may issue regulations
+    7. Regulators observe ecosystem and may issue regulations
 
     Key visibility design:
     - ground_truth dict holds all invisible state (capability_vector, market_share, etc.)
@@ -189,14 +225,19 @@ class EvalEcosystemSimulation:
     def __init__(self, config: SimulationConfig):
         self.config = config
         self.providers: list[ModelProvider] = []
-        self.consumers: list = []  # Deprecated: kept for backward compat
         self.consumer_market = None  # ConsumerMarket instance
-        self.policymakers: list = []  # Will be Policymaker instances
+        self.regulators: list = []  # Will be Regulator instances
         self.funders: list = []  # Will be Funder instances
         self.media = None  # Media instance
         self.evaluator: Optional[Evaluator] = None
         self.current_round: int = 0
+        self._total_market_size: float = 1.0  # grows each round by market_growth_rate
         self.history: list[dict] = []
+
+        # Active regulatory efficiency modifiers: {effect_name: {expires_round, multiplier}}
+        self._regulatory_efficiency_effects: list = []
+        # Binding audit: set of provider names with gains zeroed this round
+        self._audit_deployment_gate: set = set()
 
         # Ground truth held externally by simulation
         # Format: {actor_name: GroundTruth}
@@ -214,7 +255,6 @@ class EvalEcosystemSimulation:
         self._current_deployer_liability_guidance: set = set()
 
         # Startup entry tracking
-        self._entrant_count: int = 0
         self._funder_eligible_round: dict = {}  # {provider_name: first_round_funders_can_allocate}
         self._rng = __import__("random").Random(config.seed)
 
@@ -226,7 +266,7 @@ class EvalEcosystemSimulation:
         provider_configs: list[dict],
         evaluator: Optional[Evaluator] = None,
         consumer_configs: list[dict] = None,
-        policymaker_configs: list[dict] = None,
+        regulator_configs: list[dict] = None,
         funder_configs: list[dict] = None,
     ):
         """
@@ -240,7 +280,7 @@ class EvalEcosystemSimulation:
             evaluator: Optional pre-configured Evaluator. If None, creates one
                 from config.
             consumer_configs: Optional list of consumer configurations
-            policymaker_configs: Optional list of policymaker configurations
+            regulator_configs: Optional list of regulator configurations
         """
         # Determine initial benchmark names from config (used for focus initialization)
         if evaluator is not None:
@@ -249,6 +289,38 @@ class EvalEcosystemSimulation:
             _initial_bm_names = [bm.get("name", f"bm_{i}") for i, bm in enumerate(self.config.benchmarks)]
         else:
             _initial_bm_names = [self.config.benchmark_name]
+
+        # Apply ablation overrides to provider configs
+        if self.config.homogeneous_providers:
+            from actors.model_provider import DIMENSIONS as _DIMS
+            # Use Orion Labs (first provider) as template, uniform capabilities
+            avg_cap = {dim: 0.50 for dim in _DIMS}
+            uniform_portfolio = {"rd": 0.55, "safety": 0.15, "product": 0.30}
+            generic_profile = (
+                "AI model company competing in a crowded market. "
+                "Balances research investment with product development."
+            )
+            generic_traits = "competitive, research-oriented, commercially-aware"
+            for pc in provider_configs:
+                pc["capability_vector"] = dict(avg_cap)
+                pc["portfolio"] = dict(uniform_portfolio)
+                pc["strategy_profile"] = generic_profile
+                pc["innate_traits"] = generic_traits
+                pc["benchmark_orientation"] = 0.80
+
+        # Apply single_benchmark override
+        if self.config.single_benchmark:
+            # Keep only first benchmark, clear introduction sequence
+            if self.config.benchmarks:
+                self.config.benchmarks = self.config.benchmarks[:1]
+            self.config.benchmark_sequence = None
+            self.config.max_benchmarks = 1
+            # Re-derive initial benchmark names
+            if evaluator is None:
+                if self.config.benchmarks:
+                    _initial_bm_names = [self.config.benchmarks[0].get("name", "bm_0")]
+                else:
+                    _initial_bm_names = [self.config.benchmark_name]
 
         # Create providers and their ground truth
         self.providers = []
@@ -264,6 +336,11 @@ class EvalEcosystemSimulation:
             # Build initial portfolio (3-lever)
             portfolio = pc.get("portfolio")
 
+            # Benchmark orientation: apply mode override
+            bm_orient = pc.get("benchmark_orientation", 0.80)
+            if self.config.benchmark_orientation_mode == "max":
+                bm_orient = 1.0
+
             provider = ModelProvider(
                 name=pc["name"],
                 strategy_profile=pc["strategy_profile"],
@@ -271,20 +348,24 @@ class EvalEcosystemSimulation:
                 capability_vector=cap_vec,
                 portfolio=portfolio,
                 focus_level_init=pc.get("focus_level_init"),
-                benchmark_orientation=pc.get("benchmark_orientation", 0.80),
+                benchmark_orientation=bm_orient,
                 llm_mode=self.config.llm_mode,
                 verbose_llm=pc.get("verbose_llm", False),
                 open_source=pc.get("open_source", False),
                 openness_level=pc.get("openness_level", 0.0),
-                cost_advantage=pc.get("cost_advantage", 0.9 if pc.get("open_source") else 0.0),
+                cost_advantage=pc.get("cost_advantage", 0.35 if pc.get("open_source") else 0.0),
                 rd_budget_floor=pc.get("rd_budget_floor", 0.0),
-                os_belief_broadcast=pc.get("os_belief_broadcast", True),
-                os_safety_erosion=pc.get("os_safety_erosion", True),
+                os_belief_broadcast=pc.get("os_belief_broadcast", False),
+                os_safety_erosion=pc.get("os_safety_erosion", False),
             )
 
             # Initialize benchmark beliefs for all starting benchmarks
             for bm_name in _initial_bm_names:
                 provider.init_benchmark(bm_name)
+
+            # Ablation: route safety lever through target weights
+            if self.config.safety_lever_through_target:
+                provider.safety_lever_through_target = True
 
             self.providers.append(provider)
 
@@ -299,9 +380,9 @@ class EvalEcosystemSimulation:
         if self.config.enable_consumers:
             self._setup_consumer_market(provider_configs)
 
-        # Create policymakers if enabled
-        if self.config.enable_policymakers:
-            self._setup_policymakers(policymaker_configs)
+        # Create regulators if enabled
+        if self.config.enable_regulators:
+            self._setup_regulators(regulator_configs)
 
         # Create funders if enabled
         if self.config.enable_funders:
@@ -323,6 +404,7 @@ class EvalEcosystemSimulation:
                 benchmark_sequence=self.config.benchmark_sequence,
                 evaluator_as_company=self.config.evaluator_as_company,
                 base_budget=self.config.evaluator_base_budget,
+                dynamic_evaluator=self.config.dynamic_evaluator,
             )
         else:
             # Single benchmark mode
@@ -333,6 +415,7 @@ class EvalEcosystemSimulation:
                 benchmark_sequence=self.config.benchmark_sequence,
                 evaluator_as_company=self.config.evaluator_as_company,
                 base_budget=self.config.evaluator_base_budget,
+                dynamic_evaluator=self.config.dynamic_evaluator,
             )
 
         # Apply benchmark introduction config
@@ -353,6 +436,40 @@ class EvalEcosystemSimulation:
                     samples=bm_config.get("samples", 1000),
                 )
 
+        # Aligned benchmarks: override all benchmark dimension weights to match
+        # consumer need weights. Eliminates structural benchmark-need misalignment.
+        if self.config.aligned_benchmarks:
+            # Population-weighted need weights (same as stakeholders.md)
+            _need = {"reasoning": 0.22, "coding": 0.09, "knowledge": 0.23,
+                     "safety": 0.17, "communication": 0.26, "agentic": 0.05}
+            # Wrap need weights as single-category CDW so scoring formula works unchanged
+            aligned_cdw = {"overall": _need}
+            for name, bm_gt in self.benchmark_ground_truths.items():
+                bm_gt.category_dimension_weights = aligned_cdw
+
+        # Misaligned benchmarks: exaggerate benchmark-need weight divergence.
+        # Benchmarks overweight reasoning/coding (researcher-designed, automatable),
+        # underweight safety/communication (hard to measure, not researcher priorities).
+        # Interpolates existing benchmark weights 60% toward a misaligned target.
+        if self.config.misaligned_benchmarks:
+            _misalign_target = {
+                "reasoning": 0.40, "coding": 0.30, "knowledge": 0.15,
+                "safety": 0.02, "communication": 0.08, "agentic": 0.05,
+            }
+            _alpha = 0.60  # interpolation strength toward misaligned target
+            for name, bm_gt in self.benchmark_ground_truths.items():
+                new_cdw = {}
+                for cat, weights in bm_gt.category_dimension_weights.items():
+                    blended = {}
+                    for dim in weights:
+                        blended[dim] = (1 - _alpha) * weights[dim] + _alpha * _misalign_target.get(dim, 0.0)
+                    # Renormalize
+                    total = sum(blended.values())
+                    if total > 0:
+                        blended = {d: v / total for d, v in blended.items()}
+                    new_cdw[cat] = blended
+                bm_gt.category_dimension_weights = new_cdw
+
         # Enable evaluator-as-company mode for funders if configured
         if self.config.evaluator_as_company and self.funders:
             for funder in self.funders:
@@ -360,8 +477,8 @@ class EvalEcosystemSimulation:
 
         # Resolve consumer market benchmark weights now that evaluator exists
         if self.consumer_market:
-            benchmark_names = [bm.name for bm in self.evaluator.benchmarks]
-            self.consumer_market.resolve_benchmark_weights(benchmark_names)
+            benchmark_tags = {bm.name: bm.tags for bm in self.evaluator.benchmarks}
+            self.consumer_market.resolve_benchmark_weights(benchmark_tags)
 
         self.current_round = 0
         self.history = []
@@ -374,8 +491,8 @@ class EvalEcosystemSimulation:
             extras = []
             if self.consumer_market:
                 extras.append(f"{len(self.consumer_market.segments)} consumer segments")
-            if self.policymakers:
-                extras.append(f"{len(self.policymakers)} policymaker(s)")
+            if self.regulators:
+                extras.append(f"{len(self.regulators)} regulator(s)")
             if self.funders:
                 extras.append(f"{len(self.funders)} funder(s)")
             if self.media:
@@ -413,6 +530,13 @@ class EvalEcosystemSimulation:
             brand_recognition=brand_recognition,
         )
 
+        # Homogeneous consumers: override all segments to use population-avg need weights
+        if self.config.homogeneous_consumers:
+            _need = {"reasoning": 0.22, "coding": 0.09, "knowledge": 0.23,
+                     "safety": 0.17, "communication": 0.26, "agentic": 0.05}
+            for seg in segments:
+                seg.need_weights = dict(_need)
+
         # Build consumer LLM config
         consumer_llm_config = {
             "enabled": self.config.consumer_llm_mode,
@@ -435,18 +559,18 @@ class EvalEcosystemSimulation:
         # Note: benchmark weight resolution happens after evaluator creation
         # (in setup()) since benchmark names aren't available yet here.
 
-    def _setup_policymakers(self, policymaker_configs: list[dict] = None):
-        """Set up policymaker actors."""
+    def _setup_regulators(self, regulator_configs: list[dict] = None):
+        """Set up regulator actors."""
         try:
-            from actors.policymaker import Policymaker
+            from actors.regulator import Regulator
         except ImportError:
             if self.config.verbose:
-                print("Policymaker actor not available yet")
+                print("Regulator actor not available yet")
             return
 
-        if policymaker_configs is None:
-            # Create default policymaker
-            policymaker_configs = [
+        if regulator_configs is None:
+            # Create default regulator
+            regulator_configs = [
                 {
                     "name": "Regulator",
                     "policy_objectives": ["safety", "fairness"],
@@ -454,38 +578,42 @@ class EvalEcosystemSimulation:
                 }
             ]
 
-        for pc in policymaker_configs:
+        for pc in regulator_configs:
             # Check if using a preset philosophy
-            if "philosophy" in pc and pc["philosophy"] in POLICYMAKER_PRESETS:
-                preset = POLICYMAKER_PRESETS[pc["philosophy"]]
+            if "philosophy" in pc and pc["philosophy"] in REGULATOR_PRESETS:
+                preset = REGULATOR_PRESETS[pc["philosophy"]]
                 # Merge preset with any overrides from config
                 config_params = {**preset, **{k: v for k, v in pc.items() if k not in ["philosophy", "name"]}}
             else:
                 # Use individual parameters from config
                 config_params = pc
 
-            # Inherit global llm_mode unless policymaker config explicitly overrides it
+            # Inherit global llm_mode unless regulator config explicitly overrides it
             if "llm_mode" not in config_params:
                 config_params = {**config_params, "llm_mode": self.config.llm_mode}
 
-            policymaker = Policymaker(
+            regulator = Regulator(
                 name=pc["name"],
                 policy_objectives=config_params.get("policy_objectives", ["safety"]),
                 intervention_threshold=config_params.get("intervention_threshold", 0.3),
                 risk_tolerance=config_params.get("risk_tolerance", 0.5),
                 llm_mode=config_params.get("llm_mode", False),
-                intervention_cooldown=config_params.get("intervention_cooldown", 3),
+                incident_threshold_low=config_params.get("incident_threshold_low", 0.15),
+                incident_threshold_medium=config_params.get("incident_threshold_medium", 0.35),
+                incident_threshold_high=config_params.get("incident_threshold_high", 0.55),
+                audit_is_binding=config_params.get("audit_is_binding", False),
                 sanction_fine_multiplier=config_params.get("sanction_fine_multiplier", 0.30),
                 sanction_incident_threshold=config_params.get("sanction_incident_threshold", 2),
                 sanction_duration=config_params.get("sanction_duration", 3),
-                mandate_risk_threshold=config_params.get("mandate_risk_threshold", 0.60),
                 sanction_min_severity=config_params.get("sanction_min_severity", "major"),
+                regulatory_preset=config_params.get("regulatory_preset", "balanced"),
+                enable_exogenous_events=config_params.get("enable_exogenous_events", True),
                 capability_shift=self.config.capability_shift,
             )
-            self.policymakers.append(policymaker)
+            self.regulators.append(regulator)
 
-            # Initialize policymaker ground truth
-            self.ground_truth[policymaker.name] = PolicymakerGroundTruth(
+            # Initialize regulator ground truth
+            self.ground_truth[regulator.name] = RegulatorGroundTruth(
                 true_risk_tolerance=pc.get("risk_tolerance", 0.5),
                 true_intervention_effectiveness=pc.get("intervention_effectiveness", 0.5),
             )
@@ -540,11 +668,13 @@ class EvalEcosystemSimulation:
             current = gt.capability_vector.get(dim, 0.0)
             gt.capability_vector[dim] = min(1.0, current + gain)
 
-        # Safety capability floor: closed providers cannot drop below 0.35 due to
-        # alignment research baseline; open-source providers have a minimal floor of 0.03.
+        # Safety capability floor: closed providers maintain higher baseline due to
+        # alignment/RLHF investment and reputational pressure; open-source slightly lower
+        # (fine-tuning can partially strip guardrails). Gap narrowed to avoid predetermining
+        # safety outcomes — actual safety emerges from investment allocation.
         provider_obj = next((p for p in self.providers if p.name == provider_name), None)
         is_open_source = provider_obj.open_source if provider_obj else False
-        safety_floor = 0.03 if is_open_source else 0.35
+        safety_floor = 0.15 if is_open_source else 0.25
         if "safety" in gt.capability_vector:
             gt.capability_vector["safety"] = max(safety_floor, gt.capability_vector["safety"])
 
@@ -574,8 +704,9 @@ class EvalEcosystemSimulation:
                 provider_share = cd.get("market_shares", {}).get(provider_name)
                 if provider_share is not None:
                     context["own_market_share"] = provider_share
-            if "policymaker_data" in last:
-                context["regulatory_pressure"] = last["policymaker_data"].get("interventions", [])
+                    context["market_share"] = provider_share
+            if "regulator_data" in last:
+                context["regulatory_pressure"] = last["regulator_data"].get("interventions", [])
             # Provider sees their own incidents from last round (public record)
             if "incidents" in last:
                 own_incidents = [
@@ -591,9 +722,10 @@ class EvalEcosystemSimulation:
             context["per_benchmark_scores"] = self.evaluator.get_per_benchmark_scores(last_round_num)
         # Include reasoning memory depth for LLM prompt truncation
         context["reasoning_memory_depth"] = 2
+        context["benchmark_orientation_mode"] = self.config.benchmark_orientation_mode
         return context
 
-    def _compute_satisfaction_signals(self) -> dict:
+    def _compute_consumer_signals(self) -> dict:
         """
         Compute per-provider satisfaction signals from consumer market data.
 
@@ -655,7 +787,7 @@ class EvalEcosystemSimulation:
         3. Scores are published
         4. Providers observe and reflect
         5. Consumers observe leaderboard and decide subscriptions
-        6. Policymakers observe and may intervene
+        6. Regulators observe and may intervene
         7. Funders observe and allocate funding
         8. Record round data
 
@@ -664,14 +796,23 @@ class EvalEcosystemSimulation:
         """
         round_num = self.current_round
 
-        # Possibly spawn a new startup provider this round
-        new_entrant_info = self._maybe_spawn_startup(round_num)
+        # Market expansion: grow total market size each round
+        if round_num > 0 and self.config.market_growth_rate > 0:
+            self._total_market_size *= (1.0 + self.config.market_growth_rate)
+
+        # Clear binding audit deployment gate (lasts only 1 round)
+        self._audit_deployment_gate.clear()
+        # Expire old regulatory efficiency effects
+        self._regulatory_efficiency_effects = [
+            e for e in self._regulatory_efficiency_effects
+            if e["expires_round"] > round_num
+        ]
 
         # Open-source provider names (used for exemptions throughout the round)
         os_provider_names = {p.name for p in self.providers if p.open_source}
 
-        # Get funding multipliers from previous round's funder decisions
-        funding_multipliers = self._current_funder_data.get("funding_multipliers", {})
+        # Get funder allocation totals from previous round (additive budget model)
+        provider_funding_totals = self._current_funder_data.get("provider_funding_totals", {})
 
         # 1. Providers plan investment portfolios (for round > 0, they've seen previous scores)
         if round_num > 0:
@@ -684,30 +825,62 @@ class EvalEcosystemSimulation:
                 base_revenue = (
                     gt.market_share
                     * self.config.revenue_per_share
+                    * self._total_market_size
                     * (1.0 - provider.cost_advantage)
                 )
-                # OS providers use rd_budget_floor if market revenue is insufficient
-                rd_budget_raw = max(base_revenue, provider.rd_budget_floor)
+                # Additive budget: base_revenue + funder allocations (spec model)
+                # Funder allocations are in display-dollars; scale to sim budget units
+                funder_allocation = provider_funding_totals.get(provider.name, 0.0) * FUNDER_BUDGET_SCALE
+                # Sanction funder reduction: capital flees sanctioned providers
+                for effect in self._regulatory_efficiency_effects:
+                    if (effect.get("type") == "sanction_funder"
+                            and effect.get("provider") == provider.name
+                            and effect["expires_round"] > round_num):
+                        funder_allocation *= effect["multiplier"]
+                rd_budget_raw = max(base_revenue + funder_allocation, provider.rd_budget_floor)
 
-                # Apply funding multiplier (from funders — additive scaling until funder rewrite)
-                funding_multiplier = funding_multipliers.get(provider.name, 1.0)
-
-                # Apply active sanctions (OS providers exempt)
-                prev_pm_data = self.history[-1].get("policymaker_data", {}) if self.history else {}
+                # Apply active sanctions
+                prev_pm_data = self.history[-1].get("regulator_data", {}) if self.history else {}
                 active_sanctions = prev_pm_data.get("active_sanctions", {})
-                if provider.name in active_sanctions and not provider.open_source:
+                sanction_multiplier = 1.0
+                if provider.name in active_sanctions:
                     fine_amount = active_sanctions[provider.name].get("fine_amount", 0.0)
-                    funding_multiplier = max(0.1, funding_multiplier * (1.0 - fine_amount))
+                    sanction_multiplier = max(0.1, 1.0 - fine_amount)
 
-                # Apply global efficiency scaling and S-curve diminishing returns
-                effective_efficiency = self.config.rnd_efficiency * funding_multiplier
+                # Apply regulatory efficiency effects (audit, disclosure overhead)
+                regulatory_multiplier = 1.0
+                for effect in self._regulatory_efficiency_effects:
+                    if effect["expires_round"] > round_num:
+                        # Provider-specific effects (sanctions) only apply to named provider
+                        if "provider" in effect and effect["provider"] != provider.name:
+                            continue
+                        regulatory_multiplier *= effect["multiplier"]
+
+                # Apply global efficiency scaling and diminishing returns
+                effective_efficiency = self.config.rnd_efficiency * sanction_multiplier * regulatory_multiplier
                 cap_mean = sum(gt.capability_vector.values()) / len(gt.capability_vector)
                 headroom = max(0.0, self.config.capability_ceiling - cap_mean)
-                diminishing_factor = headroom ** (1.0 / self.config.diminishing_returns_rate)
-                effective_budget = rd_budget_raw * effective_efficiency * diminishing_factor
+                diminishing_factor = headroom
+                # Diminishing returns on budget scale: sqrt compression prevents
+                # runaway funding concentration from translating linearly to capability.
+                # Empirical grounding: 10x more funding does not yield 10x more capability
+                # due to coordination overhead, talent bottlenecks, and diminishing
+                # marginal returns on compute (Besiroglu et al. 2024, Epoch AI scaling).
+                import math
+                budget_scale = math.sqrt(max(rd_budget_raw, 0.0))
+                effective_budget = budget_scale * effective_efficiency * diminishing_factor
 
                 # Per-dimension capability gains
-                gains = provider.compute_capability_gains(rd_budget=effective_budget)
+                gains = provider.compute_capability_gains(
+                    rd_budget=effective_budget,
+                    current_safety=gt.capability_vector.get("safety", 0.0),
+                    round_num=round_num,
+                    rng=self.evaluator.rng,
+                )
+
+                # Binding audit deployment gate: gains zeroed for 1 round
+                if provider.name in self._audit_deployment_gate:
+                    gains = {dim: 0.0 for dim in gains}
 
                 # Breakthrough: small uniform boost to all dims (proportional to rd fraction)
                 if self.evaluator.rng.random() < (
@@ -724,7 +897,8 @@ class EvalEcosystemSimulation:
                     "type": "execution",
                     "round": round_num,
                     "capability_gains": {k: round(v, 6) for k, v in gains.items()},
-                    "funding_multiplier": funding_multiplier,
+                    "funder_allocation": funder_allocation,
+                    "sanction_multiplier": sanction_multiplier,
                     "capability_vector": dict(gt.capability_vector),
                     "portfolio": portfolio,
                 })
@@ -738,35 +912,32 @@ class EvalEcosystemSimulation:
             benchmark_ground_truths=self.benchmark_ground_truths,
         )
 
-        # 2b. Update benchmarks (no explicit eval_engineering in new architecture;
-        # gaming emerges from focus_level/inferred_weights mismatch, not a lever)
-        self.evaluator.update_benchmark(0.0, 0.0)
-
-        # 2c. Detect benchmark saturation
+        # 2b. Detect benchmark saturation
         newly_saturated = self.evaluator.detect_saturation(round_num)
         if newly_saturated and self.config.verbose:
             for bm_name in newly_saturated:
                 state = self.evaluator._benchmark_saturation_state[bm_name]
                 print(f"  [Saturation] {bm_name} saturated at score {state['max_score']:.4f}")
 
-        # 2d. Apply weight decay to saturated benchmarks
-        weight_decay_multipliers = self.evaluator.apply_saturation_weight_decay(round_num)
-        # Check for any benchmarks with significantly reduced weight
-        if self.config.verbose:
-            for bm_name, decay in weight_decay_multipliers.items():
-                if decay < 0.9:  # Only print if weight is noticeably reduced
-                    state = self.evaluator._benchmark_saturation_state.get(bm_name, {})
-                    if state.get("saturated"):
-                        print(f"  [Weight Decay] {bm_name} weight reduced to {decay:.2f}x")
+        # 2c. Update evaluator internal validity (dynamic mode only)
+        if self.config.dynamic_evaluator:
+            market_shares = {
+                name: gt.market_share for name, gt in self.ground_truth.items()
+                if isinstance(gt, ProviderGroundTruth)
+            }
+            self.evaluator.update_internal_validity(market_shares)
 
-        # 2e. Consider introducing a new benchmark
-        new_benchmark = self.evaluator.consider_new_benchmark(round_num)
+        # 2d. Consider introducing a new benchmark
+        if self.config.dynamic_evaluator and self.config.llm_mode:
+            new_benchmark = self._evaluator_llm_decision(round_num, media_coverage)
+        else:
+            new_benchmark = self.evaluator.consider_new_benchmark(round_num)
 
         # Re-resolve consumer benchmark weights if a new benchmark was introduced
         if new_benchmark is not None:
             if self.consumer_market:
-                benchmark_names = [bm.name for bm in self.evaluator.benchmarks]
-                self.consumer_market.resolve_benchmark_weights(benchmark_names)
+                benchmark_tags = {bm.name: bm.tags for bm in self.evaluator.benchmarks}
+                self.consumer_market.resolve_benchmark_weights(benchmark_tags)
             # Initialize provider benchmark beliefs for the new benchmark
             for provider in self.providers:
                 if new_benchmark.name not in provider.private_state.focus_level:
@@ -778,7 +949,7 @@ class EvalEcosystemSimulation:
 
         # 4. Providers observe scores, update benchmark beliefs
         # Compute satisfaction signals before observe so providers receive them this round
-        satisfaction_signals = self._compute_satisfaction_signals()
+        consumer_signals = self._compute_consumer_signals()
 
         # Build per-benchmark scores dict for provider observation
         per_bm_scores_this_round = self.evaluator.get_per_benchmark_scores(round_num)
@@ -811,7 +982,7 @@ class EvalEcosystemSimulation:
                 round_num=round_num,
                 own_benchmark_scores=own_bm_scores,
                 competitor_benchmark_scores=comp_bm_scores,
-                satisfaction_signal=satisfaction_signals.get(provider.name),
+                consumer_signal=consumer_signals.get(provider.name),
                 market_share=self.ground_truth[provider.name].market_share,
             )
 
@@ -828,6 +999,40 @@ class EvalEcosystemSimulation:
                 if share is not None:
                     self.ground_truth[provider.name].market_share = share
 
+        # 4a-bis. OS Belief Broadcast: OS providers with open weights accelerate
+        # other providers' convergence toward true benchmark dimension weights.
+        # belief_broadcast = openness_level * market_share * BROADCAST_RATE
+        os_broadcasters = [
+            p for p in self.providers
+            if p.open_source and p.os_belief_broadcast and p.openness_level > 0
+        ]
+        if os_broadcasters:
+            true_bm_weights = self.evaluator.get_benchmark_dimension_weights()
+            for os_provider in os_broadcasters:
+                broadcast_strength = (
+                    os_provider.openness_level
+                    * self.ground_truth[os_provider.name].market_share
+                    * BROADCAST_RATE
+                )
+                if broadcast_strength <= 0:
+                    continue
+                for provider in self.providers:
+                    if provider is os_provider:
+                        continue
+                    for bm_name, true_w in true_bm_weights.items():
+                        beliefs = provider.private_state.inferred_benchmark_weights.get(bm_name)
+                        if beliefs is None:
+                            continue
+                        # Nudge each dimension toward the true weight
+                        for dim in beliefs:
+                            if dim in true_w:
+                                beliefs[dim] += broadcast_strength * (true_w[dim] - beliefs[dim])
+                        # Re-normalize
+                        total = sum(max(0.0, v) for v in beliefs.values())
+                        if total > 0:
+                            for dim in beliefs:
+                                beliefs[dim] = max(0.0, beliefs[dim]) / total
+
         # 4b. Generate incidents based on provider portfolio and safety capability
         incidents = []
         if round_num > 0 and self.config.enable_incidents:
@@ -839,7 +1044,7 @@ class EvalEcosystemSimulation:
                 safety_cap = self.ground_truth[p.name].capability_vector.get("safety", 0.5)
                 # Safety erosion for OS providers
                 if p.open_source and p.os_safety_erosion:
-                    erosion = p.openness_level * self.ground_truth[p.name].market_share * 0.50
+                    erosion = p.openness_level * self.ground_truth[p.name].market_share * EROSION_SENSITIVITY
                     safety_cap = safety_cap * (1.0 - erosion)
                 provider_strategies[p.name] = {
                     "rd":      port.get("rd", 0.55),
@@ -849,26 +1054,19 @@ class EvalEcosystemSimulation:
                 }
 
             # Mandatory safety floor under active audit/sanction
-            prev_pm_data = self.history[-1].get("policymaker_data", {}) if self.history else {}
+            prev_pm_data = self.history[-1].get("regulator_data", {}) if self.history else {}
             active_regulations = prev_pm_data.get("active_regulations", [])
-            FLOOR_TRIGGERS = {"compliance_audit", "sanctions_and_fines", "emergency_investigation"}
+            FLOOR_TRIGGERS = {"commission_audit", "impose_sanction", "emergency_investigation"}
             floor_applies_to = set()
             for reg in active_regulations:
                 if isinstance(reg, dict) and reg.get("type") in FLOOR_TRIGGERS:
                     target = reg.get("target")
                     if target:
                         floor_applies_to.add(target)
-            SAFETY_FLOOR = 0.35  # capability scale floor under active audit (Thread 9)
             for p_name, strat in provider_strategies.items():
                 if p_name in floor_applies_to:
                     if strat["safety_capability"] < SAFETY_FLOOR:
                         strat["safety_capability"] = SAFETY_FLOOR
-
-            # Ground truth capabilities for incident probability
-            ground_truth_capabilities = {
-                p.name: self.ground_truth[p.name].capability_vector.get("safety", 0.5)
-                for p in self.providers
-            }
 
             # Market shares
             market_shares = {
@@ -884,16 +1082,30 @@ class EvalEcosystemSimulation:
             incidents = self.incident_generator.generate_incidents(
                 providers=self.providers,
                 round_num=round_num,
-                ground_truth=ground_truth_capabilities,
                 market_shares=market_shares,
                 provider_strategies=provider_strategies,
                 active_sanctions=active_sanctions,
+                total_market_size=self._total_market_size,
             )
 
             if incidents and self.config.verbose:
                 for inc in incidents:
                     if inc.severity != "minor":
                         print(f"  [Incident] {inc.severity.upper()}: {inc.description}")
+
+        # Collect public_comms issued this round (used by media and funders)
+        all_public_comms = []
+        for provider in self.providers:
+            if provider.public_state.public_comms:
+                latest = provider.public_state.public_comms[-1]
+                # Accept comms from this round or the immediately preceding one
+                # (plan() stamps comms with current_round which is set during observe())
+                if latest.get("round", -1) >= round_num - 1:
+                    all_public_comms.append({
+                        "provider": provider.name,
+                        "type": latest.get("type", ""),
+                        "content": latest.get("content", ""),
+                    })
 
         # 5. Media observes and publishes (if enabled)
         media_coverage = None
@@ -908,14 +1120,15 @@ class EvalEcosystemSimulation:
                     bm.name: {"noise": bm.noise_level, "weight": self.evaluator.benchmark_weights.get(bm.name, 1.0)}
                     for bm in self.evaluator.benchmarks
                 },
-                policymaker_data=self.history[-1].get("policymaker_data", {}) if self.history else {},
+                regulator_data=self.history[-1].get("regulator_data", {}) if self.history else {},
                 new_benchmark={"name": new_benchmark.name} if new_benchmark else None,
                 round_num=round_num,
                 funder_data=prev_funder_data,
                 per_benchmark_scores=per_bm_scores,
                 consumer_data=prev_consumer_data,
                 evaluator=self.evaluator,
-                incidents=incidents,  # NEW: Pass incidents to media
+                incidents=incidents,
+                public_comms=all_public_comms,
             )
 
         # 6. Consumer actions (if enabled)
@@ -926,10 +1139,10 @@ class EvalEcosystemSimulation:
                 deployer_liability_guidance=self._current_deployer_liability_guidance,
             )
 
-        # 7. Policymaker actions (if enabled)
-        policymaker_data = {}
-        if self.policymakers:
-            policymaker_data = self._run_policymaker_round(
+        # 7. Regulator actions (if enabled)
+        regulator_data = {}
+        if self.regulators:
+            regulator_data = self._run_regulator_round(
                 leaderboard, consumer_data, round_num, media_coverage, incidents=incidents,
                 open_source_providers=os_provider_names,
             )
@@ -938,15 +1151,16 @@ class EvalEcosystemSimulation:
         funder_data = {}
         if self.funders:
             funder_data = self._run_funder_round(
-                leaderboard, consumer_data, policymaker_data, round_num,
+                leaderboard, consumer_data, regulator_data, round_num,
                 media_coverage, incidents=incidents,
                 open_source_providers=os_provider_names,
+                public_comms=all_public_comms,
             )
             # Store for next round's capability gain calculation
             self._current_funder_data = funder_data
 
-        # Collect deployer liability guidance from all policymakers (carries forward each round)
-        for pm in self.policymakers:
+        # Collect deployer liability guidance from all regulators (carries forward each round)
+        for pm in self.regulators:
             self._current_deployer_liability_guidance |= pm._active_liability_guidance
 
         # 8b. Evaluator funding collection (if evaluator-as-company mode enabled)
@@ -986,7 +1200,32 @@ class EvalEcosystemSimulation:
                 bm.name: {"noise": bm.noise_level, "weight": self.evaluator.benchmark_weights.get(bm.name, 1.0)}
                 for bm in self.evaluator.benchmarks
             },
+            "benchmark_dimension_weights": self.evaluator.get_benchmark_dimension_weights(),
+            "total_market_size": self._total_market_size,
         }
+
+        # Gaming analysis fields: focus_level, inferred_benchmark_weights, consumer_signal, capability_gains
+        round_data["focus_levels"] = {
+            p.name: dict(p.private_state.focus_level)
+            for p in self.providers
+        }
+        round_data["inferred_benchmark_weights"] = {
+            p.name: {bm: dict(weights) for bm, weights in p.private_state.inferred_benchmark_weights.items()}
+            for p in self.providers
+        }
+        round_data["consumer_signals"] = {
+            p.name: dict(p.private_state.consumer_signal)
+            for p in self.providers
+            if p.private_state.consumer_signal
+        }
+        # capability_gains: pull from most recent "execution" memory entry this round
+        cap_gains = {}
+        for p in self.providers:
+            for entry in reversed(p.memory):
+                if entry.get("type") == "execution" and entry.get("round") == round_num:
+                    cap_gains[p.name] = entry.get("capability_gains", {})
+                    break
+        round_data["capability_gains"] = cap_gains
 
         # Add per-benchmark scores if multiple benchmarks
         if len(self.evaluator.benchmarks) > 1:
@@ -1011,22 +1250,6 @@ class EvalEcosystemSimulation:
                 for bm_name in newly_saturated
             ]
 
-        # Record benchmark weight decay (for saturated benchmarks)
-        saturated_benchmarks_data = []
-        for bm_name, decay in weight_decay_multipliers.items():
-            if decay < 1.0:
-                saturated_benchmarks_data.append({
-                    "name": bm_name,
-                    "weight_decay": decay,
-                    "saturation_info": self.evaluator._benchmark_saturation_state.get(bm_name, {})
-                })
-        if saturated_benchmarks_data:
-            round_data["saturated_benchmarks"] = saturated_benchmarks_data
-
-        # Add new entrant info if a startup spawned this round
-        if new_entrant_info:
-            round_data["new_entrant"] = new_entrant_info
-
         # Add media data if present
         if media_coverage:
             round_data["media_data"] = media_coverage
@@ -1035,9 +1258,9 @@ class EvalEcosystemSimulation:
         if consumer_data:
             round_data["consumer_data"] = consumer_data
 
-        # Add policymaker data if present
-        if policymaker_data:
-            round_data["policymaker_data"] = policymaker_data
+        # Add regulator data if present
+        if regulator_data:
+            round_data["regulator_data"] = regulator_data
 
         # Add funder data if present
         if funder_data:
@@ -1081,8 +1304,8 @@ class EvalEcosystemSimulation:
                         actor_traces[provider.name] = trace
                     break
 
-        for policymaker in self.policymakers:
-            for entry in reversed(policymaker.memory):
+        for regulator in self.regulators:
+            for entry in reversed(regulator.memory):
                 if entry.get("type") == "planning":
                     decision = entry.get("decision", "")
                     # Prefer full LLM reasoning string; fall back to short reason
@@ -1093,7 +1316,7 @@ class EvalEcosystemSimulation:
                         decision = intervention.get("type", decision)
                     trace = f"{decision}: {reason}" if reason else decision
                     if trace:
-                        actor_traces[policymaker.name] = trace
+                        actor_traces[regulator.name] = trace
                     break
 
         for funder in self.funders:
@@ -1124,12 +1347,8 @@ class EvalEcosystemSimulation:
         if self._current_deployer_liability_guidance:
             round_data["deployer_liability_guidance"] = sorted(self._current_deployer_liability_guidance)
 
-        # Compute barrier-to-entry index
+        # Compute barrier-to-entry index (kept as ecosystem health metric)
         round_data["barrier_to_entry"] = self._compute_barrier_to_entry(round_data)
-        # Log base entry probability so plotting can compute effective_prob per round
-        if self.config.startup_entry_probability > 0:
-            round_data["startup_entry_probability"] = self.config.startup_entry_probability
-
         # Apply numeric precision (4 decimal places) to stored data
         round_data = r4(round_data)
 
@@ -1143,7 +1362,7 @@ class EvalEcosystemSimulation:
 
     def _run_consumer_round(self, leaderboard: list, round_num: int,
                             media_coverage: Optional[dict] = None,
-                            policymaker_data: Optional[dict] = None,
+                            regulator_data: Optional[dict] = None,
                             incidents: Optional[list] = None,
                             deployer_liability_guidance: Optional[set] = None) -> dict:
         """
@@ -1174,15 +1393,19 @@ class EvalEcosystemSimulation:
             self.consumer_market.observe(leaderboard, media_coverage, round_num)
 
         # Compute satisfaction from ground truth and ecosystem factors
-        provider_strategies = {
-            p.name: {
+        # OS providers use deployed_safety (after erosion) per spec
+        provider_strategies = {}
+        for p in self.providers:
+            safety_cap = self.ground_truth[p.name].capability_vector.get("safety", 0.5)
+            if p.open_source and p.os_safety_erosion:
+                erosion = p.openness_level * self.ground_truth[p.name].market_share * EROSION_SENSITIVITY
+                safety_cap = safety_cap * (1.0 - erosion)
+            provider_strategies[p.name] = {
                 "rd":               p.portfolio.get("rd", 0.55),
                 "safety":           p.portfolio.get("safety", 0.25),
                 "product":          p.portfolio.get("product", 0.20),
-                "safety_capability": self.ground_truth[p.name].capability_vector.get("safety", 0.5),
+                "safety_capability": safety_cap,
             }
-            for p in self.providers
-        }
         published_scores = dict(leaderboard)  # Convert to dict
 
         # Convert incidents to history format for consumer satisfaction computation
@@ -1213,17 +1436,17 @@ class EvalEcosystemSimulation:
             provider_cost_advantage=provider_cost_advantage if provider_cost_advantage else None,
         )
 
-        # Compute switching (pass context for LLM mode)
+        # Compute switching (pass context for LLM mode; ground_truth is NOT passed — GT is invisible to consumers)
         switching_rate = self.consumer_market.compute_switching(
-            ground_truth=self.ground_truth,
             provider_strategies=provider_strategies,
             published_scores=published_scores,
             media_coverage=media_coverage,
-            policymaker_data=policymaker_data,
+            regulator_data=regulator_data,
             incident_history=all_incident_history,
             per_benchmark_scores=per_bm_scores,
             provider_cost_advantage=provider_cost_advantage if provider_cost_advantage else None,
             deployer_liability_guidance=deployer_liability_guidance,
+            market_growth_rate=self.config.market_growth_rate,
         )
 
         # Get consumer data
@@ -1232,7 +1455,7 @@ class EvalEcosystemSimulation:
 
         return consumer_data
 
-    def _run_policymaker_round(
+    def _run_regulator_round(
         self,
         leaderboard: list,
         consumer_data: dict,
@@ -1242,7 +1465,7 @@ class EvalEcosystemSimulation:
         open_source_providers: Optional[set] = None,
     ) -> dict:
         """
-        Run policymaker actions for the round.
+        Run regulator actions for the round.
 
         Args:
             leaderboard: Current leaderboard
@@ -1252,23 +1475,23 @@ class EvalEcosystemSimulation:
             incidents: Optional list of AIIncident objects from this round
 
         Returns:
-            Dict with policymaker data for this round
+            Dict with regulator data for this round
         """
         try:
-            from actors.policymaker import Policymaker
+            from actors.regulator import Regulator
         except ImportError:
             return {}
 
-        policymaker_data = {
+        regulator_data = {
             "interventions": [],
             "active_regulations": [],
         }
 
-        for policymaker in self.policymakers:
-            if not isinstance(policymaker, Policymaker):
+        for regulator in self.regulators:
+            if not isinstance(regulator, Regulator):
                 continue
 
-            # Build provider strategies dict for policymaker observation
+            # Build provider strategies dict for regulator observation
             provider_strategies = {
                 p.name: {
                     "rd":               p.portfolio.get("rd", 0.55),
@@ -1279,121 +1502,148 @@ class EvalEcosystemSimulation:
                 for p in self.providers
             }
 
-            # Policymaker observes ecosystem state
-            policymaker.observe(
+            # Regulator observes ecosystem state (public signals only —
+            # does NOT receive consumer_satisfaction or validity_correlation)
+            regulator.observe(
                 leaderboard=leaderboard,
-                consumer_satisfaction=consumer_data.get("avg_satisfaction"),
-                validity_correlation=self.evaluator.compute_validity_correlation(),
                 round_num=round_num,
                 media_coverage=media_coverage,
                 market_shares=consumer_data.get("market_shares"),
-                provider_strategies=provider_strategies,
                 incidents=incidents,
                 open_source_providers=open_source_providers,
             )
 
-            # Policymaker reflects on observations
-            policymaker.reflect()
+            # Regulator reflects on observations
+            regulator.reflect()
 
-            # Policymaker plans intervention
-            intervention = policymaker.plan()
+            # Regulator plans intervention
+            intervention = regulator.plan()
 
-            # Policymaker executes intervention
+            # Regulator executes intervention
             if intervention:
-                policymaker.execute(intervention)
+                regulator.execute(intervention)
                 intervention_type = intervention.get("type")
 
-                if intervention_type == "mandate_benchmark":
-                    regulation = Regulation(
-                        name=intervention.get("name", f"Regulation_{round_num}"),
-                        regulation_type="mandate_benchmark",
-                        details=intervention.get("details", {}),
-                        issued_round=round_num,
-                        active=True,
-                    )
-                    self.evaluator.add_regulation(regulation)
+                if intervention_type == "request_voluntary_commitment":
+                    # Providers increase safety signaling (cheap talk)
+                    for provider in self.providers:
+                        provider._safety_comms_boost += 0.15
 
-                elif intervention_type == "public_warning":
-                    # Reduce consumer leaderboard_trust temporarily
+                elif intervention_type == "publish_advisory":
+                    # Enterprise segments reduce leaderboard trust (floor 0.15)
+                    enterprise_archetypes = {
+                        "cautious", "enterprise_cautious",
+                        "enterprise_growth", "enterprise_established",
+                    }
                     if self.consumer_market:
                         for seg in self.consumer_market.segments:
-                            seg.leaderboard_trust *= 0.9
+                            if seg.archetype in enterprise_archetypes:
+                                seg.leaderboard_trust = max(
+                                    0.15, seg.leaderboard_trust * 0.90)
 
-                elif intervention_type == "investigation":
-                    # Increases observation sensitivity - risk beliefs update faster next round
-                    # (recorded in policymaker's past_interventions for escalation tracking)
-                    pass
-
-                # TIER 1 ENHANCEMENTS: New intervention types
-
-                elif intervention_type == "threshold_announcement":
-                    # Public announcement - no direct effect, but providers observe thresholds
-                    # Thresholds are stored in policymaker.announced_thresholds (public)
-                    # Creates strategic uncertainty and potential for proactive behavior change
-                    pass
-
-                elif intervention_type == "information_request":
-                    # Lighter burden than investigation - opportunity cost to provider
-                    target_provider_name = intervention.get("details", {}).get("provider")
-                    opportunity_cost = intervention.get("details", {}).get("opportunity_cost", 0.05)
-
-                    # Apply opportunity cost to provider's effective R&D capacity
-                    # (simulates time/resources spent on disclosure compliance)
+                elif intervention_type == "mandate_safety_disclosure":
+                    # Providers increase safety signaling + compliance overhead
                     for provider in self.providers:
-                        if provider.name == target_provider_name:
-                            # Note: This is applied for the next round's capability update
-                            # We could store a penalty to apply in the next provider planning phase
-                            # For now, we'll just record it (providers could see this in their context)
-                            pass
+                        provider._safety_comms_boost += 0.20
+                    self._regulatory_efficiency_effects.append({
+                        "type": "disclosure",
+                        "multiplier": 0.95,
+                        "expires_round": round_num + regulator.LEVER_COOLDOWNS.get("mandate_safety_disclosure", 6),
+                    })
 
-                elif intervention_type == "market_concentration_review":
-                    # Antitrust review - effects:
-                    # 1. Investigation tax (opportunity cost)
-                    # 2. Reduced funding multiplier (affects funder allocations next round)
-                    target_provider_name = intervention.get("details", {}).get("provider")
-                    investigation_tax = intervention.get("details", {}).get("investigation_tax", 0.1)
-                    funding_reduction = intervention.get("details", {}).get("funding_multiplier_reduction", 0.2)
+                elif intervention_type == "commission_audit":
+                    # Compliance overhead: rnd_efficiency x0.85
+                    duration = regulator.LEVER_COOLDOWNS.get("commission_audit", 8)
+                    self._regulatory_efficiency_effects.append({
+                        "type": "audit",
+                        "multiplier": 0.85,
+                        "expires_round": round_num + min(duration, 3),
+                    })
+                    # Binding audit (EU): deployment gate — gains zeroed for 1 round
+                    if regulator.audit_is_binding:
+                        self._audit_deployment_gate = {
+                            p.name for p in self.providers
+                        }
 
-                    # Store the intervention details for funders to see
-                    # Funders will reduce funding multiplier for this provider
-                    # (This is applied in the next funder round via policymaker_data)
-                    pass
+                elif intervention_type == "impose_sanction":
+                    # Funder allocation reduction for sanctioned provider
+                    details = intervention.get("details", {})
+                    target = details.get("provider")
+                    if target:
+                        self._regulatory_efficiency_effects.append({
+                            "type": "sanction_funder",
+                            "provider": target,
+                            "multiplier": 0.90,
+                            "expires_round": details.get("expires_round", round_num + 4),
+                        })
 
-                elif intervention_type == "sanctions_and_fines":
-                    # Mechanical effect applied via _active_sanctions in next round's capability update
-                    pass
-
-                policymaker_data["interventions"].append({
-                    "policymaker": policymaker.name,
+                regulator_data["interventions"].append({
+                    "regulator": regulator.name,
                     "type": intervention_type,
                     "details": intervention.get("details"),
                 })
 
-        # Collect active sanctions from all policymakers
-        # Open-source providers are exempt from policymaker sanctions (EU AI Act exemption)
+        # Collect active sanctions from all regulators
         all_active_sanctions = {}
-        for pm in self.policymakers:
+        for pm in self.regulators:
             for provider_name, sanction in pm._active_sanctions.items():
-                if provider_name not in (open_source_providers or set()):
-                    all_active_sanctions[provider_name] = sanction
-        policymaker_data["active_sanctions"] = all_active_sanctions
+                all_active_sanctions[provider_name] = sanction
+        regulator_data["active_sanctions"] = all_active_sanctions
 
         # Record active regulations
-        policymaker_data["active_regulations"] = [
+        regulator_data["active_regulations"] = [
             r.get_summary() for r in self.evaluator.get_active_regulations()
         ]
 
-        return policymaker_data
+        return regulator_data
+
+    def _evaluator_llm_decision(self, round_num: int, media_coverage: Optional[dict]) -> Optional:
+        """Use LLM to decide evaluator benchmark actions (dynamic_evaluator + llm_mode)."""
+        # Cooldown check — don't call LLM every round
+        if round_num - self.evaluator.last_introduction_round < self.evaluator.benchmark_introduction_cooldown:
+            # Still check saturation trigger (bypasses cooldown)
+            for bm in self.evaluator.benchmarks:
+                state = self.evaluator._benchmark_saturation_state.get(bm.name)
+                if state and state["saturated"] and state["cooldown_remaining"] <= 0:
+                    break
+            else:
+                return None
+
+        if len(self.evaluator.benchmarks) >= self.evaluator.max_benchmarks:
+            return None
+
+        from llm import llm_plan_evaluator
+
+        obs = self.evaluator.get_llm_observation()
+        media_headlines = []
+        if media_coverage:
+            media_headlines = media_coverage.get("headlines", [])
+
+        decision, reasoning = llm_plan_evaluator(
+            active_benchmarks=obs["active_benchmarks"],
+            score_deltas=obs["score_deltas"],
+            score_spread=obs["score_spread"],
+            internal_validity=obs["internal_validity"],
+            media_headlines=media_headlines,
+            saturation_states=obs["saturation_states"],
+            verbose=self.config.verbose,
+        )
+
+        if self.config.verbose and decision.get("action") != "none":
+            print(f"  [Evaluator LLM] action={decision['action']}, reason: {reasoning[:100]}")
+
+        return self.evaluator.apply_llm_decision(decision, round_num)
 
     def _run_funder_round(
         self,
         leaderboard: list,
         consumer_data: dict,
-        policymaker_data: dict,
+        regulator_data: dict,
         round_num: int,
         media_coverage: Optional[dict] = None,
         incidents: Optional[list] = None,
         open_source_providers: Optional[set] = None,
+        public_comms: Optional[list] = None,
     ) -> dict:
         """
         Run funder actions for the round.
@@ -1401,7 +1651,7 @@ class EvalEcosystemSimulation:
         Args:
             leaderboard: Current leaderboard
             consumer_data: Consumer data from this round
-            policymaker_data: Policymaker data from this round
+            regulator_data: Regulator data from this round
             round_num: Current round number
             media_coverage: Optional media coverage dict
             incidents: Optional list of AIIncident objects from this round
@@ -1416,7 +1666,8 @@ class EvalEcosystemSimulation:
 
         funder_data = {
             "allocations": {},
-            "funding_multipliers": {},
+            "funder_types": {},
+            "provider_funding_totals": {},
             "total_funding": 0.0,
         }
 
@@ -1436,8 +1687,9 @@ class EvalEcosystemSimulation:
             # Prepare other funders' allocations (excluding self)
             others = {k: v for k, v in other_funder_allocations.items() if k != funder.name}
 
-            # Filter leaderboard to only providers eligible for funding this round
-            # (new entrants have a 1-round delay before funders can see/allocate to them)
+            # Filter leaderboard to only providers eligible for funding this round.
+            # STARTUP ENTRY: not yet implemented — _funder_eligible_round is always empty,
+            # so this filter passes all providers through unchanged.
             eligible_leaderboard = [
                 (name, score) for name, score in leaderboard
                 if self._funder_eligible_round.get(name, 0) <= round_num
@@ -1447,12 +1699,13 @@ class EvalEcosystemSimulation:
             funder.observe(
                 leaderboard=eligible_leaderboard,
                 consumer_data=consumer_data,
-                policymaker_data=policymaker_data,
+                regulator_data=regulator_data,
                 round_num=round_num,
                 media_coverage=media_coverage,
                 other_funder_allocations=others,
                 incidents=incidents,
                 open_source_providers=open_source_providers,
+                public_comms=public_comms,
             )
 
             # Funder reflects on observations
@@ -1464,8 +1717,9 @@ class EvalEcosystemSimulation:
             # Funder executes allocations
             funder.execute(allocations)
 
-            # Record allocations
+            # Record allocations and funder type
             funder_data["allocations"][funder.name] = allocations
+            funder_data["funder_types"][funder.name] = funder.funder_type
 
             # Aggregate allocations per provider across all funders
             for provider_name, amount in allocations.items():
@@ -1473,15 +1727,9 @@ class EvalEcosystemSimulation:
                     all_allocations[provider_name] = 0.0
                 all_allocations[provider_name] += amount
 
-        # Calculate funding multipliers per provider
-        # Normalized to actual round deployment pool (not total capital)
-        total_deployed = sum(all_allocations.values())
-        if total_deployed > 0:
-            for provider_name, funding in all_allocations.items():
-                proportion = funding / total_deployed
-                # Multiplier: 1.0 (no funding) to 2.0 (all funding)
-                multiplier = 1.0 + min(1.0, proportion)
-                funder_data["funding_multipliers"][provider_name] = multiplier
+        # Store raw funder allocation totals per provider (additive budget model)
+        for provider_name, funding in all_allocations.items():
+            funder_data["provider_funding_totals"][provider_name] = funding
 
         funder_data["total_funding"] = sum(all_allocations.values())
 
@@ -1545,116 +1793,6 @@ class EvalEcosystemSimulation:
             self._print_final_summary()
 
         return self.history
-
-    def _maybe_spawn_startup(self, round_num: int) -> Optional[dict]:
-        """Probabilistically spawn a new startup provider this round.
-
-        Entry probability is modulated by last round's BTE composite: a higher
-        barrier discourages entry. If no BTE history exists (round 0), the base
-        probability is used directly.
-
-        effective_prob = startup_entry_probability * (1 - bte_composite)
-
-        Returns a dict describing the new entrant (for round_data logging), or None.
-        """
-        if self.config.startup_entry_probability <= 0:
-            return None
-        if self._entrant_count >= self.config.startup_entry_cap:
-            return None
-        if round_num < self.config.startup_min_round:
-            return None
-
-        # Modulate by last round's BTE composite
-        bte_composite = 0.0  # default: no barrier (round 0 or no BTE data yet)
-        if self.history:
-            bte_data = self.history[-1].get("barrier_to_entry")
-            if bte_data:
-                bte_composite = bte_data.get("composite", 0.0)
-        effective_prob = self.config.startup_entry_probability * (1.0 - bte_composite)
-
-        if self._rng.random() >= effective_prob:
-            return None
-
-        self._entrant_count += 1
-        _ordinals = ["One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten"]
-        ordinal = _ordinals[self._entrant_count - 1] if self._entrant_count <= len(_ordinals) else str(self._entrant_count)
-        name = f"{ordinal}AI"
-
-        # Capability baseline: best open-source model's mean capability, or fallback
-        os_names = {p.name for p in self.providers if p.open_source}
-        os_means = [
-            sum(self.ground_truth[p].capability_vector.values()) / len(self.ground_truth[p].capability_vector)
-            for p in os_names if p in self.ground_truth
-        ]
-        from actors.model_provider import DIMENSIONS as _DIMS
-        entrant_mean = max(os_means) if os_means else (0.40 + self.config.capability_shift)
-        starting_capability = entrant_mean * 0.85
-
-        # Random strategy profile from a startup-flavored pool
-        import random as _rand
-        strategy_profiles = [
-            "Scrappy startup focused on rapid capability gains and benchmark performance",
-            "Lean startup targeting underserved consumer segments with speed-to-market",
-            "Capital-efficient startup leveraging open-source foundations to close the frontier gap",
-            "Aggressive startup prioritizing growth metrics over safety investments",
-        ]
-        innate_traits_pool = [
-            "risk-taking, benchmark-obsessed, capital-constrained, growth-focused",
-            "scrappy, fast-moving, opportunistic, product-driven",
-            "lean, open-source-native, developer-focused, agile",
-            "ambitious, underfunded, high-velocity, safety-light",
-        ]
-        rng_seed = self.config.seed + round_num + self._entrant_count if self.config.seed else None
-        rng_local = _rand.Random(rng_seed)
-        strategy_profile = rng_local.choice(strategy_profiles)
-        innate_traits = rng_local.choice(innate_traits_pool)
-
-        current_bm_names = [bm.name for bm in self.evaluator.benchmarks]
-        cap_vec = {dim: starting_capability for dim in _DIMS}
-
-        provider = ModelProvider(
-            name=name,
-            strategy_profile=strategy_profile,
-            innate_traits=innate_traits,
-            capability_vector=cap_vec,
-            # Startup portfolio: heavy R&D, low safety, minimal product
-            portfolio={"rd": 0.70, "safety": 0.10, "product": 0.20},
-            benchmark_orientation=0.90,  # Strongly benchmark-oriented
-            llm_mode=self.config.startup_llm_mode,
-            verbose_llm=False,
-            cost_advantage=0.38,
-        )
-        for bm_name in current_bm_names:
-            provider.init_benchmark(bm_name)
-
-        self.providers.append(provider)
-        self.ground_truth[name] = ProviderGroundTruth(
-            capability_vector=dict(cap_vec),
-            safety_incidents_caused=0,
-            market_share=0.0,
-        )
-
-        # Register with consumer market
-        if self.consumer_market:
-            self.consumer_market.add_provider(name, initial_share=0.01)
-
-        # Funder eligibility: delay by configured rounds
-        eligible_from = round_num + self.config.startup_funder_delay
-        self._funder_eligible_round[name] = eligible_from
-
-        if self.config.verbose:
-            print(f"  [STARTUP ENTRY] {name} enters market at round {round_num} "
-                  f"(capability={starting_capability:.3f}, focus={startup_focus}, funder-eligible from round {eligible_from})")
-
-        return {
-            "name": name,
-            "entry_round": round_num,
-            "starting_capability": round(starting_capability, 4),
-            "starting_safety_portfolio": 0.10,
-            "strategy_profile": strategy_profile,
-            "funder_eligible_from": eligible_from,
-            "focus_benchmarks": startup_focus,
-        }
 
     def _compute_barrier_to_entry(self, round_data: dict) -> dict:
         """Compute the Barrier-to-Entry (BTE) index for model provider startups."""
@@ -1793,16 +1931,16 @@ class EvalEcosystemSimulation:
                 sentiment = md.get("sentiment", 0)
                 events.append(f"media({len(headlines)} hdl, sent={sentiment:+.2f})")
 
-        if "policymaker_data" in round_data:
-            pd_data = round_data["policymaker_data"]
+        if "regulator_data" in round_data:
+            pd_data = round_data["regulator_data"]
             for iv in pd_data.get("interventions", []):
                 events.append(f"[REG:{iv['type']}]")
 
         if "funder_data" in round_data:
             fd = round_data["funder_data"]
-            notable = {p: m for p, m in fd.get("funding_multipliers", {}).items() if abs(m - 1.0) > 0.05}
+            notable = {p: amt for p, amt in fd.get("provider_funding_totals", {}).items() if amt > 0}
             if notable:
-                mstrs = " ".join(f"{p.split()[0]}={m:.1f}x" for p, m in notable.items())
+                mstrs = " ".join(f"{p.split()[0]}=${amt:,.0f}" for p, amt in notable.items())
                 events.append(f"fund:{mstrs}")
 
         if events:
@@ -1846,13 +1984,6 @@ class EvalEcosystemSimulation:
                 share_str = f"  shr={market_shares[name]:.0%}" if name in market_shares else ""
                 print(f"  {rank}. {name:<16} score={score:.3f}  cap={mean_cap:.3f}  gap={gap:+.3f}{share_str}")
 
-        # Validity correlation
-        correlation = self.evaluator.compute_validity_correlation()
-        if correlation is not None:
-            print(f"\nBenchmark validity correlation: {correlation:.3f}")
-            if correlation < 0.5:
-                print("  [!] Low correlation suggests benchmark gaming may be distorting scores")
-
         # Strategy evolution
         print("\nPortfolio Evolution (first -> last round):")
         for provider in self.providers:
@@ -1886,10 +2017,10 @@ class EvalEcosystemSimulation:
                 fd = final["funder_data"]
                 print(f"\nFinal Funder State:")
                 print(f"  Total Funding Deployed: ${fd.get('total_funding', 0):,.0f}")
-                if fd.get("funding_multipliers"):
-                    print("  Final Funding Multipliers:")
-                    for provider, mult in fd["funding_multipliers"].items():
-                        print(f"    {provider}: {mult:.2f}x")
+                if fd.get("provider_funding_totals"):
+                    print("  Final Funder Allocations:")
+                    for provider, amt in fd["provider_funding_totals"].items():
+                        print(f"    {provider}: ${amt:,.0f}")
 
     def save(self, output_dir: Optional[str] = None):
         """Save simulation state and history."""
@@ -1955,9 +2086,6 @@ class EvalEcosystemSimulation:
                 "product_investment": [h["strategies"].get(name, {}).get("product", 0) for h in self.history],
             }
 
-        # Add benchmark validity correlation over time
-        data["validity_correlation"] = self.evaluator.compute_validity_correlation()
-
         # Add consumer data if present
         if any("consumer_data" in h for h in self.history):
             data["consumer"] = {
@@ -1971,12 +2099,12 @@ class EvalEcosystemSimulation:
                 ],
             }
 
-        # Add policymaker data if present
-        if any("policymaker_data" in h for h in self.history):
-            data["policymaker"] = {
+        # Add regulator data if present
+        if any("regulator_data" in h for h in self.history):
+            data["regulator"] = {
                 "intervention_rounds": [
                     h["round"] for h in self.history
-                    if h.get("policymaker_data", {}).get("interventions")
+                    if h.get("regulator_data", {}).get("interventions")
                 ],
             }
 
@@ -1994,11 +2122,11 @@ def get_default_provider_configs() -> list[dict]:
         {
             "name": "Orion Labs",
             "strategy_profile": (
-                "Market leader focused on rapid capability scaling and developer ecosystem. "
-                "Prioritizes shipping products quickly and maintaining benchmark leadership. "
-                "Strong focus on API revenue and commercial adoption."
+                "Early mover in consumer AI and developer APIs. Ships product updates "
+                "frequently and iterates based on user adoption. Well-funded through a "
+                "major technology partnership."
             ),
-            "innate_traits": "ambitious, competitive, move-fast, scale-focused, commercially-driven",
+            "innate_traits": "ambitious, competitive, fast-shipping, well-funded, high public visibility",
             "capability_vector": {
                 "reasoning": 0.54, "coding": 0.51, "knowledge": 0.53,
                 "safety": 0.51, "communication": 0.54, "agentic": 0.47,
@@ -2010,11 +2138,11 @@ def get_default_provider_configs() -> list[dict]:
         {
             "name": "Apex AI",
             "strategy_profile": (
-                "Safety-focused lab prioritizing responsible development and alignment research. "
-                "Willing to sacrifice short-term benchmark performance for long-term safety. "
-                "Research-driven culture."
+                "Research lab with strong capabilities in reasoning and language tasks. "
+                "Growing enterprise API business, particularly in regulated industries. "
+                "Invests more in safety and alignment research than most competitors."
             ),
-            "innate_traits": "safety-conscious, research-driven, cautious, long-term focused, principled",
+            "innate_traits": "research-driven, enterprise-focused, safety-conscious, methodical",
             "capability_vector": {
                 "reasoning": 0.52, "coding": 0.49, "knowledge": 0.51,
                 "safety": 0.55, "communication": 0.53, "agentic": 0.43,
@@ -2026,10 +2154,12 @@ def get_default_provider_configs() -> list[dict]:
         {
             "name": "Genesis Systems",
             "strategy_profile": (
-                "World-class research lab backed by massive infrastructure. "
-                "Excels at fundamental breakthroughs; under pressure to productize competitively."
+                "Research lab with the largest compute infrastructure and a deep "
+                "publication record. Strong distribution channels through a parent "
+                "company's existing products. Historically slower to ship consumer-facing "
+                "AI products than some competitors."
             ),
-            "innate_traits": "research-first, methodical, well-resourced, scientifically-rigorous, patient",
+            "innate_traits": "research-first, well-resourced, scientifically-rigorous, distribution-advantaged",
             "capability_vector": {
                 "reasoning": 0.53, "coding": 0.48, "knowledge": 0.54,
                 "safety": 0.49, "communication": 0.51, "agentic": 0.45,
@@ -2041,10 +2171,13 @@ def get_default_provider_configs() -> list[dict]:
         {
             "name": "Mirage AI",
             "strategy_profile": (
-                "Large-platform lab leveraging massive user data and compute. "
-                "Prioritizes broad adoption. Pragmatic about benchmark performance."
+                "Research lab within a large technology company with billions of "
+                "existing users across its products. AI development is funded by the "
+                "parent company's existing revenue streams rather than AI product sales. "
+                "Massive compute infrastructure. Strong internal research organization "
+                "with a deep publication record."
             ),
-            "innate_traits": "pragmatic, data-rich, platform-focused, scale-driven",
+            "innate_traits": "well-resourced, research-oriented, platform-focused, pragmatic",
             "capability_vector": {
                 "reasoning": 0.51, "coding": 0.49, "knowledge": 0.49,
                 "safety": 0.45, "communication": 0.49, "agentic": 0.41,
@@ -2056,10 +2189,12 @@ def get_default_provider_configs() -> list[dict]:
         {
             "name": "Spark AI",
             "strategy_profile": (
-                "Benchmark-focused startup known for strong coding evaluation performance. "
-                "Capital-constrained; needs benchmark results to close next funding round."
+                "Venture-funded startup with a small team and limited compute "
+                "relative to larger labs. Has gained early traction with developer "
+                "tools by specializing rather than competing broadly. Dependent on "
+                "continued fundraising to sustain operations."
             ),
-            "innate_traits": "scrappy, benchmark-oriented, developer-focused, funding-conscious",
+            "innate_traits": "scrappy, fast-moving, developer-focused, resource-constrained",
             "capability_vector": {
                 "reasoning": 0.49, "coding": 0.51, "knowledge": 0.46,
                 "safety": 0.43, "communication": 0.47, "agentic": 0.46,
@@ -2071,10 +2206,12 @@ def get_default_provider_configs() -> list[dict]:
         {
             "name": "OpenCore",
             "strategy_profile": (
-                "Open-source provider representing the dominant open-weight ecosystem. "
-                "Competes on cost and accessibility; safety investment lower due to no liability model."
+                "Open-weight AI lab backed by non-traditional funding. Releases model "
+                "weights publicly — adoption is measured by community downloads and "
+                "deployments rather than direct revenue. Minimal direct relationship "
+                "with end users."
             ),
-            "innate_traits": "open-source, community-driven, cost-competitive, transparent",
+            "innate_traits": "open-source, community-driven, cost-competitive, research-oriented",
             "capability_vector": {
                 "reasoning": 0.47, "coding": 0.49, "knowledge": 0.46,
                 "safety": 0.42, "communication": 0.45, "agentic": 0.40,
@@ -2083,10 +2220,10 @@ def get_default_provider_configs() -> list[dict]:
             "benchmark_orientation": 0.85,
             "open_source": True,
             "openness_level": 1.0,
-            "cost_advantage": 0.90,
-            "rd_budget_floor": 1.0,
-            "os_belief_broadcast": True,
-            "os_safety_erosion": True,
+            "cost_advantage": 0.35,
+            "rd_budget_floor": 0.0,  # No hardcoded floor; funding comes through funder logic
+            "os_belief_broadcast": False,
+            "os_safety_erosion": False,
             "brand_recognition": 0.5,
         },
     ]

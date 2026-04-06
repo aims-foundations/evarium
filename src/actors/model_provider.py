@@ -11,7 +11,7 @@ dimensions raises scores faster than it raises satisfaction.
 Visibility model:
 - PublicState: benchmark scores, market share, public_comms (visible to all)
 - PrivateState: portfolio, focus_level, inferred_benchmark_weights,
-                benchmark_orientation, satisfaction_signal (self only)
+                benchmark_orientation, consumer_signal (self only)
 - GroundTruth: capability_vector, market_share, incidents (simulation only)
 
 Modes:
@@ -28,10 +28,21 @@ from visibility import PublicState, ProviderPrivateState, ProviderGroundTruth
 # Ordered list of capability dimensions (must match capability_dimensions.py)
 DIMENSIONS = ["reasoning", "coding", "knowledge", "safety", "communication", "agentic"]
 
-# Ordinal step size applied to portfolio fractions, focus_level, and benchmark_orientation
-# on each "more"/"less" signal. Clipped and renormalized after application.
-# Final value set at Thread 9 calibration; using midpoint of range for now.
-ORDINAL_DELTA = 0.075
+# Ordinal step sizes applied to portfolio fractions, focus_level, and benchmark_orientation.
+# 5-level scale: much_more / more / same / less / much_less
+# Clipped and renormalized after application.
+ORDINAL_DELTA = 0.05         # "more" / "less"
+ORDINAL_DELTA_LARGE = 0.10   # "much_more" / "much_less"
+
+def _ordinal_to_delta(signal: str) -> float:
+    """Map a 5-level ordinal signal to a numeric delta."""
+    return {
+        "much_more": ORDINAL_DELTA_LARGE,
+        "more": ORDINAL_DELTA,
+        "same": 0.0,
+        "less": -ORDINAL_DELTA,
+        "much_less": -ORDINAL_DELTA_LARGE,
+    }.get(signal, 0.0)
 
 # Bounds for benchmark_orientation
 BENCHMARK_ORIENTATION_MIN = 0.05
@@ -111,7 +122,7 @@ class ModelProvider:
             focus_level=dict(focus_level_init) if focus_level_init else {},
             inferred_benchmark_weights={},
             benchmark_orientation=float(benchmark_orientation),
-            satisfaction_signal={},
+            consumer_signal={},
         )
 
         # Initial capability vector stored for simulation to read at setup.
@@ -136,6 +147,16 @@ class ModelProvider:
 
         # Incident safety pressure: accumulates on incidents, decays each round.
         self._incident_safety_pressure: float = 0.0
+
+        # Safety investment lag queue: gains computed now, delivered 2 rounds later.
+        self._safety_gain_queue: list = []  # [(delivery_round, gain_amount)]
+
+        # Regulatory pressure: boost to safety public_comms weight (from voluntary
+        # commitment / disclosure mandates). Decays each round.
+        self._safety_comms_boost: float = 0.0
+
+        # Ablation: route safety lever through target weights instead of direct-to-safety
+        self.safety_lever_through_target: bool = False
 
         # Per-round memory list (within-session only — not persisted in ProviderPrivateState)
         self.memory: list = []
@@ -196,7 +217,7 @@ class ModelProvider:
         round_num: int,
         own_benchmark_scores: dict,
         competitor_benchmark_scores: dict,
-        satisfaction_signal: Optional[dict] = None,
+        consumer_signal: Optional[dict] = None,
         market_share: Optional[float] = None,
     ):
         """
@@ -207,7 +228,7 @@ class ModelProvider:
             own_benchmark_scores: {benchmark_name: {"overall": float, "per_category": {cat: float}}}
             competitor_benchmark_scores: {provider_name: {benchmark_name: float}}
                 (overall scores only — per-category not needed for competitor tracking)
-            satisfaction_signal: 6-dim normalized need vector from simulation, or None.
+            consumer_signal: 6-dim normalized need vector from simulation, or None.
             market_share: Own current market share, or None.
         """
         self.public_state.current_round = round_num
@@ -240,8 +261,8 @@ class ModelProvider:
                 )
 
         # Store satisfaction signal if provided
-        if satisfaction_signal:
-            self.private_state.satisfaction_signal = dict(satisfaction_signal)
+        if consumer_signal:
+            self.private_state.consumer_signal = dict(consumer_signal)
 
         # Update public market share
         if market_share is not None:
@@ -319,8 +340,9 @@ class ModelProvider:
         """
         ctx = ecosystem_context or {}
 
+        strategy_memo = None
         if self.llm_mode:
-            portfolio, focus_deltas, orientation_delta, reasoning = self._plan_llm(ctx)
+            portfolio, focus_deltas, orientation_delta, reasoning, strategy_memo = self._plan_llm(ctx)
             self._apply_ordinal_deltas(focus_deltas, orientation_delta)
         else:
             portfolio = self._plan_heuristic(ctx)
@@ -354,7 +376,8 @@ class ModelProvider:
             self.private_state.recent_insights.append({
                 "round": self.public_state.current_round,
                 "type": "planning",
-                "reasoning": reasoning[:500],  # truncate for storage
+                "strategy_memo": strategy_memo or "",
+                "reasoning": reasoning,  # store full reasoning
             })
 
         self.memory.append({
@@ -362,6 +385,7 @@ class ModelProvider:
             "round": self.public_state.current_round,
             "portfolio": portfolio,
             "llm_mode": self.llm_mode,
+            "reasoning": reasoning,
         })
 
         return portfolio
@@ -381,23 +405,23 @@ class ModelProvider:
         safety = p.get("safety", 0.25)
         product = p.get("product", 0.20)
 
-        # Incident pressure: accumulates from own_incidents, decays 40%/round
+        # Incident pressure: accumulates from own_incidents, decays 60%/round
         own_incidents = ctx.get("own_incidents", [])
         if own_incidents:
-            severity_shifts = {"minor": 0.03, "moderate": 0.10, "major": 0.20, "critical": 0.30}
+            severity_shifts = {"minor": 0.01, "moderate": 0.04, "major": 0.08, "critical": 0.12}
             new_pressure = sum(
                 severity_shifts.get(inc.get("severity", "minor"), 0.0)
                 for inc in own_incidents
             )
-            new_pressure = min(new_pressure, 0.30)
+            new_pressure = min(new_pressure, 0.20)
             self._incident_safety_pressure = min(
-                0.40, self._incident_safety_pressure + new_pressure
+                0.25, self._incident_safety_pressure + new_pressure
             )
 
         if self._incident_safety_pressure > 0.005:
             rd -= self._incident_safety_pressure
             safety += self._incident_safety_pressure
-            self._incident_safety_pressure *= 0.60
+            self._incident_safety_pressure *= 0.40
 
         # Profile modifiers
         profile_lower = self.private_state.strategy_profile.lower()
@@ -423,8 +447,8 @@ class ModelProvider:
             product += 0.03
             rd -= 0.03
 
-        # OS providers: lower safety floor applies at clamping
-        safety_floor = 0.03 if self.open_source else 0.05
+        # OS providers: slightly lower safety floor (fine-tuning can strip guardrails)
+        safety_floor = 0.10 if self.open_source else 0.15
 
         # Bounds
         rd      = max(0.10, min(0.75, rd))
@@ -443,19 +467,21 @@ class ModelProvider:
         """
         LLM-driven portfolio planning.
 
-        Returns: (portfolio dict, focus_deltas dict, orientation_delta float, reasoning str)
+        Returns: (portfolio dict, focus_deltas dict, orientation_delta float,
+                  reasoning str, strategy_memo str)
         """
         from llm import llm_plan_provider
 
         round_num = self.public_state.current_round
         memory_depth = ctx.get("reasoning_memory_depth", 2)
-        recent_insights = [
-            {
+        # Pass strategy memos (or truncated reasoning) from recent rounds
+        recent_insights = []
+        for e in self.private_state.recent_insights[-memory_depth:]:
+            recent_insights.append({
                 "round": e["round"],
-                "reasoning": e["reasoning"][:120],
-            }
-            for e in self.private_state.recent_insights[-memory_depth:]
-        ]
+                "strategy_memo": e.get("strategy_memo", ""),
+                "reasoning": e.get("reasoning", ""),
+            })
 
         # Build per-benchmark score deltas for prompt
         score_deltas = {}
@@ -464,6 +490,10 @@ class ModelProvider:
                 score_deltas[bm] = history[-1][1] - history[-2][1]
             elif len(history) == 1:
                 score_deltas[bm] = 0.0
+
+        # Get current market share for confidence qualifier on satisfaction signal
+        market_share = ctx.get("market_share", 0.0)
+        orientation_adjustable = ctx.get("benchmark_orientation_mode") == "adjustable"
 
         result = llm_plan_provider(
             name=self.name,
@@ -479,8 +509,10 @@ class ModelProvider:
                 comp: hist[-1][1] if hist else 0.0
                 for comp, hist in self.private_state.observed_competitor_scores.items()
             },
-            satisfaction_signal=self.private_state.satisfaction_signal,
+            consumer_signal=self.private_state.consumer_signal,
             benchmark_orientation=self.private_state.benchmark_orientation,
+            market_share=market_share,
+            orientation_adjustable=orientation_adjustable,
             recent_insights=recent_insights,
             own_incidents=ctx.get("own_incidents", []),
             regulatory_actions=ctx.get("regulatory_actions", []),
@@ -489,6 +521,7 @@ class ModelProvider:
 
         # Detect fallback
         reasoning = result.get("reasoning", "")
+        strategy_memo = result.get("strategy_memo", "")
         is_fallback = "fallback" in reasoning.lower()
         if is_fallback:
             self._llm_fallback_count += 1
@@ -500,34 +533,32 @@ class ModelProvider:
         else:
             self._llm_fallback_count = 0
 
-        # Parse ordinal portfolio signals → absolute fractions
+        # Parse ordinal portfolio signals -> absolute fractions
         portfolio = self._apply_portfolio_ordinals(result.get("portfolio", {}))
         focus_deltas = result.get("benchmark_focus", {})
-        orientation_signal = result.get("benchmark_orientation", "same")
-        orientation_delta = (
-            ORDINAL_DELTA if orientation_signal == "more" else
-            -ORDINAL_DELTA if orientation_signal == "less" else 0.0
-        )
 
-        return portfolio, focus_deltas, orientation_delta, reasoning
+        # Orientation only adjustable when config says so
+        orientation_delta = 0.0
+        if orientation_adjustable:
+            orientation_signal = result.get("benchmark_orientation", "same")
+            orientation_delta = _ordinal_to_delta(orientation_signal)
+
+        return portfolio, focus_deltas, orientation_delta, reasoning, strategy_memo
 
     def _apply_portfolio_ordinals(self, signals: dict) -> dict:
         """
-        Apply {more/less/same} ordinal signals to current portfolio fractions.
+        Apply 5-level ordinal signals to current portfolio fractions.
 
-        Each "more" adds ORDINAL_DELTA to that lever's raw weight; "less" subtracts.
-        Result is clipped to [0.02, 0.80] per lever and renormalized.
+        much_more/more/same/less/much_less mapped to +LARGE/+DELTA/0/-DELTA/-LARGE.
+        Result is clipped per lever and renormalized.
         """
         p = dict(self.private_state.portfolio)
         for lever in ("rd", "safety", "product"):
             sig = signals.get(lever, "same")
-            if sig == "more":
-                p[lever] = p.get(lever, 0.33) + ORDINAL_DELTA
-            elif sig == "less":
-                p[lever] = p.get(lever, 0.33) - ORDINAL_DELTA
+            p[lever] = p.get(lever, 0.33) + _ordinal_to_delta(sig)
 
         # Clip
-        safety_floor = 0.03 if self.open_source else 0.05
+        safety_floor = 0.10 if self.open_source else 0.15
         p["rd"]      = max(0.10, min(0.75, p.get("rd", 0.55)))
         p["safety"]  = max(safety_floor, min(0.55, p.get("safety", 0.25)))
         p["product"] = max(0.05, min(0.50, p.get("product", 0.20)))
@@ -542,8 +573,7 @@ class ModelProvider:
         # focus_level: additive delta, clip to [0.1, 5.0]
         for bm, signal in focus_deltas.items():
             if bm in self.private_state.focus_level:
-                delta = (ORDINAL_DELTA if signal == "more" else
-                         -ORDINAL_DELTA if signal == "less" else 0.0)
+                delta = _ordinal_to_delta(signal)
                 self.private_state.focus_level[bm] = max(
                     0.1, min(5.0, self.private_state.focus_level[bm] + delta)
                 )
@@ -559,7 +589,10 @@ class ModelProvider:
     # Execute (capability update — called by simulation with ground truth)
     # ──────────────────────────────────────────────────────────────────────
 
-    def compute_capability_gains(self, rd_budget: float) -> dict:
+    def compute_capability_gains(self, rd_budget: float,
+                                 current_safety: float = 0.0,
+                                 round_num: int = 0,
+                                 rng=None) -> dict:
         """
         Compute per-dimension capability gains for this round.
 
@@ -570,15 +603,25 @@ class ModelProvider:
             focus_weights[b]      = normalize(focus_level[b] for b in active_benchmarks)
             benchmark_driven[dim] = sum(focus_weights[b] * inferred_benchmark_weights[b][dim])
             target[dim]           = benchmark_orientation * benchmark_driven[dim]
-                                  + (1 - benchmark_orientation) * satisfaction_signal[dim]
-            gain[dim]             = rd * target[dim]   (+ safety gain for "safety" dim)
+                                  + (1 - benchmark_orientation) * consumer_signal[dim]
+            gain[dim]             = rd * target[dim]   (+ lagged safety gain for "safety" dim)
+
+        Safety lever mechanics:
+            - Diminishing returns: gain scales by (1 - current_safety)
+            - Stochastic efficiency: uniform(0.3, 0.9), mean 0.6
+            - 2-round lag: gain computed now, delivered 2 rounds later
 
         Args:
             rd_budget: Total R&D budget this round (base_revenue + funder_allocations).
+            current_safety: Provider's current safety capability (for diminishing returns).
+            round_num: Current round number (for lag queue scheduling).
+            rng: NumPy RNG for stochastic safety efficiency.
 
         Returns:
             {dim: gain} dict (not yet applied — simulation applies it).
         """
+        import numpy as _np
+
         p = self.private_state.portfolio
         rd_fraction = p.get("rd", 0.55)
         safety_fraction = p.get("safety", 0.25)
@@ -601,7 +644,10 @@ class ModelProvider:
                 # No benchmarks at all: uniform gain across dims
                 uniform_gain = rd_fraction * rd_budget / len(DIMENSIONS)
                 gains = {dim: uniform_gain for dim in DIMENSIONS}
-                gains["safety"] = gains.get("safety", 0.0) + safety_fraction * rd_budget
+                # Safety lever still goes through diminishing returns + noise + lag
+                self._queue_safety_gain(safety_fraction * rd_budget,
+                                        current_safety, round_num, rng)
+                gains["safety"] = gains.get("safety", 0.0) + self._deliver_safety_gains(round_num)
                 return gains
 
         # benchmark_driven[dim]
@@ -611,8 +657,8 @@ class ModelProvider:
             for dim in DIMENSIONS:
                 benchmark_driven[dim] += fw * bm_weights.get(dim, 1.0 / len(DIMENSIONS))
 
-        # satisfaction signal (uniform fallback if not yet received)
-        sig = self.private_state.satisfaction_signal
+        # consumer signal (uniform fallback if not yet received)
+        sig = self.private_state.consumer_signal
         if sig:
             total_sig = sum(sig.values())
             sat_signal = {dim: sig.get(dim, 0.0) / total_sig for dim in DIMENSIONS} if total_sig > 0 else {dim: 1.0 / len(DIMENSIONS) for dim in DIMENSIONS}
@@ -625,10 +671,49 @@ class ModelProvider:
             target = bo * benchmark_driven.get(dim, 0.0) + (1.0 - bo) * sat_signal.get(dim, 0.0)
             gains[dim] = rd_fraction * rd_budget * target
 
-        # Safety lever adds directly to safety dimension
-        gains["safety"] = gains.get("safety", 0.0) + safety_fraction * rd_budget
+        if self.safety_lever_through_target:
+            # Ablation: safety allocation spreads across dimensions via target weights
+            # (same as R&D pathway — no concentrated single-dimension stream)
+            for dim in DIMENSIONS:
+                target = bo * benchmark_driven.get(dim, 0.0) + (1.0 - bo) * sat_signal.get(dim, 0.0)
+                gains[dim] += safety_fraction * rd_budget * target
+        else:
+            # Default: safety lever with diminishing returns + stochastic efficiency + 2-round lag
+            self._queue_safety_gain(safety_fraction * rd_budget,
+                                    current_safety, round_num, rng)
+            gains["safety"] = gains.get("safety", 0.0) + self._deliver_safety_gains(round_num)
 
         return gains
+
+    def _queue_safety_gain(self, raw_safety_budget: float,
+                           current_safety: float, round_num: int,
+                           rng=None):
+        """Compute safety gain with diminishing returns + noise, queue for delivery in 2 rounds."""
+        import numpy as _np
+        if rng is None:
+            rng = _np.random.default_rng()
+        # A: Diminishing returns — harder to improve at higher levels
+        diminishing = max(0.0, 1.0 - current_safety)
+        # B: Stochastic efficiency — safety R&D is generally less efficient
+        # than expected, with occasional good rounds. Mean 0.6.
+        noise = rng.uniform(0.3, 0.9)
+        gain = raw_safety_budget * diminishing * noise
+        # C: 2-round lag — investment now, capability gain delivered later
+        delivery_round = round_num + 2
+        if gain > 1e-8:
+            self._safety_gain_queue.append((delivery_round, gain))
+
+    def _deliver_safety_gains(self, round_num: int) -> float:
+        """Deliver any queued safety gains scheduled for this round."""
+        delivered = 0.0
+        remaining = []
+        for delivery_round, gain in self._safety_gain_queue:
+            if delivery_round <= round_num:
+                delivered += gain
+            else:
+                remaining.append((delivery_round, gain))
+        self._safety_gain_queue = remaining
+        return delivered
 
     # ──────────────────────────────────────────────────────────────────────
     # Public communications
@@ -638,21 +723,28 @@ class ModelProvider:
         """
         Sample a public communication type based on portfolio weights.
 
-        Type weights (heuristic mode):
+        Type weights:
             rd:      rd_fraction
             safety:  safety_fraction if safety_fraction > 0.20, else 0
             product: product_fraction if product_fraction > 0.15, else 0
             none:    0.30 (silence — always competes)
+
+        In LLM mode, generates a one-liner via lightweight LLM call.
+        In heuristic mode, uses templates.
         """
         import random
 
         p = self.private_state.portfolio
+        safety_weight = p.get("safety", 0.0) if p.get("safety", 0.0) > 0.20 else 0.0
+        safety_weight += self._safety_comms_boost
         raw = {
             "rd":      p.get("rd", 0.0),
-            "safety":  p.get("safety", 0.0) if p.get("safety", 0.0) > 0.20 else 0.0,
+            "safety":  safety_weight,
             "product": p.get("product", 0.0) if p.get("product", 0.0) > 0.15 else 0.0,
             "none":    0.30,
         }
+        # Decay boost each round
+        self._safety_comms_boost *= 0.70
         total = sum(raw.values())
         if total <= 0:
             return None
@@ -668,6 +760,21 @@ class ModelProvider:
             "safety":  f"{self.name} releases safety evaluation results",
             "product": f"{self.name} announces new enterprise deployment",
         }
+
+        if self.llm_mode:
+            try:
+                from llm import llm_generate_public_comm
+                content = llm_generate_public_comm(
+                    provider_name=self.name,
+                    comm_type=post_type,
+                    strategy_profile=self.private_state.strategy_profile,
+                    portfolio=p,
+                )
+                if content:
+                    return {"type": post_type, "content": content}
+            except Exception:
+                pass  # fall through to template
+
         return {"type": post_type, "content": templates[post_type]}
 
     # ──────────────────────────────────────────────────────────────────────

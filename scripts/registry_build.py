@@ -1,11 +1,11 @@
 """
-build_run_registry.py
+registry_build.py
 
 Walks hf_data/ and writes hf_data/runs.jsonl (one row per completed run).
 A run is "complete" if it has a rounds.jsonl file.
 
 Usage:
-    python scripts/build_run_registry.py [--hf-data PATH] [--out PATH]
+    python scripts/registry_build.py [--hf-data PATH] [--out PATH]
 
 Phases encoded in the registry:
     "llm_core"          - hf_data/llm_core/<model>/<condition>/seeds/<seed_N>/
@@ -81,10 +81,10 @@ def extract_metrics(rounds_path: Path) -> dict:
     # --- capability ---
     mean_capability_final = _mean(list(true_caps.values())) if true_caps else None
 
-    # --- eval engineering ---
+    # --- safety investment ---
     strats = last.get("strategies", {})
-    eval_engs = [v.get("evaluation_engineering") for v in strats.values() if isinstance(v, dict)]
-    mean_eval_eng_final = _mean(eval_engs)
+    safety_vals = [v.get("safety") for v in strats.values() if isinstance(v, dict)]
+    mean_safety_final = _mean(safety_vals)
 
     # --- benchmark validity ---
     bp = last.get("benchmark_params", {})
@@ -133,7 +133,7 @@ def extract_metrics(rounds_path: Path) -> dict:
     BASIC_INTERVENTIONS = {"threshold_announcement", "investigation"}
     pattern_regulatory_escalation = False
     for r in rounds:
-        for iv in r.get("policymaker_data", {}).get("interventions", []):
+        for iv in r.get("regulator_data", {}).get("interventions", []):
             iv_type = iv.get("type") if isinstance(iv, dict) else str(iv)
             if iv_type and iv_type not in BASIC_INTERVENTIONS:
                 pattern_regulatory_escalation = True
@@ -150,38 +150,35 @@ def extract_metrics(rounds_path: Path) -> dict:
             pattern_commoditization_shock = True
             break
 
-    # Gaming Persistence: mean eval_eng above initial level through round 20+
+    # Gaming Persistence: mean score-capability gap sustained at round 20+
     pattern_gaming_persistence = False
     if rounds:
-        initial_eval_eng = _mean([
-            v.get("evaluation_engineering")
-            for v in rounds[0].get("strategies", {}).values()
-            if isinstance(v, dict)
-        ])
         late_rounds = [r for r in rounds if r.get("round", 0) >= 20]
-        if initial_eval_eng is not None and late_rounds:
-            late_ee = []
+        if late_rounds:
+            late_gaps = []
             for r in late_rounds:
-                ee = [v.get("evaluation_engineering") for v in r.get("strategies", {}).values() if isinstance(v, dict)]
-                if ee:
-                    late_ee.append(_mean(ee))
-            pattern_gaming_persistence = bool(late_ee and _mean(late_ee) > initial_eval_eng)
+                s = r.get("scores", {})
+                tc = r.get("true_capabilities", {})
+                ps = [p for p in s if p in tc]
+                if ps:
+                    late_gaps.append(_mean([s[p] - tc[p] for p in ps]))
+            pattern_gaming_persistence = bool(late_gaps and _mean(late_gaps) > 0.05)
 
     # Funding Follows Scores: r(funding, score) > r(funding, true_cap)
     pattern_funding_follows_scores = False
-    funding_scores, funding_caps, funding_mults = [], [], []
+    funding_scores, funding_caps, funding_amts = [], [], []
     for r in rounds:
-        fm = r.get("funder_data", {}).get("funding_multipliers", {})
+        ft = r.get("funder_data", {}).get("provider_funding_totals", {})
         s = r.get("scores", {})
         tc = r.get("true_capabilities", {})
-        for p in fm:
+        for p in ft:
             if p in s and p in tc:
-                funding_mults.append(fm[p])
+                funding_amts.append(ft[p])
                 funding_scores.append(s[p])
                 funding_caps.append(tc[p])
-    if len(funding_mults) >= 4:
-        r_scores = _pearsonr(funding_mults, funding_scores)
-        r_caps = _pearsonr(funding_mults, funding_caps)
+    if len(funding_amts) >= 4:
+        r_scores = _pearsonr(funding_amts, funding_scores)
+        r_caps = _pearsonr(funding_amts, funding_caps)
         if r_scores is not None and r_caps is not None:
             pattern_funding_follows_scores = r_scores > r_caps
 
@@ -193,8 +190,8 @@ def extract_metrics(rounds_path: Path) -> dict:
         traces_text = json.dumps(r.get("actor_traces", {})).lower()
         if ("major" in traces_text or "critical" in traces_text) and "incident" in traces_text:
             if i + 1 < len(rounds):
-                fm_before = rounds[i].get("funder_data", {}).get("funding_multipliers", {})
-                fm_after = rounds[i + 1].get("funder_data", {}).get("funding_multipliers", {})
+                fm_before = rounds[i].get("funder_data", {}).get("provider_funding_totals", {})
+                fm_after = rounds[i + 1].get("funder_data", {}).get("provider_funding_totals", {})
                 if fm_before and fm_after:
                     if any(abs(fm_after.get(p, 0) - fm_before.get(p, 0)) > 0.01 for p in fm_before):
                         pattern_safety_incident_response = True
@@ -206,7 +203,7 @@ def extract_metrics(rounds_path: Path) -> dict:
         "gaming_gap_avg_last5": gaming_gap_avg_last5,
         "hhi_final": hhi_final,
         "mean_capability_final": mean_capability_final,
-        "mean_eval_eng_final": mean_eval_eng_final,
+        "mean_safety_final": mean_safety_final,
         "benchmark_validity_final": benchmark_validity_final,
         "role_adherence_violations": violations,
         "pattern_score_inflation": pattern_score_inflation,

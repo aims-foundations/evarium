@@ -162,10 +162,10 @@ def run_from_config(config, source_exp_id, output_dir=None, lightweight=False):
     from experiment_logger import ExperimentLogger, DirectoryLogger, generate_summary
     from game_log import generate_game_log_from_history
 
-    # Extract provider/funder/policymaker configs (not part of SimulationConfig)
+    # Extract provider/funder/regulator configs (not part of SimulationConfig)
     provider_configs    = config.pop("provider_configs", None)
     funder_configs      = config.pop("funder_configs", None)
-    policymaker_configs = config.pop("policymaker_configs", None)
+    regulator_configs = config.pop("regulator_configs", None)
 
     if provider_configs is None:
         print("ERROR: config.json missing 'provider_configs'. Cannot rerun.")
@@ -186,8 +186,8 @@ def run_from_config(config, source_exp_id, output_dir=None, lightweight=False):
     ]
     if sim_config.enable_consumers:
         parts.append(f"{sim_config.n_consumers} consumers")
-    if sim_config.enable_policymakers:
-        parts.append(f"{sim_config.n_policymakers} policymaker(s)")
+    if sim_config.enable_regulators:
+        parts.append(f"{sim_config.n_regulators} regulator(s)")
     if sim_config.enable_funders:
         parts.append(f"{n_funders} funder(s)")
 
@@ -234,7 +234,7 @@ def run_from_config(config, source_exp_id, output_dir=None, lightweight=False):
     sim.setup(
         provider_configs=provider_configs,
         funder_configs=funder_configs,
-        policymaker_configs=policymaker_configs,
+        regulator_configs=regulator_configs,
     )
 
     print(f"=== Running {n_rounds} rounds ===\n")
@@ -283,16 +283,16 @@ def run_from_config(config, source_exp_id, output_dir=None, lightweight=False):
         sim.evaluator,
         sim.providers,
         consumers=sim.consumer_market if sim_config.enable_consumers else None,
-        policymakers=sim.policymakers if sim_config.enable_policymakers else None,
+        regulators=sim.regulators if sim_config.enable_regulators else None,
         funders=sim.funders if sim_config.enable_funders else None,
     ))
     logger.log_providers(sim.providers)
     logger.log_ground_truth(sim.ground_truth)
 
-    if sim_config.enable_consumers and sim.consumers:
-        logger.log_consumers(sim.consumers)
-    if sim_config.enable_policymakers and sim.policymakers:
-        logger.log_policymakers(sim.policymakers)
+    if sim_config.enable_consumers and sim.consumer_market:
+        logger.log_consumers(sim.consumer_market)
+    if sim_config.enable_regulators and sim.regulators:
+        logger.log_regulators(sim.regulators)
     if sim_config.enable_funders and sim.funders:
         logger.log_funders(sim.funders)
 
@@ -310,8 +310,8 @@ def run_from_config(config, source_exp_id, output_dir=None, lightweight=False):
                 "noise": sim_config.benchmark_noise,
             },
             benchmarks=benchmarks,
-            consumers=sim.consumers if sim_config.enable_consumers else None,
-            policymakers=sim.policymakers if sim_config.enable_policymakers else None,
+            consumers=sim.consumer_market if sim_config.enable_consumers else None,
+            regulators=sim.regulators if sim_config.enable_regulators else None,
         )
         game_log_path = logger.save_game_log(game_log_content)
         print(f"Game log saved to: {game_log_path}")
@@ -327,7 +327,7 @@ def run_from_config(config, source_exp_id, output_dir=None, lightweight=False):
                 "n_rounds": sim_config.n_rounds,
                 "llm_mode": sim_config.llm_mode,
                 "n_consumers": sim_config.n_consumers if sim_config.enable_consumers else 0,
-                "n_policymakers": sim_config.n_policymakers if sim_config.enable_policymakers else 0,
+                "n_regulators": sim_config.n_regulators if sim_config.enable_regulators else 0,
                 "n_funders": sim_config.n_funders if sim_config.enable_funders else 0,
             }
             plots_dir = os.path.join(logger.get_experiment_dir(), "plots")

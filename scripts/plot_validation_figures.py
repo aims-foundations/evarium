@@ -1,5 +1,5 @@
 """
-explore_runs.py
+plot_validation_figures.py
 Exploratory analysis of hf_data/runs.jsonl — LLM models only (no heuristic).
 Saves all plots to overleaf/figures/validation/.
 """
@@ -55,12 +55,12 @@ COND_ORDER = list(CONDITION_LABELS.keys())
 df["condition_label"] = df["condition_base"].map(CONDITION_LABELS).fillna(df["condition_base"])
 
 METRICS = ["gaming_gap_final", "hhi_final", "mean_capability_final",
-           "mean_eval_eng_final", "benchmark_validity_final"]
+           "mean_safety_final", "benchmark_validity_final"]
 METRIC_LABELS = {
     "gaming_gap_final":         "Gaming Gap",
     "hhi_final":                "HHI",
     "mean_capability_final":    "Capability",
-    "mean_eval_eng_final":      "Eval Eng.",
+    "mean_safety_final":        "Safety Inv.",
     "benchmark_validity_final": "BM Validity",
 }
 

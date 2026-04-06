@@ -4,7 +4,7 @@ process_mindshare.py — Mind Share Stacked Area Plots
 Reads actor_mentions.json and documents_mentions.json from data/processed/,
 normalises counts to percentage mind share at each time point, and produces
 two stacked area charts (documents + actor pairs) styled to match the
-final_plots.py NeurIPS figure aesthetic.
+plot_experiment.py NeurIPS figure aesthetic.
 
 Output:
   plots/mindshare_documents.png
@@ -25,7 +25,7 @@ import matplotlib as mpl
 import numpy as np
 
 # ---------------------------------------------------------------------------
-# Tueplots NeurIPS styling (mirrors final_plots.py)
+# Tueplots NeurIPS styling (mirrors plot_experiment.py)
 # ---------------------------------------------------------------------------
 try:
     from tueplots import bundles as _tueplots_bundles
@@ -190,7 +190,7 @@ def main():
     actor_normed = normalize(actor_raw, actor_dates)
 
     # ------------------------------------------------------------------
-    # Combined figure (two panels, matches final_plots.py layout style)
+    # Combined figure (two panels, matches plot_experiment.py layout style)
     # ------------------------------------------------------------------
     fig, axes = plt.subplots(1, 2, figsize=(10, 3.6))
     fig.suptitle(

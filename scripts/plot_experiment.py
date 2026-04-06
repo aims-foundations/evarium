@@ -1,35 +1,52 @@
 """
-final_plots.py — Combined comparison + benchmark plots
+plot_experiment.py — Combined comparison + benchmark + aggregate plots
 
-Combines create_final_plots.py and selected plots from explore_benchmark_plots.py.
+Single-run comparison mode (default):
+  Plots generated:
+    1. market_share_comparison     — stacked-area market share per experiment
+    2. score_vs_capability         — score vs ground-truth capability scatter
+    3. incident_validity_combined  — incident timeline + validity/interventions
+    4. investment_allocation       — provider R&D portfolio over rounds
+    5. strategy_divergence         — mean pairwise L1 distance between strategies
+    C. C_rolling_validity          — per-benchmark rolling Pearson r (window=5)
+    F. F_slope_intercept           — gaming decomposition: slope vs intercept
+    H. H_validity_vs_inflation     — late-period validity vs inflation tradeoff
 
-Plots generated:
-  1. market_share_comparison     — stacked-area market share per experiment
-  2. score_vs_capability         — score vs ground-truth capability scatter
-  3. incident_validity_combined  — incident timeline + validity/interventions
-  4. investment_allocation       — provider R&D portfolio over rounds
-  5. strategy_divergence         — mean pairwise L1 distance between strategies
-  C. C_rolling_validity          — per-benchmark rolling Pearson r (window=5)
-  F. F_slope_intercept           — gaming decomposition: slope vs intercept
-  H. H_validity_vs_inflation     — late-period validity vs inflation tradeoff
+  CSV tables:
+    safety_investment.csv
+    consumer_satisfaction.csv
+    incident_counts.csv
 
-CSV tables:
-  safety_investment.csv
-  consumer_satisfaction.csv
-  incident_counts.csv
+Aggregate mode (--aggregate):
+  Cross-condition comparison using gap decomposition framework.
+  Plots generated:
+    A1. gap_decomposition          — stacked bar per condition
+    A2. score_reliability          — rank correlation per condition
+    A3. market_concentration       — HHI per condition
+    A4. safety_incident_tradeoff   — safety investment vs incident rate scatter
+    A5. provider_differentiation   — capability std per condition
+    A6. preset_comparison          — faceted gap decomposition for full_ecosystem
+
+  CSV tables:
+    T1_condition_summary.csv
 
 Usage:
-  python final_plots.py                  # use EXPERIMENTS list below
-  python final_plots.py 3 2             # resolve by experiment number, auto folder
-  python final_plots.py 3 2 my_run      # resolve by number, named output folder
+  python plot_experiment.py                          # use EXPERIMENTS list below
+  python plot_experiment.py 3 2                      # resolve by experiment number
+  python plot_experiment.py 3 2 my_run               # resolve by number, named folder
+  python plot_experiment.py --aggregate --from-sandbox              # aggregate mode
+  python plot_experiment.py --aggregate --from-sandbox --preset eu  # filter by preset
+  python plot_experiment.py --aggregate dir1/ dir2/                 # explicit dirs
 """
 
+import argparse
 import os
 import sys
 import json
 import csv
 import re
 import warnings
+from collections import defaultdict
 from math import ceil
 
 import matplotlib.pyplot as plt
@@ -56,10 +73,13 @@ except ImportError:
     warnings.warn("tueplots not installed — using default matplotlib style.", stacklevel=1)
 
 from plotting import (
+    _DIMS, _to_vec, _cos_sim, _get_need_weights, _get_bm_agg_weights,
+    _gap_decomposition, _tex_escape,
     get_providers,
     get_provider_colors,
     get_investment_colors,
     compute_rolling_correlation,
+    style_axis,
     PROVIDER_COLOR_MAP,
 )
 
@@ -81,10 +101,9 @@ EXPERIMENTS_DIR = os.path.join(_PROJECT_ROOT, "output", "experiments")
 MAX_COLS = 4
 
 INVESTMENT_TYPES = [
-    "fundamental_research",
-    "training_optimization",
-    "evaluation_engineering",
-    "safety_alignment",
+    "rd",
+    "safety",
+    "product",
 ]
 
 CORE_PROVIDERS = [
@@ -393,7 +412,7 @@ def plot_incident_validity_combined(all_data):
         if vv:
             ax_r.plot(vr, vv, "o-", color="#457B9D", markersize=3, linewidth=1.5, zorder=2)
         for h in history:
-            if h.get("policymaker_data", {}).get("interventions"):
+            if h.get("regulator_data", {}).get("interventions"):
                 ax_r.axvline(x=h["round"], color="#E63946", linestyle="--", alpha=0.5, linewidth=0.8)
         ax_r.set_ylim(-0.1, 1.1)
         ax_r.set_ylabel("Validity Correlation", fontsize=10)
@@ -809,6 +828,394 @@ def write_csv_incident_counts(all_data):
 
 
 # ===========================================================================
+# Aggregate mode — cross-condition comparison (merged from aggregate_plots.py)
+# ===========================================================================
+
+def load_history_jsonl(exp_dir: str) -> list:
+    """Load rounds.jsonl from an experiment directory."""
+    path = os.path.join(exp_dir, "rounds.jsonl")
+    if not os.path.exists(path):
+        return []
+    rounds = []
+    with open(path, encoding="utf-8") as f:
+        for line in f:
+            line = line.strip()
+            if line:
+                rounds.append(json.loads(line))
+    return rounds
+
+
+def discover_sandbox_runs(sandbox_dir: str, preset: str = None) -> dict:
+    """Discover experiment runs from sandbox, keeping most recent per condition.
+
+    Returns {condition_label: experiment_dir_path}.
+    """
+    if not os.path.isdir(sandbox_dir):
+        return {}
+
+    by_condition = defaultdict(list)
+    for name in os.listdir(sandbox_dir):
+        full = os.path.join(sandbox_dir, name)
+        if not os.path.isdir(full):
+            continue
+        if not os.path.exists(os.path.join(full, "rounds.jsonl")):
+            continue
+        parts = name.rsplit("_", 2)
+        if len(parts) < 3:
+            continue
+        condition_preset = parts[0]
+        if preset and not condition_preset.endswith(f"_{preset}"):
+            continue
+        by_condition[condition_preset].append((name, full))
+
+    result = {}
+    for condition, dirs in by_condition.items():
+        dirs.sort(key=lambda x: x[0])
+        result[condition] = dirs[-1][1]
+    return result
+
+
+def extract_condition_name(label: str) -> str:
+    """Extract short condition name from a label like 'no_media_balanced'."""
+    for preset in ("_balanced", "_us", "_eu"):
+        if label.endswith(preset):
+            return label[:-len(preset)]
+    return label
+
+
+def compute_condition_metrics(history: list, last_n: int = 5) -> dict:
+    """Compute aggregate metrics for one experiment run."""
+    if not history:
+        return {}
+
+    from scipy.stats import rankdata
+
+    providers = get_providers(history)
+    need = _get_need_weights(history)
+    n_rounds = len(history)
+    last_rounds = history[-last_n:] if n_rounds >= last_n else history
+
+    score_noise_vals, dim_mismatch_vals, penalty_load_vals, total_gap_vals = [], [], [], []
+    for h in last_rounds:
+        for p in providers:
+            g = _gap_decomposition(h, p, need)
+            score_noise_vals.append(g["score_noise"])
+            dim_mismatch_vals.append(g["dim_mismatch"])
+            penalty_load_vals.append(g["penalty_load"])
+            total_gap_vals.append(g["total_gap"])
+
+    reliability_vals = []
+    for h in last_rounds:
+        cd = h.get("consumer_data", {})
+        ps = cd.get("provider_satisfaction", {})
+        scores_list, sats_list = [], []
+        for p in providers:
+            if p in h.get("scores", {}) and p in ps:
+                scores_list.append(h["scores"][p])
+                sats_list.append(ps[p])
+        if len(scores_list) >= 2:
+            sr = rankdata(scores_list)
+            satr = rankdata(sats_list)
+            corr = np.corrcoef(sr, satr)[0, 1]
+            if not np.isnan(corr):
+                reliability_vals.append(corr)
+
+    hhi_vals = []
+    for h in last_rounds:
+        ms = h.get("consumer_data", {}).get("market_shares", {})
+        if ms:
+            hhi_vals.append(sum(v ** 2 for v in ms.values()))
+
+    safety_vals = []
+    for h in last_rounds:
+        for p in providers:
+            s = h.get("strategies", {}).get(p, {}).get("safety", 0)
+            safety_vals.append(s)
+
+    total_incidents = sum(len(h.get("incidents", [])) for h in history)
+    incidents_per_round = total_incidents / max(n_rounds, 1)
+
+    sat_vals = []
+    for h in last_rounds:
+        sat = h.get("consumer_data", {}).get("avg_satisfaction")
+        if sat is not None:
+            sat_vals.append(sat)
+
+    diff_vals = []
+    for h in last_rounds:
+        cap_means = []
+        for p in providers:
+            cv = h.get("capability_vectors", {}).get(p, {})
+            if cv:
+                cap_means.append(sum(cv.values()) / len(cv))
+        if len(cap_means) >= 2:
+            diff_vals.append(float(np.std(cap_means)))
+
+    growth_cos_vals = []
+    if len(history) >= 2:
+        r0, rf = history[0], history[-1]
+        for p in providers:
+            cv0 = r0.get("capability_vectors", {}).get(p, {})
+            cvf = rf.get("capability_vectors", {}).get(p, {})
+            if cv0 and cvf:
+                cap0, capf = _to_vec(cv0), _to_vec(cvf)
+                growth = capf - cap0
+                if np.linalg.norm(growth) > 1e-8:
+                    growth_cos_vals.append(_cos_sim(growth, need))
+
+    def _safe_mean(vals):
+        return float(np.mean(vals)) if vals else 0.0
+
+    return {
+        "score_noise": _safe_mean(score_noise_vals),
+        "dim_mismatch": _safe_mean(dim_mismatch_vals),
+        "penalty_load": _safe_mean(penalty_load_vals),
+        "total_gap": _safe_mean(total_gap_vals),
+        "score_reliability": _safe_mean(reliability_vals),
+        "hhi": _safe_mean(hhi_vals),
+        "mean_safety": _safe_mean(safety_vals),
+        "incidents_per_round": incidents_per_round,
+        "mean_satisfaction": _safe_mean(sat_vals),
+        "provider_differentiation": _safe_mean(diff_vals),
+        "growth_need_alignment": _safe_mean(growth_cos_vals),
+        "n_rounds": n_rounds,
+    }
+
+
+def _condition_sort_key(name: str) -> tuple:
+    if name.startswith("full_ecosystem"):
+        return (0, name)
+    return (1, name)
+
+
+def plot_agg_gap_decomposition(metrics: dict, output_dir: str):
+    """A1: Gap decomposition across conditions."""
+    conditions = sorted(metrics.keys(), key=_condition_sort_key)
+    n = len(conditions)
+    fig, ax = plt.subplots(figsize=(max(8, n * 0.6), 4))
+    x = np.arange(n)
+    bar_w = 0.22
+
+    ax.bar(x - bar_w, [metrics[c]["score_noise"] for c in conditions], bar_w,
+           label="Inflation", color="#4ECDC4")
+    ax.bar(x, [metrics[c]["dim_mismatch"] for c in conditions], bar_w,
+           label="Misalignment", color="#FF6B6B")
+    ax.bar(x + bar_w, [metrics[c]["penalty_load"] for c in conditions], bar_w,
+           label="Externalities", color="#45B7D1")
+    ax.scatter(x, [metrics[c]["total_gap"] for c in conditions],
+               color="black", zorder=5, s=25, marker="D", label="Total gap")
+
+    ax.set_xticks(x)
+    ax.set_xticklabels([_tex_escape(extract_condition_name(c)) for c in conditions],
+                       rotation=45, ha='right', fontsize=7)
+    ax.axhline(0, color='grey', lw=0.5, ls='--')
+    style_axis(ax, "Gap Decomposition by Condition", "", "Gap component")
+    fig.tight_layout()
+    fig.savefig(os.path.join(output_dir, "A1_gap_decomposition.png"),
+                dpi=300, bbox_inches='tight')
+    plt.close(fig)
+
+
+def plot_agg_score_reliability(metrics: dict, output_dir: str):
+    """A2: Score reliability across conditions."""
+    conditions = sorted(metrics.keys(), key=_condition_sort_key)
+    n = len(conditions)
+    fig, ax = plt.subplots(figsize=(max(8, n * 0.6), 3.5))
+    x = np.arange(n)
+    vals = [metrics[c]["score_reliability"] for c in conditions]
+    colors = plt.cm.RdYlGn(np.array(vals))
+    ax.bar(x, vals, color=colors, width=0.6)
+    ax.set_xticks(x)
+    ax.set_xticklabels([_tex_escape(extract_condition_name(c)) for c in conditions],
+                       rotation=45, ha='right', fontsize=7)
+    ax.set_ylim(-0.1, 1.1)
+    ax.axhline(0.7, color='grey', lw=0.5, ls='--', alpha=0.5)
+    style_axis(ax, "Score Reliability (rank corr, last 5r)", "", "Pearson r", legend=False)
+    fig.tight_layout()
+    fig.savefig(os.path.join(output_dir, "A2_score_reliability.png"),
+                dpi=300, bbox_inches='tight')
+    plt.close(fig)
+
+
+def plot_agg_market_concentration(metrics: dict, output_dir: str):
+    """A3: HHI across conditions."""
+    conditions = sorted(metrics.keys(), key=_condition_sort_key)
+    n = len(conditions)
+    fig, ax = plt.subplots(figsize=(max(8, n * 0.6), 3.5))
+    x = np.arange(n)
+    vals = [metrics[c]["hhi"] for c in conditions]
+    ax.bar(x, vals, color="#457B9D", width=0.6)
+    ax.set_xticks(x)
+    ax.set_xticklabels([_tex_escape(extract_condition_name(c)) for c in conditions],
+                       rotation=45, ha='right', fontsize=7)
+    ax.axhline(0.25, color='red', lw=0.8, ls='--', alpha=0.5, label="HHI=0.25")
+    style_axis(ax, "Market Concentration (HHI, last 5r)", "", "HHI")
+    fig.tight_layout()
+    fig.savefig(os.path.join(output_dir, "A3_market_concentration.png"),
+                dpi=300, bbox_inches='tight')
+    plt.close(fig)
+
+
+def plot_agg_safety_incident_tradeoff(metrics: dict, output_dir: str):
+    """A4: Safety investment vs incident rate scatter."""
+    conditions = sorted(metrics.keys(), key=_condition_sort_key)
+    fig, ax = plt.subplots(figsize=(6, 5))
+    for c in conditions:
+        m = metrics[c]
+        short = extract_condition_name(c)
+        ax.scatter(m["mean_safety"], m["incidents_per_round"], s=50, zorder=3, alpha=0.8)
+        ax.annotate(_tex_escape(short), (m["mean_safety"], m["incidents_per_round"]),
+                    fontsize=6, ha='left', va='bottom',
+                    xytext=(4, 4), textcoords='offset points')
+    style_axis(ax, "Safety Investment vs Incident Rate",
+               "Mean safety allocation (last 5r)", "Incidents per round", legend=False)
+    fig.tight_layout()
+    fig.savefig(os.path.join(output_dir, "A4_safety_incident_tradeoff.png"),
+                dpi=300, bbox_inches='tight')
+    plt.close(fig)
+
+
+def plot_agg_provider_differentiation(metrics: dict, output_dir: str):
+    """A5: Provider differentiation across conditions."""
+    conditions = sorted(metrics.keys(), key=_condition_sort_key)
+    n = len(conditions)
+    fig, ax = plt.subplots(figsize=(max(8, n * 0.6), 3.5))
+    x = np.arange(n)
+    vals = [metrics[c]["provider_differentiation"] for c in conditions]
+    ax.bar(x, vals, color="#2A9D8F", width=0.6)
+    ax.set_xticks(x)
+    ax.set_xticklabels([_tex_escape(extract_condition_name(c)) for c in conditions],
+                       rotation=45, ha='right', fontsize=7)
+    style_axis(ax, "Provider Differentiation (std of mean cap, last 5r)", "",
+               "Std dev", legend=False)
+    fig.tight_layout()
+    fig.savefig(os.path.join(output_dir, "A5_provider_differentiation.png"),
+                dpi=300, bbox_inches='tight')
+    plt.close(fig)
+
+
+def plot_agg_preset_comparison(all_metrics: dict, output_dir: str):
+    """A6: Gap decomposition faceted by preset for full_ecosystem."""
+    presets = ["balanced", "us", "eu"]
+    available = {}
+    for label, m in all_metrics.items():
+        for preset in presets:
+            if label == f"full_ecosystem_{preset}":
+                available[preset] = m
+
+    if len(available) < 2:
+        return
+
+    fig, axes = plt.subplots(1, len(available), figsize=(3.5 * len(available), 3.5),
+                             sharey=True)
+    if len(available) == 1:
+        axes = [axes]
+
+    components = ["score_noise", "dim_mismatch", "penalty_load"]
+    comp_labels = ["Inflation", "Misalignment", "Externalities"]
+    comp_colors = ["#4ECDC4", "#FF6B6B", "#45B7D1"]
+
+    for i, (preset, m) in enumerate(sorted(available.items())):
+        ax = axes[i]
+        vals = [m[c] for c in components]
+        x = np.arange(len(components))
+        ax.bar(x, vals, color=comp_colors, width=0.5)
+        ax.scatter([len(components) - 0.5 + 0.5], [m["total_gap"]], color="black",
+                   s=30, marker="D", zorder=5)
+        ax.set_xticks(list(range(len(components))) + [len(components)])
+        ax.set_xticklabels(comp_labels + ["Total"], rotation=30, ha='right', fontsize=7)
+        ax.axhline(0, color='grey', lw=0.5, ls='--')
+        ax.set_title(_tex_escape(f"Full Ecosystem ({preset})"), fontweight='bold')
+        if i == 0:
+            ax.set_ylabel("Gap component")
+
+    fig.tight_layout()
+    fig.savefig(os.path.join(output_dir, "A6_preset_comparison.png"),
+                dpi=300, bbox_inches='tight')
+    plt.close(fig)
+
+
+def write_agg_summary_table(metrics: dict, output_dir: str):
+    """T1: Condition effect summary CSV."""
+    conditions = sorted(metrics.keys(), key=_condition_sort_key)
+    path = os.path.join(output_dir, "T1_condition_summary.csv")
+    with open(path, "w", newline="", encoding="utf-8") as f:
+        writer = csv.writer(f)
+        writer.writerow([
+            "Condition", "Total Gap", "Score Noise", "Dim Mismatch", "Penalty Load",
+            "Score Reliability", "HHI", "Mean Safety", "Incidents/Round",
+            "Mean Satisfaction", "Provider Diff", "Growth-Need Align", "Rounds",
+        ])
+        for c in conditions:
+            m = metrics[c]
+            writer.writerow([
+                c,
+                f"{m['total_gap']:.4f}", f"{m['score_noise']:.4f}",
+                f"{m['dim_mismatch']:.4f}", f"{m['penalty_load']:.4f}",
+                f"{m['score_reliability']:.4f}", f"{m['hhi']:.4f}",
+                f"{m['mean_safety']:.4f}", f"{m['incidents_per_round']:.4f}",
+                f"{m['mean_satisfaction']:.4f}", f"{m['provider_differentiation']:.4f}",
+                f"{m['growth_need_alignment']:.4f}", m["n_rounds"],
+            ])
+    print(f"Saved: {path}")
+
+
+def run_aggregate_mode(args):
+    """Entry point for --aggregate mode."""
+    if args.from_sandbox:
+        sandbox = os.path.join(_PROJECT_ROOT, "sandbox", "experiments")
+        runs = discover_sandbox_runs(sandbox, preset=args.preset)
+        if not runs:
+            print(f"No completed runs found in {sandbox}")
+            sys.exit(1)
+    elif args.dirs:
+        runs = {}
+        for d in args.dirs:
+            name = os.path.basename(d.rstrip("/\\"))
+            parts = name.rsplit("_", 2)
+            label = parts[0] if len(parts) >= 3 else name
+            runs[label] = d
+    else:
+        print("Aggregate mode requires --from-sandbox or explicit directories.")
+        sys.exit(1)
+
+    print(f"Found {len(runs)} experiment runs:")
+    for label in sorted(runs.keys(), key=_condition_sort_key):
+        print(f"  {label}")
+
+    output_dir = args.output or os.path.join(_PROJECT_ROOT, "output", "aggregate_plots")
+    os.makedirs(output_dir, exist_ok=True)
+
+    print("\nComputing metrics...")
+    all_metrics = {}
+    for label, exp_dir in sorted(runs.items()):
+        history = load_history_jsonl(exp_dir)
+        if not history:
+            print(f"  SKIP {label} (no data)")
+            continue
+        m = compute_condition_metrics(history)
+        all_metrics[label] = m
+        print(f"  {label}: gap={m['total_gap']:.4f} "
+              f"(noise={m['score_noise']:.3f} mismatch={m['dim_mismatch']:.3f} "
+              f"penalty={m['penalty_load']:.3f}) "
+              f"reliability={m['score_reliability']:.3f} hhi={m['hhi']:.3f}")
+
+    if not all_metrics:
+        print("No valid experiments to plot.")
+        sys.exit(1)
+
+    print(f"\nGenerating plots to {output_dir}/")
+    plot_agg_gap_decomposition(all_metrics, output_dir)
+    plot_agg_score_reliability(all_metrics, output_dir)
+    plot_agg_market_concentration(all_metrics, output_dir)
+    plot_agg_safety_incident_tradeoff(all_metrics, output_dir)
+    plot_agg_provider_differentiation(all_metrics, output_dir)
+    plot_agg_preset_comparison(all_metrics, output_dir)
+    write_agg_summary_table(all_metrics, output_dir)
+    print(f"\nDone. {len(all_metrics)} conditions compared.")
+
+
+# ===========================================================================
 # CLI helpers
 # ===========================================================================
 
@@ -838,33 +1245,18 @@ def _resolve_experiment_id(num):
     raise ValueError(f"No experiment matching exp_{target}_* in {EXPERIMENTS_DIR}/")
 
 
-def _parse_args():
-    args = sys.argv[1:]
-    if not args:
-        return None, None
-    numbers, folder_name = [], None
-    for token in args:
-        if token.lstrip("-").isdigit():
-            numbers.append(int(token))
-        else:
-            folder_name = token
-    if not numbers:
-        return None, None
-    return [_resolve_experiment_id(n) for n in numbers], folder_name
-
-
 # ===========================================================================
 # Main
 # ===========================================================================
 
-def main():
+def run_single_mode(exp_numbers, folder_name):
+    """Entry point for single-run comparison mode (default)."""
     global OUTPUT_DIR, EXPERIMENTS
 
-    cli_experiments, cli_folder = _parse_args()
-    if cli_experiments is not None:
-        EXPERIMENTS = cli_experiments
-    OUTPUT_DIR = (os.path.join(_PROJECT_ROOT, "output", "final-plots", cli_folder)
-                  if cli_folder else _output_dir_for_experiments())
+    if exp_numbers:
+        EXPERIMENTS = [_resolve_experiment_id(n) for n in exp_numbers]
+    OUTPUT_DIR = (os.path.join(_PROJECT_ROOT, "output", "final-plots", folder_name)
+                  if folder_name else _output_dir_for_experiments())
 
     os.makedirs(OUTPUT_DIR, exist_ok=True)
     print(f"Output directory: {OUTPUT_DIR}")
@@ -892,6 +1284,38 @@ def main():
     write_csv_incident_counts(all_data)
 
     print(f"\nDone. Output written to: {OUTPUT_DIR}/")
+
+
+def main():
+    parser = argparse.ArgumentParser(
+        description="Generate comparison plots for simulation experiments.",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+    )
+    parser.add_argument("args", nargs="*",
+                        help="Experiment numbers and/or output folder name (single mode), "
+                             "or experiment directories (aggregate mode)")
+    parser.add_argument("--aggregate", action="store_true",
+                        help="Aggregate mode: cross-condition comparison")
+    parser.add_argument("--from-sandbox", action="store_true",
+                        help="Auto-discover runs from sandbox/experiments/ (aggregate mode)")
+    parser.add_argument("--preset", type=str, default=None,
+                        help="Filter to a specific preset (aggregate mode)")
+    parser.add_argument("-o", "--output", type=str, default=None,
+                        help="Output directory override")
+
+    parsed = parser.parse_args()
+
+    if parsed.aggregate:
+        parsed.dirs = [a for a in parsed.args if not a.lstrip("-").isdigit()]
+        run_aggregate_mode(parsed)
+    else:
+        numbers, folder_name = [], None
+        for token in parsed.args:
+            if token.lstrip("-").isdigit():
+                numbers.append(int(token))
+            else:
+                folder_name = token
+        run_single_mode(numbers or None, folder_name or parsed.output)
 
 
 if __name__ == "__main__":

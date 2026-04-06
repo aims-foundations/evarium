@@ -7,8 +7,8 @@ Each segment = archetype × use_case (e.g., "software_dev_leaderboard_follower")
 Key dynamics:
 - Segments observe leaderboard rankings weighted by their use-case benchmark preferences
 - Switching is tracked as proportions within each segment, not headcounts
-- Satisfaction = dot(capability_vector, need_weights) - incident_penalty*(1+ms²)
-  - media_penalty*leaderboard_trust + cost_bonus (ground truth, not benchmark scores)
+- Satisfaction = dot(capability_vector, need_weights) - incident_penalty*(1+ms²) + cost_bonus
+  (purely experience-based; media influence routes through exploration, not satisfaction)
 - Gaming creates a perception gap: high benchmark score but low true satisfaction
 - The gap drives probabilistic switching within each segment
 
@@ -35,85 +35,92 @@ USE_CASE_PROFILES = {
     # need_weights: {reasoning, coding, knowledge, safety, communication, agentic}
     # Sourced from stakeholders.md — these are the hidden utility functions that determine
     # what each segment actually values regardless of how they select providers.
+    # --- Individual consumer profiles ---
+    # need_weights empirically grounded in sector-level AI usage surveys:
+    #   Stack Overflow Developer Survey 2024/2025, McKinsey State of AI 2025,
+    #   Stanford AI Index 2025, Thomson Reuters Legal AI 2025, AMA Physician
+    #   AI Sentiment 2024, Gallup Teachers & AI 2024-25, Adobe Creators 2025,
+    #   NBER Bick/Blandin/Deming 2024 occupation-level adoption data.
+    # See docs/references.md for full citation list.
     "software_dev": {
         "label": "Software Developer",
         "benchmark_prefs": {"coding": 0.90, "reasoning": 0.08, "writing": 0.02},
         "consumer_type": "individual",
-        "need_weights": {"reasoning": 0.20, "coding": 0.45, "knowledge": 0.08,
-                         "safety": 0.02, "communication": 0.05, "agentic": 0.20},
+        "need_weights": {"reasoning": 0.22, "coding": 0.55, "knowledge": 0.03,
+                         "safety": 0.02, "communication": 0.03, "agentic": 0.15},
     },
     "content_writer": {
         "label": "Content Writer",
         "benchmark_prefs": {"writing": 0.90, "reasoning": 0.08, "coding": 0.02},
         "consumer_type": "individual",
-        "need_weights": {"reasoning": 0.15, "coding": 0.03, "knowledge": 0.25,
-                         "safety": 0.05, "communication": 0.50, "agentic": 0.02},
+        "need_weights": {"reasoning": 0.10, "coding": 0.02, "knowledge": 0.20,
+                         "safety": 0.03, "communication": 0.63, "agentic": 0.02},
     },
     "legal": {
         "label": "Legal Professional",
         "benchmark_prefs": {"reasoning": 0.75, "writing": 0.20, "safety": 0.05},
         "consumer_type": "individual",
-        "need_weights": {"reasoning": 0.35, "coding": 0.03, "knowledge": 0.30,
-                         "safety": 0.10, "communication": 0.20, "agentic": 0.02},
+        "need_weights": {"reasoning": 0.30, "coding": 0.01, "knowledge": 0.35,
+                         "safety": 0.22, "communication": 0.10, "agentic": 0.02},
     },
     "healthcare": {
         "label": "Healthcare Worker",
         "benchmark_prefs": {"safety": 0.75, "reasoning": 0.20, "writing": 0.05},
         "consumer_type": "individual",
-        "need_weights": {"reasoning": 0.20, "coding": 0.03, "knowledge": 0.25,
-                         "safety": 0.40, "communication": 0.10, "agentic": 0.02},
+        "need_weights": {"reasoning": 0.12, "coding": 0.02, "knowledge": 0.28,
+                         "safety": 0.48, "communication": 0.08, "agentic": 0.02},
     },
     "finance": {
         "label": "Finance Analyst",
         "benchmark_prefs": {"reasoning": 0.70, "safety": 0.25, "coding": 0.05},
         "consumer_type": "individual",
-        "need_weights": {"reasoning": 0.30, "coding": 0.15, "knowledge": 0.25,
-                         "safety": 0.20, "communication": 0.07, "agentic": 0.03},
+        "need_weights": {"reasoning": 0.35, "coding": 0.08, "knowledge": 0.22,
+                         "safety": 0.25, "communication": 0.05, "agentic": 0.05},
     },
     "educator": {
         "label": "Educator",
         "benchmark_prefs": {"writing": 0.50, "reasoning": 0.40, "safety": 0.10},
         "consumer_type": "individual",
-        "need_weights": {"reasoning": 0.25, "coding": 0.03, "knowledge": 0.25,
-                         "safety": 0.10, "communication": 0.35, "agentic": 0.02},
+        "need_weights": {"reasoning": 0.15, "coding": 0.02, "knowledge": 0.28,
+                         "safety": 0.08, "communication": 0.45, "agentic": 0.02},
     },
     "customer_service": {
         "label": "Customer Service",
         "benchmark_prefs": {"writing": 0.85, "reasoning": 0.12, "safety": 0.03},
         "consumer_type": "individual",
-        "need_weights": {"reasoning": 0.07, "coding": 0.02, "knowledge": 0.15,
-                         "safety": 0.20, "communication": 0.55, "agentic": 0.01},
+        "need_weights": {"reasoning": 0.05, "coding": 0.01, "knowledge": 0.12,
+                         "safety": 0.15, "communication": 0.50, "agentic": 0.17},
     },
     "researcher": {
         "label": "Researcher",
         "benchmark_prefs": {"reasoning": 0.50, "coding": 0.45, "writing": 0.05},
         "consumer_type": "individual",
-        "need_weights": {"reasoning": 0.30, "coding": 0.25, "knowledge": 0.25,
+        "need_weights": {"reasoning": 0.30, "coding": 0.22, "knowledge": 0.28,
                          "safety": 0.03, "communication": 0.07, "agentic": 0.10},
     },
     "creative": {
         "label": "Creative Professional",
         "benchmark_prefs": {"writing": 0.85, "reasoning": 0.10, "coding": 0.05},
         "consumer_type": "individual",
-        "need_weights": {"reasoning": 0.15, "coding": 0.03, "knowledge": 0.20,
-                         "safety": 0.05, "communication": 0.55, "agentic": 0.02},
+        "need_weights": {"reasoning": 0.12, "coding": 0.02, "knowledge": 0.10,
+                         "safety": 0.03, "communication": 0.65, "agentic": 0.08},
     },
     "marketing": {
         "label": "Marketing Professional",
         "benchmark_prefs": {"writing": 0.75, "reasoning": 0.20, "coding": 0.05},
         "consumer_type": "individual",
-        "need_weights": {"reasoning": 0.20, "coding": 0.03, "knowledge": 0.25,
-                         "safety": 0.05, "communication": 0.45, "agentic": 0.02},
+        "need_weights": {"reasoning": 0.12, "coding": 0.02, "knowledge": 0.18,
+                         "safety": 0.03, "communication": 0.55, "agentic": 0.10},
     },
     "service_worker": {
         "label": "Service Worker",
         "benchmark_prefs": {"writing": 0.65, "reasoning": 0.25, "safety": 0.10},
         "consumer_type": "individual",
-        "need_weights": {"reasoning": 0.12, "coding": 0.02, "knowledge": 0.20,
-                         "safety": 0.20, "communication": 0.45, "agentic": 0.01},
+        "need_weights": {"reasoning": 0.08, "coding": 0.01, "knowledge": 0.15,
+                         "safety": 0.18, "communication": 0.55, "agentic": 0.03},
     },
 
-    # Organizational consumer profiles
+    # --- Organizational consumer profiles ---
     "hospital_system": {
         "label": "Hospital System",
         "benchmark_prefs": {"safety": 0.65, "reasoning": 0.25, "writing": 0.10},
@@ -121,8 +128,8 @@ USE_CASE_PROFILES = {
         "compliance_requirements": ["HIPAA", "patient_safety"],
         "integration_friction": 0.175,
         "decision_delay": 6,
-        "need_weights": {"reasoning": 0.18, "coding": 0.03, "knowledge": 0.25,
-                         "safety": 0.40, "communication": 0.12, "agentic": 0.02},
+        "need_weights": {"reasoning": 0.12, "coding": 0.02, "knowledge": 0.25,
+                         "safety": 0.48, "communication": 0.10, "agentic": 0.03},
     },
     "enterprise_finance": {
         "label": "Financial Institution",
@@ -131,8 +138,8 @@ USE_CASE_PROFILES = {
         "compliance_requirements": ["SOX", "financial_reporting"],
         "integration_friction": 0.20,
         "decision_delay": 4,
-        "need_weights": {"reasoning": 0.28, "coding": 0.12, "knowledge": 0.22,
-                         "safety": 0.25, "communication": 0.10, "agentic": 0.03},
+        "need_weights": {"reasoning": 0.32, "coding": 0.08, "knowledge": 0.18,
+                         "safety": 0.30, "communication": 0.05, "agentic": 0.07},
     },
     "tech_startup": {
         "label": "Tech Startup",
@@ -141,8 +148,8 @@ USE_CASE_PROFILES = {
         "compliance_requirements": [],
         "integration_friction": 0.075,
         "decision_delay": 2,
-        "need_weights": {"reasoning": 0.20, "coding": 0.30, "knowledge": 0.12,
-                         "safety": 0.05, "communication": 0.08, "agentic": 0.25},
+        "need_weights": {"reasoning": 0.18, "coding": 0.38, "knowledge": 0.05,
+                         "safety": 0.04, "communication": 0.05, "agentic": 0.30},
     },
     "enterprise_legal": {
         "label": "Legal Organization",
@@ -151,8 +158,8 @@ USE_CASE_PROFILES = {
         "compliance_requirements": ["client_confidentiality", "data_protection"],
         "integration_friction": 0.15,
         "decision_delay": 5,
-        "need_weights": {"reasoning": 0.32, "coding": 0.04, "knowledge": 0.28,
-                         "safety": 0.12, "communication": 0.22, "agentic": 0.02},
+        "need_weights": {"reasoning": 0.28, "coding": 0.02, "knowledge": 0.35,
+                         "safety": 0.22, "communication": 0.11, "agentic": 0.02},
     },
     "government_agency": {
         "label": "Government Agency",
@@ -161,8 +168,8 @@ USE_CASE_PROFILES = {
         "compliance_requirements": ["security_clearance", "data_sovereignty"],
         "integration_friction": 0.225,
         "decision_delay": 8,
-        "need_weights": {"reasoning": 0.20, "coding": 0.03, "knowledge": 0.25,
-                         "safety": 0.35, "communication": 0.15, "agentic": 0.02},
+        "need_weights": {"reasoning": 0.12, "coding": 0.02, "knowledge": 0.22,
+                         "safety": 0.48, "communication": 0.12, "agentic": 0.04},
     },
 }
 
@@ -186,19 +193,19 @@ ARCHETYPES = {
     "leaderboard_follower": {
         "leaderboard_trust": 0.85,
         "switching_cost": 0.05,
-        "switching_threshold": 0.15,
+        "switching_threshold": 0.10,
         "cost_sensitivity": 0.15,  # Follows scores, not price
     },
     "experience_driven": {
         "leaderboard_trust": 0.35,
         "switching_cost": 0.08,
-        "switching_threshold": 0.08,
+        "switching_threshold": 0.06,
         "cost_sensitivity": 0.30,  # Will switch for better value
     },
     "cautious": {
         "leaderboard_trust": 0.50,
         "switching_cost": 0.20,
-        "switching_threshold": 0.25,
+        "switching_threshold": 0.18,
         "cost_sensitivity": 0.20,  # Weighs cost but risk-averse about quality
     },
 
@@ -206,19 +213,19 @@ ARCHETYPES = {
     "enterprise_cautious": {
         "leaderboard_trust": 0.25,  # Very experience-driven
         "switching_cost": 0.35,
-        "switching_threshold": 0.50,
+        "switching_threshold": 0.35,
         "cost_sensitivity": 0.10,  # Enterprises care less about per-token cost
     },
     "enterprise_growth": {
         "leaderboard_trust": 0.45,
         "switching_cost": 0.25,
-        "switching_threshold": 0.30,
+        "switching_threshold": 0.22,
         "cost_sensitivity": 0.15,  # Some cost awareness
     },
     "enterprise_established": {
         "leaderboard_trust": 0.35,
         "switching_cost": 0.40,
-        "switching_threshold": 0.40,
+        "switching_threshold": 0.28,
         "cost_sensitivity": 0.08,  # Inertia dominates
     },
 }
@@ -268,7 +275,8 @@ class MarketSegment:
 
     # Dynamic state
     provider_shares: dict = field(default_factory=dict)    # {provider: proportion}
-    believed_quality: dict = field(default_factory=dict)   # {provider: quality_estimate}
+    believed_quality: dict = field(default_factory=dict)   # {provider: expected_quality}
+    running_perceived_quality: dict = field(default_factory=dict)  # {provider: EMA on satisfaction}
     satisfaction: dict = field(default_factory=dict)        # {provider: satisfaction_level}
     tenure: dict = field(default_factory=dict)              # {provider: rounds_subscribed}
 
@@ -293,6 +301,7 @@ class MarketSegment:
             "last_llm_decision": self.last_llm_decision,
             "provider_shares": self.provider_shares,
             "believed_quality": self.believed_quality,
+            "running_perceived_quality": self.running_perceived_quality,
             "satisfaction": self.satisfaction,
             "tenure": self.tenure,
         }
@@ -388,37 +397,40 @@ class ConsumerMarket:
             seg.provider_shares[name] = actual_share
             seg.tenure[name] = 0
 
-    def resolve_benchmark_weights(self, benchmark_names: list[str]):
-        """Map use-case preference categories to actual benchmark names.
+    def resolve_benchmark_weights(self, benchmark_tags: dict[str, str]):
+        """Map use-case preference categories to benchmarks via tags.
 
-        Uses substring matching: "coding_bench" matches category "coding".
+        Matches category keywords against each benchmark's tags string
+        (falls back to benchmark name if tags are empty).
         Unmatched benchmarks get a small default weight (0.1).
 
         For organizational consumers, applies additional upweighting (1.5x) to
         benchmarks matching their field-specific priorities.
+
+        Args:
+            benchmark_tags: {benchmark_name: tags_string}
         """
         for seg in self.segments:
             profile = USE_CASE_PROFILES.get(seg.use_case, {})
             prefs = profile.get("benchmark_prefs", {})
             weights = {}
-            for bm_name in benchmark_names:
+            for bm_name, tags in benchmark_tags.items():
+                match_text = (tags if tags else bm_name).lower()
                 matched = False
                 for category, pref_weight in prefs.items():
-                    if category.lower() in bm_name.lower():
-                        weights[bm_name] = pref_weight
+                    if category.lower() in match_text:
+                        weights[bm_name] = max(weights.get(bm_name, 0), pref_weight)
                         matched = True
-                        break
                 if not matched:
                     weights[bm_name] = 0.1  # small default weight
 
             # Organizational field-specific upweighting
             if seg.consumer_type == "organization":
                 field_keywords = ORG_FIELD_PRIORITIES.get(seg.use_case, [])
-                for bm_name in benchmark_names:
-                    # Check if benchmark name contains any field-priority keyword
+                for bm_name, tags in benchmark_tags.items():
+                    match_text = (tags if tags else bm_name).lower()
                     for keyword in field_keywords:
-                        if keyword.lower() in bm_name.lower():
-                            # Apply 1.5x multiplier to emphasize field relevance
+                        if keyword.lower() in match_text:
                             weights[bm_name] = weights.get(bm_name, 0.1) * 1.5
                             break  # Only apply once per benchmark
 
@@ -449,36 +461,38 @@ class ConsumerMarket:
                 learning_rate = 0.3 * (1 + 0.3 * sentiment)
                 learning_rate = max(0.1, min(0.5, learning_rate))
 
-                # Risk signals reduce leaderboard trust for followers
-                if (media_coverage.get("risk_signals") and
-                        seg.archetype == "leaderboard_follower"):
-                    # Check for incident signals specifically
+                # Risk signals erode leaderboard trust, scaled by current trust.
+                # High-trust segments erode more per signal (they had more to lose);
+                # low-trust segments already discount benchmarks, so signals matter less.
+                # Replaces the old leaderboard_follower-only gate.
+                if media_coverage.get("risk_signals"):
                     incident_signals = [
-                        sig for sig in media_coverage.get("risk_signals", [])
+                        sig for sig in media_coverage["risk_signals"]
                         if sig.startswith("incident_")
                     ]
-                    if incident_signals:
-                        # Reduce trust by 5% per incident signal
-                        seg.leaderboard_trust *= (0.95 ** len(incident_signals))
-                    # Other risk signals also reduce trust but less severely
-                    other_risk_signals = [
-                        sig for sig in media_coverage.get("risk_signals", [])
+                    other_signals = [
+                        sig for sig in media_coverage["risk_signals"]
                         if not sig.startswith("incident_")
                     ]
-                    if other_risk_signals:
-                        seg.leaderboard_trust *= (0.98 ** len(other_risk_signals))
+                    if incident_signals:
+                        seg.leaderboard_trust *= 0.95 ** (len(incident_signals) * seg.leaderboard_trust)
+                    if other_signals:
+                        seg.leaderboard_trust *= 0.98 ** (len(other_signals) * seg.leaderboard_trust)
 
             for provider_name, composite_score in leaderboard:
-                # Compute use-case-weighted perceived score from per-benchmark
-                # scores if available. Falls back to composite score.
-                perceived_score = composite_score
+                # Blend: expected_quality = trust * leaderboard + (1-trust) * experience
+                rpq = seg.running_perceived_quality.get(provider_name, composite_score)
+                expected_quality = (
+                    seg.leaderboard_trust * composite_score
+                    + (1 - seg.leaderboard_trust) * rpq
+                )
 
                 if provider_name not in seg.believed_quality:
-                    seg.believed_quality[provider_name] = perceived_score
+                    seg.believed_quality[provider_name] = expected_quality
                 else:
                     old = seg.believed_quality[provider_name]
                     seg.believed_quality[provider_name] = (
-                        (1 - learning_rate) * old + learning_rate * perceived_score
+                        (1 - learning_rate) * old + learning_rate * expected_quality
                     )
 
     def observe_per_benchmark(self, leaderboard: list,
@@ -506,27 +520,23 @@ class ConsumerMarket:
                 learning_rate = 0.3 * (1 + 0.3 * sentiment)
                 learning_rate = max(0.1, min(0.5, learning_rate))
 
-                # Risk signals reduce leaderboard trust for followers
-                if (media_coverage.get("risk_signals") and
-                        seg.archetype == "leaderboard_follower"):
-                    # Check for incident signals specifically
+                # Risk signals erode leaderboard trust, scaled by current trust.
+                if media_coverage.get("risk_signals"):
                     incident_signals = [
-                        sig for sig in media_coverage.get("risk_signals", [])
+                        sig for sig in media_coverage["risk_signals"]
                         if sig.startswith("incident_")
                     ]
-                    if incident_signals:
-                        # Reduce trust by 5% per incident signal
-                        seg.leaderboard_trust *= (0.95 ** len(incident_signals))
-                    # Other risk signals also reduce trust but less severely
-                    other_risk_signals = [
-                        sig for sig in media_coverage.get("risk_signals", [])
+                    other_signals = [
+                        sig for sig in media_coverage["risk_signals"]
                         if not sig.startswith("incident_")
                     ]
-                    if other_risk_signals:
-                        seg.leaderboard_trust *= (0.98 ** len(other_risk_signals))
+                    if incident_signals:
+                        seg.leaderboard_trust *= 0.95 ** (len(incident_signals) * seg.leaderboard_trust)
+                    if other_signals:
+                        seg.leaderboard_trust *= 0.98 ** (len(other_signals) * seg.leaderboard_trust)
 
             for provider_name, _ in leaderboard:
-                # Compute weighted score based on segment's benchmark preferences
+                # Compute leaderboard signal: dot(published_scores, effective_relevance)
                 weighted_score = 0.0
                 total_weight = 0.0
                 for bm_name, bm_weight in seg.benchmark_weights.items():
@@ -535,19 +545,26 @@ class ConsumerMarket:
                         weighted_score += bm_weight * bm_scores[provider_name]
                         total_weight += bm_weight
                 if total_weight > 0:
-                    perceived_score = weighted_score / total_weight
+                    leaderboard_signal = weighted_score / total_weight
                 else:
-                    # Fallback to composite
-                    perceived_score = next(
+                    leaderboard_signal = next(
                         (s for n, s in leaderboard if n == provider_name), 0.5
                     )
 
+                # Blend: expected_quality = trust * leaderboard + (1-trust) * experience
+                rpq = seg.running_perceived_quality.get(provider_name, leaderboard_signal)
+                expected_quality = (
+                    seg.leaderboard_trust * leaderboard_signal
+                    + (1 - seg.leaderboard_trust) * rpq
+                )
+
+                # EMA smoothing on the blended expected_quality
                 if provider_name not in seg.believed_quality:
-                    seg.believed_quality[provider_name] = perceived_score
+                    seg.believed_quality[provider_name] = expected_quality
                 else:
                     old = seg.believed_quality[provider_name]
                     seg.believed_quality[provider_name] = (
-                        (1 - learning_rate) * old + learning_rate * perceived_score
+                        (1 - learning_rate) * old + learning_rate * expected_quality
                     )
 
     def compute_satisfaction(
@@ -600,66 +617,77 @@ class ConsumerMarket:
                     cap_vec.get(d, 0.0) * need_wts.get(d, 0.0) for d in _DIMS
                 )
 
-                # Factor 1: Media Sentiment Influence
-                # Negative media × provider attention × leaderboard_trust
-                # (high-trust segments are more responsive to media signals)
-                media_penalty = 0.0
-                if media_coverage:
-                    sentiment = media_coverage.get("sentiment", 0.0)
-                    provider_attention = media_coverage.get("provider_attention", {}).get(provider_name, 0.0)
-                    if sentiment < 0:
-                        media_penalty = abs(sentiment) * provider_attention * seg.leaderboard_trust
+                # Media influence on consumers is routed through exploration
+                # behavior (see _compute_switching_heuristic), not satisfaction.
+                # Satisfaction is purely experience-based (Hardy et al. 2024).
 
-                # Factor 2: Incident History Penalty
-                # severity-weighted × (1 + market_share²) — larger providers face
-                # greater reputational exposure per incident (grounded in scale-contingent
-                # regulatory obligations: EO 14110, SB 1047)
+                # Factor 1: Incident History Penalty
+                # Exponential decay: recent incidents dominate, old ones fade naturally.
+                # severity-weighted × decay^age × (1 + market_share²) — larger providers
+                # face greater reputational exposure per incident (grounded in scale-
+                # contingent regulatory obligations: EO 14110, SB 1047).
                 incident_penalty = 0.0
                 market_share = gt.market_share
                 if incident_history and provider_name in incident_history and round_num is not None:
                     provider_incidents = incident_history[provider_name]
-                    # Focus on recent incidents (last 5 rounds)
-                    recent_incidents = [
-                        inc for inc in provider_incidents
-                        if inc.round_num >= round_num - 5
-                    ]
                     severity_weights = {"minor": 0.02, "moderate": 0.08, "major": 0.15, "critical": 0.30}
+                    incident_decay_rate = 0.70  # ~2.3-round half-life
                     raw_penalty = 0.0
-                    for inc in recent_incidents:
+                    for inc in provider_incidents:
+                        age = round_num - inc.round_num
+                        if age < 0 or age > 10:
+                            continue
                         weight = severity_weights.get(inc.severity, 0.05)
-                        # 2× if incident category matches segment sector
+                        weight *= incident_decay_rate ** age
+                        # 2x if incident category matches segment sector
                         if seg.use_case in inc.affected_sectors or seg.consumer_type in inc.affected_sectors:
                             weight *= 2.0
                         raw_penalty += weight
                     incident_penalty = raw_penalty * (1.0 + market_share ** 2)
 
-                # Factor 3: Cost Efficiency Bonus
+                # Factor 2: Cost Efficiency Bonus
                 # cost_sensitivity × cost_advantage × 0.15
                 cost_bonus = 0.0
                 if provider_cost_advantage and provider_name in provider_cost_advantage:
                     cost_eff = provider_cost_advantage[provider_name]
                     cost_bonus = seg.cost_sensitivity * cost_eff * 0.15
 
-                # Compute final satisfaction
+                # Compute final satisfaction (purely experience-based)
                 satisfaction = (
                     base_satisfaction
                     - incident_penalty
-                    - media_penalty
                     + cost_bonus
                 )
 
                 # Clamp to [0, 1]
-                seg.satisfaction[provider_name] = max(0.0, min(1.0, satisfaction))
+                sat_clamped = max(0.0, min(1.0, satisfaction))
+                seg.satisfaction[provider_name] = sat_clamped
 
-    def compute_switching(self, ground_truth: Optional[dict] = None,
-                         provider_strategies: Optional[dict] = None,
+                # Update running_perceived_quality via EMA on realized satisfaction
+                rpq_alpha = 0.3  # EMA learning rate
+                old_rpq = seg.running_perceived_quality.get(provider_name, sat_clamped)
+                seg.running_perceived_quality[provider_name] = (
+                    (1 - rpq_alpha) * old_rpq + rpq_alpha * sat_clamped
+                )
+
+                # Store penalty breakdown for logging (segment-level, last round)
+                if not hasattr(seg, '_penalty_breakdown'):
+                    seg._penalty_breakdown = {}
+                seg._penalty_breakdown[provider_name] = {
+                    "base_satisfaction": base_satisfaction,
+                    "incident_penalty": incident_penalty,
+                    "cost_bonus": cost_bonus,
+                }
+
+    def compute_switching(self, provider_strategies: Optional[dict] = None,
                          published_scores: Optional[dict] = None,
                          media_coverage: Optional[dict] = None,
-                         policymaker_data: Optional[dict] = None,
+                         regulator_data: Optional[dict] = None,
                          incident_history: Optional[dict] = None,
                          per_benchmark_scores: Optional[dict] = None,
                          provider_cost_advantage: Optional[dict] = None,
-                         deployer_liability_guidance: Optional[set] = None):
+                         deployer_liability_guidance: Optional[set] = None,
+                         market_growth_rate: float = 0.0):
         """Compute switching proportions within each segment.
 
         Two triggers (same logic as original Consumer, but applied proportionally):
@@ -667,11 +695,10 @@ class ConsumerMarket:
         2. Opportunity: a better alternative exceeds switching cost + tenure bonus
 
         Args:
-            ground_truth: {provider_name: ProviderGroundTruth} - for LLM context
-            provider_strategies: {provider_name: strategy_dict} - for LLM context
+            provider_strategies: {provider_name: {rd, safety, product}} - portfolio fractions only
             published_scores: {provider_name: score} - for LLM context
             media_coverage: Media coverage dict - for LLM context
-            policymaker_data: Policymaker data dict - for LLM context
+            regulator_data: Regulator data dict - for LLM context
 
         Returns:
             Total switching rate (fraction of total market that switched)
@@ -693,12 +720,13 @@ class ConsumerMarket:
             # Branch on reasoning mode
             if seg.llm_mode:
                 seg_switching = self._compute_switching_llm(
-                    seg, ground_truth, provider_strategies, published_scores,
-                    media_coverage, policymaker_data, incident_history, per_benchmark_scores,
+                    seg, provider_strategies, published_scores,
+                    media_coverage, regulator_data, incident_history, per_benchmark_scores,
                     provider_cost_advantage, deployer_liability_guidance
                 )
             else:
-                seg_switching = self._compute_switching_heuristic(seg)
+                seg_switching = self._compute_switching_heuristic(
+                    seg, market_growth_rate, media_coverage)
 
             total_switching += seg_switching * seg.market_fraction
             segment_switching_rates[seg.name] = seg_switching
@@ -708,7 +736,9 @@ class ConsumerMarket:
 
         return total_switching
 
-    def _compute_switching_heuristic(self, seg: MarketSegment) -> float:
+    def _compute_switching_heuristic(self, seg: MarketSegment,
+                                     market_growth_rate: float = 0.0,
+                                     media_coverage: Optional[dict] = None) -> float:
         """Compute heuristic-based switching for a segment.
 
         Returns:
@@ -752,12 +782,8 @@ class ConsumerMarket:
                     alt_blended = self._blended_score(seg, alt_provider)
                     improvement = alt_blended - current_blended
                     if improvement > 0:
-                        # Open-source providers are free to try — halve the switching threshold
-                        alt_threshold = opportunity_threshold
-                        if alt_provider in self.open_source_providers:
-                            alt_threshold = opportunity_threshold * 0.5
                         opp_prob = _switching_probability(
-                            improvement, alt_threshold
+                            improvement, opportunity_threshold
                         )
                         if opp_prob > should_switch_prob:
                             should_switch_prob = opp_prob
@@ -779,6 +805,78 @@ class ConsumerMarket:
                     # Reset tenure for switchers
                     seg.tenure[provider] = max(0, seg.tenure.get(provider, 0) - 1)
 
+        # Exploration churn: per-provider, media-driven.
+        # Base rate models free-tier trials, word-of-mouth, new product launches.
+        # Negative media coverage about a specific provider drives its users to
+        # explore alternatives at a higher rate, scaled by leaderboard_trust
+        # (high-trust segments respond more to media signals; experience-driven
+        # segments mostly ignore headlines). Hardy et al. (2024): benchmarks and
+        # media drive attention/exploration, not direct quality perception.
+        base_rate = 0.05
+        exploration_pool = 0.0
+        for provider in list(seg.provider_shares.keys()):
+            share = seg.provider_shares.get(provider, 0.0)
+            if share < 0.001:
+                continue
+            provider_rate = base_rate
+            if media_coverage:
+                p_attention = media_coverage.get("provider_attention", {}).get(provider, 0.0)
+                sentiment = media_coverage.get("sentiment", 0.0)
+                if sentiment < 0:
+                    provider_rate += p_attention * abs(sentiment) * seg.leaderboard_trust
+            churn = share * provider_rate
+            seg.provider_shares[provider] -= churn
+            exploration_pool += churn
+
+        # Redistribution: blend satisfaction (experience-based) and believed_quality
+        # (public-signal-based). When media drives extra exploration, those explorers
+        # choose based on public signals (believed_quality + media buzz) rather than
+        # satisfaction they haven't experienced. This preserves credence good dynamics:
+        # consumers can't evaluate safety themselves, so media-driven explorers follow
+        # public signals including safety coverage.
+        if exploration_pool > 0:
+            base_pool = sum(
+                max(0.0, seg.provider_shares.get(p, 0.0)) * base_rate
+                for p in self.provider_names
+            )
+            media_fraction = max(0.0, 1.0 - base_pool / exploration_pool) if exploration_pool > 0.001 else 0.0
+
+            sat_scores = {p: max(0.01, seg.satisfaction.get(p, 0.3)) for p in self.provider_names}
+            bq_scores = {p: max(0.01, seg.believed_quality.get(p, 0.3)) for p in self.provider_names}
+
+            # Positive media pulls explorers toward buzzy providers
+            if media_coverage and media_coverage.get("sentiment", 0.0) > 0:
+                sentiment = media_coverage["sentiment"]
+                for p in self.provider_names:
+                    p_attn = media_coverage.get("provider_attention", {}).get(p, 0.0)
+                    media_pull = 1.0 + sentiment * p_attn * seg.leaderboard_trust
+                    bq_scores[p] *= media_pull
+
+            sat_total = sum(sat_scores.values())
+            bq_total = sum(bq_scores.values())
+            for provider in self.provider_names:
+                sat_share = sat_scores[provider] / sat_total
+                bq_share = bq_scores[provider] / bq_total
+                blended = (1.0 - media_fraction) * sat_share + media_fraction * bq_share
+                seg.provider_shares[provider] = (
+                    seg.provider_shares.get(provider, 0.0) + exploration_pool * blended
+                )
+            seg_switching += exploration_pool
+
+        # New-user entry: in a growing market, new adopters choose independently
+        # based on believed_quality rather than inheriting incumbent shares.
+        # New users are additive — existing shares are diluted by renormalization.
+        if market_growth_rate > 0:
+            new_user_weight = market_growth_rate  # fraction of existing market that enters
+            quality_scores = {p: max(0.01, seg.believed_quality.get(p, 0.3))
+                              for p in self.provider_names}
+            quality_total = sum(quality_scores.values())
+            for provider in self.provider_names:
+                seg.provider_shares[provider] = (
+                    seg.provider_shares.get(provider, 0.0)
+                    + new_user_weight * quality_scores[provider] / quality_total
+                )
+
         # Update tenure for remaining subscribers
         for provider in self.provider_names:
             if seg.provider_shares.get(provider, 0) > 0.01:
@@ -793,11 +891,11 @@ class ConsumerMarket:
 
         return seg_switching
 
-    def _compute_switching_llm(self, seg: MarketSegment, ground_truth: Optional[dict],
+    def _compute_switching_llm(self, seg: MarketSegment,
                                provider_strategies: Optional[dict],
                                published_scores: Optional[dict],
                                media_coverage: Optional[dict],
-                               policymaker_data: Optional[dict],
+                               regulator_data: Optional[dict],
                                incident_history: Optional[dict] = None,
                                per_benchmark_scores: Optional[dict] = None,
                                provider_cost_advantage: Optional[dict] = None,
@@ -806,11 +904,10 @@ class ConsumerMarket:
 
         Args:
             seg: Market segment
-            ground_truth: Ground truth data
-            provider_strategies: Provider strategies
+            provider_strategies: Provider portfolio fractions {rd, safety, product} only
             published_scores: Published scores
             media_coverage: Media coverage
-            policymaker_data: Policymaker data
+            regulator_data: Regulator data
 
         Returns:
             Switching rate for this segment
@@ -827,8 +924,8 @@ class ConsumerMarket:
 
             # Build decision context
             context = self._build_decision_context(
-                seg, provider, ground_truth, provider_strategies,
-                published_scores, media_coverage, policymaker_data,
+                seg, provider, provider_strategies,
+                published_scores, media_coverage, regulator_data,
                 incident_history, per_benchmark_scores, provider_cost_advantage,
                 deployer_liability_guidance
             )
@@ -892,11 +989,10 @@ class ConsumerMarket:
         return seg_switching
 
     def _build_decision_context(self, seg: MarketSegment, provider: str,
-                                ground_truth: Optional[dict],
                                 provider_strategies: Optional[dict],
                                 published_scores: Optional[dict],
                                 media_coverage: Optional[dict],
-                                policymaker_data: Optional[dict],
+                                regulator_data: Optional[dict],
                                 incident_history: Optional[dict] = None,
                                 per_benchmark_scores: Optional[dict] = None,
                                 provider_cost_advantage: Optional[dict] = None,
@@ -911,10 +1007,10 @@ class ConsumerMarket:
             "deployer_liability_guidance": deployer_liability_guidance or set(),
         }
 
-        # Provider safety capability (from strategies)
+        # Provider safety investment fraction (portfolio "safety" key only — GT safety_capability is invisible)
         if provider_strategies:
             context["provider_safety"] = {
-                p: strat.get("safety_capability", strat.get("safety", 0.0))
+                p: strat.get("safety", 0.0)
                 for p, strat in provider_strategies.items()
             }
 
@@ -932,9 +1028,7 @@ class ConsumerMarket:
                 "believed_quality": seg.believed_quality.get(alt_provider, 0.5),
                 "satisfaction": seg.satisfaction.get(alt_provider, 0.0),
                 "score": published_scores.get(alt_provider, 0.5) if published_scores else 0.5,
-                "safety": provider_strategies.get(alt_provider, {}).get(
-                              "safety_capability", provider_strategies.get(alt_provider, {}).get("safety", 0.0)
-                          ) if provider_strategies else 0.0,
+                "safety": provider_strategies.get(alt_provider, {}).get("safety", 0.0) if provider_strategies else 0.0,
                 "cost_advantage": cost_adv.get(alt_provider, 0.0),
             }
             context["alternatives"].append(alt_data)
@@ -952,10 +1046,10 @@ class ConsumerMarket:
             context["risk_signals"] = media_coverage.get("risk_signals", [])
 
         # Add regulatory context
-        if policymaker_data:
-            context["regulatory_pressure"] = len(policymaker_data.get("interventions", []))
+        if regulator_data:
+            context["regulatory_pressure"] = len(regulator_data.get("interventions", []))
             context["regulatory_interventions"] = [
-                iv.get("type", "unknown") for iv in policymaker_data.get("interventions", [])
+                iv.get("type", "unknown") for iv in regulator_data.get("interventions", [])
             ]
 
         # Add incident history for current provider and alternatives
@@ -1263,6 +1357,35 @@ Output ONLY valid JSON with this structure:
                     "archetype": seg.archetype,
                 }
 
+        # Aggregate penalty breakdown per provider (market-share-weighted across segments)
+        penalty_breakdown = {}
+        for provider in self.provider_names:
+            agg = {"base_satisfaction": 0.0, "incident_penalty": 0.0,
+                   "cost_bonus": 0.0}
+            total_weight = 0.0
+            for seg in self.segments:
+                pb = getattr(seg, '_penalty_breakdown', {}).get(provider)
+                if pb is None:
+                    continue
+                weight = seg.provider_shares.get(provider, 0.0) * seg.market_fraction
+                if weight > 0:
+                    for k in agg:
+                        agg[k] += pb[k] * weight
+                    total_weight += weight
+            if total_weight > 0:
+                penalty_breakdown[provider] = {k: v / total_weight for k, v in agg.items()}
+            else:
+                penalty_breakdown[provider] = agg
+
+        # Population-weighted need_weights (fixed per run, but useful for analysis)
+        agg_need = {}
+        _DIMS = ["reasoning", "coding", "knowledge", "safety", "communication", "agentic"]
+        for d in _DIMS:
+            agg_need[d] = sum(
+                seg.market_fraction * (seg.need_weights.get(d, 0.0) if seg.need_weights else 1.0 / len(_DIMS))
+                for seg in self.segments
+            )
+
         return {
             "market_shares": market_shares,
             "provider_satisfaction": provider_satisfaction,
@@ -1270,6 +1393,8 @@ Output ONLY valid JSON with this structure:
             "switching_rate": 0.0,  # set by caller after compute_switching()
             "segment_data": segment_data,
             "org_llm_decisions": org_llm_decisions,
+            "penalty_breakdown": penalty_breakdown,
+            "need_weights": agg_need,
         }
 
     def save(self, folder: str):
@@ -1348,15 +1473,34 @@ def create_default_segments(
             "enterprise_established": 0.20,
         }
 
+    # Adoption-weighted population shares per use-case.
+    # Grounded in NBER Bick/Blandin/Deming 2024, Stanford AI Index 2025,
+    # McKinsey State of AI 2025. See docs/references.md.
+    USE_CASE_POP_WEIGHTS = {
+        "software_dev": 0.14, "content_writer": 0.08, "legal": 0.04,
+        "healthcare": 0.05, "finance": 0.05, "educator": 0.07,
+        "customer_service": 0.08, "researcher": 0.06, "creative": 0.06,
+        "marketing": 0.07, "service_worker": 0.05, "hospital_system": 0.05,
+        "enterprise_finance": 0.05, "tech_startup": 0.06,
+        "enterprise_legal": 0.04, "government_agency": 0.05,
+    }
+
     segments = []
-    n_use_cases = len(use_cases)
+
+    # Compute population fractions: use pop weights for known use-cases,
+    # equal share for any custom/unknown ones, then normalize.
+    raw_fractions = {}
+    for uc in use_cases:
+        raw_fractions[uc] = USE_CASE_POP_WEIGHTS.get(uc, 1.0 / len(use_cases))
+    frac_total = sum(raw_fractions.values())
+    use_case_fractions = {uc: w / frac_total for uc, w in raw_fractions.items()}
 
     for use_case in use_cases:
         profile = USE_CASE_PROFILES.get(use_case)
         if profile is None:
             continue
 
-        use_case_fraction = 1.0 / n_use_cases
+        use_case_fraction = use_case_fractions[use_case]
         consumer_type = profile.get("consumer_type", "individual")
 
         # Select appropriate archetype weights based on consumer type
@@ -1410,155 +1554,3 @@ def create_default_segments(
             segments.append(seg)
 
     return segments
-
-
-# ============================================================
-#  Deprecated: Individual Consumer (kept for loading old experiments)
-# ============================================================
-
-class Consumer:
-    """DEPRECATED: Individual consumer model. Kept for loading old experiments.
-
-    New code should use ConsumerMarket + MarketSegment instead.
-    """
-
-    def __init__(self, name, use_cases=None, budget=100.0,
-                 quality_sensitivity=0.5, switching_threshold=0.3,
-                 leaderboard_trust=0.7, switching_cost=0.1, llm_mode=False):
-        from visibility import PublicState, ConsumerPrivateState
-        self.public_state = PublicState(name=name, current_round=0, published_scores=[])
-        self.private_state = ConsumerPrivateState(
-            use_cases=use_cases or ["general"],
-            budget=budget,
-            current_subscription=None,
-            believed_model_quality={},
-            satisfaction_history=[],
-            subscription_history=[],
-            leaderboard_trust=leaderboard_trust,
-            switching_cost=switching_cost,
-        )
-        self.quality_sensitivity = quality_sensitivity
-        self.switching_threshold = switching_threshold
-        self.llm_mode = llm_mode
-        self.memory = []
-        self._last_leaderboard = []
-        self._brand_recognition = {}
-
-    @property
-    def name(self):
-        return self.public_state.name
-
-    def observe(self, leaderboard, round_num):
-        self.public_state.current_round = round_num
-        self._last_leaderboard = leaderboard
-        for provider_name, score in leaderboard:
-            if provider_name not in self.private_state.believed_model_quality:
-                self.private_state.believed_model_quality[provider_name] = score
-            else:
-                lr = 0.3
-                old = self.private_state.believed_model_quality[provider_name]
-                self.private_state.believed_model_quality[provider_name] = (1 - lr) * old + lr * score
-        self.memory.append({"type": "observation", "round": round_num, "leaderboard": leaderboard})
-
-    def reflect(self):
-        if not self.private_state.satisfaction_history:
-            return
-        recent = self.private_state.satisfaction_history[-3:]
-        current_sub = self.private_state.current_subscription
-        if not current_sub:
-            return
-        recent_with_current = [sat for _, provider, sat in recent if provider == current_sub]
-        if recent_with_current:
-            avg_sat = sum(recent_with_current) / len(recent_with_current)
-            expected = self.private_state.believed_model_quality.get(current_sub, 0.5)
-            self.private_state.believed_model_quality[current_sub] = 0.6 * expected + 0.4 * avg_sat
-
-    def plan(self):
-        return self._plan_heuristic()
-
-    def _plan_heuristic(self):
-        current_sub = self.private_state.current_subscription
-        should_switch = False
-        switch_reason = ""
-        if current_sub and self._last_leaderboard:
-            tenure_bonus = min(0.1, self.private_state.rounds_with_provider * 0.02)
-            if self.private_state.satisfaction_history:
-                recent = [sat for _, provider, sat in self.private_state.satisfaction_history[-3:]
-                          if provider == current_sub]
-                if recent:
-                    avg_sat = sum(recent) / len(recent)
-                    lb_exp = next((s for n, s in self._last_leaderboard if n == current_sub), None)
-                    if lb_exp is None:
-                        lb_exp = self.private_state.believed_model_quality.get(current_sub, 0.5)
-                    gap = lb_exp - avg_sat
-                    threshold = self.switching_threshold + tenure_bonus + self.private_state.switching_cost
-                    if gap > threshold:
-                        should_switch = True
-                        switch_reason = f"dissatisfied: gap={gap:.3f} > threshold={threshold:.3f}"
-            if not should_switch:
-                current_lb = next((s for n, s in self._last_leaderboard if n == current_sub), None)
-                if current_lb is not None:
-                    trust = self.private_state.leaderboard_trust
-                    br = self._brand_recognition.get(current_sub, 0.5)
-                    cur_believed = self.private_state.believed_model_quality.get(current_sub, current_lb * br)
-                    cur_blended = trust * current_lb + (1 - trust) * cur_believed
-                    opp_threshold = self.private_state.switching_cost + tenure_bonus
-                    for name, score in self._last_leaderboard:
-                        if name == current_sub:
-                            continue
-                        alt_br = self._brand_recognition.get(name, 0.5)
-                        alt_believed = self.private_state.believed_model_quality.get(name, score * alt_br)
-                        alt_blended = trust * score + (1 - trust) * alt_believed
-                        if alt_blended - cur_blended > opp_threshold:
-                            should_switch = True
-                            switch_reason = f"better option: {name}"
-                            break
-        if should_switch or current_sub is None:
-            if not self._last_leaderboard:
-                return None
-            best_score = -1
-            best = None
-            for pn, lbs in self._last_leaderboard:
-                trust = self.private_state.leaderboard_trust
-                br = self._brand_recognition.get(pn, 0.5)
-                believed = self.private_state.believed_model_quality.get(pn, lbs * br)
-                blended = trust * lbs + (1 - trust) * believed
-                if blended > best_score:
-                    best_score = blended
-                    best = pn
-            self.memory.append({"type": "planning", "round": self.public_state.current_round,
-                                "decision": "switch" if current_sub else "subscribe",
-                                "provider": best, "from": current_sub, "reason": switch_reason or "initial"})
-            return best
-        self.memory.append({"type": "planning", "round": self.public_state.current_round,
-                            "decision": "stay", "provider": current_sub, "reason": "satisfied"})
-        return current_sub
-
-    def execute(self, new_subscription=None):
-        if new_subscription is None:
-            new_subscription = self.plan()
-        old_sub = self.private_state.current_subscription
-        if old_sub != new_subscription:
-            self.memory.append({"type": "subscription_change", "round": self.public_state.current_round,
-                                "from": old_sub, "to": new_subscription})
-        self.private_state.current_subscription = new_subscription
-        if new_subscription:
-            self.private_state.subscription_history.append((self.public_state.current_round, new_subscription))
-
-    def receive_satisfaction(self, satisfaction):
-        current_sub = self.private_state.current_subscription
-        if current_sub:
-            self.private_state.satisfaction_history.append(
-                (self.public_state.current_round, current_sub, satisfaction))
-
-    def save(self, folder):
-        os.makedirs(folder, exist_ok=True)
-        with open(os.path.join(folder, "public_state.json"), "w") as f:
-            json.dump(self.public_state.to_dict(), f, indent=2)
-        with open(os.path.join(folder, "private_state.json"), "w") as f:
-            json.dump(self.private_state.to_dict(), f, indent=2)
-        with open(os.path.join(folder, "memory.json"), "w") as f:
-            json.dump(self.memory, f, indent=2)
-
-    def __repr__(self):
-        return f"Consumer(name='{self.name}', subscription='{self.private_state.current_subscription}')"

@@ -238,32 +238,19 @@ class ExperimentLogger:
             provider.save(os.path.join(providers_dir, provider.name))
 
     def log_consumers(self, consumers):
-        """Log consumer final states.
-
-        Accepts either a list of Consumer objects (legacy) or a ConsumerMarket.
-        """
+        """Log consumer market final state."""
         exp_dir = self.get_experiment_dir()
         consumers_dir = os.path.join(exp_dir, "consumers")
         os.makedirs(consumers_dir, exist_ok=True)
+        consumers.save(consumers_dir)
 
-        # Handle ConsumerMarket (new format)
-        from actors.consumer import ConsumerMarket
-        if isinstance(consumers, ConsumerMarket):
-            consumers.save(consumers_dir)
-            return
-
-        # Legacy: list of Consumer objects
-        if isinstance(consumers, list):
-            for consumer in consumers:
-                consumer.save(os.path.join(consumers_dir, consumer.name))
-
-    def log_policymakers(self, policymakers: list):
-        """Log policymaker final states."""
+    def log_regulators(self, regulators: list):
+        """Log regulator final states."""
         exp_dir = self.get_experiment_dir()
-        policymakers_dir = os.path.join(exp_dir, "policymakers")
-        os.makedirs(policymakers_dir, exist_ok=True)
-        for policymaker in policymakers:
-            policymaker.save(os.path.join(policymakers_dir, policymaker.name))
+        regulators_dir = os.path.join(exp_dir, "regulators")
+        os.makedirs(regulators_dir, exist_ok=True)
+        for regulator in regulators:
+            regulator.save(os.path.join(regulators_dir, regulator.name))
 
     def log_funders(self, funders: list):
         """Log funder final states."""
@@ -399,7 +386,7 @@ def generate_summary(
     evaluator,
     providers: list,
     consumers: list = None,
-    policymakers: list = None,
+    regulators: list = None,
     funders: list = None,
 ) -> dict:
     """
@@ -410,7 +397,7 @@ def generate_summary(
         evaluator: Evaluator instance
         providers: List of ModelProvider instances
         consumers: Optional list of Consumer instances
-        policymakers: Optional list of Policymaker instances
+        regulators: Optional list of Regulator instances
 
     Returns:
         Summary dict with key metrics
@@ -525,19 +512,19 @@ def generate_summary(
 
             summary["consumer_summary"] = consumer_summary
 
-    # Policymaker summary
-    if policymakers and any("policymaker_data" in h for h in history):
-        policymaker_rounds = [h for h in history if "policymaker_data" in h]
-        if policymaker_rounds:
+    # Regulator summary
+    if regulators and any("regulator_data" in h for h in history):
+        regulator_rounds = [h for h in history if "regulator_data" in h]
+        if regulator_rounds:
             interventions = []
-            for h in policymaker_rounds:
-                interventions.extend(h["policymaker_data"].get("interventions", []))
+            for h in regulator_rounds:
+                interventions.extend(h["regulator_data"].get("interventions", []))
 
-            summary["policymaker_summary"] = {
-                "n_policymakers": len(policymakers),
+            summary["regulator_summary"] = {
+                "n_regulators": len(regulators),
                 "total_interventions": len(interventions),
                 "intervention_types": list(set(i["type"] for i in interventions if "type" in i)),
-                "active_regulations": policymaker_rounds[-1]["policymaker_data"].get("active_regulations", []),
+                "active_regulations": regulator_rounds[-1]["regulator_data"].get("active_regulations", []),
             }
 
     # Funder summary
@@ -552,13 +539,13 @@ def generate_summary(
                 for h in funder_rounds
             )
 
-            # Get final funding multipliers
-            final_multipliers = final_funder_data.get("funding_multipliers", {})
+            # Get final funder allocation totals
+            final_funding_totals = final_funder_data.get("provider_funding_totals", {})
 
             summary["funder_summary"] = {
                 "n_funders": len(funders),
                 "total_funding_deployed": total_funding,
-                "final_funding_multipliers": final_multipliers,
+                "final_provider_funding_totals": final_funding_totals,
                 "funder_types": [f.funder_type for f in funders] if hasattr(funders[0], 'funder_type') else [],
             }
 
@@ -583,7 +570,7 @@ class DirectoryLogger:
         Args:
             output_dir: Absolute path to write artifacts into.
             lightweight: If True, skip heavy artifacts (history.json,
-                game_log.md, plots/, providers/, funders/, policymakers/,
+                game_log.md, plots/, providers/, funders/, regulators/,
                 consumers/, ground_truth.json).
         """
         self.output_dir = output_dir
@@ -643,12 +630,12 @@ class DirectoryLogger:
             for c in consumers:
                 c.save(os.path.join(consumers_dir, c.name))
 
-    def log_policymakers(self, policymakers: list):
+    def log_regulators(self, regulators: list):
         if self.lightweight:
             return
-        d = os.path.join(self.output_dir, "policymakers")
+        d = os.path.join(self.output_dir, "regulators")
         os.makedirs(d, exist_ok=True)
-        for p in policymakers:
+        for p in regulators:
             p.save(os.path.join(d, p.name))
 
     def log_funders(self, funders: list):

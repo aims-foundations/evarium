@@ -38,8 +38,8 @@
 ## Simulation Architecture
 
 - Three-tier visibility: PublicState, PrivateState, GroundTruth (held by sim)
-- Actors: ModelProvider, Evaluator, Consumer, Policymaker, Funder
-- Provider investment portfolio: fundamental_research, training_optimization, evaluation_engineering, safety_alignment
+- Actors: ModelProvider, Evaluator, Consumer, Regulator, Funder
+- Provider investment portfolio: rd, safety, product (sum to 1.0)
 - Providers use either heuristic or LLM mode for planning
 - LLM providers: openai, anthropic, ollama, gemini (set via `LLM_PROVIDER` env var)
 - Experiment results logged to `hf_data/` via DirectoryLogger (canonical) or `sandbox/experiments/` for local runs
@@ -64,27 +64,24 @@ evaluation-ecosystem-simulation/
 │       ├── model_provider.py     # ModelProvider: plan/observe/reflect/execute
 │       ├── evaluator.py          # Evaluator, Benchmark, Regulation classes
 │       ├── consumer.py           # ConsumerMarket with market segments
-│       ├── policymaker.py        # Policymaker: graduated interventions (media-aware)
+│       ├── regulator.py          # Regulator: graduated interventions (media-aware)
 │       ├── funder.py             # Funder: VC/gov/foundation types (media-aware)
 │       └── media.py              # Media/TechPress actor
 │
 ├── scripts/                      # Entry points and analysis tools
 │   ├── run_experiment.py         # Edit & run experiments (main entry point)
-│   ├── run_llm_now.py            # CLI-driven quick experiments
 │   ├── rerun_experiment.py       # Rerun a past experiment from config.json
-│   ├── final_plots.py            # Combined multi-experiment plots (8 plots + 3 CSV tables)
-│   ├── create_final_plots.py     # Older combined plots (partially broken — prefer final_plots.py)
-│   ├── explore_benchmark_plots.py# Benchmark-level gaming visualizations (merged into final_plots.py)
-│   ├── plot_inflation_trajectories.py  # Score inflation trajectory plots
-│   ├── compare_experiments.py    # Side-by-side experiment comparisons
-│   ├── replot.py                 # Regenerate plots for existing experiments
-│   ├── analyze_existing.py       # Analyze existing experiment data
-│   ├── analyze_registry.py       # Analyze the run registry
-│   ├── build_run_registry.py     # Build a registry index of completed runs
-│   ├── explore_runs.py           # Explore and inspect runs
+│   ├── run_all.py                # Batch experiment runner
+│   ├── run_diagnostics.py        # Run diagnostics on an experiment
+│   ├── plot_experiment.py         # Single-run comparison + aggregate cross-condition plots
+│   ├── plot_batch.py             # Presentation figures from a batch directory
+│   ├── plot_inflation_trajectories.py  # Score inflation trajectory plots (paper figures)
+│   ├── plot_validation_figures.py# Exploratory analysis of runs (paper figures)
+│   ├── replot_experiment.py      # Regenerate dashboard plots for existing experiments
+│   ├── registry_build.py         # Build a registry index of completed runs
+│   ├── registry_analyze.py       # Analyze the run registry (hf_data/runs.jsonl)
 │   ├── generate_preset_configs.py# Generate preset experiment configs
 │   ├── sync_hf_data.py           # Sync hf_data/ to/from Hugging Face
-│   ├── run_diagnostics.py        # Run diagnostics on an experiment
 │   ├── run_phase1_qwen.sh        # Shell: run Phase 1 with Qwen model
 │   └── run_phase5_heuristic.sh   # Shell: run Phase 5 heuristic baseline
 │
@@ -132,9 +129,10 @@ evaluation-ecosystem-simulation/
 - `scripts/rerun_experiment.py`: `policymaker_configs` was not extracted/passed to `sim.setup()`; `sim.consumers` (deprecated empty list) replaced with `sim.consumer_market`
 
 ### Plotting
-- `final_plots.py` is the canonical multi-experiment analysis script
-- Run: `python scripts/final_plots.py <exp_num1> <exp_num2> [run_label]`
-- Outputs to `output/experiments/plots_<run_label>/`
+- `plot_experiment.py` is the canonical plotting script (single-run comparison + aggregate cross-condition)
+- Single mode: `python scripts/plot_experiment.py <exp_num1> <exp_num2> [run_label]`
+- Aggregate mode: `python scripts/plot_experiment.py --aggregate --from-sandbox [--preset eu]`
+- Outputs to `output/final-plots/` (single) or `output/aggregate_plots/` (aggregate)
 - Uses tueplots NeurIPS styling + matplotlib; requires LaTeX (TinyTeX on Windows)
 - TinyTeX packages needed: `type1cm`, `cm-super`, `underscore`, `dvipng`
 - tlmgr path: `C:/Users/yashd/AppData/Roaming/TinyTeX/bin/windows/tlmgr.bat`

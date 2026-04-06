@@ -5,7 +5,7 @@ This module exports all actor types:
 - ModelProvider: AI model provider competing on benchmarks
 - Evaluator: Benchmark organization that scores models
 - Consumer: End user who subscribes to models
-- Policymaker: Regulator who can issue requirements
+- Regulator: Regulatory body who can issue requirements
 - Funder: Capital allocator who influences provider development
 
 Each actor has:
@@ -16,8 +16,8 @@ Each actor has:
 
 from .model_provider import ModelProvider
 from .evaluator import Evaluator, Benchmark, Regulation
-from .consumer import Consumer
-from .policymaker import Policymaker
+from .consumer import ConsumerMarket, MarketSegment
+from .regulator import Regulator
 from .funder import Funder, get_default_funder_configs, get_multi_funder_configs
 
 __all__ = [
@@ -27,8 +27,9 @@ __all__ = [
     "Benchmark",
     "Regulation",
     # New actors
-    "Consumer",
-    "Policymaker",
+    "ConsumerMarket",
+    "MarketSegment",
+    "Regulator",
     "Funder",
     # Funder configs
     "get_default_funder_configs",

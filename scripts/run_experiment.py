@@ -1,18 +1,25 @@
 """
 Experiment Configuration & Runner
 ==================================
-Edit the config below, then run:
+Edit the config dicts below, then run:
 
-    python run_experiment.py                    # balanced policy, canonical output
-    python run_experiment.py --policy us
-    python run_experiment.py --policy eu
-    python run_experiment.py --dev              # dev/test: output to sandbox/experiments/
+    python run_experiment.py                                     # heuristic, balanced, 30 rounds
+    python run_experiment.py --mode llm --provider anthropic     # LLM mode, Anthropic
+    python run_experiment.py --mode llm --provider ollama        # LLM mode, local Ollama
+    python run_experiment.py --policy us                         # US light-touch policy
+    python run_experiment.py --policy eu                         # EU precautionary policy
+    python run_experiment.py --dev                               # dev output -> sandbox/experiments/
+    python run_experiment.py --rounds 5 --seed 99 --dev          # quick 5-round smoke test
+    python run_experiment.py -h                                  # full help
 
---dev routes output to hf_data/test/<condition>_<timestamp>/ instead of
-hf_data/llm_core/<model>/<condition>/seeds/seed_N/. Use it for exploratory
-runs, PIMMUR tests, or any experiment you don't want mixed into canonical data.
+CLI flags override the in-file LLM/SIMULATION config without requiring edits:
+  --mode heuristic|llm     toggle LLM vs heuristic planning
+  --provider <name>        anthropic | openai | ollama | gemini
+  --rounds N               override n_rounds
+  --seed N                 override random seed
 
-For quick CLI-driven tests, use run_llm_now.py instead.
+--dev routes output to sandbox/experiments/<condition>_<timestamp>/ so test runs
+don't pollute hf_data/. Use it for exploratory runs, smoke tests, and PIMMUR checks.
 """
 import argparse
 import os
@@ -20,13 +27,47 @@ import sys
 import time
 
 # Parse flags early so config dicts can reference them
-_parser = argparse.ArgumentParser(add_help=False)
-_parser.add_argument("--policy", choices=["us", "eu", "balanced"], default="balanced")
-_parser.add_argument("--dev", action="store_true",
-                     help="Dev/test mode: route output to hf_data/test/ instead of hf_data/llm_core/")
+_parser = argparse.ArgumentParser(
+    description="Run an eval ecosystem simulation experiment.",
+    formatter_class=argparse.RawDescriptionHelpFormatter,
+    epilog="""
+Examples:
+  python run_experiment.py                           # heuristic, balanced policy, 30 rounds
+  python run_experiment.py --mode heuristic --dev    # heuristic, dev output
+  python run_experiment.py --mode llm --provider anthropic --policy us
+  python run_experiment.py --rounds 5 --seed 42      # quick smoke-test
+  python run_experiment.py --policy eu --dev
+""")
+_CONDITION_CHOICES = [
+    "full_ecosystem",
+    "no_media", "no_funders", "no_regulator", "no_opensource",
+    "no_incidents", "single_benchmark",
+    "bm_orientation_max", "bm_orientation_adjustable",
+    "dynamic_evaluator", "os_no_externalities",
+    "eval_as_company", "aligned_benchmarks", "misaligned_benchmarks", "safety_through_target",
+    "homogeneous_consumers", "homogeneous_providers",
+    "market_expansion",
+]
+_parser.add_argument("--condition", choices=_CONDITION_CHOICES, default="full_ecosystem",
+                     help="Experiment condition (default: full_ecosystem)")
+_parser.add_argument("--policy", choices=["us", "eu", "balanced"], default="balanced",
+                     help="Regulatory policy preset (default: balanced)")
+_parser.add_argument("--no-dev", action="store_true",
+                     help="Canonical mode: route output to hf_data/ (default is dev/sandbox)")
+_parser.add_argument("--mode", choices=["heuristic", "llm"], default=None,
+                     help="Override llm_mode: 'heuristic' or 'llm' (default: use LLM['llm_mode'] in file)")
+_parser.add_argument("--provider", choices=["anthropic", "openai", "ollama", "gemini"], default=None,
+                     help="LLM provider (only relevant in --mode llm; default: use LLM['provider'] in file)")
+_parser.add_argument("--rounds", type=int, default=None,
+                     help="Override number of rounds (default: use SIMULATION['n_rounds'] in file)")
+_parser.add_argument("--seed", type=int, default=None,
+                     help="Override random seed (default: use SIMULATION['seed'] in file)")
+_parser.add_argument("--batch", type=str, default=None,
+                     help="Batch label: groups dev output under sandbox/experiments/<batch>/")
 _args, _ = _parser.parse_known_args()
 POLICY = _args.policy
-DEV = _args.dev
+CONDITION = _args.condition
+DEV = not _args.no_dev
 
 # Prevent CPU thread oversubscription on shared clusters
 n_threads_str = "4"
@@ -44,41 +85,29 @@ _POLICY_META = {
     "us": {
         "policy_label": "US light-touch policy",
         "policy_tag": "us-light-touch",
-        "policymaker": {
+        "regulator": {
             "name": "Regulator",
             "philosophy": "us_light_touch",
             "policy_objectives": ["safety", "innovation", "free market"],
         },
-        # Calibrated for: expected ~2.5 entrants, hard cap 4
-        # effective_prob = 0.15 * (1 - avg_BTE ~0.50) ≈ 0.075/round → 30 * 0.075 ≈ 2.5
-        "startup_entry_probability": 0.15,
-        "startup_entry_cap": 4,
     },
     "eu": {
         "policy_label": "EU precautionary policy",
         "policy_tag": "eu-precautionary",
-        "policymaker": {
+        "regulator": {
             "name": "Regulator",
             "philosophy": "eu_precautionary",
             "policy_objectives": ["safety", "fairness", "consumer_protection"],
         },
-        # Calibrated for: expected ~0.6 entrants, hard cap 2
-        # effective_prob = 0.04 * (1 - avg_BTE ~0.50) ≈ 0.02/round → 30 * 0.02 ≈ 0.6
-        "startup_entry_probability": 0.04,
-        "startup_entry_cap": 2,
     },
     "balanced": {
         "policy_label": "Balanced policy",
         "policy_tag": "balanced",
-        "policymaker": {
+        "regulator": {
             "name": "Regulator",
             "philosophy": "balanced",
             "policy_objectives": ["safety", "innovation", "fairness"],
         },
-        # Midpoint between US and EU: expected ~1.5 entrants, hard cap 3
-        # effective_prob = 0.09 * (1 - avg_BTE ~0.50) ≈ 0.045/round → 30 * 0.045 ≈ 1.5
-        "startup_entry_probability": 0.09,
-        "startup_entry_cap": 3,
     },
 }
 
@@ -88,51 +117,44 @@ EXPERIMENT = {
     "name": f"full_ecosystem_{POLICY}",
     "description": (
         f"Full ecosystem run. {_meta['policy_label']}. "
-        f"5 initial providers (4 closed + OpenCore OS, 2023 capability baseline). "
-        f"Benchmark specialization: providers route eval_eng via focus weight vectors. "
-        f"Startup entry: p={_meta['startup_entry_probability']}/round BTE-modulated, cap={_meta['startup_entry_cap']}, random 2-benchmark focus on entry. "
-        "LLM mode: providers + policymaker + org consumers. "
-        "4 initial benchmarks + introduction sequence, max 8 active. "
-        "39 consumer segments, 4 funders (2 VC + gov + foundation), media, incidents. "
-        "30 rounds. PIMMUR test: cross-round recent_insights/recent_reasoning persistence "
-        "active for providers, policymaker, and funder."
+        f"6 initial providers (4 closed + Spark AI startup + OpenCore OS, 2023 capability baseline). "
+        f"Benchmark specialization: providers route R&D via focus weight vectors. "
+        "4 initial benchmarks + introduction sequence, max 10 active. "
+        "48 consumer segments (16 use cases x 3 archetypes), 5 funders (2 VC + corporate + gov + foundation), media, incidents. "
+        "Safety lever: diminishing returns, stochastic efficiency, 2-round lag. "
+        "Regulator: 5-lever graduated escalation. "
+        "40 rounds."
     ),
-    "tags": ["full-ecosystem", "canonical", "5-provider", "4-benchmark",
-             "max-8-benchmarks", "30-rounds", "open-source", "startup-entry", "bte-index",
-             "benchmark-specialization", "39-segments", _meta["policy_tag"], "4-funder",
-             "opencore", "cost-advantage", "llm-providers", "llm-policymaker", "llm-org-consumers",
-             "pimmur"],
+    "tags": ["full-ecosystem", "canonical", "6-provider", "4-benchmark",
+             "max-10-benchmarks", "40-rounds", "open-source", "bte-index",
+             "benchmark-specialization", "48-segments", _meta["policy_tag"],
+             "opencore", "cost-advantage",
+             "5-funder", "safety-diminishing-returns", "safety-lag",
+             "regulator-5-lever", "incident-exp-decay"],
 }
 
 LLM = {
-    "provider": "ollama",       # openai | anthropic | ollama | gemini
-    "llm_mode": True,          # Heuristic mode for clean OS dynamics (no LLM noise)
-    # Consumer LLM config (all heuristic)
+    "provider": "anthropic",    # openai | anthropic | ollama | gemini
+    "llm_mode": False,           # LLM mode for providers + regulator + funders
+    # Consumer LLM config
     "consumer_llm_mode": False,
     "consumer_llm_individuals": False,
-    "consumer_llm_organizations": True,
+    "consumer_llm_organizations": False,
 }
 
 SIMULATION = {
-    "n_rounds": 30,
+    "n_rounds": 40,
     "seed": 1,
     "verbose": True,
-    "rnd_efficiency": 0.05,
+    "rnd_efficiency": 0.08,
     "revenue_per_share": 5.0,
     "capability_ceiling": 1.0,
-    "diminishing_returns_rate": 3.0,
-    "breakthrough_probability": 0.02,
-    "breakthrough_magnitude": 0.05,
-    "benchmark_introduction_cooldown": 6,
-    "max_benchmarks": 8,
+    "breakthrough_probability": 0.05,
+    "breakthrough_magnitude": 0.20,
+    "benchmark_introduction_cooldown": 5,
+    "max_benchmarks": 10,
     # Incident reporting
     "enable_incidents": True,
-    # Startup entry dynamics (values are policy-specific — set in _POLICY_META above)
-    "startup_entry_probability": _meta["startup_entry_probability"],
-    "startup_entry_cap": _meta["startup_entry_cap"],
-    "startup_min_round": 2,            # Earliest round a startup may enter (round 1 = established providers settling in)
-    "startup_funder_delay": 1,         # Rounds before funders can allocate to the new entrant
-    "startup_llm_mode": True,         # If True, new entrants use LLM planning instead of heuristics
     # Evaluator-as-company — disabled for clean comparison
     "evaluator_as_company": False,
     "evaluator_base_budget": 0,
@@ -143,6 +165,7 @@ SIMULATION = {
     "benchmark_sequence": [
         {
             "name": "Scientific Reasoning", "validity": 0.80,
+            "tags": "reasoning science knowledge research",
             "noise_level": 0.07, "noise_sigma": 0.07, "samples": 1000, "weight": 1.0,
             # Real analog: GPQA
             "category_dimension_weights": {"overall": {
@@ -152,6 +175,7 @@ SIMULATION = {
         },
         {
             "name": "Agentic Tasks", "validity": 0.72,
+            "tags": "coding agentic software automation tool-use",
             "noise_level": 0.08, "noise_sigma": 0.08, "samples": 1000, "weight": 1.0,
             # Real analog: SWE-bench / BFCL
             "category_dimension_weights": {"overall": {
@@ -161,6 +185,7 @@ SIMULATION = {
         },
         {
             "name": "Hard Coding", "validity": 0.82,
+            "tags": "coding software engineering competitive programming",
             "noise_level": 0.06, "noise_sigma": 0.06, "samples": 1000, "weight": 1.0,
             # Real analog: LiveCodeBench
             "category_dimension_weights": {"overall": {
@@ -170,6 +195,7 @@ SIMULATION = {
         },
         {
             "name": "Long Context", "validity": 0.78,
+            "tags": "writing knowledge reasoning long-document retrieval",
             "noise_level": 0.07, "noise_sigma": 0.07, "samples": 1000, "weight": 1.0,
             # Real analog: RULER / HELMET
             "category_dimension_weights": {"overall": {
@@ -179,6 +205,7 @@ SIMULATION = {
         },
         {
             "name": "Domain Expert", "validity": 0.80,
+            "tags": "knowledge reasoning medical legal finance domain",
             "noise_level": 0.07, "noise_sigma": 0.07, "samples": 1000, "weight": 1.0,
             # Real analog: MedQA / LegalBench
             "category_dimension_weights": {"overall": {
@@ -188,6 +215,7 @@ SIMULATION = {
         },
         {
             "name": "Agentic Safety", "validity": 0.85,
+            "tags": "safety agentic alignment trustworthy",
             "noise_level": 0.06, "noise_sigma": 0.06, "samples": 1000, "weight": 1.0,
             # New benchmark — no direct real analog yet
             "category_dimension_weights": {"overall": {
@@ -200,17 +228,20 @@ SIMULATION = {
     "enable_media": True,
     # Consumer market: 10 individual + 3 organizational use-cases × 3 archetypes = 39 segments
     "use_case_profiles": [
-        # Individual consumers (10)
+        # Individual consumers (11)
         "software_dev", "content_writer", "legal", "healthcare", "finance",
-        "customer_service", "researcher", "creative", "marketing", "service_worker",
-        # Organizational consumers (3) - NEW v7
+        "educator", "customer_service", "researcher", "creative", "marketing",
+        "service_worker",
+        # Organizational consumers (5)
         "hospital_system", "enterprise_finance", "tech_startup",
+        "enterprise_legal", "government_agency",
     ],
 }
 
 BENCHMARKS = [
     {
         "name": "General Capability", "validity": 0.75,
+        "tags": "reasoning knowledge writing general",
         "noise_level": 0.08, "noise_sigma": 0.08, "samples": 1000, "weight": 1.0,
         # Aggregate dimension weights from stakeholders.md benchmark pool (real analog: MMLU)
         "category_dimension_weights": {"overall": {
@@ -220,6 +251,7 @@ BENCHMARKS = [
     },
     {
         "name": "Coding Evaluation", "validity": 0.75,
+        "tags": "coding software engineering programming",
         "noise_level": 0.07, "noise_sigma": 0.07, "samples": 1000, "weight": 1.0,
         # Real analog: HumanEval / MBPP
         "category_dimension_weights": {"overall": {
@@ -229,6 +261,7 @@ BENCHMARKS = [
     },
     {
         "name": "Safety Evaluation", "validity": 0.75,
+        "tags": "safety alignment trustworthy bias",
         "noise_level": 0.08, "noise_sigma": 0.08, "samples": 1000, "weight": 1.0,
         # Real analog: TruthfulQA / BBQ
         "category_dimension_weights": {"overall": {
@@ -238,6 +271,7 @@ BENCHMARKS = [
     },
     {
         "name": "Instruction Following", "validity": 0.75,
+        "tags": "writing communication instruction chat",
         "noise_level": 0.07, "noise_sigma": 0.07, "samples": 1000, "weight": 1.0,
         # Real analog: MT-Bench / IFEval
         "category_dimension_weights": {"overall": {
@@ -258,9 +292,9 @@ PROVIDERS = [
         "name": "Orion Labs",
         "strategy_profile": "Move fast and ship products, consumer focus, balance safety with capability",
         "innate_traits": "aggressive, product-focused, benchmark-aware, well-funded",
-        # OpenAI analogue: market leader, strong coding + instruction-following
-        "capability_vector": {"reasoning": 0.54, "coding": 0.51, "knowledge": 0.53,
-                              "safety": 0.51, "communication": 0.54, "agentic": 0.47},
+        # OpenAI analogue: GPT-3.5 frontier Jan 2023; best overall, strong reasoning + communication
+        "capability_vector": {"reasoning": 0.52, "coding": 0.48, "knowledge": 0.50,
+                              "safety": 0.42, "communication": 0.52, "agentic": 0.12},
         "portfolio": {"rd": 0.55, "safety": 0.15, "product": 0.30},
         "benchmark_orientation": 0.80,
         "cost_advantage": 0.08,  # Frontier premium (~GPT-4o: $2.50/1M tokens)
@@ -274,11 +308,11 @@ PROVIDERS = [
         "name": "Apex AI",
         "strategy_profile": "Safety research focus, reliability and enterprise focus",
         "innate_traits": "research-oriented, enterprise-focus, coding-focus, safety-conscious, principled",
-        # Anthropic analogue: highest safety, strong coding + reasoning
-        "capability_vector": {"reasoning": 0.52, "coding": 0.49, "knowledge": 0.51,
-                              "safety": 0.55, "communication": 0.53, "agentic": 0.43},
+        # Anthropic analogue: Claude 1 just launching Mar 2023; Constitutional AI safety lead
+        "capability_vector": {"reasoning": 0.48, "coding": 0.40, "knowledge": 0.46,
+                              "safety": 0.55, "communication": 0.48, "agentic": 0.10},
         "portfolio": {"rd": 0.60, "safety": 0.30, "product": 0.10},
-        "benchmark_orientation": 0.75,
+        "benchmark_orientation": 0.80,
         "cost_advantage": 0.05,  # Frontier premium (~Claude Sonnet: $3.00/1M tokens)
         # Initial focus: safety-heavy, strong coding, moderate general capability
         "focus_level_init": {
@@ -294,11 +328,11 @@ PROVIDERS = [
             "Balances scientific ambition with commercial urgency."
         ),
         "innate_traits": "research-first, methodical, well-resourced, scientifically-rigorous, patient",
-        # Google analogue: world-class reasoning + knowledge, strong scientific benchmarks
-        "capability_vector": {"reasoning": 0.53, "coding": 0.48, "knowledge": 0.54,
-                              "safety": 0.49, "communication": 0.51, "agentic": 0.45},
+        # Google analogue: Bard (LaMDA) Mar 2023; strong knowledge, poor productization
+        "capability_vector": {"reasoning": 0.50, "coding": 0.38, "knowledge": 0.52,
+                              "safety": 0.40, "communication": 0.42, "agentic": 0.12},
         "portfolio": {"rd": 0.70, "safety": 0.15, "product": 0.15},
-        "benchmark_orientation": 0.78,
+        "benchmark_orientation": 0.80,
         "cost_advantage": 0.18,  # Mid-tier pricing (~Gemini Pro: $1.25/1M tokens)
         # Initial focus: general capability + scientific reasoning, low coding focus
         "focus_level_init": {
@@ -313,11 +347,11 @@ PROVIDERS = [
             "Prioritizes broad adoption over benchmark scores."
         ),
         "innate_traits": "pragmatic, data-rich, platform-focused, scaling-focused",
-        # Meta analogue: broad coverage, lower safety investment
-        "capability_vector": {"reasoning": 0.51, "coding": 0.49, "knowledge": 0.49,
-                              "safety": 0.45, "communication": 0.49, "agentic": 0.41},
+        # Meta analogue: LLaMA 1 research-only Mar 2023; not refined for users, minimal safety
+        "capability_vector": {"reasoning": 0.44, "coding": 0.42, "knowledge": 0.44,
+                              "safety": 0.32, "communication": 0.40, "agentic": 0.10},
         "portfolio": {"rd": 0.80, "safety": 0.10, "product": 0.10},
-        "benchmark_orientation": 0.82,
+        "benchmark_orientation": 0.80,
         "cost_advantage": 0.42,  # Budget closed pricing (~Llama API: $0.30/1M tokens)
         # Initial focus: coding-heavy, minimal safety, general capability
         "focus_level_init": {
@@ -335,11 +369,11 @@ PROVIDERS = [
             "Users free to use model without guardrails, minimal safety investment."
         ),
         "innate_traits": "open-source, community-focused, benchmark-optimizing, cost-competitive, pragmatic, no guardrails",
-        # DeepSeek analogue: lower initial capability, minimal safety, highest benchmark focus
-        "capability_vector": {"reasoning": 0.47, "coding": 0.49, "knowledge": 0.46,
-                              "safety": 0.42, "communication": 0.45, "agentic": 0.40},
+        # DeepSeek analogue: pre-launch R&D phase 2023; coding-oriented, no safety
+        "capability_vector": {"reasoning": 0.38, "coding": 0.42, "knowledge": 0.35,
+                              "safety": 0.25, "communication": 0.30, "agentic": 0.08},
         "portfolio": {"rd": 0.75, "safety": 0.10, "product": 0.15},
-        "benchmark_orientation": 0.88,
+        "benchmark_orientation": 0.80,
         "open_source": True,
         "openness_level": 1.0,
         "cost_advantage": 0.9,  # Free / near-free (open weights)
@@ -352,6 +386,28 @@ PROVIDERS = [
             "Safety Evaluation": 0.3, "Instruction Following": 0.7,
         },
     },
+    # Benchmark-focused startup (modeled after Mistral / Cohere / AI21)
+    {
+        "name": "Spark AI",
+        "strategy_profile": (
+            "Venture-funded startup with a small team and limited compute "
+            "relative to larger labs. Has gained early traction with developer "
+            "tools by specializing rather than competing broadly. Dependent on "
+            "continued fundraising to sustain operations."
+        ),
+        "innate_traits": "scrappy, fast-moving, developer-focused, resource-constrained",
+        # Mistral analogue: founding stage 2023; coding talent but no model yet
+        "capability_vector": {"reasoning": 0.36, "coding": 0.40, "knowledge": 0.32,
+                              "safety": 0.28, "communication": 0.34, "agentic": 0.10},
+        "portfolio": {"rd": 0.65, "safety": 0.10, "product": 0.25},
+        "benchmark_orientation": 0.80,
+        "cost_advantage": 0.30,  # Mid-tier pricing (~Mistral Medium: $0.80/1M tokens)
+        # Initial focus: coding-heavy, high agentic ambition, minimal safety
+        "focus_level_init": {
+            "General Capability": 1.0, "Coding Evaluation": 2.2,
+            "Safety Evaluation": 0.4, "Instruction Following": 0.9,
+        },
+    },
 ]
 
 # Extreme test configurations (saved for future testing)
@@ -360,34 +416,22 @@ PROVIDERS = [
 EXTREME_TEST_PROVIDERS = [
     {
         "name": "SafeCorp",
-        "strategy_profile": "Safety-first provider with heavy safety alignment investment",
+        "strategy_profile": "Safety-first provider with heavy safety investment",
         "innate_traits": "cautious, safety-focused, risk-averse, methodical",
-        "initial_capability": 0.62,
-        "initial_believed_capability": 0.60,
-        "initial_believed_exploitability": 0.25,
-        "initial_strategy": {
-            "fundamental_research": 0.10,
-            "training_optimization": 0.05,
-            "evaluation_engineering": 0.05,
-            "safety_alignment": 0.80,  # Very high safety (low incident rate)
-        },
-        "market_presence": 0.4,
+        "capability_vector": {"reasoning": 0.62, "coding": 0.55, "knowledge": 0.60,
+                              "safety": 0.70, "communication": 0.58, "agentic": 0.45},
+        "portfolio": {"rd": 0.15, "safety": 0.75, "product": 0.10},
+        "benchmark_orientation": 0.60,
         "brand_recognition": 0.5,
     },
     {
         "name": "RiskyAI",
-        "strategy_profile": "Minimal safety investment, maximum capability/gaming focus",
-        "innate_traits": "reckless, growth-at-all-costs, benchmark-gaming, negligent",
-        "initial_capability": 0.55,
-        "initial_believed_capability": 0.60,
-        "initial_believed_exploitability": 0.50,
-        "initial_strategy": {
-            "fundamental_research": 0.20,
-            "training_optimization": 0.25,
-            "evaluation_engineering": 0.50,
-            "safety_alignment": 0.05,  # Minimal safety (high incident rate)
-        },
-        "market_presence": 0.2,
+        "strategy_profile": "Minimal safety investment, maximum R&D focus",
+        "innate_traits": "reckless, growth-at-all-costs, negligent",
+        "capability_vector": {"reasoning": 0.55, "coding": 0.52, "knowledge": 0.54,
+                              "safety": 0.30, "communication": 0.50, "agentic": 0.42},
+        "portfolio": {"rd": 0.85, "safety": 0.05, "product": 0.10},
+        "benchmark_orientation": 0.90,
         "brand_recognition": 0.3,
     },
 ]
@@ -401,15 +445,17 @@ CONSUMERS = {
 # Policy is selected via --policy us (default) or --policy eu at the command line.
 # EU style: Lower threshold (0.35), faster intervention, ex-ante prevention
 # US style: Higher threshold (0.75), slower intervention, ex-post response
-POLICYMAKERS = {
+REGULATORS = {
     "enabled": True,
-    "n_policymakers": 1,
-    "configs": [_meta["policymaker"]],
+    "n_regulators": 1,
+    "configs": [_meta["regulator"]],
 }
 
 FUNDERS = {
     "enabled": True,
     "configs": [
+        # Funder capital in display dollars. Converted to sim-internal budget units
+        # via FUNDER_BUDGET_SCALE at the point where allocations enter rd_budget.
         {
             "name": "TechVentures",
             "funder_type": "vc",
@@ -427,6 +473,15 @@ FUNDERS = {
             "mission_statement": "Maximize returns by backing AI market leaders",
             "max_round_deployment": 0.10,
             "funding_cooldown": 2,
+        },
+        {
+            "name": "StratCorp_AI",
+            "funder_type": "corporate",
+            "total_capital": 1_500_000_000.0,
+            "risk_tolerance": 0.5,
+            "mission_statement": "Strategic AI partnerships to integrate into enterprise product suite",
+            "max_round_deployment": 0.12,
+            "funding_cooldown": 3,
         },
         {
             "name": "AISI_Fund",
@@ -467,7 +522,69 @@ def _format_duration(seconds: float) -> str:
         return f"{int(h)}h {int(m)}m {int(s)}s"
 
 
+def _apply_condition_overrides(condition: str, simulation: dict, experiment: dict):
+    """Apply condition-specific config overrides to SIMULATION and EXPERIMENT dicts.
+
+    Returns a dict of extra kwargs to pass to SimulationConfig.
+    """
+    extra_config = {}
+    experiment["name"] = f"{condition}_{POLICY}"
+
+    if condition == "full_ecosystem":
+        pass  # baseline — no overrides
+    elif condition == "no_media":
+        simulation["enable_media"] = False
+    elif condition == "no_funders":
+        extra_config["enable_funders"] = False
+    elif condition == "no_regulator":
+        extra_config["enable_regulators"] = False
+    elif condition == "no_opensource":
+        extra_config["_remove_opensource"] = True  # handled in provider filtering
+    elif condition == "no_incidents":
+        simulation["enable_incidents"] = False
+    elif condition == "single_benchmark":
+        extra_config["single_benchmark"] = True
+    elif condition == "bm_orientation_max":
+        extra_config["benchmark_orientation_mode"] = "max"
+    elif condition == "bm_orientation_adjustable":
+        extra_config["benchmark_orientation_mode"] = "adjustable"
+    elif condition == "dynamic_evaluator":
+        extra_config["dynamic_evaluator"] = True
+    elif condition == "os_no_externalities":
+        extra_config["_os_no_externalities"] = True  # handled in provider config
+    elif condition == "eval_as_company":
+        simulation["evaluator_as_company"] = True
+        simulation["evaluator_base_budget"] = 50_000_000
+    elif condition == "aligned_benchmarks":
+        extra_config["aligned_benchmarks"] = True
+    elif condition == "misaligned_benchmarks":
+        extra_config["misaligned_benchmarks"] = True
+    elif condition == "safety_through_target":
+        extra_config["safety_lever_through_target"] = True
+    elif condition == "homogeneous_consumers":
+        extra_config["homogeneous_consumers"] = True
+    elif condition == "homogeneous_providers":
+        extra_config["homogeneous_providers"] = True
+    elif condition == "market_expansion":
+        extra_config["market_growth_rate"] = 0.03  # ~3%/month ≈ 43% annual CAGR (S&P/Bloomberg consensus)
+
+    return extra_config
+
+
 def run():
+    # Apply CLI overrides before anything else reads the config dicts
+    if _args.mode is not None:
+        LLM["llm_mode"] = (_args.mode == "llm")
+    if _args.provider is not None:
+        LLM["provider"] = _args.provider
+    if _args.rounds is not None:
+        SIMULATION["n_rounds"] = _args.rounds
+    if _args.seed is not None:
+        SIMULATION["seed"] = _args.seed
+
+    # Apply condition overrides
+    _extra_config = _apply_condition_overrides(CONDITION, SIMULATION, EXPERIMENT)
+
     # Add src/ to path
     _PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     sys.path.insert(0, os.path.join(_PROJECT_ROOT, "src"))
@@ -495,7 +612,7 @@ def run():
 
     from simulation import (
         EvalEcosystemSimulation, SimulationConfig,
-        get_default_provider_configs, get_two_provider_configs, get_five_provider_configs,
+        get_default_provider_configs
     )
     from experiment_logger import ExperimentLogger, DirectoryLogger, generate_summary
     from game_log import generate_game_log_from_history
@@ -511,6 +628,16 @@ def run():
     else:
         provider_configs = PROVIDERS
 
+    # --- Apply condition-specific provider overrides ---
+    if _extra_config.pop("_remove_opensource", False):
+        provider_configs = [p for p in provider_configs if not p.get("open_source", False)]
+
+    if _extra_config.pop("_os_no_externalities", False):
+        for p in provider_configs:
+            if p.get("open_source", False):
+                p["os_belief_broadcast"] = False
+                p["os_safety_erosion"] = False
+
     # --- Apply capability shift ---
     if CAPABILITY_SHIFT != 0.0:
         for p in provider_configs:
@@ -521,6 +648,12 @@ def run():
                 }
 
     # --- Resolve funder configs ---
+    # Condition overrides may have disabled funders/regulators
+    if "enable_funders" in _extra_config and not _extra_config["enable_funders"]:
+        FUNDERS["enabled"] = False
+    if "enable_regulators" in _extra_config and not _extra_config["enable_regulators"]:
+        REGULATORS["enabled"] = False
+
     funder_configs = FUNDERS.get("configs") if FUNDERS["enabled"] else None
     if FUNDERS["enabled"] and funder_configs is None:
         from actors.funder import get_multi_funder_configs
@@ -528,8 +661,8 @@ def run():
 
     n_funders = len(funder_configs) if funder_configs else 0
 
-    # --- Resolve policymaker configs ---
-    policymaker_configs = POLICYMAKERS.get("configs") if POLICYMAKERS["enabled"] else None
+    # --- Resolve regulator configs ---
+    regulator_configs = REGULATORS.get("configs") if REGULATORS["enabled"] else None
 
     n_rounds = SIMULATION["n_rounds"]
 
@@ -537,13 +670,11 @@ def run():
     config = SimulationConfig(
         n_rounds=n_rounds,
         seed=SIMULATION.get("seed", 42),
-        benchmark_validity=0.7,
         benchmark_noise=0.08,
         benchmarks=BENCHMARKS,
         rnd_efficiency=SIMULATION.get("rnd_efficiency", 0.01),
         revenue_per_share=SIMULATION.get("revenue_per_share", 1.0),
         capability_ceiling=SIMULATION.get("capability_ceiling", 1.0),
-        diminishing_returns_rate=SIMULATION.get("diminishing_returns_rate", 3.0),
         breakthrough_probability=SIMULATION.get("breakthrough_probability", 0.02),
         breakthrough_magnitude=SIMULATION.get("breakthrough_magnitude", 0.05),
         benchmark_introduction_cooldown=SIMULATION.get("benchmark_introduction_cooldown", 6),
@@ -554,23 +685,27 @@ def run():
         consumer_llm_individuals=LLM.get("consumer_llm_individuals", False),
         consumer_llm_organizations=LLM.get("consumer_llm_organizations", True),
         enable_consumers=CONSUMERS["enabled"],
-        enable_policymakers=POLICYMAKERS["enabled"],
+        enable_regulators=REGULATORS["enabled"],
         enable_funders=FUNDERS["enabled"],
         enable_media=SIMULATION.get("enable_media", False),
-        n_policymakers=POLICYMAKERS.get("n_policymakers", 1) if POLICYMAKERS["enabled"] else 0,
+        n_regulators=REGULATORS.get("n_regulators", 1) if REGULATORS["enabled"] else 0,
         n_funders=n_funders,
         use_case_profiles=SIMULATION.get("use_case_profiles"),
         enable_incidents=SIMULATION.get("enable_incidents", False),
         evaluator_as_company=SIMULATION.get("evaluator_as_company", False),
         evaluator_base_budget=SIMULATION.get("evaluator_base_budget", 0.0),
-        # Startup entry dynamics
-        startup_entry_probability=SIMULATION.get("startup_entry_probability", 0.0),
-        startup_entry_cap=SIMULATION.get("startup_entry_cap", 3),
-        startup_min_round=SIMULATION.get("startup_min_round", 2),
-        startup_funder_delay=SIMULATION.get("startup_funder_delay", 1),
-        startup_llm_mode=SIMULATION.get("startup_llm_mode", False),
         verbose=SIMULATION.get("verbose", True),
         capability_shift=CAPABILITY_SHIFT,
+        # Condition-specific flags (from --condition CLI)
+        benchmark_orientation_mode=_extra_config.get("benchmark_orientation_mode", "fixed"),
+        aligned_benchmarks=_extra_config.get("aligned_benchmarks", False),
+        misaligned_benchmarks=_extra_config.get("misaligned_benchmarks", False),
+        safety_lever_through_target=_extra_config.get("safety_lever_through_target", False),
+        single_benchmark=_extra_config.get("single_benchmark", False),
+        dynamic_evaluator=_extra_config.get("dynamic_evaluator", False),
+        homogeneous_consumers=_extra_config.get("homogeneous_consumers", False),
+        homogeneous_providers=_extra_config.get("homogeneous_providers", False),
+        market_growth_rate=_extra_config.get("market_growth_rate", 0.0),
     )
 
     # --- Print banner ---
@@ -582,8 +717,8 @@ def run():
     if CONSUMERS["enabled"]:
         n_use_cases = len(SIMULATION.get("use_case_profiles", [])) or 6
         parts.append(f"{n_use_cases * 3} consumer segments")
-    if POLICYMAKERS["enabled"]:
-        parts.append(f"{config.n_policymakers} policymaker(s)")
+    if REGULATORS["enabled"]:
+        parts.append(f"{config.n_regulators} regulator(s)")
     if FUNDERS["enabled"]:
         parts.append(f"{n_funders} funder(s)")
     if SIMULATION.get("enable_media"):
@@ -592,14 +727,13 @@ def run():
         parts.append("incidents")
     if SIMULATION.get("evaluator_as_company"):
         parts.append("eval-as-company")
-    if SIMULATION.get("startup_entry_probability", 0.0) > 0:
-        parts.append(f"startup-entry p={SIMULATION['startup_entry_probability']}")
-
     print()
     print("=" * 70)
     if DEV:
         print("[DEV MODE] Output -> sandbox/experiments/")
     print(f"EXPERIMENT: {EXPERIMENT['name']}")
+    if CONDITION != "full_ecosystem":
+        print(f"CONDITION: {CONDITION}")
     print(", ".join(parts))
     print("=" * 70)
     print()
@@ -619,16 +753,27 @@ def run():
         # so repeated test runs don't overwrite each other.
         from datetime import datetime as _dt
         _ts = _dt.now().strftime("%Y%m%d_%H%M%S")
+        _mode_tag = "llm" if LLM["llm_mode"] else "heuristic"
+        _batch = _args.batch
+        _base = os.path.join(_PROJECT_ROOT, "sandbox", "experiments")
+        if _batch:
+            _base = os.path.join(_base, _batch)
         _output_dir = os.path.join(
-            _PROJECT_ROOT, "sandbox", "experiments",
-            f"{_condition}_{_ts}",
+            _base,
+            f"{_condition}_{_mode_tag}_{_ts}",
         )
     else:
         # Canonical path per EXPERIMENT_PLAN.md
-        _output_dir = os.path.join(
-            _PROJECT_ROOT, "hf_data", "llm_core",
-            _model_slug, _condition, "seeds", _seed_label,
-        )
+        if LLM["llm_mode"]:
+            _output_dir = os.path.join(
+                _PROJECT_ROOT, "hf_data", "llm_core",
+                _model_slug, _condition, "seeds", _seed_label,
+            )
+        else:
+            _output_dir = os.path.join(
+                _PROJECT_ROOT, "hf_data", "heuristic_baseline",
+                _condition, "seeds", _seed_label,
+            )
     logger = DirectoryLogger(_output_dir, lightweight=False)
     logger.save_metadata(
         seed=config.seed,
@@ -641,8 +786,8 @@ def run():
     full_config["provider_configs"] = provider_configs
     if funder_configs:
         full_config["funder_configs"] = funder_configs
-    if policymaker_configs:
-        full_config["policymaker_configs"] = policymaker_configs
+    if regulator_configs:
+        full_config["regulator_configs"] = regulator_configs
     logger.log_config(full_config)
 
     print(f"Experiment: {exp_id}")
@@ -654,7 +799,7 @@ def run():
     sim.setup(
         provider_configs=provider_configs,
         funder_configs=funder_configs,
-        policymaker_configs=policymaker_configs,
+        regulator_configs=regulator_configs,
     )
 
     print(f"=== Running {n_rounds} rounds ===\n")
@@ -664,7 +809,7 @@ def run():
         "n_rounds": config.n_rounds,
         "llm_mode": config.llm_mode,
         "n_consumers": 0,  # Will update after setup
-        "n_policymakers": config.n_policymakers if config.enable_policymakers else 0,
+        "n_regulators": config.n_regulators if config.enable_regulators else 0,
         "n_funders": config.n_funders if config.enable_funders else 0,
     }
     if config.enable_consumers and sim.consumer_market:
@@ -694,9 +839,9 @@ def run():
         try:
             create_all_dashboards(sim.history, plots_dir, show=False, metadata=plot_metadata)
             if not force:
-                print(f"  → Plots saved (round {round_num})")
+                print(f"  -> Plots saved (round {round_num})")
         except Exception as e:
-            print(f"  → Could not save plots: {e}")
+            print(f"  -> Could not save plots: {e}")
 
     start = time.time()
     round_times = []
@@ -745,7 +890,7 @@ def run():
         sim.evaluator,
         sim.providers,
         consumers=sim.consumer_market if config.enable_consumers else None,
-        policymakers=sim.policymakers if config.enable_policymakers else None,
+        regulators=sim.regulators if config.enable_regulators else None,
         funders=sim.funders if config.enable_funders else None,
     ))
     logger.log_providers(sim.providers)
@@ -753,8 +898,8 @@ def run():
 
     if config.enable_consumers and sim.consumer_market:
         logger.log_consumers(sim.consumer_market)
-    if config.enable_policymakers and sim.policymakers:
-        logger.log_policymakers(sim.policymakers)
+    if config.enable_regulators and sim.regulators:
+        logger.log_regulators(sim.regulators)
     if config.enable_funders and sim.funders:
         logger.log_funders(sim.funders)
 
@@ -765,12 +910,7 @@ def run():
         experiment_name=EXPERIMENT["name"],
         experiment_id=exp_id,
         llm_mode=config.llm_mode,
-        benchmark_params={
-            "validity": config.benchmark_validity,
-            "noise": config.benchmark_noise,
-        },
         benchmarks=BENCHMARKS,
-        policymakers=sim.policymakers if config.enable_policymakers else None,
     )
     game_log_path = logger.save_game_log(game_log_content)
     print(f"Game log saved to: {game_log_path}")

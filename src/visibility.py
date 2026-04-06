@@ -9,6 +9,20 @@ Implements three-tier visibility model:
 Key Design Principle: Invisible state doesn't live inside the actor.
 The simulation holds ground truth externally, making it structurally
 impossible for LLM prompts to access it.
+
+Audit (2026-03-31):
+- FIXED: safety_capability (GT field) was leaking into consumer LLM prompts via
+  provider_strategies dict. Now consumer.py uses only portfolio "safety" fraction.
+- FIXED: ground_truth dict was passed through compute_switching / _compute_switching_llm /
+  _build_decision_context in consumer.py but never used. Removed from all signatures.
+- FIXED: provider_strategies was passed to regulator.observe() but never read. Removed.
+- ADDED: MediaGroundTruth dataclass (was missing; media.py docstring declared GT fields
+  true_influence and accuracy but no dataclass existed).
+- VERIFIED: No other GT fields leak into actor observations or LLM prompts.
+- NOTE: MarketSegment.need_weights is GT-equivalent (defines hidden utility function)
+  but is only used in compute_satisfaction (simulation-internal). Not surfaced to actors.
+- NOTE: ProviderGroundTruth.market_share redundancy with PublicState.market_share is
+  intentional — GT is authoritative, public is the announced value.
 """
 import json
 from dataclasses import dataclass, field
@@ -144,7 +158,7 @@ class ProviderPrivateState:
 
     # Market-share-weighted consumer need signal (6-dim, normalized).
     # Updated each round by simulation; not passed to LLM prompts directly.
-    satisfaction_signal: dict = field(default_factory=dict)
+    consumer_signal: dict = field(default_factory=dict)
 
     # Competitor capability beliefs (inferred from observed scores)
     believed_competitor_capabilities: dict = field(default_factory=dict)
@@ -166,7 +180,7 @@ class ProviderPrivateState:
             "focus_level": self.focus_level,
             "inferred_benchmark_weights": self.inferred_benchmark_weights,
             "benchmark_orientation": self.benchmark_orientation,
-            "satisfaction_signal": self.satisfaction_signal,
+            "consumer_signal": self.consumer_signal,
             "believed_competitor_capabilities": self.believed_competitor_capabilities,
             "past_strategies": self.past_strategies,
             "observed_competitor_scores": self.observed_competitor_scores,
@@ -194,9 +208,9 @@ class ProviderPrivateState:
             for bm, lvl in self.focus_level.items():
                 summary += f"  {bm}: {lvl:.3f}\n"
 
-        if self.satisfaction_signal:
+        if self.consumer_signal:
             summary += "Consumer Satisfaction Signal:\n"
-            for dim, val in self.satisfaction_signal.items():
+            for dim, val in self.consumer_signal.items():
                 summary += f"  {dim}: {val:.3f}\n"
 
         if self.believed_competitor_capabilities:
@@ -287,8 +301,7 @@ class BenchmarkGroundTruth:
 
 
 # ──────────────────────────────────────────────────────────────────────────────
-# Consumer, Policymaker, Funder, Evaluator state classes
-# (unchanged from prior architecture — updated when those actors are implemented)
+# Consumer, Regulator, Funder, Evaluator state classes
 # ──────────────────────────────────────────────────────────────────────────────
 
 @dataclass
@@ -346,9 +359,9 @@ class ConsumerPrivateState:
 
 
 @dataclass
-class PolicymakerPrivateState:
+class RegulatorPrivateState:
     """
-    Private state for Policymaker/Regulator actors.
+    Private state for Regulator actors.
 
     Only accessible to the owning actor and the logger.
     """
@@ -372,7 +385,7 @@ class PolicymakerPrivateState:
         }
 
     @classmethod
-    def from_dict(cls, data: dict) -> "PolicymakerPrivateState":
+    def from_dict(cls, data: dict) -> "RegulatorPrivateState":
         known = {f.name for f in cls.__dataclass_fields__.values()}
         return cls(**{k: v for k, v in data.items() if k in known})
 
@@ -390,10 +403,6 @@ class PolicymakerPrivateState:
             for round_num, intervention_type, details in recent:
                 summary += f"  Round {round_num}: {intervention_type} - {details}\n"
         return summary
-
-
-# Alias: Regulator uses PolicymakerPrivateState (rename deferred to regulator.py rewrite)
-RegulatorPrivateState = PolicymakerPrivateState
 
 
 @dataclass
@@ -492,8 +501,8 @@ class ConsumerGroundTruth:
 
 
 @dataclass
-class PolicymakerGroundTruth:
-    """Ground truth for Policymaker/Regulator actors. INVISIBLE."""
+class RegulatorGroundTruth:
+    """Ground truth for Regulator actors. INVISIBLE."""
     true_risk_tolerance: float = 0.5
     true_intervention_effectiveness: float = 0.5
 
@@ -504,7 +513,7 @@ class PolicymakerGroundTruth:
         }
 
     @classmethod
-    def from_dict(cls, data: dict) -> "PolicymakerGroundTruth":
+    def from_dict(cls, data: dict) -> "RegulatorGroundTruth":
         return cls(**data)
 
 
@@ -522,8 +531,25 @@ class FunderGroundTruth:
         return cls(**data)
 
 
+@dataclass
+class MediaGroundTruth:
+    """Ground truth for Media actor. INVISIBLE.
+
+    true_influence and accuracy are internal simulation levers — never surfaced to actors.
+    """
+    true_influence: float = 0.5   # Actual reach/impact of media coverage
+    accuracy: float = 0.8         # How accurately media reports true safety/capability state
+
+    def to_dict(self) -> dict:
+        return {"true_influence": self.true_influence, "accuracy": self.accuracy}
+
+    @classmethod
+    def from_dict(cls, data: dict) -> "MediaGroundTruth":
+        return cls(**data)
+
+
 # Type aliases
-PrivateState = (ProviderPrivateState | ConsumerPrivateState | PolicymakerPrivateState
+PrivateState = (ProviderPrivateState | ConsumerPrivateState | RegulatorPrivateState
                 | FunderPrivateState | EvaluatorPrivateState)
 GroundTruth = (ProviderGroundTruth | BenchmarkGroundTruth | ConsumerGroundTruth
-               | PolicymakerGroundTruth | FunderGroundTruth)
+               | RegulatorGroundTruth | FunderGroundTruth | MediaGroundTruth)

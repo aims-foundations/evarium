@@ -664,7 +664,11 @@ def _extract_json(response: str) -> str:
     start = response.find("{")
     end = response.rfind("}") + 1
     if start != -1 and end > start:
-        return response[start:end]
+        response = response[start:end]
+
+    # Sanitize dollar-formatted numbers: "$130,000,000" -> 130000000
+    import re
+    response = re.sub(r'\$\s?([\d,]+)', lambda m: m.group(1).replace(',', ''), response)
 
     return response
 
@@ -704,28 +708,28 @@ def create_llm_provider(
             model=kwargs.get("model") or os.getenv("LLM_MODEL", "llama3"),
             base_url=kwargs.get("base_url") or os.getenv("OLLAMA_BASE_URL", "http://localhost:11434"),
             temperature=kwargs.get("temperature", 0.7),
-            max_tokens=kwargs.get("max_tokens", 500),
+            max_tokens=kwargs.get("max_tokens", 2048),
         )
     elif provider == "anthropic":
         return AnthropicProvider(
             model=kwargs.get("model") or os.getenv("LLM_MODEL", "claude-3-5-sonnet-20241022"),
             api_key=kwargs.get("api_key") or os.getenv("ANTHROPIC_API_KEY"),
             temperature=kwargs.get("temperature", 0.7),
-            max_tokens=kwargs.get("max_tokens", 1024),
+            max_tokens=kwargs.get("max_tokens", 2048),
         )
     elif provider == "gemini":
         return GeminiProvider(
             model=kwargs.get("model") or os.getenv("LLM_MODEL", "gemini-2.5-flash"),
             api_key=kwargs.get("api_key") or os.getenv("GEMINI_API_KEY"),
             temperature=kwargs.get("temperature", 0.7),
-            max_tokens=kwargs.get("max_tokens", 500),
+            max_tokens=kwargs.get("max_tokens", 2048),
         )
     elif provider == "openai":
         return OpenAIProvider(
             model=kwargs.get("model") or os.getenv("LLM_MODEL", "gpt-4o-mini"),
             api_key=kwargs.get("api_key") or os.getenv("OPENAI_API_KEY"),
             temperature=kwargs.get("temperature", 0.7),
-            max_tokens=kwargs.get("max_tokens", 500),
+            max_tokens=kwargs.get("max_tokens", 2048),
             base_url=kwargs.get("base_url") or os.getenv("OPENAI_BASE_URL"),
         )
     else:
@@ -744,18 +748,6 @@ def set_provider(provider: LLMProvider):
     """Set the default LLM provider."""
     global _default_provider
     _default_provider = provider
-
-
-# --- Legacy Compatibility ---
-# These maintain backwards compatibility with the old LLMClient interface
-
-class LLMClient(OpenAIProvider):
-    """
-    Legacy LLMClient class for backwards compatibility.
-
-    New code should use create_llm_provider() instead.
-    """
-    pass
 
 
 # --- Utility ---
@@ -780,29 +772,69 @@ def call_llm(prompt: str, temperature: float = 0.7, max_tokens: int = 500) -> st
 
 # --- Provider Planning (new arch) ---
 
-PROVIDER_PLANNING_SYSTEM_PROMPT = """You are the strategy team at an AI model company. You compete for market share by developing AI models evaluated on public benchmarks.
+PROVIDER_PLANNING_SYSTEM_PROMPT = """You are the strategy team at an AI model company. You compete for market share by developing AI models that are evaluated on public benchmarks and used by real customers.
 
-You control three investment levers (R&D, Safety, Product) and per-benchmark focus weights.
-- R&D: drives capability growth across dimensions
-- Safety: drives safety capability specifically
-- Product: drives user-facing quality (affects satisfaction more than benchmark scores)
-- Benchmark focus: concentrates R&D toward dimensions heavily tested by specific benchmarks
-- Benchmark orientation: how much to target benchmark-weighted dimensions vs broad consumer satisfaction
+Each month you allocate your budget across three areas and set research priorities:
+- Research & Development: advancing your model's core capabilities
+- Safety & Alignment: ensuring your model is safe, honest, and robust
+- Product & Go-to-Market: pricing, deployment, partnerships, user experience
 
-Your task is to decide ordinal adjustments ("more", "less", or "same") for each lever.
+You also decide which evaluation areas to prioritize in your R&D pipeline. Your R&D capacity is finite — prioritizing one benchmark means less attention on others. Focus on the benchmarks that are most important to your goals and deprioritize those that matter less.
 
-Output JSON:
+For each area, state how you want to adjust relative to current levels. Use a 5-point scale: "much_more", "more", "same", "less", "much_less".
+
+You MUST output valid JSON in this exact structure. Fill in all fields before writing the reasoning — this ensures your decisions are captured even if the response is long.
 {
-    "reasoning": "...",
-    "portfolio": {"rd": "more"|"less"|"same", "safety": "more"|"less"|"same", "product": "more"|"less"|"same"},
-    "benchmark_focus": {"<benchmark_name>": "more"|"less"|"same", ...},
-    "benchmark_orientation": "more"|"less"|"same"
+    "portfolio": {"rd": "<signal>", "safety": "<signal>", "product": "<signal>"},
+    "benchmark_focus": {"<benchmark_name>": "<signal>", ...},
+    "strategy_memo": "1-2 sentence summary of your decision and rationale, written for your future self to read next month.",
+    "reasoning": "Your full analysis (up to 300 words)."
 }
-The "reasoning" field must contain your actual analysis — under 200 words.
-Each signal is "more", "less", or "same" relative to your current level. You do not need to adjust all of them.
+Where <signal> is one of: "much_more", "more", "same", "less", "much_less"."""
 
-"""
+PROVIDER_PLANNING_SYSTEM_PROMPT_WITH_ORIENTATION = """You are the strategy team at an AI model company. You compete for market share by developing AI models that are evaluated on public benchmarks and used by real customers.
 
+Each month you allocate your budget across three areas and set research priorities:
+- Research & Development: advancing your model's core capabilities
+- Safety & Alignment: ensuring your model is safe, honest, and robust
+- Product & Go-to-Market: pricing, deployment, partnerships, user experience
+
+You also decide which evaluation areas to prioritize in your R&D pipeline, and how much to trust public leaderboard results vs. your own user data when setting R&D direction. Some companies invest heavily in internal evaluations that reflect real usage patterns; others optimize primarily for public benchmarks that drive press coverage and enterprise procurement. Your R&D capacity is finite — prioritizing one benchmark means less attention on others. Focus on the benchmarks that are most important to your goals and deprioritize those that matter less.
+
+For each area, state how you want to adjust relative to current levels. Use a 5-point scale: "much_more", "more", "same", "less", "much_less".
+
+You MUST output valid JSON in this exact structure. Fill in all fields before writing the reasoning — this ensures your decisions are captured even if the response is long.
+{
+    "portfolio": {"rd": "<signal>", "safety": "<signal>", "product": "<signal>"},
+    "benchmark_focus": {"<benchmark_name>": "<signal>", ...},
+    "benchmark_orientation": "<signal>" (lean R&D more toward public benchmarks, or less toward them and more toward your own user feedback),
+    "strategy_memo": "1-2 sentence summary of your decision and rationale, written for your future self to read next month.",
+    "reasoning": "Your full analysis (up to 300 words)."
+}
+Where <signal> is one of: "much_more", "more", "same", "less", "much_less"."""
+
+
+
+def _focus_label(value: float) -> str:
+    """Convert a numeric focus_level to a qualitative label."""
+    if value >= 2.5:
+        return "very high"
+    elif value >= 1.8:
+        return "high"
+    elif value >= 1.2:
+        return "moderate"
+    elif value >= 0.6:
+        return "low"
+    return "very low"
+
+
+def _beliefs_are_informative(inferred_benchmark_weights: dict) -> bool:
+    """Check if inferred benchmark weights have diverged from uniform."""
+    for bm, weights in inferred_benchmark_weights.items():
+        vals = list(weights.values())
+        if vals and (max(vals) - min(vals)) > 0.05:
+            return True
+    return False
 
 
 def _build_provider_planning_prompt(
@@ -816,45 +848,47 @@ def _build_provider_planning_prompt(
     benchmark_scores: dict,
     score_deltas: dict,
     competitor_scores: dict,
-    satisfaction_signal: dict,
+    consumer_signal: dict,
     benchmark_orientation: float,
+    market_share: float = 0.0,
+    orientation_adjustable: bool = False,
     recent_insights: Optional[list] = None,
     own_incidents: Optional[list] = None,
     regulatory_actions: Optional[list] = None,
 ) -> str:
-    """Build the planning prompt for a model provider (new arch)."""
-    prompt = f"# Round {round_num} — {name}\n"
+    """Build the planning prompt for a model provider."""
+    prompt = f"# Month {round_num} Strategy Review — {name}\n"
 
-    # Cross-round reasoning memory
+    # Cross-round strategy memos
     if recent_insights:
-        prompt += "\n## Your Reasoning From Prior Rounds\n"
+        prompt += "\n## Notes From Prior Months\n"
         for entry in recent_insights[-2:]:
-            text = _truncate(entry.get("reasoning", ""), 120)
-            if text:
-                prompt += f"[Round {entry.get('round', '?')}]: {text}\n"
+            memo = entry.get("strategy_memo") or entry.get("reasoning", "")
+            if memo:
+                prompt += f"[Month {entry.get('round', '?')}]: {memo}\n"
 
     # Benchmark scores and deltas
-    prompt += "\n## Benchmark Scores\n"
+    prompt += "\n## Evaluation Results\n"
     if benchmark_scores:
-        prompt += "| Benchmark | Score | Delta | Your Focus |\n"
-        prompt += "|-----------|-------|-------|------------|\n"
+        prompt += "| Evaluation | Score | Change | Your Priority |\n"
+        prompt += "|------------|-------|--------|---------------|\n"
         for bm, history in benchmark_scores.items():
             score = history[-1][1] if history else 0.0
             delta = score_deltas.get(bm, 0.0)
-            focus = focus_level.get(bm, 1.0)
-            prompt += f"| {bm} | {score:.3f} | {delta:+.3f} | {focus:.2f} |\n"
+            priority = _focus_label(focus_level.get(bm, 1.0))
+            prompt += f"| {bm} | {score:.3f} | {delta:+.3f} | {priority} |\n"
     else:
-        prompt += "No scores yet (first round).\n"
+        prompt += "No evaluation results yet (first month).\n"
 
     # Competitor scores
     if competitor_scores:
-        prompt += "\n## Competitor Scores\n"
+        prompt += "\n## Competitor Results\n"
         for comp, score in sorted(competitor_scores.items(), key=lambda x: x[1], reverse=True):
             prompt += f"- {comp}: {score:.3f}\n"
 
     # Incidents and regulatory signals
     if own_incidents:
-        prompt += "\n## Recent Incidents\n"
+        prompt += "\n## Recent Safety Incidents\n"
         for inc in own_incidents[-3:]:
             sev = inc.get("severity", "?")
             cat = inc.get("category", "?")
@@ -866,34 +900,43 @@ def _build_provider_planning_prompt(
 
     # Organization state
     prompt += f"\n## Your Organization\n"
-    prompt += f"Profile: {strategy_profile}\nTraits: {innate_traits}\n"
-    prompt += f"Benchmark orientation: {benchmark_orientation:.2f} (1=fully benchmark-driven, 0=fully satisfaction-driven)\n"
-    prompt += f"\nCurrent portfolio: R&D={portfolio.get('rd', 0):.0%}, Safety={portfolio.get('safety', 0):.0%}, Product={portfolio.get('product', 0):.0%}\n"
+    prompt += f"{name} is known for: {strategy_profile}\n"
+    prompt += f"Your culture and strengths: {innate_traits}\n"
+    prompt += f"\nCurrent budget allocation: R&D {portfolio.get('rd', 0):.0%}, Safety {portfolio.get('safety', 0):.0%}, Product {portfolio.get('product', 0):.0%}\n"
+    if orientation_adjustable:
+        pct = benchmark_orientation * 100
+        prompt += f"Current R&D orientation: {pct:.0f}% toward benchmark performance, {100-pct:.0f}% toward user feedback.\n"
 
-    # Inferred benchmark weights (what the provider currently believes each benchmark tests)
-    if inferred_benchmark_weights:
-        prompt += "\n## Inferred Benchmark Dimension Weights\n"
-        prompt += "(Your current belief about which capability dimensions each benchmark measures)\n"
+    # Benchmark beliefs — only show when informative
+    if inferred_benchmark_weights and _beliefs_are_informative(inferred_benchmark_weights):
+        prompt += "\n## What Your Team Thinks Each Evaluation Tests\n"
         for bm, weights in inferred_benchmark_weights.items():
             top = sorted(weights.items(), key=lambda x: x[1], reverse=True)[:3]
-            prompt += f"- {bm}: " + ", ".join(f"{d}={w:.2f}" for d, w in top) + "\n"
+            skills = ", ".join(f"{d}" for d, w in top if w > 0.10)
+            if skills:
+                prompt += f"- {bm}: primarily tests {skills}\n"
+    elif round_num == 0:
+        prompt += "\n(Your team hasn't yet gathered enough data to determine what each evaluation specifically tests.)\n"
 
-    # Satisfaction signal
-    if satisfaction_signal:
-        prompt += "\n## Consumer Need Signal\n"
-        prompt += "(Market-share-weighted consumer dimension preferences — what users actually value)\n"
-        top_needs = sorted(satisfaction_signal.items(), key=lambda x: x[1], reverse=True)[:3]
-        prompt += ", ".join(f"{d}={v:.2f}" for d, v in top_needs) + "\n"
+    # Satisfaction signal — with confidence qualifier
+    if consumer_signal and round_num > 0:
+        top_needs = sorted(consumer_signal.items(), key=lambda x: x[1], reverse=True)[:3]
+        if market_share > 0.25:
+            confidence = "Based on substantial usage data"
+        elif market_share > 0.10:
+            confidence = "Based on moderate usage data"
+        else:
+            confidence = "Based on limited usage data (treat as rough guidance)"
+        prompt += f"\n## User Research\n"
+        prompt += f"{confidence}, your users seem to value: "
+        prompt += ", ".join(f"{d} ({v:.0%})" for d, v in top_needs) + ".\n"
+    elif round_num == 0:
+        prompt += "\n## User Research\n"
+        prompt += "No user feedback data available yet — this is your first month.\n"
 
     prompt += """
 ## Decision
-Decide ordinal adjustments for the next round. Output JSON:
-{
-    "reasoning": "...",
-    "portfolio": {"rd": "more"|"less"|"same", "safety": "more"|"less"|"same", "product": "more"|"less"|"same"},
-    "benchmark_focus": {"<benchmark_name>": "more"|"less"|"same", ...},
-    "benchmark_orientation": "more"|"less"|"same"
-}"""
+Output your decisions as JSON. Fill in the decisions FIRST, then write your reasoning."""
 
     return prompt
 
@@ -909,8 +952,10 @@ def llm_plan_provider(
     benchmark_scores: dict,
     score_deltas: dict,
     competitor_scores: dict,
-    satisfaction_signal: dict,
+    consumer_signal: dict,
     benchmark_orientation: float,
+    market_share: float = 0.0,
+    orientation_adjustable: bool = False,
     recent_insights: Optional[list] = None,
     own_incidents: Optional[list] = None,
     regulatory_actions: Optional[list] = None,
@@ -919,10 +964,15 @@ def llm_plan_provider(
     """Use LLM to decide provider portfolio and benchmark focus adjustments.
 
     Returns a dict with keys:
-        reasoning (str), portfolio (ordinal signals), benchmark_focus (ordinal signals),
-        benchmark_orientation (ordinal signal)
+        reasoning (str), strategy_memo (str), portfolio (ordinal signals),
+        benchmark_focus (ordinal signals), benchmark_orientation (ordinal signal)
     """
     provider = get_provider()
+
+    # Build system prompt — conditionally include orientation framing
+    system_prompt = PROVIDER_PLANNING_SYSTEM_PROMPT
+    if orientation_adjustable:
+        system_prompt = PROVIDER_PLANNING_SYSTEM_PROMPT_WITH_ORIENTATION
 
     prompt = _build_provider_planning_prompt(
         name=name,
@@ -935,8 +985,10 @@ def llm_plan_provider(
         benchmark_scores=benchmark_scores,
         score_deltas=score_deltas,
         competitor_scores=competitor_scores,
-        satisfaction_signal=satisfaction_signal,
+        consumer_signal=consumer_signal,
         benchmark_orientation=benchmark_orientation,
+        market_share=market_share,
+        orientation_adjustable=orientation_adjustable,
         recent_insights=recent_insights,
         own_incidents=own_incidents or [],
         regulatory_actions=regulatory_actions or [],
@@ -944,14 +996,16 @@ def llm_plan_provider(
 
     fail_safe = {
         "reasoning": "fallback",
+        "strategy_memo": "",
         "portfolio": {"rd": "same", "safety": "same", "product": "same"},
         "benchmark_focus": {bm: "same" for bm in focus_level},
-        "benchmark_orientation": "same",
     }
+    if orientation_adjustable:
+        fail_safe["benchmark_orientation"] = "same"
 
     result = provider.generate_json(
         prompt=prompt,
-        system_prompt=PROVIDER_PLANNING_SYSTEM_PROMPT,
+        system_prompt=system_prompt,
         fail_safe=fail_safe,
         verbose=verbose,
     )
@@ -960,96 +1014,131 @@ def llm_plan_provider(
     if reasoning in ("...", "<your reasoning here>"):
         reasoning = "fallback"
 
-    return {
+    out = {
         "reasoning": reasoning,
+        "strategy_memo": result.get("strategy_memo", ""),
         "portfolio": result.get("portfolio", fail_safe["portfolio"]),
         "benchmark_focus": result.get("benchmark_focus", fail_safe["benchmark_focus"]),
-        "benchmark_orientation": result.get("benchmark_orientation", "same"),
     }
+    if orientation_adjustable:
+        out["benchmark_orientation"] = result.get("benchmark_orientation", "same")
+    return out
 
 
 # --- Funder Planning ---
 
-FUNDER_PLANNING_SYSTEM_PROMPT = """You are a capital allocator deciding how to invest in AI model companies.
-You must decide how to allocate your funding across AI model providers.
+FUNDER_PLANNING_SYSTEM_PROMPT = """You are a capital allocator deciding how to distribute funding across AI model companies this month.
 
-Funder Types and Their Strategies:
-- **VC**: Maximize returns by backing top performers. Concentrate funding on leaders with strong scores and market share.
-- **Government/AISI**: Ensure safety and stability. Spread funding; reduce allocation to providers with compliance failures.
-- **Foundation**: Support authentic capability growth. Favor providers with strong research investment and broad market presence.
+Funder types:
+- **VC**: Venture capital firm seeking high returns on equity investments in AI companies.
+- **Corporate**: Strategic investor maintaining relationships with multiple AI providers.
+- **Government**: Public funder with a mandate around safety and broad ecosystem health.
+- **Foundation**: Mission-driven funder focused on long-term research and societal benefit.
 
-You can infer provider quality from public signals:
-- **Leaderboard score**: Benchmark performance
-- **Inferred quality**: Your own quality estimate based on scores and history
-- **Market share**: Fraction of the market currently using this provider
-- **Regulatory interventions**: Compliance/safety risk indicator
-
-Output your decision as JSON with the following format:
+You MUST output valid JSON in this exact structure:
 {
-    "reasoning": "...",
     "allocations": {
         "ProviderName1": <amount in dollars>,
         "ProviderName2": <amount in dollars>,
         ...
-    }
+    },
+    "reasoning": "Your analysis (up to 200 words)."
 }
 The "reasoning" field MUST contain your actual analysis -- never leave it as "..." or a placeholder.
-The allocations should sum to your total available capital."""
+You do NOT need to fund every provider. Allocate only to providers you believe are worth backing -- it is fine to fund 1-3 providers and hold the rest in reserve. Allocations should sum to at most your total available capital."""
 
 
 def create_funder_planning_prompt(
     name: str,
     funder_type: str,
     total_capital: float,
-    believed_provider_quality: dict,
     leaderboard: list,
     market_shares: dict,
     recent_history: list,
     recent_insights: Optional[list] = None,
+    incidents: Optional[dict] = None,
+    media_sentiment: Optional[float] = None,
+    media_headlines: Optional[list] = None,
+    score_deltas: Optional[dict] = None,
+    public_comms: Optional[list] = None,
 ) -> str:
-    """Create a prompt for the funder to decide funding allocations."""
-    prompt = f"""# Funder Profile
-Name: {name}
-Type: {funder_type}
-Total Capital: ${total_capital:,.0f}
+    """Create a prompt for the funder to decide funding allocations.
+
+    Args:
+        name: Funder name
+        funder_type: vc, corporate, gov, foundation
+        total_capital: Amount to allocate this round
+        leaderboard: [(provider_name, score), ...]
+        market_shares: {provider: share}
+        recent_history: [(round, {provider: amount}), ...]
+        recent_insights: Cross-round reasoning memory
+        incidents: {provider: [(round, severity), ...]} recent incidents
+        media_sentiment: Overall media sentiment [-1, +1]
+        media_headlines: Recent headline strings
+        score_deltas: {provider: delta} score change from last round
+        public_comms: [{provider, type, one_liner, round}, ...] recent provider announcements
+    """
+    prompt = f"""# {name} ({funder_type})
+Capital to deploy this month: ${total_capital:,.0f}
 """
 
-    # Inject prior reasoning (cross-round persistence)
+    # Cross-round reasoning
     if recent_insights:
-        prompt += "\n# Your Reasoning From Prior Rounds\n"
+        prompt += "\n# Your Notes From Prior Months\n"
         for entry in recent_insights[-2:]:
             r = entry.get("round", "?")
             text = _truncate(entry.get("reasoning", ""), 120)
             if text:
-                prompt += f"[Round {r}]: {text}\n"
+                prompt += f"[Month {r}]: {text}\n"
 
-    prompt += "\n# Current Ecosystem State\n"
-
+    # Leaderboard with score deltas and market share
+    prompt += "\n# Current Leaderboard\n"
     if leaderboard:
-        prompt += "\nLeaderboard:\n"
         for rank, (provider_name, score) in enumerate(leaderboard, 1):
-            quality = believed_provider_quality.get(provider_name, "N/A")
             share = market_shares.get(provider_name, 0.0)
-            quality_str = f"{quality:.2f}" if isinstance(quality, float) else quality
-            prompt += f"  {rank}. {provider_name}: score={score:.3f}, inferred_quality={quality_str}, market_share={share:.1%}\n"
+            delta = score_deltas.get(provider_name, 0.0) if score_deltas else 0.0
+            prompt += f"  {rank}. {provider_name}: score {score:.3f} ({delta:+.3f}), market share {share:.1%}\n"
 
+    # Incidents
+    if incidents:
+        prompt += "\n# Recent Safety Incidents\n"
+        for provider, inc_list in incidents.items():
+            for round_num, severity in inc_list[-2:]:
+                prompt += f"  - {provider}: {severity} incident (month {round_num})\n"
+
+    # Media
+    if media_headlines:
+        prompt += "\n# Recent Press Coverage\n"
+        for h in media_headlines[-4:]:
+            prompt += f"  - {h}\n"
+    if media_sentiment is not None:
+        if media_sentiment > 0.3:
+            tone = "positive"
+        elif media_sentiment < -0.3:
+            tone = "negative"
+        else:
+            tone = "mixed"
+        prompt += f"  Overall media tone: {tone}\n"
+
+    # Provider announcements
+    if public_comms:
+        prompt += "\n# Provider Announcements\n"
+        for comm in public_comms[-6:]:
+            p = comm.get("provider", "?")
+            one_liner = comm.get("one_liner", comm.get("type", ""))
+            prompt += f"  - {p}: {one_liner}\n"
+
+    # Funding history
     if recent_history:
-        prompt += "\n# Recent Funding History\n"
+        prompt += "\n# Your Recent Allocations\n"
         for round_num, allocations in recent_history[-3:]:
-            prompt += f"Round {round_num}: "
+            prompt += f"Month {round_num}: "
             alloc_strs = [f"{p}: ${a:,.0f}" for p, a in allocations.items()]
             prompt += ", ".join(alloc_strs) + "\n"
 
     prompt += f"""
-# Decision Required
-Based on your funder type ({funder_type}) and the current ecosystem state, decide how to allocate your ${total_capital:,.0f} across the providers.
-
-Consider:
-1. Your funder type's strategy (VC=concentrate on leaders, Gov=spread+safety-focused, Foundation=support authentic growth)
-2. Provider quality trends and market share trajectory
-3. Risk tolerance appropriate for your funder type
-
-Output your decision as JSON."""
+# Decision
+You have ${total_capital:,.0f} to deploy. Fund only the providers worth backing -- you can hold capital in reserve. Output your decision as JSON. Use plain integers for dollar amounts (no $ signs, no commas)."""
 
     return prompt
 
@@ -1058,11 +1147,15 @@ def llm_plan_funding(
     name: str,
     funder_type: str,
     total_capital: float,
-    believed_provider_quality: dict,
     leaderboard: list,
     market_shares: dict,
     recent_history: list,
     recent_insights: Optional[list] = None,
+    incidents: Optional[dict] = None,
+    media_sentiment: Optional[float] = None,
+    media_headlines: Optional[list] = None,
+    score_deltas: Optional[dict] = None,
+    public_comms: Optional[list] = None,
     verbose: bool = False,
 ) -> tuple[dict, str]:
     """
@@ -1077,11 +1170,15 @@ def llm_plan_funding(
         name=name,
         funder_type=funder_type,
         total_capital=total_capital,
-        believed_provider_quality=believed_provider_quality,
         leaderboard=leaderboard,
         market_shares=market_shares,
         recent_history=recent_history,
         recent_insights=recent_insights,
+        incidents=incidents,
+        media_sentiment=media_sentiment,
+        media_headlines=media_headlines,
+        score_deltas=score_deltas,
+        public_comms=public_comms,
     )
 
     # Default allocations (spread evenly)
@@ -1121,6 +1218,186 @@ def llm_plan_funding(
             )
 
     return cleaned_allocations, reasoning
+
+
+# --- Evaluator Planning (dynamic_evaluator=True) ---
+
+EVALUATOR_PLANNING_SYSTEM_PROMPT = """You are the team responsible for maintaining the AI evaluation leaderboard. You decide when to introduce new benchmarks and what they should measure.
+
+Your goal is to ensure that leaderboard scores remain a meaningful signal of model quality for the people and organizations that rely on them. When scores stop reflecting real differences between models, it is time to act.
+
+You have three options each month:
+- **introduce_successor**: Replace a specific benchmark that is no longer informative with a harder version that measures the same skills
+- **introduce_fresh**: Add a new benchmark that covers skills not well measured by existing benchmarks
+- **none**: No action needed this month
+
+You MUST output valid JSON in this exact structure:
+{
+    "action": "introduce_successor" | "introduce_fresh" | "none",
+    "target_benchmark": "<name of benchmark to replace, only if action is introduce_successor>",
+    "reasoning": "Your analysis (up to 200 words)."
+}"""
+
+
+def create_evaluator_planning_prompt(
+    active_benchmarks: list[dict],
+    score_deltas: dict,
+    score_spread: dict,
+    internal_validity: Optional[float],
+    media_headlines: list[str],
+    saturation_states: dict,
+) -> str:
+    """Create a prompt for the evaluator to decide benchmark actions.
+
+    Args:
+        active_benchmarks: [{name, tags, weight}, ...]
+        score_deltas: {benchmark_name: {provider: delta}} last round
+        score_spread: {benchmark_name: max-min score spread}
+        internal_validity: Spearman-r(score_rank, market_share_rank) or None
+        media_headlines: Recent media headlines mentioning benchmarks
+        saturation_states: {benchmark_name: {saturated, max_score}}
+    """
+    prompt = "# Active Benchmarks\n"
+    for bm in active_benchmarks:
+        status = ""
+        sat = saturation_states.get(bm["name"], {})
+        if sat.get("saturated"):
+            status = f" [STAGNANT: top score {sat.get('max_score', 0):.3f}, scores no longer improving]"
+        prompt += f"- {bm['name']} (measures: {bm.get('tags', 'general')}){status}\n"
+
+    prompt += "\n# Score Movement (last month)\n"
+    for bm_name, deltas in score_deltas.items():
+        spread = score_spread.get(bm_name, 0)
+        if deltas:
+            avg_delta = sum(deltas.values()) / len(deltas)
+            prompt += f"- {bm_name}: avg improvement {avg_delta:+.4f}, score spread {spread:.3f}\n"
+        else:
+            prompt += f"- {bm_name}: no data, spread {spread:.3f}\n"
+
+    if internal_validity is not None:
+        if internal_validity > 0.7:
+            validity_desc = "strong"
+        elif internal_validity > 0.4:
+            validity_desc = "moderate"
+        else:
+            validity_desc = "weak"
+        prompt += f"\n# Leaderboard Signal Quality\nCorrelation between leaderboard ranking and real-world adoption: {validity_desc}\n"
+
+    if media_headlines:
+        bm_headlines = [h for h in media_headlines if any(
+            kw in h.lower() for kw in ["benchmark", "score", "converging", "plateau", "reliability", "meaningful"]
+        )]
+        if bm_headlines:
+            prompt += "\n# Recent Press Coverage\n"
+            for h in bm_headlines[-3:]:
+                prompt += f"- {h}\n"
+
+    prompt += """
+# Decision Required
+Based on the current state of benchmarks and scores, decide whether to:
+1. Replace a stagnant benchmark with a harder successor
+2. Introduce a fresh benchmark covering under-measured skills
+3. Take no action
+
+Output your decision as JSON."""
+
+    return prompt
+
+
+def llm_plan_evaluator(
+    active_benchmarks: list[dict],
+    score_deltas: dict,
+    score_spread: dict,
+    internal_validity: Optional[float],
+    media_headlines: list[str],
+    saturation_states: dict,
+    verbose: bool = False,
+) -> tuple[dict, str]:
+    """Use LLM to decide evaluator benchmark actions.
+
+    Returns:
+        Tuple of (decision_dict, reasoning) where decision_dict has:
+            action: "introduce_successor" | "introduce_fresh" | "none"
+            target_benchmark: str (only for introduce_successor)
+    """
+    provider = get_provider()
+
+    prompt = create_evaluator_planning_prompt(
+        active_benchmarks=active_benchmarks,
+        score_deltas=score_deltas,
+        score_spread=score_spread,
+        internal_validity=internal_validity,
+        media_headlines=media_headlines,
+        saturation_states=saturation_states,
+    )
+
+    result = provider.generate_json(
+        prompt=prompt,
+        system_prompt=EVALUATOR_PLANNING_SYSTEM_PROMPT,
+        fail_safe={
+            "action": "none",
+            "target_benchmark": "",
+            "reasoning": "fallback to no action",
+        },
+        verbose=verbose,
+    )
+
+    action = result.get("action", "none")
+    if action not in ("introduce_successor", "introduce_fresh", "none"):
+        action = "none"
+
+    return {
+        "action": action,
+        "target_benchmark": result.get("target_benchmark", ""),
+    }, result.get("reasoning", "")
+
+
+# --- Provider Public Communications (LLM mode) ---
+
+def llm_generate_public_comm(
+    provider_name: str,
+    comm_type: str,
+    strategy_profile: str,
+    portfolio: dict,
+) -> Optional[str]:
+    """Generate a one-liner public communication for a provider via lightweight LLM call.
+
+    Per stakeholders.md: in LLM mode, a lightweight call after planning generates
+    a one-liner for the sampled comm type. In heuristic mode, templates are used.
+
+    Args:
+        provider_name: Provider name
+        comm_type: "rd", "safety", or "product"
+        strategy_profile: Provider's strategy profile string
+        portfolio: Current portfolio allocation dict
+
+    Returns:
+        One-liner string, or None on failure.
+    """
+    type_context = {
+        "rd": "a research publication or technical blog post about your latest capabilities work",
+        "safety": "a safety card, red-teaming report, or alignment update",
+        "product": "an enterprise partnership, product launch, or integration announcement",
+    }
+    context = type_context.get(comm_type, "a public announcement")
+
+    prompt = (
+        f"You are the communications team at {provider_name}. "
+        f"Company profile: {strategy_profile[:150]}\n\n"
+        f"Write a one-sentence press release for: {context}.\n"
+        f"Keep it under 100 characters. Output only the sentence, no quotes or JSON."
+    )
+
+    provider = get_provider()
+    try:
+        response = provider.generate(prompt, max_tokens=80)
+        response = response.strip().strip('"').strip("'")
+        if response and len(response) < 200:
+            return response
+    except Exception:
+        pass
+
+    return None
 
 
 # --- Module Test ---

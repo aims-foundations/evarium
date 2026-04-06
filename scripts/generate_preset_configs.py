@@ -3,7 +3,7 @@
 Generate US and EU ablation configs from existing balanced configs.
 
 Clones each balanced ablation config.json and swaps the regulatory-preset
-fields (policymaker_configs, startup params) to produce US and EU variants.
+fields (regulator_configs, startup params) to produce US and EU variants.
 
 Creates new experiment directories in output/experiments/ so that
 run_diagnostics.py can find them by prefix.
@@ -36,31 +36,24 @@ BALANCED_ABLATIONS = {
 # Preset overrides (derived from comparing exp_011 balanced vs exp_001 US vs exp_002 EU)
 PRESETS = {
     "us": {
-        "policymaker_configs": [
+        "regulator_configs": [
             {
                 "name": "Regulator",
                 "philosophy": "us_light_touch",
                 "policy_objectives": ["safety", "innovation", "free market"],
             }
         ],
-        "startup_entry_probability": 0.15,
-        "startup_entry_cap": 4,
     },
     "eu": {
-        "policymaker_configs": [
+        "regulator_configs": [
             {
                 "name": "Regulator",
                 "philosophy": "eu_precautionary",
                 "policy_objectives": ["safety", "fairness", "consumer_protection"],
             }
         ],
-        "startup_entry_probability": 0.04,
-        "startup_entry_cap": 2,
     },
 }
-
-# Ablations where startup params are part of the ablation itself (keep at 0)
-STARTUP_ABLATIONS = {"ablation_no_startups"}
 
 
 def generate_configs(dry_run=False):
@@ -91,26 +84,16 @@ def generate_configs(dry_run=False):
             config = copy.deepcopy(balanced_config)
 
             # Apply preset overrides
-            config["policymaker_configs"] = copy.deepcopy(
-                preset_overrides["policymaker_configs"]
+            config["regulator_configs"] = copy.deepcopy(
+                preset_overrides["regulator_configs"]
             )
-
-            # Apply startup params unless this ablation disables startups
-            if condition_name not in STARTUP_ABLATIONS:
-                config["startup_entry_probability"] = preset_overrides[
-                    "startup_entry_probability"
-                ]
-                config["startup_entry_cap"] = preset_overrides["startup_entry_cap"]
 
             if dry_run:
                 print(f"  WOULD CREATE: {new_dir_name}")
                 print(f"    from: {balanced_dir}")
                 print(f"    preset: {preset_name}")
                 print(
-                    f"    policymaker: {config['policymaker_configs'][0]['philosophy']}"
-                )
-                print(
-                    f"    startup_entry_probability: {config.get('startup_entry_probability')}"
+                    f"    regulator: {config['regulator_configs'][0]['philosophy']}"
                 )
                 print()
             else:

@@ -87,16 +87,11 @@ def metric_mean_true_capability(rd: dict) -> Optional[float]:
     return sum(caps) / len(caps) if caps else None
 
 
-def metric_mean_eval_engineering(rd: dict) -> Optional[float]:
+def metric_mean_safety(rd: dict) -> Optional[float]:
     strats = rd.get("strategies", {})
-    vals = [s.get("evaluation_engineering", 0) for s in strats.values()]
+    vals = [s.get("safety", 0) for s in strats.values()]
     return sum(vals) / len(vals) if vals else None
 
-
-def metric_mean_safety_alignment(rd: dict) -> Optional[float]:
-    strats = rd.get("strategies", {})
-    vals = [s.get("safety_alignment", 0) for s in strats.values()]
-    return sum(vals) / len(vals) if vals else None
 
 
 def metric_mean_score(rd: dict) -> Optional[float]:
@@ -359,15 +354,14 @@ def detect_strategy_drift(
         if strat:
             vec = np.array(
                 [
-                    strat.get("fundamental_research", 0),
-                    strat.get("training_optimization", 0),
-                    strat.get("evaluation_engineering", 0),
-                    strat.get("safety_alignment", 0),
+                    strat.get("rd", 0),
+                    strat.get("safety", 0),
+                    strat.get("product", 0),
                 ]
             )
             allocations.append(vec)
         else:
-            allocations.append(np.full(4, np.nan))
+            allocations.append(np.full(3, np.nan))
 
     drift_scores = []
     for t in range(len(allocations)):
@@ -456,10 +450,9 @@ def analyze_prompt_sensitivity(
     Returns per-round SD for each investment category + summary.
     """
     categories = [
-        "fundamental_research",
-        "training_optimization",
-        "evaluation_engineering",
-        "safety_alignment",
+        "rd",
+        "safety",
+        "product",
     ]
 
     result = {cat: [] for cat in categories}
@@ -576,9 +569,10 @@ def _check_safety_responds_to_incidents(history: list[dict]) -> bool:
 
 
 def _check_gaming_persistence(history: list[dict]) -> bool:
-    vals = [metric_mean_eval_engineering(rd) for rd in history]
+    # Gaming persistence: score-satisfaction gap widens and stays wide across rounds
+    vals = [metric_mean_gaming_gap(rd) for rd in history]
     vals = [v for v in vals if v is not None]
-    return np.mean(vals) >= 0.10 if vals else False
+    return np.mean(vals) >= 0.05 if vals else False
 
 
 def _check_commoditization_shock(history: list[dict]) -> bool:
@@ -595,16 +589,16 @@ def _check_commoditization_shock(history: list[dict]) -> bool:
 
 def _check_regulatory_escalation(history: list[dict]) -> bool:
     ORDERING = {
-        "investigation": 0,
-        "public_warning": 1,
-        "benchmark_mandate": 2,
-        "compliance_audit": 3,
-        "sanctions_and_fines": 4,
+        "request_voluntary_commitment": 0,
+        "publish_advisory": 1,
+        "mandate_safety_disclosure": 2,
+        "commission_audit": 3,
+        "impose_sanction": 4,
         "emergency_investigation": 5,
     }
     interventions = []
     for rd in history:
-        pm_data = rd.get("policymaker_data", {})
+        pm_data = rd.get("regulator_data", {})
         for iv in pm_data.get("interventions", []):
             interventions.append(iv.get("type", ""))
     ordered = [ORDERING[iv] for iv in interventions if iv in ORDERING]
@@ -617,16 +611,16 @@ def _check_funding_follows_scores(history: list[dict]) -> bool:
     score_vals, cap_vals, funding_vals = [], [], []
     for rd in history:
         fd = rd.get("funder_data", {})
-        mults = fd.get("funding_multipliers", {})
-        if not mults:
+        totals = fd.get("provider_funding_totals", {})
+        if not totals:
             continue
-        for name in mults:
+        for name in totals:
             if name in rd.get("scores", {}) and name in rd.get(
                 "true_capabilities", {}
             ):
                 score_vals.append(rd["scores"][name])
                 cap_vals.append(rd["true_capabilities"][name])
-                funding_vals.append(mults[name])
+                funding_vals.append(totals[name])
     if len(score_vals) < 10:
         return True  # not enough data
     corr_score = np.corrcoef(score_vals, funding_vals)[0, 1]
@@ -663,8 +657,7 @@ def analyze_batch(
     # --- Aggregate stats ---
     key_metrics = {
         "mean_true_capability": metric_mean_true_capability,
-        "mean_eval_engineering": metric_mean_eval_engineering,
-        "mean_safety_alignment": metric_mean_safety_alignment,
+        "mean_safety": metric_mean_safety,
         "mean_score": metric_mean_score,
         "mean_gaming_gap": metric_mean_gaming_gap,
         "hhi": metric_hhi,
@@ -779,11 +772,11 @@ def _write_diagnostic_report(results: dict, output_dir: str):
     ps = results.get("coherence", {}).get("prompt_sensitivity", {})
     for provider, summary in ps.items():
         if isinstance(summary, dict):
-            ee = summary.get("evaluation_engineering")
-            sa = summary.get("safety_alignment")
+            rd = summary.get("rd")
+            sa = summary.get("safety")
             lines.append(
-                f"- **{provider}**: eval_eng SD={ee:.3f}, safety SD={sa:.3f}"
-                if ee is not None and sa is not None
+                f"- **{provider}**: rd SD={rd:.3f}, safety SD={sa:.3f}"
+                if rd is not None and sa is not None
                 else f"- **{provider}**: insufficient data"
             )
 

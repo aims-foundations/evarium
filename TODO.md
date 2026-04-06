@@ -1,5 +1,79 @@
 # TODO
 
+## Architecture Review Items (2026-03-30) — COMPLETED 2026-03-31
+
+- [x] **Visibility / ground truth audit** — Fixed: `safety_capability` GT leak in consumer LLM context; removed dead `ground_truth` param from `compute_switching` chain; removed dead `provider_strategies` from `regulator.observe()`; added missing `MediaGroundTruth` to `visibility.py`.
+- [x] **Startup entry shenanigans** — Decision: not implementing entry yet. `_maybe_spawn_startup()` stubbed to always return `None`; BTE/HHI metrics preserved and still logged every round.
+- [x] **Relook at plotting** — Fixed: `safety_alignment` → `safety` in 4 data-access sites; stale axis labels; `get_strategy_key()` dead code; docstring "Eval Engineering" → "R&D Investment".
+- [x] **Relook at experiment structure** — Fixed stale keys in `EXTREME_TEST_PROVIDERS` commented block. Active configs already clean.
+- [x] **Validity field review** — Fixed: removed `validity` from `game_log.py` narrative, `Benchmark.get_summary()`, `get_benchmark_summary()`, `get_statistics()`. Internal weight-decay uses untouched.
+- [ ] **Before cluster runs:** Switch `run_experiment.py` default back to `--no-dev` (currently defaults to dev/sandbox output). Also set `run_all.py` `DEV = False`. Confirm `hf_data/` directory structure exists.
+
+## Post-Run Calibration Review (after first 40-round LLM run)
+
+- [ ] **Provider-need alignment**: Initial cosine similarities were 0.93-0.95 (too flat). Widened capability spread + Q1 2023 recalibration (session 9). After 40-round run, check: do profiles diverge enough to create observable misalignment gaps? If cos stays >0.90 for all providers through round 40, the structural alignment between capability profiles and consumer needs may be too high — consider whether consumer need weights need reshaping (e.g. more heterogeneous across segments) or initial capability profiles need sharper spikes.
+- [ ] **rnd_efficiency**: Bumped from 0.05 to 0.08. Check growth trajectories — providers should reach 0.7-0.85 by round 40, not ceiling at 1.0 or stagnate at 0.55.
+- [ ] **Funder budget scale**: FUNDER_BUDGET_SCALE=1e-9 ($1B = 1.0 internal). Verify funder allocations are 10-30% of market leader's base revenue, not dominant or negligible.
+- [ ] **Market concentration**: Round 0 switching created 37% leader in old run. Check if wider capability spread changes this or makes it worse.
+- [ ] **Score-satisfaction gap emergence**: Expect visible gaps by round 15-20 from benchmark introduction + provider specialization. If gaps stay near-zero, benchmark-need misalignment may need further sharpening.
+
+## Plotting Redo — DONE (logging) / IN PROGRESS (dashboards)
+
+**Logging fields now populated in rounds.jsonl:**
+- `benchmark_dimension_weights` — true {dim: weight} per active benchmark (from evaluator ground truth)
+- `focus_levels` — per provider per benchmark scalar
+- `inferred_benchmark_weights` — per provider per benchmark {dim: weight}
+- `satisfaction_signals` — per provider 6-dim vector
+- `capability_gains` — per provider per-dim gains this round
+- `consumer_data.penalty_breakdown` — per provider {base_satisfaction, incident_penalty, cost_bonus}
+- `consumer_data.need_weights` — population-weighted 6-dim consumer need vector
+
+**Bug fixed:** `evaluator.get_benchmark_dimension_weights()` referenced `self._benchmark_ground_truth` which was never stored. Fixed by caching in `evaluate_all()`.
+
+### Design principles (revised 2026-03-31)
+
+- The score-satisfaction gap has **multiple channels**: dimensional mismatch, score inflation, and penalty load (incidents/media at scale). Visualization must decompose the gap, not assume one mechanism.
+- In empirical runs, penalty load (incident_penalty * (1 + market_share^2)) often dominates the gap. Dimensional mismatch may be absent even when the gap is large. Media influence now routes through exploration behavior, not satisfaction.
+- Cosine/L1 metrics on capability profiles are secondary evidence — useful when dimensional gaming IS active, but the gap waterfall is the primary diagnostic.
+- Organized by question ("did gaming happen?", "who won?", "what were the costs?"), not by actor type.
+
+### Dashboard A: Gap Anatomy (3x2) — `plot_gap_anatomy()`
+
+The headline dashboard. Decomposes the score-satisfaction gap.
+
+| Position | Panel | Data |
+|---|---|---|
+| A1 top-left | **Gap Waterfall** — per-provider stacked bar: score_noise (score - dot(cap,bm_agg)), dim_mismatch (dot(cap,bm_agg) - dot(cap,need)), penalty_load (dot(cap,need) - satisfaction) | scores, capability_vectors, benchmark_dimension_weights, consumer_data.penalty_breakdown |
+| A2 top-right | **Gap Over Time** — stacked area per provider, same 3 components over rounds | same, per round |
+| A3 mid-left | **Dimensional Profile** — grouped bars per dimension: benchmark_weight, need_weight, each provider's cap_share | benchmark_dimension_weights, consumer_data.need_weights, capability_vectors |
+| A4 mid-right | **Growth Direction** — per-provider grouped bars: cos(growth, need), cos(growth, bm_agg), cos(growth, satisfaction_signal) | capability_vectors round 0 vs final, satisfaction_signals |
+| A5 bottom-left | **Per-Benchmark Structural Alignment** — horizontal bars: cos(bm_weights[b], need) per benchmark | benchmark_dimension_weights, consumer_data.need_weights |
+| A6 bottom-right | **Score Reliability** — Pearson-r(score_rank, satisfaction_rank) over time | scores, consumer_data.provider_satisfaction |
+
+### Dashboard B: Market and Strategy (3x2) — `plot_market_strategy()`
+
+| Position | Panel | Data |
+|---|---|---|
+| B1 top-left | **Market Share** — stacked area over time | consumer_data.market_shares |
+| B2 top-right | **Investment Portfolio** — small multiples per provider, stacked area rd/safety/product | strategies |
+| B3 mid-left | **Funder Allocations** — stacked bar per round, colored by funder | funder_data.allocations |
+| B4 mid-right | **Benchmark Orientation** — line per provider over time | benchmark_orientations |
+| B5 bottom-left | **Consumer Switching Rate** over time | consumer_data.switching_rate |
+| B6 bottom-right | **Per-Benchmark Scores** — small multiples, one per benchmark, lines per provider | per_benchmark_scores |
+
+### Dashboard C: Costs and Interventions (3x2) — `plot_costs_interventions()`
+
+| Position | Panel | Data |
+|---|---|---|
+| C1 top-left | **Incident Timeline** — bar per round, colored by severity, provider-labeled | incidents |
+| C2 top-right | **Safety Investment vs Incident Rate** — connected scatter with time arrows | strategies.safety, incidents |
+| C3 mid-left | **Penalty Load Over Time** — line per provider (dot(cap,need) - satisfaction) | capability_vectors, consumer_data |
+| C4 mid-right | **Media Sentiment + Provider Attention** — heatmap providers x rounds | media_data |
+| C5 bottom-left | **Intervention Timeline** — Gantt: which lever, which provider, which rounds | regulator_data |
+| C6 bottom-right | **Cumulative Incidents** — stacked bar by severity per provider | incidents |
+
+---
+
 ## Validation Runs -- Target: Thursday March 5
 
 ### Status
@@ -198,6 +272,14 @@ noted. All vs the US full-feature baseline.
 - **Hypothesis:** Without evolution, gaming gaps widen monotonically; with
   evolution, new benchmarks create periodic resets in the leaderboard order.
 
+#### 11. Initial market structure ablation (capability vector compression)
+- **Tests:** Whether initial competitive structure (monopoly vs duopoly vs competition) changes ecosystem outcomes independently of mechanism ablations.
+- **Conditions:**
+  - *Monopoly:* Orion far ahead (current vectors or wider)
+  - *Duopoly:* Orion + Apex nearly tied, rest trailing
+  - *Competition:* Top 4 providers compressed to near-parity (mean ~0.38-0.40)
+- **Hypothesis:** Monopoly locks in early via revenue feedback loop; competition produces more differentiated strategies and higher Goodhart pressure (more providers chasing scores). Duopoly may show the most interesting dynamics — two leaders can diverge on strategy (one gaming, one not) in ways a monopolist or competitive field cannot.
+
 1. make vcs want to diversify more. not solely based on leaderboard
 2. double check that VCs cant fund opensource, opensource cant invest in safety
 
@@ -222,10 +304,27 @@ noted. All vs the US full-feature baseline.
 
 ## Open-Source Provider Modeling
 
-Core mechanics implemented. Remaining work:
+Session 14 (2026-04-05): PIMMUR audit removed/narrowed most hardcoded OS advantages. See `stakeholders.md` OS section for full details. Remaining structural differences: cost_advantage=0.35, safety_floor 0.15 vs 0.25, VC exclusion, deployer liability guidance track.
+
+Remaining work:
 
 - **Funder `open_source_sponsor` archetype** — funders currently treat OS providers normally. A new funder type should fund based on ecosystem_influence (adoption) rather than market-share ROI. Low priority since current funder behavior is acceptable for most experiments.
 - **Market share vs. ecosystem influence for funder traction** — currently funders use market share for all providers. For OS providers, ecosystem_influence (logged per round in `open_source_data`) should replace market share as the traction signal in funder allocations.
+- **cost_advantage <-> cost_satisfaction_bonus interaction** — flagged for review. The cost_bonus formula (`cost_sensitivity x cost_advantage x 0.15`) may double-count the cost effect alongside the revenue discount. Investigate whether both are needed.
+
+## Validation Phase: Incident Path-Dependence
+
+**Flagged 2026-04-05.** 5-seed heuristic runs (seeds 7/12/42/88/103, 40 rounds) show that market outcomes are highly sensitive to which provider receives a major/critical incident and when. A single critical incident can swing 30+ percentage points of market share. Four different providers win across 5 seeds — the winner is essentially whichever high-R&D provider avoids a major incident.
+
+This is either a feature (incidents *should* be high-impact and path-dependent, matching real-world dynamics where a single safety failure can reshape competitive standing) or a calibration issue (incident severity/frequency may be too swingy relative to other forces in the simulation).
+
+**Needs empirical grounding:** Can the magnitude of incident-driven market share shifts be justified by real-world examples (e.g., Samsung Note 7, Boeing 737 MAX, specific AI incidents)? If so, the path-dependence is a valid emergent finding worth reporting. If not, incident effect magnitudes need recalibration.
+
+**Validation steps:**
+- Run 30+ seeds and characterize the distribution of outcomes (not just point estimates)
+- Ablation: run with `enable_incidents=False` to isolate how much variance incidents explain
+- Compare incident-driven share loss magnitudes against empirical cases
+- Check whether the heuristic mode's portfolio response to incidents (safety pressure ratchet) is too aggressive or too passive
 
 ## Barriers to Entry / Startup Entry
 
@@ -293,12 +392,73 @@ The current experiment set supports the following narrative:
 
 ## Post-implementation: LLM Prompt Review (PIMMUR)
 
+- **Provider prompt** — DONE (2026-03-31): Full rewrite. Removed all apparatus vocabulary (benchmark_orientation, focus_level, dimension weights as numbers). System prompt now describes levers in natural business language. User prompt shows qualitative focus labels, suppresses satisfaction_signal at round 0, adds confidence qualifiers based on market share, hides near-uniform benchmark beliefs. Added `strategy_memo` field for structured cross-round memory.
 - **Funder LLM prompt (M + U)** — When writing `llm_plan_funding` in `llm.py`, do NOT inject theory about why scores might diverge from market outcomes (pimmur_audit.md §Minimal-Control item 4: "funder theory injection"). Pass observables only: scores at face value, market shares, score deltas, incident history, media sentiment, `public_comms`. Let the LLM reason freely. No "gap suggests X" or "scores may be inflated" framing.
-- **All LLM prompts** — Review all system prompts for "simulating" framing (replace with first-person), recognisable experimental vocabulary (audit §Unawareness), and pre-computed analytical hints in reflection prompts (audit §Minimal-Control item 3). Do this pass after all actors are implemented.
+- **Regulator / Media / Evaluator prompts** — Review for "simulating" framing, experimental vocabulary, and pre-computed hints. Same PIMMUR pass as funder. Lower priority since these actors make fewer decisions per round.
+
+## Implementation Audit (2026-03-31) — stakeholders.md vs code
+
+Comprehensive audit comparing docs/stakeholders.md spec against actual implementation.
+Fix priority: critical items first (affect gaming dynamics), then moderate, then minor.
+
+### Critical (affect simulation dynamics)
+
+- [x] **OS Belief Broadcast not implemented** — FIXED (session 9): After all providers update beliefs, OS providers with `os_belief_broadcast=True` nudge all other providers' `inferred_benchmark_weights` toward true benchmark weights. Strength = `openness_level * market_share * 0.30`. Implemented in `simulation.py` step 4a-bis.
+
+- [x] **Funder scoring formulas don't match spec** — FIXED (session 7): Per-type spec formulas implemented. Corporate funder type added. Media sentiment wired into VC/corporate scoring. `_score_providers()` replaced with `_score_providers_vc/corporate/gov/foundation()`.
+
+- [x] **OS Safety erosion not applied to consumer satisfaction** — FIXED (session 9): Consumer satisfaction path now computes `deployed_safety` with same erosion formula as incident path. `safety_capability = safety * (1 - openness_level * market_share * 0.50)` for OS providers with `os_safety_erosion=True`.
+
+### Moderate (spec-implementation mismatch)
+
+- [x] **Regulator lever names differ from spec** — FIXED (session 7): 5 spec levers implemented (`request_voluntary_commitment`, `publish_advisory`, `mandate_safety_disclosure`, `commission_audit`, `impose_sanction`). Per-lever cooldowns. Exogenous events (US round 24, EU round 14). `consumer_satisfaction` removed from regulator observation. LLM prompt PIMMUR-cleaned (risk_beliefs replaced with reasoning memory).
+
+- [x] **Media missing `narrative_state` and headline budget** — FIXED (session 8): OPTIMISM/SKEPTICISM/CRISIS state machine with transition thresholds. Gaming scandal, saturation narrative, safety concern triggers added. Headline budget: incidents guaranteed, pool sampled up to `media_sample_size=4`. `MediaCoverage` outputs `narrative_state` and `saturation_signal`.
+
+- [x] **Provider budget: multiplicative vs additive** — FIXED (session 8): Budget now `base_revenue + sum(funder_allocations)` (additive). `funding_multipliers` replaced with `provider_funding_totals`. Sanctions apply as efficiency multiplier on budget.
+
+- [x] **Consumer `expected_quality` formula differs** — FIXED (session 8): `expected_quality = trust * leaderboard_signal + (1-trust) * running_perceived_quality`. `running_perceived_quality` EMA updated each round from realized satisfaction. Keyword-matching `effective_relevance` retained (no `benchmark_public_category_weights` data structure exists yet).
+
+- [x] **Saturation detection is threshold-based not delta-based** — FIXED (session 8): Delta-based detection: saturated when max-score delta < 0.005 for 3 consecutive rounds. Perfect scores (>=1.0) still trigger immediate saturation. `max_score_history` tracked per benchmark.
+
+### Minor / Already Known
+
+- [x] **`dynamic_evaluator` toggle not wired** — FIXED (session 8): Heuristic dynamic mode implemented. Signal-based triggers: saturation, low internal validity (Spearman-r < 0.5), fallback at 2x cooldown. Internal validity computed from score_rank vs market_share_rank. Fixed mode unchanged. LLM mode deferred.
+- [x] **Evaluator internal validity estimate stub** — FIXED (session 8): `update_internal_validity()` computes Spearman-r(score_rank, market_share_rank). Used as trigger in dynamic evaluator mode.
+
+## Session 11 Fixes and Flags (2026-04-03)
+
+Analysis of 5 complete LLM runs (US, EU, bm_orient_adjustable, market_expansion, misaligned_benchmarks).
+
+### Implemented
+
+- [x] **LLM benchmark focus "all more"** — Prompt now says R&D capacity is finite, prioritize benchmarks most important to goals. Both standard and with-orientation prompts updated in `llm.py`.
+- [x] **Exploration churn 3% -> 5%** — `consumer.py` ARCHETYPES exploration_rate raised to reduce first-mover lock-in.
+- [x] **Switching thresholds ~30% lower** — All 6 archetypes in `consumer.py` ARCHETYPES: leaderboard_follower 0.15->0.10, experience_driven 0.08->0.06, cautious 0.25->0.18, enterprise_cautious 0.50->0.35, enterprise_growth 0.30->0.22, enterprise_established 0.40->0.28.
+- [x] **New users choose independently** — In market_expansion runs, new users (from market_growth_rate) now distributed by believed_quality instead of inheriting incumbent shares. `compute_switching` accepts `market_growth_rate`, passes to `_compute_switching_heuristic`. No effect when growth_rate=0.
+
+### Config changes (next runs)
+
+- [ ] **Market expansion growth rate 12% -> 5%** — Not a code change; set `market_growth_rate=0.05` in experiment config. 5% monthly ≈ 80% annual ≈ 7x over 40 months, matching enterprise AI adoption 2023-2025. Old 12% run (45x growth) was unrealistic for sustained rate.
+- [ ] **Presentation market_expansion numbers are stale** — Headline findings table in `overleaf/presentation.tex` shows results from the old 12% growth run (51 incidents, +0.070 gap, 13.6% safety). These will change when re-run at 5%. Do not present these as final.
+- [ ] **Use mean per-provider gap as canonical metric** — Aggregate gap (mean_score - avg_satisfaction) mixes weighting schemes. Per-provider gap is apples-to-apples and already positive in all 5 runs.
+
+### Watch for (after next runs)
+
+- [ ] **Goodhart dynamics imposed vs emergent** — benchmark_orientation fixed at 0.80 in 4/5 runs. In the one adjustable run, all providers dropped to 0.05 by round 20. If the benchmark_focus prompt fix changes provider specialization behavior, the orientation question may resolve itself. If not, consider: orientation floor (~0.30), noisier consumer signal, or structural reasons to keep orientation high (funder/procurement dependence on benchmark rank).
+- [ ] **Orion still dominant?** — Churn + threshold changes should help. If Orion still >75% in all runs, consider: segment-specific incumbency, diminishing returns to market_presence, or rebalancing initial brand_recognition/product allocations.
+
+### Flagged internally (known limitations)
+
+- [ ] **EU consolidation artifact** — Binding audit deployment gate hits all non-OS providers equally regardless of size. Compliance costs as uniform fixed cost disproportionately burdens small players. This is also a real-world pattern (EU AI Act), so finding is defensible but mechanism is simplified.
+- [x] **Score-delta buzz effect** — DONE (session 13): Subsumed by media-driven exploration redesign. Removed media_penalty from satisfaction formula; media influence now routes through per-provider exploration rate (negative coverage drives users to explore) and blended redistribution (media-driven explorers follow believed_quality + buzz). Trust erosion extended to all archetypes scaled by leaderboard_trust. Zero net new parameters. Grounded in Hardy et al. (2024).
+- [ ] **Single seed per LLM condition** — All findings are N=1 for LLM runs. LLM runs are case studies; heuristic runs (N=30) are the statistical backbone. Caveat in presentation.
+- [ ] **LLM backbone homogeneity** — All 6 providers reasoned by same Claude Sonnet model. Convergent strategies may reflect shared cognitive biases rather than emergent equilibrium.
+- [x] **Recalibrate benchmark introduction schedule for 40 rounds** — DONE (session 12): max_benchmarks raised to 10, cooldown reduced to 5. All 6 sequence benchmarks introduced by round 30, full pool of 10 active for last 10 rounds.
+- [ ] **Open-source provider advantage stack** — OpenCore ends at 50-60% market share in heuristic runs with minimal incidents despite low safety investment (10%). Multiple compounding advantages need review: (1) incident probability uses portfolio `safety` fraction, not `safety_capability` — so safety erosion from openness doesn't increase incident rate; (2) sanctions exempt OS providers entirely (simulation.py:843); (3) safety floor is 0.03 vs 0.35 for closed providers; (4) cost_advantage=0.9 makes switching nearly frictionless; (5) no deployer liability model — downstream deployers bear risk, not the weights publisher. Each individually defensible, but the stack may be too favorable in aggregate. Consider: using deployed `safety_capability` (post-erosion) in incident probability, or modeling downstream deployer incidents that trace back to the OS provider.
 
 ## Infrastructure
 
+- **Eval engineering / antitrust audit** — DONE (2026-03-30): all `evaluation_engineering`, `exploitability`, `gaming_penalty`, `market_concentration_review` removed from src/ and scripts/. Portfolio keys now uniformly `{rd, safety, product}` throughout.
 - **LLM plumbing** — DONE (2026-03-30): `llm.py` fully rewritten for new arch. `llm_plan_provider`, `call_llm`, `llm_plan_funding` all written. Old-arch dead code removed. PIMMUR fixes applied to funder prompt.
-- **LLM end-to-end smoke test** — `llm_plan_provider` is new and untested with a real LLM. Run `python scripts/run_llm_now.py -r 3 -p anthropic --no-log` to verify before any production run.
-- **`run_llm_now.py` is likely broken** — new config parameters (`enable_incidents`, `evaluator_as_company`, `enable_media`, `consumer_llm_mode`, policymaker presets, `use_case_profiles`) are not wired up. Needs sync with `run_experiment.py` structure.
-- **`compare_experiments.py`** — tool to load two experiments, diff their configs, compute per-metric divergence timelines, and identify the first round of significant divergence. Would replace the current manual summary.json comparison workflow.
+- **LLM end-to-end smoke test** — `llm_plan_provider` is new and untested with a real LLM. Run a short `run_experiment.py` test (3 rounds, LLM mode) to verify before any production run.

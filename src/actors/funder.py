@@ -1,19 +1,20 @@
 """
 Funder Actor for Evaluation Ecosystem Simulation
 
-Represents capital allocators (VCs, Government/AISI, Foundations) who influence
-provider development through funding decisions.
+Represents capital allocators (VCs, Corporates, Government/AISI, Foundations) who
+influence provider development through funding decisions.
 
 Key dynamics:
-- Funders observe leaderboard, consumer satisfaction, and regulatory interventions
+- Funders observe leaderboard, media sentiment, incidents, and market shares
 - They infer provider quality from public signals (cannot see strategies directly)
-- Funding affects providers via efficiency multiplier on capability gains
-- Different funder types have different allocation strategies
+- Funding affects providers via additive budget model (base_revenue + funder allocations)
+- Different funder types have different scoring formulas and allocation patterns
 
-Funder Types:
-- VC: ROI maximization, momentum-driven, strong portfolio diversification (seek contrarian opportunities)
-- Government/AISI: Safety & stability, spread funding, favor consistency
-- Foundation: Mission alignment, reward capability growth
+Funder Types and Scoring Formulas (per stakeholders.md spec):
+- VC: market_share_growth * media_sentiment * (1 - incident_risk) — concentrated bets, no OS
+- Corporate: market_share * media_sentiment * (1 - incident_risk) — multi-relationship, per-provider cooldown
+- Government/AISI: (1 - incident_rate) * market_share_growth — proportional spread, safety-first
+- Foundation: (1 - incident_rate) * market_share_growth — proportional with underdog bonus
 
 Visibility:
 - PUBLIC: name, active investments (provider names only)
@@ -63,7 +64,7 @@ class Funder:
 
         Args:
             name: Unique identifier for this funder
-            funder_type: Type of funder ("vc", "gov", "foundation")
+            funder_type: Type of funder ("vc", "corporate", "gov", "foundation")
             total_capital: Total capital available for funding
             risk_tolerance: How much risk is acceptable (0-1)
             mission_statement: Mission-driven objective (for foundation type)
@@ -101,12 +102,23 @@ class Funder:
         # Tracking for inference
         self._last_leaderboard: list = []
         self._last_consumer_data: dict = {}
-        self._last_policymaker_data: dict = {}
+        self._last_regulator_data: dict = {}
         self._previous_scores: dict = {}  # For computing score growth
 
         # Momentum tracking
         self._score_history: list[dict] = []  # [{provider: score}, ...] last N rounds
         self._previous_market_shares: dict = {}  # {provider: share} from prior round
+        self._current_market_momentum: dict = {}
+
+        # Media (updated each round from media_coverage)
+        self._media_sentiment: float = 0.0
+        self._media_coverage: Optional[dict] = None
+
+        # Public comms from providers (updated each round)
+        self._public_comms: list = []
+
+        # Incident tracking (recent incidents per provider)
+        self._recent_incident_counts: dict = {}
 
         # Open-source provider names (VCs do not fund these)
         self._open_source_providers: set = set()
@@ -126,12 +138,13 @@ class Funder:
         self,
         leaderboard: list,
         consumer_data: dict,
-        policymaker_data: dict,
+        regulator_data: dict,
         round_num: int,
         media_coverage: Optional[dict] = None,
         other_funder_allocations: Optional[dict] = None,
         incidents: Optional[list] = None,
         open_source_providers: Optional[set] = None,
+        public_comms: Optional[list] = None,
     ):
         """
         Observe the current ecosystem state.
@@ -147,7 +160,7 @@ class Funder:
         Args:
             leaderboard: List of (provider_name, score) tuples
             consumer_data: Dict with avg_satisfaction, provider_satisfaction, etc.
-            policymaker_data: Dict with interventions, active_regulations
+            regulator_data: Dict with interventions, active_regulations
             round_num: Current simulation round
             media_coverage: Optional media coverage dict
             other_funder_allocations: Dict of {funder_name: {provider: amount}}
@@ -158,9 +171,18 @@ class Funder:
         # Store for inference
         self._last_leaderboard = leaderboard
         self._last_consumer_data = consumer_data
-        self._last_policymaker_data = policymaker_data
+        self._last_regulator_data = regulator_data
         self._other_funder_allocations = other_funder_allocations or {}
         self._open_source_providers = open_source_providers or set()
+
+        # Media: store full coverage dict for LLM mode; extract sentiment for heuristic
+        self._media_coverage = media_coverage
+        self._media_sentiment = 0.0  # raw sentiment [-1, +1]
+        if media_coverage:
+            self._media_sentiment = media_coverage.get("sentiment", 0.0)
+
+        # Public comms from providers
+        self._public_comms = public_comms or []
 
         # Update beliefs about provider quality from benchmark scores at face value
         # Per observation model: funders see scores directly, not validity-adjusted
@@ -176,9 +198,6 @@ class Funder:
 
         # Track incident history per provider (last 3 rounds)
         if incidents:
-            if not hasattr(self, '_recent_incident_counts'):
-                self._recent_incident_counts = {}
-
             for incident in incidents:
                 provider = incident.provider
                 if provider not in self._recent_incident_counts:
@@ -217,7 +236,7 @@ class Funder:
             "type": "observation",
             "round": round_num,
             "leaderboard": leaderboard,
-            "interventions": len(policymaker_data.get("interventions", [])),
+            "interventions": len(regulator_data.get("interventions", [])),
         })
 
     def reflect(self):
@@ -284,6 +303,8 @@ class Funder:
             # Type-specific splits
             if self.funder_type == "vc":
                 evaluator_share = 0.05  # VCs invest minimally in infrastructure
+            elif self.funder_type == "corporate":
+                evaluator_share = 0.10  # Corporates invest modestly in eval infra
             elif self.funder_type == "gov":
                 evaluator_share = 0.30  # Governments fund public goods
             elif self.funder_type == "foundation":
@@ -296,6 +317,8 @@ class Funder:
 
         if self.funder_type == "vc":
             allocations = self._plan_vc(providers, provider_capital)
+        elif self.funder_type == "corporate":
+            allocations = self._plan_corporate(providers, provider_capital)
         elif self.funder_type == "gov":
             allocations = self._plan_gov(providers, provider_capital)
         elif self.funder_type == "foundation":
@@ -365,146 +388,203 @@ class Funder:
         # Concentration = fraction of other funders funding this provider
         return funders_funding_provider / total_funders
 
-    def _score_providers(self, providers: list, weights: dict) -> dict:
-        """Score providers using publicly observable momentum signals.
+    def _get_incident_risk(self, provider: str) -> float:
+        """Compute incident risk score [0,1] from recent incidents.
 
-        Args:
-            providers: List of provider names
-            weights: dict with keys quality, score_momentum, market_traction, market_momentum, diversification
-
-        Returns:
-            Dict of {provider: composite_score}
+        Severity-weighted sum of incidents in last 3 rounds, capped at 1.0.
         """
-        market_shares = self._last_consumer_data.get("market_shares", {})
+        if provider not in self._recent_incident_counts:
+            return 0.0
+        severity_weights = {"minor": 0.05, "moderate": 0.15, "major": 0.30, "critical": 0.50}
+        total = sum(severity_weights.get(s, 0.10) for _, s in self._recent_incident_counts[provider])
+        return min(1.0, total)
+
+    def _get_media_sentiment_factor(self) -> float:
+        """Convert raw media sentiment [-1,+1] to a multiplicative factor [0.5, 1.5].
+
+        Neutral sentiment (0) maps to 1.0. Negative sentiment reduces score,
+        positive sentiment boosts it. Used by VC and corporate scoring.
+        """
+        return 1.0 + self._media_sentiment * 0.5
+
+    def _score_providers_vc(self, providers: list) -> dict:
+        """VC scoring: growth * media * (1 - incident_risk) * (1 - market_share).
+
+        VCs chase momentum and upside potential. The (1 - market_share) term
+        models diminishing VC interest in mature positions — smaller providers
+        have more upside, and VCs naturally exit as companies mature.
+        """
+        media_factor = self._get_media_sentiment_factor()
         scores = {}
         for provider in providers:
-            quality = self.private_state.believed_provider_quality.get(provider, 0.5)
-            score_mom = self._get_score_momentum(provider)
-            traction = market_shares.get(provider, 0)
-            market_mom = getattr(self, "_current_market_momentum", {}).get(provider, 0)
-
-            # Diversification signal: high concentration reduces score
+            market_growth = max(0.0, self._current_market_momentum.get(provider, 0))
+            incident_risk = self._get_incident_risk(provider)
+            market_share = self._previous_market_shares.get(provider, 0.1)
+            upside = 1.0 - market_share
             concentration = self._compute_portfolio_concentration(provider)
-            diversification_score = 1.0 - concentration  # Higher when less concentrated
-
-            # Incident penalty: recent safety incidents reduce funding attractiveness
-            incident_penalty = 0.0
-            if hasattr(self, '_recent_incident_counts') and provider in self._recent_incident_counts:
-                # Count recent incidents with severity weighting
-                for _, severity in self._recent_incident_counts[provider]:
-                    severity_weights = {"minor": 0.05, "moderate": 0.10, "major": 0.20, "critical": 0.35}
-                    incident_penalty += severity_weights.get(severity, 0.10)
-
-            composite = (
-                weights["quality"] * quality
-                + weights["score_momentum"] * score_mom * 10  # Scale: deltas ~0.01-0.05
-                + weights["market_traction"] * traction
-                + weights["market_momentum"] * market_mom * 10
-                + weights.get("diversification", 0.0) * diversification_score
-                - incident_penalty  # NEW: Subtract incident penalty
-            )
-            scores[provider] = max(0, composite)
+            diversification = 1.0 + 0.3 * (1.0 - concentration)
+            scores[provider] = max(0, market_growth * media_factor * (1 - incident_risk) * upside * diversification)
         return scores
+
+    def _score_providers_corporate(self, providers: list) -> dict:
+        """Corporate scoring: market_share * media_sentiment * (1 - incident_risk).
+
+        Corporates anchor to current market position rather than growth.
+        """
+        market_shares = self._last_consumer_data.get("market_shares", {})
+        media_factor = self._get_media_sentiment_factor()
+        scores = {}
+        for provider in providers:
+            share = max(0.01, market_shares.get(provider, 0))
+            incident_risk = self._get_incident_risk(provider)
+            scores[provider] = max(0, share * media_factor * (1 - incident_risk))
+        return scores
+
+    def _score_providers_gov(self, providers: list) -> dict:
+        """Gov scoring: (1 - incident_rate) * market_share_growth.
+
+        Government funders prioritize safety track record and growth.
+        """
+        scores = {}
+        for provider in providers:
+            incident_risk = self._get_incident_risk(provider)
+            market_growth = max(0.01, self._current_market_momentum.get(provider, 0) + 0.1)
+            scores[provider] = max(0, (1 - incident_risk) * market_growth)
+        return scores
+
+    def _score_providers_foundation(self, providers: list) -> dict:
+        """Foundation scoring: (1 - incident_rate) * market_share_growth.
+
+        Same base formula as gov, but allocation logic differs (underdog bonus).
+        """
+        return self._score_providers_gov(providers)
 
     def _plan_vc(self, providers: list, capital: float) -> dict:
         """
-        VC strategy: Back top performers with strong diversification emphasis.
+        VC strategy: Concentrated bets on top 1-2 high-growth providers.
 
-        VCs seek contrarian opportunities and avoid crowded trades. High weight
-        on diversification (0.25) means VCs actively seek under-funded providers
-        where other funders aren't concentrated. Gaming effects emerge indirectly
-        through declining market traction when scores don't match real quality.
-
-        Open-source providers are excluded: VCs require equity stakes, which
-        open-source labs do not offer (no subscription revenue, no equity model).
+        Spec formula: market_share_growth * media_sentiment * (1 - incident_risk).
+        Open-source providers excluded (no equity model).
+        Funds at most 2 providers. Second pick must score at least 40% of the top.
         """
-        # VCs cannot take equity in open-source providers
         providers = [p for p in providers if p not in self._open_source_providers]
         if not providers:
             return {}
 
-        scores = self._score_providers(providers, {
-            "quality": 0.15, "score_momentum": 0.25,
-            "market_traction": 0.15, "market_momentum": 0.20,
-            "diversification": 0.25,  # Increased from 0.15 - VCs seek contrarian opportunities
-        })
-
+        scores = self._score_providers_vc(providers)
         ranked = sorted(scores.items(), key=lambda x: x[1], reverse=True)
-        allocations = {}
 
-        # Concentrate funding on top performers
-        if len(ranked) >= 2:
-            allocations[ranked[0][0]] = capital * 0.6
-            allocations[ranked[1][0]] = capital * 0.3
-            remaining = capital * 0.1
-            other_count = len(ranked) - 2
-            if other_count > 0:
-                per_other = remaining / other_count
-                for provider, _ in ranked[2:]:
-                    allocations[provider] = per_other
-        elif len(ranked) == 1:
+        top_score = ranked[0][1] if ranked else 0
+        if top_score <= 0:
+            return {}
+
+        allocations = {}
+        if len(ranked) >= 2 and ranked[1][1] >= top_score * 0.40:
+            # Two-bet split: 70/30
+            allocations[ranked[0][0]] = capital * 0.70
+            allocations[ranked[1][0]] = capital * 0.30
+        else:
+            # Single concentrated bet
             allocations[ranked[0][0]] = capital
 
         return allocations
 
     def _plan_gov(self, providers: list, capital: float) -> dict:
         """
-        Government/AISI strategy: Safety & stability, spread funding.
+        Government/AISI strategy: Safety & stability, proportional spread.
 
-        Weights quality heavily, with moderate market traction signal.
-        Gaming effects surface indirectly through low market share or
-        declining traction when consumers notice quality gaps.
-        Moderate diversification to support ecosystem stability.
+        Spec formula: (1 - incident_rate) * market_share_growth.
+        Penalizes providers with active regulatory interventions.
+        Allocation: proportional to normalized scores; providers scoring
+        below 10% of the top are excluded.
         """
-        scores = self._score_providers(providers, {
-            "quality": 0.50, "score_momentum": 0.10,
-            "market_traction": 0.25, "market_momentum": 0.05,
-            "diversification": 0.10,
-        })
+        scores = self._score_providers_gov(providers)
 
         # Penalize providers with active regulatory interventions
-        interventions = self._last_policymaker_data.get("interventions", [])
+        interventions = self._last_regulator_data.get("interventions", [])
         if interventions:
             for provider in providers:
-                scores[provider] = max(0, scores.get(provider, 0) - 0.1)
+                scores[provider] = max(0, scores.get(provider, 0) * 0.8)
 
-        # Normalize and allocate
+        # Exclude providers scoring below 10% of the top score
+        top_score = max(scores.values()) if scores else 0
+        threshold = top_score * 0.10
+        scores = {p: s for p, s in scores.items() if s >= threshold}
+
+        # Normalize and allocate proportionally
         total_score = sum(scores.values())
         if total_score > 0:
-            allocations = {p: (scores[p] / total_score) * capital for p in providers}
+            allocations = {p: (scores[p] / total_score) * capital for p in scores}
         else:
-            per_provider = capital / len(providers)
-            allocations = {p: per_provider for p in providers}
+            allocations = {}
 
         return allocations
 
     def _plan_foundation(self, providers: list, capital: float) -> dict:
         """
-        Foundation strategy: Mission alignment, reward capability growth.
+        Foundation strategy: Ecosystem health, underdog support.
 
-        Balances quality with score momentum (genuine improvement).
-        Gaming effects emerge indirectly: gaming providers have high scores
-        but stalling momentum and declining market traction.
-        Includes underdog bonus and strong diversification to support ecosystem health.
+        Spec formula: (1 - incident_rate) * market_share_growth (same base as gov).
+        Adds underdog bonus for lower-quality providers.
+        Allocation: top 3 by adjusted score, proportional among those.
         """
-        scores = self._score_providers(providers, {
-            "quality": 0.35, "score_momentum": 0.20,
-            "market_traction": 0.15, "market_momentum": 0.10,
-            "diversification": 0.20,
-        })
+        scores = self._score_providers_foundation(providers)
 
         # Underdog bonus: lower quality providers get a boost
         for provider in providers:
             quality = self.private_state.believed_provider_quality.get(provider, 0.5)
             scores[provider] = scores.get(provider, 0) + (1 - quality) * 0.15
 
-        # Normalize and allocate
-        total_score = sum(scores.values())
+        # Pick top 3 by adjusted score
+        ranked = sorted(scores.items(), key=lambda x: x[1], reverse=True)[:3]
+        selected_scores = {p: s for p, s in ranked if s > 0}
+
+        # Normalize and allocate proportionally among selected
+        total_score = sum(selected_scores.values())
         if total_score > 0:
-            allocations = {p: (scores[p] / total_score) * capital for p in providers}
+            allocations = {p: (s / total_score) * capital for p, s in selected_scores.items()}
         else:
-            per_provider = capital / len(providers)
-            allocations = {p: per_provider for p in providers}
+            allocations = {}
+
+        return allocations
+
+    def _plan_corporate(self, providers: list, capital: float) -> dict:
+        """
+        Corporate strategy: Strategic multi-relationship, anchored to market position.
+
+        Spec formula: market_share * media_sentiment * (1 - incident_risk).
+        Can fund OS providers. Per-provider cooldown (3 rounds between
+        allocations to the same provider). Picks top 2-4 strategic partners.
+        """
+        # Per-provider cooldown: skip providers funded within last 3 rounds
+        if not hasattr(self, '_corporate_provider_last_funded'):
+            self._corporate_provider_last_funded = {}
+        current_round = self.public_state.current_round
+        eligible = [
+            p for p in providers
+            if current_round - self._corporate_provider_last_funded.get(p, -10) >= 3
+        ]
+        if not eligible:
+            eligible = providers  # fallback if all on cooldown
+
+        scores = self._score_providers_corporate(eligible)
+
+        # Pick top 2-4 by score (strategic partnerships, not spray)
+        ranked = sorted(scores.items(), key=lambda x: x[1], reverse=True)
+        max_partners = min(4, len(ranked))
+        selected = {p: s for p, s in ranked[:max_partners] if s > 0}
+
+        # Normalize and allocate proportionally among selected
+        total_score = sum(selected.values())
+        if total_score > 0:
+            allocations = {p: (s / total_score) * capital for p, s in selected.items()}
+        else:
+            allocations = {}
+
+        # Track per-provider cooldowns
+        for p in allocations:
+            if allocations[p] > 0:
+                self._corporate_provider_last_funded[p] = current_round
 
         return allocations
 
@@ -514,15 +594,36 @@ class Funder:
             from llm import llm_plan_funding
             capped_capital = self.private_state.total_capital * self.max_round_deployment
             round_num = self.public_state.current_round
+
+            # Compute score deltas from history
+            score_deltas = {}
+            if len(self._score_history) >= 2:
+                prev = self._score_history[-2]
+                curr = self._score_history[-1]
+                for p in curr:
+                    if p in prev:
+                        score_deltas[p] = curr[p] - prev[p]
+
+            # Extract media data for LLM
+            media_headlines = None
+            media_sentiment = None
+            if self._media_coverage:
+                media_headlines = self._media_coverage.get("headlines")
+                media_sentiment = self._media_coverage.get("sentiment")
+
             allocations, reasoning = llm_plan_funding(
                 name=self.name,
                 funder_type=self.funder_type,
                 total_capital=capped_capital,
-                believed_provider_quality=self.private_state.believed_provider_quality,
                 leaderboard=self._last_leaderboard,
                 market_shares=self._last_consumer_data.get("market_shares", {}),
                 recent_history=self.private_state.funding_history[-5:],
                 recent_insights=self.private_state.recent_reasoning[-2:],
+                incidents=self._recent_incident_counts if self._recent_incident_counts else None,
+                media_sentiment=media_sentiment,
+                media_headlines=media_headlines,
+                score_deltas=score_deltas if score_deltas else None,
+                public_comms=self._public_comms if self._public_comms else None,
                 verbose=False,
             )
 
@@ -724,10 +825,10 @@ def get_default_funder_configs() -> list[dict]:
 
 def get_multi_funder_configs() -> list[dict]:
     """
-    Get multi-funder configuration with all three types.
+    Get multi-funder configuration with all four types.
 
     Returns:
-        List with VC, Government, and Foundation funder configs
+        List with VC, Corporate, Government, and Foundation funder configs
     """
     return [
         {
@@ -736,6 +837,13 @@ def get_multi_funder_configs() -> list[dict]:
             "total_capital": 1000000.0,
             "risk_tolerance": 0.7,
             "mission_statement": "Maximize returns by backing AI market leaders",
+        },
+        {
+            "name": "CloudPartners",
+            "funder_type": "corporate",
+            "total_capital": 800000.0,
+            "risk_tolerance": 0.5,
+            "mission_statement": "Strategic partnerships anchored to market position",
         },
         {
             "name": "AISI_Fund",

@@ -489,8 +489,7 @@ def cmd_analyze(args):
         crn_paired_difference,
         detect_strategy_drift_all_providers,
         metric_mean_true_capability,
-        metric_mean_eval_engineering,
-        metric_mean_safety_alignment,
+        metric_mean_safety,
         metric_mean_score,
         metric_mean_gaming_gap,
         metric_hhi,
@@ -539,7 +538,7 @@ def cmd_analyze(args):
     # Trace overlay multi-panel
     metrics = {
         "Mean True Capability": (metric_mean_true_capability, "Capability"),
-        "Mean Eval Engineering": (metric_mean_eval_engineering, "Fraction"),
+        "Mean Safety Investment": (metric_mean_safety, "Fraction"),
         "Mean Score": (metric_mean_score, "Score"),
         "Mean Gaming Gap": (metric_mean_gaming_gap, "Gap"),
         "HHI (Market Concentration)": (metric_hhi, "HHI"),
