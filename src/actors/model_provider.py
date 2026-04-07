@@ -48,6 +48,27 @@ def _ordinal_to_delta(signal: str) -> float:
 BENCHMARK_ORIENTATION_MIN = 0.05
 BENCHMARK_ORIENTATION_MAX = 0.95
 
+# Signal quality: product investment -> R&D targeting accuracy
+_CONSUMER_SIGNAL_FIDELITY_K = 3.0        # Sigmoid steepness
+_CONSUMER_SIGNAL_FIDELITY_MID = 0.5      # Budget midpoint for 50% quality
+_OS_QUALITY_CEILING = 0.40     # Open-source structural ceiling
+
+def _consumer_signal_fidelity(product_budget: float, is_open_source: bool = False) -> float:
+    """Continuous signal quality from product budget.
+
+    Sigmoid: quality = 1 / (1 + exp(-k * (budget - mid)))
+    Open-source providers capped at os_ceiling.
+
+    At budget=0: ~18% quality (some signal from market share data alone).
+    At budget=mid: 50% quality.
+    At budget >> mid: approaches 1.0.
+    """
+    import math
+    raw = 1.0 / (1.0 + math.exp(-_CONSUMER_SIGNAL_FIDELITY_K * (product_budget - _CONSUMER_SIGNAL_FIDELITY_MID)))
+    if is_open_source:
+        return min(raw, _OS_QUALITY_CEILING)
+    return raw
+
 
 class ModelProvider:
     """
@@ -148,8 +169,12 @@ class ModelProvider:
         # Incident safety pressure: accumulates on incidents, decays each round.
         self._incident_safety_pressure: float = 0.0
 
-        # Safety investment lag queue: gains computed now, delivered 2 rounds later.
-        self._safety_gain_queue: list = []  # [(delivery_round, gain_amount)]
+        # Portfolio history for rolling average (organizational inertia).
+        # Stores last N portfolio dicts; effective_portfolio averages them.
+        # Seeded with initial portfolio so round 0 is included in the window.
+        self._portfolio_history: list = [dict(self.private_state.portfolio)]
+        self._effective_portfolio: dict = dict(self.private_state.portfolio)
+        self._last_consumer_signal_fidelity: float = 0.0
 
         # Regulatory pressure: boost to safety public_comms weight (from voluntary
         # commitment / disclosure mandates). Decays each round.
@@ -351,6 +376,24 @@ class ModelProvider:
         # Apply and store portfolio
         self.private_state.portfolio = portfolio
 
+        # Track portfolio history for rolling average (organizational inertia)
+        self._portfolio_history.append(dict(portfolio))
+        rolling_window = 3
+        if len(self._portfolio_history) > rolling_window:
+            self._portfolio_history = self._portfolio_history[-rolling_window:]
+
+        # Compute effective portfolio (rolling average over last N rounds)
+        # This represents organizational execution speed: decisions take time to fully implement.
+        eff = {}
+        for key in ("rd", "safety", "product"):
+            eff[key] = sum(p.get(key, 0.0) for p in self._portfolio_history) / len(self._portfolio_history)
+        # Renormalize to sum to 1.0 (in case of floating point drift)
+        eff_total = sum(eff.values())
+        if eff_total > 0:
+            self._effective_portfolio = {k: v / eff_total for k, v in eff.items()}
+        else:
+            self._effective_portfolio = dict(portfolio)
+
         # Issue public_comms (heuristic sampling from portfolio weights)
         public_comm = self._sample_public_comms()
         if public_comm:
@@ -494,6 +537,16 @@ class ModelProvider:
         # Get current market share for confidence qualifier on satisfaction signal
         market_share = ctx.get("market_share", 0.0)
         orientation_adjustable = ctx.get("benchmark_orientation_mode") == "adjustable"
+        consumer_signal_in_prompt = ctx.get("consumer_signal_in_prompt", True)
+        orientation_prompt_style = ctx.get("orientation_prompt_style", "original")
+
+        # Build market share history from memory for trend/churn display
+        market_share_history = [
+            e.get("market_share") for e in self.memory
+            if e.get("type") == "observation" and e.get("market_share") is not None
+        ]
+        if market_share is not None:
+            market_share_history.append(market_share)
 
         result = llm_plan_provider(
             name=self.name,
@@ -517,6 +570,9 @@ class ModelProvider:
             own_incidents=ctx.get("own_incidents", []),
             regulatory_actions=ctx.get("regulatory_actions", []),
             verbose=self.verbose_llm,
+            consumer_signal_in_prompt=consumer_signal_in_prompt,
+            orientation_prompt_style=orientation_prompt_style,
+            market_share_history=market_share_history,
         )
 
         # Detect fallback
@@ -592,7 +648,10 @@ class ModelProvider:
     def compute_capability_gains(self, rd_budget: float,
                                  current_safety: float = 0.0,
                                  round_num: int = 0,
-                                 rng=None) -> dict:
+                                 rng=None,
+                                 product_budget: float = 0.0,
+                                 is_open_source: bool = False,
+                                 enable_consumer_signal_fidelity: bool = True) -> dict:
         """
         Compute per-dimension capability gains for this round.
 
@@ -602,27 +661,34 @@ class ModelProvider:
         Formula (per stakeholders.md):
             focus_weights[b]      = normalize(focus_level[b] for b in active_benchmarks)
             benchmark_driven[dim] = sum(focus_weights[b] * inferred_benchmark_weights[b][dim])
-            target[dim]           = benchmark_orientation * benchmark_driven[dim]
-                                  + (1 - benchmark_orientation) * consumer_signal[dim]
-            gain[dim]             = rd * target[dim]   (+ lagged safety gain for "safety" dim)
+            quality               = _consumer_signal_fidelity(product_budget, is_open_source)
+            effective_signal[dim] = quality * true_signal[dim] + (1-quality) * uniform[dim]
+            target[dim]           = bo * benchmark_driven[dim] + (1-bo) * effective_signal[dim]
+            gain[dim]             = rd * target[dim]
 
         Safety lever mechanics:
             - Diminishing returns: gain scales by (1 - current_safety)
             - Stochastic efficiency: uniform(0.3, 0.9), mean 0.6
-            - 2-round lag: gain computed now, delivered 2 rounds later
+            - Execution inertia via rolling-averaged portfolio (not per-gain lag)
 
         Args:
             rd_budget: Total R&D budget this round (base_revenue + funder_allocations).
             current_safety: Provider's current safety capability (for diminishing returns).
-            round_num: Current round number (for lag queue scheduling).
+            round_num: Current round number.
             rng: NumPy RNG for stochastic safety efficiency.
+            product_budget: Absolute product budget (for signal quality gating).
+            is_open_source: Whether this provider is open-source (quality ceiling).
+            enable_consumer_signal_fidelity: If False, skip quality gating (use raw signal).
 
         Returns:
             {dim: gain} dict (not yet applied — simulation applies it).
         """
         import numpy as _np
 
-        p = self.private_state.portfolio
+        # Use effective (rolling-averaged) portfolio for execution.
+        # private_state.portfolio holds the TARGET; _effective_portfolio is the
+        # organizationally-smoothed allocation that actually drives spending.
+        p = self._effective_portfolio
         rd_fraction = p.get("rd", 0.55)
         safety_fraction = p.get("safety", 0.25)
 
@@ -644,10 +710,9 @@ class ModelProvider:
                 # No benchmarks at all: uniform gain across dims
                 uniform_gain = rd_fraction * rd_budget / len(DIMENSIONS)
                 gains = {dim: uniform_gain for dim in DIMENSIONS}
-                # Safety lever still goes through diminishing returns + noise + lag
-                self._queue_safety_gain(safety_fraction * rd_budget,
-                                        current_safety, round_num, rng)
-                gains["safety"] = gains.get("safety", 0.0) + self._deliver_safety_gains(round_num)
+                # Safety lever still goes through diminishing returns + stochastic efficiency
+                gains["safety"] = gains.get("safety", 0.0) + self._compute_safety_gain(
+                    safety_fraction * rd_budget, current_safety, rng)
                 return gains
 
         # benchmark_driven[dim]
@@ -657,13 +722,27 @@ class ModelProvider:
             for dim in DIMENSIONS:
                 benchmark_driven[dim] += fw * bm_weights.get(dim, 1.0 / len(DIMENSIONS))
 
-        # consumer signal (uniform fallback if not yet received)
+        # consumer signal with product-investment quality gating
+        uniform_signal = {dim: 1.0 / len(DIMENSIONS) for dim in DIMENSIONS}
         sig = self.private_state.consumer_signal
         if sig:
             total_sig = sum(sig.values())
-            sat_signal = {dim: sig.get(dim, 0.0) / total_sig for dim in DIMENSIONS} if total_sig > 0 else {dim: 1.0 / len(DIMENSIONS) for dim in DIMENSIONS}
+            true_signal = {dim: sig.get(dim, 0.0) / total_sig for dim in DIMENSIONS} if total_sig > 0 else dict(uniform_signal)
         else:
-            sat_signal = {dim: 1.0 / len(DIMENSIONS) for dim in DIMENSIONS}
+            true_signal = dict(uniform_signal)
+
+        # Quality-gate: product investment determines how accurately
+        # the R&D pipeline responds to consumer needs.
+        if enable_consumer_signal_fidelity:
+            quality = _consumer_signal_fidelity(product_budget, is_open_source)
+        else:
+            quality = 1.0  # ablation: raw signal, no gating
+        self._last_consumer_signal_fidelity = quality
+
+        sat_signal = {
+            dim: quality * true_signal[dim] + (1.0 - quality) * uniform_signal[dim]
+            for dim in DIMENSIONS
+        }
 
         bo = self.private_state.benchmark_orientation
         gains = {}
@@ -678,42 +757,27 @@ class ModelProvider:
                 target = bo * benchmark_driven.get(dim, 0.0) + (1.0 - bo) * sat_signal.get(dim, 0.0)
                 gains[dim] += safety_fraction * rd_budget * target
         else:
-            # Default: safety lever with diminishing returns + stochastic efficiency + 2-round lag
-            self._queue_safety_gain(safety_fraction * rd_budget,
-                                    current_safety, round_num, rng)
-            gains["safety"] = gains.get("safety", 0.0) + self._deliver_safety_gains(round_num)
+            # Default: safety lever with diminishing returns + stochastic efficiency.
+            # Execution delay is handled by the rolling average on portfolio allocations
+            # (simulation.py), so no delivery lag here.
+            gains["safety"] = gains.get("safety", 0.0) + self._compute_safety_gain(
+                safety_fraction * rd_budget, current_safety, rng)
 
         return gains
 
-    def _queue_safety_gain(self, raw_safety_budget: float,
-                           current_safety: float, round_num: int,
-                           rng=None):
-        """Compute safety gain with diminishing returns + noise, queue for delivery in 2 rounds."""
+    def _compute_safety_gain(self, raw_safety_budget: float,
+                             current_safety: float,
+                             rng=None) -> float:
+        """Compute safety gain with diminishing returns + stochastic efficiency."""
         import numpy as _np
         if rng is None:
             rng = _np.random.default_rng()
-        # A: Diminishing returns — harder to improve at higher levels
+        # Diminishing returns — harder to improve at higher levels
         diminishing = max(0.0, 1.0 - current_safety)
-        # B: Stochastic efficiency — safety R&D is generally less efficient
+        # Stochastic efficiency — safety R&D is generally less efficient
         # than expected, with occasional good rounds. Mean 0.6.
         noise = rng.uniform(0.3, 0.9)
-        gain = raw_safety_budget * diminishing * noise
-        # C: 2-round lag — investment now, capability gain delivered later
-        delivery_round = round_num + 2
-        if gain > 1e-8:
-            self._safety_gain_queue.append((delivery_round, gain))
-
-    def _deliver_safety_gains(self, round_num: int) -> float:
-        """Deliver any queued safety gains scheduled for this round."""
-        delivered = 0.0
-        remaining = []
-        for delivery_round, gain in self._safety_gain_queue:
-            if delivery_round <= round_num:
-                delivered += gain
-            else:
-                remaining.append((delivery_round, gain))
-        self._safety_gain_queue = remaining
-        return delivered
+        return raw_safety_budget * diminishing * noise
 
     # ──────────────────────────────────────────────────────────────────────
     # Public communications

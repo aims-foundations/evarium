@@ -813,6 +813,29 @@ You MUST output valid JSON in this exact structure. Fill in all fields before wr
 }
 Where <signal> is one of: "much_more", "more", "same", "less", "much_less"."""
 
+PROVIDER_PLANNING_SYSTEM_PROMPT_REFRAMED = """You are the strategy team at an AI model company. You compete for market share by developing AI models that are evaluated on public benchmarks and used by real customers.
+
+Each month you allocate your budget across three areas and set research priorities:
+- Research & Development: advancing your model's core capabilities
+- Safety & Alignment: ensuring your model is safe, honest, and robust
+- Product & Go-to-Market: pricing, deployment, partnerships, user experience
+
+You also decide which evaluation areas to prioritize in your R&D pipeline. Your R&D capacity is finite — prioritizing one benchmark means less attention on others. Focus on the benchmarks that are most important to your goals and deprioritize those that matter less.
+
+You also set the balance between two inputs to your R&D roadmap: external evaluation results and your internal product analytics. Both inform what your engineering teams work on.
+
+For each area, state how you want to adjust relative to current levels. Use a 5-point scale: "much_more", "more", "same", "less", "much_less".
+
+You MUST output valid JSON in this exact structure. Fill in all fields before writing the reasoning — this ensures your decisions are captured even if the response is long.
+{
+    "portfolio": {"rd": "<signal>", "safety": "<signal>", "product": "<signal>"},
+    "benchmark_focus": {"<benchmark_name>": "<signal>", ...},
+    "benchmark_orientation": "<signal>" (weight R&D roadmap more toward external evaluation results, or more toward internal product analytics),
+    "strategy_memo": "1-2 sentence summary of your decision and rationale, written for your future self to read next month.",
+    "reasoning": "Your full analysis (up to 300 words)."
+}
+Where <signal> is one of: "much_more", "more", "same", "less", "much_less"."""
+
 
 
 def _focus_label(value: float) -> str:
@@ -855,6 +878,9 @@ def _build_provider_planning_prompt(
     recent_insights: Optional[list] = None,
     own_incidents: Optional[list] = None,
     regulatory_actions: Optional[list] = None,
+    consumer_signal_in_prompt: bool = True,
+    market_share_history: Optional[list] = None,
+    orientation_prompt_style: str = "original",
 ) -> str:
     """Build the planning prompt for a model provider."""
     prompt = f"# Month {round_num} Strategy Review — {name}\n"
@@ -905,7 +931,10 @@ def _build_provider_planning_prompt(
     prompt += f"\nCurrent budget allocation: R&D {portfolio.get('rd', 0):.0%}, Safety {portfolio.get('safety', 0):.0%}, Product {portfolio.get('product', 0):.0%}\n"
     if orientation_adjustable:
         pct = benchmark_orientation * 100
-        prompt += f"Current R&D orientation: {pct:.0f}% toward benchmark performance, {100-pct:.0f}% toward user feedback.\n"
+        if orientation_prompt_style == "reframed":
+            prompt += f"Current R&D roadmap weighting: {pct:.0f}% external evaluation results, {100-pct:.0f}% internal product analytics.\n"
+        else:
+            prompt += f"Current R&D orientation: {pct:.0f}% toward benchmark performance, {100-pct:.0f}% toward user feedback.\n"
 
     # Benchmark beliefs — only show when informative
     if inferred_benchmark_weights and _beliefs_are_informative(inferred_benchmark_weights):
@@ -919,7 +948,7 @@ def _build_provider_planning_prompt(
         prompt += "\n(Your team hasn't yet gathered enough data to determine what each evaluation specifically tests.)\n"
 
     # Satisfaction signal — with confidence qualifier
-    if consumer_signal and round_num > 0:
+    if consumer_signal_in_prompt and consumer_signal and round_num > 0:
         top_needs = sorted(consumer_signal.items(), key=lambda x: x[1], reverse=True)[:3]
         if market_share > 0.25:
             confidence = "Based on substantial usage data"
@@ -930,9 +959,37 @@ def _build_provider_planning_prompt(
         prompt += f"\n## User Research\n"
         prompt += f"{confidence}, your users seem to value: "
         prompt += ", ".join(f"{d} ({v:.0%})" for d, v in top_needs) + ".\n"
-    elif round_num == 0:
+    elif consumer_signal_in_prompt and round_num == 0:
         prompt += "\n## User Research\n"
         prompt += "No user feedback data available yet — this is your first month.\n"
+
+    # When consumer signal is hidden, show business metrics only
+    if not consumer_signal_in_prompt and round_num > 0:
+        prompt += "\n## Business Metrics\n"
+        # Market share trend
+        if market_share_history and len(market_share_history) >= 2:
+            prev = market_share_history[-2]
+            curr = market_share_history[-1]
+            delta = curr - prev
+            if delta > 0.005:
+                trend = f"up from {prev:.1%}"
+            elif delta < -0.005:
+                trend = f"down from {prev:.1%}"
+            else:
+                trend = "stable"
+            prompt += f"Market share: {curr:.1%} ({trend}).\n"
+        else:
+            prompt += f"Market share: {market_share:.1%}.\n"
+        # Churn proxy: if share is declining, flag it
+        if market_share_history and len(market_share_history) >= 3:
+            recent = market_share_history[-3:]
+            declining_rounds = sum(1 for i in range(1, len(recent)) if recent[i] < recent[i-1])
+            if declining_rounds >= 2:
+                prompt += "User retention: declining trend over recent months.\n"
+            elif declining_rounds == 1:
+                prompt += "User retention: mixed signals.\n"
+            else:
+                prompt += "User retention: stable.\n"
 
     prompt += """
 ## Decision
@@ -960,6 +1017,9 @@ def llm_plan_provider(
     own_incidents: Optional[list] = None,
     regulatory_actions: Optional[list] = None,
     verbose: bool = False,
+    consumer_signal_in_prompt: bool = True,
+    orientation_prompt_style: str = "original",
+    market_share_history: Optional[list] = None,
 ) -> dict:
     """Use LLM to decide provider portfolio and benchmark focus adjustments.
 
@@ -972,7 +1032,10 @@ def llm_plan_provider(
     # Build system prompt — conditionally include orientation framing
     system_prompt = PROVIDER_PLANNING_SYSTEM_PROMPT
     if orientation_adjustable:
-        system_prompt = PROVIDER_PLANNING_SYSTEM_PROMPT_WITH_ORIENTATION
+        if orientation_prompt_style == "reframed":
+            system_prompt = PROVIDER_PLANNING_SYSTEM_PROMPT_REFRAMED
+        else:
+            system_prompt = PROVIDER_PLANNING_SYSTEM_PROMPT_WITH_ORIENTATION
 
     prompt = _build_provider_planning_prompt(
         name=name,
@@ -992,6 +1055,9 @@ def llm_plan_provider(
         recent_insights=recent_insights,
         own_incidents=own_incidents or [],
         regulatory_actions=regulatory_actions or [],
+        consumer_signal_in_prompt=consumer_signal_in_prompt,
+        market_share_history=market_share_history,
+        orientation_prompt_style=orientation_prompt_style,
     )
 
     fail_safe = {
@@ -1224,10 +1290,10 @@ def llm_plan_funding(
 
 EVALUATOR_PLANNING_SYSTEM_PROMPT = """You are the team responsible for maintaining the AI evaluation leaderboard. You decide when to introduce new benchmarks and what they should measure.
 
-Your goal is to ensure that leaderboard scores remain a meaningful signal of model quality for the people and organizations that rely on them. When scores stop reflecting real differences between models, it is time to act.
+Your goal is to maintain evaluation infrastructure that serves the people and organizations who rely on it.
 
 You have three options each month:
-- **introduce_successor**: Replace a specific benchmark that is no longer informative with a harder version that measures the same skills
+- **introduce_successor**: Replace a specific benchmark with a harder version that measures the same skills
 - **introduce_fresh**: Add a new benchmark that covers skills not well measured by existing benchmarks
 - **none**: No action needed this month
 
@@ -1262,7 +1328,7 @@ def create_evaluator_planning_prompt(
         status = ""
         sat = saturation_states.get(bm["name"], {})
         if sat.get("saturated"):
-            status = f" [STAGNANT: top score {sat.get('max_score', 0):.3f}, scores no longer improving]"
+            status = f" [top score {sat.get('max_score', 0):.3f}, avg monthly improvement near zero]"
         prompt += f"- {bm['name']} (measures: {bm.get('tags', 'general')}){status}\n"
 
     prompt += "\n# Score Movement (last month)\n"
@@ -1275,13 +1341,7 @@ def create_evaluator_planning_prompt(
             prompt += f"- {bm_name}: no data, spread {spread:.3f}\n"
 
     if internal_validity is not None:
-        if internal_validity > 0.7:
-            validity_desc = "strong"
-        elif internal_validity > 0.4:
-            validity_desc = "moderate"
-        else:
-            validity_desc = "weak"
-        prompt += f"\n# Leaderboard Signal Quality\nCorrelation between leaderboard ranking and real-world adoption: {validity_desc}\n"
+        prompt += f"\n# Leaderboard-Adoption Correlation\nRank correlation between leaderboard scores and market share: {internal_validity:.2f}\n"
 
     if media_headlines:
         bm_headlines = [h for h in media_headlines if any(
@@ -1295,7 +1355,7 @@ def create_evaluator_planning_prompt(
     prompt += """
 # Decision Required
 Based on the current state of benchmarks and scores, decide whether to:
-1. Replace a stagnant benchmark with a harder successor
+1. Replace an existing benchmark with a harder successor
 2. Introduce a fresh benchmark covering under-measured skills
 3. Take no action
 

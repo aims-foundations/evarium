@@ -172,6 +172,20 @@ class SimulationConfig:
     #   "adjustable": providers start at configured value, LLM adjusts via ordinal signals each round
     benchmark_orientation_mode: str = "fixed"
 
+    # Consumer signal prompt visibility:
+    #   True (default): LLM sees consumer_signal in planning prompt (User Research section)
+    #   False: LLM sees only market share + churn; consumer_signal still operates mechanically
+    consumer_signal_in_prompt: bool = True
+
+    # Product investment mechanical channels
+    enable_product_signal_quality: bool = True   # Product budget gates consumer signal fidelity in R&D targeting
+    enable_product_retention: bool = True         # Product budget increases switching costs (user retention)
+
+    # Orientation prompt framing:
+    #   "reframed" (default): PIMMUR-compliant neutral framing (no loaded benchmark-vs-user language)
+    #   "original": legacy framing ("public leaderboard vs user data") — causes orientation ratchet artifact
+    orientation_prompt_style: str = "reframed"
+
     # Ablation flags
     aligned_benchmarks: bool = False       # Override benchmark weights to equal consumer need weights
     misaligned_benchmarks: bool = False   # Exaggerate benchmark-need mismatch (reasoning/coding heavy, safety/communication light)
@@ -250,6 +264,9 @@ class EvalEcosystemSimulation:
 
         # Funder data for current round (used for funding multipliers)
         self._current_funder_data: dict = {}
+
+        # Product budgets for current round (used for signal quality + retention)
+        self._current_product_budgets: dict = {}
 
         # Deployer liability guidance: OS providers under active guidance (carries across rounds)
         self._current_deployer_liability_guidance: set = set()
@@ -723,6 +740,8 @@ class EvalEcosystemSimulation:
         # Include reasoning memory depth for LLM prompt truncation
         context["reasoning_memory_depth"] = 2
         context["benchmark_orientation_mode"] = self.config.benchmark_orientation_mode
+        context["consumer_signal_in_prompt"] = self.config.consumer_signal_in_prompt
+        context["orientation_prompt_style"] = self.config.orientation_prompt_style
         return context
 
     def _compute_consumer_signals(self) -> dict:
@@ -870,12 +889,23 @@ class EvalEcosystemSimulation:
                 budget_scale = math.sqrt(max(rd_budget_raw, 0.0))
                 effective_budget = budget_scale * effective_efficiency * diminishing_factor
 
+                # Compute absolute product budget from effective (rolling-averaged) portfolio
+                product_fraction = provider._effective_portfolio.get("product", 0.0)
+                product_budget = product_fraction * rd_budget_raw
+                self._current_product_budgets[provider.name] = {
+                    "product_budget": product_budget,
+                    "is_open_source": provider.open_source,
+                }
+
                 # Per-dimension capability gains
                 gains = provider.compute_capability_gains(
                     rd_budget=effective_budget,
                     current_safety=gt.capability_vector.get("safety", 0.0),
                     round_num=round_num,
                     rng=self.evaluator.rng,
+                    product_budget=product_budget,
+                    is_open_source=provider.open_source,
+                    enable_consumer_signal_fidelity=self.config.enable_product_signal_quality,
                 )
 
                 # Binding audit deployment gate: gains zeroed for 1 round
@@ -1184,8 +1214,19 @@ class EvalEcosystemSimulation:
                 }
                 for p in self.providers
             },
+            "effective_strategies": {
+                p.name: dict(p._effective_portfolio)
+                for p in self.providers
+            },
             "benchmark_orientations": {
                 p.name: p.private_state.benchmark_orientation
+                for p in self.providers
+            },
+            "product_data": {
+                p.name: {
+                    "product_budget": self._current_product_budgets.get(p.name, {}).get("product_budget", 0.0),
+                    "consumer_signal_fidelity": p._last_consumer_signal_fidelity,
+                }
                 for p in self.providers
             },
             "open_source_data": {
@@ -1447,6 +1488,8 @@ class EvalEcosystemSimulation:
             provider_cost_advantage=provider_cost_advantage if provider_cost_advantage else None,
             deployer_liability_guidance=deployer_liability_guidance,
             market_growth_rate=self.config.market_growth_rate,
+            provider_product_budgets=self._current_product_budgets if self._current_product_budgets else None,
+            enable_product_retention=self.config.enable_product_retention,
         )
 
         # Get consumer data

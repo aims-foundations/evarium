@@ -47,6 +47,8 @@ _CONDITION_CHOICES = [
     "eval_as_company", "aligned_benchmarks", "misaligned_benchmarks", "safety_through_target",
     "homogeneous_consumers", "homogeneous_providers",
     "market_expansion",
+    "signal_ablation_control", "signal_ablation_reframed", "signal_ablation_no_signal",
+    "product_signal_only", "product_retention_only",
 ]
 _parser.add_argument("--condition", choices=_CONDITION_CHOICES, default="full_ecosystem",
                      help="Experiment condition (default: full_ecosystem)")
@@ -567,6 +569,29 @@ def _apply_condition_overrides(condition: str, simulation: dict, experiment: dic
         extra_config["homogeneous_providers"] = True
     elif condition == "market_expansion":
         extra_config["market_growth_rate"] = 0.03  # ~3%/month ≈ 43% annual CAGR (S&P/Bloomberg consensus)
+    elif condition == "signal_ablation_control":
+        # Control: original prompt framing, full consumer signal, adjustable orientation
+        extra_config["benchmark_orientation_mode"] = "adjustable"
+        extra_config["consumer_signal_in_prompt"] = True
+        extra_config["orientation_prompt_style"] = "original"
+    elif condition == "signal_ablation_reframed":
+        # Reframed orientation language, full consumer signal still shown
+        extra_config["benchmark_orientation_mode"] = "adjustable"
+        extra_config["consumer_signal_in_prompt"] = True
+        extra_config["orientation_prompt_style"] = "reframed"
+    elif condition == "signal_ablation_no_signal":
+        # Reframed orientation language, no consumer signal in prompt (mechanical only)
+        extra_config["benchmark_orientation_mode"] = "adjustable"
+        extra_config["consumer_signal_in_prompt"] = False
+        extra_config["orientation_prompt_style"] = "reframed"
+    elif condition == "product_signal_only":
+        # Signal quality gating active, retention bonus disabled
+        extra_config["enable_product_signal_quality"] = True
+        extra_config["enable_product_retention"] = False
+    elif condition == "product_retention_only":
+        # Retention bonus active, signal quality gating disabled
+        extra_config["enable_product_signal_quality"] = False
+        extra_config["enable_product_retention"] = True
 
     return extra_config
 
@@ -706,6 +731,10 @@ def run():
         homogeneous_consumers=_extra_config.get("homogeneous_consumers", False),
         homogeneous_providers=_extra_config.get("homogeneous_providers", False),
         market_growth_rate=_extra_config.get("market_growth_rate", 0.0),
+        consumer_signal_in_prompt=_extra_config.get("consumer_signal_in_prompt", True),
+        orientation_prompt_style=_extra_config.get("orientation_prompt_style", "reframed"),
+        enable_product_signal_quality=_extra_config.get("enable_product_signal_quality", True),
+        enable_product_retention=_extra_config.get("enable_product_retention", True),
     )
 
     # --- Print banner ---

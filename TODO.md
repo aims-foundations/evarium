@@ -9,6 +9,16 @@
 - [x] **Validity field review** — Fixed: removed `validity` from `game_log.py` narrative, `Benchmark.get_summary()`, `get_benchmark_summary()`, `get_statistics()`. Internal weight-decay uses untouched.
 - [ ] **Before cluster runs:** Switch `run_experiment.py` default back to `--no-dev` (currently defaults to dev/sandbox output). Also set `run_all.py` `DEV = False`. Confirm `hf_data/` directory structure exists.
 
+## PIMMUR Prompt Audit (flagged session 16, 2026-04-06) — COMPLETED session 17
+
+- [x] **Full prompt audit for Minimal-Control violations.** Audited all LLM prompts (provider, funder, evaluator, regulator, consumer individual, consumer organizational, public comms) against PIMMUR Minimal-Control and Unawareness principles. Findings:
+  - Provider, Funder, Regulator: PASS (clean after session 16 reframe)
+  - Evaluator: Fixed — removed "STAGNANT" judgment label (replaced with raw data), removed "time to act" coaching from system prompt, removed "no longer informative" from action description, replaced bucketed validity labels with raw correlation number
+  - Consumer (organizational): Fixed — removed 6-point Decision Framework (researcher theory injection), removed reasoning coaching instruction, toned down ALL-CAPS liability labels, removed `switching_threshold` parameter leak from prompt, simplified JSON reasoning placeholder
+  - Consumer (individual): PASS (minor coaching questions, acceptable)
+  - Cross-cutting Unawareness: structural concern (AI domain vocabulary throughout) — requires domain reframing, not prompt edits
+  - Reference: `rough/pimmur_audit.md` (prior audit, 2026-03-09)
+
 ## Post-Run Calibration Review (after first 40-round LLM run)
 
 - [ ] **Provider-need alignment**: Initial cosine similarities were 0.93-0.95 (too flat). Widened capability spread + Q1 2023 recalibration (session 9). After 40-round run, check: do profiles diverge enough to create observable misalignment gaps? If cos stays >0.90 for all providers through round 40, the structural alignment between capability profiles and consumer needs may be too high — consider whether consumer need weights need reshaping (e.g. more heterogeneous across segments) or initial capability profiles need sharper spikes.

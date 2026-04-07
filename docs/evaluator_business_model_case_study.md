@@ -512,7 +512,341 @@ class Evaluator:
 
 ---
 
+## Part 8: Evaluator Landscape Survey (2026-04-05)
+
+Comprehensive survey of real-world organizations functioning as AI evaluators, organized by archetype. Each case study maps organizational structure, funding model, and capture risk to inform the simulation's evaluator-as-organization model.
+
+---
+
+### 8.1 Taxonomy Overview
+
+| Archetype | Examples | Funding Model | Capture Risk | Independence |
+|-----------|----------|---------------|-------------|-------------|
+| **Benchmark/Leaderboard** | LMArena, HELM, Hugging Face | VC + provider fees + compute donations | High | Low-Medium |
+| **Red-Team / Adversarial** | Gray Swan, Haize Labs, Trail of Bits | VC + consulting fees from labs | Medium | Medium |
+| **Compliance / Audit** | Credo AI, Holistic AI, Big Four | Fee-for-service (auditee pays) | Very High | Low |
+| **Government / Nonprofit** | UK AISI, METR, Apollo Research | Government budget / grants | Low | High |
+| **Internal Lab Teams** | OpenAI Preparedness, Anthropic RSP | Parent company budget | Structural (self-eval) | None (by design) |
+
+---
+
+### 8.2 Case Study: Gray Swan AI (Red-Team / Adversarial)
+
+**Profile:** AI security startup commercializing adversarial research from Carnegie Mellon University.
+
+| Attribute | Detail |
+|-----------|--------|
+| Founded | 2024, Pittsburgh PA |
+| Founders | Matt Fredrikson (CEO, CMU faculty), Andy Zou (CTO, first author of universal adversarial attacks paper arXiv:2307.15043), Zico Kolter (CMU faculty) |
+| Funding | ~$5.7M (Juniper Ventures, Lionheart Ventures, Aperiam Ventures, LiveRamp Ventures) |
+| Customers | Frontier labs (OpenAI, Anthropic, Meta), UK AI Safety Institute |
+| Team | Small (~15-25 estimated), plus 15,000+ crowdsourced red teamers in the Arena |
+
+**Products:**
+- **Shade** — Automated red-teaming and continuous vulnerability assessment
+- **Cygnal** — Real-time I/O filtering (99.98% attack block rate, <100ms latency)
+- **Cygnet** — Safety-tuned LLM for text moderation (based on Llama-3)
+- **Arena** — Crowdsourced jailbreaking platform. UK AISI/Gray Swan challenge: 1.8M attacks across 22 models — every model broke.
+
+**Business model:** Multi-layered: SaaS products (usage-based), enterprise on-prem/VPC, red-teaming consulting, Arena as data flywheel (prize-incentivized red teamers generate adversarial data that improves products).
+
+**Capture dynamics:** Gray Swan's position is unusual — their value proposition is explicitly adversarial, which structurally resists capture (an evaluator that finds nothing has no value). However: (a) frontier labs are both customers and subjects, creating dual-role tension; (b) the Arena depends on model access from labs; (c) the team explicitly distanced from compliance/policy (SB-1047 statement). Their academic pedigree and open research model (the founding paper is public) provide some independence, but revenue dependency on labs is a structural risk as the company scales.
+
+**Simulation relevance:** Represents the "adversarial evaluator" archetype — high capability, lab-funded, inherent tension between finding vulnerabilities (value prop) and maintaining access (revenue dependency).
+
+---
+
+### 8.3 Case Study: Haize Labs (Red-Team / Adversarial)
+
+| Attribute | Detail |
+|-----------|--------|
+| Founded | 2023, New York |
+| Founders | Leonard Tang (CEO, turned down Stanford PhD), Steve Li (Berkeley AI Research) |
+| Funding | $12.5M seed (General Catalyst), $100M valuation |
+| Team | ~14 employees |
+| Investors | Angels include Amjad Masad (Replit), Scott Wu (Cognition), Demi Guo (Pika), Neil Shen (Sequoia China) |
+
+**What they do:** "Haizing" — rigorous stress-testing and red-teaming of AI systems to discover failure modes. Tagline: "Deploy 99.9% Reliable AI." Pure-play adversarial testing, closer to research end than compliance.
+
+**Capture risk:** Medium. VC-backed with strong investor bench but small team. Independence depends on whether they can diversify beyond lab-funded engagements.
+
+---
+
+### 8.4 Case Study: The Acquisition Wave (Red-Team Firms Absorbed by Platform Players)
+
+Three major AI security startups were acquired in 2024-2025, totaling ~$1.1B. This consolidation pattern mirrors cloud security circa 2018-2022.
+
+| Company | Acquirer | Price | What They Did |
+|---------|----------|-------|---------------|
+| Robust Intelligence | Cisco | ~$400M (Oct 2024) | "AI Firewall," algorithmic red-teaming. Team became Cisco's Foundation AI unit. |
+| CalypsoAI | F5 | $180M (2025) | Enterprise AI guardrails (Moderator product). Had raised $40M+ from Paladin Capital, Lockheed Martin Ventures. |
+| Protect AI | Palo Alto Networks | ~$500-700M (Jul 2025) | MLSecOps: model scanning, posture management, red-teaming, runtime protection. Had raised $108.5M. |
+| Lakera | Check Point | $190M (2025) | AI application firewall for prompt injection (Lakera Guard). Built "Gandalf" (interactive prompt injection game / data flywheel). |
+
+**Capture implication:** When independent red-team firms get acquired by large security/infra vendors, the adversarial independence may weaken. The acquirer's enterprise sales relationships with AI labs create new conflicts. A Cisco salesperson selling networking gear to OpenAI has different incentives than an independent Robust Intelligence researcher finding OpenAI vulnerabilities.
+
+**Market size:** AI red-teaming services: ~$1.75B (2025), projected $6.17B by 2030 (28-30% CAGR). Total AI security startup funding: $8.5B across 175 companies over 24 months.
+
+---
+
+### 8.5 Case Study: Scale AI / SEAL Leaderboard (Benchmark Provider)
+
+| Attribute | Detail |
+|-----------|--------|
+| Founded | 2016 (Scale AI); SEAL launched ~2024 |
+| Founder | Alexandr Wang (CEO, departed to Meta in 2025 after Meta's $14.3B investment) |
+| Valuation | $29B (with Meta investment) |
+| Revenue | $1.8B (2025 estimated) |
+| Employees | 500+ |
+
+**What they do:** Scale AI is primarily a data labeling company that expanded into AI evaluation via SEAL (Safety, Evaluations, and Alignment Lab). SEAL produces expert-curated benchmarks and leaderboards, positioning as a more rigorous alternative to LMArena's crowd-sourced approach.
+
+**Capture risk:** Very high. Scale AI's core data labeling business depends on contracts with the same labs it evaluates. Meta's $14.3B investment makes Scale financially entangled with a frontier lab. The evaluator cannot credibly rate its investor/client unfavorably.
+
+---
+
+### 8.6 Case Study: Stanford HELM (Academic Benchmark)
+
+| Attribute | Detail |
+|-----------|--------|
+| Founded | 2022, Stanford Center for Research on Foundation Models (CRFM) |
+| Lead | Percy Liang (Stanford CS) |
+| Funding | Stanford + industry compute donations |
+| Model | Open-source, academic |
+
+**What they do:** Holistic Evaluation of Language Models — multi-metric evaluation across accuracy, calibration, robustness, fairness, bias, toxicity, and efficiency. Open methodology, publicly available results.
+
+**Capture risk:** Moderate. Academic independence provides structural protection, but: (a) industry funds Stanford broadly; (b) CRFM receives compute donations from labs; (c) academic career incentives reward lab cooperation (access to models, co-authorship). Percy Liang has maintained HELM's methodological independence, but the next generation of academic evaluators may face stronger pull.
+
+---
+
+### 8.7 Case Study: Credo AI (Compliance / Governance Platform)
+
+| Attribute | Detail |
+|-----------|--------|
+| Founded | 2020 |
+| CEO | Navrina Singh (former VP at Qualcomm) |
+| Notable | Andrew Ng is co-founder/board member |
+| Funding | $41.3M total, $101M valuation |
+| Recognition | Gartner 2025 Market Guide for AI Governance Platforms; Fast Company Most Innovative 2026 |
+
+**What they do:** Enterprise AI governance platform — risk assessment, policy management, compliance tracking. Positioned for EU AI Act readiness. Helps enterprises document, monitor, and demonstrate responsible AI use.
+
+**Capture risk:** High. Classic "auditee pays" — enterprises being governed are the customers. Revenue depends on making governance painless enough that enterprises adopt it, which incentivizes lenient defaults. Andrew Ng's involvement provides credibility but also signals industry alignment.
+
+**Market context:** Enterprise AI governance market: $2.2B (2025), projected $11.05B by 2036 at 15.8% CAGR. EU AI Act compliance market estimated at EUR 17B by 2030.
+
+---
+
+### 8.8 Case Study: Big Four AI Audit Practices
+
+All four firms are building AI governance/audit capabilities, leveraging existing enterprise relationships.
+
+| Firm | AI Investment | Approach |
+|------|-------------|----------|
+| KPMG | $2B committed to AI | Launched Workbench (Jun 2025) — multi-agent audit collaboration |
+| PwC | Undisclosed | Launched Agent OS — compliance-focused, governance-driven platform |
+| Deloitte | Undisclosed | Launched Zora AI (Mar 2025) — AI-powered procurement/audit |
+| EY | 30% revenue increase in AI services | Enterprise AI transformation + governance frameworks |
+
+**Capture risk:** Very high — identical to financial auditing. The "auditee pays" model, client retention incentives, non-audit service revenue from the same clients, and revolving door dynamics all apply. The Big Four will dominate compliance auditing by default due to existing enterprise relationships, but their independence is structurally compromised.
+
+**Key difference from financial auditing:** No PCAOB equivalent exists for AI. No mandatory rotation. No restrictions on non-audit services. The AI audit market currently resembles pre-Sarbanes-Oxley financial auditing — voluntary, unregulated, structurally prone to capture.
+
+---
+
+### 8.9 Case Study: UK AI Safety Institute (Government Evaluator)
+
+| Attribute | Detail |
+|-----------|--------|
+| Founded | November 2023 (Bletchley Park AI Safety Summit) |
+| Budget | ~GBP 100M/year |
+| Head | Formerly Ian Hogarth; restructured under Labour government |
+| Staff | 100+ researchers |
+
+**What they do:** Pre-deployment safety testing of frontier models. Tested 30+ models. Built the open-source **Inspect** framework for AI evaluation. Partnered with Gray Swan Arena for adversarial challenges.
+
+**Capture risk:** Low (structurally). Government-funded, no revenue dependency on labs. But: (a) labs cooperate voluntarily (no legal mandate) — if AISI is too aggressive, labs can withdraw access; (b) political pressure can redirect priorities (the Trump-era gutting of the US AISI demonstrates this risk); (c) cultural capture via close working relationships with lab safety teams.
+
+**US counterpart (NIST/CAISI):** The US AI Safety Institute was effectively gutted under the Trump administration (renamed, director departed, staff cuts). Demonstrates that government evaluators face political capture risk even if they're structurally independent from industry.
+
+---
+
+### 8.10 Case Study: METR (Government-Adjacent Nonprofit)
+
+| Attribute | Detail |
+|-----------|--------|
+| Founded | 2023 (originally ARC Evals, spun out of ARC) |
+| Focus | Dangerous capability evaluations (autonomous replication, resource acquisition) |
+| Funding | Grants (Open Philanthropy, others) |
+| Key people | Beth Barnes (founder) |
+
+**What they do:** Evaluate whether frontier models can autonomously acquire resources, replicate, or cause catastrophic harm. Pre-deployment evaluations for frontier labs.
+
+**Capture resistance:** METR explicitly **refuses payment from AI labs** to maintain independence. Funded by philanthropic grants. This is the strongest independence model in the ecosystem but depends on continued grant funding.
+
+**Limitation:** Labs cooperate voluntarily — METR has no legal right to access or test models. If a lab refuses to engage, METR cannot compel evaluation.
+
+---
+
+### 8.11 Case Study: Apollo Research (Nonprofit Safety Evaluator)
+
+| Attribute | Detail |
+|-----------|--------|
+| Founded | 2023, London |
+| Focus | AI deception and scheming behavior |
+| Founder | Marius Hobbhahn (Time 100 AI 2025) |
+| Funding | Grants |
+
+**What they do:** Specialize in detecting whether AI models engage in deceptive behavior — scheming, sandbagging (performing poorly on safety evals to avoid restrictions), and strategic deception. Published influential research on frontier model deception capabilities.
+
+**Capture risk:** Low. Grant-funded nonprofit with narrow adversarial focus. But faces the same access-dependency problem as METR.
+
+---
+
+### 8.12 Case Study: Internal Lab Evaluation Teams
+
+| Lab | Team | Lead | Framework |
+|-----|------|------|-----------|
+| OpenAI | Preparedness | Aleksander Madry | Preparedness Framework v2 (scorecard system) |
+| Anthropic | Frontier Red Team | Jared Kaplan (RSO) | Responsible Scaling Policy v3.0 |
+| Google DeepMind | Frontier Safety | (multiple) | Frontier Safety Framework v3 (Sep 2025) |
+| Meta | Purple Llama | (multiple) | CyberSecEval (open-source), CrowdStrike collab |
+
+**Capture:** Structural by design — these teams report to the same organization they evaluate. Their purpose is internal risk management, not independent oversight. Key tensions: (a) safety teams compete for resources with product teams; (b) safety findings that delay launches create organizational pressure to soften conclusions; (c) the Timnit Gebru case at Google demonstrates what happens when internal evaluation conflicts with commercial priorities.
+
+**Relationship to external evaluators:** Internal teams often coordinate with external evaluators (METR, AISI) for pre-deployment testing, but the lab controls access, scope, and publication timing. External evaluators supplement but do not replace internal evaluation.
+
+---
+
+## Part 9: Capture Dynamics — Cross-Sector Framework
+
+### 9.1 Five Structural Enablers of Evaluator Capture
+
+Drawing from financial auditing (Arthur Andersen/SOX), credit rating agencies (2008 crisis/Dodd-Frank), cybersecurity compliance (SOC 2/PCI-DSS), and AI evaluation:
+
+**1. "Evaluated Entity Pays" Funding Model**
+
+| Sector | Who Pays | Capture Severity |
+|--------|----------|-----------------|
+| Financial auditing | Auditee pays auditor | High (pre-SOX), moderate (post-SOX) |
+| Credit ratings | Issuer pays rater | Very high (pre-2008), high (post-Dodd-Frank) |
+| Cybersecurity audits | Auditee pays auditor | High (no reforms) |
+| AI evaluation (benchmark) | Labs pay for premium access + compute | High |
+| AI evaluation (compliance) | Enterprise/lab pays auditor | Very high |
+| AI evaluation (govt/nonprofit) | Government/grants | Low |
+
+Every sector where the evaluated entity pays the evaluator develops capture over time. The severity is modulated by oversight bodies and result transparency.
+
+**2. Revolving Door**
+
+The AI talent pipeline is especially severe: AI labs pay 3-10x academic salaries. Evaluators who plan to join labs (or whose students want lab jobs) have career incentives to maintain good relationships. Specific documented dynamics:
+- HELM contributors → AI lab positions
+- Academic benchmark designers → industry research scientist roles
+- Government safety institute staff → lab safety teams
+
+Creates both anticipatory bias (soften assessments to preserve employment options) and knowledge transfer (former evaluators help labs game future evaluations).
+
+**3. Information Asymmetry / Access Dependency**
+
+This is the **most severe** capture vector in AI, and unique among analogous sectors:
+- Financial auditing: auditors have **legal rights** to access all financial records (securities law). Obstruction is criminal.
+- Credit ratings: issuers must provide material information to maintain investment-grade ratings.
+- Cybersecurity: pen-testers negotiate scope but have contracted access once engaged.
+- **AI evaluation: evaluators have NO legal right to access model internals, training data, or deployment logs.** Access is entirely at the lab's discretion. Labs can provide black-box API access while withholding weights, training data, RLHF reward models, and internal safety evaluations.
+
+This gives labs effective veto power over evaluation scope and timing.
+
+**4. Evaluator Concentration**
+
+| Sector | Major Evaluators | Dynamic |
+|--------|-----------------|---------|
+| Financial auditing | 4 (Big Four) | "Too big to sanction" |
+| Credit ratings | 3 (Moody's, S&P, Fitch) | ~95% market share |
+| Cybersecurity | Fragmented | Race to bottom on quality |
+| AI evaluation | ~5-10 credible orgs, consolidating fast | Early-stage; acquisitions reducing count |
+
+Paradox: high concentration creates too-big-to-sanction; low concentration enables audit shopping and quality race-to-bottom. Optimal: moderate concentration + strong accreditation (CREST model in cybersecurity, PCAOB in financial auditing).
+
+**5. Transparency of Results**
+
+- Financial auditing: audit opinions are **public** (SEC filings)
+- Credit ratings: ratings are **public**
+- Cybersecurity: SOC 2 reports are **restricted** (shared only with customers)
+- AI evaluation: benchmark results typically **public**, but evaluation methodology, scope limitations, and failed tests often **under NDA**. Safety evaluation results frequently restricted.
+
+### 9.2 Historical Capture Case: Arthur Andersen / Enron
+
+The most relevant historical analogy for AI evaluator capture.
+
+**How capture worked:**
+- Andersen earned $25M/year from Enron for auditing and $27M/year for consulting — consulting revenue exceeded audit revenue
+- Andersen designed the accounting systems it then audited (equivalent to: an AI evaluator that also consults on model development)
+- Enron's CFO and Chief Accounting Officer were former Andersen employees (revolving door)
+- Andersen partners embedded at Enron adopted Enron's culture (cultural capture)
+- When SEC investigation began, Andersen destroyed audit documents
+
+**Sarbanes-Oxley reforms (2002):** Created PCAOB, prohibited most non-audit services to audit clients, required lead partner rotation every 5 years. Academic evidence: improved audit quality initially but gains plateaued. Core "auditee pays" model was NOT changed.
+
+### 9.3 Historical Capture Case: Credit Rating Agencies / 2008
+
+**How the "issuer pays" model created capture:**
+- By mid-2000s, structured finance ratings = ~50% of Moody's revenue
+- Rating shopping: issuers approached multiple agencies, chose the most favorable
+- Agencies published models; banks reverse-engineered them to barely meet thresholds ("ratings arbitrage")
+- Internal emails: "Let's hope we are all wealthy and retired by the time this house of cards falters" (S&P analyst, FCIC report)
+
+**Bolton, Freixas & Shapiro (2012):** Showed counter-intuitively that **more competition among rating agencies makes inflation worse** because issuers can more easily shop for favorable ratings.
+
+**Dodd-Frank reforms:** Created SEC Office of Credit Ratings, but **did NOT change the issuer-pays model**. An assignment system (centralized body assigns raters to deals) was proposed but killed by industry lobbying.
+
+### 9.4 Cybersecurity Compliance as Analogy
+
+SOC 2, ISO 27001, and PCI-DSS audits share the "auditee pays" model with AI evaluation. Key parallels:
+- **Audit shopping:** Companies switch auditors after unfavorable results (documented in North Carolina State study, 2019)
+- **Compliance theater:** Target (2013), Home Depot (2014), and Heartland (2008) were all PCI-DSS compliant when breached
+- **No public reporting:** SOC 2 reports are restricted; opacity enables weak audits
+- **No PCAOB equivalent:** Cybersecurity auditing is voluntary and unregulated (except PCI-DSS for payment processors)
+
+The AI evaluation space currently resembles pre-SOX financial auditing or current cybersecurity auditing: voluntary, unregulated, structurally prone to capture.
+
+### 9.5 Capture Resistance Mechanisms (Cross-Sector Lessons)
+
+| Mechanism | Source Sector | AI Applicability |
+|-----------|--------------|-----------------|
+| Independent oversight board (PCAOB) | Financial auditing | High — "AI PCAOB" frequently proposed |
+| Mandatory evaluator rotation | Financial auditing (EU) | Moderate — could work for frontier model evals |
+| Legal access rights for evaluators | Financial auditing (securities law) | Critical need — requires legislation |
+| Public disclosure of evaluation results | Financial auditing (SEC filings) | High — transparency is partial remedy |
+| Separation of evaluation and consulting | SOX Section 201 | High — evaluators should not also advise labs |
+| Assignment system (break shopping) | Proposed but rejected for CRAs | Novel — centralized body assigns evaluators |
+| Accreditation of evaluators | CREST (cybersecurity) | High — establishes quality floor |
+| Evaluator-funded-by-third-party | METR model / pre-1970s CRAs | Ideal but economically challenging at scale |
+
+### 9.6 Implications for Simulation
+
+**Mapping to the evaluator-as-organization model (Parts 2-6 above):**
+
+The current simulation models evaluator capture through a single axis: premium access (provider pays evaluator → gets extra trials + early access). The real-world evidence suggests capture operates through at least **five distinct channels**, and the simulation could benefit from encoding more of them:
+
+1. **Funding dependency** (already modeled via premium subscriber revenue) — the ratio of provider-fee revenue to total revenue is the key capture metric. The credit rating agency evidence suggests this alone is a strong predictor.
+
+2. **Access dependency** (not modeled) — evaluators depend on labs for model access. A lab that withdraws cooperation can effectively shut down evaluation. This is unique to AI and is the most severe capture vector.
+
+3. **Scope negotiation** (partially modeled via benchmark design) — labs negotiate what gets evaluated. An evaluator that insists on broad scope loses clients. In the simulation, this could manifest as evaluators avoiding safety-focused benchmarks to retain premium subscribers.
+
+4. **Revolving door** (not modeled) — evaluator staff moving to labs creates anticipatory bias. Could be modeled as a parameter that softens evaluator assessment rigor over time when evaluator depends on lab-funded revenue.
+
+5. **Cultural capture** (not modeled) — evaluators who spend time with labs adopt shared assumptions. This is the subtlest form and hardest to model explicitly.
+
+**The key structural insight from cross-sector evidence:** The "auditee pays" model is the single most reliable predictor of eventual capture, and **no sector has successfully reformed it**. SOX didn't change it for financial auditing. Dodd-Frank didn't change it for credit ratings. The only working alternative is third-party funding (METR model, government evaluation), but this doesn't scale to cover all evaluation needs.
+
+For the simulation: the most impactful parameter is the evaluator's funding source mix. Government/foundation funding → more independence. Provider fees → more capture. The interaction between funding source and benchmark design choices (which dimensions get measured) is where the most interesting dynamics should emerge.
+
+---
+
 ## Document History
 
 - **2026-02-16:** Initial design based on Leaderboard Illusion paper and LMArena business model
 - **2026-02-18:** Updated to reflect actual implementation — corrected `compute_n_trials` formula (binary not gradient funding_bonus), updated config params to match `SimulationConfig`, corrected funding model signatures; implemented Phase 3 item 2 (`_get_effective_benchmark()` with 1.5x exploitability multiplier for early access window); corrected Phase 5 checklist (both logging and dashboard were already implemented)
+- **2026-04-05:** Added Parts 8-9: Evaluator landscape survey (12 case studies across 5 archetypes) and cross-sector capture dynamics framework (financial auditing, credit ratings, cybersecurity). 35+ organizations mapped. Five structural enablers of capture identified. Simulation implications documented.

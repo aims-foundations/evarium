@@ -200,8 +200,8 @@ Providers allocate 100% of their training budget across three levers each round:
 | Lever | Competitive axis | Mechanical effect |
 |---|---|---|
 | `rd` | Capability (broad + targeted) | Directed toward benchmark-focused dimensions when `focus_level[b]` is set; approximately uniform when no deliberate focus; breakthrough-eligible |
-| `safety` | Safety capability | Improves `capability_vector["safety"]` with diminishing returns `(1 - current_safety)`, stochastic efficiency `uniform(0.3, 0.9)` (mean 0.6), and 2-round delivery lag |
-| `product` | Market adoption | Accumulates `market_presence`; maps to `cost_advantage` → flows through to `cost_bonus` in satisfaction formula. Possible extensions: switching cost stickiness, enterprise segment adoption rate — both deferred. |
+| `safety` | Safety capability | Improves `capability_vector["safety"]` with diminishing returns `(1 - current_safety)`, stochastic efficiency `uniform(0.3, 0.9)` (mean 0.6). Execution inertia via rolling-averaged portfolio. |
+| `product` | Analytics + retention | Two channels: (1) **Consumer signal fidelity** — quality-gates the consumer need signal used in R&D targeting (`compute_capability_gains`). Higher product budget means R&D grows capabilities users actually need. Sigmoid: `quality = 1/(1+exp(-3*(budget-0.5)))`, OS ceiling 0.40. (2) **Switching cost retention** — increases effective switching cost via `bonus = 0.50*(1-exp(-2*budget))`, OS cap 0.15. Both use absolute product budget (effective portfolio fraction x total budget). |
 
 **Gaming mechanism:** When `focus_level[b]` is high for benchmark b, R&D gain concentrates on dimensions the provider believes b emphasizes (via `inferred_benchmark_weights[b]`). If those beliefs are accurate and benchmark weights diverge from consumer need weights, scores rise faster than consumer satisfaction. The score-satisfaction gap emerges without any explicit gaming term.
 
@@ -222,19 +222,21 @@ benchmark_driven[dim] = sum(focus_weights[b] × inferred_benchmark_weights[b][di
                             for b in active_benchmarks)
                         # when all focus_level[b] at baseline: benchmark_driven[dim] ≈ uniform
 
-target[dim]         = benchmark_orientation × benchmark_driven[dim] + (1 - benchmark_orientation) × consumer_signal[dim]
+-- Consumer signal quality-gated by product investment --
+quality             = consumer_signal_fidelity(product_budget, is_open_source)
+effective_signal[dim] = quality × true_consumer_signal[dim] + (1 - quality) × uniform[dim]
+
+target[dim]         = benchmark_orientation × benchmark_driven[dim] + (1 - benchmark_orientation) × effective_signal[dim]
 
 gain[dim] = rd × target[dim]
 
--- Safety lever: separate pathway with diminishing returns, noise, and lag --
+-- Safety lever: separate pathway with diminishing returns and noise --
 safety_raw       = safety_fraction × effective_budget
 safety_diminish  = safety_raw × (1 - current_safety)          # A: diminishing returns
 safety_noisy     = safety_diminish × uniform(0.3, 0.9)        # B: stochastic efficiency (mean 0.6)
-# C: queued for delivery 2 rounds later
-safety_gain_queue.append((current_round + 2, safety_noisy))
-delivered_safety = sum(gain for (r, gain) in queue if r <= current_round)
 
-gain["safety"] += delivered_safety
+gain["safety"] += safety_noisy
+-- Execution inertia handled by rolling-averaged portfolio (all levers) --
 
 capability_vector[dim] = min(1.0, capability_vector[dim] + gain[dim])
 ```
@@ -244,7 +246,7 @@ capability_vector[dim] = min(1.0, capability_vector[dim] + gain[dim])
 **Safety lever rationale:** Safety R&D has structurally different dynamics than capability R&D:
 - **Diminishing returns** — easy wins (RLHF, basic red-teaming) come first; frontier safety research has uncertain and diminishing payoff
 - **Stochastic efficiency** — red-teaming is discovery-based (some campaigns find critical issues, some find nothing); unlike compute-scaling where more FLOPS reliably improves loss curves
-- **Lagged delivery** — safety improvements require multi-month research and deployment cycles; a lab that decides to invest more in safety cannot ship a fix in the same month
+- **Execution inertia** — all portfolio allocations (rd, safety, product) use a 3-round rolling average, so shifts in safety investment take multiple rounds to fully materialize. This replaced a previous 2-round delivery lag to provide uniform inertia across all levers.
 
 ### Provider Belief Model
 

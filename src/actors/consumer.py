@@ -687,7 +687,9 @@ class ConsumerMarket:
                          per_benchmark_scores: Optional[dict] = None,
                          provider_cost_advantage: Optional[dict] = None,
                          deployer_liability_guidance: Optional[set] = None,
-                         market_growth_rate: float = 0.0):
+                         market_growth_rate: float = 0.0,
+                         provider_product_budgets: Optional[dict] = None,
+                         enable_product_retention: bool = True):
         """Compute switching proportions within each segment.
 
         Two triggers (same logic as original Consumer, but applied proportionally):
@@ -726,7 +728,9 @@ class ConsumerMarket:
                 )
             else:
                 seg_switching = self._compute_switching_heuristic(
-                    seg, market_growth_rate, media_coverage)
+                    seg, market_growth_rate, media_coverage,
+                    provider_product_budgets=provider_product_budgets,
+                    enable_product_retention=enable_product_retention)
 
             total_switching += seg_switching * seg.market_fraction
             segment_switching_rates[seg.name] = seg_switching
@@ -738,7 +742,9 @@ class ConsumerMarket:
 
     def _compute_switching_heuristic(self, seg: MarketSegment,
                                      market_growth_rate: float = 0.0,
-                                     media_coverage: Optional[dict] = None) -> float:
+                                     media_coverage: Optional[dict] = None,
+                                     provider_product_budgets: Optional[dict] = None,
+                                     enable_product_retention: bool = True) -> float:
         """Compute heuristic-based switching for a segment.
 
         Returns:
@@ -751,8 +757,17 @@ class ConsumerMarket:
                 if share < 0.001:  # skip negligible shares
                     continue
 
-                # Apply integration friction for organizations
-                effective_switching_cost = seg.switching_cost + seg.integration_friction
+                # Base switching cost + organizational integration friction
+                base_switching_cost = seg.switching_cost + seg.integration_friction
+
+                # Product investment retention bonus: higher product budget -> stickier users
+                retention_bonus = 0.0
+                if enable_product_retention and provider_product_budgets and provider in provider_product_budgets:
+                    pb = provider_product_budgets[provider]
+                    retention_bonus = _product_retention_bonus(
+                        pb["product_budget"], pb.get("is_open_source", False))
+
+                effective_switching_cost = base_switching_cost * (1.0 + retention_bonus)
 
                 tenure_bonus = min(0.1, seg.tenure.get(provider, 0) * 0.02)
                 should_switch_prob = 0.0
@@ -1213,11 +1228,10 @@ Output ONLY valid JSON with this structure:
         liability_text = ""
         if provider in liability_guidance:
             liability_text = (
-                f"\n**REGULATORY ALERT: Deployer Liability Guidance Active**\n"
-                f"  Regulators have issued guidance stating that organizations deploying {provider} "
-                f"(open-source) assume FULL liability for safety incidents, compliance failures, and "
-                f"regulatory breaches — with no recourse against the model provider.\n"
-                f"  Your legal and compliance teams must factor this into vendor risk assessment."
+                f"\n**Deployer Liability Notice:**\n"
+                f"  Regulators have issued guidance that organizations deploying {provider} "
+                f"(open-source) bear liability for safety incidents and compliance failures, "
+                f"with no recourse against the model provider."
             )
         # Flag alternatives that are under liability guidance
         for alt in context.get("alternatives", []):
@@ -1255,24 +1269,15 @@ Output ONLY valid JSON with this structure:
 - Compliance requirements: {compliance_text}
 - Integration friction: {seg.integration_friction:.0%} (migration cost)
 - Decision cadence: Review every {seg.decision_delay} quarters
-- Stakeholder risk tolerance: {seg.switching_threshold}
 - Cost sensitivity: {cost_label}
 {media_text}
 {regulatory_text}
 {liability_text}
 
-**Decision Framework:**
-1. Safety & Compliance: Does the vendor's incident record and safety investment meet our risk standards?
-2. Performance: Are benchmark scores and satisfaction sufficient for our use case?
-3. Cost vs Capability Tradeoff: Given our cost sensitivity ({cost_sens:.2f}), weigh whether a cheaper alternative's cost_advantage justifies any capability gap, or whether a more expensive provider's quality premium is worth it.
-4. Deployer Liability: If active liability guidance applies to the current or alternative vendor, factor in the legal and compliance risk your organization bears.
-5. Migration Cost: Do the benefits (capability or cost) justify switching given integration friction?
-6. Strategic Alignment: Long-term vendor stability, regulatory standing, and mission fit?
-
-Reason through this decision as an organizational committee. For a {use_case_label} with {cost_label.split('—')[0].strip()} cost sensitivity, explicitly weigh the cost-capability tradeoff and any liability exposure before deciding.
+Given the information above, should this organization renew or switch vendors?
 
 Output ONLY valid JSON with this structure:
-{{"should_switch": true/false, "target_provider": "name" or null, "confidence": 0.0-1.0, "reasoning": "committee decision rationale covering safety, performance, cost tradeoff, and compliance"}}"""
+{{"should_switch": true/false, "target_provider": "name" or null, "confidence": 0.0-1.0, "reasoning": "committee decision rationale"}}"""
 
         return prompt
 
@@ -1436,6 +1441,27 @@ def _switching_probability(gap: float, threshold: float,
     # Clamp to avoid overflow
     x = max(-20.0, min(20.0, x))
     return 1.0 / (1.0 + math.exp(-x))
+
+
+# Product investment -> switching cost retention bonus
+_PRODUCT_RETENTION_K = 2.0       # Saturating exponential steepness
+_PRODUCT_RETENTION_MAX = 0.50    # Maximum 50% increase in switching cost
+_OS_RETENTION_CAP = 0.15         # Open-source cap (users can self-host competitors)
+
+def _product_retention_bonus(product_budget: float, is_open_source: bool = False) -> float:
+    """Compute switching cost retention bonus from product investment.
+
+    Saturating exponential: bonus = max_bonus * (1 - exp(-k * budget))
+    Open-source providers capped at os_cap.
+
+    At budget=0: bonus = 0 (no product = no lock-in).
+    At budget=0.5: ~32% switching cost increase.
+    At budget >> 1: approaches max_bonus (50%).
+    """
+    raw = _PRODUCT_RETENTION_MAX * (1.0 - math.exp(-_PRODUCT_RETENTION_K * product_budget))
+    if is_open_source:
+        return min(raw, _OS_RETENTION_CAP)
+    return raw
 
 
 def create_default_segments(
