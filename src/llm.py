@@ -1558,6 +1558,158 @@ def llm_plan_evaluator(
     }, result.get("reasoning", "")
 
 
+# --- Evaluator Full Autonomy Mode ---
+
+EVALUATOR_AUTONOMY_SYSTEM_PROMPT = """You are the team responsible for maintaining the AI evaluation leaderboard. You decide which benchmarks to develop, when to introduce them, and when to retire saturated ones.
+
+Your goal is to maintain evaluation infrastructure that accurately measures what matters to the people and organizations who rely on AI models.
+
+You have three options each month:
+- **commit**: Start developing a benchmark from the available pool (takes several months to complete)
+- **retire**: Immediately retire an active benchmark that is no longer useful (only needed if you want to retire without replacing)
+- **none**: No action needed this month
+
+You MUST output valid JSON in this exact structure:
+{
+    "action": "commit" | "retire" | "none",
+    "benchmark_name": "<name of benchmark to commit from pool, or active benchmark to retire>",
+    "reasoning": "Your analysis (up to 200 words)."
+}
+
+Guidelines:
+- You can only commit benchmarks from the Available Pool (listed below)
+- Once committed, a benchmark cannot be cancelled and takes time to develop
+- Multiple benchmarks can be in development simultaneously
+- When the active benchmark limit is reached, the most saturated benchmark is auto-retired to make room
+- Consider dimension coverage gaps: are important capabilities under-measured?
+- Consider saturation: are providers converging on ceiling scores?
+- Consider validity: does the leaderboard track real-world adoption?"""
+
+
+def create_evaluator_autonomy_prompt(
+    active_benchmarks: list[dict],
+    score_deltas: dict,
+    score_spread: dict,
+    internal_validity: Optional[float],
+    media_headlines: list[str],
+    saturation_states: dict,
+    available_pool: list[dict],
+    dev_pipeline: list[dict],
+    retired_benchmarks: list[str],
+    current_round: int,
+) -> str:
+    """Create a prompt for the evaluator in full_autonomy mode.
+
+    Shows the evaluator what benchmarks are active, what's in the pool
+    (name + description + tags only, NO dimension weights), and pipeline status.
+    """
+    prompt = "# Active Benchmarks\n"
+    for bm in active_benchmarks:
+        status = ""
+        sat = saturation_states.get(bm["name"], {})
+        if sat.get("saturated"):
+            status = f" [SATURATED, top score {sat.get('max_score', 0):.3f}]"
+        prompt += f"- {bm['name']} (measures: {bm.get('tags', 'general')}){status}\n"
+
+    prompt += "\n# Score Movement (last month)\n"
+    for bm_name, deltas in score_deltas.items():
+        spread = score_spread.get(bm_name, 0)
+        if deltas:
+            avg_delta = sum(deltas.values()) / len(deltas)
+            prompt += f"- {bm_name}: avg improvement {avg_delta:+.4f}, score spread {spread:.3f}\n"
+        else:
+            prompt += f"- {bm_name}: no data, spread {spread:.3f}\n"
+
+    if internal_validity is not None:
+        prompt += f"\n# Leaderboard-Adoption Correlation\nRank correlation between leaderboard scores and market share: {internal_validity:.2f}\n"
+
+    if media_headlines:
+        bm_headlines = [h for h in media_headlines if any(
+            kw in h.lower() for kw in ["benchmark", "score", "converging", "plateau", "reliability", "meaningful"]
+        )]
+        if bm_headlines:
+            prompt += "\n# Recent Press Coverage\n"
+            for h in bm_headlines[-3:]:
+                prompt += f"- {h}\n"
+
+    if dev_pipeline:
+        prompt += "\n# Development Pipeline\n"
+        for item in dev_pipeline:
+            rounds_left = item["ready_round"] - current_round
+            prompt += f"- {item['name']}: {rounds_left} months until ready\n"
+
+    if retired_benchmarks:
+        prompt += "\n# Previously Retired\n"
+        for name in retired_benchmarks[-5:]:
+            prompt += f"- {name}\n"
+
+    if available_pool:
+        prompt += "\n# Available Pool (benchmarks you can commit to develop)\n"
+        for bm in available_pool:
+            prompt += f"- {bm['name']}: {bm.get('description', '')} (tags: {bm.get('tags', '')})\n"
+    else:
+        prompt += "\n# Available Pool\nNo benchmarks remaining in pool.\n"
+
+    prompt += "\n# Decision Required\nBased on the current evaluation landscape, decide whether to commit a new benchmark from the pool, retire an active benchmark, or take no action.\n\nOutput your decision as JSON."
+    return prompt
+
+
+def llm_plan_evaluator_autonomy(
+    active_benchmarks: list[dict],
+    score_deltas: dict,
+    score_spread: dict,
+    internal_validity: Optional[float],
+    media_headlines: list[str],
+    saturation_states: dict,
+    available_pool: list[dict],
+    dev_pipeline: list[dict],
+    retired_benchmarks: list[str],
+    current_round: int,
+    verbose: bool = False,
+) -> tuple[dict, str]:
+    """Use LLM to decide evaluator actions in full_autonomy mode.
+
+    Returns:
+        Tuple of (decision_dict, reasoning) where decision_dict has:
+            action: "commit" | "retire" | "none"
+            benchmark_name: str
+    """
+    provider = get_provider()
+
+    prompt = create_evaluator_autonomy_prompt(
+        active_benchmarks=active_benchmarks,
+        score_deltas=score_deltas,
+        score_spread=score_spread,
+        internal_validity=internal_validity,
+        media_headlines=media_headlines,
+        saturation_states=saturation_states,
+        available_pool=available_pool,
+        dev_pipeline=dev_pipeline,
+        retired_benchmarks=retired_benchmarks,
+        current_round=current_round,
+    )
+
+    result = provider.generate_json(
+        prompt=prompt,
+        system_prompt=EVALUATOR_AUTONOMY_SYSTEM_PROMPT,
+        fail_safe={
+            "action": "none",
+            "benchmark_name": "",
+            "reasoning": "fallback to no action",
+        },
+        verbose=verbose,
+    )
+
+    action = result.get("action", "none")
+    if action not in ("commit", "retire", "none"):
+        action = "none"
+
+    return {
+        "action": action,
+        "benchmark_name": result.get("benchmark_name", ""),
+    }, result.get("reasoning", "")
+
+
 # --- Provider Public Communications (LLM mode) ---
 
 def llm_generate_public_comm(

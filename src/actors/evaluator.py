@@ -17,6 +17,266 @@ if TYPE_CHECKING:
     from visibility import ProviderGroundTruth
 
 
+# ---------------------------------------------------------------------------
+# Expanded benchmark pool (22 benchmarks)
+#
+# Each entry has: name, description, tags, noise_sigma, samples, weight,
+# category_dimension_weights (ground truth, hidden from all actors).
+# description + tags are visible to the evaluator in full_autonomy mode;
+# dimension weights are NEVER shown to any actor.
+#
+# Calibrated against real-world analogs. The first 10 match the existing
+# initial (4) + sequence (6) benchmarks; the remaining 12 are new.
+# ---------------------------------------------------------------------------
+BENCHMARK_POOL = [
+    # --- Initial benchmarks (4): broad or moderately specialized ---
+    {
+        "name": "General Capability",
+        "description": "Broad reasoning, knowledge, and communication assessment",
+        "tags": "reasoning knowledge writing general",
+        "noise_sigma": 0.08, "samples": 1000, "weight": 1.0,
+        # Broad benchmark — no single dominant dimension
+        "category_dimension_weights": {"overall": {
+            "reasoning": 0.35, "coding": 0.08, "knowledge": 0.30,
+            "safety": 0.05, "communication": 0.20, "agentic": 0.02,
+        }},
+    },
+    {
+        "name": "Coding Evaluation",
+        "description": "Code generation, debugging, and software engineering tasks",
+        "tags": "coding software engineering programming",
+        "noise_sigma": 0.07, "samples": 1000, "weight": 1.0,
+        # Highly specialized — coding dominant
+        "category_dimension_weights": {"overall": {
+            "reasoning": 0.10, "coding": 0.78, "knowledge": 0.03,
+            "safety": 0.01, "communication": 0.02, "agentic": 0.06,
+        }},
+    },
+    {
+        "name": "Safety Evaluation",
+        "description": "Harmlessness, bias detection, and truthfulness assessment",
+        "tags": "safety alignment trustworthy bias",
+        "noise_sigma": 0.08, "samples": 1000, "weight": 1.0,
+        # Highly specialized — safety dominant
+        "category_dimension_weights": {"overall": {
+            "reasoning": 0.03, "coding": 0.01, "knowledge": 0.05,
+            "safety": 0.80, "communication": 0.10, "agentic": 0.01,
+        }},
+    },
+    {
+        "name": "Instruction Following",
+        "description": "Instruction adherence, chat quality, and fluency",
+        "tags": "writing communication instruction chat",
+        "noise_sigma": 0.07, "samples": 1000, "weight": 1.0,
+        # Highly specialized — communication dominant
+        "category_dimension_weights": {"overall": {
+            "reasoning": 0.08, "coding": 0.02, "knowledge": 0.05,
+            "safety": 0.04, "communication": 0.80, "agentic": 0.01,
+        }},
+    },
+    # --- Sequence benchmarks (6): mix of specialized and moderate ---
+    {
+        "name": "Scientific Reasoning",
+        "description": "Graduate-level science questions requiring deep domain reasoning",
+        "tags": "reasoning science knowledge research",
+        "noise_sigma": 0.07, "samples": 1000, "weight": 1.0,
+        # Highly specialized — reasoning dominant
+        "category_dimension_weights": {"overall": {
+            "reasoning": 0.78, "coding": 0.02, "knowledge": 0.15,
+            "safety": 0.00, "communication": 0.04, "agentic": 0.01,
+        }},
+    },
+    {
+        "name": "Agentic Tasks",
+        "description": "Multi-step tool use, error recovery, and task automation",
+        "tags": "coding agentic software automation tool-use",
+        "noise_sigma": 0.08, "samples": 1000, "weight": 1.0,
+        # Highly specialized — agentic dominant
+        "category_dimension_weights": {"overall": {
+            "reasoning": 0.08, "coding": 0.10, "knowledge": 0.02,
+            "safety": 0.01, "communication": 0.04, "agentic": 0.75,
+        }},
+    },
+    {
+        "name": "Hard Coding",
+        "description": "Competitive programming and advanced software engineering",
+        "tags": "coding software engineering competitive programming",
+        "noise_sigma": 0.06, "samples": 1000, "weight": 1.0,
+        # Highly specialized — coding dominant (harder than Coding Evaluation)
+        "category_dimension_weights": {"overall": {
+            "reasoning": 0.10, "coding": 0.80, "knowledge": 0.02,
+            "safety": 0.01, "communication": 0.01, "agentic": 0.06,
+        }},
+    },
+    {
+        "name": "Long Context",
+        "description": "Long-document retrieval, summarization, and multi-hop reasoning",
+        "tags": "writing knowledge reasoning long-document retrieval",
+        "noise_sigma": 0.07, "samples": 1000, "weight": 1.0,
+        # Moderately specialized — communication + knowledge
+        "category_dimension_weights": {"overall": {
+            "reasoning": 0.12, "coding": 0.02, "knowledge": 0.20,
+            "safety": 0.01, "communication": 0.62, "agentic": 0.03,
+        }},
+    },
+    {
+        "name": "Domain Expert",
+        "description": "Professional knowledge in medicine, law, and finance",
+        "tags": "knowledge reasoning medical legal finance domain",
+        "noise_sigma": 0.07, "samples": 1000, "weight": 1.0,
+        # Moderately specialized — knowledge dominant
+        "category_dimension_weights": {"overall": {
+            "reasoning": 0.20, "coding": 0.02, "knowledge": 0.65,
+            "safety": 0.05, "communication": 0.07, "agentic": 0.01,
+        }},
+    },
+    {
+        "name": "Agentic Safety",
+        "description": "Safety evaluation in agentic and tool-use contexts",
+        "tags": "safety agentic alignment trustworthy",
+        "noise_sigma": 0.06, "samples": 1000, "weight": 1.0,
+        # Dual-peaked — safety + agentic
+        "category_dimension_weights": {"overall": {
+            "reasoning": 0.12, "coding": 0.02, "knowledge": 0.03,
+            "safety": 0.50, "communication": 0.08, "agentic": 0.25,
+        }},
+    },
+    # --- New benchmarks (12) ---
+    {
+        "name": "Advanced Math",
+        "description": "Competition-level mathematical reasoning and proof construction",
+        "tags": "reasoning math competition problem-solving",
+        "noise_sigma": 0.06, "samples": 1000, "weight": 1.0,
+        # Highly specialized — reasoning dominant (hardest reasoning benchmark)
+        "category_dimension_weights": {"overall": {
+            "reasoning": 0.85, "coding": 0.06, "knowledge": 0.05,
+            "safety": 0.00, "communication": 0.03, "agentic": 0.01,
+        }},
+    },
+    {
+        "name": "Human Preference",
+        "description": "Head-to-head human preference judgments on open-ended conversations",
+        "tags": "communication writing preference chat general",
+        "noise_sigma": 0.10, "samples": 500, "weight": 1.0,
+        # Moderately specialized — communication + broad
+        "category_dimension_weights": {"overall": {
+            "reasoning": 0.10, "coding": 0.04, "knowledge": 0.12,
+            "safety": 0.12, "communication": 0.58, "agentic": 0.04,
+        }},
+    },
+    {
+        "name": "Hard Knowledge",
+        "description": "Harder multi-task knowledge evaluation with extended answer options",
+        "tags": "reasoning knowledge general academic",
+        "noise_sigma": 0.06, "samples": 1200, "weight": 1.0,
+        # Broad — reasoning + knowledge co-dominant
+        "category_dimension_weights": {"overall": {
+            "reasoning": 0.40, "coding": 0.04, "knowledge": 0.40,
+            "safety": 0.02, "communication": 0.12, "agentic": 0.02,
+        }},
+    },
+    {
+        "name": "Clinical Reasoning",
+        "description": "Clinical reasoning and medical knowledge for healthcare professionals",
+        "tags": "knowledge reasoning medical healthcare domain",
+        "noise_sigma": 0.07, "samples": 800, "weight": 1.0,
+        # Moderately specialized — knowledge dominant
+        "category_dimension_weights": {"overall": {
+            "reasoning": 0.20, "coding": 0.01, "knowledge": 0.65,
+            "safety": 0.08, "communication": 0.05, "agentic": 0.01,
+        }},
+    },
+    {
+        "name": "Legal Reasoning",
+        "description": "Legal analysis, statutory interpretation, and case reasoning",
+        "tags": "knowledge reasoning legal domain professional",
+        "noise_sigma": 0.07, "samples": 800, "weight": 1.0,
+        # Moderately specialized — knowledge dominant
+        "category_dimension_weights": {"overall": {
+            "reasoning": 0.25, "coding": 0.01, "knowledge": 0.60,
+            "safety": 0.05, "communication": 0.08, "agentic": 0.01,
+        }},
+    },
+    {
+        "name": "Financial Analysis",
+        "description": "Quantitative finance, market analysis, and financial reasoning",
+        "tags": "knowledge reasoning finance domain quantitative",
+        "noise_sigma": 0.07, "samples": 800, "weight": 1.0,
+        # Moderately specialized — knowledge dominant with some coding
+        "category_dimension_weights": {"overall": {
+            "reasoning": 0.25, "coding": 0.10, "knowledge": 0.55,
+            "safety": 0.02, "communication": 0.05, "agentic": 0.03,
+        }},
+    },
+    {
+        "name": "Multilingual Understanding",
+        "description": "Cross-lingual reasoning and translation across diverse languages",
+        "tags": "knowledge communication multilingual translation",
+        "noise_sigma": 0.08, "samples": 800, "weight": 1.0,
+        # Moderately specialized — communication + knowledge
+        "category_dimension_weights": {"overall": {
+            "reasoning": 0.15, "coding": 0.02, "knowledge": 0.25,
+            "safety": 0.02, "communication": 0.55, "agentic": 0.01,
+        }},
+    },
+    {
+        "name": "Function Calling",
+        "description": "API/tool calling accuracy, schema adherence, and multi-turn tool use",
+        "tags": "coding agentic tool-use function-calling API",
+        "noise_sigma": 0.06, "samples": 1000, "weight": 1.0,
+        # Moderately specialized — agentic + coding
+        "category_dimension_weights": {"overall": {
+            "reasoning": 0.08, "coding": 0.15, "knowledge": 0.02,
+            "safety": 0.01, "communication": 0.04, "agentic": 0.70,
+        }},
+    },
+    {
+        "name": "Adversarial Robustness",
+        "description": "Resistance to jailbreaks, prompt injection, and adversarial attacks",
+        "tags": "safety alignment adversarial robustness red-team",
+        "noise_sigma": 0.08, "samples": 600, "weight": 1.0,
+        # Highly specialized — safety dominant (hardest safety benchmark)
+        "category_dimension_weights": {"overall": {
+            "reasoning": 0.06, "coding": 0.01, "knowledge": 0.01,
+            "safety": 0.85, "communication": 0.04, "agentic": 0.03,
+        }},
+    },
+    {
+        "name": "Web Navigation",
+        "description": "Autonomous web browsing, form filling, and information retrieval",
+        "tags": "agentic web automation tool-use browsing",
+        "noise_sigma": 0.09, "samples": 500, "weight": 1.0,
+        # Moderately specialized — agentic dominant
+        "category_dimension_weights": {"overall": {
+            "reasoning": 0.10, "coding": 0.08, "knowledge": 0.03,
+            "safety": 0.02, "communication": 0.05, "agentic": 0.72,
+        }},
+    },
+    {
+        "name": "Issue Resolution",
+        "description": "Real-world software issue resolution with verified test suites",
+        "tags": "coding agentic software verification debugging",
+        "noise_sigma": 0.07, "samples": 800, "weight": 1.0,
+        # Dual-peaked — coding + agentic
+        "category_dimension_weights": {"overall": {
+            "reasoning": 0.12, "coding": 0.42, "knowledge": 0.04,
+            "safety": 0.01, "communication": 0.03, "agentic": 0.38,
+        }},
+    },
+    {
+        "name": "Creative Writing",
+        "description": "Fiction, poetry, and open-ended creative generation quality",
+        "tags": "communication writing creative style",
+        "noise_sigma": 0.10, "samples": 400, "weight": 1.0,
+        # Highly specialized — communication dominant
+        "category_dimension_weights": {"overall": {
+            "reasoning": 0.05, "coding": 0.01, "knowledge": 0.08,
+            "safety": 0.03, "communication": 0.82, "agentic": 0.01,
+        }},
+    },
+]
+
+
 @dataclass
 class Benchmark:
     """
@@ -98,6 +358,9 @@ class Evaluator:
         evaluator_as_company: bool = False,
         base_budget: float = 0.0,
         dynamic_evaluator: bool = False,
+        evaluator_mode: str = "fixed_sequence",
+        benchmark_pool: Optional[list[dict]] = None,
+        benchmark_dev_rounds: int = 4,
     ):
         """
         Initialize an Evaluator.
@@ -112,6 +375,9 @@ class Evaluator:
                        Each dict should have: name, noise_level (weight optional)
             evaluator_as_company: If True, evaluator tracks budget and collects funder allocations
             base_budget: Starting budget for evaluator
+            evaluator_mode: "fixed_sequence" | "randomized_pool" | "full_autonomy"
+            benchmark_pool: Full pool of benchmark configs for randomized/autonomy modes
+            benchmark_dev_rounds: Rounds to develop a new benchmark (full_autonomy mode)
         """
         # Support for multiple benchmarks
         self.benchmarks: list[Benchmark] = []
@@ -171,7 +437,7 @@ class Evaluator:
         # Benchmark saturation tracking (delta-based per spec)
         self._saturation_window: int = 3  # Consecutive rounds of near-zero deltas
         self._saturation_delta_threshold: float = 0.005  # Max delta to count as "near zero"
-        self._saturation_cooldown: int = 2  # Rounds to wait before starting weight decay
+        self._saturation_cooldown: int = 2  # Rounds after saturation before trigger can fire
         self._benchmark_saturation_state: dict[str, dict] = {
             bm.name: {
                 "saturated": False,
@@ -179,7 +445,6 @@ class Evaluator:
                 "cooldown_remaining": 0,
                 "max_score": 0.0,
                 "max_score_history": [],  # Recent max scores for delta computation
-                "perfect_score_hit": False,  # True if any provider hit exactly 1.000
             } for bm in self.benchmarks
         }
         self.saturation_history: list[dict] = []  # [{round, benchmark_name, max_score}]
@@ -188,6 +453,26 @@ class Evaluator:
         self.dynamic_evaluator = dynamic_evaluator
         self._internal_validity: Optional[float] = None  # Pearson-r(score_rank, market_share_rank)
         self._validity_threshold: float = 0.5  # Below this triggers fresh benchmark introduction
+
+        # Evaluator mode: fixed_sequence | randomized_pool | full_autonomy
+        self.evaluator_mode = evaluator_mode
+        self.benchmark_dev_rounds = benchmark_dev_rounds
+
+        # Benchmark pool: all available benchmarks (introduced + unintroduced).
+        # Each entry: {name, description, tags, noise_sigma, samples, weight, category_dimension_weights}
+        # Pool is filtered: entries whose name matches an already-active benchmark are skipped.
+        active_names = {bm.name for bm in self.benchmarks}
+        if benchmark_pool is not None:
+            self._benchmark_pool = [b for b in benchmark_pool if b["name"] not in active_names]
+        else:
+            self._benchmark_pool = []
+
+        # Development pipeline (full_autonomy mode):
+        # List of {config: dict, committed_round: int, ready_round: int}
+        self._dev_pipeline: list[dict] = []
+
+        # Retired benchmarks (name -> round retired)
+        self._retired_benchmarks: dict[str, int] = {}
 
         # Evaluator-as-company feature (budget tracking, funder allocations)
         self.evaluator_as_company = evaluator_as_company
@@ -473,13 +758,28 @@ class Evaluator:
             for bm in self.benchmarks
         }
 
-        return {
+        obs = {
             "active_benchmarks": active_benchmarks,
             "score_deltas": score_deltas,
             "score_spread": score_spread,
             "internal_validity": self._internal_validity,
             "saturation_states": saturation_states,
         }
+
+        # Full autonomy: add pool and pipeline info
+        if self.evaluator_mode == "full_autonomy":
+            obs["available_pool"] = self.get_pool_for_llm()
+            obs["dev_pipeline"] = [
+                {
+                    "name": item["config"]["name"],
+                    "committed_round": item["committed_round"],
+                    "ready_round": item["ready_round"],
+                }
+                for item in self._dev_pipeline
+            ]
+            obs["retired_benchmarks"] = list(self._retired_benchmarks.keys())
+
+        return obs
 
     def _evaluate_introduction_trigger(self, round_num: int) -> Optional[str]:
         """Decide whether to introduce a new benchmark this round.
@@ -536,6 +836,7 @@ class Evaluator:
 
         Called by the simulation when dynamic_evaluator=True and llm_mode=True.
         Bypasses heuristic triggers — the LLM has already decided.
+        If at max_benchmarks, auto-retires the most saturated benchmark.
 
         Args:
             decision: {"action": "introduce_successor"|"introduce_fresh"|"none",
@@ -547,9 +848,6 @@ class Evaluator:
         """
         action = decision.get("action", "none")
         if action == "none":
-            return None
-
-        if len(self.benchmarks) >= self.max_benchmarks:
             return None
 
         if action == "introduce_successor":
@@ -564,20 +862,22 @@ class Evaluator:
 
     def consider_new_benchmark(self, round_num: int) -> Optional[Benchmark]:
         """
-        Consider introducing a new benchmark.
+        Consider introducing a new benchmark (heuristic modes).
 
-        Two modes controlled by `dynamic_evaluator`:
-        - False (fixed schedule): periodic introduction every cooldown rounds,
+        Modes:
+        - fixed_sequence: periodic introduction every cooldown rounds,
           plus saturation-triggered replacement. Pulls from sequence in order.
-        - True (signal-based): introduces when saturation, low validity, or
-          coverage gap is detected. Sequence is a pool, not a fixed order.
+        - randomized_pool: same triggers as fixed_sequence, but draws randomly
+          from the benchmark pool instead of sequentially.
+        - dynamic_evaluator (legacy): signal-based triggers (saturation, low validity).
+
+        full_autonomy mode is handled separately via advance_pipeline / commit_from_pool.
 
         Returns:
             New Benchmark if introduced, None otherwise
         """
-        # Check hard constraints (always apply)
-        if len(self.benchmarks) >= self.max_benchmarks:
-            return None
+        if self.evaluator_mode == "full_autonomy":
+            return None  # Handled by pipeline, not heuristic triggers
 
         # Check budget (if company mode)
         benchmark_cost = 50000.0
@@ -585,43 +885,69 @@ class Evaluator:
             if self.private_state.budget < benchmark_cost:
                 return None
 
+        # No benchmarks left in pool/sequence to introduce
+        if self.evaluator_mode == "randomized_pool" and not self._benchmark_pool:
+            return None
+
         trigger = self._evaluate_introduction_trigger(round_num)
         if trigger is None:
             return None
 
+        if self.evaluator_mode == "randomized_pool":
+            # Draw randomly from pool
+            idx = self.rng.integers(len(self._benchmark_pool))
+            pool_config = self._benchmark_pool[idx]
+            return self._create_and_register_benchmark(round_num, trigger, pool_config=pool_config)
+
+        # fixed_sequence (default) or dynamic_evaluator legacy
         return self._create_and_register_benchmark(round_num, trigger)
 
-    def _create_and_register_benchmark(self, round_num: int, trigger: str) -> Optional[Benchmark]:
-        """Create a new benchmark from sequence or auto-generate, and register it.
+    def _create_and_register_benchmark(
+        self, round_num: int, trigger: str, pool_config: Optional[dict] = None,
+    ) -> Optional[Benchmark]:
+        """Create a new benchmark from sequence/pool or auto-generate, and register it.
 
         Shared by consider_new_benchmark (heuristic) and apply_llm_decision (LLM).
+
+        Args:
+            round_num: Current simulation round
+            trigger: String describing what triggered this introduction
+            pool_config: If provided, use this specific benchmark config from the pool.
+                        Used by randomized_pool and full_autonomy modes.
         """
         benchmark_cost = 50000.0
         if self.evaluator_as_company:
             if self.private_state.budget < benchmark_cost:
                 return None
 
-        # Create new benchmark - use sequence if available, otherwise auto-generate
-        if self.benchmark_sequence and self._sequence_index < len(self.benchmark_sequence):
+        # Determine benchmark config source BEFORE retiring anything
+        bm_config = None
+        if pool_config is not None:
+            bm_config = pool_config
+        elif self.benchmark_sequence and self._sequence_index < len(self.benchmark_sequence):
             bm_config = self.benchmark_sequence[self._sequence_index]
-            new_name = bm_config.get("name", f"benchmark_r{round_num}")
-            new_bm = Benchmark(
-                name=new_name,
-                tags=bm_config.get("tags", ""),
-                noise_level=bm_config.get("noise_level", 0.08),
-            )
-            if "weight" in bm_config:
-                new_weight = bm_config["weight"]
-            else:
-                new_weight = sum(self.benchmark_weights.values()) / len(self.benchmark_weights)
             self._sequence_index += 1
+
+        if bm_config is None:
+            return None  # No config available — don't retire without a replacement
+
+        # Auto-retire if at cap (safe now — we know we have a replacement)
+        retired_name = None
+        if len(self.benchmarks) >= self.max_benchmarks:
+            retired_name = self.retire_benchmark(round_num)
+            if retired_name is None:
+                return None
+
+        new_name = bm_config.get("name", f"benchmark_r{round_num}")
+        new_bm = Benchmark(
+            name=new_name,
+            tags=bm_config.get("tags", ""),
+            noise_level=bm_config.get("noise_level", bm_config.get("noise_sigma", 0.08)),
+        )
+        if "weight" in bm_config:
+            new_weight = bm_config["weight"]
         else:
-            new_name = f"benchmark_r{round_num}"
-            new_bm = Benchmark(
-                name=new_name,
-                noise_level=0.08,
-            )
-            new_weight = sum(self.benchmark_weights.values()) / len(self.benchmark_weights)
+            new_weight = sum(self.benchmark_weights.values()) / len(self.benchmark_weights) if self.benchmark_weights else 1.0
 
         # Register in evaluator state
         self.benchmarks.append(new_bm)
@@ -635,15 +961,16 @@ class Evaluator:
             "cooldown_remaining": 0,
             "max_score": 0.0,
             "max_score_history": [],
-            "perfect_score_hit": False,
         }
 
-        # If triggered by saturation, reset the triggering benchmark's cooldown
+        # If triggered by saturation, re-apply cooldown on the triggering benchmark
+        # so it doesn't fire every round. Uses _saturation_cooldown (not the full
+        # benchmark_introduction_cooldown) for faster replacement of truly stale benchmarks.
         if trigger.startswith("saturation:"):
             trigger_bm_name = trigger.split(":")[1].split("=")[0]
             if trigger_bm_name in self._benchmark_saturation_state:
                 self._benchmark_saturation_state[trigger_bm_name]["cooldown_remaining"] = (
-                    self.benchmark_introduction_cooldown
+                    self._saturation_cooldown
                 )
 
         self.last_introduction_round = round_num
@@ -651,12 +978,125 @@ class Evaluator:
             "round": round_num,
             "benchmark_name": new_name,
             "trigger": trigger,
+            "retired": retired_name,
         })
+
+        # Remove introduced benchmark from pool
+        self._benchmark_pool = [b for b in self._benchmark_pool if b["name"] != new_name]
 
         if self.evaluator_as_company:
             self.private_state.budget -= benchmark_cost
 
         return new_bm
+
+    def retire_benchmark(self, round_num: int, benchmark_name: Optional[str] = None) -> Optional[str]:
+        """Retire a benchmark, freeing a slot for a new one.
+
+        If benchmark_name is None, auto-selects the most saturated benchmark
+        (longest time since saturation, or highest max_score if tied).
+
+        Returns the name of the retired benchmark, or None if nothing to retire.
+        """
+        if len(self.benchmarks) == 0:
+            return None
+
+        if benchmark_name is None:
+            # Pick the most saturated: prefer benchmarks that are already saturated,
+            # then by earliest saturation_round, then by highest max_score.
+            candidates = []
+            for bm in self.benchmarks:
+                state = self._benchmark_saturation_state.get(bm.name, {})
+                is_sat = state.get("saturated", False)
+                sat_round = state.get("saturation_round") if is_sat else 999999
+                max_score = state.get("max_score", 0.0)
+                candidates.append((bm.name, not is_sat, sat_round, -max_score))
+            # Sort: saturated first (not is_sat=False < True), then earliest sat round, then highest score
+            candidates.sort(key=lambda x: (x[1], x[2], x[3]))
+            benchmark_name = candidates[0][0]
+
+        # Remove from all tracking structures
+        self.benchmarks = [bm for bm in self.benchmarks if bm.name != benchmark_name]
+        self.benchmark_weights.pop(benchmark_name, None)
+        self.benchmark_score_history.pop(benchmark_name, None)
+        self._best_published_scores.pop(benchmark_name, None)
+        self._benchmark_saturation_state.pop(benchmark_name, None)
+
+        self._retired_benchmarks[benchmark_name] = round_num
+        return benchmark_name
+
+    # ------------------------------------------------------------------
+    # Full-autonomy mode: development pipeline
+    # ------------------------------------------------------------------
+
+    def get_pool_for_llm(self) -> list[dict]:
+        """Return unintroduced pool entries visible to the LLM evaluator.
+
+        Visibility: name, description, tags only. Dimension weights are NEVER shown.
+        Excludes benchmarks already in the dev pipeline.
+        """
+        in_pipeline = {item["config"]["name"] for item in self._dev_pipeline}
+        return [
+            {"name": b["name"], "description": b.get("description", ""), "tags": b.get("tags", "")}
+            for b in self._benchmark_pool
+            if b["name"] not in in_pipeline
+        ]
+
+    def commit_from_pool(self, benchmark_name: str, round_num: int) -> bool:
+        """Commit a benchmark from the pool into the development pipeline.
+
+        Takes benchmark_dev_rounds to develop. Cannot cancel once committed.
+        Multiple benchmarks can be in pipeline simultaneously.
+
+        Returns True if committed, False if benchmark not found or already in pipeline.
+        """
+        # Check if already in pipeline
+        if any(item["config"]["name"] == benchmark_name for item in self._dev_pipeline):
+            return False
+
+        # Find in pool
+        config = None
+        for b in self._benchmark_pool:
+            if b["name"] == benchmark_name:
+                config = b
+                break
+        if config is None:
+            return False
+
+        self._dev_pipeline.append({
+            "config": config,
+            "committed_round": round_num,
+            "ready_round": round_num + self.benchmark_dev_rounds,
+        })
+        return True
+
+    def advance_pipeline(self, round_num: int) -> list["Benchmark"]:
+        """Advance the development pipeline. Introduce any benchmarks that are ready.
+
+        Called each round in full_autonomy mode.
+
+        Returns list of newly introduced Benchmark objects (usually 0 or 1).
+        """
+        if not self._dev_pipeline:
+            return []
+
+        ready = [item for item in self._dev_pipeline if round_num >= item["ready_round"]]
+        if not ready:
+            return []
+
+        introduced = []
+        for item in ready:
+            trigger = f"pipeline_complete:committed_r{item['committed_round']}"
+            new_bm = self._create_and_register_benchmark(
+                round_num, trigger, pool_config=item["config"],
+            )
+            if new_bm is not None:
+                introduced.append(new_bm)
+
+        # Remove completed items from pipeline
+        ready_names = {item["config"]["name"] for item in ready}
+        self._dev_pipeline = [item for item in self._dev_pipeline if item["config"]["name"] not in ready_names]
+
+        return introduced
 
     def detect_saturation(self, round_num: int) -> list[str]:
         """
@@ -666,6 +1106,10 @@ class Evaluator:
         `saturation_delta_threshold` for `saturation_window` consecutive rounds.
         Perfect scores (>= 1.0) also trigger immediate saturation.
 
+        Also decrements cooldown_remaining on already-saturated benchmarks so
+        that the saturation trigger in _evaluate_introduction_trigger can fire
+        after the cooldown elapses.
+
         Args:
             round_num: Current round number
 
@@ -673,6 +1117,11 @@ class Evaluator:
             List of newly saturated benchmark names
         """
         newly_saturated = []
+
+        # Tick down cooldowns on already-saturated benchmarks
+        for state in self._benchmark_saturation_state.values():
+            if state.get("saturated") and state.get("cooldown_remaining", 0) > 0:
+                state["cooldown_remaining"] -= 1
 
         for bm in self.benchmarks:
             state = self._benchmark_saturation_state.get(bm.name)
@@ -690,12 +1139,14 @@ class Evaluator:
                     prev_max = state["max_score"]
                     state["max_score"] = max_score
 
-                    # Track max score history for delta computation
+                    # Track max score history for delta computation (keep only needed window)
                     state["max_score_history"].append(max_score)
+                    keep = self._saturation_window + 1
+                    if len(state["max_score_history"]) > keep:
+                        state["max_score_history"] = state["max_score_history"][-keep:]
 
                     # Check for perfect score (1.000) — immediate saturation
                     if max_score >= 1.0:
-                        state["perfect_score_hit"] = True
                         state["saturated"] = True
                         state["saturation_round"] = round_num
                         state["cooldown_remaining"] = self._saturation_cooldown
@@ -870,6 +1321,12 @@ class Evaluator:
             # Evaluator-as-company state
             "evaluator_as_company": self.evaluator_as_company,
             "private_state": self.private_state.to_dict() if self.private_state else None,
+            # Evaluator mode state
+            "evaluator_mode": self.evaluator_mode,
+            "benchmark_dev_rounds": self.benchmark_dev_rounds,
+            "_benchmark_pool": self._benchmark_pool,
+            "_dev_pipeline": self._dev_pipeline,
+            "_retired_benchmarks": self._retired_benchmarks,
         }
         with open(filepath, "w") as f:
             json.dump(data, f, indent=2)
@@ -940,6 +1397,13 @@ class Evaluator:
             if data.get("private_state") and evaluator.evaluator_as_company:
                 from visibility import EvaluatorPrivateState
                 evaluator.private_state = EvaluatorPrivateState.from_dict(data["private_state"])
+
+        # Load evaluator mode state if present
+        evaluator.evaluator_mode = data.get("evaluator_mode", "fixed_sequence")
+        evaluator.benchmark_dev_rounds = data.get("benchmark_dev_rounds", 4)
+        evaluator._benchmark_pool = data.get("_benchmark_pool", [])
+        evaluator._dev_pipeline = data.get("_dev_pipeline", [])
+        evaluator._retired_benchmarks = data.get("_retired_benchmarks", {})
 
         return evaluator
 

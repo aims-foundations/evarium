@@ -1,5 +1,10 @@
 # TODO
 
+## Aggregation Plot Readability (session 26)
+
+- [ ] **`scripts/aggregate_heuristic.py` — quantile trajectory facets too tall.** With 18 conditions per policy, the 5x4 grid is hard to read at one glance. Options: (a) split into 2 figures of 9 conditions each grouped by ablation category (structural / mechanism / validity), (b) use a single overlay plot with color-coded conditions and median lines only, (c) drop quantile bands and use small-multiples sparklines.
+- [ ] **`scripts/aggregate_heuristic.py` — forest plots stack 51 ablations vertically.** Currently one row per condition x policy. Options: (a) split into 3 forest plots (one per policy, ~17 rows each), (b) facet horizontally by policy with shared y-axis labels, (c) only show significant effects.
+
 ## NeurIPS Paper (target: draft by Thu Apr 10, deadline ~4 weeks)
 
 - [ ] **Run new experiments** — 17 conditions x 3 presets with updated sim design (sessions 16-18 changes). Blocks experiments section.

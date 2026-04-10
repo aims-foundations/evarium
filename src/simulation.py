@@ -198,6 +198,12 @@ class SimulationConfig:
     safety_lever_through_target: bool = False  # Route safety allocation through target weights (same as R&D) instead of direct-to-safety
     single_benchmark: bool = False         # Use only the first benchmark, no introduction sequence
     dynamic_evaluator: bool = False        # Signal-responsive benchmark introduction (vs fixed schedule)
+    # Evaluator mode: "fixed_sequence" (default, predetermined order),
+    # "randomized_pool" (random draw from pool at fixed cooldown),
+    # "full_autonomy" (LLM-only, 4-round dev pipeline, picks from pool)
+    evaluator_mode: str = "fixed_sequence"
+    benchmark_pool: Optional[list] = None  # Full pool of benchmark configs for randomized/autonomy modes
+    benchmark_dev_rounds: int = 4          # Rounds to develop a new benchmark (full_autonomy mode)
     homogeneous_consumers: bool = False    # All consumer segments use identical (population-avg) need weights
     homogeneous_providers: bool = False    # All providers start with identical capabilities and profiles
 
@@ -426,38 +432,44 @@ class EvalEcosystemSimulation:
             self.media = Media(name="TechPress", seed=self.config.seed)
 
         # Create or use provided evaluator
+        _eval_common = dict(
+            seed=self.config.seed,
+            benchmark_sequence=self.config.benchmark_sequence,
+            evaluator_as_company=self.config.evaluator_as_company,
+            base_budget=self.config.evaluator_base_budget,
+            dynamic_evaluator=self.config.dynamic_evaluator,
+            evaluator_mode=self.config.evaluator_mode,
+            benchmark_pool=self.config.benchmark_pool,
+            benchmark_dev_rounds=self.config.benchmark_dev_rounds,
+        )
         if evaluator is not None:
             self.evaluator = evaluator
         elif self.config.benchmarks:
             # Multi-benchmark mode
             self.evaluator = Evaluator(
                 benchmarks=self.config.benchmarks,
-                seed=self.config.seed,
-                benchmark_sequence=self.config.benchmark_sequence,
-                evaluator_as_company=self.config.evaluator_as_company,
-                base_budget=self.config.evaluator_base_budget,
-                dynamic_evaluator=self.config.dynamic_evaluator,
+                **_eval_common,
             )
         else:
             # Single benchmark mode
             self.evaluator = Evaluator(
                 benchmark_name=self.config.benchmark_name,
                 noise_level=self.config.benchmark_noise,
-                seed=self.config.seed,
-                benchmark_sequence=self.config.benchmark_sequence,
-                evaluator_as_company=self.config.evaluator_as_company,
-                base_budget=self.config.evaluator_base_budget,
-                dynamic_evaluator=self.config.dynamic_evaluator,
+                **_eval_common,
             )
 
         # Apply benchmark introduction config
         self.evaluator.benchmark_introduction_cooldown = self.config.benchmark_introduction_cooldown
         self.evaluator.max_benchmarks = self.config.max_benchmarks
 
-        # Build BenchmarkGroundTruth objects from all benchmark configs (initial + sequence).
+        # Build BenchmarkGroundTruth objects from all benchmark configs (initial + sequence + pool).
         # Pre-built here so they are ready when consider_new_benchmark() introduces them mid-run.
         # Benchmarks that lack category_dimension_weights fall back to uniform weights in evaluate_all().
-        all_bm_configs = list(self.config.benchmarks or []) + list(self.config.benchmark_sequence or [])
+        all_bm_configs = (
+            list(self.config.benchmarks or [])
+            + list(self.config.benchmark_sequence or [])
+            + list(self.config.benchmark_pool or [])
+        )
         for bm_config in all_bm_configs:
             name = bm_config.get("name")
             cdw = bm_config.get("category_dimension_weights")
@@ -1003,50 +1015,38 @@ class EvalEcosystemSimulation:
                 state = self.evaluator._benchmark_saturation_state[bm_name]
                 print(f"  [Saturation] {bm_name} saturated at score {state['max_score']:.4f}")
 
-        # 2c. Update evaluator internal validity (dynamic mode only)
-        if self.config.dynamic_evaluator:
+        # 2c. Update evaluator internal validity (dynamic or full_autonomy mode)
+        if self.config.dynamic_evaluator or self.config.evaluator_mode == "full_autonomy":
             market_shares = {
                 name: gt.market_share for name, gt in self.ground_truth.items()
                 if isinstance(gt, ProviderGroundTruth)
             }
             self.evaluator.update_internal_validity(market_shares)
 
-        # 2d. Consider introducing a new benchmark
-        if self.config.dynamic_evaluator and self.config.llm_mode:
-            new_benchmark = self._evaluator_llm_decision(round_num, None)
+        # 2d. Consider introducing new benchmarks
+        new_benchmarks = []
+        if self.config.evaluator_mode == "full_autonomy":
+            # Pipeline advancement: check if any pipeline items are ready
+            pipeline_results = self.evaluator.advance_pipeline(round_num)
+            new_benchmarks.extend(pipeline_results)
+            # LLM commits new benchmarks to pipeline (full_autonomy is LLM-only)
+            if self.config.llm_mode:
+                self._evaluator_autonomy_decision(round_num, None)
+        elif self.config.dynamic_evaluator and self.config.llm_mode:
+            result = self._evaluator_llm_decision(round_num, None)
+            if result is not None:
+                new_benchmarks.append(result)
         else:
-            new_benchmark = self.evaluator.consider_new_benchmark(round_num)
+            result = self.evaluator.consider_new_benchmark(round_num)
+            if result is not None:
+                new_benchmarks.append(result)
 
-        # Re-resolve consumer benchmark weights if a new benchmark was introduced
-        if new_benchmark is not None:
-            if self.consumer_market:
-                benchmark_tags = {bm.name: bm.tags for bm in self.evaluator.benchmarks}
-                self.consumer_market.resolve_benchmark_weights(benchmark_tags)
-            # Initialize provider benchmark beliefs for the new benchmark
-            for provider in self.providers:
-                if new_benchmark.name not in provider.private_state.focus_level:
-                    provider.init_benchmark(new_benchmark.name)
+        # Backwards compat: single new_benchmark for round_data logging
+        new_benchmark = new_benchmarks[0] if new_benchmarks else None
 
-            # Early access: premium providers get partial knowledge of true weights
-            if (self.config.evaluator_as_company
-                    and self.evaluator.private_state
-                    and new_benchmark.name in self.benchmark_ground_truths):
-                bm_gt = self.benchmark_ground_truths[new_benchmark.name]
-                true_weights = self._aggregate_bm_weights(bm_gt)
-                if true_weights:
-                    factor = self.config.early_access_factor
-                    dims = list(true_weights.keys())
-                    uniform = {d: 1.0 / len(dims) for d in dims}
-                    for provider in self.providers:
-                        if provider.name in self.evaluator.private_state.premium_subscribers:
-                            blended = {
-                                d: (1 - factor) * uniform[d] + factor * true_weights.get(d, uniform[d])
-                                for d in dims
-                            }
-                            total = sum(blended.values())
-                            if total > 0:
-                                blended = {d: v / total for d, v in blended.items()}
-                            provider.private_state.inferred_benchmark_weights[new_benchmark.name] = blended
+        # Process all newly introduced benchmarks
+        for nbm in new_benchmarks:
+            self._on_new_benchmark(nbm)
 
         # 3. Publish scores
         published_scores = self.evaluator.publish_scores(scores)
@@ -1347,16 +1347,35 @@ class EvalEcosystemSimulation:
         if len(self.evaluator.benchmarks) > 1:
             round_data["per_benchmark_scores"] = self.evaluator.get_per_benchmark_scores(round_num)
 
-        # Record new benchmark introduction if one occurred
-        if new_benchmark is not None:
-            round_data["new_benchmark"] = {
-                "name": new_benchmark.name,
-                "noise": new_benchmark.noise_level,
-                "weight": self.evaluator.benchmark_weights.get(new_benchmark.name, 1.0),
-                "trigger": self.evaluator.introduction_history[-1]["trigger"],
-            }
+        # Record new benchmark introductions
+        if new_benchmarks:
+            round_data["new_benchmarks"] = []
+            for nbm in new_benchmarks:
+                entry = {
+                    "name": nbm.name,
+                    "noise": nbm.noise_level,
+                    "weight": self.evaluator.benchmark_weights.get(nbm.name, 1.0),
+                }
+                # Find matching introduction_history entry
+                for hist in reversed(self.evaluator.introduction_history):
+                    if hist["benchmark_name"] == nbm.name:
+                        entry["trigger"] = hist["trigger"]
+                        if hist.get("retired"):
+                            entry["retired"] = hist["retired"]
+                        break
+                round_data["new_benchmarks"].append(entry)
+            # Backwards compat: single new_benchmark key
+            if new_benchmark is not None:
+                round_data["new_benchmark"] = round_data["new_benchmarks"][0]
 
-        # Record benchmark saturation events
+        # Record pipeline state (full_autonomy mode)
+        if self.config.evaluator_mode == "full_autonomy" and self.evaluator._dev_pipeline:
+            round_data["evaluator_pipeline"] = [
+                {"name": item["config"]["name"], "ready_round": item["ready_round"]}
+                for item in self.evaluator._dev_pipeline
+            ]
+
+        # Record benchmark saturation events (filter out retired benchmarks)
         if newly_saturated:
             round_data["saturated_benchmarks"] = [
                 {
@@ -1364,6 +1383,7 @@ class EvalEcosystemSimulation:
                     "max_score": self.evaluator._benchmark_saturation_state[bm_name]["max_score"],
                 }
                 for bm_name in newly_saturated
+                if bm_name in self.evaluator._benchmark_saturation_state
             ]
 
         # Add media data if present
@@ -1762,6 +1782,92 @@ class EvalEcosystemSimulation:
             print(f"  [Evaluator LLM] action={decision['action']}, reason: {reasoning[:100]}")
 
         return self.evaluator.apply_llm_decision(decision, round_num)
+
+    def _evaluator_autonomy_decision(self, round_num: int, media_coverage: Optional[dict]) -> None:
+        """Use LLM to decide evaluator actions in full_autonomy mode.
+
+        The LLM can commit benchmarks from the pool into the pipeline,
+        or explicitly retire active benchmarks. Pipeline advancement
+        (introducing ready benchmarks) is handled separately by advance_pipeline().
+        """
+        # Don't call LLM every round — respect cooldown for commit decisions
+        if self.evaluator._dev_pipeline:
+            # If something is already in pipeline, skip unless pool has items
+            if not self.evaluator.get_pool_for_llm():
+                return
+
+        from llm import llm_plan_evaluator_autonomy
+
+        obs = self.evaluator.get_llm_observation()
+        media_headlines = []
+        if media_coverage:
+            media_headlines = media_coverage.get("headlines", [])
+
+        decision, reasoning = llm_plan_evaluator_autonomy(
+            active_benchmarks=obs["active_benchmarks"],
+            score_deltas=obs["score_deltas"],
+            score_spread=obs["score_spread"],
+            internal_validity=obs["internal_validity"],
+            media_headlines=media_headlines,
+            saturation_states=obs["saturation_states"],
+            available_pool=obs.get("available_pool", []),
+            dev_pipeline=obs.get("dev_pipeline", []),
+            retired_benchmarks=obs.get("retired_benchmarks", []),
+            current_round=round_num,
+            verbose=self.config.verbose,
+        )
+
+        action = decision.get("action", "none")
+        bm_name = decision.get("benchmark_name", "")
+
+        if action == "commit" and bm_name:
+            success = self.evaluator.commit_from_pool(bm_name, round_num)
+            if success and self.config.verbose:
+                print(f"  [Evaluator Autonomy] Committed '{bm_name}' to pipeline (ready round {round_num + self.config.benchmark_dev_rounds}). Reason: {reasoning[:100]}")
+        elif action == "retire" and bm_name:
+            retired = self.evaluator.retire_benchmark(round_num, bm_name)
+            if retired and self.config.verbose:
+                print(f"  [Evaluator Autonomy] Retired '{retired}'. Reason: {reasoning[:100]}")
+        elif self.config.verbose and action != "none":
+            print(f"  [Evaluator Autonomy] action={action}, name={bm_name}, reason: {reasoning[:100]}")
+
+    def _on_new_benchmark(self, new_benchmark) -> None:
+        """Handle all downstream effects of a new benchmark being introduced.
+
+        Re-resolves consumer weights, initializes provider beliefs,
+        and handles early access for premium subscribers.
+        """
+        if self.consumer_market:
+            benchmark_tags = {bm.name: bm.tags for bm in self.evaluator.benchmarks}
+            self.consumer_market.resolve_benchmark_weights(benchmark_tags)
+
+        for provider in self.providers:
+            if new_benchmark.name not in provider.private_state.focus_level:
+                provider.init_benchmark(new_benchmark.name)
+
+        # Early access: premium providers get partial knowledge of true weights
+        if (self.config.evaluator_as_company
+                and self.evaluator.private_state
+                and new_benchmark.name in self.benchmark_ground_truths):
+            bm_gt = self.benchmark_ground_truths[new_benchmark.name]
+            true_weights = self._aggregate_bm_weights(bm_gt)
+            if true_weights:
+                factor = self.config.early_access_factor
+                dims = list(true_weights.keys())
+                uniform = {d: 1.0 / len(dims) for d in dims}
+                for provider in self.providers:
+                    if provider.name in self.evaluator.private_state.premium_subscribers:
+                        blended = {
+                            d: (1 - factor) * uniform[d] + factor * true_weights.get(d, uniform[d])
+                            for d in dims
+                        }
+                        total = sum(blended.values())
+                        if total > 0:
+                            blended = {d: v / total for d, v in blended.items()}
+                        provider.private_state.inferred_benchmark_weights[new_benchmark.name] = blended
+
+        if self.config.verbose:
+            print(f"  [New Benchmark] {new_benchmark.name} introduced (round {self.evaluator.current_round})")
 
     def _run_funder_round(
         self,

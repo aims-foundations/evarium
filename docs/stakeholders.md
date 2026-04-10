@@ -1,6 +1,6 @@
 # Stakeholder Architecture: No Explicit Gaming
 
-> **Living architecture reference. Last updated: 2026-04-09 (session 23: switching formula overhaul, dynamic consumer market, org consumer LLM prompt rewrite, enterprise threshold recalibration).**
+> **Living architecture reference. Last updated: 2026-04-09 (session 27: dynamic_consumer_market now default; static_consumer_market is the inverse ablation; nested dev output paths).**
 > Gaming emerges from provider investment decisions and benchmark-need weight mismatch — not from an explicit gaming lever.
 
 ---
@@ -57,7 +57,7 @@ Provider names are anonymized to prevent LLM reasoning from being biased by real
 | Actor | File | LLM mode | Role |
 |-------|------|----------|------|
 | Model Provider | `actors/model_provider.py` | Yes | Develops models, allocates R&D portfolio |
-| Evaluator | `actors/evaluator.py` | Yes — `dynamic_evaluator=True` only | Operates benchmarks; introduces new benchmarks as ecosystem evolves |
+| Evaluator | `actors/evaluator.py` | Yes — `full_autonomy` or `dynamic_evaluator` | Operates benchmarks; introduces/retires benchmarks; 3 modes (fixed/random/autonomous) |
 | Consumer Market | `actors/consumer.py` | No — formula-based only | Segments (archetype × use-case); proportional switching |
 | Regulator | `actors/regulator.py` | Yes | Graduated interventions; EU/US/balanced presets |
 | Funder | `actors/funder.py` | Yes | VC, gov, foundation types; media-aware capital allocation |
@@ -463,6 +463,8 @@ category_dimension_weights:
 
 ### Benchmark Pool and Introduction Schedule
 
+**Expanded pool:** 22 benchmarks defined in `BENCHMARK_POOL` (`actors/evaluator.py`). Dimension weights are **peaked**: specialized benchmarks load 0.75-0.85 on their primary dimension so that focused investment can drive scores toward genuine saturation (0.90+). Broad benchmarks (General Capability, Hard Knowledge) stay flat (primary ~0.35-0.40). Full pool with weights in `BENCHMARK_POOL` constant.
+
 Consumer population average need_weights (anchor for alignment assessment):
 ```
 {reasoning: 0.20, coding: 0.12, knowledge: 0.25, safety: 0.18, communication: 0.20, agentic: 0.05}
@@ -470,26 +472,37 @@ Consumer population average need_weights (anchor for alignment assessment):
 
 Starting gap: ecosystem over-indexed on reasoning/coding, under-indexed on safety. Goodhart pressure concentrated there from round 0.
 
-| Round | Benchmark | reasoning | coding | knowledge | safety | communication | agentic | Real analog |
-|---|---|---|---|---|---|---|---|---|
-| 0 | General Capability | 0.39 | 0.06 | 0.30 | 0.02 | 0.22 | 0.01 | MMLU |
-| 0 | Coding Evaluation | 0.30 | 0.53 | 0.05 | 0.00 | 0.04 | 0.08 | HumanEval/MBPP |
-| 0 | Safety Evaluation | 0.06 | 0.00 | 0.10 | 0.58 | 0.26 | 0.00 | TruthfulQA/BBQ |
-| 0 | Instruction Following | 0.20 | 0.03 | 0.08 | 0.03 | 0.65 | 0.01 | MT-Bench/IFEval |
-| 5 | Scientific Reasoning | 0.57 | 0.02 | 0.32 | 0.00 | 0.08 | 0.01 | GPQA |
-| 10 | Agentic Tasks | 0.25 | 0.19 | 0.01 | 0.00 | 0.07 | 0.48 | SWE-bench/BFCL |
-| 15 | Hard Coding | 0.31 | 0.52 | 0.05 | 0.00 | 0.01 | 0.11 | LiveCodeBench |
-| 20 | Long Context | 0.19 | 0.01 | 0.28 | 0.00 | 0.47 | 0.05 | RULER/HELMET |
-| 25 | Domain Expert | 0.33 | 0.01 | 0.53 | 0.05 | 0.07 | 0.01 | MedQA/LegalBench |
-| 30 | Agentic Safety | 0.11 | 0.00 | 0.01 | 0.63 | 0.13 | 0.12 | — |
+**Initial benchmarks (round 0):**
+
+| Benchmark | Primary dim | Weight | Type | Real analog |
+|---|---|---|---|---|
+| General Capability | reasoning 0.35 + knowledge 0.30 | broad | MMLU |
+| Coding Evaluation | coding 0.78 | peaked | HumanEval/MBPP |
+| Safety Evaluation | safety 0.80 | peaked | TruthfulQA/BBQ |
+| Instruction Following | communication 0.80 | peaked | MT-Bench/IFEval |
+
+**Sequence benchmarks (introduced by cooldown schedule):**
+
+| Benchmark | Primary dim | Weight | Type | Real analog |
+|---|---|---|---|---|
+| Scientific Reasoning | reasoning 0.78 | peaked | GPQA |
+| Agentic Tasks | agentic 0.75 | peaked | SWE-bench |
+| Hard Coding | coding 0.80 | peaked | LiveCodeBench |
+| Long Context | communication 0.62 | moderate | RULER/HELMET |
+| Domain Expert | knowledge 0.65 | moderate | MedQA/LegalBench |
+| Agentic Safety | safety 0.50 + agentic 0.25 | dual-peaked | -- |
+
+**Additional pool benchmarks (12):** Advanced Math (reasoning 0.85), Human Preference (communication 0.58), Hard Knowledge (broad), Clinical Reasoning (knowledge 0.65), Legal Reasoning (knowledge 0.60), Financial Analysis (knowledge 0.55), Multilingual Understanding (communication 0.55), Function Calling (agentic 0.70), Adversarial Robustness (safety 0.85), Web Navigation (agentic 0.72), Issue Resolution (coding 0.42 + agentic 0.38), Creative Writing (communication 0.82).
 
 **Toggleable misalignment extension (`benchmark_misalignment_enabled: bool = False`):** When enabled, benchmark weights are initialized via interpolation toward a misaligned vector concentrating on automatable/measurable dimensions (reasoning-heavy, safety-light). Default off — natural benchmark structures already create sufficient Goodhart pressure.
 
 ### Saturation Detection (Delta-Based)
 
-A benchmark is saturated when the max-score delta is below `saturation_delta_threshold` (0.005) for `saturation_window` (3) consecutive rounds. Perfect scores (>= 1.0) trigger immediate saturation. Per-benchmark `max_score_history` tracks the series for delta computation.
+A benchmark is saturated when the max-score delta is below `saturation_delta_threshold` (0.005) for `saturation_window` (3) consecutive rounds. Perfect scores (>= 1.0) trigger immediate saturation. Per-benchmark `max_score_history` tracks the series (trimmed to window size). After saturation, a `cooldown_remaining` counter (default 2 rounds) is decremented each round before the saturation trigger can fire.
 
-Saturated benchmarks are **not retired** — they remain in scoring with full weight but their influence diminishes naturally as new benchmarks are added (more benchmarks = less weight per benchmark in the composite). This matches real-world dynamics: no benchmark org formally retires a benchmark; they get superseded. Media skips saturated benchmarks for headlines (`is_benchmark_saturated` check).
+**Retirement:** When the evaluator introduces a new benchmark and the active count is at `max_benchmarks`, the most saturated benchmark is auto-retired (earliest `saturation_round`, then highest `max_score`). Retirement cleans up all tracking state. If no replacement config is available (sequence exhausted, pool empty), no retirement occurs. Retired benchmarks are tracked in `_retired_benchmarks`.
+
+Media skips saturated benchmarks for headlines (`is_benchmark_saturated` check).
 
 ### Evaluator Observation Model
 
@@ -509,47 +522,43 @@ Does NOT observe: capability vectors, consumer satisfaction, provider investment
 | **Introduce harder successor** | Benchmark saturated (delta-based); pulls next from sequence pool |
 | **Introduce fresh benchmark** | Internal validity below threshold; OR periodic fallback |
 
-### Dynamic Evaluator Toggle
+### Evaluator Modes
 
 ```python
-dynamic_evaluator: bool = False    # config parameter
-saturation_window: int = 3
-saturation_delta_threshold: float = 0.005
+evaluator_mode: str = "fixed_sequence"   # "fixed_sequence" | "randomized_pool" | "full_autonomy"
+benchmark_pool: list = BENCHMARK_POOL    # 22-benchmark expanded pool
+benchmark_dev_rounds: int = 4            # pipeline time (full_autonomy only)
 ```
 
-- `False` (default): fixed schedule — periodic introduction every `benchmark_introduction_cooldown` rounds, plus saturation-triggered replacement. Pulls from sequence in order. Reproducible and empirically anchored.
-- `True` heuristic: signal-based introduction — triggers on saturation, low internal validity (Spearman-r < 0.5), or fallback at 2× cooldown. Sequence is a pool, not a fixed order.
-- `True` + `llm_mode=True`: LLM-driven — evaluator receives observations and decides action via `llm_plan_evaluator()`.
+**Three modes:**
 
-**Trigger logic** (`_evaluate_introduction_trigger`):
+| Mode | Source | Triggers | LLM? |
+|------|--------|----------|------|
+| `fixed_sequence` | `benchmark_sequence` in order | Periodic + saturation | No |
+| `randomized_pool` | Random draw from `benchmark_pool` | Periodic + saturation | No |
+| `full_autonomy` | LLM picks from pool | LLM decides | Yes (required) |
 
-| Mode | Trigger | Cooldown |
-|------|---------|----------|
-| Both | Saturation (delta-based) | Min gap 1 round |
-| Fixed | Periodic (every cooldown rounds) | Standard cooldown |
-| Dynamic | Low internal validity (< 0.5) | Standard cooldown |
-| Dynamic | Fallback (every 2× cooldown rounds) | Standard cooldown |
+**Trigger logic** (`_evaluate_introduction_trigger`, used by fixed_sequence and randomized_pool):
 
-**Internal validity:** `Spearman_r(score_rank, market_share_rank)` — updated each round from ground-truth market shares when `dynamic_evaluator=True`. Evaluator-internal only, never published.
+| Trigger | Cooldown |
+|---------|----------|
+| Saturation (delta-based) | Min gap 1 round + per-benchmark `_saturation_cooldown` |
+| Periodic (every cooldown rounds) | Standard cooldown |
+| Low internal validity (< 0.5) | Standard cooldown (`dynamic_evaluator=True` only) |
 
-### Evaluator LLM Mode (`dynamic_evaluator=True` + `llm_mode=True`)
+**Internal validity:** `Spearman_r(score_rank, market_share_rank)` — updated each round when `dynamic_evaluator=True` or `evaluator_mode="full_autonomy"`. Evaluator-internal only, never published.
 
-In fixed schedule mode and heuristic dynamic mode, no LLM reasoning is used. In LLM dynamic mode, the evaluator makes strategic decisions via `llm_plan_evaluator()`.
+**Full autonomy mode** (LLM-only):
+- LLM sees: active benchmarks (name, tags, saturation, scores), unintroduced pool (name, description, tags only — NO dimension weights), pipeline status, retired history
+- LLM actions: `commit` (start developing from pool, takes `benchmark_dev_rounds`), `retire` (remove active benchmark), `none`
+- Development pipeline: multiple benchmarks can be in development simultaneously; cannot cancel once committed; `advance_pipeline()` introduces ready benchmarks each round
+- Three-tier visibility preserved: dimension weights never shown to LLM
 
-**Observation inputs to LLM prompt:** active benchmarks with tags and saturation status, score deltas and spread per benchmark, internal validity (described qualitatively as "strong/moderate/weak"), relevant media headlines filtered for benchmark-related keywords.
+**Legacy `dynamic_evaluator` toggle:** Still supported for signal-based triggers (saturation, low validity, fallback periodic). Can combine with `randomized_pool` (random source + signal triggers).
 
-**LLM output JSON:**
-```json
-{
-  "action": "introduce_successor | introduce_fresh | none",
-  "target_benchmark": "<name if successor>",
-  "reasoning": "..."
-}
-```
+**Condition presets:** `--condition eval_randomized_pool`, `--condition eval_full_autonomy`
 
-**No apparatus vocabulary** in prompts — saturation, validity, and Goodhart framing are never surfaced. The evaluator is addressed as "the team responsible for maintaining the AI evaluation leaderboard."
-
-**Implementation:** `get_llm_observation()` collects data, simulation calls `llm_plan_evaluator()`, result applied via `apply_llm_decision()` → `_create_and_register_benchmark()` (shared with heuristic path).
+**No apparatus vocabulary** in LLM prompts — saturation, validity, and Goodhart framing are never surfaced. The evaluator is addressed as "the team responsible for maintaining the AI evaluation leaderboard."
 
 **Consumer market LLM mode** is optional and gated behind `consumer_llm_mode`. Default is heuristic-only. When enabled for organizations (`consumer_llm_organizations=True`), org segments use a PIMMUR-compliant vendor review brief (see Organizational Consumer LLM Mode section). Individual consumers remain heuristic-only by default — their decisions are routine and habitual rather than strategic.
 
@@ -666,7 +675,7 @@ Proportional sigmoid-based switching within each segment. Two independent trigge
 
 ### Dynamic Consumer Market
 
-When `dynamic_consumer_market=True`, enterprise segment `market_fraction` grows from ~25% to ~55% over the simulation via a logistic curve, modeling the real-world shift from consumer-dominated (Q1 2023) to enterprise-dominated (mid-2025) AI market. Individual segments shrink proportionally. Within each class, relative proportions are preserved.
+When `dynamic_consumer_market=True` (now the **default** as of session 27), enterprise segment `market_fraction` grows from ~25% to ~55% over the simulation via a logistic curve, modeling the real-world shift from consumer-dominated (Q1 2023) to enterprise-dominated (mid-2025) AI market. Individual segments shrink proportionally. Within each class, relative proportions are preserved. The inverse ablation is `--condition static_consumer_market`, which sets it back to `False`.
 
 ```
 enterprise_share(t) = start + (end - start) / (1 + exp(-0.25 * (t - midpoint)))

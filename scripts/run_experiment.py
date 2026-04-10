@@ -48,7 +48,8 @@ _CONDITION_CHOICES = [
     "fixed_market_size", "no_product_channels",
     "homogeneous_consumers",
     "initial_leader", "initial_duopoly", "initial_uniform",
-    "dynamic_market",
+    "static_consumer_market",
+    "eval_randomized_pool", "eval_full_autonomy",
 ]
 _parser.add_argument("--condition", choices=_CONDITION_CHOICES, default="full_ecosystem",
                      help="Experiment condition (default: full_ecosystem)")
@@ -152,7 +153,7 @@ SIMULATION = {
     "n_rounds": 40,
     "seed": 1,
     "verbose": True,
-    "rnd_efficiency": 0.08,
+    "rnd_efficiency": 0.10,
     "revenue_per_share": 5.0,
     "capability_ceiling": 1.0,
     "breakthrough_probability": 0.05,
@@ -173,49 +174,44 @@ SIMULATION = {
             "name": "Scientific Reasoning", "validity": 0.80,
             "tags": "reasoning science knowledge research",
             "noise_level": 0.07, "noise_sigma": 0.07, "samples": 1000, "weight": 1.0,
-            # Real analog: GPQA
             "category_dimension_weights": {"overall": {
-                "reasoning": 0.57, "coding": 0.02, "knowledge": 0.32,
-                "safety": 0.00, "communication": 0.08, "agentic": 0.01,
+                "reasoning": 0.78, "coding": 0.02, "knowledge": 0.15,
+                "safety": 0.00, "communication": 0.04, "agentic": 0.01,
             }},
         },
         {
             "name": "Agentic Tasks", "validity": 0.72,
             "tags": "coding agentic software automation tool-use",
             "noise_level": 0.08, "noise_sigma": 0.08, "samples": 1000, "weight": 1.0,
-            # Real analog: SWE-bench / BFCL
             "category_dimension_weights": {"overall": {
-                "reasoning": 0.25, "coding": 0.19, "knowledge": 0.01,
-                "safety": 0.00, "communication": 0.07, "agentic": 0.48,
+                "reasoning": 0.08, "coding": 0.10, "knowledge": 0.02,
+                "safety": 0.01, "communication": 0.04, "agentic": 0.75,
             }},
         },
         {
             "name": "Hard Coding", "validity": 0.82,
             "tags": "coding software engineering competitive programming",
             "noise_level": 0.06, "noise_sigma": 0.06, "samples": 1000, "weight": 1.0,
-            # Real analog: LiveCodeBench
             "category_dimension_weights": {"overall": {
-                "reasoning": 0.31, "coding": 0.52, "knowledge": 0.05,
-                "safety": 0.00, "communication": 0.01, "agentic": 0.11,
+                "reasoning": 0.10, "coding": 0.80, "knowledge": 0.02,
+                "safety": 0.01, "communication": 0.01, "agentic": 0.06,
             }},
         },
         {
             "name": "Long Context", "validity": 0.78,
             "tags": "writing knowledge reasoning long-document retrieval",
             "noise_level": 0.07, "noise_sigma": 0.07, "samples": 1000, "weight": 1.0,
-            # Real analog: RULER / HELMET
             "category_dimension_weights": {"overall": {
-                "reasoning": 0.19, "coding": 0.01, "knowledge": 0.28,
-                "safety": 0.00, "communication": 0.47, "agentic": 0.05,
+                "reasoning": 0.12, "coding": 0.02, "knowledge": 0.20,
+                "safety": 0.01, "communication": 0.62, "agentic": 0.03,
             }},
         },
         {
             "name": "Domain Expert", "validity": 0.80,
             "tags": "knowledge reasoning medical legal finance domain",
             "noise_level": 0.07, "noise_sigma": 0.07, "samples": 1000, "weight": 1.0,
-            # Real analog: MedQA / LegalBench
             "category_dimension_weights": {"overall": {
-                "reasoning": 0.33, "coding": 0.01, "knowledge": 0.53,
+                "reasoning": 0.20, "coding": 0.02, "knowledge": 0.65,
                 "safety": 0.05, "communication": 0.07, "agentic": 0.01,
             }},
         },
@@ -223,10 +219,9 @@ SIMULATION = {
             "name": "Agentic Safety", "validity": 0.85,
             "tags": "safety agentic alignment trustworthy",
             "noise_level": 0.06, "noise_sigma": 0.06, "samples": 1000, "weight": 1.0,
-            # New benchmark — no direct real analog yet
             "category_dimension_weights": {"overall": {
-                "reasoning": 0.11, "coding": 0.00, "knowledge": 0.01,
-                "safety": 0.63, "communication": 0.13, "agentic": 0.12,
+                "reasoning": 0.12, "coding": 0.02, "knowledge": 0.03,
+                "safety": 0.50, "communication": 0.08, "agentic": 0.25,
             }},
         },
     ],
@@ -249,40 +244,40 @@ BENCHMARKS = [
         "name": "General Capability", "validity": 0.75,
         "tags": "reasoning knowledge writing general",
         "noise_level": 0.08, "noise_sigma": 0.08, "samples": 1000, "weight": 1.0,
-        # Aggregate dimension weights from stakeholders.md benchmark pool (real analog: MMLU)
+        # Broad benchmark — no single dominant dimension
         "category_dimension_weights": {"overall": {
-            "reasoning": 0.39, "coding": 0.06, "knowledge": 0.30,
-            "safety": 0.02, "communication": 0.22, "agentic": 0.01,
+            "reasoning": 0.35, "coding": 0.08, "knowledge": 0.30,
+            "safety": 0.05, "communication": 0.20, "agentic": 0.02,
         }},
     },
     {
         "name": "Coding Evaluation", "validity": 0.75,
         "tags": "coding software engineering programming",
         "noise_level": 0.07, "noise_sigma": 0.07, "samples": 1000, "weight": 1.0,
-        # Real analog: HumanEval / MBPP
+        # Highly specialized — coding dominant
         "category_dimension_weights": {"overall": {
-            "reasoning": 0.30, "coding": 0.53, "knowledge": 0.05,
-            "safety": 0.00, "communication": 0.04, "agentic": 0.08,
+            "reasoning": 0.10, "coding": 0.78, "knowledge": 0.03,
+            "safety": 0.01, "communication": 0.02, "agentic": 0.06,
         }},
     },
     {
         "name": "Safety Evaluation", "validity": 0.75,
         "tags": "safety alignment trustworthy bias",
         "noise_level": 0.08, "noise_sigma": 0.08, "samples": 1000, "weight": 1.0,
-        # Real analog: TruthfulQA / BBQ
+        # Highly specialized — safety dominant
         "category_dimension_weights": {"overall": {
-            "reasoning": 0.06, "coding": 0.00, "knowledge": 0.10,
-            "safety": 0.58, "communication": 0.26, "agentic": 0.00,
+            "reasoning": 0.03, "coding": 0.01, "knowledge": 0.05,
+            "safety": 0.80, "communication": 0.10, "agentic": 0.01,
         }},
     },
     {
         "name": "Instruction Following", "validity": 0.75,
         "tags": "writing communication instruction chat",
         "noise_level": 0.07, "noise_sigma": 0.07, "samples": 1000, "weight": 1.0,
-        # Real analog: MT-Bench / IFEval
+        # Highly specialized — communication dominant
         "category_dimension_weights": {"overall": {
-            "reasoning": 0.20, "coding": 0.03, "knowledge": 0.08,
-            "safety": 0.03, "communication": 0.65, "agentic": 0.01,
+            "reasoning": 0.08, "coding": 0.02, "knowledge": 0.05,
+            "safety": 0.04, "communication": 0.80, "agentic": 0.01,
         }},
     },
 ]
@@ -586,8 +581,21 @@ def _apply_condition_overrides(condition: str, simulation: dict, experiment: dic
     elif condition == "initial_uniform":
         # All providers start with equal capabilities and brand recognition
         extra_config["_initial_market_structure"] = "uniform"
-    elif condition == "dynamic_market":
-        extra_config["dynamic_consumer_market"] = True
+    elif condition == "static_consumer_market":
+        extra_config["dynamic_consumer_market"] = False
+    elif condition == "eval_randomized_pool":
+        _src = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "src")
+        sys.path.insert(0, _src)
+        from actors.evaluator import BENCHMARK_POOL
+        extra_config["evaluator_mode"] = "randomized_pool"
+        extra_config["benchmark_pool"] = BENCHMARK_POOL
+    elif condition == "eval_full_autonomy":
+        _src = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "src")
+        sys.path.insert(0, _src)
+        from actors.evaluator import BENCHMARK_POOL
+        extra_config["evaluator_mode"] = "full_autonomy"
+        extra_config["benchmark_pool"] = BENCHMARK_POOL
+        extra_config["dynamic_evaluator"] = True
 
     return extra_config
 
@@ -758,13 +766,16 @@ def run():
         benchmark_orientation_mode=_extra_config.get("benchmark_orientation_mode", "fixed"),
         aligned_benchmarks=_extra_config.get("aligned_benchmarks", False),
         dynamic_evaluator=_extra_config.get("dynamic_evaluator", False),
+        evaluator_mode=_extra_config.get("evaluator_mode", "fixed_sequence"),
+        benchmark_pool=_extra_config.get("benchmark_pool"),
+        benchmark_dev_rounds=_extra_config.get("benchmark_dev_rounds", 4),
         homogeneous_consumers=_extra_config.get("homogeneous_consumers", False),
         market_growth_rate=_extra_config.get("market_growth_rate", 0.03),
         consumer_signal_in_prompt=_extra_config.get("consumer_signal_in_prompt", True),
         orientation_prompt_style=_extra_config.get("orientation_prompt_style", "reframed"),
         enable_product_signal_quality=_extra_config.get("enable_product_signal_quality", True),
         enable_product_retention=_extra_config.get("enable_product_retention", True),
-        dynamic_consumer_market=_extra_config.get("dynamic_consumer_market", False),
+        dynamic_consumer_market=_extra_config.get("dynamic_consumer_market", True),
     )
 
     # --- Print banner ---
@@ -808,19 +819,13 @@ def run():
     _condition = EXPERIMENT["name"]          # e.g. full_ecosystem_balanced
     _seed_label = f"seed_{SIMULATION.get('seed', 1)}"
     if DEV:
-        # Dev/test runs go to hf_data/test/<condition>/ with a timestamp suffix
-        # so repeated test runs don't overwrite each other.
-        from datetime import datetime as _dt
-        _ts = _dt.now().strftime("%Y%m%d_%H%M%S")
         _mode_tag = "llm" if LLM["llm_mode"] else "heuristic"
         _batch = _args.batch
         _base = os.path.join(_PROJECT_ROOT, "sandbox", "experiments")
         if _batch:
             _base = os.path.join(_base, _batch)
-        _seed_val = SIMULATION.get('seed', 1)
         _output_dir = os.path.join(
-            _base,
-            f"{_condition}_{_mode_tag}_s{_seed_val}_{_ts}",
+            _base, _mode_tag, _condition, "seeds", _seed_label,
         )
     else:
         # Canonical path per EXPERIMENT_PLAN.md
