@@ -41,14 +41,14 @@ Examples:
 _CONDITION_CHOICES = [
     "full_ecosystem",
     "no_media", "no_funders", "no_regulator", "no_opensource",
-    "no_incidents", "single_benchmark",
+    "no_incidents",
     "bm_orientation_max", "bm_orientation_adjustable",
-    "dynamic_evaluator", "os_no_externalities",
-    "eval_as_company", "aligned_benchmarks", "misaligned_benchmarks", "safety_through_target",
-    "homogeneous_consumers", "homogeneous_providers",
-    "market_expansion",
-    "signal_ablation_control", "signal_ablation_reframed", "signal_ablation_no_signal",
-    "product_signal_only", "product_retention_only",
+    "dynamic_evaluator",
+    "eval_as_company", "aligned_benchmarks",
+    "fixed_market_size", "no_product_channels",
+    "homogeneous_consumers",
+    "initial_leader", "initial_duopoly", "initial_uniform",
+    "dynamic_market",
 ]
 _parser.add_argument("--condition", choices=_CONDITION_CHOICES, default="full_ecosystem",
                      help="Experiment condition (default: full_ecosystem)")
@@ -58,7 +58,7 @@ _parser.add_argument("--no-dev", action="store_true",
                      help="Canonical mode: route output to hf_data/ (default is dev/sandbox)")
 _parser.add_argument("--mode", choices=["heuristic", "llm"], default=None,
                      help="Override llm_mode: 'heuristic' or 'llm' (default: use LLM['llm_mode'] in file)")
-_parser.add_argument("--provider", choices=["anthropic", "openai", "ollama", "gemini"], default=None,
+_parser.add_argument("--provider", choices=["anthropic", "openai", "ollama", "gemini", "claudecode"], default=None,
                      help="LLM provider (only relevant in --mode llm; default: use LLM['provider'] in file)")
 _parser.add_argument("--rounds", type=int, default=None,
                      help="Override number of rounds (default: use SIMULATION['n_rounds'] in file)")
@@ -66,6 +66,8 @@ _parser.add_argument("--seed", type=int, default=None,
                      help="Override random seed (default: use SIMULATION['seed'] in file)")
 _parser.add_argument("--batch", type=str, default=None,
                      help="Batch label: groups dev output under sandbox/experiments/<batch>/")
+_parser.add_argument("--name", type=str, default=None,
+                     help="Override experiment name (default: <condition>_<policy>)")
 _args, _ = _parser.parse_known_args()
 POLICY = _args.policy
 CONDITION = _args.condition
@@ -132,12 +134,14 @@ EXPERIMENT = {
              "benchmark-specialization", "48-segments", _meta["policy_tag"],
              "opencore", "cost-advantage",
              "5-funder", "safety-diminishing-returns", "safety-lag",
-             "regulator-5-lever", "incident-exp-decay"],
+             "regulator-5-lever", "incident-exp-decay",
+             "eval-as-company-fee-0.05", "product-channels",
+             "orientation-ratchet", "rolling-avg-allocations"],
 }
 
 LLM = {
-    "provider": "anthropic",    # openai | anthropic | ollama | gemini
-    "llm_mode": False,           # LLM mode for providers + regulator + funders
+    "provider": "claudecode",   # claudecode | anthropic | openai | ollama | gemini
+    "llm_mode": True,            # LLM mode for providers + regulator + funders
     # Consumer LLM config
     "consumer_llm_mode": False,
     "consumer_llm_individuals": False,
@@ -530,7 +534,7 @@ def _apply_condition_overrides(condition: str, simulation: dict, experiment: dic
     Returns a dict of extra kwargs to pass to SimulationConfig.
     """
     extra_config = {}
-    experiment["name"] = f"{condition}_{POLICY}"
+    experiment["name"] = _args.name if _args.name else f"{condition}_{POLICY}"
 
     if condition == "full_ecosystem":
         pass  # baseline — no overrides
@@ -544,54 +548,46 @@ def _apply_condition_overrides(condition: str, simulation: dict, experiment: dic
         extra_config["_remove_opensource"] = True  # handled in provider filtering
     elif condition == "no_incidents":
         simulation["enable_incidents"] = False
-    elif condition == "single_benchmark":
-        extra_config["single_benchmark"] = True
     elif condition == "bm_orientation_max":
         extra_config["benchmark_orientation_mode"] = "max"
     elif condition == "bm_orientation_adjustable":
         extra_config["benchmark_orientation_mode"] = "adjustable"
     elif condition == "dynamic_evaluator":
         extra_config["dynamic_evaluator"] = True
-    elif condition == "os_no_externalities":
-        extra_config["_os_no_externalities"] = True  # handled in provider config
     elif condition == "eval_as_company":
         simulation["evaluator_as_company"] = True
         simulation["evaluator_base_budget"] = 50_000_000
+        simulation["fee_per_submission"] = 0.05
+        simulation["max_eval_submissions"] = 10
+        simulation["early_access_factor"] = 0.5
+        # Parent company resources for eval access (only affects submission affordability)
+        _disc_budgets = {
+            "Genesis Systems": 2.0,  # Alphabet subsidiary
+            "Mirage AI": 2.0,        # Meta subsidiary
+            "Orion Labs": 0.5,       # Well-funded standalone (Microsoft partnership)
+            "Apex AI": 0.3,          # Significant VC funding
+        }
+        extra_config["_discretionary_budgets"] = _disc_budgets
     elif condition == "aligned_benchmarks":
         extra_config["aligned_benchmarks"] = True
-    elif condition == "misaligned_benchmarks":
-        extra_config["misaligned_benchmarks"] = True
-    elif condition == "safety_through_target":
-        extra_config["safety_lever_through_target"] = True
+    elif condition == "fixed_market_size":
+        extra_config["market_growth_rate"] = 0.0
+    elif condition == "no_product_channels":
+        extra_config["enable_product_signal_quality"] = False
+        extra_config["enable_product_retention"] = False
     elif condition == "homogeneous_consumers":
         extra_config["homogeneous_consumers"] = True
-    elif condition == "homogeneous_providers":
-        extra_config["homogeneous_providers"] = True
-    elif condition == "market_expansion":
-        extra_config["market_growth_rate"] = 0.03  # ~3%/month ≈ 43% annual CAGR (S&P/Bloomberg consensus)
-    elif condition == "signal_ablation_control":
-        # Control: original prompt framing, full consumer signal, adjustable orientation
-        extra_config["benchmark_orientation_mode"] = "adjustable"
-        extra_config["consumer_signal_in_prompt"] = True
-        extra_config["orientation_prompt_style"] = "original"
-    elif condition == "signal_ablation_reframed":
-        # Reframed orientation language, full consumer signal still shown
-        extra_config["benchmark_orientation_mode"] = "adjustable"
-        extra_config["consumer_signal_in_prompt"] = True
-        extra_config["orientation_prompt_style"] = "reframed"
-    elif condition == "signal_ablation_no_signal":
-        # Reframed orientation language, no consumer signal in prompt (mechanical only)
-        extra_config["benchmark_orientation_mode"] = "adjustable"
-        extra_config["consumer_signal_in_prompt"] = False
-        extra_config["orientation_prompt_style"] = "reframed"
-    elif condition == "product_signal_only":
-        # Signal quality gating active, retention bonus disabled
-        extra_config["enable_product_signal_quality"] = True
-        extra_config["enable_product_retention"] = False
-    elif condition == "product_retention_only":
-        # Retention bonus active, signal quality gating disabled
-        extra_config["enable_product_signal_quality"] = False
-        extra_config["enable_product_retention"] = True
+    elif condition == "initial_leader":
+        # Orion Labs starts as clear market leader with elevated capabilities
+        extra_config["_initial_market_structure"] = "leader"
+    elif condition == "initial_duopoly":
+        # Orion Labs + Genesis Systems start as co-leaders
+        extra_config["_initial_market_structure"] = "duopoly"
+    elif condition == "initial_uniform":
+        # All providers start with equal capabilities and brand recognition
+        extra_config["_initial_market_structure"] = "uniform"
+    elif condition == "dynamic_market":
+        extra_config["dynamic_consumer_market"] = True
 
     return extra_config
 
@@ -657,11 +653,38 @@ def run():
     if _extra_config.pop("_remove_opensource", False):
         provider_configs = [p for p in provider_configs if not p.get("open_source", False)]
 
-    if _extra_config.pop("_os_no_externalities", False):
+    # Initial market structure overrides
+    _market_structure = _extra_config.pop("_initial_market_structure", None)
+    if _market_structure == "leader":
+        # Orion Labs starts as clear leader: boost capabilities, high brand recognition
         for p in provider_configs:
-            if p.get("open_source", False):
-                p["os_belief_broadcast"] = False
-                p["os_safety_erosion"] = False
+            if p["name"] == "Orion Labs":
+                p["capability_vector"] = {
+                    d: min(v + 0.12, 1.0) for d, v in p["capability_vector"].items()
+                }
+                p["brand_recognition"] = 0.95
+            else:
+                p["brand_recognition"] = max(p.get("brand_recognition", 0.5) - 0.15, 0.1)
+    elif _market_structure == "duopoly":
+        # Orion Labs + Genesis Systems start as co-leaders
+        for p in provider_configs:
+            if p["name"] in ("Orion Labs", "Genesis Systems"):
+                p["capability_vector"] = {
+                    d: min(v + 0.08, 1.0) for d, v in p["capability_vector"].items()
+                }
+                p["brand_recognition"] = 0.90
+            else:
+                p["brand_recognition"] = max(p.get("brand_recognition", 0.5) - 0.15, 0.1)
+    elif _market_structure == "uniform":
+        # All providers start equal: same average capability level, same brand recognition
+        avg_cap = {}
+        for dim in ("reasoning", "coding", "knowledge", "safety", "communication", "agentic"):
+            avg_cap[dim] = sum(
+                p["capability_vector"][dim] for p in provider_configs
+            ) / len(provider_configs)
+        for p in provider_configs:
+            p["capability_vector"] = dict(avg_cap)
+            p["brand_recognition"] = 0.5
 
     # --- Apply capability shift ---
     if CAPABILITY_SHIFT != 0.0:
@@ -671,6 +694,13 @@ def run():
                     dim: val + CAPABILITY_SHIFT
                     for dim, val in p["capability_vector"].items()
                 }
+
+    # --- Apply discretionary budgets (eval_as_company) ---
+    _disc_budgets = _extra_config.pop("_discretionary_budgets", None)
+    if _disc_budgets:
+        for p in provider_configs:
+            if p["name"] in _disc_budgets:
+                p["discretionary_budget"] = _disc_budgets[p["name"]]
 
     # --- Resolve funder configs ---
     # Condition overrides may have disabled funders/regulators
@@ -719,22 +749,22 @@ def run():
         enable_incidents=SIMULATION.get("enable_incidents", False),
         evaluator_as_company=SIMULATION.get("evaluator_as_company", False),
         evaluator_base_budget=SIMULATION.get("evaluator_base_budget", 0.0),
+        fee_per_submission=SIMULATION.get("fee_per_submission", 0.05),
+        max_eval_submissions=SIMULATION.get("max_eval_submissions", 10),
+        early_access_factor=SIMULATION.get("early_access_factor", 0.5),
         verbose=SIMULATION.get("verbose", True),
         capability_shift=CAPABILITY_SHIFT,
         # Condition-specific flags (from --condition CLI)
         benchmark_orientation_mode=_extra_config.get("benchmark_orientation_mode", "fixed"),
         aligned_benchmarks=_extra_config.get("aligned_benchmarks", False),
-        misaligned_benchmarks=_extra_config.get("misaligned_benchmarks", False),
-        safety_lever_through_target=_extra_config.get("safety_lever_through_target", False),
-        single_benchmark=_extra_config.get("single_benchmark", False),
         dynamic_evaluator=_extra_config.get("dynamic_evaluator", False),
         homogeneous_consumers=_extra_config.get("homogeneous_consumers", False),
-        homogeneous_providers=_extra_config.get("homogeneous_providers", False),
-        market_growth_rate=_extra_config.get("market_growth_rate", 0.0),
+        market_growth_rate=_extra_config.get("market_growth_rate", 0.03),
         consumer_signal_in_prompt=_extra_config.get("consumer_signal_in_prompt", True),
         orientation_prompt_style=_extra_config.get("orientation_prompt_style", "reframed"),
         enable_product_signal_quality=_extra_config.get("enable_product_signal_quality", True),
         enable_product_retention=_extra_config.get("enable_product_retention", True),
+        dynamic_consumer_market=_extra_config.get("dynamic_consumer_market", False),
     )
 
     # --- Print banner ---
@@ -787,9 +817,10 @@ def run():
         _base = os.path.join(_PROJECT_ROOT, "sandbox", "experiments")
         if _batch:
             _base = os.path.join(_base, _batch)
+        _seed_val = SIMULATION.get('seed', 1)
         _output_dir = os.path.join(
             _base,
-            f"{_condition}_{_mode_tag}_{_ts}",
+            f"{_condition}_{_mode_tag}_s{_seed_val}_{_ts}",
         )
     else:
         # Canonical path per EXPERIMENT_PLAN.md
@@ -851,7 +882,7 @@ def run():
     try:
         import matplotlib
         matplotlib.use('Agg')
-        from plotting import create_all_dashboards
+        from plotting import generate_presentation_plots
         matplotlib_available = True
     except Exception as e:
         print(f"Warning: Matplotlib not available, plots will be skipped: {e}")
@@ -866,7 +897,7 @@ def run():
         if not force and (round_num + 1) % 10 != 0:
             return
         try:
-            create_all_dashboards(sim.history, plots_dir, show=False, metadata=plot_metadata)
+            generate_presentation_plots(sim.history, plots_dir, fmt="png")
             if not force:
                 print(f"  -> Plots saved (round {round_num})")
         except Exception as e:

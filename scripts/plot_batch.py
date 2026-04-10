@@ -194,7 +194,7 @@ def extract_intervention_timeseries(rounds):
         interventions = reg.get("interventions", [])
         for iv in interventions:
             if isinstance(iv, dict):
-                events.append((rd["round"], iv.get("action", "unknown")))
+                events.append((rd["round"], iv.get("type") or iv.get("action", "unknown")))
             elif isinstance(iv, str):
                 events.append((rd["round"], iv))
     return events
@@ -387,6 +387,13 @@ INTERVENTION_LABELS = {
     "emergency_investigation":     "Emergency investigation",
 }
 
+ESCALATION_ORDER = list(INTERVENTION_COLORS.keys())
+
+INTERVENTION_LINEWIDTHS = {
+    action: 0.6 + 1.2 * (i / (len(ESCALATION_ORDER) - 1))
+    for i, action in enumerate(ESCALATION_ORDER)
+}
+
 def fig4_regulatory_deepdive(runs, output_dir):
     """Incident timeline + regulator interventions for 3 presets."""
     fig, axes = plt.subplots(1, 3, figsize=_pres_figsize(3))
@@ -414,11 +421,12 @@ def fig4_regulatory_deepdive(runs, output_dir):
             ax.scatter(rnd, y, c=color, marker=marker, s=size, alpha=0.85,
                        edgecolors="black", linewidths=0.3, zorder=5)
 
-        # Plot interventions as colored vertical lines
+        # Plot interventions as colored vertical lines with escalation-scaled linewidth
         for rnd, action in interventions:
             color = INTERVENTION_COLORS.get(action, "#888888")
-            ax.axvline(rnd, color=color, linewidth=1.2, alpha=0.7,
-                       linestyle="-", zorder=3)
+            lw = INTERVENTION_LINEWIDTHS.get(action, 1.0)
+            ax.axvline(rnd, color=color, linewidth=lw, alpha=0.7,
+                       linestyle="--", zorder=3)
 
         ax.set_yticks(range(len(providers_in_run)))
         ax.set_yticklabels(providers_in_run, fontsize=5)
@@ -439,7 +447,8 @@ def fig4_regulatory_deepdive(runs, output_dir):
     for action, label in INTERVENTION_LABELS.items():
         legend_elements.append(Line2D(
             [0], [0], color=INTERVENTION_COLORS[action],
-            linewidth=1.2, alpha=0.7, label=label))
+            linewidth=INTERVENTION_LINEWIDTHS[action], alpha=0.7,
+            linestyle="--", label=label))
 
     fig.legend(handles=legend_elements, loc="lower center",
                ncol=5, fontsize=5, bbox_to_anchor=(0.5, -0.12))

@@ -845,10 +845,27 @@ def load_history_jsonl(exp_dir: str) -> list:
     return rounds
 
 
-def discover_sandbox_runs(sandbox_dir: str, preset: str = None) -> dict:
-    """Discover experiment runs from sandbox, keeping most recent per condition.
+def _extract_condition_label(dirname: str) -> str:
+    """Extract condition_preset_mode label from a run directory name.
 
-    Returns {condition_label: experiment_dir_path}.
+    Handles both old format: condition_preset_mode_YYYYMMDD_HHMMSS
+    and new format:          condition_preset_mode_s{seed}_YYYYMMDD_HHMMSS
+    """
+    # Strip timestamp (last 2 _ segments: YYYYMMDD_HHMMSS)
+    parts = dirname.rsplit("_", 2)
+    if len(parts) < 3:
+        return dirname
+    stem = parts[0]  # everything before timestamp
+    # Strip optional seed tag (_s1, _s11, etc.)
+    if re.match(r'.*_s\d+$', stem):
+        stem = stem.rsplit("_", 1)[0]
+    return stem
+
+
+def discover_sandbox_runs(sandbox_dir: str, preset: str = None) -> dict:
+    """Discover experiment runs from sandbox, grouping all seeds per condition.
+
+    Returns {condition_label: [list of experiment_dir_paths]}.
     """
     if not os.path.isdir(sandbox_dir):
         return {}
@@ -860,27 +877,39 @@ def discover_sandbox_runs(sandbox_dir: str, preset: str = None) -> dict:
             continue
         if not os.path.exists(os.path.join(full, "rounds.jsonl")):
             continue
-        parts = name.rsplit("_", 2)
-        if len(parts) < 3:
+        condition_label = _extract_condition_label(name)
+        if not condition_label:
             continue
-        condition_preset = parts[0]
-        if preset and not condition_preset.endswith(f"_{preset}"):
-            continue
-        by_condition[condition_preset].append((name, full))
+        if preset and not condition_label.endswith(f"_{preset}"):
+            # Also check with mode suffix stripped
+            label_no_mode = condition_label
+            for mode in ("_llm", "_heuristic"):
+                if label_no_mode.endswith(mode):
+                    label_no_mode = label_no_mode[:-len(mode)]
+            if not label_no_mode.endswith(f"_{preset}"):
+                continue
+        by_condition[condition_label].append(full)
 
-    result = {}
-    for condition, dirs in by_condition.items():
-        dirs.sort(key=lambda x: x[0])
-        result[condition] = dirs[-1][1]
-    return result
+    return dict(by_condition)
 
 
 def extract_condition_name(label: str) -> str:
-    """Extract short condition name from a label like 'no_media_balanced'."""
+    """Extract short condition name from a label like 'no_media_balanced_llm'.
+
+    Strips mode suffix (_llm, _heuristic) and preset suffix (_balanced, _us, _eu),
+    but keeps the preset if the base condition is 'full_ecosystem' to distinguish regimes.
+    """
+    name = label
+    for suffix in ("_llm", "_heuristic"):
+        if name.endswith(suffix):
+            name = name[:-len(suffix)]
     for preset in ("_balanced", "_us", "_eu"):
-        if label.endswith(preset):
-            return label[:-len(preset)]
-    return label
+        if name.endswith(preset):
+            base = name[:-len(preset)]
+            if base == "full_ecosystem":
+                return name  # keep preset to distinguish regimes
+            return base
+    return name
 
 
 def compute_condition_metrics(history: list, last_n: int = 5) -> dict:
@@ -966,20 +995,75 @@ def compute_condition_metrics(history: list, last_n: int = 5) -> dict:
     def _safe_mean(vals):
         return float(np.mean(vals)) if vals else 0.0
 
+    def _safe_se(vals):
+        if len(vals) < 2:
+            return 0.0
+        return float(np.std(vals, ddof=1) / np.sqrt(len(vals)))
+
     return {
         "score_noise": _safe_mean(score_noise_vals),
         "dim_mismatch": _safe_mean(dim_mismatch_vals),
         "penalty_load": _safe_mean(penalty_load_vals),
         "total_gap": _safe_mean(total_gap_vals),
+        "score_noise_se": _safe_se(score_noise_vals),
+        "dim_mismatch_se": _safe_se(dim_mismatch_vals),
+        "penalty_load_se": _safe_se(penalty_load_vals),
+        "total_gap_se": _safe_se(total_gap_vals),
         "score_reliability": _safe_mean(reliability_vals),
+        "score_reliability_se": _safe_se(reliability_vals),
         "hhi": _safe_mean(hhi_vals),
+        "hhi_se": _safe_se(hhi_vals),
         "mean_safety": _safe_mean(safety_vals),
         "incidents_per_round": incidents_per_round,
         "mean_satisfaction": _safe_mean(sat_vals),
+        "mean_satisfaction_se": _safe_se(sat_vals),
         "provider_differentiation": _safe_mean(diff_vals),
         "growth_need_alignment": _safe_mean(growth_cos_vals),
         "n_rounds": n_rounds,
     }
+
+
+def aggregate_across_seeds(seed_metrics: list) -> dict:
+    """Aggregate metrics from multiple seeds into mean +/- SE.
+
+    Args:
+        seed_metrics: list of dicts from compute_condition_metrics, one per seed.
+
+    Returns:
+        Single dict with same keys as compute_condition_metrics. For numeric fields,
+        the value is the cross-seed mean and _se is the cross-seed SE.
+        When only one seed is present, falls through to within-run SE.
+    """
+    if len(seed_metrics) == 1:
+        return seed_metrics[0]
+
+    # Fields that have corresponding _se entries
+    se_fields = [
+        "score_noise", "dim_mismatch", "penalty_load", "total_gap",
+        "score_reliability", "hhi", "mean_satisfaction",
+    ]
+    # Fields that are plain scalars (no _se counterpart to override)
+    scalar_fields = [
+        "mean_safety", "incidents_per_round", "provider_differentiation",
+        "growth_need_alignment",
+    ]
+
+    result = {}
+    n = len(seed_metrics)
+
+    for field in se_fields:
+        vals = [m[field] for m in seed_metrics]
+        result[field] = float(np.mean(vals))
+        result[f"{field}_se"] = float(np.std(vals, ddof=1) / np.sqrt(n))
+
+    for field in scalar_fields:
+        vals = [m[field] for m in seed_metrics]
+        result[field] = float(np.mean(vals))
+
+    result["n_rounds"] = max(m["n_rounds"] for m in seed_metrics)
+    result["n_seeds"] = n
+
+    return result
 
 
 def _condition_sort_key(name: str) -> tuple:
@@ -989,7 +1073,7 @@ def _condition_sort_key(name: str) -> tuple:
 
 
 def plot_agg_gap_decomposition(metrics: dict, output_dir: str):
-    """A1: Gap decomposition across conditions."""
+    """A1: Gap decomposition across conditions (with error bars)."""
     conditions = sorted(metrics.keys(), key=_condition_sort_key)
     n = len(conditions)
     fig, ax = plt.subplots(figsize=(max(8, n * 0.6), 4))
@@ -997,13 +1081,18 @@ def plot_agg_gap_decomposition(metrics: dict, output_dir: str):
     bar_w = 0.22
 
     ax.bar(x - bar_w, [metrics[c]["score_noise"] for c in conditions], bar_w,
-           label="Inflation", color="#4ECDC4")
+           yerr=[metrics[c]["score_noise_se"] for c in conditions],
+           label="Inflation", color="#4ECDC4", capsize=2, error_kw={"lw": 0.8})
     ax.bar(x, [metrics[c]["dim_mismatch"] for c in conditions], bar_w,
-           label="Misalignment", color="#FF6B6B")
+           yerr=[metrics[c]["dim_mismatch_se"] for c in conditions],
+           label="Misalignment", color="#FF6B6B", capsize=2, error_kw={"lw": 0.8})
     ax.bar(x + bar_w, [metrics[c]["penalty_load"] for c in conditions], bar_w,
-           label="Externalities", color="#45B7D1")
-    ax.scatter(x, [metrics[c]["total_gap"] for c in conditions],
-               color="black", zorder=5, s=25, marker="D", label="Total gap")
+           yerr=[metrics[c]["penalty_load_se"] for c in conditions],
+           label="Externalities", color="#45B7D1", capsize=2, error_kw={"lw": 0.8})
+    ax.errorbar(x, [metrics[c]["total_gap"] for c in conditions],
+                yerr=[metrics[c]["total_gap_se"] for c in conditions],
+                fmt="D", color="black", markersize=4, capsize=2, capthick=0.8,
+                lw=0.8, zorder=5, label="Total gap")
 
     ax.set_xticks(x)
     ax.set_xticklabels([_tex_escape(extract_condition_name(c)) for c in conditions],
@@ -1135,6 +1224,117 @@ def plot_agg_preset_comparison(all_metrics: dict, output_dir: str):
     plt.close(fig)
 
 
+def plot_agg_ablation_effect(metrics: dict, output_dir: str):
+    """A7: Ablation effect sizes — delta vs full_ecosystem baseline (horizontal dot + CI)."""
+    # Find the baseline (full_ecosystem)
+    baseline_key = None
+    for k in metrics:
+        if k.startswith("full_ecosystem"):
+            baseline_key = k
+            break
+    if baseline_key is None:
+        print("  SKIP A7 (no full_ecosystem baseline found)")
+        return
+
+    base = metrics[baseline_key]
+    ablations = sorted(
+        [k for k in metrics if k != baseline_key],
+        key=_condition_sort_key,
+    )
+    if not ablations:
+        return
+
+    fig, ax = plt.subplots(figsize=(6, max(3, len(ablations) * 0.45)))
+    y = np.arange(len(ablations))
+
+    deltas, errs = [], []
+    for c in ablations:
+        m = metrics[c]
+        delta = m["total_gap"] - base["total_gap"]
+        se = np.sqrt(m["total_gap_se"] ** 2 + base["total_gap_se"] ** 2)
+        deltas.append(delta)
+        errs.append(1.96 * se)
+
+    colors = ["#E63946" if d > 0 else "#2A9D8F" for d in deltas]
+    ax.barh(y, deltas, xerr=errs, height=0.5, color=colors, alpha=0.8,
+            capsize=3, error_kw={"lw": 0.8}, edgecolor="white", linewidth=0.5)
+    ax.axvline(0, color="grey", lw=0.8, ls="--")
+    ax.set_yticks(y)
+    ax.set_yticklabels([_tex_escape(extract_condition_name(c)) for c in ablations],
+                       fontsize=7)
+    ax.invert_yaxis()
+    style_axis(ax, "Ablation Effect on Score-Satisfaction Gap",
+               "Gap delta vs full ecosystem (95\\% CI)" if mpl.rcParams.get("text.usetex")
+               else "Gap delta vs full ecosystem (95% CI)", "", legend=False)
+    fig.tight_layout()
+    fig.savefig(os.path.join(output_dir, "A7_ablation_effect.png"),
+                dpi=300, bbox_inches="tight")
+    plt.close(fig)
+    print(f"Saved: {os.path.join(output_dir, 'A7_ablation_effect.png')}")
+
+
+def plot_agg_dashboard_summary(metrics: dict, output_dir: str):
+    """A8: 2x2 dashboard summary — gap, reliability, HHI, incidents across conditions."""
+    conditions = sorted(metrics.keys(), key=_condition_sort_key)
+    n = len(conditions)
+    x = np.arange(n)
+    labels = [_tex_escape(extract_condition_name(c)) for c in conditions]
+
+    fig, axes = plt.subplots(2, 2, figsize=(max(8, n * 0.55), 6))
+
+    # (0,0) Total gap with error bars
+    ax = axes[0, 0]
+    vals = [metrics[c]["total_gap"] for c in conditions]
+    errs = [metrics[c]["total_gap_se"] for c in conditions]
+    bar_colors = ["#E63946" if v > 0 else "#2A9D8F" for v in vals]
+    ax.bar(x, vals, yerr=errs, color=bar_colors, width=0.6, alpha=0.85,
+           capsize=2, error_kw={"lw": 0.8})
+    ax.axhline(0, color="grey", lw=0.5, ls="--")
+    style_axis(ax, "Score-Satisfaction Gap", "", "Gap (last 5r)", legend=False)
+    ax.set_xticks(x)
+    ax.set_xticklabels(labels, rotation=45, ha="right", fontsize=6)
+
+    # (0,1) Score reliability with error bars
+    ax = axes[0, 1]
+    vals = [metrics[c]["score_reliability"] for c in conditions]
+    errs = [metrics[c]["score_reliability_se"] for c in conditions]
+    bar_colors = plt.cm.RdYlGn(np.clip(vals, 0, 1))
+    ax.bar(x, vals, yerr=errs, color=bar_colors, width=0.6,
+           capsize=2, error_kw={"lw": 0.8})
+    ax.axhline(0.7, color="grey", lw=0.5, ls="--", alpha=0.5)
+    ax.set_ylim(-0.1, 1.1)
+    style_axis(ax, "Score Reliability", "", "Rank correlation", legend=False)
+    ax.set_xticks(x)
+    ax.set_xticklabels(labels, rotation=45, ha="right", fontsize=6)
+
+    # (1,0) Market concentration (HHI) with error bars
+    ax = axes[1, 0]
+    vals = [metrics[c]["hhi"] for c in conditions]
+    errs = [metrics[c]["hhi_se"] for c in conditions]
+    ax.bar(x, vals, yerr=errs, color="#457B9D", width=0.6,
+           capsize=2, error_kw={"lw": 0.8})
+    ax.axhline(0.25, color="red", lw=0.8, ls="--", alpha=0.5)
+    style_axis(ax, "Market Concentration", "", "HHI (last 5r)", legend=False)
+    ax.set_xticks(x)
+    ax.set_xticklabels(labels, rotation=45, ha="right", fontsize=6)
+
+    # (1,1) Consumer satisfaction with error bars
+    ax = axes[1, 1]
+    vals = [metrics[c]["mean_satisfaction"] for c in conditions]
+    errs = [metrics[c]["mean_satisfaction_se"] for c in conditions]
+    ax.bar(x, vals, yerr=errs, color="#F4A261", width=0.6,
+           capsize=2, error_kw={"lw": 0.8})
+    style_axis(ax, "Consumer Satisfaction", "", "Mean satisfaction (last 5r)", legend=False)
+    ax.set_xticks(x)
+    ax.set_xticklabels(labels, rotation=45, ha="right", fontsize=6)
+
+    fig.tight_layout()
+    fig.savefig(os.path.join(output_dir, "A8_dashboard_summary.png"),
+                dpi=300, bbox_inches="tight")
+    plt.close(fig)
+    print(f"Saved: {os.path.join(output_dir, 'A8_dashboard_summary.png')}")
+
+
 def write_agg_summary_table(metrics: dict, output_dir: str):
     """T1: Condition effect summary CSV."""
     conditions = sorted(metrics.keys(), key=_condition_sort_key)
@@ -1142,15 +1342,17 @@ def write_agg_summary_table(metrics: dict, output_dir: str):
     with open(path, "w", newline="", encoding="utf-8") as f:
         writer = csv.writer(f)
         writer.writerow([
-            "Condition", "Total Gap", "Score Noise", "Dim Mismatch", "Penalty Load",
+            "Condition", "Seeds", "Total Gap", "Gap SE",
+            "Score Noise", "Dim Mismatch", "Penalty Load",
             "Score Reliability", "HHI", "Mean Safety", "Incidents/Round",
             "Mean Satisfaction", "Provider Diff", "Growth-Need Align", "Rounds",
         ])
         for c in conditions:
             m = metrics[c]
             writer.writerow([
-                c,
-                f"{m['total_gap']:.4f}", f"{m['score_noise']:.4f}",
+                c, m.get("n_seeds", 1),
+                f"{m['total_gap']:.4f}", f"{m['total_gap_se']:.4f}",
+                f"{m['score_noise']:.4f}",
                 f"{m['dim_mismatch']:.4f}", f"{m['penalty_load']:.4f}",
                 f"{m['score_reliability']:.4f}", f"{m['hhi']:.4f}",
                 f"{m['mean_safety']:.4f}", f"{m['incidents_per_round']:.4f}",
@@ -1162,40 +1364,63 @@ def write_agg_summary_table(metrics: dict, output_dir: str):
 
 def run_aggregate_mode(args):
     """Entry point for --aggregate mode."""
-    if args.from_sandbox:
+    if args.batch:
+        batch_dir = os.path.join(_PROJECT_ROOT, "sandbox", "experiments", args.batch)
+        if not os.path.isdir(batch_dir):
+            print(f"ERROR: batch directory not found: {batch_dir}")
+            sys.exit(1)
+        run_groups = discover_sandbox_runs(batch_dir, preset=args.preset)
+        if not run_groups:
+            print(f"No completed runs found in {batch_dir}")
+            sys.exit(1)
+        if not args.output:
+            args.output = os.path.join(batch_dir, "_aggregate_plots")
+    elif args.from_sandbox:
         sandbox = os.path.join(_PROJECT_ROOT, "sandbox", "experiments")
-        runs = discover_sandbox_runs(sandbox, preset=args.preset)
-        if not runs:
+        run_groups = discover_sandbox_runs(sandbox, preset=args.preset)
+        if not run_groups:
             print(f"No completed runs found in {sandbox}")
             sys.exit(1)
     elif args.dirs:
-        runs = {}
+        # Group explicit dirs by condition label
+        run_groups = defaultdict(list)
         for d in args.dirs:
             name = os.path.basename(d.rstrip("/\\"))
-            parts = name.rsplit("_", 2)
-            label = parts[0] if len(parts) >= 3 else name
-            runs[label] = d
+            label = _extract_condition_label(name)
+            run_groups[label].append(d)
+        run_groups = dict(run_groups)
     else:
-        print("Aggregate mode requires --from-sandbox or explicit directories.")
+        print("Aggregate mode requires --batch, --from-sandbox, or explicit directories.")
         sys.exit(1)
 
-    print(f"Found {len(runs)} experiment runs:")
-    for label in sorted(runs.keys(), key=_condition_sort_key):
-        print(f"  {label}")
+    # Count total runs
+    total_runs = sum(len(dirs) for dirs in run_groups.values())
+    print(f"Found {len(run_groups)} conditions ({total_runs} total runs):")
+    for label in sorted(run_groups.keys(), key=_condition_sort_key):
+        n_seeds = len(run_groups[label])
+        seed_str = f" ({n_seeds} seeds)" if n_seeds > 1 else ""
+        print(f"  {label}{seed_str}")
 
     output_dir = args.output or os.path.join(_PROJECT_ROOT, "output", "aggregate_plots")
     os.makedirs(output_dir, exist_ok=True)
 
     print("\nComputing metrics...")
     all_metrics = {}
-    for label, exp_dir in sorted(runs.items()):
-        history = load_history_jsonl(exp_dir)
-        if not history:
+    for label in sorted(run_groups.keys()):
+        seed_metrics = []
+        for exp_dir in run_groups[label]:
+            history = load_history_jsonl(exp_dir)
+            if not history:
+                continue
+            seed_metrics.append(compute_condition_metrics(history))
+        if not seed_metrics:
             print(f"  SKIP {label} (no data)")
             continue
-        m = compute_condition_metrics(history)
+        m = aggregate_across_seeds(seed_metrics)
         all_metrics[label] = m
-        print(f"  {label}: gap={m['total_gap']:.4f} "
+        n_seeds = m.get("n_seeds", 1)
+        seed_note = f" [{n_seeds} seeds]" if n_seeds > 1 else ""
+        print(f"  {label}{seed_note}: gap={m['total_gap']:.4f} "
               f"(noise={m['score_noise']:.3f} mismatch={m['dim_mismatch']:.3f} "
               f"penalty={m['penalty_load']:.3f}) "
               f"reliability={m['score_reliability']:.3f} hhi={m['hhi']:.3f}")
@@ -1211,6 +1436,8 @@ def run_aggregate_mode(args):
     plot_agg_safety_incident_tradeoff(all_metrics, output_dir)
     plot_agg_provider_differentiation(all_metrics, output_dir)
     plot_agg_preset_comparison(all_metrics, output_dir)
+    plot_agg_ablation_effect(all_metrics, output_dir)
+    plot_agg_dashboard_summary(all_metrics, output_dir)
     write_agg_summary_table(all_metrics, output_dir)
     print(f"\nDone. {len(all_metrics)} conditions compared.")
 
@@ -1298,6 +1525,8 @@ def main():
                         help="Aggregate mode: cross-condition comparison")
     parser.add_argument("--from-sandbox", action="store_true",
                         help="Auto-discover runs from sandbox/experiments/ (aggregate mode)")
+    parser.add_argument("--batch", type=str, default=None,
+                        help="Batch directory name under sandbox/experiments/ (aggregate mode)")
     parser.add_argument("--preset", type=str, default=None,
                         help="Filter to a specific preset (aggregate mode)")
     parser.add_argument("-o", "--output", type=str, default=None,

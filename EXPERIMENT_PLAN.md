@@ -27,13 +27,12 @@ Remove a component entirely. Tests whether the component is load-bearing.
 
 | # | Condition | Config override | What it tests |
 |---|-----------|-----------------|---------------|
-| 1 | Full Ecosystem | (baseline) | Reference run with all mechanisms active |
-| 2 | No Media | `enable_media=False` | Does media amplify/dampen gaming via attention and sentiment? |
+| 1 | Full Ecosystem | (baseline) | Reference run with all mechanisms active (market growth 3%/month) |
+| 2 | No Media | `enable_media=False` | Does media amplify/dampen dynamics via attention and sentiment? |
 | 3 | No Funders | `enable_funders=False` | Does the capital allocation feedback loop matter? |
 | 4 | No Regulator | `enable_regulators=False` | Does regulatory intervention change provider behavior? |
 | 5 | No OpenSource | Remove OpenCore from provider configs | Does an open-weight competitor reshape dynamics? |
 | 6 | No Incidents | `enable_incidents=False` | Is the penalty channel load-bearing for the gap? |
-| 7 | Single Benchmark | `single_benchmark=True` | Does benchmark diversity affect dynamics? |
 
 ### Category 2: Mechanism Ablations
 
@@ -41,12 +40,13 @@ A component is present but a specific mechanism is toggled or varied.
 
 | # | Condition | Config override | What it tests |
 |---|-----------|-----------------|---------------|
-| 8 | BM Orientation = 1.0 | `benchmark_orientation_mode="max"` | Does max benchmark-chasing intensify dimensional mismatch? |
-| 9 | BM Orientation adjustable | `benchmark_orientation_mode="adjustable"` | Can providers learn to de-emphasize benchmarks? |
-| 10 | Dynamic Evaluator | `dynamic_evaluator=True` | Does signal-responsive benchmark introduction improve validity? |
-| 11 | OS without externalities | `os_belief_broadcast=False, os_safety_erosion=False` | Are OS information/safety externalities driving Goodhart acceleration? |
-| 12 | Eval-as-a-company | `evaluator_as_company=True` | Do evaluation conflicts of interest worsen outcomes? |
-| 13 | Aligned Benchmarks | `aligned_benchmarks=True` | Is benchmark-need misalignment the root cause of gaming? |
+| 7 | BM Orientation = 1.0 | `benchmark_orientation_mode="max"` | Does max benchmark-chasing intensify dimensional mismatch? Consumer signal has zero R&D weight. |
+| 8 | BM Orientation adjustable | `benchmark_orientation_mode="adjustable"` | Can providers learn to shift R&D emphasis between benchmarks and product analytics? |
+| 9 | Dynamic Evaluator | `dynamic_evaluator=True` | Does signal-responsive benchmark introduction improve validity? |
+| 10 | Eval-as-a-company | `evaluator_as_company=True` | Do evaluation conflicts of interest worsen outcomes? |
+| 11 | Aligned Benchmarks | `aligned_benchmarks=True` | Is benchmark-need misalignment the root cause of the gap? |
+| 12 | Fixed Market Size | `market_growth_rate=0.0` | Does market expansion change competitive dynamics? (Baseline uses 3%/month growth.) |
+| 13 | No Product Channels | `enable_product_signal_quality=False, enable_product_retention=False` | Is the product lever load-bearing? Disables both signal fidelity gating and retention bonus. |
 
 ### Category 3: Internal Validity Checks
 
@@ -55,13 +55,23 @@ Test whether results are artifacts of simulation design choices.
 | # | Condition | Config override | What it tests |
 |---|-----------|-----------------|---------------|
 | 14 | Homogeneous Consumers | `homogeneous_consumers=True` | Is consumer heterogeneity load-bearing for the dynamics? |
-| 15 | Homogeneous Providers | `homogeneous_providers=True` | Is differentiation emergent or baked into initial conditions? |
+| 15 | Initial Leader | Orion Labs capabilities +0.12, brand 0.95, others reduced | Does starting from a monopolistic market change long-run outcomes? |
+| 16 | Initial Duopoly | Orion+Genesis capabilities +0.08, brand 0.90, others reduced | Does starting from a duopoly change dynamics vs. the baseline diffuse market? |
+| 17 | Initial Uniform | All providers get mean capabilities, brand 0.50 | Is differentiation emergent or baked into initial conditions? |
 
 ### Condition x Preset Matrix
 
 Each condition is run under all 3 regulatory presets: **Balanced**, **US light-touch**, **EU precautionary**.
 
-Total Phase 1 runs: **15 x 3 = 45**.
+Total Phase 1 runs: **17 x 3 = 51**.
+
+### Prompt sensitivity analysis (separate from ablation matrix)
+
+Not ablations — these are methodological checks for LLM-mode runs, measuring how prompt framing affects agent behavior. Should be run as a dedicated sensitivity study, not mixed into the structural ablation matrix.
+
+- **PIMMUR control prompt:** Re-run with pre-audit evaluator/consumer prompts (coaching, decision framework, loaded labels) to measure impact of the session 17 prompt audit.
+- **Consumer signal visibility:** Toggle `consumer_signal_in_prompt` to test whether LLM providers anchor on explicit user need percentages.
+- **Orientation prompt framing:** The session 16 ablation (control/reframed/no_signal) already demonstrated that small framing changes dominate LLM dynamics. Results in `docs/product_consumer_signal_design.md`.
 
 ---
 

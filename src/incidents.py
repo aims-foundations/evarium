@@ -195,6 +195,7 @@ class IncidentGenerator:
                 provider_strategies,
                 active_sanctions=active_sanctions,
                 total_market_size=total_market_size,
+                round_num=round_num,
             )
 
             # Sample incident occurrence
@@ -221,6 +222,7 @@ class IncidentGenerator:
         provider_strategies: dict,
         active_sanctions: dict = None,
         total_market_size: float = 1.0,
+        round_num: int = None,
     ) -> float:
         """
         Compute incident probability based on safety investment, exposure,
@@ -231,8 +233,7 @@ class IncidentGenerator:
         if active_sanctions is None:
             active_sanctions = {}
 
-        # Base incident rate
-        base_incident_rate = 0.10  # 10% baseline per round
+        base_incident_rate = 0.10
 
         # Factor 1: Safety Investment (primary)
         strategy = provider_strategies.get(provider_name, {})
@@ -255,13 +256,15 @@ class IncidentGenerator:
         # Factor 3: Incident history escalation
         # Prior major/critical incidents signal safety culture degradation and
         # accumulated technical debt (Reason's Swiss cheese model; Leveson STAMP).
-        # Each prior major/critical adds +0.04 to base rate, capped at +0.20 total.
+        # Each prior major/critical in last 15 rounds adds +0.02, capped at +0.10.
+        # Aging: incidents older than 15 rounds no longer count (culture can recover).
         prior_incidents = self.incident_history.get(provider_name, [])
         prior_serious = sum(
             1 for inc in prior_incidents
             if inc.severity in ("major", "critical")
+            and (round_num is None or round_num - inc.round_num <= 15)
         )
-        history_addend = min(prior_serious * 0.04, 0.20)
+        history_addend = min(prior_serious * 0.02, 0.10)
 
         # Factor 4: Active sanction -> operational caution reduction
         # Sanctions force compliance audits and heightened internal oversight,

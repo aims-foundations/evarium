@@ -198,6 +198,40 @@ Empirical evidence and theoretical frameworks for how safety incidents reshape m
 - **AI Incident Database (AIID).** Base rates for AI safety incidents.
 - **Weidinger, L., et al. (2023).** "Sociotechnical Safety Evaluation of Generative AI Systems." *arXiv.*
 
+## Dynamic Consumer Market / Enterprise Adoption
+
+Sources grounding the dynamic consumer market composition change (enterprise share growth from ~25% to ~55% over 30 rounds) and longitudinal AI usage shifts.
+
+### Enterprise adoption trajectory
+
+- **McKinsey & Company (2024, 2025).** "The State of AI" (annual). GenAI adoption: 33% (2023) to 65% (2024) to 79% (2025). Only 7% report full-scale deployment (2025) — adoption wide, depth shallow.
+- **Menlo Ventures (2024, 2025).** "State of Generative AI in the Enterprise." Enterprise GenAI spending: $1.7B (2023) to $11.5B (2024) to $37B (2025). Coding/developer tools: $7.3B (largest app category, 2025). Vertical AI (healthcare, legal, finance): $1.2B (2024) to $3.5B (2025). Build-to-buy shift: 47% build (2024) to 24% build (2025).
+- **Stanford HAI (2024, 2025).** *AI Index Reports.* Business adoption 55% (2023) to 78% (2024). Corporate AI investment: $252.3B (2024), private investment up 44.5% YoY. GPT-3.5-level inference cost dropped 280x (Nov 2022 to Oct 2024).
+
+### Enterprise vs consumer revenue differentiation
+
+- **Axios (2026).** "AI Enterprise Revenue: Anthropic Turns Tables on OpenAI." Anthropic enterprise-heavy (~80% of revenue); ~$211/user/month.
+- **Tanay Jaipuria (2025).** "OpenAI and Anthropic Revenue Breakdown." OpenAI enterprise ~25% of 2025 revenue; ChatGPT Enterprise seats: 150K (Jan 2024) to 2M+ (Feb 2025) to 9M+ (Feb 2026).
+- **SaaStr (2025).** "OpenAI Crosses $12B ARR." OpenAI ARR trajectory: $2B (2023) to $6B (2024) to $20B (2025).
+
+### Longitudinal usage pattern shifts (existing users changing behavior)
+
+- **Anthropic (2024-2026).** "Anthropic Economic Index" series. Computer/math tasks: ~37-40% of conversations (stable). Educational instruction: rose 40%+ (9% to 13%). Directive conversations: 27% to 39% (Dec 2024 to mid-2025). Automation surpassed augmentation (49.1% vs 47%); API is 75% automated. New code creation doubled over 8 months; debugging declined.
+- **OpenAI / Deming (2025).** "How People Use ChatGPT." NBER Working Paper, 1.5M conversations. Information seeking surged 14% to 24% YoY. Feminine-name users 37% (Jan 2024) to 52% (Jul 2025) — evidence of new user segments joining. 4x growth in low/middle-income countries.
+- **Stack Overflow (2023-2025).** Developer Surveys. AI tool usage: 70% (2023) to 76% (2024) to 84% (2025). Trust in AI output declined: ~40% (2024) to 29% (2025). Usage-trust divergence — adoption rises while trust falls.
+
+### Agentic AI demand (capability-driven demand creation)
+
+- **MarketsandMarkets (2024).** Agentic AI market: $5.25B (2024), CAGR 43.8%.
+- **Gartner (2024).** Enterprise software with agentic AI: <1% (2024), projected 33% by 2028.
+- **Databricks (2025).** "State of AI: Enterprise Adoption Growth Trends." 43% of companies directing >50% of AI budget to agentic systems.
+
+### GitHub Copilot / coding assistant adoption
+
+- **GitHub (2024, 2025).** Octoverse reports. Users: ~1M (early 2024) to 15M (early 2025) to 20M (Jul 2025). Paid subscribers: 1.3M to 4.7M (Jan 2026). 80% of new GitHub developers use Copilot within first week. Code acceptance rate: 27-30%; Copilot generates 46% of all code.
+
+---
+
 ## Market Share and Consumer Switching
 
 - **Hardy, A., Reuel, A., Jafari Meimandi, K., Soder, L., Griffith, A., Asmar, D. M., Koyejo, S., Bernstein, M. S., & Kochenderfer, M. J. (2024).** "More than Marketing? On the Information Value of AI Benchmarks for Practitioners." *arXiv:2412.05520.* Interview study (N=19) finding benchmarks function as negative filters (poor scores disqualify) rather than positive adoption drivers; product/policy practitioners develop internal evals and rely on direct experience over public leaderboards; high-trust-in-benchmarks is concentrated in research contexts. Grounds the `leaderboard_trust` archetype differentiation and the asymmetry between score-driven attention vs. experience-driven switching.

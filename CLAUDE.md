@@ -7,6 +7,7 @@
 - **Python:** 3.12
 - **Paths:** Use forward slashes or raw strings. Never assume Unix paths.
 - **Package manager:** pip
+- **Background processes:** Shell backgrounding (`&`, `nohup`) does NOT survive parent exit on Windows/Git Bash. For long-running experiments, use separate `run_in_background: true` Bash tool calls — one per process.
 
 ## Project Paths
 

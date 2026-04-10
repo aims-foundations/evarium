@@ -1,24 +1,18 @@
-# Session Handoff -- 2026-04-06 (session 17)
+# Session Handoff -- 2026-04-09 (session 25)
 
-## Completed (session 16)
-- Benchmark orientation ratchet diagnosed and fixed (prompt reframe)
-- Product allocation: two mechanical channels (signal fidelity + switching cost retention)
-- Rolling average (3-round) for all portfolio allocations
-- PIMMUR principles reference, design doc, ablation infrastructure
-
-## Completed (session 17)
-- **PIMMUR prompt audit completed.** All LLM prompts audited against Minimal-Control and Unawareness.
-  - Evaluator: removed "STAGNANT" label, "time to act" coaching, bucketed validity labels. Now shows raw data.
-  - Consumer (organizational): removed 6-point Decision Framework, reasoning coaching, ALL-CAPS liability labels, `switching_threshold` parameter leak.
-  - Provider, Funder, Regulator, Consumer (individual): PASS.
+## Completed (session 25)
+- **Abstract rewrite** — aligned three contributions with intro (C1: framework + interviews, C2: simulation with emergent score inflation design, C3: ablation findings). Removed outdated diagnostic-toolkit framing as standalone contribution. Dropped overused "Goodhart" terminology.
+- **Reference audit** — found and fixed 8 undefined citations (bachmann2023firms, bick2024rapid, costanzachock2022who, dulleck2006credence, hardy2024benchmarks, raji2022outsider, singh2025leaderboard, zhou2026pimmur). All added to references.bib with verified metadata. 23 uncited bib entries identified (not yet removed).
 
 ## In Progress
-- All code changes from sessions 16-17 are uncommitted
+- Sessions 16-25 code changes still uncommitted
+- Paper still has stale content in experiments section (TODOs, placeholder table, outdated mechanics references)
 
-## Next Steps
-1. Commit sessions 16-17 changes
-2. Calibration sensitivity: signal fidelity midpoint and retention bonus strength across 40-round runs
-3. Re-run market_expansion condition at 0.03 rate with new code
-4. Re-run US/EU comparison with latest code (product channels + rolling average + reframed prompt + audited prompts)
-5. Multi-seed LLM replication (5-10 seeds per condition)
-6. Deferred: safetywashing / safety friction mechanics
+## Next Steps (priority order)
+1. **Implement evaluator autonomy** (~4.5 hours) — full plan at `.claude/plans/zazzy-orbiting-giraffe.md`
+2. **Re-run heuristic baseline** with current code (all old heuristic results invalidated by switching formula fix)
+3. **Paper updates remaining** — intro contribution bullets need same alignment as abstract; experiments section needs updated results; scope/diagnostics sections not yet wired into main.tex; 23 dead bib entries to clean
+4. **Incident-response validation** — extract standardized response profiles from existing LLM runs
+5. **LLM-adds-what analysis** — requires CRN-paired heuristic runs as prerequisite
+6. **Evaluator case study runs** — primary testbed demonstration
+7. **Commit sessions 16-25 changes**

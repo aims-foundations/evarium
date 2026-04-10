@@ -102,6 +102,8 @@ class ModelProvider:
         rd_budget_floor: float = 0.0,
         os_belief_broadcast: bool = True,
         os_safety_erosion: bool = True,
+        # Evaluator-as-company: parent company resources for eval access
+        discretionary_budget: float = 0.0,
     ):
         """
         Initialize a Model Provider.
@@ -159,6 +161,7 @@ class ModelProvider:
         self.rd_budget_floor: float = rd_budget_floor
         self.os_belief_broadcast: bool = os_belief_broadcast
         self.os_safety_erosion: bool = os_safety_erosion
+        self.discretionary_budget: float = discretionary_budget
 
         # Mode settings
         self.llm_mode = llm_mode
@@ -182,6 +185,9 @@ class ModelProvider:
 
         # Ablation: route safety lever through target weights instead of direct-to-safety
         self.safety_lever_through_target: bool = False
+
+        # Evaluator-as-company: number of model submissions last decided
+        self._last_n_submissions: int = 1
 
         # Per-round memory list (within-session only — not persisted in ProviderPrivateState)
         self.memory: list = []
@@ -506,6 +512,17 @@ class ModelProvider:
             "product": product / total,
         }
 
+    def _decide_n_submissions_heuristic(self, base_revenue: float, fee: float, max_n: int) -> int:
+        """Decide how many model variants to submit to evaluator (heuristic mode).
+
+        Affordability is based on base_revenue + discretionary_budget (parent
+        company resources). Fee is still deducted from R&D budget in sim loop.
+        Spends up to 15% of total affordability on extra submissions.
+        """
+        affordability = base_revenue + self.discretionary_budget
+        max_spend = affordability * 0.15
+        return min(max_n, max(1, 1 + int(max_spend / fee))) if fee > 0 else 1
+
     def _plan_llm(self, ctx: dict) -> tuple:
         """
         LLM-driven portfolio planning.
@@ -598,6 +615,15 @@ class ModelProvider:
         if orientation_adjustable:
             orientation_signal = result.get("benchmark_orientation", "same")
             orientation_delta = _ordinal_to_delta(orientation_signal)
+
+        # Evaluator submissions (eval_as_company): integer 1-N from LLM
+        n_subs = result.get("n_submissions")
+        if n_subs is not None:
+            try:
+                n_subs = max(1, min(int(n_subs), 10))
+            except (ValueError, TypeError):
+                n_subs = self._last_n_submissions
+            self._last_n_submissions = n_subs
 
         return portfolio, focus_deltas, orientation_delta, reasoning, strategy_memo
 

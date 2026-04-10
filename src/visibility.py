@@ -465,18 +465,28 @@ class EvaluatorPrivateState:
     budget: float = 0.0
     base_funding: float = 0.0
     recent_reasoning: list = field(default_factory=list)
+    # Premium access tracking (eval_as_company)
+    premium_subscribers: set = field(default_factory=set)
+    premium_revenue: float = 0.0
+    submission_counts: dict = field(default_factory=dict)
 
     def to_dict(self) -> dict:
         return {
             "budget": self.budget,
             "base_funding": self.base_funding,
             "recent_reasoning": self.recent_reasoning,
+            "premium_subscribers": sorted(self.premium_subscribers),
+            "premium_revenue": self.premium_revenue,
+            "submission_counts": dict(self.submission_counts),
         }
 
     @classmethod
     def from_dict(cls, data: dict) -> "EvaluatorPrivateState":
         known = {f.name for f in cls.__dataclass_fields__.values()}
-        return cls(**{k: v for k, v in data.items() if k in known})
+        filtered = {k: v for k, v in data.items() if k in known}
+        if "premium_subscribers" in filtered and isinstance(filtered["premium_subscribers"], list):
+            filtered["premium_subscribers"] = set(filtered["premium_subscribers"])
+        return cls(**filtered)
 
 
 # ──────────────────────────────────────────────────────────────────────────────

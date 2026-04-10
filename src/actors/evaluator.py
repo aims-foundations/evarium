@@ -326,7 +326,21 @@ class Evaluator:
             for benchmark in self.benchmarks:
                 bm_gt = (benchmark_ground_truths or {}).get(benchmark.name)
 
-                score = self._score_provider_on_benchmark(cap_vec, bm_gt, benchmark)
+                # Best-of-N trials for premium providers (eval_as_company)
+                n_trials = 1
+                if (self.evaluator_as_company
+                        and self.private_state
+                        and provider.name in self.private_state.submission_counts):
+                    n_trials = self.private_state.submission_counts[provider.name]
+
+                if n_trials > 1:
+                    trial_scores = [
+                        self._score_provider_on_benchmark(cap_vec, bm_gt, benchmark)
+                        for _ in range(n_trials)
+                    ]
+                    score = max(trial_scores)
+                else:
+                    score = self._score_provider_on_benchmark(cap_vec, bm_gt, benchmark)
 
                 # Monotonicity: providers wouldn't disclose a worse score
                 best = self._best_published_scores[benchmark.name].get(provider.name, 0.0)
@@ -734,8 +748,11 @@ class Evaluator:
         from scipy.stats import spearmanr
         scores = [latest_scores[p] for p in common]
         shares = [market_shares[p] for p in common]
+        if len(set(scores)) < 2 or len(set(shares)) < 2:
+            return
         corr, _ = spearmanr(scores, shares)
-        self._internal_validity = corr
+        if not np.isnan(corr):
+            self._internal_validity = corr
 
     def is_benchmark_saturated(self, benchmark_name: str) -> bool:
         """

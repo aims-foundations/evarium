@@ -10,11 +10,14 @@ Key visibility design:
 - Ground truth is passed to evaluator for scoring, never to actors
 """
 import json
+import math
 import os
+import random
+from collections import defaultdict
 from dataclasses import dataclass, field, asdict
 from typing import Optional
 
-from actors.model_provider import ModelProvider
+from actors.model_provider import ModelProvider, DIMENSIONS
 from actors.evaluator import Evaluator, Regulation
 from visibility import (ProviderGroundTruth, BenchmarkGroundTruth,
                         ConsumerGroundTruth, RegulatorGroundTruth, FunderGroundTruth)
@@ -165,6 +168,9 @@ class SimulationConfig:
     # Evaluator-as-company feature
     evaluator_as_company: bool = False  # Evaluator operates as company with funder allocations
     evaluator_base_budget: float = 0.0  # Starting budget for evaluator
+    fee_per_submission: float = 0.03    # R&D budget cost per extra eval submission (sim units)
+    max_eval_submissions: int = 10      # Hard cap on submissions per provider per round
+    early_access_factor: float = 0.5    # Belief init blend for premium: 0=uniform, 1=true weights
 
     # Benchmark orientation mode:
     #   "fixed" (default): all providers use their configured benchmark_orientation, LLM cannot adjust
@@ -200,6 +206,14 @@ class SimulationConfig:
     # Calibration: 0.03/month ~ 43% annual CAGR, matching GenAI market consensus
     # (S&P Global 451 Research: 40% CAGR; Bloomberg Intelligence: 42% CAGR).
     market_growth_rate: float = 0.0
+
+    # Dynamic consumer market: enterprise share grows over simulation via logistic curve.
+    # Models the real-world shift from consumer-dominated (~25% enterprise, Q1 2023)
+    # to enterprise-dominated (~55% enterprise, mid-2025) AI market.
+    dynamic_consumer_market: bool = False
+    enterprise_share_start: float = 0.25
+    enterprise_share_end: float = 0.55
+    enterprise_growth_midpoint: int = 18  # round at which growth is steepest
 
     # Capability baseline shift (applied to provider initial values and absolute thresholds)
     capability_shift: float = 0.0
@@ -273,7 +287,7 @@ class EvalEcosystemSimulation:
 
         # Startup entry tracking
         self._funder_eligible_round: dict = {}  # {provider_name: first_round_funders_can_allocate}
-        self._rng = __import__("random").Random(config.seed)
+        self._rng = random.Random(config.seed)
 
         # Incident reporting system
         self.incident_generator = IncidentGenerator(seed=config.seed)
@@ -309,7 +323,7 @@ class EvalEcosystemSimulation:
 
         # Apply ablation overrides to provider configs
         if self.config.homogeneous_providers:
-            from actors.model_provider import DIMENSIONS as _DIMS
+            _DIMS = DIMENSIONS
             # Use Orion Labs (first provider) as template, uniform capabilities
             avg_cap = {dim: 0.50 for dim in _DIMS}
             uniform_portfolio = {"rd": 0.55, "safety": 0.15, "product": 0.30}
@@ -347,7 +361,7 @@ class EvalEcosystemSimulation:
             if cap_vec is None:
                 # Fallback: uniform at initial_capability scalar (backward compat)
                 scalar = pc.get("initial_capability", 0.5)
-                from actors.model_provider import DIMENSIONS as _DIMS
+                _DIMS = DIMENSIONS
                 cap_vec = {dim: scalar for dim in _DIMS}
 
             # Build initial portfolio (3-lever)
@@ -374,6 +388,7 @@ class EvalEcosystemSimulation:
                 rd_budget_floor=pc.get("rd_budget_floor", 0.0),
                 os_belief_broadcast=pc.get("os_belief_broadcast", False),
                 os_safety_erosion=pc.get("os_safety_erosion", False),
+                discretionary_budget=pc.get("discretionary_budget", 0.0),
             )
 
             # Initialize benchmark beliefs for all starting benchmarks
@@ -751,7 +766,7 @@ class EvalEcosystemSimulation:
         Returns {provider_name: {dim: float}} normalized 6-dim vectors.
         When consumer market is not enabled, returns uniform signals.
         """
-        from actors.model_provider import DIMENSIONS as _DIMS
+        _DIMS = DIMENSIONS
         default = {dim: 1.0 / len(_DIMS) for dim in _DIMS}
 
         if not self.consumer_market:
@@ -782,9 +797,8 @@ class EvalEcosystemSimulation:
                 true_signal = dict(default)
 
             # Add noise proportional to 1/sqrt(market_share) and renormalize
-            import math as _math
             sigma_base = 0.05  # Thread 9 calibration param
-            sigma = sigma_base / _math.sqrt(max(market_share, 0.01))
+            sigma = sigma_base / math.sqrt(max(market_share, 0.01))
             noisy = {}
             for dim in _DIMS:
                 noisy[dim] = max(0.0, true_signal[dim] + self._rng.gauss(0, sigma))
@@ -819,6 +833,15 @@ class EvalEcosystemSimulation:
         if round_num > 0 and self.config.market_growth_rate > 0:
             self._total_market_size *= (1.0 + self.config.market_growth_rate)
 
+        # Dynamic consumer market: rebalance enterprise/individual market fractions
+        if self.config.dynamic_consumer_market and self.consumer_market is not None:
+            self.consumer_market.rebalance_market_fractions(
+                round_num,
+                self.config.enterprise_share_start,
+                self.config.enterprise_share_end,
+                self.config.enterprise_growth_midpoint,
+            )
+
         # Clear binding audit deployment gate (lasts only 1 round)
         self._audit_deployment_gate.clear()
         # Expire old regulatory efficiency effects
@@ -832,6 +855,10 @@ class EvalEcosystemSimulation:
 
         # Get funder allocation totals from previous round (additive budget model)
         provider_funding_totals = self._current_funder_data.get("provider_funding_totals", {})
+
+        # Evaluator-as-company: track per-provider submission counts this round
+        _submission_counts = {}
+        _premium_set = set()
 
         # 1. Providers plan investment portfolios (for round > 0, they've seen previous scores)
         if round_num > 0:
@@ -857,6 +884,22 @@ class EvalEcosystemSimulation:
                             and effect["expires_round"] > round_num):
                         funder_allocation *= effect["multiplier"]
                 rd_budget_raw = max(base_revenue + funder_allocation, provider.rd_budget_floor)
+
+                # Evaluator-as-company: provider decides N submissions, fee deducted
+                if self.config.evaluator_as_company:
+                    if provider.llm_mode and provider._last_n_submissions > 1:
+                        n_subs = provider._last_n_submissions
+                    else:
+                        n_subs = provider._decide_n_submissions_heuristic(
+                            base_revenue=base_revenue,
+                            fee=self.config.fee_per_submission,
+                            max_n=self.config.max_eval_submissions,
+                        )
+                    sub_cost = (n_subs - 1) * self.config.fee_per_submission
+                    rd_budget_raw = max(rd_budget_raw - sub_cost, provider.rd_budget_floor)
+                    _submission_counts[provider.name] = n_subs
+                    if n_subs > 1:
+                        _premium_set.add(provider.name)
 
                 # Apply active sanctions
                 prev_pm_data = self.history[-1].get("regulator_data", {}) if self.history else {}
@@ -885,7 +928,6 @@ class EvalEcosystemSimulation:
                 # Empirical grounding: 10x more funding does not yield 10x more capability
                 # due to coordination overhead, talent bottlenecks, and diminishing
                 # marginal returns on compute (Besiroglu et al. 2024, Epoch AI scaling).
-                import math
                 budget_scale = math.sqrt(max(rd_budget_raw, 0.0))
                 effective_budget = budget_scale * effective_efficiency * diminishing_factor
 
@@ -923,7 +965,7 @@ class EvalEcosystemSimulation:
                 self._update_ground_truth(provider.name, gains)
 
                 # Record execution in provider memory
-                provider.memory.append({
+                exec_entry = {
                     "type": "execution",
                     "round": round_num,
                     "capability_gains": {k: round(v, 6) for k, v in gains.items()},
@@ -931,7 +973,19 @@ class EvalEcosystemSimulation:
                     "sanction_multiplier": sanction_multiplier,
                     "capability_vector": dict(gt.capability_vector),
                     "portfolio": portfolio,
-                })
+                }
+                if self.config.evaluator_as_company:
+                    exec_entry["n_submissions"] = _submission_counts.get(provider.name, 1)
+                provider.memory.append(exec_entry)
+
+        # Pass eval_as_company submission counts to evaluator before scoring
+        if self.config.evaluator_as_company and self.evaluator.private_state:
+            self.evaluator.private_state.submission_counts = _submission_counts
+            self.evaluator.private_state.premium_subscribers = _premium_set
+            self.evaluator.private_state.premium_revenue = sum(
+                (n - 1) * self.config.fee_per_submission
+                for n in _submission_counts.values()
+            )
 
         # 2. Evaluator scores all providers using ground truth capability vectors
         # and hidden benchmark dimension weights (BenchmarkGroundTruth).
@@ -959,7 +1013,7 @@ class EvalEcosystemSimulation:
 
         # 2d. Consider introducing a new benchmark
         if self.config.dynamic_evaluator and self.config.llm_mode:
-            new_benchmark = self._evaluator_llm_decision(round_num, media_coverage)
+            new_benchmark = self._evaluator_llm_decision(round_num, None)
         else:
             new_benchmark = self.evaluator.consider_new_benchmark(round_num)
 
@@ -972,6 +1026,27 @@ class EvalEcosystemSimulation:
             for provider in self.providers:
                 if new_benchmark.name not in provider.private_state.focus_level:
                     provider.init_benchmark(new_benchmark.name)
+
+            # Early access: premium providers get partial knowledge of true weights
+            if (self.config.evaluator_as_company
+                    and self.evaluator.private_state
+                    and new_benchmark.name in self.benchmark_ground_truths):
+                bm_gt = self.benchmark_ground_truths[new_benchmark.name]
+                true_weights = self._aggregate_bm_weights(bm_gt)
+                if true_weights:
+                    factor = self.config.early_access_factor
+                    dims = list(true_weights.keys())
+                    uniform = {d: 1.0 / len(dims) for d in dims}
+                    for provider in self.providers:
+                        if provider.name in self.evaluator.private_state.premium_subscribers:
+                            blended = {
+                                d: (1 - factor) * uniform[d] + factor * true_weights.get(d, uniform[d])
+                                for d in dims
+                            }
+                            total = sum(blended.values())
+                            if total > 0:
+                                blended = {d: v / total for d, v in blended.items()}
+                            provider.private_state.inferred_benchmark_weights[new_benchmark.name] = blended
 
         # 3. Publish scores
         published_scores = self.evaluator.publish_scores(scores)
@@ -1316,6 +1391,13 @@ class EvalEcosystemSimulation:
                     "base_funding": self.evaluator.private_state.base_funding,
                 }
 
+        # Evaluator-as-company premium access logging
+        if self.config.evaluator_as_company and self.evaluator.private_state:
+            bm = round_data.setdefault("evaluator_business_metrics", {})
+            bm["premium_revenue"] = self.evaluator.private_state.premium_revenue
+            bm["n_premium_subscribers"] = len(self.evaluator.private_state.premium_subscribers)
+            bm["submission_counts"] = dict(self.evaluator.private_state.submission_counts)
+
         # Add incidents if any occurred
         if incidents:
             round_data["incidents"] = [inc.to_dict() for inc in incidents]
@@ -1368,17 +1450,17 @@ class EvalEcosystemSimulation:
                         actor_traces[funder.name] = trace
                     break
 
-        # Organizational consumer LLM reasoning traces (when switches happen)
+        # Organizational consumer LLM reasoning traces (when switches/pilots happen)
         if self.consumer_market:
             for seg in self.consumer_market.segments:
                 if seg.consumer_type == "organization" and seg.last_llm_decision:
-                    # Only include if there was a switch decision
-                    decision = seg.last_llm_decision.get("decision", {})
-                    if decision.get("should_switch"):
-                        reasoning = decision.get("reasoning", "")
-                        target = decision.get("target_provider", "unknown")
-                        provider = seg.last_llm_decision.get("provider", "current")
-                        trace = f"switch_{provider}_to_{target}: {reasoning}"
+                    d = seg.last_llm_decision
+                    action = d.get("action", "renew")
+                    if action in ("switch", "pilot"):
+                        target = d.get("target_provider", "unknown")
+                        current = d.get("current_provider", "current")
+                        reasoning = d.get("reasoning", "")
+                        trace = f"{action}_{current}_to_{target}: {reasoning}"
                         actor_traces[seg.name] = trace
 
         if actor_traces:
@@ -1387,6 +1469,10 @@ class EvalEcosystemSimulation:
         # Log active deployer liability guidance
         if self._current_deployer_liability_guidance:
             round_data["deployer_liability_guidance"] = sorted(self._current_deployer_liability_guidance)
+
+        # Log enterprise share if dynamic consumer market is enabled
+        if self.config.dynamic_consumer_market and self.consumer_market is not None:
+            round_data["enterprise_share"] = self.consumer_market.get_enterprise_share()
 
         # Compute barrier-to-entry index (kept as ecosystem health metric)
         round_data["barrier_to_entry"] = self._compute_barrier_to_entry(round_data)
@@ -1778,6 +1864,24 @@ class EvalEcosystemSimulation:
 
         return funder_data
 
+    @staticmethod
+    def _aggregate_bm_weights(bm_gt) -> dict:
+        """Aggregate per-category dimension weights into flat {dim: weight} dict.
+
+        Same logic as evaluator._score_provider_on_benchmark: averages across categories.
+        """
+        cdw = bm_gt.category_dimension_weights
+        if not cdw:
+            return {}
+        if isinstance(next(iter(cdw.values())), dict):
+            agg = {}
+            for cat_weights in cdw.values():
+                for dim, w in cat_weights.items():
+                    agg[dim] = agg.get(dim, 0.0) + w
+            n_cats = len(cdw)
+            return {dim: w / n_cats for dim, w in agg.items()}
+        return dict(cdw)
+
     def _run_evaluator_funding_round(
         self,
         round_num: int,
@@ -1839,7 +1943,6 @@ class EvalEcosystemSimulation:
 
     def _compute_barrier_to_entry(self, round_data: dict) -> dict:
         """Compute the Barrier-to-Entry (BTE) index for model provider startups."""
-        from collections import defaultdict
 
         components = {}
 
@@ -2176,7 +2279,8 @@ def get_default_provider_configs() -> list[dict]:
             },
             "portfolio": {"rd": 0.55, "safety": 0.15, "product": 0.30},
             "benchmark_orientation": 0.85,
-            "brand_recognition": 0.9,
+            "brand_recognition": 0.8,
+            "discretionary_budget": 0.5,  # Well-funded standalone (Microsoft partnership)
         },
         {
             "name": "Apex AI",
@@ -2193,6 +2297,7 @@ def get_default_provider_configs() -> list[dict]:
             "portfolio": {"rd": 0.60, "safety": 0.30, "product": 0.10},
             "benchmark_orientation": 0.75,
             "brand_recognition": 0.7,
+            "discretionary_budget": 0.3,  # Significant VC funding, safety-focused spending
         },
         {
             "name": "Genesis Systems",
@@ -2209,7 +2314,8 @@ def get_default_provider_configs() -> list[dict]:
             },
             "portfolio": {"rd": 0.70, "safety": 0.15, "product": 0.15},
             "benchmark_orientation": 0.80,
-            "brand_recognition": 0.8,
+            "brand_recognition": 0.7,
+            "discretionary_budget": 2.0,  # Alphabet subsidiary, trivial cost
         },
         {
             "name": "Mirage AI",
@@ -2222,12 +2328,13 @@ def get_default_provider_configs() -> list[dict]:
             ),
             "innate_traits": "well-resourced, research-oriented, platform-focused, pragmatic",
             "capability_vector": {
-                "reasoning": 0.51, "coding": 0.49, "knowledge": 0.49,
-                "safety": 0.45, "communication": 0.49, "agentic": 0.41,
+                "reasoning": 0.52, "coding": 0.50, "knowledge": 0.50,
+                "safety": 0.47, "communication": 0.50, "agentic": 0.44,
             },
             "portfolio": {"rd": 0.80, "safety": 0.10, "product": 0.10},
             "benchmark_orientation": 0.82,
             "brand_recognition": 0.6,
+            "discretionary_budget": 2.0,  # Meta subsidiary, trivial cost
         },
         {
             "name": "Spark AI",
@@ -2239,12 +2346,12 @@ def get_default_provider_configs() -> list[dict]:
             ),
             "innate_traits": "scrappy, fast-moving, developer-focused, resource-constrained",
             "capability_vector": {
-                "reasoning": 0.49, "coding": 0.51, "knowledge": 0.46,
-                "safety": 0.43, "communication": 0.47, "agentic": 0.46,
+                "reasoning": 0.50, "coding": 0.52, "knowledge": 0.48,
+                "safety": 0.46, "communication": 0.49, "agentic": 0.48,
             },
             "portfolio": {"rd": 0.65, "safety": 0.10, "product": 0.25},
             "benchmark_orientation": 0.90,
-            "brand_recognition": 0.3,
+            "brand_recognition": 0.4,
         },
         {
             "name": "OpenCore",
@@ -2256,8 +2363,8 @@ def get_default_provider_configs() -> list[dict]:
             ),
             "innate_traits": "open-source, community-driven, cost-competitive, research-oriented",
             "capability_vector": {
-                "reasoning": 0.47, "coding": 0.49, "knowledge": 0.46,
-                "safety": 0.42, "communication": 0.45, "agentic": 0.40,
+                "reasoning": 0.49, "coding": 0.51, "knowledge": 0.48,
+                "safety": 0.45, "communication": 0.47, "agentic": 0.43,
             },
             "portfolio": {"rd": 0.75, "safety": 0.10, "product": 0.15},
             "benchmark_orientation": 0.85,

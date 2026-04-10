@@ -32,31 +32,82 @@ import time
 #  CONFIGURATION — edit this section
 # ============================================================
 
-# Explicit list of (condition, preset) pairs to run.
-# These don't form a clean cross-product, so we list them directly.
+# 17 conditions x 3 policies = 51 runs (full ablation matrix)
 JOBS_SPEC = [
-    ("full_ecosystem", "balanced"),
+    # Full ecosystem across all 3 policy presets
+    # ("full_ecosystem", "balanced"),
     # ("full_ecosystem", "us"),
     # ("full_ecosystem", "eu"),
+    # Actor ablations (balanced policy — isolates actor contribution)
+    ("no_media", "balanced"),
+    ("no_funders", "balanced"),
+    ("no_regulator", "balanced"),
+    ("no_opensource", "balanced"),
+    ("no_incidents", "balanced"),
+    # Benchmark orientation variants
+    # ("bm_orientation_max", "balanced"),
     # ("bm_orientation_adjustable", "balanced"),
-    # ("market_expansion", "balanced"),
-    # ("misaligned_benchmarks", "balanced"),
+    # Evaluator variants
+    # ("dynamic_evaluator", "balanced"),
+    # ("eval_as_company", "balanced"),
+    # ("aligned_benchmarks", "balanced"),
+    # Market structure variants
+    # ("fixed_market_size", "balanced"),
+    # ("no_product_channels", "balanced"),
+    # ("homogeneous_consumers", "balanced"),
+    # Initial condition variants
+    # ("initial_leader", "balanced"),
+    # ("initial_duopoly", "balanced"),
+    # ("initial_uniform", "balanced"),
+    # Policy sensitivity: actor ablations under US and EU
+    # ("no_media", "us"),
+    # ("no_media", "eu"),
+    # ("no_funders", "us"),
+    # ("no_funders", "eu"),
+    # ("no_regulator", "us"),
+    # ("no_regulator", "eu"),
+    # ("no_incidents", "us"),
+    # ("no_incidents", "eu"),
+    # Evaluator variants under US and EU
+    # ("eval_as_company", "us"),
+    # ("eval_as_company", "eu"),
+    # ("dynamic_evaluator", "us"),
+    # ("dynamic_evaluator", "eu"),
+    # Orientation under US and EU
+    # ("bm_orientation_adjustable", "us"),
+    # ("bm_orientation_adjustable", "eu"),
+    # Market structure under US and EU
+    # ("no_product_channels", "us"),
+    # ("no_product_channels", "eu"),
+    # ("homogeneous_consumers", "us"),
+    # ("homogeneous_consumers", "eu"),
+    # Initial conditions under US and EU
+    # ("initial_leader", "us"),
+    # ("initial_leader", "eu"),
+    # ("initial_uniform", "us"),
+    # ("initial_uniform", "eu"),
+    # Aligned benchmarks under US and EU
+    # ("aligned_benchmarks", "us"),
+    # ("aligned_benchmarks", "eu"),
+    # Fixed market / no_opensource under US and EU
+    # ("fixed_market_size", "us"),
+    # ("fixed_market_size", "eu"),
+    # ("no_opensource", "us"),
+    # ("no_opensource", "eu"),
+    # ("bm_orientation_max", "us"),
+    # ("bm_orientation_max", "eu"),
+    # ("initial_duopoly", "us"),
+    # ("initial_duopoly", "eu"),
 ]
 
-# Phase 1: single seed. Phase 2: range(1, 31). Phase 5: range(1, 31)
 SEEDS = [1]
 
-# "llm" for LLM-driven runs, "heuristic" for Phase 5
 MODE = "llm"
 
-# LLM provider: "anthropic", "openai", "ollama", "gemini"
-# For Qwen via vLLM: set PROVIDER="openai" and configure env vars
-# (OPENAI_BASE_URL=http://localhost:8000/v1, OPENAI_API_KEY=dummy)
-PROVIDER = "anthropic"
+PROVIDER = "claudecode"
 
 ROUNDS = 40
 
-# Set True for local dev/test runs (output -> sandbox/experiments/)
 DEV = True
 
 # ============================================================
@@ -108,6 +159,7 @@ def expected_output_dir(condition, preset, seed, mode, provider, dev):
     else:
         model_slug = {
             "anthropic": "claude-sonnet-4-6",
+            "claudecode": "claude-code",
             "openai": "qwen-235b",
             "gemini": "gemini-flash",
             "ollama": "ollama",
@@ -205,8 +257,7 @@ def main():
     # Auto-generate batch label if not provided (dev mode only)
     batch = args.batch
     if DEV and not batch:
-        from datetime import datetime
-        batch = f"batch_{MODE}_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+        batch = "apr8_sonnet46_complete_40r"
 
     run_jobs(jobs, MODE, PROVIDER, ROUNDS, DEV,
              dry_run=args.dry_run, skip_existing=args.skip_existing, batch=batch)

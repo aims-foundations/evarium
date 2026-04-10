@@ -126,7 +126,7 @@ USE_CASE_PROFILES = {
         "benchmark_prefs": {"safety": 0.65, "reasoning": 0.25, "writing": 0.10},
         "consumer_type": "organization",
         "compliance_requirements": ["HIPAA", "patient_safety"],
-        "integration_friction": 0.175,
+        "integration_friction": 0.0,
         "decision_delay": 6,
         "need_weights": {"reasoning": 0.12, "coding": 0.02, "knowledge": 0.25,
                          "safety": 0.48, "communication": 0.10, "agentic": 0.03},
@@ -136,7 +136,7 @@ USE_CASE_PROFILES = {
         "benchmark_prefs": {"reasoning": 0.60, "safety": 0.30, "coding": 0.10},
         "consumer_type": "organization",
         "compliance_requirements": ["SOX", "financial_reporting"],
-        "integration_friction": 0.20,
+        "integration_friction": 0.0,
         "decision_delay": 4,
         "need_weights": {"reasoning": 0.32, "coding": 0.08, "knowledge": 0.18,
                          "safety": 0.30, "communication": 0.05, "agentic": 0.07},
@@ -146,7 +146,7 @@ USE_CASE_PROFILES = {
         "benchmark_prefs": {"coding": 0.70, "reasoning": 0.25, "writing": 0.05},
         "consumer_type": "organization",
         "compliance_requirements": [],
-        "integration_friction": 0.075,
+        "integration_friction": 0.0,
         "decision_delay": 2,
         "need_weights": {"reasoning": 0.18, "coding": 0.38, "knowledge": 0.05,
                          "safety": 0.04, "communication": 0.05, "agentic": 0.30},
@@ -156,7 +156,7 @@ USE_CASE_PROFILES = {
         "benchmark_prefs": {"reasoning": 0.65, "writing": 0.25, "safety": 0.10},
         "consumer_type": "organization",
         "compliance_requirements": ["client_confidentiality", "data_protection"],
-        "integration_friction": 0.15,
+        "integration_friction": 0.0,
         "decision_delay": 5,
         "need_weights": {"reasoning": 0.28, "coding": 0.02, "knowledge": 0.35,
                          "safety": 0.22, "communication": 0.11, "agentic": 0.02},
@@ -166,7 +166,7 @@ USE_CASE_PROFILES = {
         "benchmark_prefs": {"safety": 0.50, "reasoning": 0.30, "writing": 0.20},
         "consumer_type": "organization",
         "compliance_requirements": ["security_clearance", "data_sovereignty"],
-        "integration_friction": 0.225,
+        "integration_friction": 0.0,
         "decision_delay": 8,
         "need_weights": {"reasoning": 0.12, "coding": 0.02, "knowledge": 0.22,
                          "safety": 0.48, "communication": 0.12, "agentic": 0.04},
@@ -213,19 +213,19 @@ ARCHETYPES = {
     "enterprise_cautious": {
         "leaderboard_trust": 0.25,  # Very experience-driven
         "switching_cost": 0.35,
-        "switching_threshold": 0.35,
+        "switching_threshold": 0.20,  # Above individual range (0.06-0.15)
         "cost_sensitivity": 0.10,  # Enterprises care less about per-token cost
     },
     "enterprise_growth": {
         "leaderboard_trust": 0.45,
         "switching_cost": 0.25,
-        "switching_threshold": 0.22,
+        "switching_threshold": 0.15,  # Growth-oriented but still stickier than individuals
         "cost_sensitivity": 0.15,  # Some cost awareness
     },
     "enterprise_established": {
         "leaderboard_trust": 0.35,
         "switching_cost": 0.40,
-        "switching_threshold": 0.28,
+        "switching_threshold": 0.18,  # Moderate inertia
         "cost_sensitivity": 0.08,  # Inertia dominates
     },
 }
@@ -270,8 +270,9 @@ class MarketSegment:
     compliance_weight: float = 1.0  # Multiplier for safety satisfaction (higher for orgs)
 
     # Decision tracking
-    rounds_since_decision: int = 0  # Track decision delay
+    rounds_since_decision: int = 0  # Track decision delay (legacy, unused in heuristic)
     last_llm_decision: Optional[dict] = None  # Store LLM reasoning trace
+    prior_decisions: list = field(default_factory=list)  # Cross-round memory for LLM mode
 
     # Dynamic state
     provider_shares: dict = field(default_factory=dict)    # {provider: proportion}
@@ -299,6 +300,7 @@ class MarketSegment:
             "compliance_weight": self.compliance_weight,
             "rounds_since_decision": self.rounds_since_decision,
             "last_llm_decision": self.last_llm_decision,
+            "prior_decisions": self.prior_decisions,
             "provider_shares": self.provider_shares,
             "believed_quality": self.believed_quality,
             "running_perceived_quality": self.running_perceived_quality,
@@ -630,7 +632,7 @@ class ConsumerMarket:
                 market_share = gt.market_share
                 if incident_history and provider_name in incident_history and round_num is not None:
                     provider_incidents = incident_history[provider_name]
-                    severity_weights = {"minor": 0.02, "moderate": 0.08, "major": 0.15, "critical": 0.30}
+                    severity_weights = {"minor": 0.01, "moderate": 0.05, "major": 0.10, "critical": 0.20}
                     incident_decay_rate = 0.70  # ~2.3-round half-life
                     raw_penalty = 0.0
                     for inc in provider_incidents:
@@ -711,13 +713,10 @@ class ConsumerMarket:
         segment_switching_rates = {}
 
         for seg in self.segments:
-            # Organizations decide less frequently
-            if seg.consumer_type == "organization":
-                seg.rounds_since_decision += 1
-                if seg.rounds_since_decision < seg.decision_delay:
-                    segment_switching_rates[seg.name] = 0.0
-                    continue  # Skip this round, not time to decide yet
-                seg.rounds_since_decision = 0  # Reset counter
+            # Decay switch cooldown each round (replaces decision_delay)
+            if not hasattr(seg, '_switch_cooldown'):
+                seg._switch_cooldown = 0.0
+            seg._switch_cooldown *= 0.5  # ~2-round half-life
 
             # Branch on reasoning mode
             if seg.llm_mode:
@@ -757,9 +756,6 @@ class ConsumerMarket:
                 if share < 0.001:  # skip negligible shares
                     continue
 
-                # Base switching cost + organizational integration friction
-                base_switching_cost = seg.switching_cost + seg.integration_friction
-
                 # Product investment retention bonus: higher product budget -> stickier users
                 retention_bonus = 0.0
                 if enable_product_retention and provider_product_budgets and provider in provider_product_budgets:
@@ -767,19 +763,22 @@ class ConsumerMarket:
                     retention_bonus = _product_retention_bonus(
                         pb["product_budget"], pb.get("is_open_source", False))
 
-                effective_switching_cost = base_switching_cost * (1.0 + retention_bonus)
+                # Switching cost dampens the fraction that follows through (0 = frictionless, 1 = locked in)
+                cost_damper = 1.0 - min(0.9, seg.switching_cost * (1.0 + retention_bonus))
 
-                tenure_bonus = min(0.1, seg.tenure.get(provider, 0) * 0.02)
                 should_switch_prob = 0.0
                 best_alternative = None
                 best_alt_score = -1.0
+
+                # Post-switch cooldown raises threshold temporarily
+                cooldown = getattr(seg, '_switch_cooldown', 0.0)
 
                 # --- Trigger 1: Dissatisfaction ---
                 believed = seg.believed_quality.get(provider, 0.5)
                 actual_sat = seg.satisfaction.get(provider, 0.5)
                 gap = believed - actual_sat
 
-                threshold = seg.switching_threshold + tenure_bonus + effective_switching_cost
+                threshold = seg.switching_threshold + cooldown
                 if gap > 0:
                     # Sigmoid-based probability: smooth transition
                     should_switch_prob = max(
@@ -789,7 +788,7 @@ class ConsumerMarket:
 
                 # --- Trigger 2: Better alternative ---
                 current_blended = self._blended_score(seg, provider)
-                opportunity_threshold = effective_switching_cost + tenure_bonus
+                opportunity_threshold = seg.switching_threshold * 0.5 + cooldown
 
                 for alt_provider in self.provider_names:
                     if alt_provider == provider:
@@ -806,9 +805,9 @@ class ConsumerMarket:
                             best_alt_score = alt_blended
                             best_alternative = alt_provider
 
-                # Apply switching
+                # Apply switching: cost_damper reduces fraction that follows through
                 if should_switch_prob > 0.01 and best_alternative:
-                    switching_fraction = should_switch_prob * share
+                    switching_fraction = should_switch_prob * share * cost_damper
                     switching_fraction = min(switching_fraction, share)  # can't exceed current share
 
                     seg.provider_shares[provider] -= switching_fraction
@@ -817,8 +816,8 @@ class ConsumerMarket:
                     )
                     seg_switching += switching_fraction
 
-                    # Reset tenure for switchers
-                    seg.tenure[provider] = max(0, seg.tenure.get(provider, 0) - 1)
+                    # Spike cooldown after a switch
+                    seg._switch_cooldown = 0.20
 
         # Exploration churn: per-provider, media-driven.
         # Base rate models free-tier trials, word-of-mouth, new product launches.
@@ -915,369 +914,327 @@ class ConsumerMarket:
                                per_benchmark_scores: Optional[dict] = None,
                                provider_cost_advantage: Optional[dict] = None,
                                deployer_liability_guidance: Optional[set] = None) -> float:
-        """Compute LLM-based switching decisions for a segment.
-
-        Args:
-            seg: Market segment
-            provider_strategies: Provider portfolio fractions {rd, safety, product} only
-            published_scores: Published scores
-            media_coverage: Media coverage
-            regulator_data: Regulator data
-
-        Returns:
-            Switching rate for this segment
-        """
-        from llm import call_llm
-        import json as json_module
+        """LLM-based switching: single call per segment, vendor review brief format."""
+        from llm import get_provider as get_llm_provider
 
         seg_switching = 0.0
+        cooldown = getattr(seg, '_switch_cooldown', 0.0)
 
-        for provider in list(seg.provider_shares.keys()):
-            share = seg.provider_shares.get(provider, 0.0)
-            if share < 0.001:  # skip negligible shares
-                continue
+        # Skip LLM call if recent switch cooldown is active
+        if cooldown > 0.15:
+            return 0.0
 
-            # Build decision context
-            context = self._build_decision_context(
-                seg, provider, provider_strategies,
-                published_scores, media_coverage, regulator_data,
-                incident_history, per_benchmark_scores, provider_cost_advantage,
-                deployer_liability_guidance
-            )
+        # Find primary vendor (largest share)
+        current_provider = max(seg.provider_shares, key=seg.provider_shares.get)
+        current_share = seg.provider_shares.get(current_provider, 0.0)
+        if current_share < 0.05:
+            return 0.0
 
-            # Build prompt based on consumer type
-            if seg.consumer_type == "organization":
-                prompt = self._build_organizational_prompt(seg, provider, context)
-            else:
-                prompt = self._build_individual_prompt(seg, provider, context)
+        # Build the vendor review brief
+        if seg.consumer_type == "organization":
+            prompt = self._build_vendor_review_brief(
+                seg, current_provider, published_scores, media_coverage,
+                regulator_data, incident_history, per_benchmark_scores,
+                provider_cost_advantage, deployer_liability_guidance)
+        else:
+            prompt = self._build_individual_prompt_v2(
+                seg, current_provider, published_scores, media_coverage,
+                per_benchmark_scores, provider_cost_advantage)
 
-            # Call LLM
-            try:
-                response = call_llm(prompt, temperature=0.7, max_tokens=500)
+        # Single LLM call
+        fail_safe = {"action": "renew", "target_provider": None,
+                     "share_to_move": 0.0, "reasoning": "LLM parse failure - defaulting to renew"}
+        try:
+            llm = get_llm_provider()
+            decision = llm.generate_json(prompt, retries=2, fail_safe=fail_safe)
+        except Exception as e:
+            print(f"[ConsumerMarket] LLM failed for {seg.name}: {e}")
+            decision = fail_safe
 
-                # Parse JSON response
-                decision = json_module.loads(response)
-                should_switch = decision.get("should_switch", False)
-                target_provider = decision.get("target_provider")
-                confidence = decision.get("confidence", 0.5)
-                reasoning = decision.get("reasoning", "")
+        action = decision.get("action", "renew")
+        target = decision.get("target_provider")
+        share_to_move = float(decision.get("share_to_move", 0.0))
+        reasoning = decision.get("reasoning", "")
 
-                # Store decision trace
-                seg.last_llm_decision = {
-                    "provider": provider,
-                    "decision": decision,
-                    "round": self.current_round,
-                }
+        # Validate target
+        if action in ("switch", "pilot") and (not target or target not in self.provider_names or target == current_provider):
+            action = "renew"
 
-                # Apply switching based on LLM decision
-                if should_switch and target_provider and target_provider in self.provider_names:
-                    switching_fraction = confidence * share
-                    switching_fraction = min(switching_fraction, share)
+        # Apply decision
+        if action == "pilot":
+            share_to_move = max(0.10, min(0.25, share_to_move))
+            actual_move = share_to_move * current_share
+            seg.provider_shares[current_provider] -= actual_move
+            seg.provider_shares[target] = seg.provider_shares.get(target, 0.0) + actual_move
+            seg_switching = actual_move
+            seg._switch_cooldown = 0.15
+        elif action == "switch":
+            share_to_move = max(0.30, min(1.0, share_to_move))
+            actual_move = share_to_move * current_share
+            seg.provider_shares[current_provider] -= actual_move
+            seg.provider_shares[target] = seg.provider_shares.get(target, 0.0) + actual_move
+            seg_switching = actual_move
+            seg._switch_cooldown = 0.25
 
-                    seg.provider_shares[provider] -= switching_fraction
-                    seg.provider_shares[target_provider] = (
-                        seg.provider_shares.get(target_provider, 0.0) + switching_fraction
-                    )
-                    seg_switching += switching_fraction
+        # Store decision in cross-round memory
+        seg.last_llm_decision = {
+            "round": self.current_round,
+            "action": action,
+            "current_provider": current_provider,
+            "target_provider": target,
+            "share_to_move": share_to_move if action != "renew" else 0.0,
+            "reasoning": reasoning,
+        }
+        seg.prior_decisions.append({
+            "round": self.current_round,
+            "action": action,
+            "target_provider": target,
+            "reasoning": reasoning[:150],
+        })
+        seg.prior_decisions = seg.prior_decisions[-4:]
 
-                    # Reset tenure for switchers
-                    seg.tenure[provider] = max(0, seg.tenure.get(provider, 0) - 1)
-
-            except Exception as e:
-                # Fallback to heuristic if LLM fails
-                print(f"[ConsumerMarket] LLM decision failed for {seg.name}/{provider}: {e}")
-                # Use heuristic logic as fallback
-                pass
-
-        # Update tenure for remaining subscribers
+        # Update tenure
         for provider in self.provider_names:
             if seg.provider_shares.get(provider, 0) > 0.01:
                 seg.tenure[provider] = seg.tenure.get(provider, 0) + 1
 
-        # Normalize shares to prevent drift
+        # Normalize shares
         total_share = sum(seg.provider_shares.values())
         if total_share > 0:
-            seg.provider_shares = {
-                k: v / total_share for k, v in seg.provider_shares.items()
-            }
+            seg.provider_shares = {k: v / total_share for k, v in seg.provider_shares.items()}
 
         return seg_switching
 
-    def _build_decision_context(self, seg: MarketSegment, provider: str,
-                                provider_strategies: Optional[dict],
-                                published_scores: Optional[dict],
-                                media_coverage: Optional[dict],
-                                regulator_data: Optional[dict],
-                                incident_history: Optional[dict] = None,
-                                per_benchmark_scores: Optional[dict] = None,
-                                provider_cost_advantage: Optional[dict] = None,
-                                deployer_liability_guidance: Optional[set] = None) -> dict:
-        """Build context dictionary for LLM decision-making."""
-        context = {
-            "satisfaction": seg.satisfaction.get(provider, 0.5),
-            "believed_quality": seg.believed_quality.get(provider, 0.5),
-            "tenure": seg.tenure.get(provider, 0),
-            "alternatives": [],
-            "cost_advantage": provider_cost_advantage or {},
-            "deployer_liability_guidance": deployer_liability_guidance or set(),
-        }
+    # ------------------------------------------------------------------
+    #  Translation helpers (simulation state -> natural language)
+    # ------------------------------------------------------------------
 
-        # Provider safety investment fraction (portfolio "safety" key only — GT safety_capability is invisible)
-        if provider_strategies:
-            context["provider_safety"] = {
-                p: strat.get("safety", 0.0)
-                for p, strat in provider_strategies.items()
-            }
+    @staticmethod
+    def _satisfaction_label(sat: float) -> str:
+        if sat > 0.75: return "Excellent"
+        if sat > 0.55: return "Good"
+        if sat > 0.40: return "Mixed"
+        return "Poor"
 
-        # Per-benchmark scores for this provider and alternatives
-        if per_benchmark_scores:
-            context["per_benchmark_scores"] = per_benchmark_scores
+    @staticmethod
+    def _cost_tier(cost_advantage: float) -> str:
+        if cost_advantage > 0.65: return "Budget-friendly"
+        if cost_advantage > 0.25: return "Mid-range pricing"
+        return "Premium pricing"
 
-        # Build alternatives list (include safety, benchmark scores, and cost_advantage)
+    @staticmethod
+    def _benchmark_rank_label(rank: int, total: int) -> str:
+        if rank == 1: return f"Leader (1st of {total})"
+        if rank <= total // 2: return f"Above average ({rank}/{total})"
+        return f"Below average ({rank}/{total})"
+
+    # ------------------------------------------------------------------
+    #  Vendor review brief (organizational LLM prompt)
+    # ------------------------------------------------------------------
+
+    def _build_vendor_review_brief(self, seg: MarketSegment, current_provider: str,
+                                    published_scores: Optional[dict],
+                                    media_coverage: Optional[dict],
+                                    regulator_data: Optional[dict],
+                                    incident_history: Optional[dict],
+                                    per_benchmark_scores: Optional[dict],
+                                    provider_cost_advantage: Optional[dict],
+                                    deployer_liability_guidance: Optional[set]) -> str:
+        """Build PIMMUR-compliant vendor review brief for organizational consumers."""
+        use_case_label = USE_CASE_PROFILES.get(seg.use_case, {}).get("label", seg.use_case)
+        compliance_text = ", ".join(seg.compliance_requirements) if seg.compliance_requirements else "None specific"
         cost_adv = provider_cost_advantage or {}
-        for alt_provider in self.provider_names:
-            if alt_provider == provider:
-                continue
-            alt_data = {
-                "name": alt_provider,
-                "believed_quality": seg.believed_quality.get(alt_provider, 0.5),
-                "satisfaction": seg.satisfaction.get(alt_provider, 0.0),
-                "score": published_scores.get(alt_provider, 0.5) if published_scores else 0.5,
-                "safety": provider_strategies.get(alt_provider, {}).get("safety", 0.0) if provider_strategies else 0.0,
-                "cost_advantage": cost_adv.get(alt_provider, 0.0),
-            }
-            context["alternatives"].append(alt_data)
-        # Also store current provider's cost_advantage in context
-        context["current_cost_advantage"] = cost_adv.get(provider, 0.0)
+        liability = deployer_liability_guidance or set()
 
-        # Sort alternatives by believed quality
-        context["alternatives"].sort(key=lambda x: x["believed_quality"], reverse=True)
+        # Prior decisions (cross-round memory)
+        prior_text = ""
+        if seg.prior_decisions:
+            prior_lines = []
+            for pd in seg.prior_decisions[-2:]:
+                action_desc = {"renew": "Renewed contract", "switch": "Switched vendor",
+                               "pilot": "Launched pilot"}.get(pd["action"], pd["action"])
+                target_note = f" with {pd['target_provider']}" if pd.get("target_provider") else ""
+                prior_lines.append(f"[Month {pd['round']}]: {action_desc}{target_note}. {pd['reasoning']}")
+            prior_text = "Prior Reviews:\n" + "\n".join(prior_lines) + "\n"
 
-        # Add media context
-        if media_coverage:
-            context["media_sentiment"] = media_coverage.get("sentiment", 0.0)
-            context["media_headlines"] = media_coverage.get("headlines", [])
-            context["provider_attention"] = media_coverage.get("provider_attention", {}).get(provider, 0.0)
-            context["risk_signals"] = media_coverage.get("risk_signals", [])
+        # Current vendor summary
+        cur_sat = self._satisfaction_label(seg.satisfaction.get(current_provider, 0.5))
+        cur_cost = self._cost_tier(cost_adv.get(current_provider, 0.0))
+        cur_tenure = seg.tenure.get(current_provider, 0)
 
-        # Add regulatory context
-        if regulator_data:
-            context["regulatory_pressure"] = len(regulator_data.get("interventions", []))
-            context["regulatory_interventions"] = [
-                iv.get("type", "unknown") for iv in regulator_data.get("interventions", [])
-            ]
-
-        # Add incident history for current provider and alternatives
+        # Incident record for current vendor
+        incident_text = "No reported incidents."
         if incident_history:
-            # Recent incidents (last 10 rounds) for current provider
-            provider_incs = incident_history.get(provider, [])
-            context["provider_incidents"] = [
-                {
-                    "severity": inc.severity,
-                    "category": inc.category,
-                    "description": inc.description,
-                    "round": inc.round_num,
-                }
-                for inc in provider_incs[-5:]  # Last 5 incidents
-            ]
-            # Incident counts per provider (summary for alternatives)
-            context["incident_counts"] = {
-                p: len(incs) for p, incs in incident_history.items()
-            }
-            # Severity breakdown for current provider
-            sev_counts = {"minor": 0, "moderate": 0, "major": 0, "critical": 0}
-            for inc in provider_incs:
-                sev_counts[inc.severity] = sev_counts.get(inc.severity, 0) + 1
-            context["provider_incident_severity"] = sev_counts
+            cur_incs = incident_history.get(current_provider, [])
+            if cur_incs:
+                recent = cur_incs[-5:]
+                inc_lines = [f"- [{inc.severity.upper()}] Month {inc.round_num}: {inc.description}"
+                             for inc in recent]
+                incident_text = "\n".join(inc_lines)
 
-        return context
+        # Benchmark comparison table
+        bm_table = ""
+        if per_benchmark_scores:
+            bm_names = list(per_benchmark_scores.keys())[:5]
+            providers_with_scores = self.provider_names
+            n_provs = len(providers_with_scores)
 
-    def _build_individual_prompt(self, seg: MarketSegment, provider: str, context: dict) -> str:
-        """Build LLM prompt for individual consumer decision."""
-        use_case_label = USE_CASE_PROFILES.get(seg.use_case, {}).get("label", seg.use_case)
+            header = "| Vendor |"
+            sep = "|--------|"
+            for bm in bm_names:
+                short_bm = bm[:20]
+                header += f" {short_bm} |"
+                sep += "------|"
 
-        current_cost = context.get("current_cost_advantage", 0.0)
-        cost_adv = context.get("cost_advantage", {})
-        include_cost = seg.cost_sensitivity >= 0.10  # Only surface cost for price-sensitive individuals
+            rows = []
+            for prov in providers_with_scores:
+                marker = " (current)" if prov == current_provider else ""
+                row = f"| {prov}{marker} |"
+                for bm in bm_names:
+                    scores = per_benchmark_scores.get(bm, {})
+                    score = scores.get(prov)
+                    if score is not None:
+                        ranked = sorted(scores.values(), reverse=True)
+                        rank = ranked.index(score) + 1
+                        row += f" {self._benchmark_rank_label(rank, n_provs)} |"
+                    else:
+                        row += " N/A |"
+                rows.append(row)
 
-        alternatives_text = "\n".join([
-            f"  - {alt['name']}: quality {alt['believed_quality']:.2f}, score {alt['score']:.2f}"
-            + (f", cost_advantage {alt.get('cost_advantage', 0.0):.2f}" if include_cost else "")
-            for alt in context["alternatives"][:3]
-        ])
+            bm_table = f"{header}\n{sep}\n" + "\n".join(rows)
 
-        media_text = ""
-        if "media_headlines" in context and context["media_headlines"]:
-            headlines = context["media_headlines"][:3]
-            media_text = f"\n**Recent News:**\n" + "\n".join([f"  - {h}" for h in headlines])
-
-        cost_text = ""
-        if include_cost:
-            cost_text = f"\n- Price sensitivity: {seg.cost_sensitivity:.2f} (higher = more budget-conscious)\n- Current provider cost_advantage: {current_cost:.2f} (0=expensive, 1=cheapest)"
-
-        prompt = f"""You are a {use_case_label} who uses AI models for your work.
-
-**Current Situation:**
-- Provider: {provider}
-- Your satisfaction: {context['satisfaction']:.2f}/1.0
-- Your believed quality: {context['believed_quality']:.2f}/1.0
-- Tenure: {context['tenure']} rounds
-
-**Alternatives:**
-{alternatives_text}
-
-**Your Decision Style:**
-- Leaderboard trust: {seg.leaderboard_trust:.0%}
-- Switching cost: {seg.switching_cost}{cost_text}
-{media_text}
-
-Should you switch providers? Consider:
-1. Is your current satisfaction meeting your needs?
-2. Are there significantly better alternatives?
-3. Is the improvement worth the switching cost?{"" if not include_cost else chr(10) + "4. Does a cheaper alternative offer sufficient quality for your budget?"}
-
-Output ONLY valid JSON with this structure:
-{{"should_switch": true/false, "target_provider": "name" or null, "confidence": 0.0-1.0, "reasoning": "brief explanation"}}"""
-
-        return prompt
-
-    def _build_organizational_prompt(self, seg: MarketSegment, provider: str, context: dict) -> str:
-        """Build LLM prompt for organizational consumer decision."""
-        use_case_label = USE_CASE_PROFILES.get(seg.use_case, {}).get("label", seg.use_case)
-
-        compliance_text = ", ".join(seg.compliance_requirements) if seg.compliance_requirements else "None"
-
-        # Current provider safety vs alternatives
-        provider_safety = context.get("provider_safety", {})
-        current_safety = provider_safety.get(provider, 0.0)
-        current_cost = context.get("current_cost_advantage", 0.0)
-        alt_safety_lines = []
-        for alt in context["alternatives"][:4]:
-            alt_name = alt["name"]
-            alt_saf = provider_safety.get(alt_name, alt.get("safety", 0.0))
-            alt_cost = alt.get("cost_advantage", 0.0)
-            inc_count = context.get("incident_counts", {}).get(alt_name, 0)
-            liability_flag = " [DEPLOYER LIABILITY ACTIVE]" if alt.get("deployer_liability") else ""
-            alt_safety_lines.append(
-                f"  - {alt_name}: quality {alt['believed_quality']:.2f}, "
-                f"score {alt['score']:.2f}, safety {alt_saf:.2f}, "
-                f"cost_advantage {alt_cost:.2f}, incidents {inc_count}{liability_flag}"
-            )
-        alternatives_text = "\n".join(alt_safety_lines) if alt_safety_lines else "  (none)"
-
-        # Per-benchmark scores for org-relevant benchmarks
-        per_bm = context.get("per_benchmark_scores", {})
-        benchmark_lines = []
-        if per_bm:
-            for bm_name, scores in per_bm.items():
-                cur_score = scores.get(provider, None)
-                if cur_score is not None:
-                    top_alt = max(
-                        ((p, s) for p, s in scores.items() if p != provider),
-                        key=lambda x: x[1], default=(None, None)
-                    )
-                    leader_note = f" (leader: {top_alt[0]} {top_alt[1]:.2f})" if top_alt[0] else ""
-                    benchmark_lines.append(f"  - {bm_name}: {cur_score:.3f}{leader_note}")
-        benchmark_text = "\n".join(benchmark_lines) if benchmark_lines else "  (not available)"
-
-        # Incident history for current provider
-        incident_lines = []
-        provider_incidents = context.get("provider_incidents", [])
-        if provider_incidents:
-            sev_counts = context.get("provider_incident_severity", {})
-            incident_lines.append(
-                f"  Current vendor safety record: "
-                f"minor={sev_counts.get('minor',0)}, "
-                f"moderate={sev_counts.get('moderate',0)}, "
-                f"major={sev_counts.get('major',0)}, "
-                f"critical={sev_counts.get('critical',0)}"
-            )
-            for inc in provider_incidents[-3:]:  # Last 3 incidents
-                incident_lines.append(
-                    f"  - [{inc['severity'].upper()}] Round {inc['round']}: {inc['description']}"
-                )
-        else:
-            incident_lines.append(f"  {provider}: no reported incidents")
-        incident_text = "\n".join(incident_lines)
+        # Alternative vendors
+        alt_lines = []
+        for prov in self.provider_names:
+            if prov == current_provider:
+                continue
+            alt_sat = self._satisfaction_label(seg.satisfaction.get(prov, 0.3))
+            alt_cost = self._cost_tier(cost_adv.get(prov, 0.0))
+            inc_count = len(incident_history.get(prov, [])) if incident_history else 0
+            inc_note = f"{inc_count} incidents on record" if inc_count > 0 else "Clean safety record"
+            liability_note = " [Note: Open-source model - your organization bears deployment liability]" if prov in liability else ""
+            alt_lines.append(f"- {prov}: Performance {alt_sat}, {alt_cost}, {inc_note}{liability_note}")
+        alternatives_text = "\n".join(alt_lines) if alt_lines else "(none)"
 
         # Media intelligence
         media_text = ""
-        if "media_headlines" in context and context["media_headlines"]:
-            headlines = context["media_headlines"][:3]
-            media_text = "\n**Market Intelligence (Media):**\n" + "\n".join([f"  - {h}" for h in headlines])
-            if "media_sentiment" in context:
-                sentiment_label = "positive" if context["media_sentiment"] > 0.1 else \
-                                  "negative" if context["media_sentiment"] < -0.1 else "neutral"
-                media_text += f"\n  Sector sentiment: {context['media_sentiment']:.2f} ({sentiment_label})"
-            risk_signals = context.get("risk_signals", [])
+        if media_coverage:
+            headlines = media_coverage.get("headlines", [])[:4]
+            if headlines:
+                media_text = "Market Intelligence:\n" + "\n".join(f"- {h}" for h in headlines)
+            risk_signals = media_coverage.get("risk_signals", [])
             if risk_signals:
-                media_text += f"\n  Risk signals: {', '.join(risk_signals[:5])}"
+                media_text += "\nRisk signals: " + ", ".join(risk_signals[:3])
 
         # Regulatory context
-        regulatory_text = ""
-        if "regulatory_pressure" in context and context["regulatory_pressure"] > 0:
-            interventions = context.get("regulatory_interventions", [])
-            regulatory_text = (
-                f"\n**Regulatory Environment:**\n"
-                f"  Active interventions: {context['regulatory_pressure']}\n"
-                f"  Types: {', '.join(set(interventions)) if interventions else 'general oversight'}"
-            )
+        reg_text = ""
+        if regulator_data:
+            interventions = regulator_data.get("interventions", [])
+            if interventions:
+                types = set(iv.get("type", "oversight") for iv in interventions)
+                reg_text = f"Regulatory environment: {len(interventions)} active intervention(s) ({', '.join(types)})"
 
-        # Deployer liability warning for open-source providers
-        liability_guidance = context.get("deployer_liability_guidance", set())
+        # Liability warning for current vendor
         liability_text = ""
-        if provider in liability_guidance:
-            liability_text = (
-                f"\n**Deployer Liability Notice:**\n"
-                f"  Regulators have issued guidance that organizations deploying {provider} "
-                f"(open-source) bear liability for safety incidents and compliance failures, "
-                f"with no recourse against the model provider."
-            )
-        # Flag alternatives that are under liability guidance
-        for alt in context.get("alternatives", []):
-            if alt["name"] in liability_guidance:
-                alt["deployer_liability"] = True
+        if current_provider in liability:
+            liability_text = (f"Deployer Liability Notice: Regulators have issued guidance that "
+                              f"organizations deploying {current_provider} (open-source) bear "
+                              f"liability for safety incidents with no recourse against the model provider.")
 
-        # Cost sensitivity label for the prompt
+        # Cost sensitivity framing
         cost_sens = seg.cost_sensitivity
         if cost_sens >= 0.20:
-            cost_label = "HIGH — budget pressure is a primary constraint; cost savings can justify capability tradeoffs"
+            budget_note = "Budget pressure is a primary constraint for this organization."
         elif cost_sens >= 0.10:
-            cost_label = "MODERATE — cost matters but capability and safety take precedence"
+            budget_note = "Cost matters but capability and safety take precedence."
         else:
-            cost_label = "LOW — performance and reliability dominate; pricing is secondary"
+            budget_note = ""
 
-        prompt = f"""You are the decision-making committee for a {use_case_label} organization evaluating AI vendor relationships.
+        prompt = f"""Quarterly AI Vendor Review - {use_case_label}
 
-**Current Vendor: {provider}**
-- Organizational satisfaction: {context['satisfaction']:.2f}/1.0
-- Believed quality: {context['believed_quality']:.2f}/1.0
-- Safety investment: {current_safety:.2f}/1.0
-- Cost advantage: {current_cost:.2f}/1.0 (0=most expensive, 1=cheapest)
-- Contract tenure: {context['tenure']} quarters
+{prior_text}Current Vendor: {current_provider}
+- Relationship tenure: {cur_tenure} months
+- Overall experience: {cur_sat}
+- Pricing: {cur_cost}
 
-**Alternative Vendors (quality / score / safety / cost_advantage / incidents):**
-{alternatives_text}
-
-**Benchmark Performance (current vendor vs. market leader):**
-{benchmark_text}
-
-**Safety & Incident Record:**
+Safety and Incident Record:
 {incident_text}
 
-**Organizational Constraints:**
-- Compliance requirements: {compliance_text}
-- Integration friction: {seg.integration_friction:.0%} (migration cost)
-- Decision cadence: Review every {seg.decision_delay} quarters
-- Cost sensitivity: {cost_label}
+Published Benchmark Performance:
+{bm_table if bm_table else "(Benchmark data not available)"}
+
+Alternative Vendors:
+{alternatives_text}
+
+Compliance Requirements: {compliance_text}
+{budget_note}
 {media_text}
-{regulatory_text}
+{reg_text}
 {liability_text}
 
-Given the information above, should this organization renew or switch vendors?
+Your organization ({use_case_label}) is conducting its quarterly AI vendor review. Based on the information above, what is the committee's recommendation?
 
-Output ONLY valid JSON with this structure:
-{{"should_switch": true/false, "target_provider": "name" or null, "confidence": 0.0-1.0, "reasoning": "committee decision rationale"}}"""
+Respond with ONLY valid JSON:
+{{"action": "renew" | "switch" | "pilot", "target_provider": "vendor name or null", "share_to_move": 0.0 to 1.0, "reasoning": "committee rationale (1-2 sentences)"}}
+
+Guidelines:
+- "renew": Continue with current vendor for all deployments
+- "pilot": Trial an alternative for a portion of deployments (share_to_move typically 0.10-0.25)
+- "switch": Full migration to a new vendor (share_to_move typically 0.50-1.0)
+- Consider piloting when an alternative looks promising but migration risk is significant"""
+
+        return prompt
+
+    # ------------------------------------------------------------------
+    #  Individual consumer LLM prompt (simplified, PIMMUR-compliant)
+    # ------------------------------------------------------------------
+
+    def _build_individual_prompt_v2(self, seg: MarketSegment, current_provider: str,
+                                    published_scores: Optional[dict],
+                                    media_coverage: Optional[dict],
+                                    per_benchmark_scores: Optional[dict],
+                                    provider_cost_advantage: Optional[dict]) -> str:
+        """Build PIMMUR-compliant prompt for individual consumer decisions."""
+        use_case_label = USE_CASE_PROFILES.get(seg.use_case, {}).get("label", seg.use_case)
+        cost_adv = provider_cost_advantage or {}
+
+        cur_sat = self._satisfaction_label(seg.satisfaction.get(current_provider, 0.5))
+        cur_cost = self._cost_tier(cost_adv.get(current_provider, 0.0))
+
+        # Top 3 alternatives by believed quality
+        alts = []
+        for prov in self.provider_names:
+            if prov == current_provider:
+                continue
+            alts.append((prov, seg.believed_quality.get(prov, 0.3)))
+        alts.sort(key=lambda x: -x[1])
+
+        alt_lines = []
+        for prov, _ in alts[:3]:
+            alt_sat = self._satisfaction_label(seg.satisfaction.get(prov, 0.3))
+            alt_cost = self._cost_tier(cost_adv.get(prov, 0.0))
+            alt_lines.append(f"- {prov}: {alt_sat} experience, {alt_cost}")
+        alternatives_text = "\n".join(alt_lines)
+
+        media_text = ""
+        if media_coverage:
+            headlines = media_coverage.get("headlines", [])[:3]
+            if headlines:
+                media_text = "Recent news:\n" + "\n".join(f"- {h}" for h in headlines)
+
+        prompt = f"""You are a {use_case_label} deciding whether to switch AI providers.
+
+Current provider: {current_provider}
+- Your experience: {cur_sat}
+- Pricing: {cur_cost}
+- Using for: {seg.tenure.get(current_provider, 0)} months
+
+Top alternatives:
+{alternatives_text}
+{media_text}
+
+Should you switch? Respond with ONLY valid JSON:
+{{"action": "renew" | "switch", "target_provider": "name or null", "share_to_move": 1.0, "reasoning": "brief explanation"}}"""
 
         return prompt
 
@@ -1288,6 +1245,52 @@ Output ONLY valid JSON with this structure:
         actual_sat = seg.satisfaction.get(provider, 0.5)
         # Blend leaderboard-derived belief with actual experience
         return trust * believed + (1 - trust) * actual_sat
+
+    # ------------------------------------------------------------------
+    #  Dynamic consumer market: enterprise share rebalancing
+    # ------------------------------------------------------------------
+
+    def rebalance_market_fractions(
+        self,
+        round_num: int,
+        start: float = 0.25,
+        end: float = 0.55,
+        midpoint: int = 18,
+    ):
+        """Rebalance market_fraction so enterprise share follows a logistic curve.
+
+        Enterprise segments grow from `start` to `end` over the simulation.
+        Individual segments shrink proportionally. Within each class, relative
+        proportions are preserved.
+        """
+        # Store base fractions on first call
+        if not hasattr(self, "_base_fractions"):
+            self._base_fractions = {seg.name: seg.market_fraction for seg in self.segments}
+            self._base_enterprise_total = sum(
+                f for seg, f in zip(self.segments, [self._base_fractions[s.name] for s in self.segments])
+                if seg.consumer_type == "organization"
+            )
+            self._base_individual_total = 1.0 - self._base_enterprise_total
+
+        # Logistic curve: target enterprise share at this round
+        k = 0.25  # steepness
+        target_enterprise = start + (end - start) / (1.0 + math.exp(-k * (round_num - midpoint)))
+
+        target_individual = 1.0 - target_enterprise
+
+        # Scale each segment's fraction proportionally within its class
+        for seg in self.segments:
+            base = self._base_fractions[seg.name]
+            if seg.consumer_type == "organization":
+                if self._base_enterprise_total > 0:
+                    seg.market_fraction = base * (target_enterprise / self._base_enterprise_total)
+            else:
+                if self._base_individual_total > 0:
+                    seg.market_fraction = base * (target_individual / self._base_individual_total)
+
+    def get_enterprise_share(self) -> float:
+        """Return current fraction of market held by enterprise segments."""
+        return sum(seg.market_fraction for seg in self.segments if seg.consumer_type == "organization")
 
     def get_consumer_data(self) -> dict:
         """Return consumer_data dict compatible with downstream systems.
@@ -1350,14 +1353,14 @@ Output ONLY valid JSON with this structure:
         org_llm_decisions = {}
         for seg in self.segments:
             if seg.consumer_type == "organization" and hasattr(seg, "last_llm_decision") and seg.last_llm_decision:
-                decision = seg.last_llm_decision
+                d = seg.last_llm_decision
                 org_llm_decisions[seg.name] = {
-                    "provider": decision.get("provider"),
-                    "round": decision.get("round"),
-                    "should_switch": decision.get("decision", {}).get("should_switch"),
-                    "target_provider": decision.get("decision", {}).get("target_provider"),
-                    "confidence": decision.get("decision", {}).get("confidence"),
-                    "reasoning": decision.get("decision", {}).get("reasoning", ""),
+                    "round": d.get("round"),
+                    "action": d.get("action", "renew"),
+                    "current_provider": d.get("current_provider"),
+                    "target_provider": d.get("target_provider"),
+                    "share_to_move": d.get("share_to_move", 0.0),
+                    "reasoning": d.get("reasoning", ""),
                     "use_case": seg.use_case,
                     "archetype": seg.archetype,
                 }

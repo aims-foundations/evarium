@@ -8,6 +8,7 @@ Supported Providers:
 - Anthropic (Claude 3.5 Sonnet, Claude 3 Opus, etc.)
 - Ollama (local models like llama3, mistral, phi, gemma)
 - Gemini (Gemini 2.5 Flash, Gemini 2.5 Pro, etc.)
+- Claude Code (claude CLI in print mode -- experimental)
 
 Configuration via environment variables:
 - LLM_PROVIDER: "openai", "anthropic", "ollama", or "gemini" (default: "openai")
@@ -19,6 +20,8 @@ Configuration via environment variables:
 """
 import json
 import os
+import subprocess
+import tempfile
 import time
 from abc import ABC, abstractmethod
 from typing import Callable, Optional
@@ -646,6 +649,145 @@ class GeminiProvider(LLMProvider):
         )
 
 
+class ClaudeCodeProvider(LLMProvider):
+    """
+    Claude Code CLI provider.
+
+    Uses the `claude` CLI in print mode (claude -p) as a backend.
+    Requires Claude Code to be installed and on PATH.
+
+    Note: Temperature and max_tokens are not controllable via CLI --
+    these parameters are accepted for interface compatibility but ignored.
+    """
+
+    def __init__(self, model: str = "sonnet"):
+        """
+        Initialize Claude Code provider.
+
+        Args:
+            model: Model alias or ID (e.g. "sonnet", "opus", "claude-sonnet-4-6")
+        """
+        try:
+            result = subprocess.run(
+                ["claude", "--version"],
+                capture_output=True, text=True, timeout=10,
+            )
+            if result.returncode != 0:
+                raise RuntimeError(f"claude CLI error: {result.stderr.strip()}")
+        except FileNotFoundError:
+            raise RuntimeError(
+                "claude CLI not found on PATH. Install Claude Code first."
+            )
+
+        self.model = model
+
+        # Rate limiting -- CLI startup is slower than direct API
+        self.last_call_time = 0
+        self.min_call_interval = 1.0
+
+    def _rate_limit(self):
+        """Simple rate limiting."""
+        elapsed = time.time() - self.last_call_time
+        if elapsed < self.min_call_interval:
+            time.sleep(self.min_call_interval - elapsed)
+        self.last_call_time = time.time()
+
+    def generate(
+        self,
+        prompt: str,
+        system_prompt: Optional[str] = None,
+        temperature: Optional[float] = None,
+        max_tokens: Optional[int] = None,
+        **kwargs,
+    ) -> str:
+        """Generate a response via claude CLI in print mode."""
+        self._rate_limit()
+
+        cmd = [
+            "claude", "-p",
+            "--output-format", "json",
+            "--max-turns", "1",
+        ]
+        if self.model:
+            cmd += ["--model", self.model]
+
+        # Write system prompt to temp file to avoid command-line length limits
+        sys_file = None
+        if system_prompt:
+            fd, sys_file = tempfile.mkstemp(suffix='.txt', prefix='claude_sys_')
+            with os.fdopen(fd, 'w', encoding='utf-8') as f:
+                f.write(system_prompt)
+            cmd += ["--system-prompt-file", sys_file]
+
+        try:
+            result = subprocess.run(
+                cmd,
+                input=prompt,
+                capture_output=True,
+                encoding='utf-8',
+                timeout=180,
+            )
+            if result.returncode != 0:
+                print(f"Claude Code CLI error (exit {result.returncode}): {result.stderr[:300]}")
+                return f"ERROR: claude exited with code {result.returncode}"
+
+            envelope = json.loads(result.stdout)
+            if envelope.get("is_error"):
+                err_msg = envelope.get("result", "unknown error")
+                print(f"Claude Code returned error: {err_msg}")
+                return f"ERROR: {err_msg}"
+            return envelope.get("result", "")
+
+        except subprocess.TimeoutExpired:
+            print("Claude Code CLI timed out after 180s")
+            return "ERROR: claude CLI timed out"
+        except json.JSONDecodeError:
+            print(f"Failed to parse Claude Code JSON envelope")
+            return "ERROR: invalid JSON envelope from claude CLI"
+        except Exception as e:
+            print(f"Claude Code CLI error: {e}")
+            return f"ERROR: {e}"
+        finally:
+            if sys_file and os.path.exists(sys_file):
+                os.unlink(sys_file)
+
+    def generate_json(
+        self,
+        prompt: str,
+        system_prompt: Optional[str] = None,
+        retries: int = 3,
+        fail_safe: dict = None,
+        verbose: bool = False,
+    ) -> dict:
+        """Generate and parse JSON response via Claude Code CLI."""
+        json_prompt = prompt + "\n\nRespond with valid JSON only. No explanation, just the JSON object."
+
+        if system_prompt:
+            system_prompt = system_prompt + " Always respond with valid JSON only."
+
+        def validate_json(response: str) -> bool:
+            try:
+                cleaned = _extract_json(response)
+                json.loads(cleaned)
+                return True
+            except Exception:
+                return False
+
+        def cleanup_json(response: str) -> dict:
+            cleaned = _extract_json(response)
+            return json.loads(cleaned)
+
+        return self.safe_generate(
+            prompt=json_prompt,
+            system_prompt=system_prompt,
+            func_validate=validate_json,
+            func_cleanup=cleanup_json,
+            retries=retries,
+            fail_safe=fail_safe or {},
+            verbose=verbose,
+        )
+
+
 def _extract_json(response: str) -> str:
     """Extract JSON from a response that may contain extra text."""
     response = response.strip()
@@ -686,7 +828,7 @@ def create_llm_provider(
     Create an LLM provider based on configuration.
 
     Args:
-        provider: Provider name ("openai", "anthropic", "ollama", or "gemini").
+        provider: Provider name ("openai", "anthropic", "ollama", "gemini", or "claudecode").
                  If None, uses LLM_PROVIDER env var (default: "openai")
         **kwargs: Additional arguments passed to provider constructor
 
@@ -694,14 +836,14 @@ def create_llm_provider(
         LLMProvider instance
 
     Environment Variables:
-        LLM_PROVIDER: Provider name (openai, anthropic, ollama, gemini)
+        LLM_PROVIDER: Provider name (openai, anthropic, ollama, gemini, claudecode)
         LLM_MODEL: Model name (provider-specific)
         OPENAI_API_KEY: For OpenAI provider
         ANTHROPIC_API_KEY: For Anthropic provider
         GEMINI_API_KEY: For Gemini provider
         OLLAMA_BASE_URL: For Ollama provider
     """
-    provider = provider or os.getenv("LLM_PROVIDER", "openai")
+    provider = provider or os.getenv("LLM_PROVIDER", "claudecode")
 
     if provider == "ollama":
         return OllamaProvider(
@@ -732,8 +874,12 @@ def create_llm_provider(
             max_tokens=kwargs.get("max_tokens", 2048),
             base_url=kwargs.get("base_url") or os.getenv("OPENAI_BASE_URL"),
         )
+    elif provider == "claudecode":
+        return ClaudeCodeProvider(
+            model=kwargs.get("model") or os.getenv("LLM_MODEL", "sonnet"),
+        )
     else:
-        raise ValueError(f"Unknown provider: {provider}. Use 'openai', 'anthropic', 'ollama', or 'gemini'.")
+        raise ValueError(f"Unknown provider: {provider}. Use 'openai', 'anthropic', 'ollama', 'gemini', or 'claudecode'.")
 
 
 def get_provider() -> LLMProvider:

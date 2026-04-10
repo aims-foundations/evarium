@@ -1,6 +1,6 @@
 # Stakeholder Architecture: No Explicit Gaming
 
-> **Living architecture reference. Last updated: 2026-04-05 (session 15: incident empirical grounding added).**
+> **Living architecture reference. Last updated: 2026-04-09 (session 23: switching formula overhaul, dynamic consumer market, org consumer LLM prompt rewrite, enterprise threshold recalibration).**
 > Gaming emerges from provider investment decisions and benchmark-need weight mismatch — not from an explicit gaming lever.
 
 ---
@@ -40,7 +40,10 @@ Provider names are anonymized to prevent LLM reasoning from being biased by real
 | `src/actors/media.py` | Media actor (TechPress) — coverage influences downstream actors |
 | `src/incidents.py` | `IncidentGenerator` — probabilistic AI safety incident generation |
 | `src/llm.py` | Multi-provider LLM integration (OpenAI, Anthropic, Ollama, Gemini) |
-| `src/plotting.py` | Per-experiment visualization dashboards |
+| `src/plotting.py` | Per-experiment visualization; presentation plots (pres_slide1/2) are default end-of-run output |
+| `scripts/plot_single_run.py` | Presentation-style single-run plots (incident+intervention with escalation colors) |
+| `scripts/plot_batch.py` | Batch presentation plots (fig1-fig5 across presets) |
+| `docs/aggregation_pipeline.md` | Reasoning-grounded trajectory analysis design doc |
 | `src/experiment_logger.py` | `ExperimentLogger` + `DirectoryLogger` |
 | `src/game_log.py` | Natural language game log generator |
 | `scripts/run_experiment.py` | Editable experiment config — edit and run |
@@ -165,7 +168,7 @@ satisfaction = dot(capability_vector, need_weights)
 
 Satisfaction is purely experience-based. There is no `gaming_penalty` or `media_penalty` term. The score-satisfaction gap is a measurement artifact: it arises when a provider's capability vector is tilted toward benchmark-weighted dimensions that the consuming segment does not need. Media influence is routed through exploration behavior, not satisfaction (see Exploration Churn below; grounded in Hardy et al. 2024: benchmarks/media drive attention and exploration, not direct quality perception).
 
-- **Incident penalty:** Severity-weighted (minor: 0.02, moderate: 0.08, major: 0.15, critical: 0.30) with exponential decay over time (`weight × 0.70^age`, ~2.3-round half-life, max 10-round window); 2x if category matches segment sector. Scaled by `(1 + market_share^2)` -- the HHI contribution of a single firm, reflecting that dominant providers face greater scrutiny and reputational exposure per incident (grounded in scale-contingent regulatory obligations: EO 14110, SB 1047).
+- **Incident penalty:** Severity-weighted (minor: 0.01, moderate: 0.05, major: 0.10, critical: 0.20) with exponential decay over time (`weight × 0.70^age`, ~2.3-round half-life, max 10-round window); 2x if category matches segment sector. Scaled by `(1 + market_share^2)` -- the HHI contribution of a single firm, reflecting that dominant providers face greater scrutiny and reputational exposure per incident (grounded in scale-contingent regulatory obligations: EO 14110, SB 1047). Weights reduced ~33% in session 21 recalibration to prevent single-incident satisfaction wipeout while preserving meaningful differentiation.
 - **Cost bonus:** `cost_sensitivity × cost_advantage × 0.15`
 
 ### Expected Quality (Selection Stage)
@@ -548,7 +551,43 @@ In fixed schedule mode and heuristic dynamic mode, no LLM reasoning is used. In 
 
 **Implementation:** `get_llm_observation()` collects data, simulation calls `llm_plan_evaluator()`, result applied via `apply_llm_decision()` → `_create_and_register_benchmark()` (shared with heuristic path).
 
-**Consumer market uses no LLM mode.** The archetype system (`leaderboard_trust`, `switching_threshold`, `switching_cost`, `cost_sensitivity`) combined with the formula-based satisfaction model and `running_perceived_quality` EMA captures sufficient behavioral heterogeneity. Consumer decisions are routine and habitual rather than strategic, making LLM reasoning an unnecessary source of variance.
+**Consumer market LLM mode** is optional and gated behind `consumer_llm_mode`. Default is heuristic-only. When enabled for organizations (`consumer_llm_organizations=True`), org segments use a PIMMUR-compliant vendor review brief (see Organizational Consumer LLM Mode section). Individual consumers remain heuristic-only by default — their decisions are routine and habitual rather than strategic.
+
+### Evaluator-as-Company (`evaluator_as_company=True`)
+
+Models evaluator conflict of interest (Leaderboard Illusion paper; cross-sector capture dynamics from credit rating agencies, financial auditing). Gated behind `evaluator_as_company: bool = False`.
+
+**Three mechanics activate when enabled:**
+
+**1. Best-of-N trial submissions.** Each provider chooses how many model variants to submit per round (1 to `max_eval_submissions`, default 10). Each extra submission costs `fee_per_submission` (default 0.03 sim units), deducted from R&D budget. Evaluator runs N independent scoring trials per benchmark; best score published. Selection bias from best-of-N with Gaussian noise: `E[max(X_1,...,X_N)] ~ mu + sigma * sqrt(2 ln N)`.
+
+- **Heuristic mode:** `N = min(max_n, 1 + int((base_revenue + discretionary_budget) * 0.15 / fee))`. Affordability-gated by 15% of total resources.
+- **LLM mode:** Provider outputs `"n_submissions": int` in planning JSON. Prompt frames it as a strategic cost/benefit tradeoff.
+
+**2. Early access.** Providers with N > 1 (any paying customer) get partial knowledge of new benchmarks. When a benchmark is introduced, premium providers' `inferred_benchmark_weights` are initialized as a blend of uniform and true weights: `(1 - early_access_factor) * uniform + early_access_factor * true_weights` (default factor 0.5). Non-premium providers start at uniform. This gives a multi-round R&D targeting advantage.
+
+**3. Discretionary budget.** Per-provider `discretionary_budget` field represents parent company resources available for evaluator access (does NOT affect R&D capability gains). Only affects submission affordability calculation. Models that Google/Meta subsidiaries can trivially afford maximum submissions while standalone startups are constrained.
+
+| Provider | discretionary_budget | Rationale |
+|---|---|---|
+| Genesis Systems | 2.0 | Alphabet subsidiary |
+| Mirage AI | 2.0 | Meta subsidiary |
+| Orion Labs | 0.5 | Microsoft partnership |
+| Apex AI | 0.3 | VC-funded standalone |
+| Spark AI | 0.0 | Resource-constrained startup |
+| OpenCore | 0.0 | Open-source, limited discretionary |
+
+**Config parameters:**
+
+| Parameter | Default | Description |
+|---|---|---|
+| `evaluator_as_company` | `False` | Feature gate |
+| `evaluator_base_budget` | `0.0` | Evaluator starting budget (display dollars) |
+| `fee_per_submission` | `0.03` | R&D cost per extra submission (sim units) |
+| `max_eval_submissions` | `10` | Hard cap on submissions per provider per round |
+| `early_access_factor` | `0.5` | Belief blend: 0=uniform, 1=true weights |
+
+**Logging:** `evaluator_business_metrics` in `rounds.jsonl` includes `submission_counts` (per-provider N), `premium_revenue`, `n_premium_subscribers`. Provider execution memory includes `n_submissions`.
 
 ---
 
@@ -565,9 +604,9 @@ Each segment = use-case profile × behavioral archetype. Archetypes modify obser
 | `leaderboard_follower` | 0.85 | 0.05 | 0.10 | 0.15 |
 | `experience_driven` | 0.35 | 0.08 | 0.06 | 0.30 |
 | `cautious` | 0.50 | 0.20 | 0.18 | 0.20 |
-| `enterprise_cautious` | 0.25 | 0.35 | 0.35 | 0.10 |
-| `enterprise_growth` | 0.45 | 0.25 | 0.22 | 0.15 |
-| `enterprise_established` | 0.35 | 0.40 | 0.28 | 0.08 |
+| `enterprise_cautious` | 0.25 | 0.35 | 0.20 | 0.10 |
+| `enterprise_growth` | 0.45 | 0.25 | 0.15 | 0.15 |
+| `enterprise_established` | 0.35 | 0.40 | 0.18 | 0.08 |
 
 ### Need Weights Per Profile
 
@@ -614,7 +653,38 @@ This replaces the earlier dot-product spec (`dot(need_weights, benchmark_public_
 
 ### Switching
 
-Proportional sigmoid-based switching within each segment. Two triggers: dissatisfaction (expected > experienced quality) and opportunity (better alternative exists). Tenure bonus adds inertia. Opportunity threshold halved when the alternative is an OS provider.
+Proportional sigmoid-based switching within each segment. Two independent triggers:
+
+1. **Dissatisfaction:** `gap = believed_quality - satisfaction`. Fires when gap > 0; probability = `sigmoid(10 * (gap - threshold))` where `threshold = switching_threshold + switch_cooldown`.
+2. **Opportunity:** `improvement = blended_score[alt] - blended_score[current]`. `opportunity_threshold = switching_threshold * 0.5 + switch_cooldown`.
+
+**Switching cost** acts as a damper on the fraction that follows through: `cost_damper = 1.0 - min(0.9, switching_cost * (1 + retention_bonus))`. Product investment retention bonus (`retention_bonus`) connects provider product lever to consumer stickiness.
+
+**Post-switch cooldown** replaces the old `tenure_bonus` and `decision_delay` parameters. After a switch, `_switch_cooldown` spikes to 0.20 and decays 0.5x per round (~2-round half-life). This naturally models institutional inertia without a binary gate or separate parameter.
+
+**Removed (session 23):** `integration_friction` (redundant with switching_cost), `tenure_bonus` (subsumed by cooldown + EMA smoothing), `decision_delay` (subsumed by cooldown).
+
+### Dynamic Consumer Market
+
+When `dynamic_consumer_market=True`, enterprise segment `market_fraction` grows from ~25% to ~55% over the simulation via a logistic curve, modeling the real-world shift from consumer-dominated (Q1 2023) to enterprise-dominated (mid-2025) AI market. Individual segments shrink proportionally. Within each class, relative proportions are preserved.
+
+```
+enterprise_share(t) = start + (end - start) / (1 + exp(-0.25 * (t - midpoint)))
+```
+
+Default: `enterprise_share_start=0.25`, `enterprise_share_end=0.55`, `enterprise_growth_midpoint=18`. Grounded in McKinsey State of AI (2024-2025), Menlo Ventures (2024-2025), Stanford HAI (2024-2025). See `docs/references.md`.
+
+### Organizational Consumer LLM Mode
+
+When `consumer_llm_mode=True` and `consumer_llm_organizations=True`, organizational segments use a single LLM call per segment per round (not per-provider). The prompt is a PIMMUR-compliant vendor review brief containing:
+- Cross-round memory (last 2 decisions with reasoning)
+- Current vendor experience (qualitative: Excellent/Good/Mixed/Poor)
+- Benchmark comparison table (rank labels, no raw scores)
+- Alternative vendors (qualitative performance, cost tier, incident count)
+- Compliance requirements, media intelligence, regulatory context
+- No simulation parameters, no private state, no apparatus vocabulary
+
+Output format: `{action: renew|switch|pilot, target_provider, share_to_move, reasoning}`. "Pilot" moves 10-25% of deployments; "switch" moves 30-100%. Cooldown spikes after switch (0.25) or pilot (0.15).
 
 ---
 
@@ -628,7 +698,7 @@ Probabilistic AI safety incidents with ecosystem-wide propagation effects. Empir
 |--------|---------|-----------|
 | Safety investment | `1 - (portfolio["safety"] × 0.8)` | Higher safety allocation → lower prob |
 | Market share (exposure) | `(0.5 + market_share × 1.5) × sqrt(total_market_size)` | Larger market → higher prob |
-| Incident history escalation | `+0.04 per prior major/critical, cap +0.20` | Past harm → elevated future risk |
+| Incident history escalation | `+0.02 per prior major/critical in last 15 rounds, cap +0.10` | Past harm → elevated future risk (ages out) |
 | Active sanction | `0.75×` while sanctioned | Regulatory oversight → reduced prob |
 
 Floor at 5% (irreducible risk from deployment context, adversarial users, novel failure modes). Capped at 40% per round.
@@ -649,16 +719,16 @@ Floor at 5% (irreducible risk from deployment context, adversarial users, novel 
 **Categories:** `healthcare_harm` (20%), `security_breach` (25%), `bias_discrimination` (20%), `safety_failure` (20%), `misinformation` (10%), `misuse` (5%).
 
 **Ecosystem propagation:**
-- **Media:** Headlines for moderate+; provider attention and sentiment penalties; risk signals
+- **Media:** Critical incidents get guaranteed headline slots; major/moderate incidents compete for coverage in the pooled event system via weighted sampling (major: 3x weight, moderate: 2x, routine news: 1x). This models the attention economy — not all incidents make the news, but severe ones are more likely to. Provider attention and sentiment penalties apply regardless of coverage.
 - **Consumers:** Incident penalty in satisfaction; `leaderboard_trust` erosion across all archetypes (scaled by current trust -- high-trust segments erode more); media-driven exploration boost
 - **Regulator:** Risk belief updates; critical incidents may skip escalation levels
 - **Funders:** Incident penalty in provider scoring
 
-**Empirical calibration (see `docs/incident_path_dependence.md`):** Cross-sector survey validates that critical incidents can cause 30+pp market share swings: Boeing 737 MAX (39pp delivery share drop), Avandia (34pp within-class), Cruise robotaxi (50+pp to permanent exit). The simulation's current incident severity weights (critical: 0.30, major: 0.15) and exploration churn amplification (~39% at peak) produce swings within the empirically documented range. Key calibration nuances from the evidence:
-- **Incident type matters:** Physical harm + regulatory shutdown produces permanent exits; pure reputational/trust incidents produce ~0pp shifts in AI markets (trust-behavior gap).
-- **Recovery is slow and fragile:** Boeing partially recovered in 3 years but was reset by a second incident. Current ~2.3-round decay half-life may be too fast for critical incidents.
-- **"Liability of good reputation":** Market leaders are MORE vulnerable to incident shocks (Rhee & Haunschild, 2006). The `(1 + market_share^2)` scaling partially captures this.
-- **Contagion vs. competition:** Some incidents damage the entire sector (COX-2 class destruction after Vioxx), not just the affected firm. Not currently modeled.
+**Empirical calibration (see `docs/incident_path_dependence.md`):** Cross-sector survey validates that critical incidents can cause 30+pp market share swings: Boeing 737 MAX (39pp delivery share drop), Avandia (34pp within-class), Cruise robotaxi (50+pp to permanent exit). Session 21 recalibration reduced severity weights ~33% and halved history escalation (+0.02/prior, cap 0.10, 15-round aging) to prevent death spirals while preserving meaningful differentiation. 5-seed validation showed 3 different winners across seeds (vs 4 previously), with strategic advantage now surviving moderate incidents but critical incidents still reshaping markets. Key calibration nuances from the evidence:
+- **Incident type matters:** Physical harm + regulatory shutdown produces permanent exits; pure reputational/trust incidents produce ~0pp shifts in AI markets (trust-behavior gap). Media headline competition (critical=guaranteed, major/moderate=pooled with weighted sampling) partially captures this: critical incidents always dominate news, while moderate incidents may be crowded out by other stories.
+- **Recovery is slow and fragile:** Boeing partially recovered in 3 years but was reset by a second incident. Decay half-life (~2.3 rounds) remains unchanged; the reduced severity weights lower the peak penalty rather than extending the tail.
+- **"Liability of good reputation":** Market leaders are MORE vulnerable to incident shocks (Rhee & Haunschild, 2006). The `(1 + market_share^2)` scaling captures this.
+- **Contagion vs. competition:** Some incidents damage the entire sector (COX-2 class destruction after Vioxx), not just the affected firm. Not currently modeled (deferred).
 
 ---
 
@@ -817,7 +887,7 @@ Does NOT observe: capability vectors, consumer satisfaction, `score_reliability`
 | Safety concern narrative | Cumulative incident rate > low_threshold for M consecutive rounds |
 | Major partnership | Org-archetype consumer switches OR funder leads significant round (probabilistic) |
 
-**Headline budget:** All moderate+ incidents are guaranteed slots. Other fired triggers enter a pool; up to `media_sample_size` (default 4) are sampled randomly per round. This models the attention economy — not all newsworthy events receive coverage.
+**Headline budget:** Critical incidents are guaranteed slots. Major and moderate incidents enter the pooled event system alongside other news (score changes, regulatory actions, funding, product launches) and compete for limited headline slots via weighted sampling (major: 3x, moderate: 2x, routine: 1x). Up to `media_sample_size` (default 4) pooled events are sampled per round. This models the attention economy — a moderate security breach makes the news on a slow day but gets buried when there's a major product launch and a regulatory action in the same round.
 
 ### Provider Public Communications (`public_comms`)
 

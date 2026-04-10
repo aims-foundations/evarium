@@ -1,5 +1,43 @@
 # TODO
 
+## NeurIPS Paper (target: draft by Thu Apr 10, deadline ~4 weeks)
+
+- [ ] **Run new experiments** — 17 conditions x 3 presets with updated sim design (sessions 16-18 changes). Blocks experiments section.
+- [ ] **Experiments section** — Replace placeholder content (currently presentation-era results) with new figures and findings.
+- [ ] **Discussion + Conclusion** — Write after experiments finalize.
+- [ ] **Related work** — Untouched from old draft; trim to ~1.5 pages, move LLM-sim validation discussion to Appendix F.
+- [ ] **Dangling references** — `\ref` labels may be broken after restructuring; do a full pass.
+- [ ] **Missing bib entries** — Add: singh2025leaderboard, zhou2026pimmur, bick2024rapid, bachmann2023firms, rhee2006liability, hardy2024benchmarks, dulleck2006credence.
+- [ ] **Compile + page count check** — Verify main body fits NeurIPS 10-page limit.
+- [ ] **Commit sessions 16-18 sim changes** — Still uncommitted.
+- [ ] **Commit session 20 overleaf changes** — Still uncommitted.
+- [ ] **Expert interviews** — Conduct a few before submission; mentioned in contributions but not budgeted in draft.
+
+## Parameter Concision / Occam's Razor Pass
+
+- [ ] **Full-sim parameter audit** — Inspired by session 23 discovery that switching_cost, switching_threshold, tenure_bonus, integration_friction, and decision_delay were all interacting in unauditable ways. For every heuristic parameter in the sim, ask: (1) does it connect to any other actor's decision, or is it isolated? If isolated, consider cutting. (2) Is it doing the same thing as another parameter? If so, merge. (3) Can the LLM mode subsume it? Scope: consumer.py (done for switching), model_provider.py, regulator.py, funder.py, media.py, incidents.py. Goal: fewer knobs, cleaner causal attribution, more auditable heuristic mode.
+
+## Session 22 Open Threads
+
+- [x] **Run initial_uniform + initial_duopoly ablations** — Running overnight in apr9 batch (3 seeds each)
+- [ ] **Analyze apr9 batch** — 18 runs (6 conditions × 3 seeds) with updated cap/brand vectors. Key question: does initial_uniform break Orion dominance?
+- [ ] **Dynamic consumer market** — HIGH PRIORITY. Enterprise share should grow ~25%→55% over 30 rounds to match real 2023→2025 market transition. Enables segment-specific catch-up (Anthropic's real path). See `memory/session22_dynamic_consumer_market.md`.
+- [ ] **Rerun stalled apr8 ablations** — no_media (10r), no_funders (14r), no_regulator (33r) need fresh 40-round runs. Delete partials first.
+- [ ] **Reasoning pipeline worked example** — Implement Steps 1-2 of `docs/aggregation_pipeline.md` on one run. Hand-code clusters. Produce reasoning timeline figure.
+- [ ] **Higher dimensions / latent needs** — Explore adding unmeasured consumer need dimensions (reliability, UX, deployment ease) that benchmarks can't capture. Would increase dim_mismatch structurally.
+- [x] **Investigate no_media misalignment** — RESOLVED: run-length artifact. Baseline shows same 0.025 mismatch at R5-9; drops at R10 when new benchmarks introduced. Need full 40r no_media run to confirm.
+- [ ] **Commit sessions 16-22 changes** — All still uncommitted.
+
+## Deep Dive Findings (session 22) — for paper framing
+
+Key findings from apr8 batch analysis:
+- **Media is the strongest alignment channel** — removing it 3.4x the gap, mostly dim_mismatch
+- **Incidents serve as alignment mechanism** — removing them makes gap negative, reduces score reliability
+- **Regulator is underpowered** — no_regulator barely changes outcomes; safety floor from incidents + media
+- **Gap driven by incidents not gaming** — penalty_load >> dim_mismatch in baseline. Paper framing should be "multiple failure modes" not just Goodhart
+- **Seed 1 is unusually stable** — seed 11 produces healthier market dynamics; multi-seed results needed
+- **Incident sequences are seed-deterministic** — identical within seed regardless of condition for first ~15 rounds; safety investment doesn't modulate early enough
+
 ## Architecture Review Items (2026-03-30) — COMPLETED 2026-03-31
 
 - [x] **Visibility / ground truth audit** — Fixed: `safety_capability` GT leak in consumer LLM context; removed dead `ground_truth` param from `compute_switching` chain; removed dead `provider_strategies` from `regulator.observe()`; added missing `MediaGroundTruth` to `visibility.py`.

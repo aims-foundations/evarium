@@ -774,7 +774,7 @@ def plot_costs_interventions(history: list, save_path: Optional[str] = None,
     # Parse regulator interventions
     intervention_events = []
     for h in history:
-        rd = h.get("regulator_data", h.get("policymaker_data", {}))
+        rd = h.get("regulator_data", {})
         if not rd:
             continue
         interventions = rd.get("interventions", [])
@@ -1107,8 +1107,35 @@ def pres_slide2_market_safety(history: list, save_path: str,
 
     # --- Panel 3: Incident Timeline + Interventions ---
     ax = axes[2]
-    severity_markers = {"minor": "o", "moderate": "s", "major": "^", "critical": "X"}
-    severity_sizes = {"minor": 25, "moderate": 50, "major": 80, "critical": 120}
+    severity_markers = {"minor": ".", "moderate": "s", "major": "^", "critical": "X"}
+    severity_sizes = {"minor": 15, "moderate": 25, "major": 40, "critical": 60}
+    severity_colors = {"minor": "#AAAAAA", "moderate": "#E9C46A", "major": "#E76F51", "critical": "#D62828"}
+
+    _escalation_order = [
+        "request_voluntary_commitment", "publish_advisory",
+        "mandate_safety_disclosure", "commission_audit",
+        "impose_sanction", "emergency_investigation",
+    ]
+    _intervention_colors = {
+        "request_voluntary_commitment": "#90BE6D",
+        "publish_advisory":            "#F9C74F",
+        "mandate_safety_disclosure":   "#F8961E",
+        "commission_audit":            "#F3722C",
+        "impose_sanction":             "#D62828",
+        "emergency_investigation":     "#9B2226",
+    }
+    _intervention_lw = {
+        a: 0.6 + 1.2 * (i / (len(_escalation_order) - 1))
+        for i, a in enumerate(_escalation_order)
+    }
+    _intervention_labels = {
+        "request_voluntary_commitment": "Voluntary commitment",
+        "publish_advisory":            "Advisory",
+        "mandate_safety_disclosure":   "Disclosure mandate",
+        "commission_audit":            "Audit",
+        "impose_sanction":             "Sanction",
+        "emergency_investigation":     "Emergency investigation",
+    }
 
     for h in history:
         for inc in h.get("incidents", []):
@@ -1119,44 +1146,48 @@ def pres_slide2_market_safety(history: list, save_path: str,
             ax.scatter(
                 h["round"], providers.index(prov),
                 marker=severity_markers.get(sev, "o"),
-                s=severity_sizes.get(sev, 25),
-                color=colors[prov], alpha=0.8,
-                edgecolors='black', linewidth=0.5, zorder=3,
+                s=severity_sizes.get(sev, 20),
+                color=severity_colors.get(sev, "#999999"), alpha=0.85,
+                edgecolors='black', linewidth=0.3, zorder=5,
             )
 
-    # Overlay interventions as vertical lines / markers
+    # Overlay interventions as color-coded vertical lines with escalation-scaled linewidth
     for h in history:
-        rd = h.get("regulator_data", h.get("policymaker_data", {}))
+        rd = h.get("regulator_data", {})
         if not rd:
             continue
         for intv in rd.get("interventions", []):
             if isinstance(intv, dict):
-                target = intv.get("provider", intv.get("target", ""))
-                itype = intv.get("type", intv.get("action", ""))
-                if target in providers:
-                    ax.axvline(h["round"], color='#E63946', lw=0.6, ls='--', alpha=0.35)
-                    ax.scatter(h["round"], providers.index(target),
-                               marker='|', s=100, color='#E63946',
-                               lw=1.5, zorder=4, alpha=0.8)
-                else:
-                    # Ecosystem-wide intervention (no specific target)
-                    ax.axvline(h["round"], color='#E63946', lw=0.8, ls='--', alpha=0.4, zorder=2)
+                action = intv.get("type") or intv.get("action", "unknown")
+            elif isinstance(intv, str):
+                action = intv
+            else:
+                continue
+            color = _intervention_colors.get(action, "#888888")
+            lw = _intervention_lw.get(action, 1.0)
+            ax.axvline(h["round"], color=color, linewidth=lw, alpha=0.7,
+                       linestyle="--", zorder=3)
 
     ax.set_yticks(range(len(providers)))
     ax.set_yticklabels([_tex_escape(p.split()[0]) for p in providers], fontsize=7)
 
-    # Severity legend
+    # Combined legend: severity markers + intervention lines
     sev_handles = [
-        mlines.Line2D([0], [0], marker=m, color='w', markerfacecolor='gray',
-                      markeredgecolor='black', markersize=sz**0.5,
-                      label=sev.capitalize())
-        for sev, m in severity_markers.items()
-        for sz in [severity_sizes[sev]]
+        mlines.Line2D([0], [0], marker=severity_markers[sev], color='w',
+                      markerfacecolor=severity_colors[sev],
+                      markeredgecolor='black', markeredgewidth=0.3,
+                      markersize=severity_sizes[sev]**0.5,
+                      label=sev.capitalize(), linestyle='None')
+        for sev in ("minor", "moderate", "major", "critical")
     ]
-    intv_handle = mlines.Line2D([0], [0], marker='|', color='#E63946',
-                                markersize=8, lw=0, label="Intervention")
-    ax.legend(handles=sev_handles + [intv_handle], loc='upper right',
-              fontsize=5, ncol=2, handletextpad=0.3)
+    intv_handles = [
+        mlines.Line2D([0], [0], color=_intervention_colors[a],
+                      linewidth=_intervention_lw[a], alpha=0.7,
+                      linestyle="--", label=_intervention_labels[a])
+        for a in _escalation_order
+    ]
+    ax.legend(handles=sev_handles + intv_handles, loc='upper right',
+              fontsize=4, ncol=2, handletextpad=0.3, handlelength=2.0)
     style_axis(ax, "Incidents \\& Interventions" if mpl.rcParams.get("text.usetex")
                else "Incidents & Interventions", "Round", "", legend=False)
 
