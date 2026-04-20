@@ -15,7 +15,6 @@
 - Always search from the project root, not from `/` or `~`
 - Key entry points:
   - `scripts/run_experiment.py` — editable experiment config file (edit & run)
-  - `scripts/run_llm_now.py` — CLI-driven quick experiments
   - `src/simulation.py` — core sim loop, SimulationConfig, provider config presets
 
 ## Working Style

@@ -221,16 +221,61 @@ class ModelProvider:
     # benchmarks are introduced)
     # ──────────────────────────────────────────────────────────────────────
 
-    def init_benchmark(self, benchmark_name: str):
+    def init_benchmark(
+        self,
+        benchmark_name: str,
+        public_weights: Optional[dict] = None,
+        sigma_prior: float = 0.0,
+        rng: Optional[object] = None,
+    ):
         """
         Initialize beliefs and focus for a newly introduced benchmark.
 
-        - inferred_benchmark_weights[b]: uniform across 6 dimensions
-        - focus_level[b]: mean of existing focus_level values (or 1.0 if first)
+        inferred_benchmark_weights[b]: noisy-public-weights prior. Represents the
+        "framing prior" — providers know the benchmark's category (via its name)
+        and roughly what it tests, but not its exact dimension profile.
+
+            initial = normalize(clip_nonneg(public_weights + Normal(0, sigma_prior)))
+
+        When public_weights is None or sigma_prior is 0, falls back to uniform
+        (preserves backward compatibility for benchmarks introduced without sim
+        context).
+
+        focus_level[b]: preserved if already set; otherwise mean of existing
+        benchmarks.
+
+        Args:
+            benchmark_name: Name of the new benchmark
+            public_weights: Flat {dim: weight} dict for the benchmark's public
+                side (from BenchmarkGroundTruth.category_dimension_weights,
+                aggregated across categories). If None, falls back to uniform.
+            sigma_prior: Gaussian noise std applied to public_weights to model
+                framing uncertainty. Independent of the benchmark's h.
+            rng: Optional np.random.Generator (for reproducibility).
         """
-        # Uniform initial belief
-        uniform = {dim: 1.0 / len(DIMENSIONS) for dim in DIMENSIONS}
-        self.private_state.inferred_benchmark_weights[benchmark_name] = uniform
+        if public_weights and sigma_prior > 0 and rng is not None:
+            noisy = {
+                dim: public_weights.get(dim, 1.0 / len(DIMENSIONS)) + float(rng.normal(0.0, sigma_prior))
+                for dim in DIMENSIONS
+            }
+            clipped = {dim: max(0.0, w) for dim, w in noisy.items()}
+            total = sum(clipped.values())
+            init_weights = (
+                {dim: w / total for dim, w in clipped.items()}
+                if total > 0 else
+                {dim: 1.0 / len(DIMENSIONS) for dim in DIMENSIONS}
+            )
+        elif public_weights:
+            # Use public_weights as-is (no noise); still normalize defensively.
+            total = sum(max(0.0, public_weights.get(d, 0.0)) for d in DIMENSIONS)
+            init_weights = (
+                {d: max(0.0, public_weights.get(d, 0.0)) / total for d in DIMENSIONS}
+                if total > 0 else
+                {d: 1.0 / len(DIMENSIONS) for d in DIMENSIONS}
+            )
+        else:
+            init_weights = {dim: 1.0 / len(DIMENSIONS) for dim in DIMENSIONS}
+        self.private_state.inferred_benchmark_weights[benchmark_name] = init_weights
 
         # Focus: preserve focus_level_init value if already set; otherwise initialize
         # at mean of existing benchmarks (used for newly-introduced benchmarks mid-sim).
@@ -311,11 +356,29 @@ class ModelProvider:
     # Belief update (always heuristic — beliefs are epistemic, not LLM output)
     # ──────────────────────────────────────────────────────────────────────
 
+    def _profile_learning_rate(self) -> float:
+        """Belief-update learning rate derived from provider profile.
+
+        Aggressive/competitive providers update beliefs faster (chase benchmark
+        wins); safety- or risk-averse providers update more slowly (prefer prior
+        mental models over single-round signals).  Default 0.15 covers the
+        middle.  This is a heuristic-mode Profile differentiation hook — no
+        behavioural change in LLM mode where beliefs are prompt-driven.
+        """
+        profile = self.private_state.strategy_profile.lower()
+        traits = self.private_state.innate_traits.lower()
+        if "aggressive" in profile or "competitive" in profile:
+            return 0.20
+        if ("safety" in profile or "responsible" in profile
+                or "risk-averse" in traits):
+            return 0.10
+        return 0.15
+
     def update_benchmark_beliefs(
         self,
         own_benchmark_scores: dict,
         capability_vector: dict,
-        learning_rate: float = 0.15,
+        learning_rate: Optional[float] = None,
     ):
         """
         Update inferred_benchmark_weights from score prediction errors.
@@ -330,8 +393,11 @@ class ModelProvider:
             own_benchmark_scores: {benchmark_name: {"overall": float, ...}}
             capability_vector: Provider's current true capability vector (ground truth,
                 passed in by simulation — never stored on provider).
-            learning_rate: Step size for weight update.
+            learning_rate: Step size for weight update.  When None (default),
+                derived from the provider's profile via `_profile_learning_rate`.
         """
+        if learning_rate is None:
+            learning_rate = self._profile_learning_rate()
         for bm_name, scores in own_benchmark_scores.items():
             observed = scores.get("overall", scores) if isinstance(scores, dict) else float(scores)
 
@@ -441,20 +507,27 @@ class ModelProvider:
 
     def _plan_heuristic(self, ctx: dict) -> dict:
         """
-        Heuristic portfolio planning.
+        Heuristic portfolio planning — observation-driven, no profile ratchet.
 
-        Base allocation preserved from last round (provider identity persists).
-        Adjustments:
-        - Incident pressure shifts budget from rd toward safety.
-        - Profile modifiers nudge allocation based on strategy_profile.
-        - Bounds prevent any lever collapsing or dominating.
+        Base allocation preserved from last round (provider identity persists
+        via initial config, not via recurring profile pushes).
+
+        Dynamic rules (universal across providers):
+        - Incident pressure: own incidents shift budget from rd toward safety,
+          with exponential decay.
+        - Rule A (share trend): declining share -> more product; rising share
+          -> more rd.
+        - Rule C (crisis): CRISIS narrative -> safety bump.
+        - Rule D (intervention): recent own-targeted interventions -> safety bump.
+
+        Bounds prevent any lever collapsing or dominating.
         """
         p = dict(self.private_state.portfolio)
         rd = p.get("rd", 0.55)
         safety = p.get("safety", 0.25)
         product = p.get("product", 0.20)
 
-        # Incident pressure: accumulates from own_incidents, decays 60%/round
+        # Incident pressure: accumulates from own_incidents, decays each round
         own_incidents = ctx.get("own_incidents", [])
         if own_incidents:
             severity_shifts = {"minor": 0.01, "moderate": 0.04, "major": 0.08, "critical": 0.12}
@@ -472,36 +545,35 @@ class ModelProvider:
             safety += self._incident_safety_pressure
             self._incident_safety_pressure *= 0.40
 
-        # Profile modifiers
-        profile_lower = self.private_state.strategy_profile.lower()
-        traits_lower = self.private_state.innate_traits.lower()
+        # Rule A: share-trend response (3-round delta, 2pp threshold)
+        share_hist = ctx.get("own_share_history", [])
+        if len(share_hist) >= 3:
+            trend = share_hist[-1] - share_hist[-3]
+            if trend < -0.02:
+                product += 0.03
+                rd -= 0.03
+            elif trend > 0.02:
+                rd += 0.02
+                product -= 0.02
 
-        if "aggressive" in profile_lower or "competitive" in profile_lower:
-            rd += 0.05
-            safety -= 0.05
+        # Rule C: crisis narrative -> safety bump
+        if ctx.get("narrative_state") == "CRISIS":
+            safety += 0.04
+            rd -= 0.04
 
-        if "quality" in profile_lower or "long-term" in profile_lower:
-            rd += 0.03
-            product -= 0.03
-
-        if "safety" in profile_lower or "responsible" in profile_lower:
-            safety += 0.05
-            rd -= 0.05
-
-        if "risk-averse" in traits_lower:
-            safety += 0.03
-            rd -= 0.03
-
-        if "product" in profile_lower or "market" in profile_lower:
-            product += 0.03
-            rd -= 0.03
+        # Rule D: recent own-targeted interventions -> safety bump
+        own_iv = ctx.get("own_recent_interventions", 0) or 0
+        if own_iv > 0:
+            delta = min(0.06, 0.02 * own_iv)
+            safety += delta
+            rd -= delta
 
         # OS providers: slightly lower safety floor (fine-tuning can strip guardrails)
         safety_floor = 0.10 if self.open_source else 0.15
 
         # Bounds
         rd      = max(0.10, min(0.75, rd))
-        safety  = max(safety_floor, min(0.55, safety))
+        safety  = max(safety_floor, min(0.70, safety))
         product = max(0.05, min(0.50, product))
 
         # Normalize to sum to 1.0

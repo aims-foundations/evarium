@@ -285,13 +285,35 @@ class BenchmarkGroundTruth:
     noise_sigma: float = 0.02
     samples: int = 1000
 
+    # Private benchmark attributes (per-benchmark):
+    # benchmark_type in {"public", "partial", "private", "iid_holdout"}:
+    #   public       -> scored on full sample with category_dimension_weights
+    #   partial      -> h=0.3, cosine(public, holdout)=0.95; contamination-magnitude asymmetry
+    #   private      -> h=1.0, cosine=0.85;                 adversarial FrontierMath-style holdout
+    #   iid_holdout  -> h=1.0, cosine=1.0;                  ablation: reporting-mechanism isolation
+    # holdout_fraction (h): fraction of items in private holdout. For non-public types,
+    #   the holdout-only score uses samples*h items, so measurement noise scales as
+    #   noise_sigma / sqrt(samples * h).
+    # holdout_category_dimension_weights: dimension weights used for holdout-only scoring
+    #   when benchmark_type != "public". Constructed from category_dimension_weights with a
+    #   target cosine offset via construct_holdout_weights() in the simulation setup.
+    benchmark_type: str = "public"
+    holdout_fraction: float = 0.0
+    holdout_category_dimension_weights: Optional[dict] = None
+
     def to_dict(self) -> dict:
         """Convert to dict for serialization."""
-        return {
+        d = {
             "category_dimension_weights": self.category_dimension_weights,
             "noise_sigma": self.noise_sigma,
             "samples": self.samples,
+            "benchmark_type": self.benchmark_type,
         }
+        if self.holdout_fraction > 0:
+            d["holdout_fraction"] = self.holdout_fraction
+        if self.holdout_category_dimension_weights is not None:
+            d["holdout_category_dimension_weights"] = self.holdout_category_dimension_weights
+        return d
 
     @classmethod
     def from_dict(cls, data: dict) -> "BenchmarkGroundTruth":

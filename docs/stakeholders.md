@@ -1,6 +1,6 @@
 # Stakeholder Architecture: No Explicit Gaming
 
-> **Living architecture reference. Last updated: 2026-04-09 (session 27: dynamic_consumer_market now default; static_consumer_market is the inverse ablation; nested dev output paths).**
+> **Living architecture reference. Last updated: 2026-04-20 (session 42: heuristic policy rewrite (F1) — removed recurring profile modifiers, added 3 universal observation-driven rules (share trend / CRISIS narrative / own-intervention). Unlocks Apex/Orion safety variance (std 0.000 → 0.13+). Cadence default reconciled to 4 across 10 files. 2 new structural ablations: `cadence_static`, `cadence_every_8`. Per-benchmark gap analysis shows session-38 privacy mechanism visible at per-benchmark level (hidden by aggregate). See [Session Changelog](#session-changelog) for full details.)**
 > Gaming emerges from provider investment decisions and benchmark-need weight mismatch — not from an explicit gaming lever.
 
 ---
@@ -57,11 +57,11 @@ Provider names are anonymized to prevent LLM reasoning from being biased by real
 | Actor | File | LLM mode | Role |
 |-------|------|----------|------|
 | Model Provider | `actors/model_provider.py` | Yes | Develops models, allocates R&D portfolio |
-| Evaluator | `actors/evaluator.py` | Yes — `full_autonomy` or `dynamic_evaluator` | Operates benchmarks; introduces/retires benchmarks; 3 modes (fixed/random/autonomous) |
+| Evaluator | `actors/evaluator.py` | Yes — `dynamic` mode only | Operates benchmarks; creates/retires benchmarks; 3 modes (fixed_sequence / randomized_pool / dynamic). Dynamic mode is **time-triggered** every `benchmark_introduction_interval` rounds (default 4); no signal-based saturation/validity triggers. Heuristic: gap-based pool selection. LLM: judgment from pool. |
 | Consumer Market | `actors/consumer.py` | No — formula-based only | Segments (archetype × use-case); proportional switching |
 | Regulator | `actors/regulator.py` | Yes | Graduated interventions; EU/US/balanced presets |
 | Funder | `actors/funder.py` | Yes | VC, gov, foundation types; media-aware capital allocation |
-| Media | `actors/media.py` | Yes | TechPress outlet; coverage influences all downstream actors |
+| Media | `actors/media.py` | No — fully algorithmic | TechPress outlet; template headlines + rule-based sentiment / attention / narrative-state; coverage influences all downstream actors |
 | Incident System | `incidents.py` | No — probabilistic only | Probabilistic AI safety incidents; ecosystem propagation |
 
 ---
@@ -129,7 +129,11 @@ class BenchmarkGroundTruth:
     category_dimension_weights: dict[str, dict[str, float]]  # hidden per-category loadings
     noise_sigma: float
     samples: int
+    holdout_fraction: float = 0.0          # fraction of score from holdout set (0=public, 1=fully opaque)
+    holdout_category_dimension_weights: Optional[dict] = None  # holdout weights (same domain, less extreme)
 ```
+
+`holdout_fraction > 0` activates the private benchmark blending formula (see Score Formula below). Holdout weights are domain-consistent — same capability space as public weights, dominant dimension reduced ~13-15pp to model a harder/different slice of the same test distribution. 10 of 22 pool benchmarks carry holdout weights.
 
 ### ConsumerSegment
 
@@ -153,6 +157,59 @@ raw_score       = dot(capability_vector, benchmark_true_weights)
 published_score = max(prev_published_score,
                       Normal(raw_score, (noise_sigma / sqrt(samples))²))
 ```
+
+**Private benchmark scoring (holdout-only, h > 0):**
+```
+published_score = Normal(dot(capability_vector, holdout_weights), (noise_sigma / sqrt(samples * h))²)
+```
+
+Published every K rounds (K = `evaluation_lag` = 3). Between publications, providers see stale scores. There is no blended formula; the market receives only the holdout-derived signal for any benchmark with a holdout.
+
+**h controls observation noise, not blending.** `h` is the fraction of benchmark items in the private holdout; the holdout-only score is computed on `samples × h` items, so smaller h produces a noisier statistic. For `partial` (h=0.3) vs `private` (h=1.0): partial has ~1.8× the score noise. Practice-signal mechanisms on the publicly-observable `(1-h)` fraction are NOT modelled; providers have no direct observation of the public portion beyond their prior on `public_weights` (see Provider Belief Model below).
+
+**Three benchmark types + one ablation type:**
+
+| Type | h | cosine(public, holdout) | Real-world analog |
+|---|---|---|---|
+| `public` | 0 | — | MMLU, HumanEval, GPQA |
+| `partial` | 0.3 | 0.95 | SEAL-style, contamination-magnitude asymmetry (Singh et al. 2024 retro-holdout anchor) |
+| `private` | 1.0 | 0.85 | FrontierMath-style, adversarially constructed holdout |
+| `iid_holdout` | 1.0 | 1.00 | Ablation only: isolates reporting lag from weight asymmetry (holdout weights = public weights) |
+
+Cosine values anchored empirically: 0.85 matches Epoch within-family Pearson correlation (e.g., FrontierMath T1-3 vs T4: 0.85) and MMLU-vs-MMLU-Pro / GSM8K-vs-GSM-Plus literature. 0.95 anchors to Singh et al. (2024) 8–16pp inflation from retro-holdout contamination, which maps to effective cosine ~0.95–0.97 at typical capability magnitudes. Cosine-<1 is a **composite proxy** for contamination, training-on-the-test-task (Dominguez-Olmedo et al. 2024), and distributional adversarialness — the sim's single-knob abstraction of multiple literature mechanisms.
+
+**Evaluation cadence (`evaluation_lag`, K):** K = 3 rounds (global, all providers × all private benchmarks publish simultaneously). Empirical anchor: median-of-medians K_advance = 3.0 months across 24 Epoch AI benchmarks × 8 frontier labs (`external-validation/scripts/analyze_k_cadence.py`, derived tables in `external-validation/data/processed/`). Code default stays at K = 0 until full wiring lands; condition configs set K=3 explicitly. Per-provider asynchronous release variants (Fix-C / Poisson/Bernoulli) are deferred as sensitivity ablations — see `TODO.md`.
+
+**Five ablation conditions (pool attribute assignments over 22 generic-named benchmarks):**
+
+| Condition | Pool composition |
+|---|---|
+| `public_only` | All 22 → `public` |
+| `baseline` | ~18 `public` + ~3 `partial` + ~1 `private` (matches 2024–2025 reality) |
+| `private_dominant` | All 22 → `partial` |
+| `private_only` | All 22 → `private` |
+| `iid_holdout` | All 22 → `iid_holdout` |
+
+Generic benchmark names (General Capability, Scientific Reasoning, Hard Coding, etc.) are unchanged across conditions — only structural attributes (h, cosine) vary. LLM providers do not observe benchmark types or real-world analog labels; they infer from score patterns.
+
+**Premium access (orthogonal axis; not activated in primary conditions):**
+
+| Parameter | Scope | Real-world analog |
+|---|---|---|
+| `premium_pre_access` | Per (provider, benchmark) | FrontierMath-OpenAI pre-launch access: simulates N rounds of public-weight observations at t=0, sharpening the new provider's `inferred_weights[b]` prior beyond the global σ_prior |
+| `premium_submissions_per_round` | Per (provider, benchmark) | SEAL-style eval-as-company: best-of-M scoring each round |
+
+Reserved for future benchmark-sponsorship + eval-as-company ablations. Implementation notes: pre-access sharpens initial belief via simulated delta-rule updates before benchmark goes live; submissions-per-round applies standard extremum-of-M score inflation (`sigma/√samples × √(2 ln M)`).
+
+**Channels summary:**
+
+| # | Channel | Controlled by | Mechanism |
+|---|---|---|---|
+| 1 | Weight distance | `cosine` | Gaming public weights partially misaligned with holdout reward |
+| 2 | Reporting lag | `K = 3` | Slower market reactions via K-round publication delay |
+| 3 | Observation noise | `h` | Smaller h = noisier holdout score (σ / √(samples × h)) |
+
+Ablation comparisons isolate specific channels: `iid_holdout` vs `public_only` isolates Channels 2+3 (no weight distance); `private_dominant` vs `iid_holdout` isolates the marginal effect of cosine=0.95 weight asymmetry; `private_only` vs `private_dominant` isolates adversarial vs contamination-magnitude cosine (0.85 vs 0.95).
 
 `benchmark_true_weights` are ground truth — held by the simulation, never passed to any actor. Providers observe per-category scores and infer what they reveal about the hidden dimension weights.
 
@@ -187,6 +244,8 @@ Switching is triggered when `expected_quality - satisfaction > switching_thresho
 **Exploration churn (media-driven):** Each round, a per-provider fraction of share enters an exploration pool. The base rate is 5%. Negative media coverage increases the rate for the covered provider's users: `provider_rate = 0.05 + provider_attention × abs(sentiment) × leaderboard_trust`. A critical incident (attention=1.0, sentiment=-0.40) on a high-trust segment (0.85) pushes exploration to ~39%; a quiet round stays at 5%. This is the primary pathway for media influence on consumers -- media drives attention and exploration, not direct satisfaction (Hardy et al. 2024).
 
 Redistribution is blended: baseline explorers redistribute proportional to satisfaction (experience-based), while media-driven explorers redistribute proportional to `believed_quality` weighted by positive media buzz (`1 + sentiment × attention × trust`). This preserves credence good dynamics -- consumers who can't evaluate safety themselves follow public signals when exploring, including safety coverage. The media-driven fraction is estimated from the overshoot above base_rate.
+
+**Positive exploration (media-driven):** When a provider receives positive media attention (`sentiment > 0`), users of other providers with low attention (`< 0.3`) churn toward the buzzy provider at rate `0.5 × max_attn × sentiment × leaderboard_trust`. Redistribution during positive-exploration rounds is additionally biased toward positively-covered providers via `bq_scores` boost. This models hype-driven switching (new model releases, breakthrough announcements) symmetrically with the negative-coverage exodus.
 
 **New-user entry (market expansion):** When `market_growth_rate > 0`, new users enter each segment each round (sized by the growth rate as a fraction of existing market). New users are distributed proportional to `believed_quality` rather than inheriting incumbent shares, modeling that new adopters choose based on current public signals. No effect when `market_growth_rate = 0`.
 
@@ -258,13 +317,13 @@ Providers hold beliefs about the benchmark's hidden dimension weights, updated e
 **ProviderPrivateState additions:**
 
 ```python
-inferred_benchmark_weights: dict[str, dict[str, float]]  # per-benchmark × per-dim; heuristic-updated; initially uniform per benchmark
+inferred_benchmark_weights: dict[str, dict[str, float]]  # per-benchmark × per-dim; heuristic-updated; initialized at noisy-public-weights prior (see "New benchmark initialization")
 focus_level: dict[str, float]                            # per active benchmark, running scalar; provider-calibrated baseline
 benchmark_orientation: float                             # fixed at 0.80 for all providers; not LLM-adjustable (mode="fixed")
 consumer_signal: dict[str, float]                    # 6-dim vector; noise ∝ 1/sqrt(market_share)
 ```
 
-**New benchmark initialization:** When a benchmark b is introduced mid-simulation, `focus_level[b]` is initialized at `mean(focus_level[other active benchmarks])` for that provider. `inferred_benchmark_weights[b]` initializes uniform. All providers are scored on all active benchmarks each round regardless of focus_level — scores feed the belief update from the benchmark's introduction round onward. `focus_level` affects capability gains, not scoring participation.
+**New benchmark initialization:** When a benchmark b is introduced mid-simulation, `focus_level[b]` is initialized at `mean(focus_level[other active benchmarks])` for that provider. `inferred_benchmark_weights[b]` initializes at a **noisy-public-weights prior**: `normalize(public_weights[b] + Normal(0, σ_prior))`, where σ_prior is a global config parameter representing framing uncertainty (provider knows what category the benchmark is in but not its exact dimension-profile). σ_prior is independent of h. For private/partial benchmarks, this prior differs from the holdout target by the cosine gap, which providers must learn via K-lagged published signals. Providers with `premium_pre_access[b]` additionally pre-run N simulated delta-rule observations of `public_weights[b]` at t=0, arriving with a sharper prior (models sponsor / early-access advantage; see Premium access section above). All providers are scored on all active benchmarks each round regardless of focus_level — scores feed the belief update from the benchmark's introduction round onward. `focus_level` affects capability gains, not scoring participation.
 
 **Belief update (both modes — heuristic):**
 
@@ -519,44 +578,48 @@ Does NOT observe: capability vectors, consumer satisfaction, provider investment
 
 | Action | When |
 |---|---|
-| **Introduce harder successor** | Benchmark saturated (delta-based); pulls next from sequence pool |
-| **Introduce fresh benchmark** | Internal validity below threshold; OR periodic fallback |
+| **Create new benchmark** | `fixed_sequence`/`randomized_pool`: saturation (bypasses cooldown) or periodic schedule. `dynamic`: time-triggered every `benchmark_introduction_interval` rounds — heuristic picks the pool benchmark that best fills the need-vs-coverage gap; LLM picks from pool or chooses `none`. |
+| **Retire benchmark** | Auto-retirement when `max_benchmarks` is reached and a new benchmark is introduced (most-saturated active benchmark is removed). In `dynamic` LLM mode, the LLM can also explicitly retire by judgment. |
+| **none** | Default in `dynamic` LLM mode when no suitable candidate is found. |
 
 ### Evaluator Modes
 
 ```python
-evaluator_mode: str = "fixed_sequence"   # "fixed_sequence" | "randomized_pool" | "full_autonomy"
-benchmark_pool: list = BENCHMARK_POOL    # 22-benchmark expanded pool
-benchmark_dev_rounds: int = 4            # pipeline time (full_autonomy only)
+evaluator_mode: str = "fixed_sequence"     # "fixed_sequence" | "randomized_pool" | "dynamic"
+benchmark_pool: list = BENCHMARK_POOL      # 22-benchmark expanded pool
+benchmark_introduction_cooldown: int = 4   # rounds between periodic introductions (fixed_sequence / randomized_pool)
+benchmark_introduction_interval: int = 4   # rounds between dynamic-mode introduction decisions
 ```
 
-**Three modes:**
+**Three modes (ladder, each step = single-primitive change from previous):**
 
-| Mode | Source | Triggers | LLM? |
-|------|--------|----------|------|
-| `fixed_sequence` | `benchmark_sequence` in order | Periodic + saturation | No |
-| `randomized_pool` | Random draw from `benchmark_pool` | Periodic + saturation | No |
-| `full_autonomy` | LLM picks from pool | LLM decides | Yes (required) |
+| Mode | Trigger | Selection | Actor |
+|------|---------|-----------|-------|
+| `fixed_sequence` | Cooldown-periodic + saturation | Preset sequence | — |
+| `randomized_pool` | Cooldown-periodic + saturation | Random draw from pool | — |
+| `dynamic` | Time-triggered every `benchmark_introduction_interval` rounds | Gap-based pool selection (heuristic) OR LLM pool pick / `none` (LLM) | — (heuristic) OR `llm_plan_dynamic_evaluator` |
 
-**Trigger logic** (`_evaluate_introduction_trigger`, used by fixed_sequence and randomized_pool):
+**Trigger logic for fixed_sequence / randomized_pool** (`_evaluate_introduction_trigger`):
 
 | Trigger | Cooldown |
 |---------|----------|
 | Saturation (delta-based) | Min gap 1 round + per-benchmark `_saturation_cooldown` |
-| Periodic (every cooldown rounds) | Standard cooldown |
-| Low internal validity (< 0.5) | Standard cooldown (`dynamic_evaluator=True` only) |
+| Periodic (every `benchmark_introduction_cooldown` rounds) | Standard cooldown |
 
-**Internal validity:** `Spearman_r(score_rank, market_share_rank)` — updated each round when `dynamic_evaluator=True` or `evaluator_mode="full_autonomy"`. Evaluator-internal only, never published.
+**Dynamic mode** (both heuristic and LLM variants):
 
-**Full autonomy mode** (LLM-only):
-- LLM sees: active benchmarks (name, tags, saturation, scores), unintroduced pool (name, description, tags only — NO dimension weights), pipeline status, retired history
-- LLM actions: `commit` (start developing from pool, takes `benchmark_dev_rounds`), `retire` (remove active benchmark), `none`
-- Development pipeline: multiple benchmarks can be in development simultaneously; cannot cancel once committed; `advance_pipeline()` introduces ready benchmarks each round
-- Three-tier visibility preserved: dimension weights never shown to LLM
+- **Trigger:** time-based only — fires when `round_num % benchmark_introduction_interval == 0` (skips round 0). No dev pipeline; introductions are immediate.
+- **Heuristic selection** (`_select_pool_benchmark_by_gap` in `simulation.py`): computes current dimension coverage across active benchmarks and market-fraction-weighted consumer need weights; picks the pool candidate whose dimension profile best fills `max(0, need - coverage)`.
+- **LLM selection** (`llm_plan_dynamic_evaluator` in `llm.py`): picks from pool or chooses `none`/`retire` given observables (active benchmarks, score deltas, spread, saturation states, media headlines, `internal_validity`). If the LLM names a benchmark not in the current pool, the action is downgraded to `none`.
+- Three-tier visibility preserved: dimension weights and ground-truth need weights are never shown to the LLM.
 
-**Legacy `dynamic_evaluator` toggle:** Still supported for signal-based triggers (saturation, low validity, fallback periodic). Can combine with `randomized_pool` (random source + signal triggers).
+Known asymmetry: heuristic selection is gap-driven (reactive to the consumer-need/coverage mismatch); LLM selection reasons from public-visible signals only and can be proactive in ways the heuristic cannot. This difference is the research finding, not a bug.
 
-**Condition presets:** `--condition eval_randomized_pool`, `--condition eval_full_autonomy`
+**LLM dynamic mode** uses `DYNAMIC_EVALUATOR_SYSTEM_PROMPT` (stewardship framing; inaction as default). No staff-capacity / pipeline block is surfaced — the N=2 pipeline cap described in earlier design docs was never implemented; the time-trigger provides all pacing.
+
+**Internal validity:** `Pearson_r(score_rank, market_share_rank)` — updated each round when `evaluator_mode == "dynamic"`. Evaluator-internal only, never published; passed to the LLM as an observable signal but not used as a trigger.
+
+**Condition preset:** `--condition dynamic_evaluator` (works in both `--mode llm` and `--mode heuristic`). The legacy `evaluator_mode="full_autonomy"` string and `dynamic_evaluator: bool` field were retired in session 31 (saved configs in `sandbox/experiments/llm/` were migrated in-place; the `__post_init__` shim is gone). Replays of any pre-session-31 config that still carries those legacy values will now fail loudly rather than auto-migrate.
 
 **No apparatus vocabulary** in LLM prompts — saturation, validity, and Goodhart framing are never surfaced. The evaluator is addressed as "the team responsible for maintaining the AI evaluation leaderboard."
 
@@ -572,8 +635,15 @@ Models evaluator conflict of interest (Leaderboard Illusion paper; cross-sector 
 
 - **Heuristic mode:** `N = min(max_n, 1 + int((base_revenue + discretionary_budget) * 0.15 / fee))`. Affordability-gated by 15% of total resources.
 - **LLM mode:** Provider outputs `"n_submissions": int` in planning JSON. Prompt frames it as a strategic cost/benefit tradeoff.
+- **K-lag fee gating (session 41):** On rounds where no benchmark produces a fresh score (fully-frozen K-lag rounds under `private_only` / `iid_holdout`), fee is waived and `premium_revenue` is zero. Best-of-N only runs on publish rounds, so the fee only fires when the service is rendered. Checked via `EvalEcosystemSimulation._any_benchmark_publishes_fresh(round_num)`.
 
-**2. Early access.** Providers with N > 1 (any paying customer) get partial knowledge of new benchmarks. When a benchmark is introduced, premium providers' `inferred_benchmark_weights` are initialized as a blend of uniform and true weights: `(1 - early_access_factor) * uniform + early_access_factor * true_weights` (default factor 0.5). Non-premium providers start at uniform. This gives a multi-round R&D targeting advantage.
+**2. Early access.** Premium subscribers start closer to the actual holdout-scoring target at benchmark introduction. The blend uses the noisy-public-weights prior (session 38 default, `normalize(public_weights + Normal(0, σ_prior))`) as the base and pulls it toward the benchmark's `holdout_category_dimension_weights`:
+
+```
+premium_init = (1 - factor) × noisy_public_prior + factor × holdout_weights
+```
+
+`factor=0` matches non-subscribers (no advantage); `factor=1` gives exact holdout knowledge at introduction. On public-type benchmarks where `holdout_category_dimension_weights is None`, the blend falls back to public weights and collapses to a weak sharpening of the noisy prior — i.e. eval-as-company sells private-benchmark access advantage specifically, consistent with the SEAL business model. Justification: paying subscribers have implicit bias-variance knowledge (better sense of where their models overfit), so start with a holdout-target-informed prior without extra effort. Default `early_access_factor=0.5` — aggressive under new semantics; revisit before activation.
 
 **3. Discretionary budget.** Per-provider `discretionary_budget` field represents parent company resources available for evaluator access (does NOT affect R&D capability gains). Only affects submission affordability calculation. Models that Google/Meta subsidiaries can trivially afford maximum submissions while standalone startups are constrained.
 
@@ -594,7 +664,7 @@ Models evaluator conflict of interest (Leaderboard Illusion paper; cross-sector 
 | `evaluator_base_budget` | `0.0` | Evaluator starting budget (display dollars) |
 | `fee_per_submission` | `0.03` | R&D cost per extra submission (sim units) |
 | `max_eval_submissions` | `10` | Hard cap on submissions per provider per round |
-| `early_access_factor` | `0.5` | Belief blend: 0=uniform, 1=true weights |
+| `early_access_factor` | `0.5` | Belief blend: 0=noisy-public prior (no advantage), 1=exact holdout weights |
 
 **Logging:** `evaluator_business_metrics` in `rounds.jsonl` includes `submission_counts` (per-provider N), `premium_revenue`, `n_premium_subscribers`. Provider execution memory includes `n_submissions`.
 
@@ -639,10 +709,11 @@ Each segment = use-case profile × behavioral archetype. Archetypes modify obser
 | tech_startup | 0.18 | **0.38** | 0.05 | 0.04 | 0.05 | **0.30** | 0.06 |
 | enterprise_legal | 0.28 | 0.02 | **0.35** | 0.22 | 0.11 | 0.02 | 0.04 |
 | government_agency | 0.12 | 0.02 | 0.22 | **0.48** | 0.12 | 0.04 | 0.05 |
+| enterprise_hr | 0.20 | 0.02 | 0.20 | **0.35** | 0.18 | 0.05 | 0.04 |
 
-Population weights are adoption-weighted market shares, grounded in NBER Bick/Blandin/Deming 2024 occupation-level AI adoption data, Stanford AI Index 2025, and McKinsey State of AI 2025. See `docs/references.md` for full citations.
+Population weights are adoption-weighted market shares, grounded in NBER Bick/Blandin/Deming 2024 occupation-level AI adoption data, Stanford AI Index 2025, and McKinsey State of AI 2025. `enterprise_hr` (session 40b) is anchored in EEOC 2024 algorithmic-discrimination guidance + NYC Local Law 144 + EU AI Act Annex III §4. See `docs/references.md` for full citations. Raw pop weights sum to 1.04; `create_default_segments` normalizes to 1.0.
 
-Population-weighted average ≈ `{reasoning: 0.18, coding: 0.13, knowledge: 0.18, safety: 0.16, communication: 0.27, agentic: 0.09}`. `agentic` intentionally low at simulation start (2023).
+Population-weighted average ≈ `{reasoning: 0.18, coding: 0.12, knowledge: 0.18, safety: 0.17, communication: 0.27, agentic: 0.09}` post-40b (safety ticks up ~0.007 from `enterprise_hr`'s safety-0.35 weight). `agentic` intentionally low at simulation start (2023).
 
 ### Benchmark Relevance (Derived)
 
@@ -675,7 +746,7 @@ Proportional sigmoid-based switching within each segment. Two independent trigge
 
 ### Dynamic Consumer Market
 
-When `dynamic_consumer_market=True` (now the **default** as of session 27), enterprise segment `market_fraction` grows from ~25% to ~55% over the simulation via a logistic curve, modeling the real-world shift from consumer-dominated (Q1 2023) to enterprise-dominated (mid-2025) AI market. Individual segments shrink proportionally. Within each class, relative proportions are preserved. The inverse ablation is `--condition static_consumer_market`, which sets it back to `False`.
+When `dynamic_consumer_market=True` (the **default** since session 27, and the dataclass default since session 31), enterprise segment `market_fraction` grows from ~25% to ~55% over the simulation via a logistic curve, modeling the real-world shift from consumer-dominated (Q1 2023) to enterprise-dominated (mid-2025) AI market. Individual segments shrink proportionally. Within each class, relative proportions are preserved. The inverse ablation is `--condition static_enterprise_size`, which sets it back to `False`.
 
 ```
 enterprise_share(t) = start + (end - start) / (1 + exp(-0.25 * (t - midpoint)))
@@ -701,16 +772,16 @@ Output format: `{action: renew|switch|pilot, target_provider, share_to_move, rea
 
 Probabilistic AI safety incidents with ecosystem-wide propagation effects. Empirical grounding in `docs/incident_path_dependence.md` (cross-sector survey of 12+ real-world cases).
 
-**Base rate:** 10% per provider per round. Multiplied by factors:
+**Base rate:** 20% per provider per round (session 39b recalibration — raised from 10% to make safety lever observable against market-share confound). Multiplied by factors:
 
 | Factor | Formula | Direction |
 |--------|---------|-----------|
-| Safety investment | `1 - (portfolio["safety"] × 0.8)` | Higher safety allocation → lower prob |
+| Safety investment | `1 - (portfolio["safety"] × 1.5)`, clipped ≥ 0 | Higher safety allocation → lower prob |
 | Market share (exposure) | `(0.5 + market_share × 1.5) × sqrt(total_market_size)` | Larger market → higher prob |
 | Incident history escalation | `+0.02 per prior major/critical in last 15 rounds, cap +0.10` | Past harm → elevated future risk (ages out) |
 | Active sanction | `0.75×` while sanctioned | Regulatory oversight → reduced prob |
 
-Floor at 5% (irreducible risk from deployment context, adversarial users, novel failure modes). Capped at 40% per round.
+Floor at 2% (session 39b, from 5%). Capped at 50% per round (session 39b, from 40%). See Session Changelog for the validation that led to these values.
 
 **OS providers:** Use `deployed_safety` (after erosion) rather than `capability_vector["safety"]` when `os_safety_erosion=True`.
 
@@ -726,6 +797,19 @@ Floor at 5% (irreducible risk from deployment context, adversarial users, novel 
 | Critical | 7% |
 
 **Categories:** `healthcare_harm` (20%), `security_breach` (25%), `bias_discrimination` (20%), `safety_failure` (20%), `misinformation` (10%), `misuse` (5%).
+
+**Sector propagation (session 40b correction):** Each category has an `affected_sectors` list. Segments whose `use_case` or `consumer_type` is in that list get a 2× satisfaction-penalty multiplier. Prior to session 40b, 5 of 7 sector strings did not match any `USE_CASE_PROFILES` key — `misinformation` and `misuse` propagation were effectively dead. Corrected mapping:
+
+| Category | Sectors |
+|---|---|
+| healthcare_harm | `hospital_system`, `healthcare` |
+| security_breach | `enterprise_finance`, `hospital_system` |
+| bias_discrimination | `enterprise_hr`, `enterprise_finance`, `government_agency` |
+| safety_failure | `enterprise_finance`, `government_agency` |
+| misinformation | `individual`, `government_agency` |
+| misuse | `individual` |
+
+Matching logic at `consumer.py:645`: `if seg.use_case in affected_sectors or seg.consumer_type in affected_sectors: weight *= 2.0`.
 
 **Ecosystem propagation:**
 - **Media:** Critical incidents get guaranteed headline slots; major/moderate incidents compete for coverage in the pooled event system via weighted sampling (major: 3x weight, moderate: 2x, routine news: 1x). This models the attention economy — not all incidents make the news, but severe ones are more likely to. Provider attention and sentiment penalties apply regardless of coverage.
@@ -1061,3 +1145,162 @@ Items requiring simulation output before values can be finalized:
 - **Regulator parameters**: exact threshold values per preset (EU/Balanced/US)
 - **Consumer state**: `running_perceived_quality` initialization value per segment per provider
 - **Incident severity/recovery calibration**: Current critical penalty (0.30) and decay (~2.3-round half-life) produce 30+pp swings, consistent with Boeing/Avandia/Cruise evidence. Consider: (a) slower decay for critical incidents (half-life 4-5 rounds), (b) incident-type gating (physical harm vs. reputational), (c) contagion mechanic where sector-wide incidents hit all providers. See `docs/incident_path_dependence.md`.
+
+---
+
+## Experiment Seeds
+
+30 unique 3-digit seeds used for all heuristic baseline runs. Generated once and fixed for reproducibility. Stored in `SEEDS.txt`.
+
+```python
+import random
+random.seed(42)
+seeds = sorted(random.sample(range(100, 1000), 30))
+```
+
+Seeds: 125 127 130 132 189 195 204 214 242 303 323 328 338 350 381 529 532 617 658 674 704 716 754 765 792 818 833 854 858 859
+
+---
+
+## Session Changelog
+
+Entries preserve the *why* behind recent structural changes. Current state is reflected in the architecture sections above; this changelog is for auditing how we got there. Older sessions are summarized in single bullets; see `SESSION_HANDOFF.md` and project memory for full detail.
+
+### 2026-04-20 — Session 42: heuristic policy rewrite (F1) + cadence reconciliation + per-benchmark gap reframing
+
+**F1 — `_plan_heuristic` rewrite (`src/actors/model_provider.py:508-579`, `src/simulation.py:808-830`):**
+Removed unconditional profile-string-based modifiers (the `if "safety" in profile_lower: safety += 0.05` ratchets) that were firing every round and saturating providers at deterministic end-states. `safety_last` std across 1,500 runs was 0.000 for Apex and Orion — blocking all safety counterfactual analysis. New policy preserves incident-pressure mechanism and adds 3 universal observation-driven rules: **Rule A** (share trend: 3-round Δshare < −0.02 → product +=0.03, rd −=0.03; Δshare > +0.02 → rd +=0.02, product −=0.02); **Rule C** (CRISIS narrative → safety +=0.04, rd −=0.04); **Rule D** (own-targeted recent interventions → safety += min(0.06, 0.02·count)). Provider identity now comes from initial portfolio + innate cap vector only; no per-policy profile bias. Safety cap raised 0.55→0.70 since ratchet is gone. Added 3 ctx signals in `_get_provider_ecosystem_context`: `own_share_history` (last 5 rounds), `narrative_state`, `own_recent_interventions`. LLM mode untouched.
+
+**Validation (1,500-run re-baseline, same seeds 1000-1029):**
+- Apex `safety_last` std 0.0000 → 0.187; Orion 0.0000 → 0.149. Variance unlocked across all providers.
+- **Regime shift**: leader-by-share flipped Mirage 47% → 0.9%; Orion 18% → 64%. Prior Mirage-dominance confirmed as policy artifact of profile ratchets.
+- Gap more negative (−0.057 → −0.145) and HHI up (0.27 → 0.56) across all 5 privacy conditions. Satisfaction 0.62 → 0.75.
+
+**Cadence reconciliation to canonical 4** (was spread across 3/4/5/6/7/8 in 10 locations): `src/simulation.py` (cooldown default 5→4; interval already 4), `src/actors/evaluator.py` (init default 7→4, deserialization default 8→4), `scripts/run_experiment.py` (SIMULATION value 5→4; fallbacks 6/4→4), `docs/stakeholders.md` (cooldown doc 3→4), `overleaf/appendix/A_architecture.tex` (schedule rounds 0/5/10/15/20/25/30 → 0/4/8/12/16/20/24).
+
+**2 new structural ablations** (`run_experiment.py:_STRUCTURAL_CHOICES` + `_apply_structural_overrides`): `cadence_static` (sets `benchmark_sequence=[]` — only 4 initial benchmarks, "fixed benchmark era" counterfactual); `cadence_every_8` (cooldown=8 — pre-2023-era slower release rate). Default cadence=4 stays as `none`. Smoke-tested; 450 heuristic runs queued but unexecuted. Matrix becomes 5 privacy × 12 structural × 30 seeds = 1,800 if fully re-baselined.
+
+**`fee_per_submission` default 0.03 → 0.05** (`src/simulation.py:193`) — aligns `SimulationConfig` default with calibrated session-18 value that `run_experiment.py` was overriding. Structurally eval-as-company was already correct.
+
+**Per-benchmark gap reframing** (analysis-only; not a sim change). Replaced scalar `score − satisfaction` with per-benchmark × per-provider `score_b − matched_sat_b_aligned` where matched = weighted avg of (cap · need_weights_s) across segments × alignment(cdw_b, nw_s) × size. Decomposed into clean (pure capability × weight mismatch) and full (incl. cost_bonus + incident_penalty). Finding: 8/10 benchmarks have positive gap (overpromise); Agentic Tasks is −0.21 outlier because cdw heavily weights agentic (0.75) but capability stays low (0.26) — no heuristic rule invests there. Privacy mechanism IS visible at per-benchmark level (gaps compress toward zero under `private_only`) — aggregate scalar averaged it out. Validates session-38 claim. Paper figures 1-3 drafted at `sandbox/experiments/heuristic_apr19_postF1/plots_story/`.
+
+**6 LLM diagnostic runs** (anthropic API, seed 2026, 30 rounds): `baseline`, `private_only`, `baseline × initial_uniform_allocation`, `baseline × no_regulator`, `baseline × no_incidents`, `fixed_public`. Key findings: (a) regulator IS load-bearing in LLM (removing it: Apex share 0.62→0.16, Orion 0.07→0.65) — the heuristic no-op is a heuristic-specific weakness, not a sim-design failure; F2/F3/F4 scope reduces to "port LLM-mode responsiveness into heuristic Rules"; (b) `fixed_public` at N=1 validates aging/overfitting hypothesis — mean |gap| on 4 shared benchmarks +61% vs baseline (0.015 → 0.024); (c) `bo_mean_last` pinned at 0.800 in LLM mode too (mode="fixed" is the default across sessions 38, 39, 42) — session-38 gap collapse mechanism operated via `inferred_benchmark_weights` delta-rule drift, not bo adjustment; (d) `initial_uniform_allocation` LLM run: providers DO drift to differentiated portfolios within 30 rounds (Apex safety 0.31, Orion 0.15) but Orion still wins via capability moat — confirms R4 (capability recalibration) as prerequisite for any "equal start" story.
+
+**Paper — Appendix A updated**: schedule table rounds shifted to cadence=4 (0/4/8/12/16/20/24); new "Schedule calibration" paragraph maps each sim benchmark to its real-world analog release date (MMLU Sep 2020 through LiveCodeBench Mar 2024 / RULER Apr 2024) and notes the implicit ~1 round ≈ 2 months conversion.
+
+### 2026-04-20 — Session 41: eval_as_company minimal honesty fix + re-baseline validation
+
+**Problem.** Three latent inconsistencies in `evaluator_as_company` code paths vs the session-38 holdout typology:
+1. `_on_new_benchmark` early-access blend used `(1-factor) × uniform + factor × aggregate_true_weights` — overwriting the new noisy-public-weights prior (session 38) with a different blend, and blurring the public/holdout split that the new mechanic was specifically designed to preserve.
+2. `fee_per_submission` was deducted every round regardless of whether any benchmark actually produced a fresh score. On K-lag private/partial rounds, providers paid for best-of-N that didn't run.
+3. Same issue for `premium_revenue` accounting on the evaluator side.
+
+**Fix (Option A — minimal honesty pass; `src/simulation.py`):**
+- New staticmethod `_aggregate_holdout_weights(bm_gt)` — mirror of `_aggregate_bm_weights` that reads `holdout_category_dimension_weights` instead of `category_dimension_weights`. Returns `{}` on public benchmarks.
+- New method `_any_benchmark_publishes_fresh(round_num)` — mirrors the K-lag gate in `evaluator.evaluate_all`. Used to gate eval_as_company submission fees.
+- Early-access blend (`_on_new_benchmark`) rewritten: target is `holdout_category_dimension_weights` (falls back to public on public benchmarks); base is the existing `inferred_benchmark_weights[b]` set by `init_benchmark` (noisy-public prior). `factor=0` now means no advantage; `factor=1` means exact holdout knowledge at introduction. Consistent with the SEAL business model (sells private-benchmark access advantage).
+- Fee accounting gated on `_any_publish = self._any_benchmark_publishes_fresh(round_num)`: `sub_cost` and `premium_revenue` collapse to 0.0 on fully-frozen K-lag rounds.
+
+**Justification for Option A semantics.** Paying subscribers have implicit bias-variance knowledge (better sense of where their models overfit) → they arrive with a holdout-target-informed prior without extra effort. Avoids tuning an N-rounds-of-pre-access parameter.
+
+**Not done.**
+- Full benchmark-sponsorship mechanic (FrontierMath-style per-(provider, benchmark) pre-launch holdout access) — still spec-only in stakeholders.md §"Premium access"; not in code.
+- `early_access_factor=0.5` default is aggressive under new semantics (50% of the way to exact holdout). Should revisit before any paper condition activates `evaluator_as_company`.
+
+**Validation runs (session 41 re-baseline under session-39c incident formula + session-40b sector fix + session-41 eval_as_company fixes):**
+- 50 heuristic runs (5 conditions × 10 seeds, baseline condition): gap stable at −0.05 ± 0.006 across all 5 privacy conditions, 13 incidents/run, `r(safety, incidents)` ≈ −0.45. No regressions vs pre-session-41 expectations.
+- 3 LLM runs (anthropic baseline, seeds 125/127/130, 30 rounds, 0 fallbacks each): **gap flipped sign vs session-39c (+0.023 → −0.065 ± 0.012 across all 3 seeds; not seed noise).** LLM + heuristic now agree on gap sign and magnitude. Session-28/29 "LLM gaming cleaner" narrative (memory: `finding_llm_consumer_feedback_loop`) needs revisiting. Most likely driver: session-39c incident formula (incident count up ~65% in LLM runs). Session-40b sector fix secondary.
+- 20 initial-condition-probe runs (`--structural initial_uniform_capability` / `initial_uniform_allocation`, 10 seeds each): **Apex's safety lead is ~100% capability-vector-driven.** Under `initial_uniform_capability`: Apex safety drops 0.82 → 0.66; leader distribution flips to Mirage:6 / OpenCore:3 / Spark:1. Under `initial_uniform_allocation`: Orion dominance strengthens (8/10 vs 6/10 baseline). Gap magnitude drops ~40% under uniform capability (emergent component of gap ≈ −0.03, vs baseline −0.05).
+
+**External-validation pipeline executed** (first time end-to-end) on session-41 LLM baseline. Paper-quality signal: **reasoning rank-correlation Spearman ρ ≈ 0.90 (paired sim vs PWC real-world) across all 3 seeds (p ≤ 0.05 each).** Coding ρ ≈ 0.73 (marginal). Writing ρ ≈ 0.27 (does not validate — likely a PWC "writing" dimension mismatch; MMLU/HellaSwag-derived rather than communication-focused). Math n=0 (Advanced Math didn't enter active pool in any seed).
+
+**Profile-anchoring finding (LLM actor_traces).** Profile-token reference rate varies 6× across providers: OpenCore 2.95 hits/round (100% of rounds); Spark 1.60 (92%); Mirage 0.93 (58%); big-4 closed-source 0.47-0.54 (33-38%). Driven by profile-string length disparity (8-38 words). OpenCore and Spark outcomes are doubly profile-determined (mechanical + narrative); big-4 outcomes are mostly mechanical. Redesign options catalogued as post-deadline memory (`future_work_provider_profile_redesign.md`): minimal structural facts / historical behavior / single-axis-asymmetry-fixed-length / null profiles + memory-only. Swap-ablation proposal included.
+
+**Breaking:** none. All session-41 code changes live behind `evaluator_as_company=False` default.
+
+**Deferred:**
+- Commit pending — session-39 Tier-1 PIMMUR edits + session-40b Fix-B + session-41 eval_as_company fixes all uncommitted.
+- Paper narrative update reflecting the LLM-gap-sign-flip (session 28/29 finding needs revisiting in Section 5 + Appendix H).
+- Math validation (force Advanced Math into active pool).
+- Provider profile redesign (post-deadline memory saved).
+- Benchmark introduction cadence kept at 4-month default; unjustified empirically vs raw adoption (1.2 mo/event) but defensible under "research-guiding only" narrow filter (3.5-5 mo/wave). Documented as informal calibration in memory.
+
+### 2026-04-19 — Session 40b: `enterprise_hr` use_case + incident sector-string correction
+
+**Problem.** In `incidents.py` `CATEGORIES`, 5 of 7 `affected_sectors` strings did not match any `USE_CASE_PROFILES` key or `consumer_type` value. The 2× propagation multiplier at `consumer.py:645` never fired for `misinformation` or `misuse`, and was partially dead for `safety_failure` and `bias_discrimination`.
+
+**Fix-A (sector-string corrections in `incidents.py`):**
+- `healthcare_individual` → `healthcare`
+- `government` → `government_agency`
+- `consumer` → `individual`
+- `enterprise_saas` → dropped (no SaaS-specific use_case; finance/legal/govt already over-represented)
+
+**Fix-B (new `enterprise_hr` use_case in `consumer.py`):** closes EU AI Act Annex III §4 (employment) coverage gap. Properties: `consumer_type="organization"`, need_weights safety-dominant (0.35; rest: reasoning 0.20, knowledge 0.20, communication 0.18, agentic 0.05, coding 0.02), `compliance_requirements=[EEOC, non_discrimination, GDPR_art22]`, decision_delay 5, pop weight 0.04. Added to `ORG_FIELD_PRIORITIES`, `USE_CASE_POP_WEIGHTS`, `scripts/run_experiment.py` `use_case_profiles` list, and `plotting.py` `_USE_CASE_GROUPS["Operations"]`. Anchored in EEOC 2024 algorithmic-discrimination guidance, NYC Local Law 144 (bias-audit mandate), and EU AI Act Annex III §4.
+
+**Validation (5 seeds × 30 rounds, baseline heuristic, paired prior vs post):**
+- mean Δgap = −0.0015 (SD 0.0017); mean Δgap_h2 = −0.0011 (SD 0.0011); all 5 seeds preserve sign
+- mean ΔHHI = +0.008 (SD 0.010)
+- incident counts near-identical (−0.20 mean; one `misinformation` incident shifted across 5 seeds)
+- provider share shifts: Apex AI (safety leader) +0.8pp, Mirage AI −1.1pp, others within ±0.1pp
+- Decision rule (`consumer_redesign.md` §13): |Δgap| > 0.022 AND CI-crosses-zero → halt. Passes with margin.
+
+**Breaking:** pre-40b heuristic runs have mostly-dead sector multipliers. Any cross-condition incident figure that depends on per-category propagation requires re-baseline under the new sector strings. Session-39c's incident formula re-baseline (see below) already required a fresh run, so 40b piggybacks at zero marginal cost.
+
+**Deferred:** Full consumer-ontology redesign (Option 1.5 in `docs/consumer_redesign.md`, 10 uniform deployment contexts) — 40b is the minimal incident-correctness subset, not the full ontology rework. `security_operations` coverage gap still open.
+
+### 2026-04-19 — Session 39b: incident formula recalibration
+
+`incidents.py:_compute_incident_probability` retuned to make the safety-investment lever observable against the market-share exposure confound.
+
+| Parameter | Before | After |
+|---|---|---|
+| base_incident_rate | 0.10 | 0.20 |
+| safety_multiplier coef | 0.8 | 1.5 (clipped ≥ 0) |
+| floor | 0.05 | 0.02 |
+| cap | 0.40 | 0.50 |
+
+**Validation (15-seed paired heuristic baseline):**
+- Pearson r(safety, incidents) flipped +0.138 → −0.066 (correct direction at last)
+- safety-leader Apex incident count 2.33 → 1.87 (−20%)
+- incident rate/round 0.46 → 0.53; regulator-action SD 2.8 → 1.6 (less noise)
+- gap + max market share unchanged within noise
+
+An intermediate coef=1.0 variant was rejected (Pearson flipped positive again at +0.088 — market-share exposure re-dominated).
+
+**Breaking:** all pre-39b heuristic incident counts use the prior formula and are not directly comparable.
+
+### 2026-04-18 — Session 39: PIMMUR Tier-1 heuristic realism upgrades
+
+Five edits landed and validated against a 5-seed paired prior/post baseline:
+
+1. **Per-provider incident logging** — `incident_summary` in `rounds.jsonl` now carries `by_provider_severity` and `by_provider_category` (`simulation.py:1464–1496`); closes `future_work_incident_logging.md`. Old `by_provider` retained for backwards-compat.
+2. **Media narrative inertia** — `Media._cumulative_incidents` is now `float` (was `int`); decays 10%/round when no new incidents (`media.py:92, 503`); SKEPTICISM→OPTIMISM and CRISIS→SKEPTICISM recoveries now require BOTH the existing time-since-incident gate AND `cumulative < threshold/2` (`media.py:529–536`). Removes the prior instant-reset on recovery.
+3. **Evaluator stewardship prompt** — hard-coded `0.75` validity-correlation threshold dropped from `DYNAMIC_EVALUATOR_SYSTEM_PROMPT` (`llm.py:1462`); replaced with neutral framing. Min-Control upgrade.
+4. **Profile-derived heuristic learning rate** — new `ModelProvider._profile_learning_rate()` (`model_provider.py:359–376`) returns 0.20 for aggressive/competitive profiles, 0.10 for safety/responsible/risk-averse, default 0.15. `update_benchmark_beliefs` default `learning_rate` is now `Optional[float] = None`; resolves via `_profile_learning_rate()` when None (`model_provider.py:378–402`). Sim call site no longer passes the hard-coded 0.15 (`simulation.py:1141–1148`).
+5. Verified positive-sentiment exploration churn already present at `consumer.py:844–850` (no edit).
+
+**Validation (5 seeds × 30 rounds, paired):** provider economics drift in 4th decimal (Δsat=+0.000±0.001, ΔHHI=+0.002±0.003, Δgap≈0); incident counts identical; media narrative-state distribution per-seed-variable (Δ%OPTIMISM=−6±25pp, max single-seed swing ±43pp). Existing 30-seed heuristic baseline safe for sat/HHI/gap/incident figures; **30-seed re-baseline recommended for any narrative-state figure** before publication.
+
+### 2026-04-18 — Session 38: private-benchmark mechanism redesign
+
+Q1 (reporting) + Q3 (cosine) Appendix C questions resolved. Code and presets landed same session.
+
+1. **Holdout-only reporting** replaces the blended formula: `published_score = dot(cap, holdout_weights) + noise`.
+2. **Three benchmark types with public/partial/private typology:**
+   - `public` (h=0)
+   - `partial` (h=0.3, cosine=0.95, noise ×√(1/0.3) ≈ 1.8×)
+   - `private` (h=1.0, cosine=0.85, baseline noise)
+   - plus ablation-only `iid_holdout` (h=1.0, cosine=1.0)
+3. **Five ablation conditions** (uniform pool-type assignment): `public_only`, `baseline` (matches reality), `private_dominant`, `private_only`, `iid_holdout`. K=3 locked (session 37 empirical calibration retained).
+4. **h role redefined as sample-size noise scaling**, not blending fraction; practice-signal mechanism dropped.
+5. **`inferred_benchmark_weights` initialization** changed to noisy-public-weights prior (`σ_prior` independent of h; default 0.05).
+6. **Premium access as orthogonal axis** (`premium_pre_access`, `premium_submissions_per_round`) for future benchmark-sponsorship / eval-as-company ablations.
+
+**Also this session:** Evaluator Modes section rewritten to match actual code — dynamic mode is time-triggered every `benchmark_introduction_interval` rounds (heuristic: gap-based pool selection; LLM: pool pick or `none`/`retire`), immediate introduction, auto-retire on `max_benchmarks`. Removed fictitious spec for 4-round dev pipeline, N=2 concurrency cap, `replaces`-graph paired retirement (never implemented). Internal validity corrected to Pearson (was Spearman). Actors Overview Media row corrected to "No — fully algorithmic"; `media.py` contains zero LLM calls.
+
+### Prior sessions (compressed)
+
+- **Session 37 (2026-04-17):** `evaluation_lag = 3` empirically calibrated via `external-validation/scripts/analyze_k_cadence.py` (24 Epoch benchmarks × 8 labs, median-of-medians K_advance 2.5–3.3 months).
+- **Session 35 (2026-04-16):** `evaluation_lag: int = 0` field added to `SimulationConfig`.
+- **Session 34 (2026-04-16):** Per-benchmark `holdout_fraction` + `holdout_category_dimension_weights` introduced (superseded by session-38 typology).
+- **Sessions ≤ 33:** see `SESSION_HANDOFF.md` git history + project memory index.

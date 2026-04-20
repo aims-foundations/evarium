@@ -171,6 +171,16 @@ USE_CASE_PROFILES = {
         "need_weights": {"reasoning": 0.12, "coding": 0.02, "knowledge": 0.22,
                          "safety": 0.48, "communication": 0.12, "agentic": 0.04},
     },
+    "enterprise_hr": {
+        "label": "HR / Talent Organization",
+        "benchmark_prefs": {"safety": 0.55, "reasoning": 0.30, "writing": 0.15},
+        "consumer_type": "organization",
+        "compliance_requirements": ["EEOC", "non_discrimination", "GDPR_art22"],
+        "integration_friction": 0.0,
+        "decision_delay": 5,
+        "need_weights": {"reasoning": 0.20, "coding": 0.02, "knowledge": 0.20,
+                         "safety": 0.35, "communication": 0.18, "agentic": 0.05},
+    },
 }
 
 # Field-specific benchmark keyword priorities for organizations
@@ -181,6 +191,7 @@ ORG_FIELD_PRIORITIES = {
     "tech_startup": ["coding", "code", "software", "engineering", "swe"],
     "enterprise_legal": ["legal", "law", "reasoning", "logic", "argument"],
     "government_agency": ["safety", "security", "compliance", "policy"],
+    "enterprise_hr": ["safety", "bias", "fairness", "hiring", "employment", "discrimination"],
 }
 
 
@@ -821,11 +832,13 @@ class ConsumerMarket:
 
         # Exploration churn: per-provider, media-driven.
         # Base rate models free-tier trials, word-of-mouth, new product launches.
-        # Negative media coverage about a specific provider drives its users to
-        # explore alternatives at a higher rate, scaled by leaderboard_trust
-        # (high-trust segments respond more to media signals; experience-driven
-        # segments mostly ignore headlines). Hardy et al. (2024): benchmarks and
-        # media drive attention/exploration, not direct quality perception.
+        # Media coverage modulates exploration in both directions:
+        #   Negative: users of the covered provider explore away (fear/scandal)
+        #   Positive: users of OTHER providers explore toward buzzy provider (hype/launch)
+        # Scaled by leaderboard_trust (high-trust segments respond more to media;
+        # experience-driven segments mostly ignore headlines).
+        # Hardy et al. (2024): benchmarks/media drive attention and exploration,
+        # not direct quality perception.
         base_rate = 0.05
         exploration_pool = 0.0
         for provider in list(seg.provider_shares.keys()):
@@ -837,7 +850,15 @@ class ConsumerMarket:
                 p_attention = media_coverage.get("provider_attention", {}).get(provider, 0.0)
                 sentiment = media_coverage.get("sentiment", 0.0)
                 if sentiment < 0:
+                    # Negative: users of covered provider churn away
                     provider_rate += p_attention * abs(sentiment) * seg.leaderboard_trust
+                elif sentiment > 0 and p_attention < 0.3:
+                    # Positive hype: users of NON-buzzy providers explore toward
+                    # the buzzy one. Only fires for providers NOT getting attention
+                    # (attention < 0.3 filters out the launch provider itself).
+                    # 0.5x attenuation vs negative side: hype weaker than fear.
+                    max_attn = max(media_coverage.get("provider_attention", {}).values(), default=0.0)
+                    provider_rate += 0.5 * max_attn * sentiment * seg.leaderboard_trust
             churn = share * provider_rate
             seg.provider_shares[provider] -= churn
             exploration_pool += churn
@@ -1512,6 +1533,7 @@ def create_default_segments(
         "marketing": 0.07, "service_worker": 0.05, "hospital_system": 0.05,
         "enterprise_finance": 0.05, "tech_startup": 0.06,
         "enterprise_legal": 0.04, "government_agency": 0.05,
+        "enterprise_hr": 0.04,
     }
 
     segments = []

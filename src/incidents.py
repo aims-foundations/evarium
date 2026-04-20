@@ -19,7 +19,7 @@ class IncidentGenerator:
     CATEGORIES = {
         "healthcare_harm": {
             "weight": 0.20,
-            "sectors": ["hospital_system", "healthcare_individual"],
+            "sectors": ["hospital_system", "healthcare"],
             "templates": {
                 "moderate": [
                     "{provider} model causes incorrect medication recommendation, patient hospitalized",
@@ -40,7 +40,7 @@ class IncidentGenerator:
         },
         "security_breach": {
             "weight": 0.25,
-            "sectors": ["enterprise_finance", "enterprise_saas", "hospital_system"],
+            "sectors": ["enterprise_finance", "hospital_system"],
             "templates": {
                 "moderate": [
                     "{provider} data leak exposes private user conversations to search engines",
@@ -61,7 +61,7 @@ class IncidentGenerator:
         },
         "bias_discrimination": {
             "weight": 0.20,
-            "sectors": ["enterprise_hr", "enterprise_finance", "government"],
+            "sectors": ["enterprise_hr", "enterprise_finance", "government_agency"],
             "templates": {
                 "moderate": [
                     "Study finds {provider} model produces biased hiring recommendations",
@@ -82,7 +82,7 @@ class IncidentGenerator:
         },
         "safety_failure": {
             "weight": 0.20,
-            "sectors": ["enterprise_finance", "enterprise_saas", "government"],
+            "sectors": ["enterprise_finance", "government_agency"],
             "templates": {
                 "moderate": [
                     "{provider} model hallucinates in critical financial analysis task",
@@ -103,7 +103,7 @@ class IncidentGenerator:
         },
         "misinformation": {
             "weight": 0.10,
-            "sectors": ["consumer", "government"],
+            "sectors": ["individual", "government_agency"],
             "templates": {
                 "moderate": [
                     "{provider} model generates false information on public health topic",
@@ -124,7 +124,7 @@ class IncidentGenerator:
         },
         "misuse": {
             "weight": 0.05,
-            "sectors": ["consumer", "enterprise_saas"],
+            "sectors": ["individual"],
             "templates": {
                 "moderate": [
                     "Researchers demonstrate jailbreak of {provider} safety guardrails",
@@ -233,12 +233,12 @@ class IncidentGenerator:
         if active_sanctions is None:
             active_sanctions = {}
 
-        base_incident_rate = 0.10
+        base_incident_rate = 0.20
 
         # Factor 1: Safety Investment (primary)
         strategy = provider_strategies.get(provider_name, {})
         safety_investment = strategy.get("safety", 0.0)
-        safety_multiplier = 1.0 - (safety_investment * 0.8)
+        safety_multiplier = max(0.0, 1.0 - (safety_investment * 1.5))
         # safety=0.0 -> multiplier=1.0 (full risk)
         # safety=0.5 -> multiplier=0.6 (40% reduction)
         # safety=1.0 -> multiplier=0.2 (80% reduction)
@@ -280,9 +280,9 @@ class IncidentGenerator:
             * sanction_multiplier
         )
 
-        # Floor at 5% (irreducible risk from deployment context, adversarial
-        # users, infrastructure failures, novel failure modes), cap at 40%.
-        return max(0.05, min(incident_prob, 0.40))
+        # Floor at 2% (irreducible risk from deployment context, adversarial
+        # users, infrastructure failures, novel failure modes), cap at 50%.
+        return max(0.02, min(incident_prob, 0.50))
 
     def _create_incident(
         self,

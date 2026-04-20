@@ -142,16 +142,6 @@ def get_providers(history: list) -> list:
     return sorted(seen, key=lambda n: seen[n])
 
 
-def get_strategy_key(history: list) -> str:
-    """Determine which strategy format is used."""
-    if not history:
-        return "new"
-    first_strategy = list(history[0]["strategies"].values())[0]
-    if "rd" in first_strategy:
-        return "new"
-    return "old"
-
-
 def extract_investment(history: list, provider: str, investment_type: str) -> list:
     """Extract investment values for a provider over time."""
     return [h["strategies"].get(provider, {}).get(investment_type, 0) for h in history]
@@ -1171,13 +1161,23 @@ def pres_slide2_market_safety(history: list, save_path: str,
     ax.set_yticks(range(len(providers)))
     ax.set_yticklabels([_tex_escape(p.split()[0]) for p in providers], fontsize=7)
 
-    # Combined legend: severity markers + intervention lines
+    # Count incidents by severity for legend labels
+    _sev_counts = {"minor": 0, "moderate": 0, "major": 0, "critical": 0}
+    for h in history:
+        for inc in h.get("incidents", []):
+            sev = inc.get("severity", "minor")
+            if sev in _sev_counts:
+                _sev_counts[sev] += 1
+    _total_incidents = sum(_sev_counts.values())
+
+    # Combined legend: severity markers (with counts) + intervention lines
     sev_handles = [
         mlines.Line2D([0], [0], marker=severity_markers[sev], color='w',
                       markerfacecolor=severity_colors[sev],
                       markeredgecolor='black', markeredgewidth=0.3,
                       markersize=severity_sizes[sev]**0.5,
-                      label=sev.capitalize(), linestyle='None')
+                      label=f"{sev.capitalize()} ({_sev_counts[sev]})",
+                      linestyle='None')
         for sev in ("minor", "moderate", "major", "critical")
     ]
     intv_handles = [
@@ -1186,16 +1186,344 @@ def pres_slide2_market_safety(history: list, save_path: str,
                       linestyle="--", label=_intervention_labels[a])
         for a in _escalation_order
     ]
-    ax.legend(handles=sev_handles + intv_handles, loc='upper right',
-              fontsize=4, ncol=2, handletextpad=0.3, handlelength=2.0)
     style_axis(ax, "Incidents \\& Interventions" if mpl.rcParams.get("text.usetex")
                else "Incidents & Interventions", "Round", "", legend=False)
 
+    # Place legend below the incidents panel to avoid overlap
+    _inc_title = f"Total incidents: {_total_incidents}"
+    ax.legend(handles=sev_handles + intv_handles,
+              loc='upper center', bbox_to_anchor=(0.5, -0.18),
+              fontsize=4.5, ncol=5, handletextpad=0.3, handlelength=2.0,
+              frameon=True, framealpha=0.9, title=_inc_title,
+              title_fontsize=5)
+
     _pres_provider_legend(fig, providers, colors)
-    fig.tight_layout(rect=[0, 0.06, 1, 1.0])
+    fig.tight_layout(rect=[0, 0.10, 1, 1.0])
 
     if save_path:
         fig.savefig(save_path, dpi=300, bbox_inches='tight')
+    if show:
+        plt.show()
+    return fig
+
+
+# =============================================================================
+# Benchmark & Revenue Helpers
+# =============================================================================
+
+# Short names for benchmarks (fit in axis labels)
+_BM_SHORT = {
+    "General Capability":   "General Cap.",
+    "Coding Evaluation":    "Coding",
+    "Safety Evaluation":    "Safety",
+    "Instruction Following": "Instruct. Follow.",
+    "Scientific Reasoning": "Sci. Reasoning",
+    "Agentic Tasks":        "Agentic",
+    "Hard Coding":          "Hard Coding",
+    "Long Context":         "Long Context",
+    "Domain Expert":        "Domain Expert",
+    "Agentic Safety":       "Agentic Safety",
+}
+
+# Use case groupings for revenue breakdown
+_USE_CASE_GROUPS = {
+    "Technical":     ["software_dev", "tech_startup", "researcher"],
+    "Content":       ["content_writer", "creative", "marketing", "educator"],
+    "Professional":  ["legal", "enterprise_legal", "finance", "enterprise_finance"],
+    "Health/Gov":    ["healthcare", "hospital_system", "government_agency"],
+    "Operations":    ["customer_service", "service_worker", "enterprise_hr"],
+}
+_UCG_COLORS = {
+    "Technical": "#2E86AB", "Content": "#A23B72", "Professional": "#E9C46A",
+    "Health/Gov": "#2A9D8F", "Operations": "#F4A261",
+}
+_ARCHETYPE_COLORS = {
+    "leaderboard_follower": "#457B9D", "experience_driven": "#2A9D8F",
+    "cautious": "#E9C46A", "enterprise_growth": "#E63946",
+    "enterprise_established": "#6A4C93", "enterprise_cautious": "#F4A261",
+}
+_ARCHETYPE_SHORT = {
+    "leaderboard_follower": "LB follower", "experience_driven": "Experience",
+    "cautious": "Cautious", "enterprise_growth": "Ent. growth",
+    "enterprise_established": "Ent. established", "enterprise_cautious": "Ent. cautious",
+}
+_IE_COLORS = {"Individual": "#457B9D", "Enterprise": "#E63946"}
+_ENTERPRISE_ARCHETYPES = {"enterprise_cautious", "enterprise_established", "enterprise_growth"}
+
+
+def _get_benchmark_introductions(history):
+    """Return {round_num: [benchmark_names]} for newly introduced benchmarks."""
+    intros = {}
+    prev_bms = set()
+    for h in history:
+        rnd = h["round"]
+        current_bms = set(h.get("benchmark_params", {}).keys())
+        new = current_bms - prev_bms
+        if new:
+            intros[rnd] = sorted(new)
+        prev_bms = current_bms
+    return intros
+
+
+def _get_final_leader(history):
+    """Return the name of the final-round market share leader."""
+    last = history[-1]
+    shares = last["consumer_data"]["market_shares"]
+    return max(shares, key=shares.get)
+
+
+def _add_benchmark_vlines(ax, intros, label_fontsize=5):
+    """Add vertical dashed lines at benchmark introduction rounds.
+
+    Labels are placed inside the plot at the top, cycling through three
+    vertical tiers to avoid overlap in dense clusters (e.g. rounds 15-21).
+    """
+    tiers = [0.96, 0.87, 0.78]
+    idx = 0
+    for rnd, bms in sorted(intros.items()):
+        if rnd == 0:
+            continue
+        ax.axvline(rnd, color="#BBBBBB", linewidth=0.4, linestyle=":", alpha=0.5, zorder=1)
+        label = ", ".join(_BM_SHORT.get(b, b) for b in bms)
+        y_frac = tiers[idx % len(tiers)]
+        ax.annotate(
+            _tex_escape(label),
+            xy=(rnd, y_frac), xycoords=("data", "axes fraction"),
+            fontsize=label_fontsize, ha="left", va="top",
+            color="#555555",
+            arrowprops=dict(arrowstyle="-", color="#BBBBBB", lw=0.3),
+            xytext=(rnd + 0.5, y_frac),
+            textcoords=("data", "axes fraction"),
+        )
+        idx += 1
+
+
+def _extract_revenue_data(history):
+    """Extract per-round revenue breakdown by archetype, use-case group, and ind/ent."""
+    from collections import defaultdict
+    leader = _get_final_leader(history)
+    n_rounds = len(history)
+
+    arch_total = defaultdict(lambda: [0.0] * n_rounds)
+    arch_leader = defaultdict(lambda: [0.0] * n_rounds)
+    ucg_total = defaultdict(lambda: [0.0] * n_rounds)
+    ucg_leader = defaultdict(lambda: [0.0] * n_rounds)
+    ie_total = defaultdict(lambda: [0.0] * n_rounds)
+    ie_leader = defaultdict(lambda: [0.0] * n_rounds)
+
+    uc_to_group = {}
+    for group, ucs in _USE_CASE_GROUPS.items():
+        for uc in ucs:
+            uc_to_group[uc] = group
+
+    for t, h in enumerate(history):
+        sd = h.get("consumer_data", {}).get("segment_data", {})
+        for seg in sd.values():
+            frac = seg["market_fraction"]
+            arch = seg["archetype"]
+            uc = seg["use_case"]
+            leader_share = seg["provider_shares"].get(leader, 0.0)
+
+            arch_total[arch][t] += frac
+            arch_leader[arch][t] += frac * leader_share
+
+            group = uc_to_group.get(uc, "Other")
+            ucg_total[group][t] += frac
+            ucg_leader[group][t] += frac * leader_share
+
+            if arch in _ENTERPRISE_ARCHETYPES:
+                ie_total["Enterprise"][t] += frac
+                ie_leader["Enterprise"][t] += frac * leader_share
+            else:
+                ie_total["Individual"][t] += frac
+                ie_leader["Individual"][t] += frac * leader_share
+
+    return {
+        "leader": leader,
+        "arch_total": dict(arch_total), "arch_leader": dict(arch_leader),
+        "ucg_total": dict(ucg_total), "ucg_leader": dict(ucg_leader),
+        "ie_total": dict(ie_total), "ie_leader": dict(ie_leader),
+    }
+
+
+def _stacked_area(ax, rounds, data_dict, color_map, short_names=None):
+    """Draw a stacked area chart on ax."""
+    labels = sorted(data_dict.keys(), key=lambda k: -np.mean(data_dict[k]))
+    arrays = [np.array(data_dict[k]) for k in labels]
+    display = [_tex_escape(short_names.get(l, l) if short_names else l) for l in labels]
+    colors = [color_map.get(l, "#AAAAAA") for l in labels]
+    ax.stackplot(rounds, *arrays, labels=display, colors=colors, alpha=0.8)
+
+
+# =============================================================================
+# Presentation Slides 3-5 (new single-run plots)
+# =============================================================================
+
+def pres_slide3_benchmark_scores(history: list, save_path: str,
+                                 show: bool = False) -> Optional[plt.Figure]:
+    """Per-benchmark max scores over time.
+
+    One line per benchmark showing the max score across all providers.
+    Lines start when the benchmark is introduced, so the introduction
+    sequence is readable from the plot structure itself.
+    The final market leader's score on each benchmark is shown as a
+    thin dotted line in the same color.
+    """
+    if not history:
+        return None
+
+    leader = _get_final_leader(history)
+
+    # Collect all benchmarks that ever appear and their per-round max/leader scores
+    bm_data = {}  # {bm_name: {"rounds": [], "max": [], "leader": []}}
+    for h in history:
+        pbs = h.get("per_benchmark_scores", {})
+        rnd = h["round"]
+        for bm_name, provider_scores in pbs.items():
+            if bm_name not in bm_data:
+                bm_data[bm_name] = {"rounds": [], "max": [], "leader": []}
+            bm_data[bm_name]["rounds"].append(rnd)
+            bm_data[bm_name]["max"].append(max(provider_scores.values()))
+            bm_data[bm_name]["leader"].append(provider_scores.get(leader, 0.0))
+
+    if not bm_data:
+        return None
+
+    # Assign colors from a qualitative colormap
+    n_bms = len(bm_data)
+    cmap = plt.cm.get_cmap("tab20", max(n_bms, 4))
+    bm_names = sorted(bm_data.keys(), key=lambda b: bm_data[b]["rounds"][0])
+    bm_colors = {name: cmap(i) for i, name in enumerate(bm_names)}
+
+    fig, ax = plt.subplots(figsize=(4.5, 2.8))
+
+    for bm_name in bm_names:
+        d = bm_data[bm_name]
+        short = _BM_SHORT.get(bm_name, bm_name)
+        color = bm_colors[bm_name]
+
+        ax.plot(d["rounds"], d["max"], color=color, linewidth=1.2, zorder=3,
+                label=_tex_escape(short))
+        ax.plot(d["rounds"], d["leader"], color=color, linewidth=0.6,
+                linestyle=":", alpha=0.5, zorder=2)
+
+        # Label at the end of each line (right edge)
+        if d["rounds"]:
+            ax.text(d["rounds"][-1] + 0.4, d["max"][-1],
+                    _tex_escape(short), fontsize=4, color=color,
+                    va="center", ha="left", clip_on=True)
+
+    # Legend entries for line styles
+    ax.plot([], [], color="grey", lw=1.2, label="Max across providers")
+    ax.plot([], [], color="grey", lw=0.6, ls=":", alpha=0.5,
+            label=_tex_escape(f"{leader} (leader)"))
+
+    style_axis(ax, "Benchmark Scores Over Time", "Round", "Max score", legend=False)
+    ax.legend(fontsize=4.5, loc="lower right", frameon=True, framealpha=0.9, ncol=2)
+    ax.tick_params(axis="both", labelsize=6)
+
+    fig.tight_layout()
+    if save_path:
+        fig.savefig(save_path, dpi=300, bbox_inches="tight")
+    if show:
+        plt.show()
+    return fig
+
+
+def pres_slide4_capability_alignment(history: list, save_path: str,
+                                     show: bool = False) -> Optional[plt.Figure]:
+    """Capability-need alignment with benchmark introduction markers.
+
+    Solid lines: cosine similarity to consumer needs per provider.
+    Dashed lines: cosine similarity to benchmark aggregate weights.
+    Vertical markers at benchmark introduction rounds.
+    """
+    if not history:
+        return None
+
+    intros = _get_benchmark_introductions(history)
+    providers = get_providers(history)
+    colors = get_provider_colors(providers)
+    need = _get_need_weights(history)
+    rounds = [h["round"] for h in history]
+
+    fig, ax = plt.subplots(figsize=(4.2, 2.6))
+
+    for p in providers:
+        cos_need, cos_bm = [], []
+        for h in history:
+            cs = _cap_share(h, p)
+            cos_need.append(_cos_sim(cs, need))
+            bm_agg = _get_bm_agg_weights(h)
+            cos_bm.append(_cos_sim(cs, bm_agg))
+        ax.plot(rounds, cos_need, color=colors[p], linewidth=1.2,
+                label=_tex_escape(p.split()[0]))
+        ax.plot(rounds, cos_bm, color=colors[p], linewidth=0.6,
+                linestyle="--", alpha=0.4)
+
+    _add_benchmark_vlines(ax, intros)
+
+    # Style legend entries for line types
+    ax.plot([], [], color="grey", ls="-", lw=1.2, label="vs needs")
+    ax.plot([], [], color="grey", ls="--", lw=0.6, alpha=0.4, label="vs benchmarks")
+
+    style_axis(ax, "Capability Alignment", "Round", "Cosine similarity", legend=False)
+    ax.legend(fontsize=5.5, loc="lower right", frameon=True, framealpha=0.9, ncol=2)
+    ax.tick_params(axis="both", labelsize=7)
+
+    fig.tight_layout()
+    if save_path:
+        fig.savefig(save_path, dpi=300, bbox_inches="tight")
+    if show:
+        plt.show()
+    return fig
+
+
+def pres_slide5_revenue_breakdown(history: list, save_path: str,
+                                  show: bool = False) -> Optional[plt.Figure]:
+    """Revenue breakdown 2x3: total market (row 1) vs leader (row 2).
+
+    Columns: by archetype, by use-case group, individual vs enterprise.
+    """
+    if not history:
+        return None
+
+    data = _extract_revenue_data(history)
+    leader = data["leader"]
+    rounds = list(range(len(history)))
+
+    fig, axes = plt.subplots(2, 3, figsize=(7.0, 4.0))
+
+    col_labels = ["By archetype", "By use-case group", "Individual vs Enterprise"]
+
+    _stacked_area(axes[0, 0], rounds, data["arch_total"], _ARCHETYPE_COLORS, _ARCHETYPE_SHORT)
+    _stacked_area(axes[0, 1], rounds, data["ucg_total"], _UCG_COLORS)
+    _stacked_area(axes[0, 2], rounds, data["ie_total"], _IE_COLORS)
+
+    _stacked_area(axes[1, 0], rounds, data["arch_leader"], _ARCHETYPE_COLORS, _ARCHETYPE_SHORT)
+    _stacked_area(axes[1, 1], rounds, data["ucg_leader"], _UCG_COLORS)
+    _stacked_area(axes[1, 2], rounds, data["ie_leader"], _IE_COLORS)
+
+    for j in range(3):
+        axes[0, j].set_title(col_labels[j], fontsize=7, fontweight="bold")
+        axes[1, j].set_xlabel("Round", fontsize=7)
+        for i in range(2):
+            axes[i, j].tick_params(axis="both", labelsize=5.5)
+            axes[i, j].set_xlim(0, len(history) - 1)
+            handles, labels = axes[i, j].get_legend_handles_labels()
+            if handles:
+                axes[i, j].legend(fontsize=4.5, loc="upper left" if j < 2 else "center left",
+                                  frameon=True, framealpha=0.9)
+
+    axes[0, 0].set_ylabel("Total market\nfraction", fontsize=7)
+    axes[1, 0].set_ylabel(_tex_escape(f"{leader}\nrevenue proxy"), fontsize=7)
+
+    fig.suptitle(_tex_escape(f"Market composition: total vs {leader} (leader)"),
+                 fontsize=8, fontweight="bold", y=1.02)
+    fig.tight_layout(h_pad=1.0, w_pad=0.8)
+
+    if save_path:
+        fig.savefig(save_path, dpi=300, bbox_inches="tight")
     if show:
         plt.show()
     return fig
@@ -1234,6 +1562,27 @@ def generate_presentation_plots(
         plt.close(fig)
         saved['slide2_market_safety'] = path
         print(f"  - Slide 2: Market & Safety saved")
+
+    path = os.path.join(output_dir, f"pres_slide3_benchmark_scores.{fmt}")
+    fig = pres_slide3_benchmark_scores(history, save_path=path, show=False)
+    if fig:
+        plt.close(fig)
+        saved['slide3_benchmark_scores'] = path
+        print(f"  - Slide 3: Benchmark Scores saved")
+
+    path = os.path.join(output_dir, f"pres_slide4_capability_alignment.{fmt}")
+    fig = pres_slide4_capability_alignment(history, save_path=path, show=False)
+    if fig:
+        plt.close(fig)
+        saved['slide4_capability_alignment'] = path
+        print(f"  - Slide 4: Capability Alignment saved")
+
+    path = os.path.join(output_dir, f"pres_slide5_revenue_breakdown.{fmt}")
+    fig = pres_slide5_revenue_breakdown(history, save_path=path, show=False)
+    if fig:
+        plt.close(fig)
+        saved['slide5_revenue_breakdown'] = path
+        print(f"  - Slide 5: Revenue Breakdown saved")
 
     print(f"Presentation plots saved to: {output_dir}")
     return saved

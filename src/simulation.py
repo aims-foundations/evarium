@@ -14,6 +14,8 @@ import math
 import os
 import random
 from collections import defaultdict
+
+import numpy as np
 from dataclasses import dataclass, field, asdict
 from typing import Optional
 
@@ -137,7 +139,7 @@ class SimulationConfig:
     breakthrough_magnitude: float = 0.20
 
     # Benchmark introduction (evaluator introduces new benchmarks mid-simulation)
-    benchmark_introduction_cooldown: int = 5
+    benchmark_introduction_cooldown: int = 4
     max_benchmarks: int = 10  # Full benchmark pool (4 initial + 6 sequence) across 40 rounds
     benchmark_sequence: Optional[list] = None  # Ordered list of benchmark dicts to introduce
     # Each dict: {"name": str, "validity": float, "noise_level": float, "weight": float}
@@ -165,10 +167,30 @@ class SimulationConfig:
     # Incident reporting system
     enable_incidents: bool = False  # Enable probabilistic AI safety incidents
 
+    # Private benchmark publication cadence (K). Private-type benchmarks publish
+    # their holdout-only score every K rounds; between publications, providers see
+    # the last published (stale) score. Public-type benchmarks always publish
+    # every round regardless of K.
+    # K=0 or 1: no lag (every round publication for all benchmarks).
+    # K=3: empirical canonical value — 3.0mo median-of-medians frontier-lab release
+    #      cadence across 24 Epoch AI benchmarks × 8 labs
+    #      (external-validation/scripts/analyze_k_cadence.py).
+    # See docs/stakeholders.md "Private benchmark scoring" and Appendix C.
+    evaluation_lag: int = 0
+
+    # Framing uncertainty on provider priors at benchmark introduction.
+    # inferred_benchmark_weights[b] is initialized as:
+    #     normalize(clip_nonneg(public_weights + Normal(0, sigma_prior)))
+    # sigma_prior=0 falls back to the public_weights vector itself.
+    # Independent of h; purely controls how well providers read the benchmark's
+    # category/framing at launch. Calibrated default ~0.05-0.10 to be tuned during
+    # implementation verification.
+    sigma_prior: float = 0.05
+
     # Evaluator-as-company feature
     evaluator_as_company: bool = False  # Evaluator operates as company with funder allocations
     evaluator_base_budget: float = 0.0  # Starting budget for evaluator
-    fee_per_submission: float = 0.03    # R&D budget cost per extra eval submission (sim units)
+    fee_per_submission: float = 0.05    # R&D budget cost per extra eval submission (calibrated session 18)
     max_eval_submissions: int = 10      # Hard cap on submissions per provider per round
     early_access_factor: float = 0.5    # Belief init blend for premium: 0=uniform, 1=true weights
 
@@ -197,13 +219,13 @@ class SimulationConfig:
     misaligned_benchmarks: bool = False   # Exaggerate benchmark-need mismatch (reasoning/coding heavy, safety/communication light)
     safety_lever_through_target: bool = False  # Route safety allocation through target weights (same as R&D) instead of direct-to-safety
     single_benchmark: bool = False         # Use only the first benchmark, no introduction sequence
-    dynamic_evaluator: bool = False        # Signal-responsive benchmark introduction (vs fixed schedule)
     # Evaluator mode: "fixed_sequence" (default, predetermined order),
     # "randomized_pool" (random draw from pool at fixed cooldown),
-    # "full_autonomy" (LLM-only, 4-round dev pipeline, picks from pool)
+    # "dynamic" (time-triggered every benchmark_introduction_interval rounds;
+    #           heuristic uses gap-scoring, LLM uses judgment from pool).
     evaluator_mode: str = "fixed_sequence"
-    benchmark_pool: Optional[list] = None  # Full pool of benchmark configs for randomized/autonomy modes
-    benchmark_dev_rounds: int = 4          # Rounds to develop a new benchmark (full_autonomy mode)
+    benchmark_pool: Optional[list] = None  # Full pool of benchmark configs for randomized/dynamic modes
+    benchmark_introduction_interval: int = 4  # Rounds between introductions in dynamic mode
     homogeneous_consumers: bool = False    # All consumer segments use identical (population-avg) need weights
     homogeneous_providers: bool = False    # All providers start with identical capabilities and profiles
 
@@ -216,7 +238,8 @@ class SimulationConfig:
     # Dynamic consumer market: enterprise share grows over simulation via logistic curve.
     # Models the real-world shift from consumer-dominated (~25% enterprise, Q1 2023)
     # to enterprise-dominated (~55% enterprise, mid-2025) AI market.
-    dynamic_consumer_market: bool = False
+    # Default True since session 27; ablation `static_enterprise_size` flips to False.
+    dynamic_consumer_market: bool = True
     enterprise_share_start: float = 0.25
     enterprise_share_end: float = 0.55
     enterprise_growth_midpoint: int = 18  # round at which growth is steepest
@@ -294,6 +317,10 @@ class EvalEcosystemSimulation:
         # Startup entry tracking
         self._funder_eligible_round: dict = {}  # {provider_name: first_round_funders_can_allocate}
         self._rng = random.Random(config.seed)
+        # Independent numpy RNG for continuous-valued noise (sigma_prior Gaussian,
+        # etc.). Separate stream from self._rng (stdlib) to keep draws reproducible
+        # even as new numpy-style noise injections are added.
+        self._belief_init_rng = np.random.default_rng(config.seed)
 
         # Incident reporting system
         self.incident_generator = IncidentGenerator(seed=config.seed)
@@ -397,9 +424,19 @@ class EvalEcosystemSimulation:
                 discretionary_budget=pc.get("discretionary_budget", 0.0),
             )
 
-            # Initialize benchmark beliefs for all starting benchmarks
+            # Initialize benchmark beliefs for all starting benchmarks.
+            # Use noisy-public-weights prior (framing-direction aware, still uncertain
+            # about exact dimension profile). For benchmarks without a GT record yet
+            # we pass None and init_benchmark falls back to uniform.
             for bm_name in _initial_bm_names:
-                provider.init_benchmark(bm_name)
+                bm_gt = self.benchmark_ground_truths.get(bm_name)
+                public_weights = self._aggregate_bm_weights(bm_gt) if bm_gt else None
+                provider.init_benchmark(
+                    bm_name,
+                    public_weights=public_weights,
+                    sigma_prior=self.config.sigma_prior,
+                    rng=self._belief_init_rng,
+                )
 
             # Ablation: route safety lever through target weights
             if self.config.safety_lever_through_target:
@@ -437,10 +474,9 @@ class EvalEcosystemSimulation:
             benchmark_sequence=self.config.benchmark_sequence,
             evaluator_as_company=self.config.evaluator_as_company,
             base_budget=self.config.evaluator_base_budget,
-            dynamic_evaluator=self.config.dynamic_evaluator,
             evaluator_mode=self.config.evaluator_mode,
             benchmark_pool=self.config.benchmark_pool,
-            benchmark_dev_rounds=self.config.benchmark_dev_rounds,
+            evaluation_lag=self.config.evaluation_lag,
         )
         if evaluator is not None:
             self.evaluator = evaluator
@@ -478,6 +514,9 @@ class EvalEcosystemSimulation:
                     category_dimension_weights=cdw,
                     noise_sigma=bm_config.get("noise_sigma", bm_config.get("noise_level", 0.02)),
                     samples=bm_config.get("samples", 1000),
+                    benchmark_type=bm_config.get("benchmark_type", "public"),
+                    holdout_fraction=bm_config.get("holdout_fraction", 0.0),
+                    holdout_category_dimension_weights=bm_config.get("holdout_category_dimension_weights"),
                 )
 
         # Aligned benchmarks: override all benchmark dimension weights to match
@@ -759,8 +798,39 @@ class EvalEcosystemSimulation:
                 ]
                 if own_incidents:
                     context["own_incidents"] = own_incidents
-        # Always include available benchmark names and per-benchmark scores from last round
-        context["available_benchmarks"] = [bm.name for bm in self.evaluator.benchmarks]
+            # Media narrative state (heuristic rule C)
+            if "media_data" in last:
+                context["narrative_state"] = last["media_data"].get("narrative_state")
+        # Recent own share history (heuristic rule A: share-trend response)
+        if self.history:
+            share_hist = []
+            for h in self.history[-5:]:
+                cd = h.get("consumer_data", {})
+                s = cd.get("market_shares", {}).get(provider_name)
+                if s is not None:
+                    share_hist.append(s)
+            if share_hist:
+                context["own_share_history"] = share_hist
+        # Recent own-targeted interventions count (heuristic rule D)
+        if self.history:
+            own_iv = 0
+            for h in self.history[-5:]:
+                for iv in h.get("regulator_data", {}).get("interventions", []) or []:
+                    if iv.get("provider") == provider_name:
+                        own_iv += 1
+            context["own_recent_interventions"] = own_iv
+        # Always include available benchmark names (with type annotation) and per-benchmark scores.
+        # Annotation maps each benchmark to its observability regime — providers can reason about
+        # gaming ROI differently for public vs. private benchmarks. Types are public knowledge in the
+        # real world (SEAL-ness is not a researcher secret), so exposing them does not violate PIMMUR.
+        _bm_names = []
+        for bm in self.evaluator.benchmarks:
+            bm_gt = self.benchmark_ground_truths.get(bm.name)
+            label = bm.name
+            if bm_gt is not None and bm_gt.benchmark_type != "public" and bm_gt.holdout_fraction > 0:
+                label += f" [private benchmark: {int(bm_gt.holdout_fraction * 100)}% of items held out; scored on holdout only]"
+            _bm_names.append(label)
+        context["available_benchmarks"] = _bm_names
         if self.history:
             last_round_num = self.history[-1].get("round", self.current_round - 1)
             context["per_benchmark_scores"] = self.evaluator.get_per_benchmark_scores(last_round_num)
@@ -871,6 +941,7 @@ class EvalEcosystemSimulation:
         # Evaluator-as-company: track per-provider submission counts this round
         _submission_counts = {}
         _premium_set = set()
+        _any_publish = self._any_benchmark_publishes_fresh(round_num)
 
         # 1. Providers plan investment portfolios (for round > 0, they've seen previous scores)
         if round_num > 0:
@@ -907,7 +978,10 @@ class EvalEcosystemSimulation:
                             fee=self.config.fee_per_submission,
                             max_n=self.config.max_eval_submissions,
                         )
-                    sub_cost = (n_subs - 1) * self.config.fee_per_submission
+                    sub_cost = (
+                        (n_subs - 1) * self.config.fee_per_submission
+                        if _any_publish else 0.0
+                    )
                     rd_budget_raw = max(rd_budget_raw - sub_cost, provider.rd_budget_floor)
                     _submission_counts[provider.name] = n_subs
                     if n_subs > 1:
@@ -994,9 +1068,10 @@ class EvalEcosystemSimulation:
         if self.config.evaluator_as_company and self.evaluator.private_state:
             self.evaluator.private_state.submission_counts = _submission_counts
             self.evaluator.private_state.premium_subscribers = _premium_set
-            self.evaluator.private_state.premium_revenue = sum(
-                (n - 1) * self.config.fee_per_submission
-                for n in _submission_counts.values()
+            self.evaluator.private_state.premium_revenue = (
+                sum((n - 1) * self.config.fee_per_submission
+                    for n in _submission_counts.values())
+                if _any_publish else 0.0
             )
 
         # 2. Evaluator scores all providers using ground truth capability vectors
@@ -1015,8 +1090,8 @@ class EvalEcosystemSimulation:
                 state = self.evaluator._benchmark_saturation_state[bm_name]
                 print(f"  [Saturation] {bm_name} saturated at score {state['max_score']:.4f}")
 
-        # 2c. Update evaluator internal validity (dynamic or full_autonomy mode)
-        if self.config.dynamic_evaluator or self.config.evaluator_mode == "full_autonomy":
+        # 2c. Update evaluator internal validity (diagnostic; consumed by dynamic mode)
+        if self.config.evaluator_mode == "dynamic":
             market_shares = {
                 name: gt.market_share for name, gt in self.ground_truth.items()
                 if isinstance(gt, ProviderGroundTruth)
@@ -1025,18 +1100,16 @@ class EvalEcosystemSimulation:
 
         # 2d. Consider introducing new benchmarks
         new_benchmarks = []
-        if self.config.evaluator_mode == "full_autonomy":
-            # Pipeline advancement: check if any pipeline items are ready
-            pipeline_results = self.evaluator.advance_pipeline(round_num)
-            new_benchmarks.extend(pipeline_results)
-            # LLM commits new benchmarks to pipeline (full_autonomy is LLM-only)
+        if self.config.evaluator_mode == "dynamic":
+            # Time-triggered: fire every benchmark_introduction_interval rounds
             if self.config.llm_mode:
-                self._evaluator_autonomy_decision(round_num, None)
-        elif self.config.dynamic_evaluator and self.config.llm_mode:
-            result = self._evaluator_llm_decision(round_num, None)
-            if result is not None:
-                new_benchmarks.append(result)
+                new_bm = self._dynamic_evaluator_decision(round_num, None)
+            else:
+                new_bm = self._evaluator_heuristic_dynamic_decision(round_num)
+            if new_bm is not None:
+                new_benchmarks.append(new_bm)
         else:
+            # Heuristic fixed_sequence / randomized_pool modes
             result = self.evaluator.consider_new_benchmark(round_num)
             if result is not None:
                 new_benchmarks.append(result)
@@ -1091,11 +1164,12 @@ class EvalEcosystemSimulation:
                 market_share=self.ground_truth[provider.name].market_share,
             )
 
-            # Heuristic belief update from score prediction errors (always runs)
+            # Heuristic belief update from score prediction errors (always runs).
+            # learning_rate defaults to profile-derived value (aggressive 0.20 /
+            # safety-focused 0.10 / default 0.15) via _profile_learning_rate().
             provider.update_benchmark_beliefs(
                 own_benchmark_scores=own_bm_scores,
                 capability_vector=self.ground_truth[provider.name].capability_vector,
-                learning_rate=0.15,
             )
 
             # Update market share in ground truth from consumer data (if available)
@@ -1273,10 +1347,13 @@ class EvalEcosystemSimulation:
         if self.config.evaluator_as_company and round_num > 0:
             evaluator_funding_data = self._run_evaluator_funding_round(round_num, funder_data)
 
-        # Record round data
+        # Record round data. Under the new private-benchmark mechanism, the
+        # evaluator's evaluate_all() already applies K-lag gating and holdout-only
+        # scoring per benchmark_type — so `scores` IS the published score. No
+        # separate `published_scores` field needed.
         round_data = {
             "round": round_num,
-            "scores": dict(scores),  # Composite scores
+            "scores": dict(scores),  # Composite scores (blended, updated every round)
             "capability_vectors": {
                 p.name: dict(self.ground_truth[p.name].capability_vector)
                 for p in self.providers
@@ -1368,13 +1445,6 @@ class EvalEcosystemSimulation:
             if new_benchmark is not None:
                 round_data["new_benchmark"] = round_data["new_benchmarks"][0]
 
-        # Record pipeline state (full_autonomy mode)
-        if self.config.evaluator_mode == "full_autonomy" and self.evaluator._dev_pipeline:
-            round_data["evaluator_pipeline"] = [
-                {"name": item["config"]["name"], "ready_round": item["ready_round"]}
-                for item in self.evaluator._dev_pipeline
-            ]
-
         # Record benchmark saturation events (filter out retired benchmarks)
         if newly_saturated:
             round_data["saturated_benchmarks"] = [
@@ -1421,15 +1491,35 @@ class EvalEcosystemSimulation:
         # Add incidents if any occurred
         if incidents:
             round_data["incidents"] = [inc.to_dict() for inc in incidents]
-            # Add summary statistics
+            # Add summary statistics.  by_provider_severity / by_provider_category
+            # give raw per-provider counts so downstream figures don't have to
+            # re-aggregate the full incident list.
+            severities = ["minor", "moderate", "major", "critical"]
+            categories = sorted({inc.category for inc in incidents})
             round_data["incident_summary"] = {
                 "total_count": len(incidents),
                 "by_severity": {
                     sev: len([inc for inc in incidents if inc.severity == sev])
-                    for sev in ["minor", "moderate", "major", "critical"]
+                    for sev in severities
                 },
                 "by_provider": {
                     p.name: len([inc for inc in incidents if inc.provider == p.name])
+                    for p in self.providers
+                },
+                "by_provider_severity": {
+                    p.name: {
+                        sev: len([inc for inc in incidents
+                                  if inc.provider == p.name and inc.severity == sev])
+                        for sev in severities
+                    }
+                    for p in self.providers
+                },
+                "by_provider_category": {
+                    p.name: {
+                        cat: len([inc for inc in incidents
+                                  if inc.provider == p.name and inc.category == cat])
+                        for cat in categories
+                    }
                     for p in self.providers
                 },
             }
@@ -1469,6 +1559,19 @@ class EvalEcosystemSimulation:
                     if trace:
                         actor_traces[funder.name] = trace
                     break
+
+        # Evaluator reasoning traces (dynamic mode, LLM or heuristic)
+        if hasattr(self, '_last_evaluator_reasoning') and self._last_evaluator_reasoning:
+            decision = getattr(self, '_last_evaluator_decision', {})
+            action = decision.get("action", "none")
+            bm_name = decision.get("benchmark_name", "")
+            trace = f"{action}"
+            if bm_name:
+                trace += f" [{bm_name}]"
+            trace += f": {self._last_evaluator_reasoning}"
+            actor_traces["Evaluator"] = trace
+            self._last_evaluator_reasoning = None
+            self._last_evaluator_decision = None
 
         # Organizational consumer LLM reasoning traces (when switches/pilots happen)
         if self.consumer_market:
@@ -1746,64 +1849,117 @@ class EvalEcosystemSimulation:
 
         return regulator_data
 
-    def _evaluator_llm_decision(self, round_num: int, media_coverage: Optional[dict]) -> Optional:
-        """Use LLM to decide evaluator benchmark actions (dynamic_evaluator + llm_mode)."""
-        # Cooldown check — don't call LLM every round
-        if round_num - self.evaluator.last_introduction_round < self.evaluator.benchmark_introduction_cooldown:
-            # Still check saturation trigger (bypasses cooldown)
-            for bm in self.evaluator.benchmarks:
-                state = self.evaluator._benchmark_saturation_state.get(bm.name)
-                if state and state["saturated"] and state["cooldown_remaining"] <= 0:
-                    break
-            else:
-                return None
+    def _select_pool_benchmark_by_gap(self) -> Optional[dict]:
+        """Select the pool benchmark that best fills the gap between consumer needs
+        and current benchmark coverage.
 
-        if len(self.evaluator.benchmarks) >= self.evaluator.max_benchmarks:
+        Uses ground-truth dimension weights for both active benchmarks and pool
+        entries (heuristic-only; never passed to LLM prompts).
+
+        Returns the best pool entry dict, or None if pool is empty or no ground
+        truth is available.
+        """
+        pool = self.evaluator._benchmark_pool
+        if not pool:
             return None
 
-        from llm import llm_plan_evaluator
+        # Compute active benchmark coverage: sum dim weights across active benchmarks
+        coverage = {dim: 0.0 for dim in DIMENSIONS}
+        for bm in self.evaluator.benchmarks:
+            gt = self.benchmark_ground_truths.get(bm.name)
+            if gt is None:
+                continue
+            for cat_weights in gt.category_dimension_weights.values():
+                for dim, w in cat_weights.items():
+                    if dim in coverage:
+                        coverage[dim] += w
+        total_cov = sum(coverage.values())
+        if total_cov > 0:
+            coverage = {dim: v / total_cov for dim, v in coverage.items()}
 
-        obs = self.evaluator.get_llm_observation()
-        media_headlines = []
-        if media_coverage:
-            media_headlines = media_coverage.get("headlines", [])
+        # Compute market-fraction-weighted consumer need weights
+        need = {dim: 0.0 for dim in DIMENSIONS}
+        if self.consumer_market:
+            for seg in self.consumer_market.segments:
+                for dim, w in seg.need_weights.items():
+                    if dim in need:
+                        need[dim] += seg.market_fraction * w
 
-        decision, reasoning = llm_plan_evaluator(
-            active_benchmarks=obs["active_benchmarks"],
-            score_deltas=obs["score_deltas"],
-            score_spread=obs["score_spread"],
-            internal_validity=obs["internal_validity"],
-            media_headlines=media_headlines,
-            saturation_states=obs["saturation_states"],
-            verbose=self.config.verbose,
-        )
+        # Gap = need - coverage (clip negative: no credit for over-coverage)
+        gap = {dim: max(0.0, need[dim] - coverage[dim]) for dim in DIMENSIONS}
+        gap_total = sum(gap.values())
 
-        if self.config.verbose and decision.get("action") != "none":
-            print(f"  [Evaluator LLM] action={decision['action']}, reason: {reasoning[:100]}")
+        best_score = -1.0
+        best_candidate = None
+        for candidate in pool:
+            gt = self.benchmark_ground_truths.get(candidate["name"])
+            if gt is None:
+                # No ground truth: score = 0, eligible only if all else fails
+                continue
+            cand_weights = {dim: 0.0 for dim in DIMENSIONS}
+            for cat_weights in gt.category_dimension_weights.values():
+                for dim, w in cat_weights.items():
+                    if dim in cand_weights:
+                        cand_weights[dim] += w
+            total = sum(cand_weights.values())
+            if total > 0:
+                cand_weights = {dim: v / total for dim, v in cand_weights.items()}
+            score = sum(gap[dim] * cand_weights.get(dim, 0.0) for dim in DIMENSIONS)
+            if score > best_score:
+                best_score = score
+                best_candidate = candidate
 
-        return self.evaluator.apply_llm_decision(decision, round_num)
+        # Fallback: if no ground truth matched, pick first pool entry
+        return best_candidate if best_candidate is not None else pool[0]
 
-    def _evaluator_autonomy_decision(self, round_num: int, media_coverage: Optional[dict]) -> None:
-        """Use LLM to decide evaluator actions in full_autonomy mode.
+    def _evaluator_heuristic_dynamic_decision(self, round_num: int) -> Optional[object]:
+        """Time-triggered heuristic dynamic evaluator.
 
-        The LLM can commit benchmarks from the pool into the pipeline,
-        or explicitly retire active benchmarks. Pipeline advancement
-        (introducing ready benchmarks) is handled separately by advance_pipeline().
+        Fires every benchmark_introduction_interval rounds. Selects the pool
+        benchmark that best fills the gap between consumer needs and current
+        benchmark coverage. Introduces immediately (no dev pipeline).
+
+        Returns the new Benchmark object if one was introduced, else None.
         """
-        # Don't call LLM every round — respect cooldown for commit decisions
-        if self.evaluator._dev_pipeline:
-            # If something is already in pipeline, skip unless pool has items
-            if not self.evaluator.get_pool_for_llm():
-                return
+        if round_num == 0 or round_num % self.config.benchmark_introduction_interval != 0:
+            return None
+        if not self.evaluator._benchmark_pool:
+            return None
 
-        from llm import llm_plan_evaluator_autonomy
+        candidate = self._select_pool_benchmark_by_gap()
+        if candidate is None:
+            return None
+
+        new_bm = self.evaluator._create_and_register_benchmark(
+            round_num, "dynamic_gap_based", pool_config=candidate,
+        )
+        reasoning = f"gap-based: selected '{candidate['name']}'"
+        self._last_evaluator_reasoning = reasoning
+        self._last_evaluator_decision = {"action": "create", "benchmark_name": candidate["name"]}
+        if new_bm and self.config.verbose:
+            print(f"  [Evaluator Dynamic/Heuristic] Introduced '{candidate['name']}' (gap-based).")
+        return new_bm
+
+    def _dynamic_evaluator_decision(self, round_num: int, media_coverage: Optional[dict]) -> Optional[object]:
+        """Time-triggered LLM dynamic evaluator.
+
+        Fires every benchmark_introduction_interval rounds. LLM picks which
+        benchmark to introduce from the pool (create), or retires one (retire),
+        or takes no action (none). Introductions happen immediately.
+
+        Returns the new Benchmark object if one was introduced, else None.
+        """
+        if round_num == 0 or round_num % self.config.benchmark_introduction_interval != 0:
+            return None
+
+        from llm import llm_plan_dynamic_evaluator
 
         obs = self.evaluator.get_llm_observation()
         media_headlines = []
         if media_coverage:
             media_headlines = media_coverage.get("headlines", [])
 
-        decision, reasoning = llm_plan_evaluator_autonomy(
+        decision, reasoning = llm_plan_dynamic_evaluator(
             active_benchmarks=obs["active_benchmarks"],
             score_deltas=obs["score_deltas"],
             score_spread=obs["score_spread"],
@@ -1811,7 +1967,6 @@ class EvalEcosystemSimulation:
             media_headlines=media_headlines,
             saturation_states=obs["saturation_states"],
             available_pool=obs.get("available_pool", []),
-            dev_pipeline=obs.get("dev_pipeline", []),
             retired_benchmarks=obs.get("retired_benchmarks", []),
             current_round=round_num,
             verbose=self.config.verbose,
@@ -1819,17 +1974,32 @@ class EvalEcosystemSimulation:
 
         action = decision.get("action", "none")
         bm_name = decision.get("benchmark_name", "")
+        new_bm = None
 
-        if action == "commit" and bm_name:
-            success = self.evaluator.commit_from_pool(bm_name, round_num)
-            if success and self.config.verbose:
-                print(f"  [Evaluator Autonomy] Committed '{bm_name}' to pipeline (ready round {round_num + self.config.benchmark_dev_rounds}). Reason: {reasoning[:100]}")
+        if action == "create" and bm_name:
+            pool_config = next(
+                (b for b in self.evaluator._benchmark_pool if b["name"] == bm_name), None
+            )
+            if pool_config:
+                new_bm = self.evaluator._create_and_register_benchmark(
+                    round_num, f"llm_dynamic:{bm_name}", pool_config=pool_config,
+                )
+                if new_bm and self.config.verbose:
+                    print(f"  [Evaluator Dynamic/LLM] Introduced '{bm_name}'. Reason: {reasoning[:100]}")
+            else:
+                # LLM named a benchmark not in pool — downgrade to none
+                decision = {"action": "none", "benchmark_name": ""}
+                reasoning = f"(invalid pool name '{bm_name}') {reasoning}"
         elif action == "retire" and bm_name:
             retired = self.evaluator.retire_benchmark(round_num, bm_name)
             if retired and self.config.verbose:
-                print(f"  [Evaluator Autonomy] Retired '{retired}'. Reason: {reasoning[:100]}")
-        elif self.config.verbose and action != "none":
-            print(f"  [Evaluator Autonomy] action={action}, name={bm_name}, reason: {reasoning[:100]}")
+                print(f"  [Evaluator Dynamic/LLM] Retired '{retired}'. Reason: {reasoning[:100]}")
+        elif self.config.verbose and action not in ("none", ""):
+            print(f"  [Evaluator Dynamic/LLM] action={action}, name={bm_name}, reason: {reasoning[:100]}")
+
+        self._last_evaluator_reasoning = reasoning
+        self._last_evaluator_decision = decision
+        return new_bm
 
     def _on_new_benchmark(self, new_benchmark) -> None:
         """Handle all downstream effects of a new benchmark being introduced.
@@ -1841,24 +2011,41 @@ class EvalEcosystemSimulation:
             benchmark_tags = {bm.name: bm.tags for bm in self.evaluator.benchmarks}
             self.consumer_market.resolve_benchmark_weights(benchmark_tags)
 
+        new_bm_gt = self.benchmark_ground_truths.get(new_benchmark.name)
+        new_public_weights = self._aggregate_bm_weights(new_bm_gt) if new_bm_gt else None
         for provider in self.providers:
             if new_benchmark.name not in provider.private_state.focus_level:
-                provider.init_benchmark(new_benchmark.name)
+                provider.init_benchmark(
+                    new_benchmark.name,
+                    public_weights=new_public_weights,
+                    sigma_prior=self.config.sigma_prior,
+                    rng=self._belief_init_rng,
+                )
 
-        # Early access: premium providers get partial knowledge of true weights
+        # Early access: premium providers start closer to the holdout-scoring target.
+        # Under the session-38 format, non-subscribers init at a noisy-public-weights
+        # prior (via init_benchmark above); subscribers blend that prior toward the
+        # actual holdout weights. factor=0: no advantage (identical to non-subscribers);
+        # factor=1: exact holdout knowledge at introduction. On public-type benchmarks
+        # holdout weights are absent, so the blend falls back to public weights and
+        # collapses to a weak sharpening of the noisy prior.
         if (self.config.evaluator_as_company
                 and self.evaluator.private_state
                 and new_benchmark.name in self.benchmark_ground_truths):
             bm_gt = self.benchmark_ground_truths[new_benchmark.name]
-            true_weights = self._aggregate_bm_weights(bm_gt)
-            if true_weights:
+            target_weights = (
+                self._aggregate_holdout_weights(bm_gt) or self._aggregate_bm_weights(bm_gt)
+            )
+            if target_weights:
                 factor = self.config.early_access_factor
-                dims = list(true_weights.keys())
-                uniform = {d: 1.0 / len(dims) for d in dims}
+                dims = list(target_weights.keys())
                 for provider in self.providers:
                     if provider.name in self.evaluator.private_state.premium_subscribers:
+                        base = provider.private_state.inferred_benchmark_weights.get(
+                            new_benchmark.name, {d: 1.0 / len(dims) for d in dims}
+                        )
                         blended = {
-                            d: (1 - factor) * uniform[d] + factor * true_weights.get(d, uniform[d])
+                            d: (1 - factor) * base.get(d, 0.0) + factor * target_weights.get(d, 0.0)
                             for d in dims
                         }
                         total = sum(blended.values())
@@ -1987,6 +2174,41 @@ class EvalEcosystemSimulation:
             n_cats = len(cdw)
             return {dim: w / n_cats for dim, w in agg.items()}
         return dict(cdw)
+
+    @staticmethod
+    def _aggregate_holdout_weights(bm_gt) -> dict:
+        """Aggregate holdout category_dimension_weights; {} if benchmark is public."""
+        cdw = getattr(bm_gt, "holdout_category_dimension_weights", None)
+        if not cdw:
+            return {}
+        if isinstance(next(iter(cdw.values())), dict):
+            agg = {}
+            for cat_weights in cdw.values():
+                for dim, w in cat_weights.items():
+                    agg[dim] = agg.get(dim, 0.0) + w
+            n_cats = len(cdw)
+            return {dim: w / n_cats for dim, w in agg.items()}
+        return dict(cdw)
+
+    def _any_benchmark_publishes_fresh(self, round_num: int) -> bool:
+        """True if at least one active benchmark produces a fresh score this round.
+
+        Mirrors the K-lag gate in evaluator.evaluate_all: public-type benchmarks
+        publish every round; private/partial-type benchmarks publish only when
+        round_num % evaluation_lag == 0. Used to gate eval_as_company submission
+        fees — best-of-N does not run on fully-frozen K-lag rounds.
+        """
+        K = self.evaluator.evaluation_lag
+        for bm in self.evaluator.benchmarks:
+            bm_gt = self.benchmark_ground_truths.get(bm.name)
+            is_private = (
+                bm_gt is not None
+                and bm_gt.benchmark_type != "public"
+                and bm_gt.holdout_fraction > 0
+            )
+            if not is_private or K <= 1 or round_num % K == 0:
+                return True
+        return False
 
     def _run_evaluator_funding_round(
         self,

@@ -1,0 +1,25 @@
+benchmark,n_rows,span_months,rows_per_month,pct_providers_saturated,handling,reason
+ECI,291,38.0,7.66,12.0,keep,
+ARC-AGI-1,111,18.0,6.18,0.0,drop,community-run rapid submissions (~6.6 rows/mo)
+ARC-AGI-2,110,19.8,5.55,0.0,drop,community-run rapid submissions (~5.9 rows/mo)
+Aider-Polyglot,64,16.7,3.83,50.0,drop,community benchmark updates on checkpoint variants (~3.7 rows/mo)
+GPQA-Diamond,140,37.4,3.75,12.0,keep,
+FrontierMath-T1-3,80,22.2,3.61,0.0,keep,
+MATH-L5,99,28.5,3.47,62.0,keep,
+MMLU,118,34.3,3.44,100.0,truncate,saturated for frontier labs; truncate to pre-saturation window
+OTIS-AIME,119,37.4,3.18,12.0,keep,
+WebDev-Arena,26,8.2,3.16,0.0,keep,
+BBH,44,14.8,2.97,100.0,truncate,no submissions after 2024-12; truncate to last-advance date
+FrontierMath-T4,51,22.2,2.3,0.0,keep,
+HLE,38,16.6,2.28,0.0,keep,
+APEX-Agents,18,8.0,2.26,0.0,keep,
+SWE-Bench-Bash,26,12.9,2.02,0.0,keep,
+SimpleQA-V,36,18.0,2.0,33.0,keep,
+Chess-Puzzles,25,13.3,1.88,0.0,keep,
+LiveBench,36,20.8,1.73,83.0,drop,"live-updating composite by design; measures continuous drift, not release events"
+GSM8K,79,48.5,1.63,100.0,truncate,saturated early 2024; truncate to pre-saturation window
+SWE-Bench-Verified,23,15.7,1.47,0.0,keep,
+BALROG,24,19.4,1.23,33.0,keep,
+OS-World,15,14.4,1.04,50.0,keep,
+Cybench,22,24.0,0.92,33.0,keep,
+AgentCo,14,16.0,0.88,67.0,keep,

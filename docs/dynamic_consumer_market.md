@@ -1,6 +1,8 @@
 # Dynamic Consumer Market
 
 > Design doc for two coupled mechanisms that make consumer market composition evolve over the simulation window. Last updated: 2026-04-09.
+>
+> **Status (2026-04-12):** Mechanism A (enterprise share growth) shipped in session 23 and is the default since session 27 (`dynamic_consumer_market: bool = True`). Mechanism B (technology-triggered need evolution) was scoped here but **not built** — sections 3 and the related sub-toggles (`enterprise_share_growth`, `need_evolution`) below are design record only. Ablation: `--condition static_enterprise_size` flips Mechanism A off.
 
 ---
 
@@ -142,21 +144,26 @@ When dimension `d` grows by `shift`, all other dimensions shrink proportionally 
 | `src/actors/consumer.py` | Add `update_market_composition()` method to `ConsumerMarket`; store `base_fractions` at init |
 | `scripts/run_experiment.py` | Wire new config params through `extra_config` |
 
-### New config parameters on `SimulationConfig`
+### Config parameters on `SimulationConfig`
 
+Actually shipped (Mechanism A only):
 ```python
-dynamic_consumer_market: bool = False
-enterprise_share_growth: bool = True
-need_evolution: bool = True
+dynamic_consumer_market: bool = True   # default since session 27
 enterprise_share_start: float = 0.25
 enterprise_share_end: float = 0.55
 enterprise_growth_midpoint: int = 18
-need_evolution_thresholds: Optional[dict] = None   # uses defaults if None
-need_evolution_growth_rate: float = 0.15
-need_evolution_max_shift: float = 0.01
 ```
 
-`dynamic_consumer_market` is the master gate. When False, neither mechanism runs. When True, `enterprise_share_growth` and `need_evolution` are sub-toggles.
+Originally scoped but not built (Mechanism B sub-toggles + thresholds):
+```python
+# enterprise_share_growth: bool = True   # never added — Mechanism A is the only mechanism
+# need_evolution: bool = True            # never added — Mechanism B not implemented
+# need_evolution_thresholds: Optional[dict] = None
+# need_evolution_growth_rate: float = 0.15
+# need_evolution_max_shift: float = 0.01
+```
+
+`dynamic_consumer_market` is the gate for Mechanism A: True (default) enables enterprise share growth via the logistic curve; False (set by `static_enterprise_size` ablation) freezes shares at init.
 
 ### Method signatures on `ConsumerMarket`
 
@@ -218,32 +225,26 @@ After first runs with the dynamic market enabled:
 
 ## 7. Ablation Design
 
-Three configurations for clean ablation:
+As shipped (Mechanism A only), the ablation is a single binary toggle:
 
-| Condition | `dynamic_consumer_market` | `enterprise_share_growth` | `need_evolution` | Purpose |
-|-----------|--------------------------|--------------------------|-----------------|---------|
-| `baseline` | False | -- | -- | Static market (existing behavior) |
-| `enterprise_only` | True | True | False | Mechanism A only: structural shift |
-| `needs_only` | True | False | True | Mechanism B only: capability-driven |
-| `dynamic_full` | True | True | True | Both mechanisms |
+| Condition | `dynamic_consumer_market` | Purpose |
+|-----------|--------------------------|---------|
+| (default — any condition) | True  | Enterprise share grows ~25% → ~55% via logistic |
+| `static_enterprise_size`  | False | Enterprise share frozen at init values (baseline check) |
+
+Wire-in (already present in `run_experiment.py`):
+```python
+elif condition == "static_enterprise_size":
+    extra_config["dynamic_consumer_market"] = False
+```
+
+Mechanism B's planned sub-ablations (`enterprise_only`, `needs_only`, `dynamic_full`) are not wired since Mechanism B was never built. If Mechanism B is implemented later, restore the original 4-row table.
 
 Run each condition with the same seed set (30 seeds minimum) under the `balanced` regulatory preset. Compare:
 
 - Market-weighted aggregate need vector trajectory
-- Enterprise share trajectory (should be flat for `baseline` and `needs_only`)
+- Enterprise share trajectory (should be flat for `static_enterprise_size`)
 - Per-dimension need weight evolution for key segments (software_dev, tech_startup, enterprise_finance)
 - Score-satisfaction gap (mean across providers)
 - Provider investment allocation shifts (do providers respond to changing demand?)
 - Incident count (enterprise segments have higher safety needs; does dynamic market change incident impact?)
-
-Wire these as named conditions in `run_experiment.py`:
-```python
-elif condition == "dynamic_enterprise_only":
-    extra_config["dynamic_consumer_market"] = True
-    extra_config["need_evolution"] = False
-elif condition == "dynamic_needs_only":
-    extra_config["dynamic_consumer_market"] = True
-    extra_config["enterprise_share_growth"] = False
-elif condition == "dynamic_full":
-    extra_config["dynamic_consumer_market"] = True
-```

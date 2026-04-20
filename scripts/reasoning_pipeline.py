@@ -14,7 +14,7 @@ Usage:
     python scripts/reasoning_pipeline.py <run_dir> --output report.md
 
 Example:
-    python scripts/reasoning_pipeline.py sandbox/experiments/apr9_sonnet46_market_structure/full_ecosystem_balanced_llm_s11_20260409_031446
+    python scripts/reasoning_pipeline.py sandbox/experiments/_preserved/llm_full_ecosystem_progression/apr09
 """
 
 import argparse

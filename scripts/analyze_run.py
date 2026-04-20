@@ -1,7 +1,7 @@
 """Quick analysis of a running/completed experiment from rounds.jsonl."""
 import json, statistics, sys, os
 
-path = sys.argv[1] if len(sys.argv) > 1 else "sandbox/experiments/_apr7_full_ecosystem_balanced_llm_20260407_092700"
+path = sys.argv[1] if len(sys.argv) > 1 else "sandbox/experiments/_preserved/llm_full_ecosystem_progression/apr07"
 
 with open(os.path.join(path, "rounds.jsonl")) as f:
     rounds = [json.loads(l) for l in f]

@@ -668,9 +668,12 @@ class ClaudeCodeProvider(LLMProvider):
             model: Model alias or ID (e.g. "sonnet", "opus", "claude-sonnet-4-6")
         """
         try:
+            # Scrub API keys so claude CLI uses subscription, not direct API billing
+            clean_env = {k: v for k, v in os.environ.items() if k != "ANTHROPIC_API_KEY"}
             result = subprocess.run(
                 ["claude", "--version"],
                 capture_output=True, text=True, timeout=10,
+                env=clean_env,
             )
             if result.returncode != 0:
                 raise RuntimeError(f"claude CLI error: {result.stderr.strip()}")
@@ -720,12 +723,15 @@ class ClaudeCodeProvider(LLMProvider):
             cmd += ["--system-prompt-file", sys_file]
 
         try:
+            # Scrub API keys so claude CLI uses subscription, not direct API billing
+            clean_env = {k: v for k, v in os.environ.items() if k != "ANTHROPIC_API_KEY"}
             result = subprocess.run(
                 cmd,
                 input=prompt,
                 capture_output=True,
                 encoding='utf-8',
                 timeout=180,
+                env=clean_env,
             )
             if result.returncode != 0:
                 print(f"Claude Code CLI error (exit {result.returncode}): {result.stderr[:300]}")
@@ -1432,161 +1438,35 @@ def llm_plan_funding(
     return cleaned_allocations, reasoning
 
 
-# --- Evaluator Planning (dynamic_evaluator=True) ---
+# --- Evaluator Dynamic Mode (LLM judgment) ---
 
-EVALUATOR_PLANNING_SYSTEM_PROMPT = """You are the team responsible for maintaining the AI evaluation leaderboard. You decide when to introduce new benchmarks and what they should measure.
+DYNAMIC_EVALUATOR_SYSTEM_PROMPT = """You are the team responsible for maintaining the AI evaluation leaderboard. Each quarter you decide whether to introduce a new benchmark from the available pool, retire an active one, or leave the suite unchanged.
 
-Your goal is to maintain evaluation infrastructure that serves the people and organizations who rely on it.
+A good evaluation suite covers the dimensions that matter to real users. Stability is valuable, but so is keeping pace with capability growth and emerging use cases.
 
-You have three options each month:
-- **introduce_successor**: Replace a specific benchmark with a harder version that measures the same skills
-- **introduce_fresh**: Add a new benchmark that covers skills not well measured by existing benchmarks
-- **none**: No action needed this month
-
-You MUST output valid JSON in this exact structure:
-{
-    "action": "introduce_successor" | "introduce_fresh" | "none",
-    "target_benchmark": "<name of benchmark to replace, only if action is introduce_successor>",
-    "reasoning": "Your analysis (up to 200 words)."
-}"""
-
-
-def create_evaluator_planning_prompt(
-    active_benchmarks: list[dict],
-    score_deltas: dict,
-    score_spread: dict,
-    internal_validity: Optional[float],
-    media_headlines: list[str],
-    saturation_states: dict,
-) -> str:
-    """Create a prompt for the evaluator to decide benchmark actions.
-
-    Args:
-        active_benchmarks: [{name, tags, weight}, ...]
-        score_deltas: {benchmark_name: {provider: delta}} last round
-        score_spread: {benchmark_name: max-min score spread}
-        internal_validity: Spearman-r(score_rank, market_share_rank) or None
-        media_headlines: Recent media headlines mentioning benchmarks
-        saturation_states: {benchmark_name: {saturated, max_score}}
-    """
-    prompt = "# Active Benchmarks\n"
-    for bm in active_benchmarks:
-        status = ""
-        sat = saturation_states.get(bm["name"], {})
-        if sat.get("saturated"):
-            status = f" [top score {sat.get('max_score', 0):.3f}, avg monthly improvement near zero]"
-        prompt += f"- {bm['name']} (measures: {bm.get('tags', 'general')}){status}\n"
-
-    prompt += "\n# Score Movement (last month)\n"
-    for bm_name, deltas in score_deltas.items():
-        spread = score_spread.get(bm_name, 0)
-        if deltas:
-            avg_delta = sum(deltas.values()) / len(deltas)
-            prompt += f"- {bm_name}: avg improvement {avg_delta:+.4f}, score spread {spread:.3f}\n"
-        else:
-            prompt += f"- {bm_name}: no data, spread {spread:.3f}\n"
-
-    if internal_validity is not None:
-        prompt += f"\n# Leaderboard-Adoption Correlation\nRank correlation between leaderboard scores and market share: {internal_validity:.2f}\n"
-
-    if media_headlines:
-        bm_headlines = [h for h in media_headlines if any(
-            kw in h.lower() for kw in ["benchmark", "score", "converging", "plateau", "reliability", "meaningful"]
-        )]
-        if bm_headlines:
-            prompt += "\n# Recent Press Coverage\n"
-            for h in bm_headlines[-3:]:
-                prompt += f"- {h}\n"
-
-    prompt += """
-# Decision Required
-Based on the current state of benchmarks and scores, decide whether to:
-1. Replace an existing benchmark with a harder successor
-2. Introduce a fresh benchmark covering under-measured skills
-3. Take no action
-
-Output your decision as JSON."""
-
-    return prompt
-
-
-def llm_plan_evaluator(
-    active_benchmarks: list[dict],
-    score_deltas: dict,
-    score_spread: dict,
-    internal_validity: Optional[float],
-    media_headlines: list[str],
-    saturation_states: dict,
-    verbose: bool = False,
-) -> tuple[dict, str]:
-    """Use LLM to decide evaluator benchmark actions.
-
-    Returns:
-        Tuple of (decision_dict, reasoning) where decision_dict has:
-            action: "introduce_successor" | "introduce_fresh" | "none"
-            target_benchmark: str (only for introduce_successor)
-    """
-    provider = get_provider()
-
-    prompt = create_evaluator_planning_prompt(
-        active_benchmarks=active_benchmarks,
-        score_deltas=score_deltas,
-        score_spread=score_spread,
-        internal_validity=internal_validity,
-        media_headlines=media_headlines,
-        saturation_states=saturation_states,
-    )
-
-    result = provider.generate_json(
-        prompt=prompt,
-        system_prompt=EVALUATOR_PLANNING_SYSTEM_PROMPT,
-        fail_safe={
-            "action": "none",
-            "target_benchmark": "",
-            "reasoning": "fallback to no action",
-        },
-        verbose=verbose,
-    )
-
-    action = result.get("action", "none")
-    if action not in ("introduce_successor", "introduce_fresh", "none"):
-        action = "none"
-
-    return {
-        "action": action,
-        "target_benchmark": result.get("target_benchmark", ""),
-    }, result.get("reasoning", "")
-
-
-# --- Evaluator Full Autonomy Mode ---
-
-EVALUATOR_AUTONOMY_SYSTEM_PROMPT = """You are the team responsible for maintaining the AI evaluation leaderboard. You decide which benchmarks to develop, when to introduce them, and when to retire saturated ones.
-
-Your goal is to maintain evaluation infrastructure that accurately measures what matters to the people and organizations who rely on AI models.
-
-You have three options each month:
-- **commit**: Start developing a benchmark from the available pool (takes several months to complete)
-- **retire**: Immediately retire an active benchmark that is no longer useful (only needed if you want to retire without replacing)
-- **none**: No action needed this month
+You have three options each quarter:
+- **none**: No action. Correct when the suite is healthy and covers relevant dimensions.
+- **create**: Introduce a new benchmark from the available pool immediately.
+- **retire**: Immediately retire an active benchmark.
 
 You MUST output valid JSON in this exact structure:
 {
-    "action": "commit" | "retire" | "none",
-    "benchmark_name": "<name of benchmark to commit from pool, or active benchmark to retire>",
-    "reasoning": "Your analysis (up to 200 words)."
+    "action": "none" | "create" | "retire",
+    "benchmark_name": "<pool benchmark to create, or active benchmark to retire; empty string for none>",
+    "reasoning": "Up to 200 words. If acting, name the specific trigger that justifies the change."
 }
 
-Guidelines:
-- You can only commit benchmarks from the Available Pool (listed below)
-- Once committed, a benchmark cannot be cancelled and takes time to develop
-- Multiple benchmarks can be in development simultaneously
-- When the active benchmark limit is reached, the most saturated benchmark is auto-retired to make room
-- Consider dimension coverage gaps: are important capabilities under-measured?
-- Consider saturation: are providers converging on ceiling scores?
-- Consider validity: does the leaderboard track real-world adoption?"""
+Triggers that can justify action:
+- **Saturation**: a benchmark is labeled [SATURATED] in the active benchmark list below. Scores have plateaued — the benchmark no longer differentiates models.
+- **Uncovered dimension**: a capability dimension with meaningful real-world usage has no active benchmark coverage. High leaderboard-adoption correlation does not excuse leaving important dimensions unmeasured.
+- **Validity breakdown**: the leaderboard no longer tracks which providers real users adopt. Current benchmarks are not differentiating on what end-users actually care about.
+
+Constraints:
+- You can only create benchmarks from the Available Pool.
+- When the active benchmark limit is reached, the most saturated benchmark is auto-retired to make room."""
 
 
-def create_evaluator_autonomy_prompt(
+def create_dynamic_evaluator_prompt(
     active_benchmarks: list[dict],
     score_deltas: dict,
     score_spread: dict,
@@ -1594,11 +1474,10 @@ def create_evaluator_autonomy_prompt(
     media_headlines: list[str],
     saturation_states: dict,
     available_pool: list[dict],
-    dev_pipeline: list[dict],
     retired_benchmarks: list[str],
     current_round: int,
 ) -> str:
-    """Create a prompt for the evaluator in full_autonomy mode.
+    """Create a prompt for the evaluator in dynamic mode.
 
     Shows the evaluator what benchmarks are active, what's in the pool
     (name + description + tags only, NO dimension weights), and pipeline status.
@@ -1632,29 +1511,25 @@ def create_evaluator_autonomy_prompt(
             for h in bm_headlines[-3:]:
                 prompt += f"- {h}\n"
 
-    if dev_pipeline:
-        prompt += "\n# Development Pipeline\n"
-        for item in dev_pipeline:
-            rounds_left = item["ready_round"] - current_round
-            prompt += f"- {item['name']}: {rounds_left} months until ready\n"
-
     if retired_benchmarks:
         prompt += "\n# Previously Retired\n"
         for name in retired_benchmarks[-5:]:
             prompt += f"- {name}\n"
 
     if available_pool:
-        prompt += "\n# Available Pool (benchmarks you can commit to develop)\n"
+        prompt += "\n# Available Pool (benchmarks you can create from)\n"
         for bm in available_pool:
-            prompt += f"- {bm['name']}: {bm.get('description', '')} (tags: {bm.get('tags', '')})\n"
+            replaces = bm.get("replaces")
+            suffix = f" (replaces {replaces})" if replaces else ""
+            prompt += f"- {bm['name']}: {bm.get('description', '')}{suffix} (tags: {bm.get('tags', '')})\n"
     else:
         prompt += "\n# Available Pool\nNo benchmarks remaining in pool.\n"
 
-    prompt += "\n# Decision Required\nBased on the current evaluation landscape, decide whether to commit a new benchmark from the pool, retire an active benchmark, or take no action.\n\nOutput your decision as JSON."
+    prompt += "\n# Decision Required\nBased on the current evaluation landscape, decide whether to create a new benchmark from the pool, retire an active benchmark, or take no action.\n\nOutput your decision as JSON."
     return prompt
 
 
-def llm_plan_evaluator_autonomy(
+def llm_plan_dynamic_evaluator(
     active_benchmarks: list[dict],
     score_deltas: dict,
     score_spread: dict,
@@ -1662,21 +1537,21 @@ def llm_plan_evaluator_autonomy(
     media_headlines: list[str],
     saturation_states: dict,
     available_pool: list[dict],
-    dev_pipeline: list[dict],
     retired_benchmarks: list[str],
     current_round: int,
     verbose: bool = False,
 ) -> tuple[dict, str]:
-    """Use LLM to decide evaluator actions in full_autonomy mode.
+    """Use LLM to decide evaluator actions in dynamic mode.
 
     Returns:
         Tuple of (decision_dict, reasoning) where decision_dict has:
-            action: "commit" | "retire" | "none"
+            action: "create" | "retire" | "none" (legacy "commit" is accepted
+                   and normalized to "create")
             benchmark_name: str
     """
     provider = get_provider()
 
-    prompt = create_evaluator_autonomy_prompt(
+    prompt = create_dynamic_evaluator_prompt(
         active_benchmarks=active_benchmarks,
         score_deltas=score_deltas,
         score_spread=score_spread,
@@ -1684,14 +1559,13 @@ def llm_plan_evaluator_autonomy(
         media_headlines=media_headlines,
         saturation_states=saturation_states,
         available_pool=available_pool,
-        dev_pipeline=dev_pipeline,
         retired_benchmarks=retired_benchmarks,
         current_round=current_round,
     )
 
     result = provider.generate_json(
         prompt=prompt,
-        system_prompt=EVALUATOR_AUTONOMY_SYSTEM_PROMPT,
+        system_prompt=DYNAMIC_EVALUATOR_SYSTEM_PROMPT,
         fail_safe={
             "action": "none",
             "benchmark_name": "",
@@ -1701,7 +1575,7 @@ def llm_plan_evaluator_autonomy(
     )
 
     action = result.get("action", "none")
-    if action not in ("commit", "retire", "none"):
+    if action not in ("create", "retire", "none"):
         action = "none"
 
     return {

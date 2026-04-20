@@ -43,16 +43,34 @@ _CONDITION_CHOICES = [
     "no_media", "no_funders", "no_regulator", "no_opensource",
     "no_incidents",
     "bm_orientation_max", "bm_orientation_adjustable",
-    "dynamic_evaluator",
     "eval_as_company", "aligned_benchmarks",
     "fixed_market_size", "no_product_channels",
     "homogeneous_consumers",
     "initial_leader", "initial_duopoly", "initial_uniform",
-    "static_consumer_market",
-    "eval_randomized_pool", "eval_full_autonomy",
+    "static_enterprise_size",
+    "eval_randomized_pool",
+    "dynamic_evaluator",  # canonical: pool-based create+retire, 4-round dev, N=2 cap; works for both llm_mode and heuristic
+    "fixed_public",     # 4 initial benchmarks only, no new introductions, all public
+    # Private-benchmark ablation set (session 38 design — holdout-only reporting, K=3):
+    "public_only",      # all benchmarks → public (pre-private-era counterfactual)
+    "baseline",         # realistic mix: most public, a few partial, one private (matches 2024-2025)
+    "private_dominant", # all benchmarks → partial type (h=0.3, cosine=0.95; SEAL-dominant future)
+    "private_only",     # all benchmarks → private type (h=1.0, cosine=0.85; FrontierMath-dominant future)
+    "iid_holdout",      # all benchmarks → iid_holdout type (h=1.0, cosine=1.0; reporting-mechanism isolation)
 ]
 _parser.add_argument("--condition", choices=_CONDITION_CHOICES, default="full_ecosystem",
                      help="Experiment condition (default: full_ecosystem)")
+_STRUCTURAL_CHOICES = [
+    "none",
+    "no_media", "no_funders", "no_regulator", "no_incidents", "no_opensource",
+    "homogeneous_consumers", "no_benchmark_orientation",
+    "initial_uniform_capability", "initial_uniform_allocation",
+    # Benchmark-cadence ablations (default cadence = 4; overrides cooldown)
+    "cadence_static", "cadence_every_8",
+]
+_parser.add_argument("--structural", choices=_STRUCTURAL_CHOICES, default="none",
+                     help="Structural ablation layered on top of --condition (default: none). "
+                          "Enables double-ablation matrix: condition (e.g. privacy) x structural.")
 _parser.add_argument("--policy", choices=["us", "eu", "balanced"], default="balanced",
                      help="Regulatory policy preset (default: balanced)")
 _parser.add_argument("--no-dev", action="store_true",
@@ -69,9 +87,14 @@ _parser.add_argument("--batch", type=str, default=None,
                      help="Batch label: groups dev output under sandbox/experiments/<batch>/")
 _parser.add_argument("--name", type=str, default=None,
                      help="Override experiment name (default: <condition>_<policy>)")
+_parser.add_argument("--lightweight", action="store_true",
+                     help="Minimal artifacts only: metadata.json, config.json, rounds.jsonl, summary.json. "
+                          "Skips plots, history.json, game_log.md, providers/, consumers/, regulators/, "
+                          "funders/, ground_truth.json. For bulk replication runs.")
 _args, _ = _parser.parse_known_args()
 POLICY = _args.policy
 CONDITION = _args.condition
+STRUCTURAL = _args.structural
 DEV = not _args.no_dev
 
 # Prevent CPU thread oversubscription on shared clusters
@@ -158,7 +181,7 @@ SIMULATION = {
     "capability_ceiling": 1.0,
     "breakthrough_probability": 0.05,
     "breakthrough_magnitude": 0.20,
-    "benchmark_introduction_cooldown": 5,
+    "benchmark_introduction_cooldown": 4,
     "max_benchmarks": 10,
     # Incident reporting
     "enable_incidents": True,
@@ -227,15 +250,15 @@ SIMULATION = {
     ],
     # Media
     "enable_media": True,
-    # Consumer market: 10 individual + 3 organizational use-cases × 3 archetypes = 39 segments
+    # Consumer market: 11 individual + 6 organizational use-cases × 3 archetypes = 51 segments
     "use_case_profiles": [
         # Individual consumers (11)
         "software_dev", "content_writer", "legal", "healthcare", "finance",
         "educator", "customer_service", "researcher", "creative", "marketing",
         "service_worker",
-        # Organizational consumers (5)
+        # Organizational consumers (6)
         "hospital_system", "enterprise_finance", "tech_startup",
-        "enterprise_legal", "government_agency",
+        "enterprise_legal", "government_agency", "enterprise_hr",
     ],
 }
 
@@ -529,7 +552,7 @@ def _apply_condition_overrides(condition: str, simulation: dict, experiment: dic
     Returns a dict of extra kwargs to pass to SimulationConfig.
     """
     extra_config = {}
-    experiment["name"] = _args.name if _args.name else f"{condition}_{POLICY}"
+    experiment["name"] = _args.name if _args.name else (condition if POLICY == "balanced" else f"{condition}_{POLICY}")
 
     if condition == "full_ecosystem":
         pass  # baseline — no overrides
@@ -547,8 +570,6 @@ def _apply_condition_overrides(condition: str, simulation: dict, experiment: dic
         extra_config["benchmark_orientation_mode"] = "max"
     elif condition == "bm_orientation_adjustable":
         extra_config["benchmark_orientation_mode"] = "adjustable"
-    elif condition == "dynamic_evaluator":
-        extra_config["dynamic_evaluator"] = True
     elif condition == "eval_as_company":
         simulation["evaluator_as_company"] = True
         simulation["evaluator_base_budget"] = 50_000_000
@@ -581,7 +602,7 @@ def _apply_condition_overrides(condition: str, simulation: dict, experiment: dic
     elif condition == "initial_uniform":
         # All providers start with equal capabilities and brand recognition
         extra_config["_initial_market_structure"] = "uniform"
-    elif condition == "static_consumer_market":
+    elif condition == "static_enterprise_size":
         extra_config["dynamic_consumer_market"] = False
     elif condition == "eval_randomized_pool":
         _src = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "src")
@@ -589,15 +610,165 @@ def _apply_condition_overrides(condition: str, simulation: dict, experiment: dic
         from actors.evaluator import BENCHMARK_POOL
         extra_config["evaluator_mode"] = "randomized_pool"
         extra_config["benchmark_pool"] = BENCHMARK_POOL
-    elif condition == "eval_full_autonomy":
+    elif condition == "fixed_public":
+        simulation["benchmark_sequence"] = []
+    elif condition in ("public_only", "baseline", "private_dominant", "private_only", "iid_holdout"):
+        # Private-benchmark ablation set (session 38). All five conditions share:
+        #   evaluation_lag = 3 (K = 3, empirically calibrated cadence)
+        #   Five-condition typology assigns benchmark_type uniformly over the pool,
+        #   except `baseline` which uses a realistic mix matching current ecosystem.
+        # Type → (h, cosine-to-public) mapping:
+        #   public       → (0.0, n/a)
+        #   partial      → (0.3, ~0.95)   mild asymmetry, contamination-magnitude
+        #   private      → (1.0, ~0.85)   strong adversarial holdout
+        #   iid_holdout  → (1.0, 1.00)    reporting-mechanism isolation (weights identical)
+        simulation["evaluation_lag"] = 3
         _src = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "src")
         sys.path.insert(0, _src)
         from actors.evaluator import BENCHMARK_POOL
-        extra_config["evaluator_mode"] = "full_autonomy"
+
+        def _pub_cdw(name):
+            for b in BENCHMARK_POOL:
+                if b["name"] == name:
+                    return b.get("category_dimension_weights")
+            return None
+
+        def _hand_holdout_cdw(name):
+            for b in BENCHMARK_POOL:
+                if b["name"] == name:
+                    return b.get("holdout_category_dimension_weights")
+            return None
+
+        def _scale_cdw(public_cdw, hand_holdout_cdw, scale: float):
+            """Interpolate/extrapolate holdout weights from public toward hand_holdout.
+            scale=0 -> public_cdw (iid); scale=1 -> hand_holdout_cdw (partial target cos~0.95);
+            scale=2 -> more-adversarial (private target cos~0.85). Per-category normalized, non-negative.
+            """
+            if public_cdw is None:
+                return None
+            if scale == 0.0 or hand_holdout_cdw is None:
+                # Iid or fallback: holdout = public (copy to be safe)
+                return {cat: dict(w) for cat, w in public_cdw.items()}
+            out = {}
+            for cat, pub_w in public_cdw.items():
+                hold_w = hand_holdout_cdw.get(cat, pub_w)
+                interp = {d: pub_w[d] + scale * (hold_w.get(d, pub_w[d]) - pub_w[d]) for d in pub_w}
+                clipped = {d: max(0.0, v) for d, v in interp.items()}
+                total = sum(clipped.values())
+                out[cat] = {d: v / total for d, v in clipped.items()} if total > 0 else dict(pub_w)
+            return out
+
+        def _assign_type(bm, btype):
+            bm["benchmark_type"] = btype
+            if btype == "public":
+                bm["holdout_fraction"] = 0.0
+                bm.pop("holdout_category_dimension_weights", None)
+                return
+            if btype == "partial":
+                h, scale = 0.3, 1.0
+            elif btype == "private":
+                h, scale = 1.0, 2.0
+            elif btype == "iid_holdout":
+                h, scale = 1.0, 0.0
+            else:
+                return
+            bm["holdout_fraction"] = h
+            bm["holdout_category_dimension_weights"] = _scale_cdw(
+                _pub_cdw(bm["name"]), _hand_holdout_cdw(bm["name"]), scale
+            )
+
+        # `baseline` uses a realistic 7-public / 2-partial / 1-private mix over the
+        # 10-benchmark pool; all other conditions apply a uniform override.
+        _BASELINE_MIX = {
+            "General Capability":   "public",
+            "Coding Evaluation":    "public",
+            "Safety Evaluation":    "partial",   # SEAL-safety analog
+            "Instruction Following":"public",
+            "Scientific Reasoning": "partial",   # GPQA-diamond-style (contamination-adjacent)
+            "Agentic Tasks":        "public",
+            "Hard Coding":          "public",
+            "Long Context":         "public",
+            "Domain Expert":        "public",
+            "Agentic Safety":       "private",   # FrontierMath-analog (adversarially held out)
+        }
+
+        def _type_for(bm_name):
+            if condition == "public_only":     return "public"
+            if condition == "private_dominant": return "partial"
+            if condition == "private_only":    return "private"
+            if condition == "iid_holdout":     return "iid_holdout"
+            return _BASELINE_MIX.get(bm_name, "public")  # baseline
+
+        for bm in BENCHMARKS:
+            _assign_type(bm, _type_for(bm["name"]))
+        for bm in simulation.get("benchmark_sequence", []):
+            _assign_type(bm, _type_for(bm["name"]))
+
+    elif condition == "dynamic_evaluator":
+        # Canonical post-consolidation dynamic_evaluator condition.
+        # Pool-based create + retire, 4-round dev pipeline, N=2 concurrency cap.
+        # Works in both llm_mode (LLM judgment) and heuristic mode (gap-scoring metric).
+        _src = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "src")
+        sys.path.insert(0, _src)
+        from actors.evaluator import BENCHMARK_POOL
+        extra_config["evaluator_mode"] = "dynamic"
         extra_config["benchmark_pool"] = BENCHMARK_POOL
-        extra_config["dynamic_evaluator"] = True
 
     return extra_config
+
+
+def _apply_structural_overrides(structural: str, simulation: dict, extra_config: dict, experiment: dict):
+    """Apply structural ablation overrides on top of the primary condition overrides.
+
+    Structural ablations are orthogonal to --condition (which typically controls
+    benchmark typology / evaluator mode / market structure). This enables double
+    ablation: e.g. --condition private_only --structural no_media.
+
+    Provider-side overrides (no_benchmark_orientation, initial_uniform_allocation)
+    are deferred via extra_config flags and applied in run() once provider_configs
+    are resolved, following the same pattern as _initial_market_structure.
+    """
+    if structural == "none":
+        return
+
+    # Compose name suffix (respects --name override: only applies if name wasn't user-set)
+    if not _args.name:
+        experiment["name"] = f"{experiment['name']}__{structural}"
+
+    if structural == "no_media":
+        simulation["enable_media"] = False
+    elif structural == "no_funders":
+        extra_config["enable_funders"] = False
+    elif structural == "no_regulator":
+        extra_config["enable_regulators"] = False
+    elif structural == "no_incidents":
+        simulation["enable_incidents"] = False
+    elif structural == "no_opensource":
+        extra_config["_remove_opensource"] = True
+    elif structural == "homogeneous_consumers":
+        extra_config["homogeneous_consumers"] = True
+    elif structural == "no_benchmark_orientation":
+        # Pin all providers to pure need-signal-driven R&D targeting.
+        # Force mode=fixed so LLM cannot ratchet bo up off 0.0 (the [0.05, 0.95]
+        # clip only fires in adjustable mode; fixed mode leaves bo at init value).
+        extra_config["_zero_benchmark_orientation"] = True
+        extra_config["benchmark_orientation_mode"] = "fixed"
+    elif structural == "initial_uniform_capability":
+        # Alias to existing uniform market-structure path (flattens cap vectors
+        # to the population mean + sets brand_recognition=0.5 for all providers).
+        extra_config["_initial_market_structure"] = "uniform"
+    elif structural == "initial_uniform_allocation":
+        # Flatten portfolios to the population mean across providers.
+        extra_config["_uniform_allocation"] = True
+    elif structural == "cadence_static":
+        # No new benchmark introductions — only the 4 initial benchmarks stay active.
+        # Represents "fixed benchmark era" counterfactual.
+        simulation["benchmark_sequence"] = []
+    elif structural == "cadence_every_8":
+        # Slow cadence: introduce every 8 rounds (2x default). Represents
+        # pre-2023-era slower benchmark release rate.
+        simulation["benchmark_introduction_cooldown"] = 8
+        extra_config["benchmark_introduction_interval"] = 8
 
 
 def run():
@@ -613,6 +784,9 @@ def run():
 
     # Apply condition overrides
     _extra_config = _apply_condition_overrides(CONDITION, SIMULATION, EXPERIMENT)
+
+    # Apply structural ablation (orthogonal axis, layered on top of condition)
+    _apply_structural_overrides(STRUCTURAL, SIMULATION, _extra_config, EXPERIMENT)
 
     # Add src/ to path
     _PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -694,6 +868,22 @@ def run():
             p["capability_vector"] = dict(avg_cap)
             p["brand_recognition"] = 0.5
 
+    # Structural: uniform allocation (flatten portfolios to population mean)
+    if _extra_config.pop("_uniform_allocation", False):
+        avg_portfolio = {"rd": 0.0, "safety": 0.0, "product": 0.0}
+        for p in provider_configs:
+            for k in avg_portfolio:
+                avg_portfolio[k] += p["portfolio"][k]
+        n = len(provider_configs)
+        avg_portfolio = {k: v / n for k, v in avg_portfolio.items()}
+        for p in provider_configs:
+            p["portfolio"] = dict(avg_portfolio)
+
+    # Structural: zero benchmark orientation (pure need-signal-driven R&D)
+    if _extra_config.pop("_zero_benchmark_orientation", False):
+        for p in provider_configs:
+            p["benchmark_orientation"] = 0.0
+
     # --- Apply capability shift ---
     if CAPABILITY_SHIFT != 0.0:
         for p in provider_configs:
@@ -740,7 +930,7 @@ def run():
         capability_ceiling=SIMULATION.get("capability_ceiling", 1.0),
         breakthrough_probability=SIMULATION.get("breakthrough_probability", 0.02),
         breakthrough_magnitude=SIMULATION.get("breakthrough_magnitude", 0.05),
-        benchmark_introduction_cooldown=SIMULATION.get("benchmark_introduction_cooldown", 6),
+        benchmark_introduction_cooldown=SIMULATION.get("benchmark_introduction_cooldown", 4),
         max_benchmarks=SIMULATION.get("max_benchmarks", 8),
         benchmark_sequence=SIMULATION.get("benchmark_sequence"),
         llm_mode=LLM["llm_mode"],
@@ -755,6 +945,7 @@ def run():
         n_funders=n_funders,
         use_case_profiles=SIMULATION.get("use_case_profiles"),
         enable_incidents=SIMULATION.get("enable_incidents", False),
+        evaluation_lag=SIMULATION.get("evaluation_lag", 0),
         evaluator_as_company=SIMULATION.get("evaluator_as_company", False),
         evaluator_base_budget=SIMULATION.get("evaluator_base_budget", 0.0),
         fee_per_submission=SIMULATION.get("fee_per_submission", 0.05),
@@ -765,17 +956,16 @@ def run():
         # Condition-specific flags (from --condition CLI)
         benchmark_orientation_mode=_extra_config.get("benchmark_orientation_mode", "fixed"),
         aligned_benchmarks=_extra_config.get("aligned_benchmarks", False),
-        dynamic_evaluator=_extra_config.get("dynamic_evaluator", False),
         evaluator_mode=_extra_config.get("evaluator_mode", "fixed_sequence"),
         benchmark_pool=_extra_config.get("benchmark_pool"),
-        benchmark_dev_rounds=_extra_config.get("benchmark_dev_rounds", 4),
+        benchmark_introduction_interval=_extra_config.get("benchmark_introduction_interval", 4),
         homogeneous_consumers=_extra_config.get("homogeneous_consumers", False),
         market_growth_rate=_extra_config.get("market_growth_rate", 0.03),
         consumer_signal_in_prompt=_extra_config.get("consumer_signal_in_prompt", True),
         orientation_prompt_style=_extra_config.get("orientation_prompt_style", "reframed"),
         enable_product_signal_quality=_extra_config.get("enable_product_signal_quality", True),
         enable_product_retention=_extra_config.get("enable_product_retention", True),
-        dynamic_consumer_market=_extra_config.get("dynamic_consumer_market", True),
+        dynamic_consumer_market=_extra_config.get("dynamic_consumer_market", SimulationConfig.dynamic_consumer_market),
     )
 
     # --- Print banner ---
@@ -804,6 +994,8 @@ def run():
     print(f"EXPERIMENT: {EXPERIMENT['name']}")
     if CONDITION != "full_ecosystem":
         print(f"CONDITION: {CONDITION}")
+    if STRUCTURAL != "none":
+        print(f"STRUCTURAL: {STRUCTURAL}")
     print(", ".join(parts))
     print("=" * 70)
     print()
@@ -839,7 +1031,7 @@ def run():
                 _PROJECT_ROOT, "hf_data", "heuristic_baseline",
                 _condition, "seeds", _seed_label,
             )
-    logger = DirectoryLogger(_output_dir, lightweight=False)
+    logger = DirectoryLogger(_output_dir, lightweight=_args.lightweight)
     logger.save_metadata(
         seed=config.seed,
         llm_mode=config.llm_mode,
@@ -968,20 +1160,22 @@ def run():
     if config.enable_funders and sim.funders:
         logger.log_funders(sim.funders)
 
-    # Game log
-    game_log_content = generate_game_log_from_history(
-        history=sim.history,
-        providers=sim.providers,
-        experiment_name=EXPERIMENT["name"],
-        experiment_id=exp_id,
-        llm_mode=config.llm_mode,
-        benchmarks=BENCHMARKS,
-    )
-    game_log_path = logger.save_game_log(game_log_content)
-    print(f"Game log saved to: {game_log_path}")
+    # Game log (skip in lightweight — content build is expensive and save is a no-op)
+    if not _args.lightweight:
+        game_log_content = generate_game_log_from_history(
+            history=sim.history,
+            providers=sim.providers,
+            experiment_name=EXPERIMENT["name"],
+            experiment_id=exp_id,
+            llm_mode=config.llm_mode,
+            benchmarks=BENCHMARKS,
+        )
+        game_log_path = logger.save_game_log(game_log_content)
+        print(f"Game log saved to: {game_log_path}")
 
     # Final plots (force save regardless of round number)
-    save_plots_if_needed(n_rounds - 1, force=True)
+    if not _args.lightweight:
+        save_plots_if_needed(n_rounds - 1, force=True)
 
     # Finalize
     logger.add_note(f"Total runtime: {_format_duration(total_elapsed)}")

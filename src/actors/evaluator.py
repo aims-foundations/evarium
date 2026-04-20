@@ -22,7 +22,7 @@ if TYPE_CHECKING:
 #
 # Each entry has: name, description, tags, noise_sigma, samples, weight,
 # category_dimension_weights (ground truth, hidden from all actors).
-# description + tags are visible to the evaluator in full_autonomy mode;
+# description + tags are visible to the evaluator in dynamic mode;
 # dimension weights are NEVER shown to any actor.
 #
 # Calibrated against real-world analogs. The first 10 match the existing
@@ -51,6 +51,12 @@ BENCHMARK_POOL = [
             "reasoning": 0.10, "coding": 0.78, "knowledge": 0.03,
             "safety": 0.01, "communication": 0.02, "agentic": 0.06,
         }},
+        # Private benchmark (strong tier): rolling private problems reduce gaming ROI.
+        # Holdout probes deeper algorithmic understanding within the same coding domain.
+        "holdout_category_dimension_weights": {"overall": {
+            "reasoning": 0.18, "coding": 0.65, "knowledge": 0.04,
+            "safety": 0.01, "communication": 0.02, "agentic": 0.10,
+        }},
     },
     {
         "name": "Safety Evaluation",
@@ -61,6 +67,12 @@ BENCHMARK_POOL = [
         "category_dimension_weights": {"overall": {
             "reasoning": 0.03, "coding": 0.01, "knowledge": 0.05,
             "safety": 0.80, "communication": 0.10, "agentic": 0.01,
+        }},
+        # Private benchmark (mild+): internal safety evals are kept private to prevent
+        # gaming jailbreaks. Holdout probes more reasoning-intensive safety scenarios.
+        "holdout_category_dimension_weights": {"overall": {
+            "reasoning": 0.12, "coding": 0.02, "knowledge": 0.07,
+            "safety": 0.65, "communication": 0.12, "agentic": 0.02,
         }},
     },
     {
@@ -85,6 +97,12 @@ BENCHMARK_POOL = [
             "reasoning": 0.78, "coding": 0.02, "knowledge": 0.15,
             "safety": 0.00, "communication": 0.04, "agentic": 0.01,
         }},
+        # Private benchmark (mild+): GPQA Diamond-style — solutions never published.
+        # Holdout shifts toward deeper knowledge synthesis within same scientific domain.
+        "holdout_category_dimension_weights": {"overall": {
+            "reasoning": 0.65, "coding": 0.03, "knowledge": 0.25,
+            "safety": 0.00, "communication": 0.06, "agentic": 0.01,
+        }},
     },
     {
         "name": "Agentic Tasks",
@@ -96,16 +114,29 @@ BENCHMARK_POOL = [
             "reasoning": 0.08, "coding": 0.10, "knowledge": 0.02,
             "safety": 0.01, "communication": 0.04, "agentic": 0.75,
         }},
+        # Private benchmark (mild+): METR-style — known private task suite.
+        # Holdout probes strategic multi-step reasoning within same agentic domain.
+        "holdout_category_dimension_weights": {"overall": {
+            "reasoning": 0.18, "coding": 0.12, "knowledge": 0.03,
+            "safety": 0.02, "communication": 0.05, "agentic": 0.60,
+        }},
     },
     {
         "name": "Hard Coding",
         "description": "Competitive programming and advanced software engineering",
         "tags": "coding software engineering competitive programming",
+        "replaces": "Coding Evaluation",
         "noise_sigma": 0.06, "samples": 1000, "weight": 1.0,
         # Highly specialized — coding dominant (harder than Coding Evaluation)
         "category_dimension_weights": {"overall": {
             "reasoning": 0.10, "coding": 0.80, "knowledge": 0.02,
             "safety": 0.01, "communication": 0.01, "agentic": 0.06,
+        }},
+        # Private benchmark (strong tier): post-contest holdback.
+        # Holdout probes deeper algorithmic reasoning within competitive programming domain.
+        "holdout_category_dimension_weights": {"overall": {
+            "reasoning": 0.18, "coding": 0.67, "knowledge": 0.03,
+            "safety": 0.01, "communication": 0.02, "agentic": 0.09,
         }},
     },
     {
@@ -118,6 +149,12 @@ BENCHMARK_POOL = [
             "reasoning": 0.12, "coding": 0.02, "knowledge": 0.20,
             "safety": 0.01, "communication": 0.62, "agentic": 0.03,
         }},
+        # Private benchmark (strong tier): multi-document tasks with private corpora.
+        # Holdout probes cross-document reasoning requiring more synthesis.
+        "holdout_category_dimension_weights": {"overall": {
+            "reasoning": 0.18, "coding": 0.02, "knowledge": 0.25,
+            "safety": 0.01, "communication": 0.50, "agentic": 0.04,
+        }},
     },
     {
         "name": "Domain Expert",
@@ -129,6 +166,12 @@ BENCHMARK_POOL = [
             "reasoning": 0.20, "coding": 0.02, "knowledge": 0.65,
             "safety": 0.05, "communication": 0.07, "agentic": 0.01,
         }},
+        # Private benchmark (mild+): licensing exam holdout sets are industry standard.
+        # Holdout integrates domain knowledge with more reasoning and communication.
+        "holdout_category_dimension_weights": {"overall": {
+            "reasoning": 0.30, "coding": 0.02, "knowledge": 0.52,
+            "safety": 0.05, "communication": 0.10, "agentic": 0.01,
+        }},
     },
     {
         "name": "Agentic Safety",
@@ -139,6 +182,12 @@ BENCHMARK_POOL = [
         "category_dimension_weights": {"overall": {
             "reasoning": 0.12, "coding": 0.02, "knowledge": 0.03,
             "safety": 0.50, "communication": 0.08, "agentic": 0.25,
+        }},
+        # Private benchmark (both tiers, h=1.0): SEAL-analog — fully private.
+        # Holdout tests harder safety+agentic scenarios within same evaluation domain.
+        "holdout_category_dimension_weights": {"overall": {
+            "reasoning": 0.22, "coding": 0.04, "knowledge": 0.02,
+            "safety": 0.42, "communication": 0.10, "agentic": 0.20,
         }},
     },
     # --- New benchmarks (12) ---
@@ -168,6 +217,7 @@ BENCHMARK_POOL = [
         "name": "Hard Knowledge",
         "description": "Harder multi-task knowledge evaluation with extended answer options",
         "tags": "reasoning knowledge general academic",
+        "replaces": "General Capability",
         "noise_sigma": 0.06, "samples": 1200, "weight": 1.0,
         # Broad — reasoning + knowledge co-dominant
         "category_dimension_weights": {"overall": {
@@ -234,6 +284,7 @@ BENCHMARK_POOL = [
         "name": "Adversarial Robustness",
         "description": "Resistance to jailbreaks, prompt injection, and adversarial attacks",
         "tags": "safety alignment adversarial robustness red-team",
+        "replaces": "Safety Evaluation",
         "noise_sigma": 0.08, "samples": 600, "weight": 1.0,
         # Highly specialized — safety dominant (hardest safety benchmark)
         "category_dimension_weights": {"overall": {
@@ -357,10 +408,9 @@ class Evaluator:
         benchmark_sequence: Optional[list[dict]] = None,
         evaluator_as_company: bool = False,
         base_budget: float = 0.0,
-        dynamic_evaluator: bool = False,
         evaluator_mode: str = "fixed_sequence",
         benchmark_pool: Optional[list[dict]] = None,
-        benchmark_dev_rounds: int = 4,
+        evaluation_lag: int = 0,
     ):
         """
         Initialize an Evaluator.
@@ -375,9 +425,9 @@ class Evaluator:
                        Each dict should have: name, noise_level (weight optional)
             evaluator_as_company: If True, evaluator tracks budget and collects funder allocations
             base_budget: Starting budget for evaluator
-            evaluator_mode: "fixed_sequence" | "randomized_pool" | "full_autonomy"
-            benchmark_pool: Full pool of benchmark configs for randomized/autonomy modes
-            benchmark_dev_rounds: Rounds to develop a new benchmark (full_autonomy mode)
+            evaluator_mode: "fixed_sequence" | "randomized_pool" | "dynamic"
+            benchmark_pool: Full pool of benchmark configs for randomized/dynamic modes
+            benchmark_dev_rounds: Rounds to develop a new benchmark (dynamic mode)
         """
         # Support for multiple benchmarks
         self.benchmarks: list[Benchmark] = []
@@ -420,7 +470,7 @@ class Evaluator:
         self.active_regulations: list[Regulation] = []
 
         # Benchmark introduction parameters
-        self.benchmark_introduction_cooldown: int = 7
+        self.benchmark_introduction_cooldown: int = 4
         self.last_introduction_round: int = 0  # first introduction at round 8
         self.max_benchmarks: int = 6
         self.introduction_history: list[dict] = []  # [{round, benchmark_name, trigger}]
@@ -433,6 +483,14 @@ class Evaluator:
         self._best_published_scores: dict[str, dict[str, float]] = {
             bm.name: {} for bm in self.benchmarks
         }
+
+        # K-lag gating state: private benchmarks publish scores only every
+        # evaluation_lag rounds. Between publications, providers see the last
+        # published score (frozen). Public benchmarks (benchmark_type == "public")
+        # are unaffected — they always publish every round.
+        self.evaluation_lag: int = max(0, int(evaluation_lag))
+        # benchmark_name -> {provider_name: last_published_score}
+        self._last_published: dict[str, dict[str, float]] = {bm.name: {} for bm in self.benchmarks}
 
         # Benchmark saturation tracking (delta-based per spec)
         self._saturation_window: int = 3  # Consecutive rounds of near-zero deltas
@@ -449,14 +507,11 @@ class Evaluator:
         }
         self.saturation_history: list[dict] = []  # [{round, benchmark_name, max_score}]
 
-        # Dynamic evaluator mode (signal-based introduction vs fixed schedule)
-        self.dynamic_evaluator = dynamic_evaluator
+        # Signal-responsive introduction signals (used by dynamic mode)
         self._internal_validity: Optional[float] = None  # Pearson-r(score_rank, market_share_rank)
-        self._validity_threshold: float = 0.5  # Below this triggers fresh benchmark introduction
 
-        # Evaluator mode: fixed_sequence | randomized_pool | full_autonomy
+        # Evaluator mode: fixed_sequence | randomized_pool | dynamic
         self.evaluator_mode = evaluator_mode
-        self.benchmark_dev_rounds = benchmark_dev_rounds
 
         # Benchmark pool: all available benchmarks (introduced + unintroduced).
         # Each entry: {name, description, tags, noise_sigma, samples, weight, category_dimension_weights}
@@ -466,10 +521,6 @@ class Evaluator:
             self._benchmark_pool = [b for b in benchmark_pool if b["name"] not in active_names]
         else:
             self._benchmark_pool = []
-
-        # Development pipeline (full_autonomy mode):
-        # List of {config: dict, committed_round: int, ready_round: int}
-        self._dev_pipeline: list[dict] = []
 
         # Retired benchmarks (name -> round retired)
         self._retired_benchmarks: dict[str, int] = {}
@@ -494,11 +545,18 @@ class Evaluator:
         """
         Score a provider on a benchmark using the dot-product formula.
 
-            score ~ Normal(dot(capability_vector, dim_weights), (noise_sigma / sqrt(samples))^2)
+        Public benchmarks (benchmark_type == "public"):
+            score ~ Normal(dot(cap, public_weights), (noise_sigma / sqrt(samples))^2)
 
-        Gaming emerges naturally: providers whose capability_vector aligns with
-        the benchmark's dimension weights score higher than providers with equal
-        general capability but different specialization.
+        Private-ish benchmarks (partial/private/iid_holdout, h > 0):
+            score ~ Normal(dot(cap, holdout_weights),
+                           (noise_sigma / sqrt(samples * h))^2)
+        Holdout-only reporting (no blending): gaming the public-weight direction
+        doesn't mechanically raise the holdout score when cosine(public, holdout) < 1.
+        Smaller h => fewer items in the holdout sample => noisier measurement.
+
+        Gaming emerges from dimension mismatch between what providers target and
+        what the holdout rewards.
 
         Args:
             capability_vector: Dict {dim: float} from ProviderGroundTruth
@@ -509,12 +567,15 @@ class Evaluator:
             Score in [0, 1]
         """
         if bm_gt is not None:
-            cdw = bm_gt.category_dimension_weights
+            is_private = bm_gt.benchmark_type != "public" and bm_gt.holdout_fraction > 0
+            if is_private:
+                cdw = bm_gt.holdout_category_dimension_weights or bm_gt.category_dimension_weights
+                effective_samples = bm_gt.samples * bm_gt.holdout_fraction
+            else:
+                cdw = bm_gt.category_dimension_weights
+                effective_samples = bm_gt.samples
             noise_sigma = bm_gt.noise_sigma
-            samples = bm_gt.samples
             # Aggregate {category: {dim: weight}} to flat {dim: weight} by averaging categories.
-            # This implements: raw_score = dot(capability_vector, benchmark_true_weights)
-            # where benchmark_true_weights is the mean of per-category dimension loadings.
             if cdw and isinstance(next(iter(cdw.values())), dict):
                 agg: dict = {}
                 for cat_weights in cdw.values():
@@ -525,16 +586,16 @@ class Evaluator:
             else:
                 weights = cdw  # Already a flat {dim: weight} dict
         else:
-            # Fallback: uniform weights, default noise
+            # Fallback: uniform weights, default noise (benchmark has no GT record)
             weights = {d: 1.0 / len(self._DIMS) for d in self._DIMS}
             noise_sigma = benchmark.noise_level
-            samples = 100
+            effective_samples = 100.0
 
         mean_score = sum(
             capability_vector.get(d, 0.0) * weights.get(d, 0.0)
             for d in self._DIMS
         )
-        noise_std = noise_sigma / np.sqrt(max(samples, 1))
+        noise_std = noise_sigma / np.sqrt(max(effective_samples, 1.0))
         score = self.rng.normal(mean_score, noise_std)
         return max(0.0, min(1.0, score))
 
@@ -610,22 +671,44 @@ class Evaluator:
 
             for benchmark in self.benchmarks:
                 bm_gt = (benchmark_ground_truths or {}).get(benchmark.name)
+                is_private = bm_gt is not None and bm_gt.benchmark_type != "public" and bm_gt.holdout_fraction > 0
 
-                # Best-of-N trials for premium providers (eval_as_company)
-                n_trials = 1
-                if (self.evaluator_as_company
-                        and self.private_state
-                        and provider.name in self.private_state.submission_counts):
-                    n_trials = self.private_state.submission_counts[provider.name]
+                # K-lag gating: private-type benchmarks publish a fresh score only
+                # every evaluation_lag rounds. Public benchmarks and K<=1 publish fresh
+                # every round. Between publications, providers see the frozen last score.
+                is_publish_round = (
+                    (not is_private)
+                    or self.evaluation_lag <= 1
+                    or (round_num % self.evaluation_lag == 0)
+                )
 
-                if n_trials > 1:
-                    trial_scores = [
-                        self._score_provider_on_benchmark(cap_vec, bm_gt, benchmark)
-                        for _ in range(n_trials)
-                    ]
-                    score = max(trial_scores)
+                if is_publish_round:
+                    # Fresh evaluation. Best-of-N trials for premium providers (eval_as_company).
+                    n_trials = 1
+                    if (self.evaluator_as_company
+                            and self.private_state
+                            and provider.name in self.private_state.submission_counts):
+                        n_trials = self.private_state.submission_counts[provider.name]
+
+                    if n_trials > 1:
+                        trial_scores = [
+                            self._score_provider_on_benchmark(cap_vec, bm_gt, benchmark)
+                            for _ in range(n_trials)
+                        ]
+                        score = max(trial_scores)
+                    else:
+                        score = self._score_provider_on_benchmark(cap_vec, bm_gt, benchmark)
+
+                    if is_private:
+                        self._last_published[benchmark.name][provider.name] = score
                 else:
-                    score = self._score_provider_on_benchmark(cap_vec, bm_gt, benchmark)
+                    # Frozen: return last published score. First-publish fallback: if no
+                    # score has been published yet (benchmark introduced at a non-publish
+                    # round), compute one now as the initial baseline and cache it.
+                    score = self._last_published[benchmark.name].get(provider.name)
+                    if score is None:
+                        score = self._score_provider_on_benchmark(cap_vec, bm_gt, benchmark)
+                        self._last_published[benchmark.name][provider.name] = score
 
                 # Monotonicity: providers wouldn't disclose a worse score
                 best = self._best_published_scores[benchmark.name].get(provider.name, 0.0)
@@ -724,10 +807,13 @@ class Evaluator:
             active_benchmarks, score_deltas, score_spread, internal_validity,
             saturation_states
         """
-        active_benchmarks = [
-            {"name": bm.name, "tags": bm.tags, "weight": self.benchmark_weights.get(bm.name, 1.0)}
-            for bm in self.benchmarks
-        ]
+        active_benchmarks = []
+        for bm in self.benchmarks:
+            entry = {"name": bm.name, "tags": bm.tags, "weight": self.benchmark_weights.get(bm.name, 1.0)}
+            bm_gt = (getattr(self, "_benchmark_ground_truth", None) or {}).get(bm.name)
+            if bm_gt is not None and bm_gt.holdout_fraction > 0:
+                entry["holdout_fraction"] = bm_gt.holdout_fraction
+            active_benchmarks.append(entry)
 
         # Score deltas: compare last two rounds per benchmark
         score_deltas = {}
@@ -766,17 +852,9 @@ class Evaluator:
             "saturation_states": saturation_states,
         }
 
-        # Full autonomy: add pool and pipeline info
-        if self.evaluator_mode == "full_autonomy":
+        # Dynamic mode: add pool and retired info
+        if self.evaluator_mode == "dynamic":
             obs["available_pool"] = self.get_pool_for_llm()
-            obs["dev_pipeline"] = [
-                {
-                    "name": item["config"]["name"],
-                    "committed_round": item["committed_round"],
-                    "ready_round": item["ready_round"],
-                }
-                for item in self._dev_pipeline
-            ]
             obs["retired_benchmarks"] = list(self._retired_benchmarks.keys())
 
         return obs
@@ -784,19 +862,15 @@ class Evaluator:
     def _evaluate_introduction_trigger(self, round_num: int) -> Optional[str]:
         """Decide whether to introduce a new benchmark this round.
 
-        Returns a trigger string if yes, None if no.
+        Used only by fixed_sequence and randomized_pool heuristic modes.
+        Dynamic mode has its own trigger logic in heuristic_dynamic_decide (heuristic)
+        and llm_plan_dynamic_evaluator (LLM).
 
-        Fixed mode (dynamic_evaluator=False):
-            - Saturation trigger (bypasses cooldown with min gap of 1 round)
+        Triggers:
+            - Saturation (bypasses cooldown with min gap of 1 round)
             - Periodic introduction every cooldown rounds
-
-        Dynamic mode (dynamic_evaluator=True):
-            - Saturation trigger (same as fixed)
-            - Low internal validity (score-rank vs market-share-rank decoupled)
-            - Fallback: periodic at 2x cooldown (ensures benchmarks are introduced
-              even when signals are weak)
         """
-        # --- Saturation trigger: checked BEFORE main cooldown in both modes ---
+        # --- Saturation trigger: bypasses main cooldown ---
         saturation_trigger = None
         for bm in self.benchmarks:
             state = self._benchmark_saturation_state.get(bm.name)
@@ -808,75 +882,31 @@ class Evaluator:
         if saturation_trigger and round_num - self.last_introduction_round >= _saturation_min_gap:
             return saturation_trigger
 
-        # --- Mode-specific triggers (subject to standard cooldown) ---
+        # --- Periodic introduction (subject to standard cooldown) ---
         if round_num - self.last_introduction_round < self.benchmark_introduction_cooldown:
             return None
 
-        if not self.dynamic_evaluator:
-            # Fixed schedule: periodic introduction
-            if round_num > 0 and round_num % self.benchmark_introduction_cooldown == 0:
-                return f"periodic_introduction:round_{round_num}"
-            return None
-
-        # Dynamic mode: signal-based triggers
-        # Trigger 1: Low internal validity — scores decoupled from market reality
-        if (self._internal_validity is not None
-                and self._internal_validity < self._validity_threshold):
-            return f"low_validity:{self._internal_validity:.3f}"
-
-        # Trigger 2: Fallback periodic at 2x cooldown (ensure progress)
-        fallback_cooldown = self.benchmark_introduction_cooldown * 2
-        if round_num > 0 and round_num % fallback_cooldown == 0:
-            return f"dynamic_fallback:round_{round_num}"
-
+        if round_num > 0 and round_num % self.benchmark_introduction_cooldown == 0:
+            return f"periodic_introduction:round_{round_num}"
         return None
-
-    def apply_llm_decision(self, decision: dict, round_num: int) -> Optional["Benchmark"]:
-        """Apply an LLM evaluator decision to introduce a benchmark.
-
-        Called by the simulation when dynamic_evaluator=True and llm_mode=True.
-        Bypasses heuristic triggers — the LLM has already decided.
-        If at max_benchmarks, auto-retires the most saturated benchmark.
-
-        Args:
-            decision: {"action": "introduce_successor"|"introduce_fresh"|"none",
-                       "target_benchmark": str}
-            round_num: Current round
-
-        Returns:
-            New Benchmark if introduced, None otherwise
-        """
-        action = decision.get("action", "none")
-        if action == "none":
-            return None
-
-        if action == "introduce_successor":
-            target = decision.get("target_benchmark", "")
-            trigger = f"llm_successor:{target}"
-        elif action == "introduce_fresh":
-            trigger = "llm_fresh"
-        else:
-            return None
-
-        return self._create_and_register_benchmark(round_num, trigger)
 
     def consider_new_benchmark(self, round_num: int) -> Optional[Benchmark]:
         """
-        Consider introducing a new benchmark (heuristic modes).
+        Consider introducing a new benchmark (heuristic fixed/randomized modes).
 
         Modes:
         - fixed_sequence: periodic introduction every cooldown rounds,
           plus saturation-triggered replacement. Pulls from sequence in order.
         - randomized_pool: same triggers as fixed_sequence, but draws randomly
           from the benchmark pool instead of sequentially.
-        - dynamic_evaluator (legacy): signal-based triggers (saturation, low validity).
 
-        full_autonomy mode is handled separately via advance_pipeline / commit_from_pool.
+        dynamic mode is handled separately via advance_pipeline + create_from_pool
+        (see heuristic_dynamic_decide and the LLM dynamic_evaluator path).
 
         Returns:
             New Benchmark if introduced, None otherwise
         """
-        if self.evaluator_mode == "full_autonomy":
+        if self.evaluator_mode == "dynamic":
             return None  # Handled by pipeline, not heuristic triggers
 
         # Check budget (if company mode)
@@ -899,7 +929,7 @@ class Evaluator:
             pool_config = self._benchmark_pool[idx]
             return self._create_and_register_benchmark(round_num, trigger, pool_config=pool_config)
 
-        # fixed_sequence (default) or dynamic_evaluator legacy
+        # fixed_sequence (default)
         return self._create_and_register_benchmark(round_num, trigger)
 
     def _create_and_register_benchmark(
@@ -907,13 +937,13 @@ class Evaluator:
     ) -> Optional[Benchmark]:
         """Create a new benchmark from sequence/pool or auto-generate, and register it.
 
-        Shared by consider_new_benchmark (heuristic) and apply_llm_decision (LLM).
+        Called by consider_new_benchmark (heuristic fixed/randomized modes).
 
         Args:
             round_num: Current simulation round
             trigger: String describing what triggered this introduction
             pool_config: If provided, use this specific benchmark config from the pool.
-                        Used by randomized_pool and full_autonomy modes.
+                        Used by randomized_pool and dynamic modes.
         """
         benchmark_cost = 50000.0
         if self.evaluator_as_company:
@@ -954,6 +984,7 @@ class Evaluator:
         self.benchmark_weights[new_name] = new_weight
         self.benchmark_score_history[new_name] = []
         self._best_published_scores[new_name] = {}
+        self._last_published[new_name] = {}
 
         self._benchmark_saturation_state[new_name] = {
             "saturated": False,
@@ -1019,84 +1050,25 @@ class Evaluator:
         self.benchmark_weights.pop(benchmark_name, None)
         self.benchmark_score_history.pop(benchmark_name, None)
         self._best_published_scores.pop(benchmark_name, None)
+        self._last_published.pop(benchmark_name, None)
         self._benchmark_saturation_state.pop(benchmark_name, None)
 
         self._retired_benchmarks[benchmark_name] = round_num
         return benchmark_name
 
     # ------------------------------------------------------------------
-    # Full-autonomy mode: development pipeline
+    # Dynamic mode: development pipeline
     # ------------------------------------------------------------------
 
     def get_pool_for_llm(self) -> list[dict]:
         """Return unintroduced pool entries visible to the LLM evaluator.
 
         Visibility: name, description, tags only. Dimension weights are NEVER shown.
-        Excludes benchmarks already in the dev pipeline.
         """
-        in_pipeline = {item["config"]["name"] for item in self._dev_pipeline}
         return [
             {"name": b["name"], "description": b.get("description", ""), "tags": b.get("tags", "")}
             for b in self._benchmark_pool
-            if b["name"] not in in_pipeline
         ]
-
-    def commit_from_pool(self, benchmark_name: str, round_num: int) -> bool:
-        """Commit a benchmark from the pool into the development pipeline.
-
-        Takes benchmark_dev_rounds to develop. Cannot cancel once committed.
-        Multiple benchmarks can be in pipeline simultaneously.
-
-        Returns True if committed, False if benchmark not found or already in pipeline.
-        """
-        # Check if already in pipeline
-        if any(item["config"]["name"] == benchmark_name for item in self._dev_pipeline):
-            return False
-
-        # Find in pool
-        config = None
-        for b in self._benchmark_pool:
-            if b["name"] == benchmark_name:
-                config = b
-                break
-        if config is None:
-            return False
-
-        self._dev_pipeline.append({
-            "config": config,
-            "committed_round": round_num,
-            "ready_round": round_num + self.benchmark_dev_rounds,
-        })
-        return True
-
-    def advance_pipeline(self, round_num: int) -> list["Benchmark"]:
-        """Advance the development pipeline. Introduce any benchmarks that are ready.
-
-        Called each round in full_autonomy mode.
-
-        Returns list of newly introduced Benchmark objects (usually 0 or 1).
-        """
-        if not self._dev_pipeline:
-            return []
-
-        ready = [item for item in self._dev_pipeline if round_num >= item["ready_round"]]
-        if not ready:
-            return []
-
-        introduced = []
-        for item in ready:
-            trigger = f"pipeline_complete:committed_r{item['committed_round']}"
-            new_bm = self._create_and_register_benchmark(
-                round_num, trigger, pool_config=item["config"],
-            )
-            if new_bm is not None:
-                introduced.append(new_bm)
-
-        # Remove completed items from pipeline
-        ready_names = {item["config"]["name"] for item in ready}
-        self._dev_pipeline = [item for item in self._dev_pipeline if item["config"]["name"] not in ready_names]
-
-        return introduced
 
     def detect_saturation(self, round_num: int) -> list[str]:
         """
@@ -1323,9 +1295,7 @@ class Evaluator:
             "private_state": self.private_state.to_dict() if self.private_state else None,
             # Evaluator mode state
             "evaluator_mode": self.evaluator_mode,
-            "benchmark_dev_rounds": self.benchmark_dev_rounds,
             "_benchmark_pool": self._benchmark_pool,
-            "_dev_pipeline": self._dev_pipeline,
             "_retired_benchmarks": self._retired_benchmarks,
         }
         with open(filepath, "w") as f:
@@ -1351,7 +1321,7 @@ class Evaluator:
             evaluator.benchmark_score_history = data["benchmark_score_history"]
 
         # Load benchmark introduction state if present
-        evaluator.benchmark_introduction_cooldown = data.get("benchmark_introduction_cooldown", 8)
+        evaluator.benchmark_introduction_cooldown = data.get("benchmark_introduction_cooldown", 4)
         evaluator.last_introduction_round = data.get("last_introduction_round", 0)
         evaluator.max_benchmarks = data.get("max_benchmarks", 6)
         evaluator.introduction_history = data.get("introduction_history", [])
@@ -1400,9 +1370,7 @@ class Evaluator:
 
         # Load evaluator mode state if present
         evaluator.evaluator_mode = data.get("evaluator_mode", "fixed_sequence")
-        evaluator.benchmark_dev_rounds = data.get("benchmark_dev_rounds", 4)
         evaluator._benchmark_pool = data.get("_benchmark_pool", [])
-        evaluator._dev_pipeline = data.get("_dev_pipeline", [])
         evaluator._retired_benchmarks = data.get("_retired_benchmarks", {})
 
         return evaluator

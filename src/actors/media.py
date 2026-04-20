@@ -89,7 +89,7 @@ class Media:
 
         # Narrative state machine (OPTIMISM / SKEPTICISM / CRISIS)
         self._narrative_state: str = "OPTIMISM"
-        self._cumulative_incidents: int = 0
+        self._cumulative_incidents: float = 0.0
         self._rounds_without_incident: int = 0
         self._gaming_scandal_active: bool = False
         self._score_market_divergence_rounds: int = 0  # rounds score leader != market share leader
@@ -170,19 +170,21 @@ class Media:
                 )
                 coverage.sentiment += 0.2  # leader changes are exciting
 
-        # 2. Large score jumps (> 0.05) — scores are monotonic so only upward
+        # 2. Score jumps — scores are monotonic so only upward.
+        # Thresholds calibrated to LLM-mode gains (P90 ~0.025, max ~0.03);
+        # heuristic mode produces larger jumps but headline budget caps overflow.
         current_scores = {name: score for name, score in leaderboard}
         for name, score in current_scores.items():
             prev_score = self._previous_scores.get(name)
             if prev_score is not None:
                 delta = score - prev_score
-                if delta > 0.05:
+                if delta > 0.02:
                     _pool(f"{name} surges by {delta:.3f}")
                     coverage.provider_attention[name] = max(
                         coverage.provider_attention.get(name, 0), 0.6
                     )
                     coverage.sentiment += 0.1
-                    if delta > 0.08:
+                    if delta > 0.025:
                         _pool(f"{name} appears to release major model update")
                         coverage.provider_attention[name] = max(
                             coverage.provider_attention.get(name, 0), 0.7
@@ -490,16 +492,24 @@ class Media:
     def _update_narrative_state(self, round_has_incidents: bool):
         """Update the OPTIMISM/SKEPTICISM/CRISIS state machine.
 
+        Narrative inertia: incident pressure decays 10%/round when no new
+        incidents occur, not instantly.  Recovery transitions require BOTH
+        elapsed time since last incident AND cumulative pressure to have
+        subsided below a lower threshold — one quiet quarter after a critical
+        burst doesn't snap the narrative back.
+
         Transitions:
             OPTIMISM  -> SKEPTICISM : cumulative incidents > low_threshold OR gaming scandal
             SKEPTICISM -> CRISIS    : cumulative incidents > high_threshold OR multiple scandals
-            CRISIS    -> SKEPTICISM : no incidents for M rounds AND no scandal
-            SKEPTICISM -> OPTIMISM  : no incidents for N rounds
+            CRISIS    -> SKEPTICISM : no incidents for M rounds AND cumulative < high/2 AND no scandal
+            SKEPTICISM -> OPTIMISM  : no incidents for N rounds AND cumulative < low/2
         """
         if round_has_incidents:
             self._rounds_without_incident = 0
         else:
             self._rounds_without_incident += 1
+            # Narrative inertia: pressure fades slowly, not instantly
+            self._cumulative_incidents *= 0.90
             # Clear gaming scandal if no incidents for a while
             if self._rounds_without_incident >= self._crisis_recovery_rounds:
                 self._gaming_scandal_active = False
@@ -516,12 +526,13 @@ class Media:
                     or (self._gaming_scandal_active
                         and self._cumulative_incidents > self._incident_low_threshold)):
                 self._narrative_state = "CRISIS"
-            elif self._rounds_without_incident >= self._skepticism_recovery_rounds:
+            elif (self._rounds_without_incident >= self._skepticism_recovery_rounds
+                    and self._cumulative_incidents < self._incident_low_threshold * 0.5):
                 self._narrative_state = "OPTIMISM"
-                self._cumulative_incidents = 0  # reset on recovery
 
         elif state == "CRISIS":
             if (self._rounds_without_incident >= self._crisis_recovery_rounds
+                    and self._cumulative_incidents < self._incident_high_threshold * 0.5
                     and not self._gaming_scandal_active):
                 self._narrative_state = "SKEPTICISM"
 
