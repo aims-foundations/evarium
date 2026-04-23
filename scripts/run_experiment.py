@@ -53,7 +53,8 @@ _CONDITION_CHOICES = [
     "fixed_public",     # 4 initial benchmarks only, no new introductions, all public
     # Private-benchmark ablation set (session 38 design — holdout-only reporting, K=3):
     "public_only",      # all benchmarks → public (pre-private-era counterfactual)
-    "baseline",         # realistic mix: most public, a few partial, one private (matches 2024-2025)
+    "baseline",         # realistic mix: 8 public / 3 partial / 2 private (matches 2024-2025)
+    "baseline_randomized",  # 8/3/2 ratio with per-seed randomized assignment (session 43; identifies privacy-mechanism coefficient)
     "private_dominant", # all benchmarks → partial type (h=0.3, cosine=0.95; SEAL-dominant future)
     "private_only",     # all benchmarks → private type (h=1.0, cosine=0.85; FrontierMath-dominant future)
     "iid_holdout",      # all benchmarks → iid_holdout type (h=1.0, cosine=1.0; reporting-mechanism isolation)
@@ -148,7 +149,7 @@ EXPERIMENT = {
         f"6 initial providers (4 closed + Spark AI startup + OpenCore OS, 2023 capability baseline). "
         f"Benchmark specialization: providers route R&D via focus weight vectors. "
         "4 initial benchmarks + introduction sequence, max 10 active. "
-        "48 consumer segments (16 use cases x 3 archetypes), 5 funders (2 VC + corporate + gov + foundation), media, incidents. "
+        "48 consumer segments (16 use cases x 3 archetypes), 6 funders (2 VC + 2 corporate + gov + foundation), media, incidents. "
         "Safety lever: diminishing returns, stochastic efficiency, 2-round lag. "
         "Regulator: 5-lever graduated escalation. "
         "40 rounds."
@@ -182,18 +183,19 @@ SIMULATION = {
     "breakthrough_probability": 0.05,
     "breakthrough_magnitude": 0.20,
     "benchmark_introduction_cooldown": 4,
-    "max_benchmarks": 10,
+    "max_benchmarks": 13,
     # Incident reporting
     "enable_incidents": True,
     # Evaluator-as-company — disabled for clean comparison
     "evaluator_as_company": False,
     "evaluator_base_budget": 0,
 
-    # Benchmark introduction sequence — introduced one per cooldown period starting with
-    # the 4 initial benchmarks above. Anchored to stakeholders.md pool schedule.
-    # Order: first item introduced ~round 6, next ~round 12, etc.
+    # Benchmark introduction sequence — 9 benchmarks introduced one per cooldown
+    # (interval=4), rounds 4/8/12/16/20/24/28/32/36. Ordering anchored to real-world
+    # AI-eval history (2023 Q2 → 2026 Q1). See docs/stakeholders.md + rough/randomized_baseline_design.md.
     "benchmark_sequence": [
         {
+            # Round 4 ≈ May 2023. GPQA / MMLU-Pro era.
             "name": "Scientific Reasoning", "validity": 0.80,
             "tags": "reasoning science knowledge research",
             "noise_level": 0.07, "noise_sigma": 0.07, "samples": 1000, "weight": 1.0,
@@ -203,15 +205,28 @@ SIMULATION = {
             }},
         },
         {
-            "name": "Agentic Tasks", "validity": 0.72,
-            "tags": "coding agentic software automation tool-use",
-            "noise_level": 0.08, "noise_sigma": 0.08, "samples": 1000, "weight": 1.0,
+            # Round 8 ≈ Sep 2023. Med-PaLM 2 era; clinical benchmarks (MedQA, MultiMedQA).
+            "name": "Clinical Reasoning", "validity": 0.80,
+            "tags": "knowledge reasoning medical healthcare domain",
+            "noise_level": 0.07, "noise_sigma": 0.07, "samples": 800, "weight": 1.0,
             "category_dimension_weights": {"overall": {
-                "reasoning": 0.08, "coding": 0.10, "knowledge": 0.02,
-                "safety": 0.01, "communication": 0.04, "agentic": 0.75,
+                "reasoning": 0.20, "coding": 0.01, "knowledge": 0.65,
+                "safety": 0.08, "communication": 0.05, "agentic": 0.01,
             }},
         },
         {
+            # Round 12 ≈ Jan 2024. SEAL-Safety / HarmBench-private era — first salient
+            # private safety benchmark (precedes FrontierMath).
+            "name": "Adversarial Robustness", "validity": 0.82,
+            "tags": "safety alignment adversarial robustness red-team",
+            "noise_level": 0.08, "noise_sigma": 0.08, "samples": 600, "weight": 1.0,
+            "category_dimension_weights": {"overall": {
+                "reasoning": 0.06, "coding": 0.01, "knowledge": 0.01,
+                "safety": 0.85, "communication": 0.04, "agentic": 0.03,
+            }},
+        },
+        {
+            # Round 16 ≈ May 2024. LiveCodeBench / Codeforces-style competitive programming.
             "name": "Hard Coding", "validity": 0.82,
             "tags": "coding software engineering competitive programming",
             "noise_level": 0.06, "noise_sigma": 0.06, "samples": 1000, "weight": 1.0,
@@ -221,6 +236,43 @@ SIMULATION = {
             }},
         },
         {
+            # Round 20 ≈ Sep 2024. SWE-bench era of agentic coding.
+            "name": "Agentic Tasks", "validity": 0.72,
+            "tags": "coding agentic software automation tool-use",
+            "noise_level": 0.08, "noise_sigma": 0.08, "samples": 1000, "weight": 1.0,
+            # SWE-bench/BFCL-style: agentic-dominant but reasoning+coding meaningful.
+            "category_dimension_weights": {"overall": {
+                "reasoning": 0.25, "coding": 0.19, "knowledge": 0.01,
+                "safety": 0.00, "communication": 0.07, "agentic": 0.48,
+            }},
+        },
+        {
+            # Round 24 ≈ Jan 2025. FrontierMath era — archetypal private reasoning benchmark.
+            "name": "Advanced Math", "validity": 0.82,
+            "tags": "reasoning math competition problem-solving",
+            "noise_level": 0.06, "noise_sigma": 0.06, "samples": 1000, "weight": 1.0,
+            "category_dimension_weights": {"overall": {
+                "reasoning": 0.85, "coding": 0.06, "knowledge": 0.05,
+                "safety": 0.00, "communication": 0.03, "agentic": 0.01,
+            }},
+        },
+        {
+            # Round 28 ≈ May 2025. BFCL / tool-use maturation, computer-use APIs emerging.
+            "name": "Function Calling", "validity": 0.75,
+            "tags": "coding agentic tool-use function-calling API",
+            "noise_level": 0.06, "noise_sigma": 0.06, "samples": 1000, "weight": 1.0,
+            # BFCL-anchored: JSON/schema conformance (coding) dominates; tool-loop
+            # (agentic) still substantial; tool-selection planning (reasoning) and
+            # multi-turn result processing (communication) are meaningful.
+            # Recalibrated from agentic=0.70 -> 0.40 (original overstated pure-agentic
+            # weight; no consumer segment needs 70% agentic capability).
+            "category_dimension_weights": {"overall": {
+                "reasoning": 0.15, "coding": 0.30, "knowledge": 0.02,
+                "safety": 0.01, "communication": 0.12, "agentic": 0.40,
+            }},
+        },
+        {
+            # Round 32 ≈ Sep 2025. LongBench-v2 / extended-context benchmarks.
             "name": "Long Context", "validity": 0.78,
             "tags": "writing knowledge reasoning long-document retrieval",
             "noise_level": 0.07, "noise_sigma": 0.07, "samples": 1000, "weight": 1.0,
@@ -230,21 +282,13 @@ SIMULATION = {
             }},
         },
         {
-            "name": "Domain Expert", "validity": 0.80,
-            "tags": "knowledge reasoning medical legal finance domain",
-            "noise_level": 0.07, "noise_sigma": 0.07, "samples": 1000, "weight": 1.0,
+            # Round 36 ≈ Jan 2026. LegalBench-Pro / mature legal-AI benchmarks.
+            "name": "Legal Reasoning", "validity": 0.80,
+            "tags": "knowledge reasoning legal domain professional",
+            "noise_level": 0.07, "noise_sigma": 0.07, "samples": 800, "weight": 1.0,
             "category_dimension_weights": {"overall": {
-                "reasoning": 0.20, "coding": 0.02, "knowledge": 0.65,
-                "safety": 0.05, "communication": 0.07, "agentic": 0.01,
-            }},
-        },
-        {
-            "name": "Agentic Safety", "validity": 0.85,
-            "tags": "safety agentic alignment trustworthy",
-            "noise_level": 0.06, "noise_sigma": 0.06, "samples": 1000, "weight": 1.0,
-            "category_dimension_weights": {"overall": {
-                "reasoning": 0.12, "coding": 0.02, "knowledge": 0.03,
-                "safety": 0.50, "communication": 0.08, "agentic": 0.25,
+                "reasoning": 0.25, "coding": 0.01, "knowledge": 0.60,
+                "safety": 0.05, "communication": 0.08, "agentic": 0.01,
             }},
         },
     ],
@@ -314,8 +358,8 @@ CAPABILITY_SHIFT = 0.0
 PROVIDERS = [
     {
         "name": "Orion Labs",
-        "strategy_profile": "Move fast and ship products, consumer focus, balance safety with capability",
-        "innate_traits": "aggressive, product-focused, benchmark-aware, well-funded",
+        "strategy_profile": "Frontier AI lab pursuing AGI with a mandate to ensure benefits are broadly distributed. Operating as a public benefit corporation with substantial investor capital.",
+        "innate_traits": "frontier-focused, AGI-oriented, broad-benefit-mandate, capital-intensive",
         # OpenAI analogue: GPT-3.5 frontier Jan 2023; best overall, strong reasoning + communication
         "capability_vector": {"reasoning": 0.52, "coding": 0.48, "knowledge": 0.50,
                               "safety": 0.42, "communication": 0.52, "agentic": 0.12},
@@ -330,8 +374,8 @@ PROVIDERS = [
     },
     {
         "name": "Apex AI",
-        "strategy_profile": "Safety research focus, reliability and enterprise focus",
-        "innate_traits": "research-oriented, enterprise-focus, coding-focus, safety-conscious, principled",
+        "strategy_profile": "Frontier AI lab with a safety-research thesis: building frontier models is necessary because safety challenges emerge at scale. Race-to-the-top positioning: demonstrating safety-first frontier labs can be commercially viable. Operating as a public benefit corporation with substantial investor capital.",
+        "innate_traits": "research-first, enterprise-focus, safety-research-thesis, race-to-top-positioning, capital-intensive",
         # Anthropic analogue: Claude 1 just launching Mar 2023; Constitutional AI safety lead
         "capability_vector": {"reasoning": 0.48, "coding": 0.40, "knowledge": 0.46,
                               "safety": 0.55, "communication": 0.48, "agentic": 0.10},
@@ -347,11 +391,12 @@ PROVIDERS = [
     {
         "name": "Genesis Systems",
         "strategy_profile": (
-            "World-class research lab backed by massive infrastructure. "
-            "Excels at fundamental breakthroughs but historically slower to productize. "
-            "Balances scientific ambition with commercial urgency."
+            "Science-led AI research lab pursuing responsible AI to benefit humanity and "
+            "solve fundamental scientific challenges. Operates within a large technology "
+            "company with massive compute infrastructure. Responsibility framed as integral "
+            "to the scientific method, not supplementary."
         ),
-        "innate_traits": "research-first, methodical, well-resourced, scientifically-rigorous, patient",
+        "innate_traits": "science-led, massive-infrastructure, scientifically-rigorous, parent-company-embedded, responsibility-as-method",
         # Google analogue: Bard (LaMDA) Mar 2023; strong knowledge, poor productization
         "capability_vector": {"reasoning": 0.50, "coding": 0.38, "knowledge": 0.52,
                               "safety": 0.40, "communication": 0.42, "agentic": 0.12},
@@ -367,10 +412,12 @@ PROVIDERS = [
     {
         "name": "Mirage AI",
         "strategy_profile": (
-            "Large-platform AI lab leveraging massive user data and compute. "
-            "Prioritizes broad adoption over benchmark scores."
+            "AI lab within a large-platform technology company. Mission framed around making "
+            "AI capabilities broadly available rather than centralized. Product integration "
+            "across an existing massive user base. Capital expenditure scales with "
+            "parent-company commitments."
         ),
-        "innate_traits": "pragmatic, data-rich, platform-focused, scaling-focused",
+        "innate_traits": "platform-embedded, broad-distribution-oriented, massive-user-base, capex-intensive, decentralization-thesis",
         # Meta analogue: LLaMA 1 research-only Mar 2023; not refined for users, minimal safety
         "capability_vector": {"reasoning": 0.44, "coding": 0.42, "knowledge": 0.44,
                               "safety": 0.32, "communication": 0.40, "agentic": 0.10},
@@ -387,12 +434,12 @@ PROVIDERS = [
     {
         "name": "OpenCore",
         "strategy_profile": (
-            "Open-source AI lab releasing weights publicly. "
-            "Prioritizes community adoption and benchmark visibility over subscription revenue. "
-            "Leverages cost efficiency as competitive weapon against closed-source providers. "
-            "Users free to use model without guardrails, minimal safety investment."
+            "Research-focused AI lab pursuing AGI with open-source release as core strategy. "
+            "Publishes weights and technical details to build research community adoption. "
+            "Efficient training and compute use are structural priorities. "
+            "Operates under different capital and regulatory conditions than Western closed-source labs."
         ),
-        "innate_traits": "open-source, community-focused, benchmark-optimizing, cost-competitive, pragmatic, no guardrails",
+        "innate_traits": "open-source-first, research-oriented, compute-efficient, community-adoption, non-standard-regulatory-context",
         # DeepSeek analogue: pre-launch R&D phase 2023; coding-oriented, no safety
         "capability_vector": {"reasoning": 0.38, "coding": 0.42, "knowledge": 0.35,
                               "safety": 0.25, "communication": 0.30, "agentic": 0.08},
@@ -414,12 +461,11 @@ PROVIDERS = [
     {
         "name": "Spark AI",
         "strategy_profile": (
-            "Venture-funded startup with a small team and limited compute "
-            "relative to larger labs. Has gained early traction with developer "
-            "tools by specializing rather than competing broadly. Dependent on "
-            "continued fundraising to sustain operations."
+            "Venture-funded AI startup with a small team and limited compute relative to "
+            "hyperscalers. Growth strategy is specialization rather than broad competition. "
+            "Runway and fundraising cadence are recurring constraints on strategic decisions."
         ),
-        "innate_traits": "scrappy, fast-moving, developer-focused, resource-constrained",
+        "innate_traits": "venture-funded, resource-constrained, specialization-strategy, runway-sensitive, developer-focused",
         # Mistral analogue: founding stage 2023; coding talent but no model yet
         "capability_vector": {"reasoning": 0.36, "coding": 0.40, "knowledge": 0.32,
                               "safety": 0.28, "communication": 0.34, "agentic": 0.10},
@@ -483,47 +529,62 @@ FUNDERS = {
         {
             "name": "TechVentures",
             "funder_type": "vc",
-            "total_capital": 2_000_000_000.0,
+            "total_capital": 30_000_000_000.0,
             "risk_tolerance": 0.9,
             "mission_statement": "Early-stage AI startup bets with outsized upside potential",
             "max_round_deployment": 0.15,
-            "funding_cooldown": 3,
+            "funding_cooldown": 4,
+            "capital_growth_rate": 0.07,
         },
         {
             "name": "Horizon_Capital",
             "funder_type": "vc",
-            "total_capital": 1_000_000_000.0,
+            "total_capital": 20_000_000_000.0,
             "risk_tolerance": 0.6,
             "mission_statement": "Maximize returns by backing AI market leaders",
             "max_round_deployment": 0.10,
-            "funding_cooldown": 2,
+            "funding_cooldown": 4,
+            "capital_growth_rate": 0.07,
         },
         {
             "name": "StratCorp_AI",
             "funder_type": "corporate",
-            "total_capital": 1_500_000_000.0,
+            "total_capital": 65_000_000_000.0,
             "risk_tolerance": 0.5,
             "mission_statement": "Strategic AI partnerships to integrate into enterprise product suite",
             "max_round_deployment": 0.12,
-            "funding_cooldown": 3,
+            "funding_cooldown": 7,
+            "capital_growth_rate": 0.07,
+        },
+        {
+            "name": "IndustryPartners_AI",
+            "funder_type": "corporate",
+            "total_capital": 65_000_000_000.0,
+            "risk_tolerance": 0.5,
+            "mission_statement": "Corporate capital and infrastructure commitments to AI providers",
+            "max_round_deployment": 0.12,
+            "funding_cooldown": 7,
+            "capital_growth_rate": 0.07,
         },
         {
             "name": "AISI_Fund",
             "funder_type": "gov",
-            "total_capital": 500_000_000.0,
+            "total_capital": 10_000_000_000.0,
             "risk_tolerance": 0.3,
             "mission_statement": "Ensure safe and responsible AI development, preference to closed-source providers",
             "max_round_deployment": 0.10,
-            "funding_cooldown": 4,
+            "funding_cooldown": 10,
+            "capital_growth_rate": 0.07,
         },
         {
             "name": "OpenResearch_Foundation",
             "funder_type": "foundation",
-            "total_capital": 500_000_000.0,
+            "total_capital": 3_000_000_000.0,
             "risk_tolerance": 0.5,
             "mission_statement": "Advance open, safe, and broadly beneficial AI research",
             "max_round_deployment": 0.08,
-            "funding_cooldown": 3,
+            "funding_cooldown": 6,
+            "capital_growth_rate": 0.07,
         },
     ],
 }
@@ -574,8 +635,11 @@ def _apply_condition_overrides(condition: str, simulation: dict, experiment: dic
         simulation["evaluator_as_company"] = True
         simulation["evaluator_base_budget"] = 50_000_000
         simulation["fee_per_submission"] = 0.05
-        simulation["max_eval_submissions"] = 10
-        simulation["early_access_factor"] = 0.5
+        # Conservative retune (session 49, post-funder-recalibration): raise best-of-N cap
+        # and early-access belief blend to restore HHI-delta signal that weakened under the
+        # more-diversified funder regime. See docs/case_studies/eval_as_company.md.
+        simulation["max_eval_submissions"] = 12
+        simulation["early_access_factor"] = 0.7
         # Parent company resources for eval access (only affects submission affordability)
         _disc_budgets = {
             "Genesis Systems": 2.0,  # Alphabet subsidiary
@@ -612,11 +676,15 @@ def _apply_condition_overrides(condition: str, simulation: dict, experiment: dic
         extra_config["benchmark_pool"] = BENCHMARK_POOL
     elif condition == "fixed_public":
         simulation["benchmark_sequence"] = []
-    elif condition in ("public_only", "baseline", "private_dominant", "private_only", "iid_holdout"):
-        # Private-benchmark ablation set (session 38). All five conditions share:
+    elif condition in ("public_only", "baseline", "baseline_randomized",
+                       "private_dominant", "private_only", "iid_holdout"):
+        # Private-benchmark ablation set (session 38 + session 43). Conditions share:
         #   evaluation_lag = 3 (K = 3, empirically calibrated cadence)
-        #   Five-condition typology assigns benchmark_type uniformly over the pool,
-        #   except `baseline` which uses a realistic mix matching current ecosystem.
+        #   Uniform-type conditions override the pool; `baseline` uses the calibrated
+        #   8/3/2 mix matching current ecosystem; `baseline_randomized` (session 43)
+        #   preserves the 8/3/2 ratio but shuffles which benchmarks fill each slot
+        #   deterministically from `simulation["seed"]` — enables clean identification
+        #   of the privacy-mechanism coefficient via benchmark-fixed-effects modeling.
         # Type → (h, cosine-to-public) mapping:
         #   public       → (0.0, n/a)
         #   partial      → (0.3, ~0.95)   mild asymmetry, contamination-magnitude
@@ -677,26 +745,61 @@ def _apply_condition_overrides(condition: str, simulation: dict, experiment: dic
                 _pub_cdw(bm["name"]), _hand_holdout_cdw(bm["name"]), scale
             )
 
-        # `baseline` uses a realistic 7-public / 2-partial / 1-private mix over the
-        # 10-benchmark pool; all other conditions apply a uniform override.
+        # `baseline` uses an 8-public / 3-partial / 2-private mix over the
+        # 13-benchmark static set; matches 2024–2025 real-world ratios
+        # (~62% public / 23% partial / 15% private). All other conditions apply
+        # a uniform override. See rough/randomized_baseline_design.md for the
+        # calibration + temporal anchoring (interval=4, 40-round window).
         _BASELINE_MIX = {
-            "General Capability":   "public",
-            "Coding Evaluation":    "public",
-            "Safety Evaluation":    "partial",   # SEAL-safety analog
-            "Instruction Following":"public",
-            "Scientific Reasoning": "partial",   # GPQA-diamond-style (contamination-adjacent)
-            "Agentic Tasks":        "public",
-            "Hard Coding":          "public",
-            "Long Context":         "public",
-            "Domain Expert":        "public",
-            "Agentic Safety":       "private",   # FrontierMath-analog (adversarially held out)
+            "General Capability":    "public",
+            "Coding Evaluation":     "public",
+            "Safety Evaluation":     "partial",   # SEAL-Safety partial-holdout analog
+            "Instruction Following": "public",
+            "Scientific Reasoning":  "partial",   # GPQA-Diamond (contamination-adjacent)
+            "Clinical Reasoning":    "public",
+            "Adversarial Robustness":"private",   # SEAL-Safety / HarmBench-private (r12, Jan 2024)
+            "Hard Coding":           "partial",   # LiveCodeBench / competitive-programming w/ contamination mitigation
+            "Agentic Tasks":         "public",
+            "Advanced Math":         "private",   # FrontierMath analog (r24, Jan 2025)
+            "Function Calling":      "public",
+            "Long Context":          "public",
+            "Legal Reasoning":       "public",
         }
+
+        def _randomized_baseline_mix(seed: int, benchmark_names: list,
+                                     n_private: int = 2, n_partial: int = 3) -> dict:
+            """Deterministic per-seed type assignment preserving the n_private/n_partial/rest
+            ratio. Depends only on `seed` — identical across structural variants so
+            privacy × structural contrasts are fair within a seed. Returns {name: type}."""
+            import random
+            rng = random.Random(seed)
+            pool = sorted(set(benchmark_names))  # sort for stable input ordering
+            rng.shuffle(pool)
+            out = {}
+            for i, name in enumerate(pool):
+                if i < n_private:
+                    out[name] = "private"
+                elif i < n_private + n_partial:
+                    out[name] = "partial"
+                else:
+                    out[name] = "public"
+            return out
+
+        # Lazily compute the randomized mix once per run — seed comes from SIMULATION.
+        _RANDOMIZED_MIX = None
+        if condition == "baseline_randomized":
+            _rand_seed = int(simulation.get("seed", 1))
+            _all_names = [bm["name"] for bm in BENCHMARKS] + \
+                         [bm["name"] for bm in simulation.get("benchmark_sequence", [])]
+            _RANDOMIZED_MIX = _randomized_baseline_mix(_rand_seed, _all_names)
 
         def _type_for(bm_name):
             if condition == "public_only":     return "public"
             if condition == "private_dominant": return "partial"
             if condition == "private_only":    return "private"
             if condition == "iid_holdout":     return "iid_holdout"
+            if condition == "baseline_randomized":
+                return _RANDOMIZED_MIX.get(bm_name, "public")
             return _BASELINE_MIX.get(bm_name, "public")  # baseline
 
         for bm in BENCHMARKS:
@@ -804,14 +907,19 @@ def run():
                     os.environ[key.strip()] = value.strip()
 
     os.environ["LLM_PROVIDER"] = LLM["provider"]
-    # Override LLM_MODEL from config so .env model names don't bleed across providers
+    # Override LLM_MODEL from config so .env model names don't bleed across providers.
+    # Precedence: explicit LLM_MODEL env (if already set, honor it) > LLM["model"] config > provider-default.
     _model_overrides = {
         "anthropic": "claude-sonnet-4-6",
         "openai": "gpt-4o",
         "ollama": "llama3",
         "gemini": "gemini-2.5-flash",
     }
-    os.environ["LLM_MODEL"] = LLM.get("model") or _model_overrides.get(LLM["provider"], "")
+    os.environ["LLM_MODEL"] = (
+        os.environ.get("LLM_MODEL")
+        or LLM.get("model")
+        or _model_overrides.get(LLM["provider"], "")
+    )
 
     from simulation import (
         EvalEcosystemSimulation, SimulationConfig,

@@ -86,6 +86,7 @@ class Media:
         self._previous_per_benchmark_leaders: dict = {}  # {bm_name: provider_name}
         self._previous_market_shares: dict = {}          # {provider_name: share}
         self._previous_funding_allocations: dict = {}    # {funder_name: {"top_provider": str, "top_amount": float}}
+        self._milestones_hit: dict = {}  # {bm_name: set[(provider, threshold)]} — first-crossing tracker
 
         # Narrative state machine (OPTIMISM / SKEPTICISM / CRISIS)
         self._narrative_state: str = "OPTIMISM"
@@ -102,7 +103,7 @@ class Media:
         self._scandal_divergence_rounds: int = 3  # score vs market leader divergence before scandal
 
         # Headline budget
-        self._media_sample_size: int = 4
+        self._media_sample_size: int = 6
 
     def observe_and_publish(
         self,
@@ -169,6 +170,24 @@ class Media:
                     coverage.provider_attention.get(prev_leader, 0), 0.5
                 )
                 coverage.sentiment += 0.2  # leader changes are exciting
+
+        # 1b. Rival closes the gap (competitor-panic-as-PR dynamic).
+        # When #2 narrows the lead/#1 gap by >0.015 in one round, attention
+        # accrues to the gaining #2 — mirroring the real-world pattern where
+        # a dominant provider's visible concern about a rival becomes free PR
+        # for the rival.
+        if self._previous_leaderboard and len(leaderboard) >= 2 and len(self._previous_leaderboard) >= 2:
+            prev_gap = self._previous_leaderboard[0][1] - self._previous_leaderboard[1][1]
+            curr_gap = leaderboard[0][1] - leaderboard[1][1]
+            gap_shrinkage = prev_gap - curr_gap
+            if gap_shrinkage > 0.008 and curr_gap > 0:
+                num_2 = leaderboard[1][0]
+                num_1 = leaderboard[0][0]
+                _pool(f"{num_2} closing the gap with {num_1}", weight=1.5)
+                coverage.provider_attention[num_2] = max(
+                    coverage.provider_attention.get(num_2, 0), 0.6
+                )
+                coverage.sentiment += 0.1
 
         # 2. Score jumps — scores are monotonic so only upward.
         # Thresholds calibrated to LLM-mode gains (P90 ~0.025, max ~0.03);
@@ -312,6 +331,27 @@ class Media:
                             coverage.benchmark_attention.get(bm_name, 0), 0.4)
                         coverage.sentiment += 0.1
                     self._previous_per_benchmark_leaders[bm_name] = current_leader
+
+        # 8b. Benchmark milestone crossings (benchmarks as marketing vessels).
+        # First provider to cross natural thresholds on a benchmark gets
+        # headline coverage + attention boost. Anchor values (70/80/90)
+        # are cardinal benchmark milestones in real-world AI press
+        # ("first to break 90% on MMLU"). Each (provider, threshold) fires
+        # at most once per benchmark.
+        if per_benchmark_scores:
+            MILESTONES = [0.70, 0.80, 0.90]
+            for bm_name, bm_scores in per_benchmark_scores.items():
+                seen = self._milestones_hit.setdefault(bm_name, set())
+                for provider, score in (bm_scores or {}).items():
+                    for m in MILESTONES:
+                        if score >= m and (provider, m) not in seen:
+                            _pool(f"{provider} first to break {int(m*100)}% on {bm_name}", weight=2.0)
+                            coverage.provider_attention[provider] = max(
+                                coverage.provider_attention.get(provider, 0), 0.7)
+                            coverage.benchmark_attention[bm_name] = max(
+                                coverage.benchmark_attention.get(bm_name, 0), 0.5)
+                            coverage.sentiment += 0.15
+                            seen.add((provider, m))
 
         # 9. Consumer switching / market share shifts
         if consumer_data:

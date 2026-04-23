@@ -926,6 +926,8 @@ def call_llm(prompt: str, temperature: float = 0.7, max_tokens: int = 500) -> st
 
 PROVIDER_PLANNING_SYSTEM_PROMPT = """You are the strategy team at an AI model company. You compete for market share by developing AI models that are evaluated on public benchmarks and used by real customers.
 
+Benchmarks are reported in three types — public (scored each round on published weights), partial (K=3-round reporting lag, blended public+holdout weights), private (K=3-round lag, holdout-only weights) — each is labeled in your evaluation results.
+
 Each month you allocate your budget across three areas and set research priorities:
 - Research & Development: advancing your model's core capabilities
 - Safety & Alignment: ensuring your model is safe, honest, and robust
@@ -940,11 +942,13 @@ You MUST output valid JSON in this exact structure. Fill in all fields before wr
     "portfolio": {"rd": "<signal>", "safety": "<signal>", "product": "<signal>"},
     "benchmark_focus": {"<benchmark_name>": "<signal>", ...},
     "strategy_memo": "1-2 sentence summary of your decision and rationale, written for your future self to read next month.",
-    "reasoning": "Your full analysis (up to 300 words)."
+    "reasoning": "Your analysis in up to 250 words. Do NOT restate the leaderboard, user-research percentages, or current portfolio numbers — those are already provided above."
 }
 Where <signal> is one of: "much_more", "more", "same", "less", "much_less"."""
 
 PROVIDER_PLANNING_SYSTEM_PROMPT_WITH_ORIENTATION = """You are the strategy team at an AI model company. You compete for market share by developing AI models that are evaluated on public benchmarks and used by real customers.
+
+Benchmarks are reported in three types — public (scored each round on published weights), partial (K=3-round reporting lag, blended public+holdout weights), private (K=3-round lag, holdout-only weights) — each is labeled in your evaluation results.
 
 Each month you allocate your budget across three areas and set research priorities:
 - Research & Development: advancing your model's core capabilities
@@ -961,11 +965,13 @@ You MUST output valid JSON in this exact structure. Fill in all fields before wr
     "benchmark_focus": {"<benchmark_name>": "<signal>", ...},
     "benchmark_orientation": "<signal>" (lean R&D more toward public benchmarks, or less toward them and more toward your own user feedback),
     "strategy_memo": "1-2 sentence summary of your decision and rationale, written for your future self to read next month.",
-    "reasoning": "Your full analysis (up to 300 words)."
+    "reasoning": "Your analysis in up to 250 words. Do NOT restate the leaderboard, user-research percentages, or current portfolio numbers — those are already provided above."
 }
 Where <signal> is one of: "much_more", "more", "same", "less", "much_less"."""
 
 PROVIDER_PLANNING_SYSTEM_PROMPT_REFRAMED = """You are the strategy team at an AI model company. You compete for market share by developing AI models that are evaluated on public benchmarks and used by real customers.
+
+Benchmarks are reported in three types — public (scored each round on published weights), partial (K=3-round reporting lag, blended public+holdout weights), private (K=3-round lag, holdout-only weights) — each is labeled in your evaluation results.
 
 Each month you allocate your budget across three areas and set research priorities:
 - Research & Development: advancing your model's core capabilities
@@ -984,7 +990,7 @@ You MUST output valid JSON in this exact structure. Fill in all fields before wr
     "benchmark_focus": {"<benchmark_name>": "<signal>", ...},
     "benchmark_orientation": "<signal>" (weight R&D roadmap more toward external evaluation results, or more toward internal product analytics),
     "strategy_memo": "1-2 sentence summary of your decision and rationale, written for your future self to read next month.",
-    "reasoning": "Your full analysis (up to 300 words)."
+    "reasoning": "Your analysis in up to 250 words. Do NOT restate the leaderboard, user-research percentages, or current portfolio numbers — those are already provided above."
 }
 Where <signal> is one of: "much_more", "more", "same", "less", "much_less"."""
 
@@ -1033,36 +1039,145 @@ def _build_provider_planning_prompt(
     consumer_signal_in_prompt: bool = True,
     market_share_history: Optional[list] = None,
     orientation_prompt_style: str = "original",
+    competitor_public_comms: Optional[dict] = None,
+    per_benchmark_history: Optional[list] = None,
+    new_benchmarks: Optional[set] = None,
+    benchmark_types: Optional[dict] = None,
+    media_headlines_recent: Optional[list] = None,
+    funding_this_month: float = 0.0,
+    funding_cumulative: float = 0.0,
+    funder_types_active: Optional[list] = None,
+    funder_types_abstained: Optional[list] = None,
+    funder_types_all: Optional[list] = None,
+    inferred_benchmark_weights_prev: Optional[dict] = None,
 ) -> str:
     """Build the planning prompt for a model provider."""
+    competitor_public_comms = competitor_public_comms or {}
+    per_benchmark_history = per_benchmark_history or []
+    new_benchmarks = new_benchmarks or set()
+    benchmark_types = benchmark_types or {}
+    media_headlines_recent = media_headlines_recent or []
+    funder_types_active = funder_types_active or []
+    funder_types_abstained = funder_types_abstained or []
+    funder_types_all = funder_types_all or []
+    inferred_benchmark_weights_prev = inferred_benchmark_weights_prev or {}
+
     prompt = f"# Month {round_num} Strategy Review — {name}\n"
 
-    # Cross-round strategy memos
+    # Cross-round strategy memos — prior commitments presented as-is.
     if recent_insights:
-        prompt += "\n## Notes From Prior Months\n"
+        prompt += "\n## What You Committed To In Recent Months\n"
         for entry in recent_insights[-2:]:
             memo = entry.get("strategy_memo") or entry.get("reasoning", "")
             if memo:
                 prompt += f"[Month {entry.get('round', '?')}]: {memo}\n"
 
-    # Benchmark scores and deltas
+    # Benchmark scores and deltas — with type + new-benchmark tag
     prompt += "\n## Evaluation Results\n"
+    prompt += "(types: public — scored every round on published weights; partial — K=3-round reporting lag, blended public+holdout weights; private — K=3-round lag, holdout-only weights)\n"
     if benchmark_scores:
-        prompt += "| Evaluation | Score | Change | Your Priority |\n"
-        prompt += "|------------|-------|--------|---------------|\n"
+        prompt += "| Evaluation | Type | Score | Change | Your Priority |\n"
+        prompt += "|------------|------|-------|--------|---------------|\n"
         for bm, history in benchmark_scores.items():
             score = history[-1][1] if history else 0.0
             delta = score_deltas.get(bm, 0.0)
             priority = _focus_label(focus_level.get(bm, 1.0))
-            prompt += f"| {bm} | {score:.3f} | {delta:+.3f} | {priority} |\n"
+            btype = benchmark_types.get(bm, "public")
+            bm_label = bm + (" (new)" if bm in new_benchmarks else "")
+            prompt += f"| {bm_label} | {btype} | {score:.3f} | {delta:+.3f} | {priority} |\n"
     else:
         prompt += "No evaluation results yet (first month).\n"
 
-    # Competitor scores
-    if competitor_scores:
-        prompt += "\n## Competitor Results\n"
-        for comp, score in sorted(competitor_scores.items(), key=lambda x: x[1], reverse=True):
-            prompt += f"- {comp}: {score:.3f}\n"
+    # Competitor Activity — announcements + X6-labeled delta matrix
+    if competitor_public_comms or per_benchmark_history or competitor_scores:
+        prompt += "\n## Competitor Activity (This Month)\n"
+
+        if competitor_public_comms:
+            prompt += "\n### Announcements\n"
+            for cname in sorted(competitor_public_comms.keys()):
+                comm = competitor_public_comms[cname]
+                content = comm.get("content", "") if isinstance(comm, dict) else str(comm)
+                if content:
+                    prompt += f"- {cname}: {content}\n"
+
+        # X6-labeled delta matrix when we have per-benchmark history.
+        if len(per_benchmark_history) >= 1:
+            last_round_num, last_pbs = per_benchmark_history[-1]
+            prev_pbs = per_benchmark_history[-2][1] if len(per_benchmark_history) >= 2 else {}
+
+            # Cross-competitor |delta| magnitude per benchmark (excluding self).
+            bm_cross_delta = {}
+            bm_own_delta = {}
+            for bm_name, scores_by_p in last_pbs.items():
+                total_abs = 0.0
+                for p, s in scores_by_p.items():
+                    if p == name:
+                        continue
+                    prev_s = (prev_pbs.get(bm_name) or {}).get(p)
+                    if prev_s is not None:
+                        total_abs += abs(s - prev_s)
+                bm_cross_delta[bm_name] = total_abs
+                own_now = scores_by_p.get(name)
+                own_prev = (prev_pbs.get(bm_name) or {}).get(name)
+                bm_own_delta[bm_name] = (
+                    abs(own_now - own_prev)
+                    if own_now is not None and own_prev is not None
+                    else 0.0
+                )
+
+            # Rank-based split: top 5 by focus_level → focused pool; rest → non-focused.
+            # Handles both narrow-focus (few priorities) and broad-focus (many priorities at moderate+)
+            # agents symmetrically — always gives a clean 3/3 surface when ≥5 benchmarks exist.
+            sorted_by_focus = sorted(
+                last_pbs.keys(), key=lambda b: focus_level.get(b, 1.0), reverse=True
+            )
+            focused = sorted_by_focus[:5]
+            non_focused = sorted_by_focus[5:]
+            focused_top = sorted(focused, key=lambda b: bm_own_delta.get(b, 0), reverse=True)[:3]
+            non_focused_top = sorted(non_focused, key=lambda b: bm_cross_delta.get(b, 0), reverse=True)[:3]
+
+            if focused_top or non_focused_top:
+                all_providers = sorted({p for scores in last_pbs.values() for p in scores})
+                header = "| Benchmark | " + " | ".join(all_providers) + " |"
+                sep = "|" + "|".join(["---"] * (len(all_providers) + 1)) + "|"
+
+                def _fmt_row(bm_name: str) -> str:
+                    cells = [bm_name]
+                    for p in all_providers:
+                        s = last_pbs.get(bm_name, {}).get(p)
+                        if s is None:
+                            cells.append("—")
+                        else:
+                            prev_s = (prev_pbs.get(bm_name) or {}).get(p)
+                            d = (s - prev_s) if prev_s is not None else 0.0
+                            cells.append(f"{s:.3f} ({d:+.3f})")
+                    return "| " + " | ".join(cells) + " |"
+
+                prompt += "\n### Where scores moved most this month\n"
+                if focused_top:
+                    prompt += "\nIn benchmarks you're prioritizing:\n"
+                    prompt += header + "\n" + sep + "\n"
+                    for bm_name in focused_top:
+                        prompt += _fmt_row(bm_name) + "\n"
+                if non_focused_top:
+                    prompt += "\nMovement elsewhere this month:\n"
+                    prompt += header + "\n" + sep + "\n"
+                    for bm_name in non_focused_top:
+                        prompt += _fmt_row(bm_name) + "\n"
+        elif competitor_scores:
+            # Fallback when no per-benchmark history yet (e.g. round 0).
+            prompt += "\n### Current leaderboard (aggregate score)\n"
+            for comp, score in sorted(competitor_scores.items(), key=lambda x: x[1], reverse=True):
+                prompt += f"- {comp}: {score:.3f}\n"
+
+    # Industry News — raw headlines, last 2 rounds.
+    if media_headlines_recent:
+        prompt += "\n## Industry News (Last 2 Months)\n"
+        for r_num, hls in media_headlines_recent:
+            if hls:
+                prompt += f"\nMonth {r_num}:\n"
+                for h in hls:
+                    prompt += f"- {h}\n"
 
     # Incidents and regulatory signals
     if own_incidents:
@@ -1073,14 +1188,43 @@ def _build_provider_planning_prompt(
             prompt += f"- {sev.upper()} incident: {cat}\n"
     if regulatory_actions:
         prompt += "\n## Regulatory Activity\n"
-        for action in regulatory_actions[-2:]:
-            prompt += f"- {action.get('type', '?')}: {action.get('name', '')}\n"
+        for action in regulatory_actions[-4:]:
+            r = action.get("round")
+            r_tag = f"[Month {r}] " if r is not None else ""
+            prompt += f"- {r_tag}{action.get('type', '?')}: {action.get('name', '')}\n"
 
-    # Organization state
-    prompt += f"\n## Your Organization\n"
-    prompt += f"{name} is known for: {strategy_profile}\n"
-    prompt += f"Your culture and strengths: {innate_traits}\n"
-    prompt += f"\nCurrent budget allocation: R&D {portfolio.get('rd', 0):.0%}, Safety {portfolio.get('safety', 0):.0%}, Product {portfolio.get('product', 0):.0%}\n"
+    # Current State — financial snapshot + portfolio
+    prompt += "\n## Current State\n"
+    if market_share_history and len(market_share_history) >= 2:
+        prev = market_share_history[-2]
+        curr = market_share_history[-1]
+        delta_pp = (curr - prev) * 100
+        trend = "stable" if abs(delta_pp) < 0.5 else f"{delta_pp:+.1f}pp this month"
+        prompt += f"Market share: {curr:.1%} ({trend})\n"
+    elif round_num > 0:
+        prompt += f"Market share: {market_share:.1%}\n"
+
+    prompt += f"Budget allocation: R&D {portfolio.get('rd', 0):.0%}, Safety {portfolio.get('safety', 0):.0%}, Product {portfolio.get('product', 0):.0%}\n"
+
+    # Funding block — amounts and funder-type participation are public in reality.
+    if round_num > 0 and funder_types_all:
+        if funding_this_month > 0:
+            n_active = len(funder_types_active)
+            n_total = len(funder_types_all)
+            abst_str = (
+                " — " + ", ".join(funder_types_abstained) + " abstained"
+                if funder_types_abstained
+                else ""
+            )
+            prompt += (
+                f"Funding received this month: ${funding_this_month:,.0f} "
+                f"(from {n_active} of {n_total} funder types active{abst_str})\n"
+            )
+        else:
+            prompt += "Funding received this month: $0 — no funder allocated to you\n"
+        if funding_cumulative > 0:
+            prompt += f"Cumulative funding to date: ${funding_cumulative:,.0f}\n"
+
     if orientation_adjustable:
         pct = benchmark_orientation * 100
         if orientation_prompt_style == "reframed":
@@ -1088,52 +1232,53 @@ def _build_provider_planning_prompt(
         else:
             prompt += f"Current R&D orientation: {pct:.0f}% toward benchmark performance, {100-pct:.0f}% toward user feedback.\n"
 
-    # Benchmark beliefs — only show when informative
-    if inferred_benchmark_weights and _beliefs_are_informative(inferred_benchmark_weights):
-        prompt += "\n## What Your Team Thinks Each Evaluation Tests\n"
+    # Benchmark beliefs — compressed: show only benchmarks that are new OR whose top-dim
+    # weight shifted > 0.05 vs last round. Stable beliefs are already implicit in prior memos.
+    if inferred_benchmark_weights and round_num > 0:
+        to_show = {}
         for bm, weights in inferred_benchmark_weights.items():
-            top = sorted(weights.items(), key=lambda x: x[1], reverse=True)[:3]
-            skills = ", ".join(f"{d}" for d, w in top if w > 0.10)
-            if skills:
-                prompt += f"- {bm}: primarily tests {skills}\n"
+            if not weights:
+                continue
+            is_new = bm in new_benchmarks
+            prev_w = inferred_benchmark_weights_prev.get(bm, {})
+            materially_changed = False
+            if prev_w:
+                top_dim = max(weights, key=weights.get)
+                if abs(weights.get(top_dim, 0) - prev_w.get(top_dim, 0)) > 0.05:
+                    materially_changed = True
+            elif _beliefs_are_informative({bm: weights}):
+                # First informative read (no prior beliefs stored).
+                materially_changed = True
+            if is_new or materially_changed:
+                to_show[bm] = weights
+        if to_show:
+            prompt += "\n## What Your Team Thinks Each Evaluation Tests (updated this month)\n"
+            for bm, weights in to_show.items():
+                top = sorted(weights.items(), key=lambda x: x[1], reverse=True)[:3]
+                skills = ", ".join(f"{d}" for d, w in top if w > 0.10)
+                if skills:
+                    prompt += f"- {bm}: primarily tests {skills}\n"
     elif round_num == 0:
         prompt += "\n(Your team hasn't yet gathered enough data to determine what each evaluation specifically tests.)\n"
 
-    # Satisfaction signal — with confidence qualifier
+    # User Research — ordered list only, no percentages, no confidence qualifier.
     if consumer_signal_in_prompt and consumer_signal and round_num > 0:
         top_needs = sorted(consumer_signal.items(), key=lambda x: x[1], reverse=True)[:3]
-        if market_share > 0.25:
-            confidence = "Based on substantial usage data"
-        elif market_share > 0.10:
-            confidence = "Based on moderate usage data"
-        else:
-            confidence = "Based on limited usage data (treat as rough guidance)"
-        prompt += f"\n## User Research\n"
-        prompt += f"{confidence}, your users seem to value: "
-        prompt += ", ".join(f"{d} ({v:.0%})" for d, v in top_needs) + ".\n"
+        if top_needs:
+            prompt += "\n## User Research\n"
+            prompt += (
+                "Your users most prioritize: "
+                + ", ".join(d for d, _ in top_needs)
+                + " (in that order).\n"
+            )
     elif consumer_signal_in_prompt and round_num == 0:
         prompt += "\n## User Research\n"
         prompt += "No user feedback data available yet — this is your first month.\n"
 
-    # When consumer signal is hidden, show business metrics only
+    # Retention signal when consumer_signal is hidden (market share is already in Current State).
     if not consumer_signal_in_prompt and round_num > 0:
-        prompt += "\n## Business Metrics\n"
-        # Market share trend
-        if market_share_history and len(market_share_history) >= 2:
-            prev = market_share_history[-2]
-            curr = market_share_history[-1]
-            delta = curr - prev
-            if delta > 0.005:
-                trend = f"up from {prev:.1%}"
-            elif delta < -0.005:
-                trend = f"down from {prev:.1%}"
-            else:
-                trend = "stable"
-            prompt += f"Market share: {curr:.1%} ({trend}).\n"
-        else:
-            prompt += f"Market share: {market_share:.1%}.\n"
-        # Churn proxy: if share is declining, flag it
         if market_share_history and len(market_share_history) >= 3:
+            prompt += "\n## Business Metrics\n"
             recent = market_share_history[-3:]
             declining_rounds = sum(1 for i in range(1, len(recent)) if recent[i] < recent[i-1])
             if declining_rounds >= 2:
@@ -1172,6 +1317,17 @@ def llm_plan_provider(
     consumer_signal_in_prompt: bool = True,
     orientation_prompt_style: str = "original",
     market_share_history: Optional[list] = None,
+    competitor_public_comms: Optional[dict] = None,
+    per_benchmark_history: Optional[list] = None,
+    new_benchmarks: Optional[set] = None,
+    benchmark_types: Optional[dict] = None,
+    media_headlines_recent: Optional[list] = None,
+    funding_this_month: float = 0.0,
+    funding_cumulative: float = 0.0,
+    funder_types_active: Optional[list] = None,
+    funder_types_abstained: Optional[list] = None,
+    funder_types_all: Optional[list] = None,
+    inferred_benchmark_weights_prev: Optional[dict] = None,
 ) -> dict:
     """Use LLM to decide provider portfolio and benchmark focus adjustments.
 
@@ -1188,6 +1344,16 @@ def llm_plan_provider(
             system_prompt = PROVIDER_PLANNING_SYSTEM_PROMPT_REFRAMED
         else:
             system_prompt = PROVIDER_PLANNING_SYSTEM_PROMPT_WITH_ORIENTATION
+
+    # Anchor persistent identity in the system prompt (role layer) rather than
+    # re-injecting it into the per-round user prompt each month. This reduces
+    # the model's tendency to treat identity as a fresh argument for every
+    # decision (PIMMUR-Mutable).
+    system_prompt += (
+        f"\n\n---\n## Your Company: {name}\n"
+        f"Known for: {strategy_profile}\n"
+        f"Traits: {innate_traits}"
+    )
 
     prompt = _build_provider_planning_prompt(
         name=name,
@@ -1210,6 +1376,17 @@ def llm_plan_provider(
         consumer_signal_in_prompt=consumer_signal_in_prompt,
         market_share_history=market_share_history,
         orientation_prompt_style=orientation_prompt_style,
+        competitor_public_comms=competitor_public_comms,
+        per_benchmark_history=per_benchmark_history,
+        new_benchmarks=new_benchmarks,
+        benchmark_types=benchmark_types,
+        media_headlines_recent=media_headlines_recent,
+        funding_this_month=funding_this_month,
+        funding_cumulative=funding_cumulative,
+        funder_types_active=funder_types_active,
+        funder_types_abstained=funder_types_abstained,
+        funder_types_all=funder_types_all,
+        inferred_benchmark_weights_prev=inferred_benchmark_weights_prev,
     )
 
     fail_safe = {
@@ -1247,12 +1424,6 @@ def llm_plan_provider(
 
 FUNDER_PLANNING_SYSTEM_PROMPT = """You are a capital allocator deciding how to distribute funding across AI model companies this month.
 
-Funder types:
-- **VC**: Venture capital firm seeking high returns on equity investments in AI companies.
-- **Corporate**: Strategic investor maintaining relationships with multiple AI providers.
-- **Government**: Public funder with a mandate around safety and broad ecosystem health.
-- **Foundation**: Mission-driven funder focused on long-term research and societal benefit.
-
 You MUST output valid JSON in this exact structure:
 {
     "allocations": {
@@ -1263,59 +1434,87 @@ You MUST output valid JSON in this exact structure:
     "reasoning": "Your analysis (up to 200 words)."
 }
 The "reasoning" field MUST contain your actual analysis -- never leave it as "..." or a placeholder.
-You do NOT need to fund every provider. Allocate only to providers you believe are worth backing -- it is fine to fund 1-3 providers and hold the rest in reserve. Allocations should sum to at most your total available capital."""
+You may fund any subset of providers and hold capital in reserve; allocations must sum to at most your total available capital."""
+
+
+FUNDER_IDENTITY_BLOCKS = {
+    "vc": "You are a venture capital firm. You invest equity in AI companies to earn returns; you cannot fund open-source providers (no equity to take). Selective, high-conviction allocation is common.",
+    "corporate": "You are a corporate strategic investor. You maintain relationships across multiple AI providers for commercial alignment and optionality, not pure financial return.",
+    "gov": "You are a government funder with a public mandate. You prioritize safety, broad ecosystem health, and avoiding excessive market concentration.",
+    "foundation": "You are a mission-driven foundation. You allocate for long-term research and societal benefit, often supporting underdogs and public-good capabilities.",
+}
 
 
 def create_funder_planning_prompt(
     name: str,
-    funder_type: str,
     total_capital: float,
     leaderboard: list,
     market_shares: dict,
-    recent_history: list,
     recent_insights: Optional[list] = None,
     incidents: Optional[dict] = None,
-    media_sentiment: Optional[float] = None,
     media_headlines: Optional[list] = None,
     score_deltas: Optional[dict] = None,
+    score_deltas_2round: Optional[dict] = None,
     public_comms: Optional[list] = None,
+    peer_funder_allocations: Optional[dict] = None,
+    regulator_interventions: Optional[list] = None,
+    active_regulations: Optional[list] = None,
+    cumulative_allocations: Optional[dict] = None,
 ) -> str:
     """Create a prompt for the funder to decide funding allocations.
 
     Args:
         name: Funder name
-        funder_type: vc, corporate, gov, foundation
-        total_capital: Amount to allocate this round
+        total_capital: Amount to allocate this round (budget cap)
         leaderboard: [(provider_name, score), ...]
         market_shares: {provider: share}
-        recent_history: [(round, {provider: amount}), ...]
         recent_insights: Cross-round reasoning memory
         incidents: {provider: [(round, severity), ...]} recent incidents
-        media_sentiment: Overall media sentiment [-1, +1]
-        media_headlines: Recent headline strings
-        score_deltas: {provider: delta} score change from last round
-        public_comms: [{provider, type, one_liner, round}, ...] recent provider announcements
+        media_headlines: Recent headline strings (raw, no sentiment label)
+        score_deltas: {provider: delta} last-round score change
+        score_deltas_2round: {provider: delta} 2-round cumulative score change
+        public_comms: [{provider, type, one_liner, round}, ...] recent announcements
+        peer_funder_allocations: {provider: [(funder_name, amount), ...]} -- other
+            funders backing each provider this month (sorted desc by amount)
+        regulator_interventions: [(round, type, target), ...] recent regulator actions
+        active_regulations: [str, ...] currently-active regulation names
+        cumulative_allocations: {provider: {"total": $, "last_amount": $, "last_round": int}}
+            own portfolio view across all prior rounds
     """
-    prompt = f"""# {name} ({funder_type})
+    prompt = f"""# {name}
 Capital to deploy this month: ${total_capital:,.0f}
 """
 
-    # Cross-round reasoning
+    # Cross-round reasoning — truncated to 250 chars (was 120, which mangled trajectory)
     if recent_insights:
         prompt += "\n# Your Notes From Prior Months\n"
         for entry in recent_insights[-2:]:
             r = entry.get("round", "?")
-            text = _truncate(entry.get("reasoning", ""), 120)
+            text = _truncate(entry.get("reasoning", ""), 250)
             if text:
                 prompt += f"[Month {r}]: {text}\n"
 
-    # Leaderboard with score deltas and market share
+    # Leaderboard with single- and 2-round score deltas + market share
     prompt += "\n# Current Leaderboard\n"
     if leaderboard:
         for rank, (provider_name, score) in enumerate(leaderboard, 1):
             share = market_shares.get(provider_name, 0.0)
             delta = score_deltas.get(provider_name, 0.0) if score_deltas else 0.0
-            prompt += f"  {rank}. {provider_name}: score {score:.3f} ({delta:+.3f}), market share {share:.1%}\n"
+            delta2 = (
+                score_deltas_2round.get(provider_name)
+                if score_deltas_2round else None
+            )
+            if delta2 is not None:
+                prompt += (
+                    f"  {rank}. {provider_name}: score {score:.3f} "
+                    f"({delta:+.3f} last month, {delta2:+.3f} over 2 months), "
+                    f"market share {share:.1%}\n"
+                )
+            else:
+                prompt += (
+                    f"  {rank}. {provider_name}: score {score:.3f} "
+                    f"({delta:+.3f}), market share {share:.1%}\n"
+                )
 
     # Incidents
     if incidents:
@@ -1324,19 +1523,39 @@ Capital to deploy this month: ${total_capital:,.0f}
             for round_num, severity in inc_list[-2:]:
                 prompt += f"  - {provider}: {severity} incident (month {round_num})\n"
 
-    # Media
+    # Regulatory context
+    has_interventions = bool(regulator_interventions)
+    has_regs = bool(active_regulations)
+    if has_interventions or has_regs:
+        prompt += "\n# Regulatory Context\n"
+        if has_interventions:
+            prompt += "Recent actions (last 2 months):\n"
+            for round_num, itype, target in regulator_interventions[-4:]:
+                if target and target not in ("null", "None", "none", ""):
+                    prompt += f"  - Month {round_num}: {itype} (targeting {target})\n"
+                else:
+                    prompt += f"  - Month {round_num}: {itype} (system-wide)\n"
+        if has_regs:
+            prompt += "Active regulations: " + ", ".join(active_regulations) + "\n"
+
+    # Peer funders — top 3 per provider by allocation size
+    if peer_funder_allocations:
+        entries = []
+        for provider, funders_list in peer_funder_allocations.items():
+            if not funders_list:
+                continue
+            top3 = funders_list[:3]
+            rendered = ", ".join(f"{fn} (${amt:,.0f})" for fn, amt in top3)
+            entries.append(f"  - {provider}: {rendered}")
+        if entries:
+            prompt += "\n# Other Funders This Month\nTop backers by provider:\n"
+            prompt += "\n".join(entries) + "\n"
+
+    # Media (raw headlines, no tone label)
     if media_headlines:
         prompt += "\n# Recent Press Coverage\n"
         for h in media_headlines[-4:]:
             prompt += f"  - {h}\n"
-    if media_sentiment is not None:
-        if media_sentiment > 0.3:
-            tone = "positive"
-        elif media_sentiment < -0.3:
-            tone = "negative"
-        else:
-            tone = "mixed"
-        prompt += f"  Overall media tone: {tone}\n"
 
     # Provider announcements
     if public_comms:
@@ -1346,17 +1565,31 @@ Capital to deploy this month: ${total_capital:,.0f}
             one_liner = comm.get("one_liner", comm.get("type", ""))
             prompt += f"  - {p}: {one_liner}\n"
 
-    # Funding history
-    if recent_history:
-        prompt += "\n# Your Recent Allocations\n"
-        for round_num, allocations in recent_history[-3:]:
-            prompt += f"Month {round_num}: "
-            alloc_strs = [f"{p}: ${a:,.0f}" for p, a in allocations.items()]
-            prompt += ", ".join(alloc_strs) + "\n"
+    # Own portfolio — cumulative + last-round per provider
+    if cumulative_allocations:
+        prompt += "\n# Your Funding Portfolio\nCumulative to date:\n"
+        ranked = sorted(
+            cumulative_allocations.items(),
+            key=lambda kv: kv[1].get("total", 0),
+            reverse=True,
+        )
+        for provider, info in ranked:
+            total = info.get("total", 0)
+            if total <= 0:
+                continue
+            last_amt = info.get("last_amount", 0)
+            last_round = info.get("last_round")
+            if last_amt > 0 and last_round is not None:
+                prompt += (
+                    f"  - {provider}: ${total:,.0f} "
+                    f"(last: ${last_amt:,.0f} in month {last_round})\n"
+                )
+            else:
+                prompt += f"  - {provider}: ${total:,.0f}\n"
 
     prompt += f"""
 # Decision
-You have ${total_capital:,.0f} to deploy. Fund only the providers worth backing -- you can hold capital in reserve. Output your decision as JSON. Use plain integers for dollar amounts (no $ signs, no commas)."""
+Capital available: ${total_capital:,.0f}. Output your decision as JSON. Use plain integers for dollar amounts (no $ signs, no commas)."""
 
     return prompt
 
@@ -1367,13 +1600,17 @@ def llm_plan_funding(
     total_capital: float,
     leaderboard: list,
     market_shares: dict,
-    recent_history: list,
     recent_insights: Optional[list] = None,
     incidents: Optional[dict] = None,
-    media_sentiment: Optional[float] = None,
     media_headlines: Optional[list] = None,
     score_deltas: Optional[dict] = None,
+    score_deltas_2round: Optional[dict] = None,
     public_comms: Optional[list] = None,
+    peer_funder_allocations: Optional[dict] = None,
+    regulator_interventions: Optional[list] = None,
+    active_regulations: Optional[list] = None,
+    cumulative_allocations: Optional[dict] = None,
+    mission_statement: str = "",
     verbose: bool = False,
 ) -> tuple[dict, str]:
     """
@@ -1384,19 +1621,30 @@ def llm_plan_funding(
     """
     provider = get_provider()
 
+    # Anchor per-funder identity in the system prompt (role layer) so it does
+    # not re-inject each month. Mirrors the provider/regulator pattern from
+    # session 48.
+    system_prompt = FUNDER_PLANNING_SYSTEM_PROMPT
+    system_prompt += f"\n\n---\n## Your Fund: {name}\n"
+    system_prompt += FUNDER_IDENTITY_BLOCKS.get(funder_type, "")
+    if mission_statement:
+        system_prompt += f"\nYour mission: {mission_statement}"
+
     prompt = create_funder_planning_prompt(
         name=name,
-        funder_type=funder_type,
         total_capital=total_capital,
         leaderboard=leaderboard,
         market_shares=market_shares,
-        recent_history=recent_history,
         recent_insights=recent_insights,
         incidents=incidents,
-        media_sentiment=media_sentiment,
         media_headlines=media_headlines,
         score_deltas=score_deltas,
+        score_deltas_2round=score_deltas_2round,
         public_comms=public_comms,
+        peer_funder_allocations=peer_funder_allocations,
+        regulator_interventions=regulator_interventions,
+        active_regulations=active_regulations,
+        cumulative_allocations=cumulative_allocations,
     )
 
     # Default allocations (spread evenly)
@@ -1408,7 +1656,7 @@ def llm_plan_funding(
 
     result = provider.generate_json(
         prompt=prompt,
-        system_prompt=FUNDER_PLANNING_SYSTEM_PROMPT,
+        system_prompt=system_prompt,
         fail_safe={
             "allocations": default_alloc,
             "reasoning": "fallback to even distribution",
@@ -1427,9 +1675,10 @@ def llm_plan_funding(
         except (ValueError, TypeError):
             cleaned_allocations[provider_name] = 0.0
 
-    # Normalize to total capital
+    # Cap at total_capital; never scale up. Respects the "hold in reserve" intent
+    # stated in the funder system prompt — under-deployed budgets must stay under.
     total = sum(cleaned_allocations.values())
-    if total > 0:
+    if total > total_capital and total > 0:
         for provider_name in cleaned_allocations:
             cleaned_allocations[provider_name] = (
                 cleaned_allocations[provider_name] / total * total_capital
@@ -1442,10 +1691,8 @@ def llm_plan_funding(
 
 DYNAMIC_EVALUATOR_SYSTEM_PROMPT = """You are the team responsible for maintaining the AI evaluation leaderboard. Each quarter you decide whether to introduce a new benchmark from the available pool, retire an active one, or leave the suite unchanged.
 
-A good evaluation suite covers the dimensions that matter to real users. Stability is valuable, but so is keeping pace with capability growth and emerging use cases.
-
 You have three options each quarter:
-- **none**: No action. Correct when the suite is healthy and covers relevant dimensions.
+- **none**: No action this quarter.
 - **create**: Introduce a new benchmark from the available pool immediately.
 - **retire**: Immediately retire an active benchmark.
 
@@ -1456,10 +1703,10 @@ You MUST output valid JSON in this exact structure:
     "reasoning": "Up to 200 words. If acting, name the specific trigger that justifies the change."
 }
 
-Triggers that can justify action:
-- **Saturation**: a benchmark is labeled [SATURATED] in the active benchmark list below. Scores have plateaued — the benchmark no longer differentiates models.
-- **Uncovered dimension**: a capability dimension with meaningful real-world usage has no active benchmark coverage. High leaderboard-adoption correlation does not excuse leaving important dimensions unmeasured.
-- **Validity breakdown**: the leaderboard no longer tracks which providers real users adopt. Current benchmarks are not differentiating on what end-users actually care about.
+Signals to watch for:
+- Whether scores still differentiate models, or have plateaued at the top of the range.
+- Whether active benchmarks collectively cover the capability dimensions that matter to real users.
+- Whether leaderboard standing still tracks which providers real users adopt.
 
 Constraints:
 - You can only create benchmarks from the Available Pool.
@@ -1474,21 +1721,60 @@ def create_dynamic_evaluator_prompt(
     media_headlines: list[str],
     saturation_states: dict,
     available_pool: list[dict],
-    retired_benchmarks: list[str],
-    current_round: int,
+    retired_benchmarks_enriched: Optional[list] = None,
+    current_round: int = 0,
+    prior_decisions: Optional[list[dict]] = None,
+    introduction_metadata: Optional[dict] = None,
+    active_regulations: Optional[list[str]] = None,
 ) -> str:
     """Create a prompt for the evaluator in dynamic mode.
 
     Shows the evaluator what benchmarks are active, what's in the pool
-    (name + description + tags only, NO dimension weights), and pipeline status.
+    (name + description + tags only, NO dimension weights), the evaluator's
+    own recent decisions, enriched retirement history, and active regulations.
+
+    Args:
+        retired_benchmarks_enriched: [(name, retired_round, reason), ...]
+        prior_decisions: [{round, action, benchmark_name, reasoning}, ...]
+            — this evaluator's own LLM decisions from prior quarters.
+        introduction_metadata: {name: {round, trigger, reasoning}} — when and
+            why each currently-active benchmark was introduced.
+        active_regulations: short summary strings for the LLM prompt.
     """
-    prompt = "# Active Benchmarks\n"
+    prompt = ""
+
+    # Prior decisions — the evaluator's own memory across calls
+    if prior_decisions:
+        prompt += "# Your Prior Quarterly Decisions\n"
+        for entry in prior_decisions:
+            r = entry.get("round", "?")
+            action = entry.get("action", "none")
+            bm_name = entry.get("benchmark_name", "")
+            reasoning_tail = _truncate(entry.get("reasoning", ""), 180)
+            if action == "none":
+                prompt += f'[Month {r}]: none — "{reasoning_tail}"\n'
+            else:
+                prompt += f'[Month {r}]: {action} {bm_name} — "{reasoning_tail}"\n'
+
+    # Active benchmarks with introduction metadata (saturation label dropped;
+    # saturation is legible from Score Movement numerics below).
+    prompt += "\n# Active Benchmarks\n" if prompt else "# Active Benchmarks\n"
+    intro_map = introduction_metadata or {}
     for bm in active_benchmarks:
-        status = ""
-        sat = saturation_states.get(bm["name"], {})
-        if sat.get("saturated"):
-            status = f" [SATURATED, top score {sat.get('max_score', 0):.3f}]"
-        prompt += f"- {bm['name']} (measures: {bm.get('tags', 'general')}){status}\n"
+        tags = bm.get("tags", "general")
+        line = f"- {bm['name']} (measures: {tags})"
+        meta = intro_map.get(bm["name"])
+        if meta and meta.get("round") is not None:
+            trigger = meta.get("trigger", "")
+            if meta.get("reasoning"):
+                line += f" — introduced month {meta['round']} (this team)"
+            elif trigger.startswith("saturation:"):
+                line += f" — introduced month {meta['round']} (saturation trigger)"
+            elif trigger in ("fixed_sequence", "periodic_introduction", ""):
+                line += f" — introduced month {meta['round']}"
+            else:
+                line += f" — introduced month {meta['round']}"
+        prompt += line + "\n"
 
     prompt += "\n# Score Movement (last month)\n"
     for bm_name, deltas in score_deltas.items():
@@ -1500,32 +1786,43 @@ def create_dynamic_evaluator_prompt(
             prompt += f"- {bm_name}: no data, spread {spread:.3f}\n"
 
     if internal_validity is not None:
-        prompt += f"\n# Leaderboard-Adoption Correlation\nRank correlation between leaderboard scores and market share: {internal_validity:.2f}\n"
+        prompt += (
+            f"\n# Leaderboard-Adoption Correlation\n"
+            f"Rank correlation between leaderboard scores and market share: "
+            f"{internal_validity:.2f}\n"
+        )
 
-    if media_headlines:
-        bm_headlines = [h for h in media_headlines if any(
-            kw in h.lower() for kw in ["benchmark", "score", "converging", "plateau", "reliability", "meaningful"]
-        )]
-        if bm_headlines:
-            prompt += "\n# Recent Press Coverage\n"
-            for h in bm_headlines[-3:]:
-                prompt += f"- {h}\n"
-
-    if retired_benchmarks:
-        prompt += "\n# Previously Retired\n"
-        for name in retired_benchmarks[-5:]:
+    # Active regulations — mandate signal
+    if active_regulations:
+        prompt += "\n# Active Regulations\n"
+        for name in active_regulations:
             prompt += f"- {name}\n"
+
+    # Media — raw headlines, no keyword filter (last 4)
+    if media_headlines:
+        prompt += "\n# Recent Press Coverage\n"
+        for h in media_headlines[-4:]:
+            prompt += f"- {h}\n"
+
+    # Previously retired — enriched with round + reason
+    if retired_benchmarks_enriched:
+        prompt += "\n# Previously Retired\n"
+        for name, retired_round, reason in retired_benchmarks_enriched[-5:]:
+            prompt += f"- {name} (retired month {retired_round}, {reason})\n"
 
     if available_pool:
         prompt += "\n# Available Pool (benchmarks you can create from)\n"
         for bm in available_pool:
             replaces = bm.get("replaces")
             suffix = f" (replaces {replaces})" if replaces else ""
-            prompt += f"- {bm['name']}: {bm.get('description', '')}{suffix} (tags: {bm.get('tags', '')})\n"
+            prompt += (
+                f"- {bm['name']}: {bm.get('description', '')}{suffix} "
+                f"(tags: {bm.get('tags', '')})\n"
+            )
     else:
         prompt += "\n# Available Pool\nNo benchmarks remaining in pool.\n"
 
-    prompt += "\n# Decision Required\nBased on the current evaluation landscape, decide whether to create a new benchmark from the pool, retire an active benchmark, or take no action.\n\nOutput your decision as JSON."
+    prompt += "\n# Decision\nOutput your decision as JSON."
     return prompt
 
 
@@ -1537,8 +1834,11 @@ def llm_plan_dynamic_evaluator(
     media_headlines: list[str],
     saturation_states: dict,
     available_pool: list[dict],
-    retired_benchmarks: list[str],
-    current_round: int,
+    retired_benchmarks_enriched: Optional[list] = None,
+    current_round: int = 0,
+    prior_decisions: Optional[list[dict]] = None,
+    introduction_metadata: Optional[dict] = None,
+    active_regulations: Optional[list[str]] = None,
     verbose: bool = False,
 ) -> tuple[dict, str]:
     """Use LLM to decide evaluator actions in dynamic mode.
@@ -1559,8 +1859,11 @@ def llm_plan_dynamic_evaluator(
         media_headlines=media_headlines,
         saturation_states=saturation_states,
         available_pool=available_pool,
-        retired_benchmarks=retired_benchmarks,
+        retired_benchmarks_enriched=retired_benchmarks_enriched,
         current_round=current_round,
+        prior_decisions=prior_decisions,
+        introduction_metadata=introduction_metadata,
+        active_regulations=active_regulations,
     )
 
     result = provider.generate_json(

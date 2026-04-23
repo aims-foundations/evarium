@@ -29,6 +29,25 @@ from typing import Optional
 from visibility import PublicState, RegulatorPrivateState
 
 
+# Static intervention menu + output schema — moved to system prompt (session 48)
+# to avoid re-injecting ~780 chars of unchanging lever description each round.
+REGULATOR_SYSTEM_PROMPT = """You are a regulatory body overseeing the AI model provider market.
+
+Available interventions you can take each month:
+- "none" -- No action this month
+- "request_voluntary_commitment" -- Ask providers for public safety pledges
+- "publish_advisory" -- Publish an evaluation summary naming specific concerns
+- "mandate_safety_disclosure" -- Require providers to publish system cards or safety reports
+- "commission_audit" -- Order a pre-deployment safety evaluation of a provider
+- "impose_sanction" -- Impose a financial penalty on a provider
+- "emergency_investigation" -- Launch an immediate investigation
+
+Name a specific target provider only when your concern is provider-specific; otherwise use null.
+
+You MUST output ONLY valid JSON in this exact structure:
+{"intervention_type": "none"|"request_voluntary_commitment"|"publish_advisory"|"mandate_safety_disclosure"|"commission_audit"|"impose_sanction"|"emergency_investigation", "target_provider": "provider name or null", "reasoning": "2-4 sentence explanation"}"""
+
+
 class Regulator:
     """
     A Regulator agent in the evaluation ecosystem simulation.
@@ -144,6 +163,7 @@ class Regulator:
         self._last_media_pressure: float = 0.0  # from media narrative_state / sentiment
         self._last_media_narrative: str = "OPTIMISM"  # OPTIMISM / SKEPTICISM / CRISIS
         self._last_media_headlines: list = []
+        self._last_public_comms: dict = {}
 
         # Per-lever last-used round tracking (for per-lever cooldowns)
         self._lever_last_used: dict = {}  # {lever_name: round_num}
@@ -207,12 +227,14 @@ class Regulator:
         market_shares: Optional[dict] = None,
         incidents: Optional[list] = None,
         open_source_providers: Optional[set] = None,
+        public_comms: Optional[dict] = None,
     ):
         """
         Observe the current ecosystem state.
 
         Regulator observes: incident rate/severity, market share distribution,
-        media pressure, provider compliance status, leaderboard.
+        media pressure, provider compliance status, leaderboard, provider
+        public announcements (public_comms).
         Does NOT observe: consumer satisfaction, score_reliability,
         capability vectors, benchmark validity.
         """
@@ -220,6 +242,7 @@ class Regulator:
 
         self._last_market_shares = market_shares or {}
         self._open_source_providers = open_source_providers or set()
+        self._last_public_comms = public_comms or {}
 
         # Media pressure index from media coverage
         if media_coverage:
@@ -587,26 +610,43 @@ class Regulator:
         incident_rate = self._compute_incident_rate()
         media_pressure = self._last_media_pressure
 
-        # Recent incidents from observed_incidents
-        recent_incidents = [
+        # Per-provider incident aggregation over a 10-round window (session 48 Fix H) —
+        # shows pattern-level signal (repeat offenders, severity clusters) alongside
+        # the raw chronological list.
+        window_incidents = [
             inc for inc in self.private_state.observed_incidents
-            if len(inc) >= 4 and inc[0] >= round_num - 5
+            if len(inc) >= 4 and inc[0] >= round_num - 10
         ]
-        incident_text = "\n".join(
+        per_provider = {}
+        for inc in window_incidents:
+            per_provider.setdefault(inc[3], []).append(inc)
+        incident_summary_lines = []
+        for prov in sorted(per_provider.keys(), key=lambda p: -len(per_provider[p])):
+            items = per_provider[prov]
+            sev_counts = {}
+            for inc in items:
+                sev_counts[inc[2]] = sev_counts.get(inc[2], 0) + 1
+            sev_str = ", ".join(
+                f"{n} {s}" for s, n in sorted(sev_counts.items(), key=lambda x: -x[1])
+            )
+            most_recent = max(items, key=lambda i: i[0])
+            incident_summary_lines.append(
+                f"  - {prov}: {len(items)} in last 10 months ({sev_str}); "
+                f"most recent Month {most_recent[0]}: {most_recent[1]}"
+            )
+        incident_summary_text = "\n".join(incident_summary_lines) or "  None in last 10 months"
+
+        # Chronological tail (last 3) — for sequence/clustering reads.
+        recent_incidents = window_incidents[-3:]
+        incident_tail_text = "\n".join(
             f"  - Month {inc[0]}: {inc[1]} (severity: {inc[2]}, provider: {inc[3]})"
-            for inc in recent_incidents[-6:]
+            for inc in recent_incidents
         ) or "  None recently"
 
         # Prior interventions
         past_text = "\n".join(
             f"  Month {r}: {t}" for r, t, _ in self.private_state.past_interventions[-5:]
         ) or "  None"
-
-        # Escalation state
-        has_commitment = self._has_prior_lever("request_voluntary_commitment")
-        has_advisory = self._has_prior_lever("publish_advisory")
-        has_disclosure = self._has_prior_lever("mandate_safety_disclosure")
-        has_audit = self._has_prior_lever("commission_audit")
 
         objectives = ", ".join(self.private_state.policy_objectives) if self.private_state.policy_objectives else "safety, fairness"
 
@@ -631,35 +671,29 @@ class Regulator:
         else:
             mandate_desc = "Your audits are advisory only — you cannot block deployments."
 
-        # Translate media narrative to natural language
-        media_narrative = self._last_media_narrative
-        if media_narrative == "CRISIS":
-            media_desc = "The press is in crisis mode — sustained negative coverage of AI safety failures."
-        elif media_narrative == "SKEPTICISM":
-            media_desc = "The press is skeptical — growing concern about AI safety and provider behavior."
-        else:
-            media_desc = "The press tone is broadly positive toward the AI industry."
-
-        # Media headlines
+        # Media headlines — raw only, no researcher narrative label (session 48 Fix A).
         media_headlines_text = ""
         if self._last_media_headlines:
             media_headlines_text = "\n".join(
                 f"  - {h}" for h in self._last_media_headlines[-4:]
             )
+        else:
+            media_headlines_text = "  (no notable coverage)"
 
-        # Build prior actions as prose
-        prior_actions = []
-        if has_commitment:
-            prior_actions.append("voluntary commitments requested")
-        if has_advisory:
-            prior_actions.append("advisory published")
-        if has_disclosure:
-            prior_actions.append("safety disclosure mandated")
-        if has_audit:
-            prior_actions.append("audit commissioned")
-        prior_actions_text = ", ".join(prior_actions) if prior_actions else "none"
+        # Provider public announcements (session 48 Fix F) — regulator should see what
+        # providers publicly commit to, not just what made the press sampler's top-4.
+        comms_text = ""
+        if self._last_public_comms:
+            lines = []
+            for prov in sorted(self._last_public_comms.keys()):
+                comm = self._last_public_comms[prov]
+                content = comm.get("content", "") if isinstance(comm, dict) else str(comm)
+                if content:
+                    lines.append(f"  - {prov}: {content}")
+            if lines:
+                comms_text = "\n".join(lines)
 
-        prompt = f"""You are a regulatory body overseeing the AI model provider market. It is month {round_num}.
+        prompt = f"""It is month {round_num}.
 
 **Your Policy Objectives:** {objectives}
 **Your Mandate:** {mandate_desc}
@@ -670,16 +704,22 @@ class Regulator:
 **Market Shares:**
 {shares_text}
 
-**Recent Incidents:**
-{incident_text}
+**Incident Frequency by Provider (last 10 months):**
+{incident_summary_text}
+
+**Most Recent Incidents:**
+{incident_tail_text}
 
 **Media Coverage:**
-{media_desc}
 {media_headlines_text}
+"""
 
+        if comms_text:
+            prompt += f"\n**Recent Provider Announcements:**\n{comms_text}\n"
+
+        prompt += f"""
 **Prior Interventions:**
 {past_text}
-Actions taken so far: {prior_actions_text}
 """
         if prior_reasoning_text:
             prompt += f"""
@@ -687,24 +727,16 @@ Actions taken so far: {prior_actions_text}
 {prior_reasoning_text}
 """
 
-        prompt += f"""
-**Available Interventions:**
-- "none" -- No action this month
-- "request_voluntary_commitment" -- Ask providers for public safety pledges
-- "publish_advisory" -- Publish an evaluation summary naming specific concerns
-- "mandate_safety_disclosure" -- Require providers to publish system cards or safety reports
-- "commission_audit" -- Order a pre-deployment safety evaluation of a provider
-- "impose_sanction" -- Impose a financial penalty on a provider
-- "emergency_investigation" -- Launch an immediate investigation into a critical incident
-
-Decide the most appropriate action given the current situation. Name a specific target provider only when your concern is provider-specific.
-
-Output ONLY valid JSON:
-{{"intervention_type": "none"|"request_voluntary_commitment"|"publish_advisory"|"mandate_safety_disclosure"|"commission_audit"|"impose_sanction"|"emergency_investigation", "target_provider": "provider name or null", "reasoning": "2-4 sentence explanation"}}"""
+        prompt += "\nDecide the most appropriate action given the current situation."
 
         try:
             provider = get_provider()
-            response = provider.generate(prompt, temperature=0.4, max_tokens=400)
+            response = provider.generate(
+                prompt,
+                system_prompt=REGULATOR_SYSTEM_PROMPT,
+                temperature=0.4,
+                max_tokens=400,
+            )
             decision = _json.loads(_extract_json(response))
 
             intervention_type = decision.get("intervention_type", "none")

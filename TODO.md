@@ -15,6 +15,7 @@
     8. [ ] σ_prior calibration — current default 0.05 is preliminary; run longer heuristic sweeps to verify reasonable convergence time for inferred_weights on private benchmarks
 - [ ] **Premium-access axis (future benchmark-sponsorship + eval-as-company ablations)** — implement `premium_pre_access` (simulates N rounds of public-weight observations at t=0, sharpening initial `inferred_weights[b]`) and `premium_submissions_per_round` (best-of-M scoring). Orthogonal to the 5-condition primary set.
 - [ ] **Private-benchmark asynchrony sensitivity (deferred)** — primary ablations use global K=3 (F1: all providers × benchmarks synchronized). Optional sensitivity ablation with per-provider asynchronous release cadence (Fix-C deterministic + gap-level jitter, or F3 Bernoulli per round with p=1/K_p) to verify qualitative findings don't depend on synchronized releases. See session-38 memo.
+- [ ] **Revise abstract** — rework to reflect current paper framing (ecosystem lens, session-49 §5 reorganization around privacy + eval_as_company, softened seed-sensitive claims).
 - [ ] **Main-body trim** — currently ~14.5 pp; target NeurIPS 10 pp. Heaviest remaining: Related Work (3.3pp), Simulation (4.0pp).
 - [ ] **Dangling references** — `\ref` labels may be broken after restructuring; full pass needed.
 - [ ] **Missing bib entries** — Add: singh2025leaderboard, zhou2026pimmur, bick2024rapid, bachmann2023firms, rhee2006liability, hardy2024benchmarks, dulleck2006credence.

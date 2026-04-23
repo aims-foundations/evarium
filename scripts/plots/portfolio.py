@@ -3,9 +3,11 @@
 Per-run tool — writes into `<run_dir>/plots/` by default (use --output to override).
 Not a paper-canonical figure; see `scripts.plots.paper.*` for those.
 
-Two options:
+Three options:
   Option 1: Top-2 stacked area (by final market share)
   Option 3: Ternary trajectory (all 6 providers)
+  Allocations-mean: Per-provider rd (solid) + safety (dotted) trajectories with
+                    market-share-weighted mean overlaid in bold.
 
 Usage:
     python -m scripts.plots.portfolio <run_dir>
@@ -110,6 +112,64 @@ def plot_ternary(ax, providers, T, portfolios, final_shares, p_colors):
                  else "Portfolio trajectory (rounds 0 -> final)", fontsize=9)
 
 
+def _weighted_mean_alloc(rounds: list, providers: list, portfolios: dict, key: str) -> np.ndarray:
+    """Per-round market-share-weighted mean of `portfolios[p][key]`.
+
+    Uses `consumer_data.market_shares` from each round. Providers missing
+    from market_shares at a given round get weight 0. If total weight is 0
+    for a round (e.g. pre-consumer initialization), fall back to NaN so the
+    line breaks rather than mis-reporting.
+    """
+    T = len(rounds)
+    out = np.full(T, np.nan, dtype=float)
+    for t, r in enumerate(rounds):
+        shares = r.get("consumer_data", {}).get("market_shares", {}) or {}
+        num = 0.0
+        den = 0.0
+        for p in providers:
+            s = float(shares.get(p, 0.0) or 0.0)
+            v = float(portfolios[p][key][t])
+            num += s * v
+            den += s
+        if den > 0:
+            out[t] = num / den
+    return out
+
+
+def plot_allocations_mean(ax, rounds, providers, T, portfolios, p_colors):
+    """Per-provider rd (solid) + safety (dotted) over time; bold weighted-mean overlay.
+
+    Returns nothing; mutates `ax`. Legend is placed outside to the right.
+    """
+    xs = np.arange(T)
+
+    # Per-provider thin lines
+    for p in providers:
+        color = p_colors[p]
+        ax.plot(xs, portfolios[p]["rd"], color=color, linestyle="-", linewidth=1.0,
+                alpha=0.85, label=p)
+        ax.plot(xs, portfolios[p]["safety"], color=color, linestyle=":", linewidth=1.0,
+                alpha=0.85)
+
+    # Weighted-mean bold overlays
+    wm_rd = _weighted_mean_alloc(rounds, providers, portfolios, "rd")
+    wm_sf = _weighted_mean_alloc(rounds, providers, portfolios, "safety")
+    ax.plot(xs, wm_rd, color="black", linestyle="-", linewidth=2.5,
+            label="weighted mean (R\\&D)" if mpl_uses_tex() else "weighted mean (R&D)")
+    ax.plot(xs, wm_sf, color="black", linestyle=":", linewidth=2.5,
+            label="weighted mean (safety)")
+
+    ax.set_xlim(0, T - 1)
+    ax.set_ylim(0, 1)
+    ax.set_xlabel("Round")
+    ax.set_ylabel("Allocation fraction")
+    ax.grid(True, alpha=0.3, linewidth=0.5)
+    ax.set_title("Investment allocations over time "
+                 "(market-share-weighted mean in bold)", fontsize=10)
+    ax.legend(loc="center left", bbox_to_anchor=(1.02, 0.5),
+              frameon=False, fontsize=7)
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     ap.add_argument("run_dir", type=Path)
@@ -145,7 +205,16 @@ def main():
     fig3.savefig(out3_pdf, bbox_inches="tight")
     plt.close(fig3)
 
-    print(f"Wrote:\n  {out1_png}\n  {out1_pdf}\n  {out3_png}\n  {out3_pdf}")
+    fig4, ax4 = plt.subplots(1, 1, figsize=(6.5, 3.4))
+    plot_allocations_mean(ax4, rounds, providers, T, portfolios, p_colors)
+    fig4.tight_layout(rect=[0, 0, 0.82, 1.0])
+    out4_png = out_dir / "allocations_over_time.png"
+    out4_pdf = out_dir / "allocations_over_time.pdf"
+    fig4.savefig(out4_png, dpi=200, bbox_inches="tight")
+    fig4.savefig(out4_pdf, bbox_inches="tight")
+    plt.close(fig4)
+
+    print(f"Wrote:\n  {out1_png}\n  {out1_pdf}\n  {out3_png}\n  {out3_pdf}\n  {out4_png}\n  {out4_pdf}")
 
 
 if __name__ == "__main__":

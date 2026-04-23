@@ -501,6 +501,7 @@ class ModelProvider:
             "portfolio": portfolio,
             "llm_mode": self.llm_mode,
             "reasoning": reasoning,
+            "strategy_memo": strategy_memo or "",
         })
 
         return portfolio
@@ -662,6 +663,18 @@ class ModelProvider:
             consumer_signal_in_prompt=consumer_signal_in_prompt,
             orientation_prompt_style=orientation_prompt_style,
             market_share_history=market_share_history,
+            # Session-48 additions: competitor awareness + financial state + belief-compression inputs
+            competitor_public_comms=ctx.get("competitor_public_comms", {}),
+            per_benchmark_history=ctx.get("per_benchmark_history", []),
+            new_benchmarks=ctx.get("new_benchmarks", set()),
+            benchmark_types=ctx.get("benchmark_types", {}),
+            media_headlines_recent=ctx.get("media_headlines_recent", []),
+            funding_this_month=ctx.get("funding_this_month", 0.0),
+            funding_cumulative=ctx.get("funding_cumulative", 0.0),
+            funder_types_active=ctx.get("funder_types_active", []),
+            funder_types_abstained=ctx.get("funder_types_abstained", []),
+            funder_types_all=ctx.get("funder_types_all", []),
+            inferred_benchmark_weights_prev=ctx.get("inferred_benchmark_weights_prev", {}),
         )
 
         # Detect fallback

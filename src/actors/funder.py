@@ -12,7 +12,7 @@ Key dynamics:
 
 Funder Types and Scoring Formulas (per stakeholders.md spec):
 - VC: market_share_growth * media_sentiment * (1 - incident_risk) — concentrated bets, no OS
-- Corporate: market_share * media_sentiment * (1 - incident_risk) — multi-relationship, per-provider cooldown
+- Corporate: market_share * media_sentiment * (1 - incident_risk) — multi-relationship, 2-4 strategic partners
 - Government/AISI: (1 - incident_rate) * market_share_growth — proportional spread, safety-first
 - Foundation: (1 - incident_rate) * market_share_growth — proportional with underdog bonus
 
@@ -58,6 +58,8 @@ class Funder:
         llm_mode: bool = False,
         max_round_deployment: float = 0.10,
         funding_cooldown: int = 2,
+        capital_growth_rate: float = 0.07,
+        sim_total_rounds: int = 40,
     ):
         """
         Initialize a Funder.
@@ -65,12 +67,15 @@ class Funder:
         Args:
             name: Unique identifier for this funder
             funder_type: Type of funder ("vc", "corporate", "gov", "foundation")
-            total_capital: Total capital available for funding
+            total_capital: Sim-wide capital integral (deployable across full sim window)
             risk_tolerance: How much risk is acceptable (0-1)
             mission_statement: Mission-driven objective (for foundation type)
             llm_mode: If True, use LLM for decision-making
-            max_round_deployment: Fraction of total_capital deployable per round (default 10%)
+            max_round_deployment: Fraction of active-this-round capital deployable per decision (default 10%)
             funding_cooldown: Rounds between new allocation decisions (default 2)
+            capital_growth_rate: Geometric monthly growth of available capital (default 0.07 = 7%/mo).
+                See docs/funder_calibration.md for empirical anchor.
+            sim_total_rounds: Sim length for availability-curve normalization (default 40).
         """
         # Initialize public state
         self.public_state = PublicState(
@@ -95,6 +100,8 @@ class Funder:
         self.llm_mode = llm_mode
         self.max_round_deployment = max_round_deployment
         self.funding_cooldown = funding_cooldown
+        self.capital_growth_rate = capital_growth_rate
+        self.sim_total_rounds = sim_total_rounds
 
         # Memory
         self.memory = []
@@ -119,6 +126,9 @@ class Funder:
 
         # Incident tracking (recent incidents per provider)
         self._recent_incident_counts: dict = {}
+
+        # Regulator intervention tracking: [(round, type, target), ...] last 3 rounds
+        self._recent_interventions: list = []
 
         # Open-source provider names (VCs do not fund these)
         self._open_source_providers: set = set()
@@ -196,7 +206,29 @@ class Funder:
                     (1 - learning_rate) * old_belief + learning_rate * score
                 )
 
-        # Track incident history per provider (last 3 rounds)
+        # Pruning window scales with funding_cooldown so longer-cadence funders
+        # retain history spanning the gap between their decisions. Minimum 3
+        # rounds so short-cadence funders keep their existing behavior.
+        history_window = max(3, self.funding_cooldown)
+
+        # Track regulator intervention history for prompt context.
+        # Simulation aggregation stores the target under "provider"; older paths
+        # may use "target_provider" (LLM output) or nested details — fall through all.
+        current_interventions = regulator_data.get("interventions", []) if regulator_data else []
+        for iv in current_interventions:
+            itype = iv.get("type", "unknown")
+            target = (
+                iv.get("provider")
+                or iv.get("target_provider")
+                or (iv.get("details") or {}).get("target_provider")
+            )
+            self._recent_interventions.append((round_num, itype, target))
+        self._recent_interventions = [
+            (r, t, tgt) for (r, t, tgt) in self._recent_interventions
+            if r >= round_num - history_window
+        ]
+
+        # Track incident history per provider
         if incidents:
             for incident in incidents:
                 provider = incident.provider
@@ -204,11 +236,11 @@ class Funder:
                     self._recent_incident_counts[provider] = []
                 self._recent_incident_counts[provider].append((round_num, incident.severity))
 
-            # Prune old incidents (keep only last 3 rounds)
+            # Prune old incidents
             for provider in list(self._recent_incident_counts.keys()):
                 self._recent_incident_counts[provider] = [
                     (r, s) for r, s in self._recent_incident_counts[provider]
-                    if r >= round_num - 3
+                    if r >= round_num - history_window
                 ]
                 if not self._recent_incident_counts[provider]:
                     del self._recent_incident_counts[provider]
@@ -279,6 +311,25 @@ class Funder:
         """Enable or disable evaluator-as-company allocation split."""
         self._evaluator_as_company = enabled
 
+    def _availability(self, round_num: int) -> float:
+        """
+        Fraction of total_capital active for deployment at this round.
+
+        Geometric growth normalized so availabilities sum to 1.0 over sim_total_rounds,
+        modeling the empirical ecosystem capital ramp (~7%/mo compound, ~2.3x YoY).
+        See docs/funder_calibration.md for data anchors.
+
+        availability(r) = (1 + g)^r / Sum_{i=0}^{N-1} (1+g)^i
+        """
+        g = self.capital_growth_rate
+        N = self.sim_total_rounds
+        if N <= 0:
+            return 1.0
+        if g == 0:
+            return 1.0 / N
+        normalization = ((1 + g) ** N - 1) / g
+        return ((1 + g) ** round_num) / normalization
+
     def _plan_heuristic(self) -> dict:
         """
         Heuristic funding decision based on funder type.
@@ -293,7 +344,12 @@ class Funder:
         providers = [name for name, _ in self._last_leaderboard]
         allocations = {}
 
-        available_capital = self.private_state.total_capital * self.max_round_deployment
+        availability = self._availability(self.public_state.current_round)
+        available_capital = (
+            self.private_state.total_capital
+            * availability
+            * self.max_round_deployment
+        )
 
         # Split capital: providers + evaluator (if company mode enabled)
         evaluator_allocation = 0.0
@@ -553,21 +609,9 @@ class Funder:
         Corporate strategy: Strategic multi-relationship, anchored to market position.
 
         Spec formula: market_share * media_sentiment * (1 - incident_risk).
-        Can fund OS providers. Per-provider cooldown (3 rounds between
-        allocations to the same provider). Picks top 2-4 strategic partners.
+        Can fund OS providers. Picks top 2-4 strategic partners each decision round.
         """
-        # Per-provider cooldown: skip providers funded within last 3 rounds
-        if not hasattr(self, '_corporate_provider_last_funded'):
-            self._corporate_provider_last_funded = {}
-        current_round = self.public_state.current_round
-        eligible = [
-            p for p in providers
-            if current_round - self._corporate_provider_last_funded.get(p, -10) >= 3
-        ]
-        if not eligible:
-            eligible = providers  # fallback if all on cooldown
-
-        scores = self._score_providers_corporate(eligible)
+        scores = self._score_providers_corporate(providers)
 
         # Pick top 2-4 by score (strategic partnerships, not spray)
         ranked = sorted(scores.items(), key=lambda x: x[1], reverse=True)
@@ -581,35 +625,80 @@ class Funder:
         else:
             allocations = {}
 
-        # Track per-provider cooldowns
-        for p in allocations:
-            if allocations[p] > 0:
-                self._corporate_provider_last_funded[p] = current_round
-
         return allocations
 
     def _plan_llm(self) -> dict:
         """LLM-driven funding decision."""
         try:
             from llm import llm_plan_funding
-            capped_capital = self.private_state.total_capital * self.max_round_deployment
             round_num = self.public_state.current_round
+            availability = self._availability(round_num)
+            capped_capital = (
+                self.private_state.total_capital
+                * availability
+                * self.max_round_deployment
+            )
 
-            # Compute score deltas from history
+            # Compute score deltas from history — last-round and 2-round
             score_deltas = {}
+            score_deltas_2round = {}
             if len(self._score_history) >= 2:
                 prev = self._score_history[-2]
                 curr = self._score_history[-1]
                 for p in curr:
                     if p in prev:
                         score_deltas[p] = curr[p] - prev[p]
+            if len(self._score_history) >= 3:
+                earlier = self._score_history[-3]
+                curr = self._score_history[-1]
+                for p in curr:
+                    if p in earlier:
+                        score_deltas_2round[p] = curr[p] - earlier[p]
 
-            # Extract media data for LLM
+            # Extract media headlines only (no sentiment label — coaching removed)
             media_headlines = None
-            media_sentiment = None
             if self._media_coverage:
                 media_headlines = self._media_coverage.get("headlines")
-                media_sentiment = self._media_coverage.get("sentiment")
+
+            # Peer funder allocations — {provider: [(funder_name, amount), ...]}
+            # sorted by amount desc, excluding self, excluding zero allocations.
+            peer_funder_allocations: dict = {}
+            for other_name, other_allocs in self._other_funder_allocations.items():
+                if other_name == self.name:
+                    continue
+                for provider, amount in other_allocs.items():
+                    if provider == "__EVALUATOR__" or amount <= 0:
+                        continue
+                    peer_funder_allocations.setdefault(provider, []).append(
+                        (other_name, amount)
+                    )
+            for provider in peer_funder_allocations:
+                peer_funder_allocations[provider].sort(
+                    key=lambda t: t[1], reverse=True
+                )
+            peer_funder_allocations = peer_funder_allocations or None
+
+            # Regulator context
+            regulator_interventions = (
+                self._recent_interventions if self._recent_interventions else None
+            )
+            active_regulations = self._last_regulator_data.get("active_regulations") or None
+
+            # Own cumulative allocations by provider, with last-round info
+            cumulative_allocations: dict = {}
+            for hist_round, hist_allocs in self.private_state.funding_history:
+                for provider, amount in hist_allocs.items():
+                    if provider == "__EVALUATOR__":
+                        continue
+                    if provider not in cumulative_allocations:
+                        cumulative_allocations[provider] = {
+                            "total": 0.0, "last_amount": 0.0, "last_round": None
+                        }
+                    cumulative_allocations[provider]["total"] += amount
+                    if amount > 0:
+                        cumulative_allocations[provider]["last_amount"] = amount
+                        cumulative_allocations[provider]["last_round"] = hist_round
+            cumulative_allocations = cumulative_allocations or None
 
             allocations, reasoning = llm_plan_funding(
                 name=self.name,
@@ -617,13 +706,17 @@ class Funder:
                 total_capital=capped_capital,
                 leaderboard=self._last_leaderboard,
                 market_shares=self._last_consumer_data.get("market_shares", {}),
-                recent_history=self.private_state.funding_history[-5:],
                 recent_insights=self.private_state.recent_reasoning[-2:],
                 incidents=self._recent_incident_counts if self._recent_incident_counts else None,
-                media_sentiment=media_sentiment,
                 media_headlines=media_headlines,
                 score_deltas=score_deltas if score_deltas else None,
+                score_deltas_2round=score_deltas_2round if score_deltas_2round else None,
                 public_comms=self._public_comms if self._public_comms else None,
+                peer_funder_allocations=peer_funder_allocations,
+                regulator_interventions=regulator_interventions,
+                active_regulations=active_regulations,
+                cumulative_allocations=cumulative_allocations,
+                mission_statement=self.private_state.mission_statement,
                 verbose=False,
             )
 
@@ -764,6 +857,8 @@ class Funder:
                 "llm_mode": self.llm_mode,
                 "max_round_deployment": self.max_round_deployment,
                 "funding_cooldown": self.funding_cooldown,
+                "capital_growth_rate": self.capital_growth_rate,
+                "sim_total_rounds": self.sim_total_rounds,
             }, f, indent=2)
 
     @classmethod
@@ -787,6 +882,8 @@ class Funder:
             llm_mode=params.get("llm_mode", False),
             max_round_deployment=params.get("max_round_deployment", 0.10),
             funding_cooldown=params.get("funding_cooldown", 2),
+            capital_growth_rate=params.get("capital_growth_rate", 0.07),
+            sim_total_rounds=params.get("sim_total_rounds", 40),
         )
 
         funder.public_state = PublicState.from_dict(public_data)

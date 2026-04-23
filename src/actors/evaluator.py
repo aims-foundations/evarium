@@ -40,6 +40,12 @@ BENCHMARK_POOL = [
             "reasoning": 0.35, "coding": 0.08, "knowledge": 0.30,
             "safety": 0.05, "communication": 0.20, "agentic": 0.02,
         }},
+        # MMLU-Redux-style holdout: harder knowledge-synthesis, slight reasoning
+        # reduction, more weight on knowledge + communication integration.
+        "holdout_category_dimension_weights": {"overall": {
+            "reasoning": 0.25, "coding": 0.08, "knowledge": 0.35,
+            "safety": 0.05, "communication": 0.25, "agentic": 0.02,
+        }},
     },
     {
         "name": "Coding Evaluation",
@@ -85,6 +91,12 @@ BENCHMARK_POOL = [
             "reasoning": 0.08, "coding": 0.02, "knowledge": 0.05,
             "safety": 0.04, "communication": 0.80, "agentic": 0.01,
         }},
+        # Adversarial-instruction holdout: jailbreak-via-instruction patterns
+        # require more reasoning and safety-aware parsing beyond surface fluency.
+        "holdout_category_dimension_weights": {"overall": {
+            "reasoning": 0.18, "coding": 0.02, "knowledge": 0.05,
+            "safety": 0.11, "communication": 0.62, "agentic": 0.02,
+        }},
     },
     # --- Sequence benchmarks (6): mix of specialized and moderate ---
     {
@@ -109,16 +121,19 @@ BENCHMARK_POOL = [
         "description": "Multi-step tool use, error recovery, and task automation",
         "tags": "coding agentic software automation tool-use",
         "noise_sigma": 0.08, "samples": 1000, "weight": 1.0,
-        # Highly specialized — agentic dominant
+        # SWE-bench/BFCL-style: agentic-dominant but reasoning+coding also meaningful.
+        # Recalibrated 2026-04-20 from agentic=0.75 → 0.48 (paper Appendix A).
         "category_dimension_weights": {"overall": {
-            "reasoning": 0.08, "coding": 0.10, "knowledge": 0.02,
-            "safety": 0.01, "communication": 0.04, "agentic": 0.75,
+            "reasoning": 0.25, "coding": 0.19, "knowledge": 0.01,
+            "safety": 0.00, "communication": 0.07, "agentic": 0.48,
         }},
         # Private benchmark (mild+): METR-style — known private task suite.
         # Holdout probes strategic multi-step reasoning within same agentic domain.
+        # Holdout shifted with public: agentic 0.60 → 0.38, excess redistributed
+        # proportionally to reasoning/coding/comm.
         "holdout_category_dimension_weights": {"overall": {
-            "reasoning": 0.18, "coding": 0.12, "knowledge": 0.03,
-            "safety": 0.02, "communication": 0.05, "agentic": 0.60,
+            "reasoning": 0.30, "coding": 0.23, "knowledge": 0.01,
+            "safety": 0.00, "communication": 0.08, "agentic": 0.38,
         }},
     },
     {
@@ -201,6 +216,12 @@ BENCHMARK_POOL = [
             "reasoning": 0.85, "coding": 0.06, "knowledge": 0.05,
             "safety": 0.00, "communication": 0.03, "agentic": 0.01,
         }},
+        # FrontierMath-style holdout: multi-step synthesis requiring domain
+        # knowledge and coding-adjacent formalism — not pattern-match on canonical forms.
+        "holdout_category_dimension_weights": {"overall": {
+            "reasoning": 0.67, "coding": 0.12, "knowledge": 0.12,
+            "safety": 0.02, "communication": 0.05, "agentic": 0.02,
+        }},
     },
     {
         "name": "Human Preference",
@@ -235,6 +256,12 @@ BENCHMARK_POOL = [
             "reasoning": 0.20, "coding": 0.01, "knowledge": 0.65,
             "safety": 0.08, "communication": 0.05, "agentic": 0.01,
         }},
+        # Adversarial clinical-vignette holdout: mislabeled symptoms, high-stakes
+        # differential-diagnosis under uncertainty — more reasoning and safety weight.
+        "holdout_category_dimension_weights": {"overall": {
+            "reasoning": 0.28, "coding": 0.01, "knowledge": 0.52,
+            "safety": 0.13, "communication": 0.05, "agentic": 0.01,
+        }},
     },
     {
         "name": "Legal Reasoning",
@@ -245,6 +272,12 @@ BENCHMARK_POOL = [
         "category_dimension_weights": {"overall": {
             "reasoning": 0.25, "coding": 0.01, "knowledge": 0.60,
             "safety": 0.05, "communication": 0.08, "agentic": 0.01,
+        }},
+        # Case-novelty holdout: precedents unseen in training, requires stronger
+        # reasoning and clearer communication of statutory interpretation.
+        "holdout_category_dimension_weights": {"overall": {
+            "reasoning": 0.33, "coding": 0.01, "knowledge": 0.48,
+            "safety": 0.05, "communication": 0.12, "agentic": 0.01,
         }},
     },
     {
@@ -274,10 +307,21 @@ BENCHMARK_POOL = [
         "description": "API/tool calling accuracy, schema adherence, and multi-turn tool use",
         "tags": "coding agentic tool-use function-calling API",
         "noise_sigma": 0.06, "samples": 1000, "weight": 1.0,
-        # Moderately specialized — agentic + coding
+        # BFCL-anchored: JSON/schema conformance (coding) dominates; tool-loop
+        # (agentic) still substantial; tool-selection planning (reasoning) and
+        # multi-turn result processing (communication) are meaningful.
+        # Recalibrated 2026-04-20 from agentic=0.70 -> 0.40 (original overstated
+        # pure-agentic weight; no consumer segment needs 70% agentic capability).
         "category_dimension_weights": {"overall": {
-            "reasoning": 0.08, "coding": 0.15, "knowledge": 0.02,
-            "safety": 0.01, "communication": 0.04, "agentic": 0.70,
+            "reasoning": 0.15, "coding": 0.30, "knowledge": 0.02,
+            "safety": 0.01, "communication": 0.12, "agentic": 0.40,
+        }},
+        # Novel-API holdout: robust schema handling on unseen tool definitions,
+        # shifting weight toward reasoning (plan for unseen tool) and coding
+        # (parse unfamiliar schema); agentic loop less load-bearing. cos ~0.85.
+        "holdout_category_dimension_weights": {"overall": {
+            "reasoning": 0.25, "coding": 0.32, "knowledge": 0.03,
+            "safety": 0.02, "communication": 0.13, "agentic": 0.25,
         }},
     },
     {
@@ -290,6 +334,12 @@ BENCHMARK_POOL = [
         "category_dimension_weights": {"overall": {
             "reasoning": 0.06, "coding": 0.01, "knowledge": 0.01,
             "safety": 0.85, "communication": 0.04, "agentic": 0.03,
+        }},
+        # SEAL-Safety / HarmBench-private holdout: jailbreak-via-reasoning-step,
+        # unseen attack classes — more reasoning weight, broader dim-knowledge probe.
+        "holdout_category_dimension_weights": {"overall": {
+            "reasoning": 0.17, "coding": 0.01, "knowledge": 0.06,
+            "safety": 0.67, "communication": 0.07, "agentic": 0.02,
         }},
     },
     {
@@ -524,6 +574,15 @@ class Evaluator:
 
         # Retired benchmarks (name -> round retired)
         self._retired_benchmarks: dict[str, int] = {}
+
+        # Retirement reasons parallel to _retired_benchmarks (name -> short reason)
+        # Populated by retire_benchmark. Surfaced to LLM dynamic evaluator prompt.
+        self._retirement_reasons: dict[str, str] = {}
+
+        # LLM dynamic-mode decision log: [{round, action, benchmark_name, reasoning}, ...]
+        # Used only by LLM dynamic mode; written in simulation._dynamic_evaluator_decision.
+        # Surfaced to subsequent LLM dynamic evaluator calls as Prior Quarterly Decisions.
+        self._dynamic_llm_decisions: list[dict] = []
 
         # Evaluator-as-company feature (budget tracking, funder allocations)
         self.evaluator_as_company = evaluator_as_company
@@ -852,10 +911,42 @@ class Evaluator:
             "saturation_states": saturation_states,
         }
 
-        # Dynamic mode: add pool and retired info
+        # Dynamic mode: add pool + enriched retirement/introduction metadata + prior decisions
         if self.evaluator_mode == "dynamic":
             obs["available_pool"] = self.get_pool_for_llm()
-            obs["retired_benchmarks"] = list(self._retired_benchmarks.keys())
+
+            # Enriched retired: [(name, retired_round, reason), ...]
+            obs["retired_benchmarks_enriched"] = [
+                (
+                    name,
+                    retired_round,
+                    self._retirement_reasons.get(name, "unspecified"),
+                )
+                for name, retired_round in self._retired_benchmarks.items()
+            ]
+
+            # Introduction metadata keyed by benchmark name: {name: (round, trigger, reasoning)}
+            # `trigger` carries heuristic-path reason ("fixed_sequence", "saturation:..."),
+            # `reasoning` holds LLM-path tail when the LLM initiated the introduction.
+            intro_map: dict[str, dict] = {}
+            for entry in self.introduction_history:
+                bm_name = entry.get("benchmark_name")
+                if not bm_name:
+                    continue
+                intro_map[bm_name] = {
+                    "round": entry.get("round"),
+                    "trigger": entry.get("trigger", ""),
+                    "reasoning": entry.get("reasoning"),
+                }
+            obs["introduction_metadata"] = intro_map
+
+            # Last 3 LLM decisions (this evaluator's own reasoning trail)
+            obs["prior_decisions"] = list(self._dynamic_llm_decisions[-3:])
+
+            # Active regulations (short-string summaries for the LLM prompt)
+            obs["active_regulations"] = [
+                reg.name for reg in self.get_active_regulations() if reg.name
+            ]
 
         return obs
 
@@ -1020,18 +1111,30 @@ class Evaluator:
 
         return new_bm
 
-    def retire_benchmark(self, round_num: int, benchmark_name: Optional[str] = None) -> Optional[str]:
+    def retire_benchmark(
+        self,
+        round_num: int,
+        benchmark_name: Optional[str] = None,
+        reason: str = "auto-retire at cap",
+    ) -> Optional[str]:
         """Retire a benchmark, freeing a slot for a new one.
 
         If benchmark_name is None, auto-selects the most saturated benchmark
         (longest time since saturation, or highest max_score if tied).
+
+        Args:
+            reason: Short tag stored in _retirement_reasons for downstream
+                LLM dynamic prompt rendering. Callers with a specific cause
+                ("saturation", "llm: <tail>") should pass one; default covers
+                sim-initiated auto-retire when introducing at cap.
 
         Returns the name of the retired benchmark, or None if nothing to retire.
         """
         if len(self.benchmarks) == 0:
             return None
 
-        if benchmark_name is None:
+        auto_selected = benchmark_name is None
+        if auto_selected:
             # Pick the most saturated: prefer benchmarks that are already saturated,
             # then by earliest saturation_round, then by highest max_score.
             candidates = []
@@ -1044,6 +1147,10 @@ class Evaluator:
             # Sort: saturated first (not is_sat=False < True), then earliest sat round, then highest score
             candidates.sort(key=lambda x: (x[1], x[2], x[3]))
             benchmark_name = candidates[0][0]
+            # If auto-selected a saturated benchmark, refine the default reason.
+            sat_state = self._benchmark_saturation_state.get(benchmark_name, {})
+            if sat_state.get("saturated") and reason == "auto-retire at cap":
+                reason = "saturation"
 
         # Remove from all tracking structures
         self.benchmarks = [bm for bm in self.benchmarks if bm.name != benchmark_name]
@@ -1054,6 +1161,7 @@ class Evaluator:
         self._benchmark_saturation_state.pop(benchmark_name, None)
 
         self._retired_benchmarks[benchmark_name] = round_num
+        self._retirement_reasons[benchmark_name] = reason
         return benchmark_name
 
     # ------------------------------------------------------------------
@@ -1297,6 +1405,8 @@ class Evaluator:
             "evaluator_mode": self.evaluator_mode,
             "_benchmark_pool": self._benchmark_pool,
             "_retired_benchmarks": self._retired_benchmarks,
+            "_retirement_reasons": self._retirement_reasons,
+            "_dynamic_llm_decisions": self._dynamic_llm_decisions,
         }
         with open(filepath, "w") as f:
             json.dump(data, f, indent=2)
@@ -1372,6 +1482,8 @@ class Evaluator:
         evaluator.evaluator_mode = data.get("evaluator_mode", "fixed_sequence")
         evaluator._benchmark_pool = data.get("_benchmark_pool", [])
         evaluator._retired_benchmarks = data.get("_retired_benchmarks", {})
+        evaluator._retirement_reasons = data.get("_retirement_reasons", {})
+        evaluator._dynamic_llm_decisions = data.get("_dynamic_llm_decisions", [])
 
         return evaluator
 

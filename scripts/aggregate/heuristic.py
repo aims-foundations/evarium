@@ -37,6 +37,10 @@ OUTPUT_BASE = os.path.join(_PROJECT_ROOT, "output", "heuristic_analysis")
 POLICIES = ("balanced", "us", "eu")
 BASELINE_CONDITION = "full_ecosystem"
 
+# Module-level mutable state; overridden by --baseline-condition at CLI time so
+# that downstream functions (compute_ablation_effects) see the right reference.
+_BASELINE_CONDITION = BASELINE_CONDITION
+
 HHI_COMPETITIVE = 0.15
 HHI_CONCENTRATED = 0.25
 
@@ -76,6 +80,12 @@ def parse_args():
                    help="Number of final rounds for endpoint metrics")
     p.add_argument("-o", "--output", type=str, default=None,
                    help="Output directory override")
+    p.add_argument("--base", type=str, default=None,
+                   help="Heuristic base dir (default: sandbox/experiments/heuristic). "
+                        "Pass e.g. sandbox/experiments/heuristic_session44/heuristic for a batch.")
+    p.add_argument("--baseline-condition", type=str, default=None,
+                   help="Condition name to use as ablation reference "
+                        "(default: full_ecosystem; session-38+ batches use 'baseline').")
     return p.parse_args()
 
 
@@ -494,12 +504,12 @@ def compute_ablation_effects(all_seed_metrics):
 
     results = []
     for pol, cond_metrics in by_policy.items():
-        baseline = cond_metrics.get(BASELINE_CONDITION)
+        baseline = cond_metrics.get(_BASELINE_CONDITION)
         if baseline is None:
             continue
 
         for cond, abl_metrics in cond_metrics.items():
-            if cond == BASELINE_CONDITION:
+            if cond == _BASELINE_CONDITION:
                 continue
 
             for metric in ABLATION_METRICS:
@@ -966,13 +976,22 @@ def main():
     output_dir = args.output or OUTPUT_BASE
     os.makedirs(output_dir, exist_ok=True)
 
+    base_dir = args.base or HEURISTIC_BASE
+    if not os.path.isabs(base_dir):
+        base_dir = os.path.join(_PROJECT_ROOT, base_dir)
+    global _BASELINE_CONDITION
+    if args.baseline_condition:
+        _BASELINE_CONDITION = args.baseline_condition
+
     print("=" * 70)
     print("  Heuristic Baseline Aggregation")
+    print(f"  base        : {base_dir}")
+    print(f"  baseline    : {_BASELINE_CONDITION}")
     print("=" * 70)
 
     # 1. Discovery
     run_groups = discover_heuristic_runs(
-        HEURISTIC_BASE, args.condition, args.policy
+        base_dir, args.condition, args.policy
     )
     total_seeds = sum(len(g["seed_dirs"]) for g in run_groups.values())
     print(f"\n  Found {len(run_groups)} condition-policy combos, "

@@ -1584,6 +1584,42 @@ def generate_presentation_plots(
         saved['slide5_revenue_breakdown'] = path
         print(f"  - Slide 5: Revenue Breakdown saved")
 
+    # Per-benchmark dumbbell (score vs matched satisfaction)
+    try:
+        import sys as _sys
+        _scripts_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "scripts")
+        if _scripts_dir not in _sys.path:
+            _sys.path.insert(0, _scripts_dir)
+        from plots.per_benchmark import per_benchmark_from_rows, dumbbell_from_df
+        df_gap = per_benchmark_from_rows(history)
+        path = os.path.join(output_dir, f"per_benchmark_dumbbell.{fmt}")
+        dumbbell_from_df(df_gap, out_path=path, title_suffix=os.path.basename(os.path.dirname(output_dir)))
+        saved['per_benchmark_dumbbell'] = path
+        print(f"  - Dumbbell: per-benchmark gap saved")
+    except Exception as e:
+        print(f"  - Dumbbell skipped ({type(e).__name__}: {e})")
+
+    # Allocations over time (market-share-weighted mean overlay)
+    try:
+        import sys as _sys
+        _scripts_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "scripts")
+        if _scripts_dir not in _sys.path:
+            _sys.path.insert(0, _scripts_dir)
+        from plots.portfolio import plot_allocations_mean, extract_portfolio_data
+        providers, T, portfolios, _final_shares = extract_portfolio_data(history)
+        p_colors = get_provider_colors(providers)
+        fig_alloc, ax_alloc = plt.subplots(figsize=(7.0, 3.6))
+        plot_allocations_mean(ax_alloc, history, providers, T, portfolios, p_colors)
+        fig_alloc.suptitle("Investment allocations over time (market-share-weighted mean in bold)", fontsize=10)
+        fig_alloc.tight_layout(rect=[0, 0, 0.82, 0.95])
+        path = os.path.join(output_dir, f"allocations_over_time.{fmt}")
+        fig_alloc.savefig(path, dpi=200, bbox_inches="tight")
+        plt.close(fig_alloc)
+        saved['allocations_over_time'] = path
+        print(f"  - Allocations-over-time saved")
+    except Exception as e:
+        print(f"  - Allocations-over-time skipped ({type(e).__name__}: {e})")
+
     print(f"Presentation plots saved to: {output_dir}")
     return saved
 

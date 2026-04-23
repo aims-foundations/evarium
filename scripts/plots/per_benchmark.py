@@ -55,20 +55,22 @@ from consumer import USE_CASE_PROFILES  # type: ignore  # noqa: E402
 
 DIMS = ["reasoning", "coding", "knowledge", "safety", "communication", "agentic"]
 BM_ORDER = [
-    "General Capability", "Coding Evaluation", "Safety Evaluation",
-    "Instruction Following", "Scientific Reasoning", "Agentic Tasks",
-    "Hard Coding", "Long Context", "Domain Expert", "Agentic Safety",
+    "General Capability", "Coding Evaluation", "Safety Evaluation", "Instruction Following",
+    "Scientific Reasoning", "Clinical Reasoning", "Adversarial Robustness", "Hard Coding",
+    "Agentic Tasks", "Advanced Math", "Function Calling", "Long Context", "Legal Reasoning",
 ]
-EXCLUDE_BM = ["Agentic Tasks"]
+EXCLUDE_BM = ["Agentic Tasks", "Function Calling"]
 BM_KEEP = [b for b in BM_ORDER if b not in EXCLUDE_BM]
 
 PRIV_ORDER = ["public_only", "baseline", "private_dominant", "private_only", "iid_holdout"]
 PRIV_COLORS = {
-    "public_only": "#9E9E9E",
-    "baseline": "#607D8B",
-    "private_dominant": "#1976D2",
-    "private_only": "#1B5E20",
-    "iid_holdout": "#6A1B9A",
+    # Sequential blue scale: lighter = more public, darker = more private.
+    "public_only":      "#c6dbef",
+    "baseline":         "#6baed6",
+    "private_dominant": "#2171b5",
+    "private_only":     "#08306b",
+    # iid_holdout sits off the privacy axis (ablation); distinct contrast color.
+    "iid_holdout":      "#d94801",
 }
 
 plt.rcParams.update({
@@ -261,6 +263,12 @@ def plot_aggregate_heuristic_forest(long_csv: str, out_path: str, title_suffix: 
         mean="mean", sd="std", n="count"
     ).reset_index()
     agg["ci"] = 1.96 * agg["sd"] / np.sqrt(agg["n"])
+    # Pooled gap of excluded benchmarks (across all 5 privacy conditions) for caption.
+    excluded_stats = {
+        bm: float(g_run[g_run.benchmark == bm]["clean_gap"].mean())
+        for bm in EXCLUDE_BM
+        if bm in set(g_run.benchmark)
+    }
     agg = agg[~agg["benchmark"].isin(EXCLUDE_BM)]
 
     order_df = agg[agg.condition == "public_only"].set_index("benchmark")["mean"].reindex(BM_KEEP)
@@ -295,10 +303,12 @@ def plot_aggregate_heuristic_forest(long_csv: str, out_path: str, title_suffix: 
             transform=ax.transAxes, fontsize=9, color="#1565C0", alpha=0.8)
     ax.text(0.98, 0.96, "benchmark overpromises →",
             transform=ax.transAxes, fontsize=9, color="#C62828", alpha=0.8, ha="right")
+    excl_str = ", ".join(f"{bm} (pooled g={excluded_stats[bm]:+.3f})"
+                         for bm in EXCLUDE_BM if bm in excluded_stats)
     ax.set_title(
         "Privacy conditions compress per-benchmark gap toward zero\n"
         f"{title_suffix or 'aggregate heuristic'} (struct=none, 5 privacy × seeds × providers)"
-        f" — excluded: {', '.join(EXCLUDE_BM)}",
+        f"\nexcluded as agentic-calibration outliers: {excl_str}",
         loc="left")
     fig.tight_layout()
     fig.savefig(out_path)
@@ -419,6 +429,64 @@ def plot_heuristic_plus_llm(long_csv: str, llm_batch: str, llm_seed: int,
     print(f"Saved {out_path}")
 
 
+# ───────── walk-all-runs: Plot 1 per LLM run in sandbox/experiments ─────────
+
+def _discover_llm_runs():
+    """Return (jsonl_path, batch, condition, seed_label) tuples for every LLM run
+    under sandbox/experiments. Handles both layouts:
+        sandbox/experiments/<batch>/llm/<cond>/seeds/seed_<N>/rounds.jsonl
+        sandbox/experiments/llm/<cond>/seeds/seed_<N>/rounds.jsonl   (batch literally "llm")
+    """
+    root = os.path.join(_paths.PROJECT_ROOT, "sandbox", "experiments")
+    patterns = [
+        os.path.join(root, "*", "llm", "*", "seeds", "seed_*", "rounds.jsonl"),
+        os.path.join(root, "llm", "*", "seeds", "seed_*", "rounds.jsonl"),
+    ]
+    seen = set()
+    out = []
+    for pat in patterns:
+        for p in glob.glob(pat):
+            norm = os.path.normpath(p)
+            if norm in seen:
+                continue
+            seen.add(norm)
+            parts = norm.replace("\\", "/").split("/")
+            try:
+                i = len(parts) - 1 - parts[::-1].index("llm")
+            except ValueError:
+                continue
+            if i == 0 or parts[i - 1] != "experiments":
+                batch = parts[i - 1]
+            else:
+                batch = "llm"
+            cond = parts[i + 1]
+            seed_label = parts[-2]
+            out.append((norm, batch, cond, seed_label))
+    return sorted(out)
+
+
+def plot_all_llm_runs(out_dir: str):
+    """Emit one Plot 1 (single-run dumbbell) per LLM run found in sandbox/experiments."""
+    runs = _discover_llm_runs()
+    if not runs:
+        print("No LLM runs found under sandbox/experiments/**/llm/*/seeds/seed_*/")
+        return
+    os.makedirs(out_dir, exist_ok=True)
+    ok = 0
+    for jsonl, batch, cond, seed_label in runs:
+        fname = f"{batch}__{cond}__{seed_label}.png"
+        out_path = os.path.join(out_dir, fname)
+        try:
+            plot_single_run_dumbbell(
+                jsonl, out_path,
+                title_suffix=f"{batch} / {cond} / {seed_label}",
+            )
+            ok += 1
+        except Exception as e:
+            print(f"ERROR {jsonl}: {e}")
+    print(f"Plot 1 per-run: wrote {ok}/{len(runs)} plots to {out_dir}")
+
+
 # ───────── CLI ─────────
 
 def main():
@@ -429,11 +497,21 @@ def main():
                     help="sandbox/experiments/<batch>/ directory holding LLM runs")
     ap.add_argument("--llm-seed", type=int, default=2026,
                     help="LLM seed to use for Plot 1 and Plot 3")
+    ap.add_argument("--llm-condition", default="baseline",
+                    help="condition name under <llm-batch>/llm/ for the Plot 1 single-run dumbbell")
     ap.add_argument("--rebuild-csv", action="store_true",
                     help="rebuild per_benchmark_long.csv from the heuristic batch")
     ap.add_argument("--out-subject", default="per_benchmark_gap",
                     help="subject name under output/analysis/")
+    ap.add_argument("--all-llm-runs", action="store_true",
+                    help="Emit Plot 1 per LLM run under sandbox/experiments/ and exit "
+                         "(skips heuristic Plots 2/3).")
     args = ap.parse_args()
+
+    if args.all_llm_runs:
+        out_dir = os.path.join(_paths.analysis_dir(args.out_subject), "per_run")
+        plot_all_llm_runs(out_dir)
+        return
 
     out_dir = _paths.analysis_dir(args.out_subject)
 
@@ -441,15 +519,15 @@ def main():
     if args.rebuild_csv or not os.path.exists(csv_path):
         csv_path = extract_per_benchmark(args.heuristic_batch, csv_path)
 
-    # Plot 1: single LLM baseline run
+    # Plot 1: single LLM run (condition-agnostic via --llm-condition)
     bl_jsonl = _paths.sandbox_run_dir(
-        args.llm_batch, "llm", "baseline", "seeds", f"seed_{args.llm_seed}", "rounds.jsonl"
+        args.llm_batch, "llm", args.llm_condition, "seeds", f"seed_{args.llm_seed}", "rounds.jsonl"
     )
     if os.path.exists(bl_jsonl):
         plot_single_run_dumbbell(
             bl_jsonl,
             os.path.join(out_dir, "plot1_single_run_dumbbell.png"),
-            title_suffix=f"LLM baseline/none, seed {args.llm_seed}",
+            title_suffix=f"LLM {args.llm_condition}, seed {args.llm_seed}",
         )
     else:
         print(f"SKIP Plot 1 — missing {bl_jsonl}")

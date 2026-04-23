@@ -140,7 +140,7 @@ class SimulationConfig:
 
     # Benchmark introduction (evaluator introduces new benchmarks mid-simulation)
     benchmark_introduction_cooldown: int = 4
-    max_benchmarks: int = 10  # Full benchmark pool (4 initial + 6 sequence) across 40 rounds
+    max_benchmarks: int = 13  # Full benchmark pool (4 initial + 9 sequence) across 40 rounds
     benchmark_sequence: Optional[list] = None  # Ordered list of benchmark dicts to introduce
     # Each dict: {"name": str, "validity": float, "noise_level": float, "weight": float}
     # Default realistic sequence inspired by real-world benchmarks (MMLU, HumanEval, GSM8K, etc.)
@@ -715,15 +715,23 @@ class EvalEcosystemSimulation:
             funder_configs = get_default_funder_configs()[:self.config.n_funders]
 
         for fc in funder_configs:
+            mission = fc.get("mission_statement", "").strip()
+            if self.config.llm_mode and not mission:
+                raise ValueError(
+                    f"Funder {fc['name']} has no mission_statement. "
+                    "LLM funders require mission_statement to distinguish per-funder identity."
+                )
             funder = Funder(
                 name=fc["name"],
                 funder_type=fc.get("funder_type", "vc"),
                 total_capital=fc.get("total_capital", 1000000.0),
                 risk_tolerance=fc.get("risk_tolerance", 0.5),
-                mission_statement=fc.get("mission_statement", ""),
+                mission_statement=mission,
                 llm_mode=self.config.llm_mode,
                 max_round_deployment=fc.get("max_round_deployment", 0.10),
                 funding_cooldown=fc.get("funding_cooldown", 2),
+                capital_growth_rate=fc.get("capital_growth_rate", 0.07),
+                sim_total_rounds=self.config.n_rounds,
             )
             self.funders.append(funder)
 
@@ -824,16 +832,93 @@ class EvalEcosystemSimulation:
         # gaming ROI differently for public vs. private benchmarks. Types are public knowledge in the
         # real world (SEAL-ness is not a researcher secret), so exposing them does not violate PIMMUR.
         _bm_names = []
+        benchmark_types = {}
         for bm in self.evaluator.benchmarks:
             bm_gt = self.benchmark_ground_truths.get(bm.name)
             label = bm.name
             if bm_gt is not None and bm_gt.benchmark_type != "public" and bm_gt.holdout_fraction > 0:
                 label += f" [private benchmark: {int(bm_gt.holdout_fraction * 100)}% of items held out; scored on holdout only]"
             _bm_names.append(label)
+            benchmark_types[bm.name] = bm_gt.benchmark_type if bm_gt is not None else "public"
         context["available_benchmarks"] = _bm_names
+        context["benchmark_types"] = benchmark_types
         if self.history:
             last_round_num = self.history[-1].get("round", self.current_round - 1)
             context["per_benchmark_scores"] = self.evaluator.get_per_benchmark_scores(last_round_num)
+
+        # --- Competitor awareness signals (session 48) ---
+        # Public announcements by each competitor (last public_comm if any).
+        competitor_public_comms = {}
+        for other in self.providers:
+            if other.name == provider_name:
+                continue
+            pcs = other.public_state.public_comms
+            if pcs:
+                competitor_public_comms[other.name] = pcs[-1]
+        context["competitor_public_comms"] = competitor_public_comms
+
+        # Cross-competitor per-benchmark score history (last 2 rounds of per_benchmark_scores).
+        # Lets the prompt builder assemble the X6 level+delta matrix.
+        if self.history:
+            pbs_recent = []
+            for h in self.history[-2:]:
+                pbs_recent.append((h.get("round"), h.get("per_benchmark_scores", {})))
+            context["per_benchmark_history"] = pbs_recent
+
+        # New-benchmark flag: benchmarks that appeared in the last 2 rounds only.
+        # Derived from history rather than dedicated state to avoid new primitives.
+        current_bms = {bm.name for bm in self.evaluator.benchmarks}
+        if len(self.history) >= 2:
+            prior_pbs = self.history[-2].get("per_benchmark_scores", {})
+            context["new_benchmarks"] = current_bms - set(prior_pbs.keys())
+        else:
+            context["new_benchmarks"] = current_bms
+
+        # Media headlines (last 2 rounds, raw — tone inferable from content).
+        if self.history:
+            recent_headlines = []
+            for h in self.history[-2:]:
+                md = h.get("media_data") or {}
+                hl = md.get("headlines") or []
+                if hl:
+                    recent_headlines.append((h.get("round"), hl))
+            context["media_headlines_recent"] = recent_headlines
+
+        # Funding signals: this month's inflows + cumulative + funder-type participation.
+        # All amounts and funder identities are public in reality; exposing them is PIMMUR-clean.
+        if self.history:
+            last_fd = self.history[-1].get("funder_data") or {}
+            allocations = last_fd.get("allocations") or {}
+            funder_types = last_fd.get("funder_types") or {}
+            received = 0.0
+            active_types = set()
+            for funder_name, provider_allocs in allocations.items():
+                amt = (provider_allocs or {}).get(provider_name, 0.0) or 0.0
+                if amt > 0:
+                    received += amt
+                    ft = funder_types.get(funder_name)
+                    if ft:
+                        active_types.add(ft)
+            all_types = sorted(set(funder_types.values()))
+            abstained = sorted(set(all_types) - active_types)
+            context["funding_this_month"] = received
+            context["funder_types_active"] = sorted(active_types)
+            context["funder_types_abstained"] = abstained
+            context["funder_types_all"] = all_types
+        cumulative = 0.0
+        for h in self.history:
+            for provider_allocs in ((h.get("funder_data") or {}).get("allocations") or {}).values():
+                cumulative += (provider_allocs or {}).get(provider_name, 0.0) or 0.0
+        context["funding_cumulative"] = cumulative
+
+        # Prior-round inferred benchmark weights (for belief-compression in prompt).
+        # Lets the builder show "What Your Team Thinks" only for freshly-updated beliefs.
+        if len(self.history) >= 2:
+            prior_ibw = self.history[-2].get("inferred_benchmark_weights") or {}
+            context["inferred_benchmark_weights_prev"] = prior_ibw.get(provider_name, {})
+        else:
+            context["inferred_benchmark_weights_prev"] = {}
+
         # Include reasoning memory depth for LLM prompt truncation
         context["reasoning_memory_depth"] = 2
         context["benchmark_orientation_mode"] = self.config.benchmark_orientation_mode
@@ -1756,6 +1841,12 @@ class EvalEcosystemSimulation:
 
             # Regulator observes ecosystem state (public signals only —
             # does NOT receive consumer_satisfaction or validity_correlation)
+            # public_comms: each provider's most recent announcement, if any.
+            provider_public_comms = {}
+            for p in self.providers:
+                pcs = p.public_state.public_comms
+                if pcs:
+                    provider_public_comms[p.name] = pcs[-1]
             regulator.observe(
                 leaderboard=leaderboard,
                 round_num=round_num,
@@ -1763,6 +1854,7 @@ class EvalEcosystemSimulation:
                 market_shares=consumer_data.get("market_shares"),
                 incidents=incidents,
                 open_source_providers=open_source_providers,
+                public_comms=provider_public_comms,
             )
 
             # Regulator reflects on observations
@@ -1832,6 +1924,7 @@ class EvalEcosystemSimulation:
                 regulator_data["interventions"].append({
                     "regulator": regulator.name,
                     "type": intervention_type,
+                    "provider": intervention.get("provider"),
                     "details": intervention.get("details"),
                 })
 
@@ -1967,8 +2060,11 @@ class EvalEcosystemSimulation:
             media_headlines=media_headlines,
             saturation_states=obs["saturation_states"],
             available_pool=obs.get("available_pool", []),
-            retired_benchmarks=obs.get("retired_benchmarks", []),
+            retired_benchmarks_enriched=obs.get("retired_benchmarks_enriched", []),
             current_round=round_num,
+            prior_decisions=obs.get("prior_decisions", []),
+            introduction_metadata=obs.get("introduction_metadata", {}),
+            active_regulations=obs.get("active_regulations", []),
             verbose=self.config.verbose,
         )
 
@@ -1984,6 +2080,10 @@ class EvalEcosystemSimulation:
                 new_bm = self.evaluator._create_and_register_benchmark(
                     round_num, f"llm_dynamic:{bm_name}", pool_config=pool_config,
                 )
+                # Attach reasoning to the introduction_history entry just
+                # written so later prompts can surface it under "this team".
+                if new_bm and self.evaluator.introduction_history:
+                    self.evaluator.introduction_history[-1]["reasoning"] = reasoning
                 if new_bm and self.config.verbose:
                     print(f"  [Evaluator Dynamic/LLM] Introduced '{bm_name}'. Reason: {reasoning[:100]}")
             else:
@@ -1991,11 +2091,22 @@ class EvalEcosystemSimulation:
                 decision = {"action": "none", "benchmark_name": ""}
                 reasoning = f"(invalid pool name '{bm_name}') {reasoning}"
         elif action == "retire" and bm_name:
-            retired = self.evaluator.retire_benchmark(round_num, bm_name)
+            retire_reason = f"llm: {reasoning[:80]}" if reasoning else "llm decision"
+            retired = self.evaluator.retire_benchmark(
+                round_num, bm_name, reason=retire_reason
+            )
             if retired and self.config.verbose:
                 print(f"  [Evaluator Dynamic/LLM] Retired '{retired}'. Reason: {reasoning[:100]}")
         elif self.config.verbose and action not in ("none", ""):
             print(f"  [Evaluator Dynamic/LLM] action={action}, name={bm_name}, reason: {reasoning[:100]}")
+
+        # Log this decision so the next LLM call sees it under "Prior Quarterly Decisions".
+        self.evaluator._dynamic_llm_decisions.append({
+            "round": round_num,
+            "action": decision.get("action", "none"),
+            "benchmark_name": decision.get("benchmark_name", ""),
+            "reasoning": reasoning or "",
+        })
 
         self._last_evaluator_reasoning = reasoning
         self._last_evaluator_decision = decision

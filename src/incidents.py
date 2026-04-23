@@ -248,10 +248,14 @@ class IncidentGenerator:
         market_share = market_shares.get(provider_name, 0.0)
         import math
         market_size_factor = math.sqrt(total_market_size)  # sqrt to dampen
-        exposure_multiplier = (0.5 + (market_share * 1.5)) * market_size_factor
+        exposure_multiplier = (0.3 + (market_share * 1.5)) * market_size_factor
         # More users = more incidents discovered
-        # market_share=0.1 -> multiplier=0.65
-        # market_share=0.5 -> multiplier=1.25
+        # market_share=0.05 -> multiplier=0.375 (small providers face less over-tax)
+        # market_share=0.1  -> multiplier=0.45
+        # market_share=0.5  -> multiplier=1.05
+        # Floor reduced from 0.5 to 0.3 (session 49d+) — 0.5 over-taxed small providers
+        # relative to share-proportional incident risk; 0.3 still provides a baseline
+        # "even a niche provider faces some scrutiny" floor without dominating.
 
         # Factor 3: Incident history escalation
         # Prior major/critical incidents signal safety culture degradation and

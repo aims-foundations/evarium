@@ -60,11 +60,13 @@ CONDITION_LABELS = {
 }
 
 CONDITION_COLORS = {
-    "public_only":       "#808080",
-    "baseline":          "#4472C4",
-    "private_dominant":  "#ED7D31",
-    "private_only":      "#C00000",
-    "iid_holdout":       "#7030A0",
+    # Sequential blue scale: lighter = more public, darker = more private.
+    "public_only":       "#c6dbef",
+    "baseline":          "#6baed6",
+    "private_dominant":  "#2171b5",
+    "private_only":      "#08306b",
+    # iid_holdout sits off the privacy axis (ablation); distinct contrast color.
+    "iid_holdout":       "#d94801",
 }
 
 CONDITION_LINESTYLES = {
