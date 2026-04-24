@@ -1,5 +1,9 @@
 # TODO
 
+## Open threads to raise with collaborators
+
+- [ ] **Interview integration in §5.3 Validation** — how should practitioner interviews enter the paper? Abstract + §3 mention them as input to framework construction; §5.3 Validation alludes to them as a design-grounding source but defers specifics. Options: (a) separate appendix stub listing practitioner roles + which design choices each informed; (b) paragraph in §3 intro about interview methodology; (c) defer to follow-on paper. Open thread; needs collaborator input before writing.
+
 ## Paper (NeurIPS)
 
 - [ ] **Sync `docs/references.md` with `overleaf/references.bib`** — references.md has accumulated citations across sessions (market growth, consumer, regulator, funder, benchmark-privacy / Singh 2024 / Dominguez-Olmedo 2024 / Xu 2024 / Deng 2024 / Epoch AI data / Kaggle LLM leaderboard). Sync pass to bib; verify `\cite{}` calls in Appendix C resolve.
@@ -16,11 +20,18 @@
 - [ ] **Premium-access axis (future benchmark-sponsorship + eval-as-company ablations)** — implement `premium_pre_access` (simulates N rounds of public-weight observations at t=0, sharpening initial `inferred_weights[b]`) and `premium_submissions_per_round` (best-of-M scoring). Orthogonal to the 5-condition primary set.
 - [ ] **Private-benchmark asynchrony sensitivity (deferred)** — primary ablations use global K=3 (F1: all providers × benchmarks synchronized). Optional sensitivity ablation with per-provider asynchronous release cadence (Fix-C deterministic + gap-level jitter, or F3 Bernoulli per round with p=1/K_p) to verify qualitative findings don't depend on synchronized releases. See session-38 memo.
 - [ ] **Revise abstract** — rework to reflect current paper framing (ecosystem lens, session-49 §5 reorganization around privacy + eval_as_company, softened seed-sensitive claims).
+- [ ] **Redo Appendix H** — comprehensive LLM + heuristic results section needs full rewrite once Tier 1–3 runs land. Current content is session-44-era (21 LLM runs, 18-condition heuristic matrix, volcano/forest/pathway-scatter plots) and no longer matches the paper's results story after the §5 privacy+eval_as_company pivot. Restructure plan: H.1 heuristic methodology (no runs needed); H.2 privacy ladder extended (existing data); H.3 eval-as-company cross-mode (batch 1); H.4 Tier 2 ablation sweep (batch 2); H.5 face-validity cross-mode (batch 3 + Tier 1 EV1/EV2); H.6 methodological caveats (salvage from current).
+- [ ] **Heuristic batch 1: eval-as-company N=30** — single condition + matched baseline, 40 rounds, ~2 hr. Enables §5.3 cross-mode panel. Expect p=0.20 directional effect (per session 49b); publishable finding is "business-model effect is LLM-reasoning-dependent." Populates App H.3.
+- [ ] **Heuristic batch 2: Tier 2 ablations N=30** — 14 conditions × 30 seeds × 40 rounds (~1 day). Converts Tier 2 from directional LLM × 2 seeds into distributional table. Populates App H.4. Defer until Tier 1 LLM lands so we know which ablations are worth including (may cut half).
+- [ ] **Heuristic batch 3: EV2 EU AI Act N=30** — 1 condition × 30 seeds × 40 rounds. Face-validity companion to LLM EV1/EV2 runs. Populates App H.5 cross-mode.
+- [ ] **Pre-submission seed audit** — verify all `N{=}X` and seed-range references in paper match what actually ran. Current known inconsistencies: `sections/5exp.tex:4` says N=5; `5exp.tex:63,105` say N=3; Appendix H and `docs/experiment_plan.md` now say N=6 (seeds 42-47). Don't resolve until runs land — pick whichever matches ground truth.
+- [ ] **Limitations pass (main body vs appendix)** — rethink what belongs in main body §6/§5 scope paragraph vs Appendix G (scope). Substantive changes expected (not just relocation). Current split is ad-hoc across §5.4 scope paragraph, G_scope limitations, and the orphan 6scope.tex.
 - [ ] **Main-body trim** — currently ~14.5 pp; target NeurIPS 10 pp. Heaviest remaining: Related Work (3.3pp), Simulation (4.0pp).
 - [ ] **Dangling references** — `\ref` labels may be broken after restructuring; full pass needed.
 - [ ] **Missing bib entries** — Add: singh2025leaderboard, zhou2026pimmur, bick2024rapid, bachmann2023firms, rhee2006liability, hardy2024benchmarks, dulleck2006credence.
 - [ ] **Expert interviews** — mentioned in contributions; not conducted. Ties to validation workstream.
 - [ ] **Commit pending sim + overleaf changes** — flagged across multiple sessions.
+- [ ] **Appendix K refresh (Sonnet vs Opus) when Tier 1 Opus ladder completes** — re-run full playbook in `docs/sonnet_vs_opus_appendix_playbook.md` once batch 3a/3b lands. Current draft (2026-04-24) covers 4 matched pairs: `baseline@s42`, `baseline@s43`, `private_dominant@s42`, `private_only@s42`. Refresh adds `public_only@s42` + `iid_holdout@s42` Opus (→ full seed-42 ladder). Re-run: `python -m scripts.plots.paper.sonnet_vs_opus` then `python -m scripts.tag_reasoning_frames` then re-run plots, copy PDFs to `overleaf/figures/`, update Table K.1, K.3 percentages, K.4 wall-clock numbers in `overleaf/appendix/K_sonnet_opus.tex`.
 
 ## Aggregation Plot Readability (session 26)
 

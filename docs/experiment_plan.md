@@ -1,8 +1,84 @@
 # Experiment Plan
 
-**Last updated:** 2026-04-23 (session 49d end — includes post-identity validation + media/incident tweaks + E4 calibration decision)
+**Last updated:** 2026-04-24 (session 51: concrete launch plan added for remaining $400 budget; current state reflects post-overnight run inventory)
 
 This doc lists the specific runs the paper needs and their current status. It is anchored to the case-studies bank (`docs/case_studies/README.md`) rather than to phase-numbered abstractions. The prior `EXPERIMENT_PLAN.md` (Qwen / 30-round / 15×3 structure) has been retired to `archive/EXPERIMENT_PLAN_phase-structure.md`.
+
+## Current state (post-session 51)
+
+**Spent to date:** ~$300 across 37 runs. **Remaining budget:** ~$400.
+
+Completed overnight runs (`sandbox/experiments/`):
+
+| Batch | Conditions | Seeds present | Runs |
+|---|---|---|---|
+| `_core_privacy` Sonnet | public_only / baseline / private_dominant / private_only / iid_holdout | s42–s45 (non-baseline); s42–s46 (baseline) | 21 |
+| `_core_privacy` Opus | baseline s42–s43; private_dominant/private_only/iid_holdout/public_only s42 | — | 6 |
+| `_core_evalcompany` Sonnet | eval_as_company | s42, s43 | 2 |
+| `_tier2_ablations` Sonnet | 7 ablations (no_funders/no_regulator/no_incidents/no_media/no_opensource/initial_uniform_capability/homogeneous_consumers) | s42 only | 7 |
+| `_ev1_smoke` Sonnet | ev1_deepseek_shock | s42 only | 1 |
+| **Total** | | | **37** |
+
+**Still missing to complete the planned Tier 1 privacy ladder at N=6 (Sonnet):** public_only s46+s47, baseline s47, private_dominant s46+s47, private_only s46+s47, iid_holdout s46+s47 = **9 runs**.
+
+## Session 51+ launch plan — $400 budget, five batches
+
+Five targeted batches in priority order. All assume Sonnet 4.6 unless noted. Batches 2+ are **gated on committing session-48-through-51 sim+paper changes first** (see "Blocking dependencies" below).
+
+### Batch 1 — Fill privacy ladder to N=6 (9 runs, $90–135)
+Parallelizable with nothing else pending. Upgrades §5.2 headline claim from N=4–5 to N=6 clean.
+
+| Condition | New seeds |
+|---|---|
+| public_only | s46, s47 |
+| baseline | s47 |
+| private_dominant | s46, s47 |
+| private_only | s46, s47 |
+| iid_holdout | s46, s47 |
+
+**Decision gate:** after Batch 1 completes, re-run `scripts/plots/per_benchmark_core_privacy.py` and verify the 9/11 cross-mode sign-agreement claim still holds, monotone HHI compression still holds ($0.46 \rightarrow 0.34$ at N=6), and no single new seed produces an outlier run that flips a sign. If any of those fail, investigate before continuing.
+
+### Batch 2 — E2a EV1 DeepSeek multi-seed (6 runs, $60–90)
+One condition, seeds 42–47. Promotes exogenous-shock face validity from smoke-only (currently `_ev1_smoke` at s42) to a multi-seed claim. Paired controls: matched `baseline_s4X_sonnet` already present in `_core_privacy`.
+
+**Decision gate:** verify shock propagates through actor reasoning in ≥ 5/6 seeds (verbatim narrative citation in provider or funder traces, plus R&D rebalance +3–9pp within 3 rounds on matched controls). If ≤ 4/6, defer Batch 3 until the shock plumbing is debugged.
+
+### Batch 3 — E2b EV2 EU AI Act staged (6 runs, $60–90)
+One condition (staged regulatory escalation at R20/R26/R32), seeds 42–47. Different shock archetype than EV1 — tests whether provider response to *regulator* shocks differs from provider response to *competitor* shocks. Doubles the face-validity evidence base.
+
+**Decision gate:** confirm staged-shock rounds propagate into regulator reasoning AND provider portfolio reallocation (not just one). If only one layer responds, note as limitation in App E Internal-Subjective.
+
+### Batch 4 — Tier 2 ablation s43 replicates (7 runs, $70–105)
+All 7 ablations at seed 43 only (s42 already run). Upgrades App F ablation-sweep from N=1 to N=2 directional; specifically tests whether the Mirage-wins-under-`initial_uniform_capability` finding (seed-42-only, currently flagged as "mode-dependent") replicates or is s42-specific.
+
+**Decision gate:** if `initial_uniform_capability` s43 shows OpenCore winning (matching heuristic-layer prediction) or a third provider, the App H narrative needs a seed-sensitivity caveat. If s43 also produces Mirage, the mode-dependent finding is more defensible.
+
+### Batch 5 — CS2 transparency mandate 1-seed smoke (1 run + dev, $10–15 + ~60 LOC dev)
+Only if the transparency-mandate lever is implemented (~60 LOC in `src/actors/regulator.py` per case-study bank). Single-seed smoke (s42) to verify the disclose-vs-window-dress mechanism shows up at all in LLM reasoning. Does **not** let the paper make a CS2 claim — but lets §5.4 case-studies table caption promote CS2 from "future work" to "preliminary implementation, smoke only".
+
+**Decision gate:** if smoke shows provider reasoning explicitly engages the disclosure tradeoff, CS2 becomes a viable post-deadline followup. If providers ignore the lever, defer CS2 indefinitely.
+
+### Batch totals
+
+| Batch | Runs | Cost (midpoint) | Wall-clock @ 4-parallel |
+|---|---|---|---|
+| 1 Privacy ladder fill | 9 | $110 | ~2h |
+| 2 E2a EV1 multi-seed | 6 | $75 | ~1.5h |
+| 3 E2b EV2 multi-seed | 6 | $75 | ~1.5h |
+| 4 Tier 2 s43 replicates | 7 | $85 | ~2h |
+| 5 CS2 smoke (optional) | 1 | $12 | ~30m |
+| **Total (all 5)** | **29** | **~$357** | **~7h + dev for B5** |
+
+Fits $400 budget with ~$40 headroom for re-runs if any batch has a failure that requires a retry.
+
+## What we're explicitly NOT buying with this budget
+
+- **More Opus runs.** Existing 6 paired Opus points at s42 + baseline s43 is a defensible robustness story. Cost-per-additional-claim is poor at this margin.
+- **E8 eval_as_company scale-up.** Existing N=2 "mode-dependent finding" (ΔHHI = −0.029 LLM vs +0.041 heuristic, Apex share via throughput not safety) is a cleaner paper claim than a noisier N=6.
+- **Longer horizons (>40 rounds).** Calibrated cadence choice; extending doesn't strengthen a claim.
+- **Homogeneous-consumers × privacy-ladder interaction.** Interesting robustness check but lower marginal value than the 5 batches above.
+
+---
 
 ## Context
 
@@ -31,11 +107,11 @@ Exogenous event validation (`docs/exogenous_event_validation.md`) is Tier 1 — 
 
 ## Tier 1 (MVP core) — 36 LLM runs
 
-### E1 — LLM privacy ladder (5 conditions × 5 seeds each)
+### E1 — LLM privacy ladder (5 conditions × 6 seeds each)
 
 **Conditions:** `public_only`, `baseline`, `private_dominant`, `private_only`, `iid_holdout`.
-**Seeds:** 101-105.
-**Runs:** 25.
+**Seeds:** 42-47.
+**Runs:** 30.
 **Purpose:** CS1 §5.2 primary claim — adversarial privacy compresses |score − satisfaction gap| monotonically; `iid_holdout` isolates weight-distance channel from noise+lag.
 **Cross-reference:** heuristic N=30 × 9 conditions already at `heuristic_session49/`.
 
@@ -43,15 +119,15 @@ Exogenous event validation (`docs/exogenous_event_validation.md`) is Tier 1 — 
 
 **Prereq:** `recent_exogenous_events` prompt-field plumbing (~10-20 LOC) in `src/actors/{model_provider,regulator,funder}.py`.
 
-- **E2-smoke — 1-seed EV1 DeepSeek R25 shock**. Seed 101. Purpose: verify shock mechanism propagates before committing to 5 seeds. Gate: if EV1 shock is not visible in actor reasoning at N=1, de-scope E2a/E2b until plumbing is fixed.
-- **E2a — EV1 DeepSeek R25 (post-smoke)**. Seeds 101-105. Paired controls: E1 `baseline` at matched seeds.
-- **E2b — EV2 EU AI Act staged R20/R26/R32**. Seeds 101-105. Paired controls: E1 `baseline` at matched seeds. Gate: only after EV1 harness validates.
+- **E2-smoke — 1-seed EV1 DeepSeek R25 shock**. Seed 42. Purpose: verify shock mechanism propagates before committing to 6 seeds. Gate: if EV1 shock is not visible in actor reasoning at N=1, de-scope E2a/E2b until plumbing is fixed.
+- **E2a — EV1 DeepSeek R25 (post-smoke)**. Seeds 42-47. Paired controls: E1 `baseline` at matched seeds.
+- **E2b — EV2 EU AI Act staged R20/R26/R32**. Seeds 42-47. Paired controls: E1 `baseline` at matched seeds. Gate: only after EV1 harness validates.
 
-**Runs:** 1 + 5 + 5 = 11 (1 smoke counts toward the 11; if smoke fails, stop at 1).
+**Runs:** 1 + 6 + 6 = 13 (1 smoke counts toward the 13; if smoke fails, stop at 1).
 
 ### Tier 1 gate decision
 
-After E1 + E2 complete, verify post-49d findings replicate across seeds 101-105:
+After E1 + E2 complete, verify post-49d findings replicate across seeds 42-47:
 - Apex archetype drift resolution (incident-window sustains, late-run partial regression)
 - OpenCore-as-safety-leader pattern
 - VC-VC r < 0.5
@@ -66,7 +142,7 @@ If all directional findings replicate → launch Tier 2. If multiple fail → ro
 
 ### E3 — Ablation sweep (7 conditions × 2 seeds each)
 
-Seeds 101-102. Purpose: mechanism decomposition appendix + post-49d surprise investigations.
+Seeds 42-43. Purpose: mechanism decomposition appendix + post-49d surprise investigations.
 
 | Ablation | Addresses |
 |---|---|
@@ -82,22 +158,22 @@ Seeds 101-102. Purpose: mechanism decomposition appendix + post-49d surprise inv
 
 ### E4 — Dynamic evaluator (decided: single-seed artifact only)
 
-Single-seed calibration run complete (`dynamic_evaluator_40r_s101`, seed=101, 40 rounds). Evaluator LLM produced coherent reasoning with memory use + self-correction (R20 retirement of R13-introduced Agentic Tasks) + leaderboard-adoption correlation tracking for decision gating. Suite evolved 4→6 benchmarks with sensible domain coverage. Reasoning traces are paper-worthy as illustrative Appendix content.
+Single-seed calibration run complete (`dynamic_evaluator_40r_s101`, seed=101, 40 rounds). Note: seed=101 predates the seeds 42-47 lock-in; retained as-is for the Appendix artifact since re-running at a seed-range-42-47 value would not change the single-seed claim. Evaluator LLM produced coherent reasoning with memory use + self-correction (R20 retirement of R13-introduced Agentic Tasks) + leaderboard-adoption correlation tracking for decision gating. Suite evolved 4→6 benchmarks with sensible domain coverage. Reasoning traces are paper-worthy as illustrative Appendix content.
 
 **Decision:** retain as single-seed Appendix artifact (reasoning trace + curriculum evolution); skip multi-seed. Rationale: action space (create/retire/none × pool selection) is constrained enough that a well-designed fixed sequence could plausibly match the suite evolution; multi-seed confirms replicability of reasoning but doesn't demonstrate LLM > fixed_sequence on outcome metrics. Proper paper claim would require a 3-mode comparison (LLM dynamic vs randomized_pool vs fixed_sequence at matched seeds) — out of scope this deadline.
 
 **Runs:** 0 additional. Seed 101 run stays in `_llm_apr23_v1/llm/dynamic_evaluator_40r_s101/`.
 
-## Tier 3 (deepening — after Tier 1 complete) — 20 LLM runs + dev
+## Tier 3 (deepening — after Tier 1 complete) — 24 LLM runs + dev
 
 | Experiment | Runs | Model | Purpose |
 |---|---|---|---|
-| CS3 media shadow (after ~50 LOC) × 5 seeds | 5 | Sonnet | §5.4 |
-| CS2 transparency mandate (after ~60 LOC) × 5 seeds | 5 | Sonnet | §5.3 |
-| E8 eval_as_company × 5 seeds | 5 | Sonnet | App H CS4 |
-| E9 Opus baseline paired (robustness) × 5 seeds | 5 | **Opus 4.6** | Robustness appendix — paired t-test vs E1 `baseline` at matched seeds 101-105 |
+| CS3 media shadow (after ~50 LOC) × 6 seeds | 6 | Sonnet | §5.4 |
+| CS2 transparency mandate (after ~60 LOC) × 6 seeds | 6 | Sonnet | §5.3 |
+| E8 eval_as_company × 6 seeds | 6 | Sonnet | App H CS4 |
+| E9 Opus baseline paired (robustness) × 6 seeds | 6 | **Opus 4.6** | Robustness appendix — paired t-test vs E1 `baseline` at matched seeds 42-47 |
 
-**Runs:** 20. Sonnet: 15, Opus: 5.
+**Runs:** 24. Sonnet: 18, Opus: 6.
 
 ### Tier 3 gating
 
@@ -124,18 +200,18 @@ Ordered by paper-claim value when deadline known. Typical order:
 
 | Layer | Sonnet runs | Opus runs | Cost estimate | Wall-clock |
 |---|---|---|---|---|
-| Tier 1 | 36 | 0 | $270-540 | ~12-15h |
+| Tier 1 | 43 | 0 | $320-650 | ~14-18h |
 | Tier 2 | 14 | 0 | $100-200 | ~5h |
-| Tier 3 | 15 | 5 | $250-550 | ~10h + 2-3 days dev |
-| **Total** | **65** | **5** | **~$600-1,300** | **~30h + dev** |
+| Tier 3 | 18 | 6 | $300-660 | ~12h + 2-3 days dev |
+| **Total** | **75** | **6** | **~$720-1,510** | **~32h + dev** |
 
 E4 dynamic_evaluator run at seed=101 already complete (single-seed Appendix artifact; not counted in totals). 3-4 parallel streams → ~10-15h wall-clock total for all LLM runs.
 
 ## Seed discipline
 
-- **Seeds 101-105:** all Tier 1 and Tier 3 runs (enables paired tests across conditions + model families)
-- **Seeds 101-102:** Tier 2 ablations (N=2 directional)
-- **Seeds 1, 2:** earlier post-49d evidence runs; NOT used for Tier 1+ to avoid selection contamination
+- **Seeds 42-47:** all Tier 1 and Tier 3 runs (N=6; enables paired tests across conditions + model families)
+- **Seeds 42-43:** Tier 2 ablations (N=2 directional)
+- **Seeds 1, 2, 101:** earlier post-49d evidence runs (101 is the retained dynamic-evaluator single-seed artifact); NOT used for Tier 1+ to avoid selection contamination
 - Seeds were selected deterministically before running — resistant to cherry-picking accusations.
 
 ## Decision gates
@@ -143,15 +219,19 @@ E4 dynamic_evaluator run at seed=101 already complete (single-seed Appendix arti
 | Gate | Decision |
 |---|---|
 | After E1 | Does privacy-ladder monotonic compression replicate? If no, investigate; if yes, launch Tier 2. |
-| After E2-smoke | Does EV1 shock propagate through actor reasoning? If no, defer E2a/E2b until plumbing fix; if yes, scale to 5 seeds. |
+| After E2-smoke | Does EV1 shock propagate through actor reasoning? If no, defer E2a/E2b until plumbing fix; if yes, scale to 6 seeds. |
 | After dynamic_evaluator seed=101 | Is evaluator agency paper-worthy? If yes, add to Tier 2 (+3 seeds); if no, defer post-deadline. |
 | After Tier 1 complete | Deadline-aware Tier 3 ordering. If deadline tight, drop CS2 or E9 Opus. |
 
-## Blocking dependencies (must resolve before Tier 1 launch)
+## Blocking dependencies
 
-1. **Commit session-48 + 49/a/b/c/d/e work** — so run configs are reproducible from git history
-2. **Budget approval** for ~$600-1300 Anthropic API spend
-3. **`recent_exogenous_events` plumbing** — for E2 (not E1)
+### Resolved
+1. **Session 48-49 commits** — still pending as of session 51; required before Batches 2+ launch.
+2. **`recent_exogenous_events` plumbing** — ✓ landed; `_ev1_smoke` validates the mechanism at s42.
+
+### Open
+1. **Commit session-48 through session-51 work** (sim + paper) — blocks Batch 2 onward.
+2. **CS2 lever implementation (~60 LOC)** — blocks Batch 5 only; optional for this cycle.
 
 ## Storage policy
 

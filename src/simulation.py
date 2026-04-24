@@ -176,7 +176,7 @@ class SimulationConfig:
     #      cadence across 24 Epoch AI benchmarks × 8 labs
     #      (external-validation/scripts/analyze_k_cadence.py).
     # See docs/stakeholders.md "Private benchmark scoring" and Appendix C.
-    evaluation_lag: int = 0
+    evaluation_lag: int = 3
 
     # Framing uncertainty on provider priors at benchmark introduction.
     # inferred_benchmark_weights[b] is initialized as:
@@ -246,6 +246,14 @@ class SimulationConfig:
 
     # Capability baseline shift (applied to provider initial values and absolute thresholds)
     capability_shift: float = 0.0
+
+    # Exogenous shocks (list, one entry per event). Each dict:
+    #   type: str (registry key, e.g. "deepseek_r1")
+    #   round: int (one-round state perturbation)
+    #   active_rounds: list[int] (rounds in which narrative is injected into LLM prompts)
+    #   narrative: str (natural-language description for actors' planning prompts)
+    #   params: dict (handler-specific, e.g. {"target_pct_of_leader": 0.95, "funding_bump_usd": 2e8})
+    exogenous_shocks: Optional[list] = None
 
     # Output
     output_dir: Optional[str] = None
@@ -741,6 +749,72 @@ class EvalEcosystemSimulation:
                 funding_efficiency=fc.get("funding_efficiency", 1.0),
             )
 
+    def _apply_exogenous_shocks(self, round_num: int):
+        """One-round state perturbation for each configured shock matching this round.
+
+        Shock dict schema:
+          type: registry key (handler dispatches by this)
+          round: int — perturbation fires once on this round
+          params: dict (handler-specific)
+        Narrative injection (see _active_shock_narrative) is driven by active_rounds,
+        independently of the state-perturbation round.
+        """
+        shocks = self.config.exogenous_shocks
+        if not shocks:
+            return
+        for shock in shocks:
+            if shock.get("round") != round_num:
+                continue
+            stype = shock.get("type")
+            if stype == "deepseek_r1":
+                self._shock_deepseek_r1(shock, round_num)
+            # Future: elif stype == "eu_ai_act": ...
+
+    def _shock_deepseek_r1(self, shock: dict, round_num: int):
+        """EV1 DeepSeek R1: bump OpenCore reasoning/knowledge/coding to target% of leader.
+        State perturbation is deliberately minimal (narrative injection is the
+        load-bearing channel; see docs/exogenous_event_validation.md §5.1).
+        """
+        if "OpenCore" not in self.ground_truth:
+            return
+        params = shock.get("params", {})
+        target_pct = float(params.get("target_pct_of_leader", 0.95))
+        dims_to_bump = params.get("dims", ["reasoning", "knowledge", "coding"])
+
+        oc_gt = self.ground_truth["OpenCore"]
+        provider_names = {p.name for p in self.providers}
+        bumps = {}
+        for dim in dims_to_bump:
+            leader_cap = max(
+                (gt.capability_vector.get(dim, 0.0)
+                 for name, gt in self.ground_truth.items()
+                 if name != "OpenCore" and name in provider_names
+                 and hasattr(gt, "capability_vector")),
+                default=0.0,
+            )
+            new_cap = min(1.0, target_pct * leader_cap)
+            old_cap = oc_gt.capability_vector.get(dim, 0.0)
+            if new_cap > old_cap:
+                oc_gt.capability_vector[dim] = new_cap
+                bumps[dim] = (old_cap, new_cap)
+
+        if self.config.verbose:
+            bump_str = ", ".join(f"{d}: {o:.3f}->{n:.3f}" for d, (o, n) in bumps.items())
+            print(f"  [R{round_num}] EV1 shock: OpenCore capability bumped ({bump_str})")
+
+    def _active_shock_narrative(self, round_num: int) -> Optional[str]:
+        """Return a concatenated narrative string for all shocks active this round, or None."""
+        shocks = self.config.exogenous_shocks
+        if not shocks:
+            return None
+        parts = []
+        for shock in shocks:
+            if round_num in shock.get("active_rounds", []):
+                narrative = shock.get("narrative", "")
+                if narrative:
+                    parts.append(narrative)
+        return "\n\n".join(parts) if parts else None
+
     def _update_ground_truth(self, provider_name: str, capability_gains: dict):
         """
         Apply per-dimension capability gains to provider's ground truth vector.
@@ -783,6 +857,10 @@ class EvalEcosystemSimulation:
         - Their OWN recent incidents (public record)
         """
         context = {}
+        # Exogenous event narrative (if any active this round) — visible to all actors
+        shock_narrative = self._active_shock_narrative(self.current_round)
+        if shock_narrative:
+            context["recent_exogenous_events"] = shock_narrative
         if self.history:
             last = self.history[-1]
             if "consumer_data" in last:
@@ -1022,6 +1100,11 @@ class EvalEcosystemSimulation:
 
         # Get funder allocation totals from previous round (additive budget model)
         provider_funding_totals = self._current_funder_data.get("provider_funding_totals", {})
+
+        # Exogenous shocks: one-round state perturbation (fires BEFORE providers plan,
+        # so they see the new state). Narrative injection into prompts is handled
+        # separately in each actor's context builder via _active_shock_narrative().
+        self._apply_exogenous_shocks(round_num)
 
         # Evaluator-as-company: track per-provider submission counts this round
         _submission_counts = {}
@@ -1860,6 +1943,9 @@ class EvalEcosystemSimulation:
             # Regulator reflects on observations
             regulator.reflect()
 
+            # Inject active exogenous-event narrative (read by regulator._plan_llm)
+            regulator._exogenous_narrative = self._active_shock_narrative(round_num)
+
             # Regulator plans intervention
             intervention = regulator.plan()
 
@@ -2243,6 +2329,9 @@ class EvalEcosystemSimulation:
 
             # Funder reflects on observations
             funder.reflect()
+
+            # Inject active exogenous-event narrative (read by funder._plan_llm)
+            funder._exogenous_narrative = self._active_shock_narrative(round_num)
 
             # Funder plans funding allocations
             allocations = funder.plan()

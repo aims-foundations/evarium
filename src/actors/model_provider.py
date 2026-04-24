@@ -675,6 +675,7 @@ class ModelProvider:
             funder_types_abstained=ctx.get("funder_types_abstained", []),
             funder_types_all=ctx.get("funder_types_all", []),
             inferred_benchmark_weights_prev=ctx.get("inferred_benchmark_weights_prev", {}),
+            recent_exogenous_events=ctx.get("recent_exogenous_events"),
         )
 
         # Detect fallback

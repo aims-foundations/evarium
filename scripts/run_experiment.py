@@ -44,6 +44,7 @@ _CONDITION_CHOICES = [
     "no_incidents",
     "bm_orientation_max", "bm_orientation_adjustable",
     "eval_as_company", "aligned_benchmarks",
+    "ev1_deepseek_shock",
     "fixed_market_size", "no_product_channels",
     "homogeneous_consumers",
     "initial_leader", "initial_duopoly", "initial_uniform",
@@ -80,6 +81,9 @@ _parser.add_argument("--mode", choices=["heuristic", "llm"], default=None,
                      help="Override llm_mode: 'heuristic' or 'llm' (default: use LLM['llm_mode'] in file)")
 _parser.add_argument("--provider", choices=["anthropic", "openai", "ollama", "gemini", "claudecode"], default=None,
                      help="LLM provider (only relevant in --mode llm; default: use LLM['provider'] in file)")
+_parser.add_argument("--model", type=str, default=None,
+                     help="LLM model id (e.g. claude-sonnet-4-6, claude-opus-4-6). Sets LLM_MODEL env var; "
+                          "takes precedence over any pre-set LLM_MODEL and LLM['model'] in file.")
 _parser.add_argument("--rounds", type=int, default=None,
                      help="Override number of rounds (default: use SIMULATION['n_rounds'] in file)")
 _parser.add_argument("--seed", type=int, default=None,
@@ -165,7 +169,7 @@ EXPERIMENT = {
 }
 
 LLM = {
-    "provider": "claudecode",   # claudecode | anthropic | openai | ollama | gemini
+    "provider": "anthropic",    # anthropic | claudecode | openai | ollama | gemini
     "llm_mode": True,            # LLM mode for providers + regulator + funders
     # Consumer LLM config
     "consumer_llm_mode": False,
@@ -650,6 +654,24 @@ def _apply_condition_overrides(condition: str, simulation: dict, experiment: dic
         extra_config["_discretionary_budgets"] = _disc_budgets
     elif condition == "aligned_benchmarks":
         extra_config["aligned_benchmarks"] = True
+    elif condition == "ev1_deepseek_shock":
+        # EV1: open-source frontier release at R25. See docs/exogenous_event_validation.md §5.1.
+        simulation["exogenous_shocks"] = [{
+            "type": "deepseek_r1",
+            "round": 25,
+            "active_rounds": [25, 26, 27],
+            "narrative": (
+                "An open-source model provider (OpenCore) has released a frontier model "
+                "this round, claiming performance parity with leading closed models at "
+                "roughly 10x lower training cost. Public weights are available. Industry "
+                "coverage is dominated by an \"efficiency over scale\" framing, with "
+                "commentary questioning the durability of incumbent cost moats."
+            ),
+            "params": {
+                "target_pct_of_leader": 0.95,
+                "dims": ["reasoning", "knowledge", "coding"],
+            },
+        }]
     elif condition == "fixed_market_size":
         extra_config["market_growth_rate"] = 0.0
     elif condition == "no_product_channels":
@@ -908,7 +930,7 @@ def run():
 
     os.environ["LLM_PROVIDER"] = LLM["provider"]
     # Override LLM_MODEL from config so .env model names don't bleed across providers.
-    # Precedence: explicit LLM_MODEL env (if already set, honor it) > LLM["model"] config > provider-default.
+    # Precedence: --model CLI flag > explicit LLM_MODEL env > LLM["model"] config > provider-default.
     _model_overrides = {
         "anthropic": "claude-sonnet-4-6",
         "openai": "gpt-4o",
@@ -916,7 +938,8 @@ def run():
         "gemini": "gemini-2.5-flash",
     }
     os.environ["LLM_MODEL"] = (
-        os.environ.get("LLM_MODEL")
+        _args.model
+        or os.environ.get("LLM_MODEL")
         or LLM.get("model")
         or _model_overrides.get(LLM["provider"], "")
     )
@@ -1074,6 +1097,7 @@ def run():
         enable_product_signal_quality=_extra_config.get("enable_product_signal_quality", True),
         enable_product_retention=_extra_config.get("enable_product_retention", True),
         dynamic_consumer_market=_extra_config.get("dynamic_consumer_market", SimulationConfig.dynamic_consumer_market),
+        exogenous_shocks=SIMULATION.get("exogenous_shocks"),
     )
 
     # --- Print banner ---

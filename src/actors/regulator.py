@@ -693,8 +693,12 @@ class Regulator:
             if lines:
                 comms_text = "\n".join(lines)
 
-        prompt = f"""It is month {round_num}.
+        # Exogenous event context (if an event is active this round)
+        shock_narrative = getattr(self, "_exogenous_narrative", None)
+        shock_block = f"\n**Recent Industry News:**\n{shock_narrative}\n" if shock_narrative else ""
 
+        prompt = f"""It is month {round_num}.
+{shock_block}
 **Your Policy Objectives:** {objectives}
 **Your Mandate:** {mandate_desc}
 

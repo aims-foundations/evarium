@@ -1050,6 +1050,7 @@ def _build_provider_planning_prompt(
     funder_types_abstained: Optional[list] = None,
     funder_types_all: Optional[list] = None,
     inferred_benchmark_weights_prev: Optional[dict] = None,
+    recent_exogenous_events: Optional[str] = None,
 ) -> str:
     """Build the planning prompt for a model provider."""
     competitor_public_comms = competitor_public_comms or {}
@@ -1063,6 +1064,11 @@ def _build_provider_planning_prompt(
     inferred_benchmark_weights_prev = inferred_benchmark_weights_prev or {}
 
     prompt = f"# Month {round_num} Strategy Review — {name}\n"
+
+    # Exogenous event context (if an event is active this round) — placed near top
+    # so it's visible before scores/state, but after the header so the month anchors.
+    if recent_exogenous_events:
+        prompt += f"\n## Recent Industry News\n\n{recent_exogenous_events}\n"
 
     # Cross-round strategy memos — prior commitments presented as-is.
     if recent_insights:
@@ -1328,6 +1334,7 @@ def llm_plan_provider(
     funder_types_abstained: Optional[list] = None,
     funder_types_all: Optional[list] = None,
     inferred_benchmark_weights_prev: Optional[dict] = None,
+    recent_exogenous_events: Optional[str] = None,
 ) -> dict:
     """Use LLM to decide provider portfolio and benchmark focus adjustments.
 
@@ -1387,6 +1394,7 @@ def llm_plan_provider(
         funder_types_abstained=funder_types_abstained,
         funder_types_all=funder_types_all,
         inferred_benchmark_weights_prev=inferred_benchmark_weights_prev,
+        recent_exogenous_events=recent_exogenous_events,
     )
 
     fail_safe = {
@@ -1460,6 +1468,7 @@ def create_funder_planning_prompt(
     regulator_interventions: Optional[list] = None,
     active_regulations: Optional[list] = None,
     cumulative_allocations: Optional[dict] = None,
+    recent_exogenous_events: Optional[str] = None,
 ) -> str:
     """Create a prompt for the funder to decide funding allocations.
 
@@ -1484,6 +1493,10 @@ def create_funder_planning_prompt(
     prompt = f"""# {name}
 Capital to deploy this month: ${total_capital:,.0f}
 """
+
+    # Exogenous event context (if an event is active this round) — placed near top
+    if recent_exogenous_events:
+        prompt += f"\n# Recent Industry News\n\n{recent_exogenous_events}\n"
 
     # Cross-round reasoning — truncated to 250 chars (was 120, which mangled trajectory)
     if recent_insights:
@@ -1611,6 +1624,7 @@ def llm_plan_funding(
     active_regulations: Optional[list] = None,
     cumulative_allocations: Optional[dict] = None,
     mission_statement: str = "",
+    recent_exogenous_events: Optional[str] = None,
     verbose: bool = False,
 ) -> tuple[dict, str]:
     """
@@ -1645,6 +1659,7 @@ def llm_plan_funding(
         regulator_interventions=regulator_interventions,
         active_regulations=active_regulations,
         cumulative_allocations=cumulative_allocations,
+        recent_exogenous_events=recent_exogenous_events,
     )
 
     # Default allocations (spread evenly)

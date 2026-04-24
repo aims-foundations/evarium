@@ -1,7 +1,7 @@
 """
 Single-run ecosystem-loop figure (paper §5.1).
 
-2x2 panel figure concretising the ecosystem loop on one LLM run:
+1x4 panel figure concretising the ecosystem loop on one LLM run:
   (a) market-share trajectories (stacked area)
   (b) incident + regulator-intervention timeline
   (c) portfolio allocations over time (rd solid, safety dotted; weighted mean bold)
@@ -35,7 +35,7 @@ from ..per_benchmark import per_benchmark_from_rows, dumbbell_from_df  # noqa: E
 
 
 SEVERITY_MARKERS = {"minor": ".", "moderate": "s", "major": "^", "critical": "X"}
-SEVERITY_SIZES = {"minor": 10, "moderate": 18, "major": 30, "critical": 45}
+SEVERITY_SIZES = {"minor": 28, "moderate": 52, "major": 88, "critical": 130}
 SEVERITY_COLORS = {"minor": "#AAAAAA", "moderate": "#E9C46A",
                    "major": "#E76F51", "critical": "#D62828"}
 
@@ -53,7 +53,7 @@ INTERVENTION_COLORS = {
     "emergency_investigation":      "#9B2226",
 }
 INTERVENTION_LW = {
-    a: 0.5 + 1.0 * (i / (len(ESCALATION_ORDER) - 1))
+    a: 1.2 + 1.8 * (i / (len(ESCALATION_ORDER) - 1))
     for i, a in enumerate(ESCALATION_ORDER)
 }
 INTERVENTION_LABELS = {
@@ -90,10 +90,10 @@ def _panel_market_share(ax, rounds, providers, p_colors):
         bottom += vals
     ax.set_xlim(rnds[0], rnds[-1])
     ax.set_ylim(0, max(1.0, bottom.max() * 1.02))
-    ax.set_title("(a) Market share", fontsize=9, loc="left", fontweight="bold")
-    ax.set_xlabel("Round", fontsize=7)
-    ax.set_ylabel("Share", fontsize=7)
-    ax.tick_params(labelsize=6)
+    ax.set_title("(a) Market share", fontsize=13, loc="left", fontweight="bold")
+    ax.set_xlabel("Round", fontsize=12)
+    ax.set_ylabel("Share", fontsize=12)
+    ax.tick_params(labelsize=10)
     ax.spines["top"].set_visible(False)
     ax.spines["right"].set_visible(False)
 
@@ -128,32 +128,14 @@ def _panel_incidents(ax, rounds, providers):
     rnds = [h["round"] for h in rounds]
     ax.set_xlim(rnds[0], rnds[-1])
     ax.set_yticks(range(len(providers)))
-    ax.set_yticklabels([p.split()[0] for p in providers], fontsize=6)
-    ax.set_title("(b) Incidents \\& regulator interventions",
-                 fontsize=9, loc="left", fontweight="bold")
-    ax.set_xlabel("Round", fontsize=7)
-    ax.tick_params(axis="x", labelsize=6)
+    ax.set_yticklabels([p.split()[0] for p in providers], fontsize=11)
+    ax.set_title("(b) Incidents \\& interventions",
+                 fontsize=13, loc="left", fontweight="bold")
+    ax.set_xlabel("Round", fontsize=12)
+    ax.tick_params(axis="x", labelsize=10)
     ax.spines["top"].set_visible(False)
     ax.spines["right"].set_visible(False)
-
-    sev_handles = [
-        mlines.Line2D([0], [0], marker=SEVERITY_MARKERS[s], color="w",
-                      markerfacecolor=SEVERITY_COLORS[s], markeredgecolor="black",
-                      markeredgewidth=0.3, markersize=SEVERITY_SIZES[s] ** 0.5,
-                      linestyle="None",
-                      label=f"{s} ({sev_counts.get(s, 0)})")
-        for s in ("minor", "moderate", "major", "critical")
-    ]
-    intv_handles = [
-        mlines.Line2D([0], [0], color=INTERVENTION_COLORS[a],
-                      linewidth=INTERVENTION_LW[a] + 0.2, alpha=0.8,
-                      linestyle="--", label=INTERVENTION_LABELS[a])
-        for a in ESCALATION_ORDER
-    ]
-    ax.legend(handles=sev_handles + intv_handles,
-              loc="upper left", bbox_to_anchor=(1.01, 1.02),
-              fontsize=5, frameon=False, handlelength=1.6,
-              handletextpad=0.4, borderaxespad=0.0, labelspacing=0.3)
+    return sev_counts
 
 
 # ---------- panel (c): allocations over time ----------
@@ -174,16 +156,14 @@ def _panel_allocations(ax, rounds, providers, portfolios, p_colors):
             label="mean safety")
     ax.set_xlim(0, T - 1)
     ax.set_ylim(0, 1)
-    ax.set_title("(c) Portfolio allocations (market-share-weighted mean in bold)",
-                 fontsize=9, loc="left", fontweight="bold")
-    ax.set_xlabel("Round", fontsize=7)
-    ax.set_ylabel("Allocation fraction", fontsize=7)
-    ax.tick_params(labelsize=6)
+    ax.set_title("(c) Portfolio allocations",
+                 fontsize=13, loc="left", fontweight="bold")
+    ax.set_xlabel("Round", fontsize=12)
+    ax.set_ylabel("Allocation fraction", fontsize=12)
+    ax.tick_params(labelsize=10)
     ax.grid(True, alpha=0.25, linewidth=0.4)
     ax.spines["top"].set_visible(False)
     ax.spines["right"].set_visible(False)
-    ax.legend(loc="upper left", bbox_to_anchor=(1.01, 1.02),
-              fontsize=6, frameon=False, handlelength=2.0)
 
 
 # ---------- panel (d): per-benchmark dumbbell ----------
@@ -207,16 +187,14 @@ def _panel_dumbbell(ax, rounds):
                    edgecolor="black", linewidth=0.5,
                    label="score" if i == 0 else None)
     ax.set_yticks(y_pos)
-    ax.set_yticklabels(g["benchmark"], fontsize=6)
+    ax.set_yticklabels(g["benchmark"], fontsize=10)
     ax.invert_yaxis()
-    ax.set_title(f"(d) Per-benchmark gap at round {rounds[-1]['round']}",
-                 fontsize=9, loc="left", fontweight="bold")
-    ax.set_xlabel("Value", fontsize=7)
-    ax.tick_params(axis="x", labelsize=6)
+    ax.set_title("(d) Per-benchmark gap",
+                 fontsize=13, loc="left", fontweight="bold")
+    ax.set_xlabel("Value", fontsize=12)
+    ax.tick_params(axis="x", labelsize=10)
     ax.spines["top"].set_visible(False)
     ax.spines["right"].set_visible(False)
-    ax.legend(loc="lower right", fontsize=5, frameon=False,
-              handletextpad=0.4, borderaxespad=0.3)
 
 
 def main(run_dir: Path, out_path: Path, show: bool = False):
@@ -226,26 +204,63 @@ def main(run_dir: Path, out_path: Path, show: bool = False):
     providers = sorted(providers, key=lambda p: -final_shares.get(p, 0.0))
     p_colors = get_provider_colors(providers)
 
-    fig, axes = plt.subplots(2, 2, figsize=(7.5, 5.0))
-    (ax_a, ax_b), (ax_c, ax_d) = axes
+    plt.rcParams["figure.constrained_layout.use"] = False
+    plt.rcParams["figure.autolayout"] = False
+
+    fig, axes = plt.subplots(1, 4, figsize=(14.0, 4.4),
+                             gridspec_kw={"wspace": 0.55,
+                                          "width_ratios": [1.0, 1.0, 1.0, 1.25]})
+    ax_a, ax_b, ax_c, ax_d = axes
 
     _panel_market_share(ax_a, rounds, providers, p_colors)
-    _panel_incidents(ax_b, rounds, providers)
+    sev_counts = _panel_incidents(ax_b, rounds, providers)
     _panel_allocations(ax_c, rounds, providers, portfolios, p_colors)
     _panel_dumbbell(ax_d, rounds)
 
-    # Shared provider legend at figure bottom
+    # Shared figure-level legend at bottom: providers | severity | interventions
     prov_handles = [
-        mlines.Line2D([0], [0], color=p_colors[p], linewidth=3,
-                      label=p)
+        mlines.Line2D([0], [0], color=p_colors[p], linewidth=3, label=p)
         for p in providers
     ]
-    fig.legend(handles=prov_handles, loc="lower center",
-               bbox_to_anchor=(0.5, -0.02), ncol=len(providers),
-               fontsize=7, frameon=False, handlelength=1.8,
-               columnspacing=1.2)
+    _leg_marker = {"minor": 7, "moderate": 10, "major": 12, "critical": 14}
+    sev_handles = [
+        mlines.Line2D([0], [0], marker=SEVERITY_MARKERS[s], color="w",
+                      markerfacecolor=SEVERITY_COLORS[s], markeredgecolor="black",
+                      markeredgewidth=0.5,
+                      markersize=_leg_marker[s],
+                      linestyle="None",
+                      label=f"{s} ({sev_counts.get(s, 0)})")
+        for s in ("minor", "moderate", "major", "critical")
+    ]
+    intv_handles = [
+        mlines.Line2D([0], [0], color=INTERVENTION_COLORS[a],
+                      linewidth=INTERVENTION_LW[a] + 0.8, alpha=0.85,
+                      linestyle="--", label=INTERVENTION_LABELS[a])
+        for a in ESCALATION_ORDER
+    ]
 
-    fig.tight_layout(rect=[0, 0.035, 1, 1.0])
+    fig.subplots_adjust(left=0.055, right=0.995, top=0.94, bottom=0.28,
+                        wspace=0.55)
+
+    # Row 1 (top): providers.  Row 2 (bottom): severity + intervention ladder.
+    leg1 = fig.legend(handles=prov_handles, loc="upper center",
+                      bbox_to_anchor=(0.5, 0.22), ncol=len(providers),
+                      fontsize=11, frameon=False, handlelength=1.8,
+                      columnspacing=1.8, title="Providers",
+                      title_fontsize=12)
+    leg2 = fig.legend(handles=sev_handles, loc="upper left",
+                      bbox_to_anchor=(0.06, 0.10), ncol=len(sev_handles),
+                      fontsize=11, frameon=False, handlelength=1.2,
+                      columnspacing=1.2, title="Incident severity",
+                      title_fontsize=12)
+    leg3 = fig.legend(handles=intv_handles, loc="upper left",
+                      bbox_to_anchor=(0.38, 0.10), ncol=len(intv_handles),
+                      fontsize=11, frameon=False, handlelength=1.6,
+                      columnspacing=1.2, title="Regulator action ladder",
+                      title_fontsize=12)
+    fig.add_artist(leg1)
+    fig.add_artist(leg2)
+    fig.add_artist(leg3)
 
     out_path = Path(out_path)
     out_path.parent.mkdir(parents=True, exist_ok=True)

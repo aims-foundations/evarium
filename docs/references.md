@@ -347,3 +347,10 @@ Sources grounding the private-benchmark mechanism: `holdout_fraction`, `evaluati
 
 - **Lu, X., Naik, A., Dhamnani, S., et al. (2024).** "Can Benchmarks Still Track Progress in LLMs?" Discussion of benchmark saturation, score-gaming patterns, and overfitting to leaderboard targets. Cited alongside Singh et al. and Dominguez-Olmedo et al. for the broader "evaluation gaming" framing of why public-holdout gaps matter.
 - **Manheim, D. & Garrabrant, S. (2018).** "Categorizing Variants of Goodhart's Law." *arXiv: 1803.04585.* Taxonomy of Goodhart-effect variants (regressional, causal, extremal, adversarial). Grounds our characterization of cosine-<1 as the "adversarial" variant (optimization pressure decouples proxy from target).
+
+---
+
+## Unsorted / to triage
+
+- **Chang Che (2026).** "A Year Inside ByteDance's AI Lab." *Substack*, https://changche.substack.com/p/a-year-inside-bytedances-ai-lab. First-person account of provider-side practices at a large Chinese AI lab; potentially relevant to provider-identity realism and internal evaluation-engineering dynamics. [Not yet integrated — triage after read.]
+- **Averi Institute (2026).** "Frontier AI Auditing & Related Legislation in the US: Landscape, Challenges, and a Path Forward." *Report*, https://www.averi.org/ourwork/frontier-ai-auditing-related-legislation-in-the-us-landscape-challenges-and-a-path-forward. US frontier-AI audit landscape and legislative status; potentially relevant to regulator actor calibration and auditing-related governance ablations. [Not yet integrated — triage after read.]

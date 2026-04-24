@@ -717,6 +717,7 @@ class Funder:
                 active_regulations=active_regulations,
                 cumulative_allocations=cumulative_allocations,
                 mission_statement=self.private_state.mission_statement,
+                recent_exogenous_events=getattr(self, "_exogenous_narrative", None),
                 verbose=False,
             )
 
