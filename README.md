@@ -38,7 +38,7 @@ Run `python scripts/run_experiment.py --help` for the full condition list.
 
 ## Reproducing paper results
 
-The dataset of all paper-supporting runs is hosted at: **`<DATASET_URL>`** (anonymous mirror during review; permanent location at camera-ready).
+The dataset of paper-supporting runs is withheld during double-blind review; the permanent location will be released at camera-ready.
 
 To regenerate plots or re-run a saved config:
 

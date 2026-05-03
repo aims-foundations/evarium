@@ -1,4 +1,4 @@
-"""Push hf_data_staging/ to the AIMS-Foundations HuggingFace dataset repo as a PR.
+"""Push hf_data_staging/ to the anonymous-review HuggingFace dataset repo as a PR.
 
 Default behavior is **additive**: uploads files in the local staging dir and
 leaves anything else on HF untouched. Use this for adding new runs over time.
@@ -11,7 +11,7 @@ glob-style relative to the repo root, e.g.:
 
 The push opens a draft PR on HF, not a direct push to main.
 
-Pre-flight: requires HF_TOKEN with write scope on aims-foundations/ecosystem.
+Pre-flight: requires HF_TOKEN with write scope on anon-author-B41C/evaluation-ecosystem-data.
 
 Workflow:
   1. python scripts/run_experiment.py --no-dev --bucket <X> ...   # produce runs into staging
@@ -38,7 +38,7 @@ from dotenv import load_dotenv
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 STAGING = PROJECT_ROOT / "hf_data_staging"
-HF_REPO_ID = "aims-foundations/ecosystem"
+HF_REPO_ID = "anon-author-B41C/evaluation-ecosystem-data"
 
 DEFAULT_COMMIT_MESSAGE = "Update dataset"
 DEFAULT_COMMIT_DESCRIPTION = """\

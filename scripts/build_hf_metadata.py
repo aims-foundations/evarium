@@ -22,7 +22,7 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 STAGING = PROJECT_ROOT / "hf_data_staging"
 
 DATASET_NAME = "AI Evaluation Ecosystem Simulation Dataset"
-HF_REPO_ID = "aims-foundations/ecosystem"
+HF_REPO_ID = "anon-author-B41C/evaluation-ecosystem-data"
 LICENSE = "CC-BY-4.0"
 
 PROVIDER_BY_MODEL = {
