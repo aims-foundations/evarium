@@ -11,7 +11,7 @@ A bank of case studies showing how the evaluation ecosystem simulation can be us
 | CS1 | [Privacy ladder](privacy_ladder.md) | Epoch private holdouts, FrontierMath-T4, SEAL-Safety | `holdout_fraction` + K=3 lag + cosine distance | **Live** | §5.2 |
 | CS2 | [Transparency mandate](transparency_mandate.md) | SB 53 (CA), NY RAISE, EU Art 55 | Rolling-mean disclosure of `safety_allocation` → consumer / funder / media | **Designed** | §5.3 |
 | CS3 | [Media-as-shadow-evaluator](media_shadow.md) | Sora/Devin virality, AI Twitter influence, `hardy2024benchmarks` | `media_trust` term in `expected_quality`; top-3 viral tweets in planner prompt | **Designed** | §5.4 |
-| CS4 | [Eval-as-company](eval_as_company.md) | LMArena, Leaderboard Illusion, Scale/SEAL | `evaluator_as_company` flag; best-of-N + early access | **Demoted** | App. H |
+| CS4 | [Evaluator-capture](evaluator_capture.md) | LMArena, Leaderboard Illusion, Scale/SEAL | `evaluator_as_company` flag; best-of-N + early access | **Demoted** | App. H |
 | CS5 | [Benchmark sponsorship](benchmark_sponsorship.md) | FrontierMath / OpenAI, ARC Prize, Epoch | Per-benchmark sponsor attribution; sponsor pre-access; scoring asymmetry | **Brainstorm** | — |
 | CS6 | [Audit & verification](audit_verification.md) | AISI, RAISE third-party audit, Anthropic RSP, AVERI landscape | 5 senses of "audit"; declare-then-verify game | **Brainstorm** | — |
 | CS7 | [EU vs US regulatory philosophy](eu_us_regulation.md) | EU AI Act, CA SB 53, US EO reversal, Italy Garante €15M | `intervention_threshold` + graduated-sanction presets | **Archival** | App. archival |

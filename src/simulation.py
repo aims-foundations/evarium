@@ -1232,7 +1232,7 @@ class EvalEcosystemSimulation:
                     exec_entry["n_submissions"] = _submission_counts.get(provider.name, 1)
                 provider.memory.append(exec_entry)
 
-        # Pass eval_as_company submission counts to evaluator before scoring
+        # Pass evaluator_capture submission counts to evaluator before scoring
         if self.config.evaluator_as_company and self.evaluator.private_state:
             self.evaluator.private_state.submission_counts = _submission_counts
             self.evaluator.private_state.premium_subscribers = _premium_set
@@ -2395,7 +2395,7 @@ class EvalEcosystemSimulation:
 
         Mirrors the K-lag gate in evaluator.evaluate_all: public-type benchmarks
         publish every round; private/partial-type benchmarks publish only when
-        round_num % evaluation_lag == 0. Used to gate eval_as_company submission
+        round_num % evaluation_lag == 0. Used to gate evaluator_capture submission
         fees — best-of-N does not run on fully-frozen K-lag rounds.
         """
         K = self.evaluator.evaluation_lag

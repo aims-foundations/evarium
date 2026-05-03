@@ -14,7 +14,7 @@ Adjacent patterns:
 
 - **ARC Prize** (Chollet, 2024 on) — sponsor-funded prize pool ($1M+) for ARC-AGI; scoring harness public; private test set.
 - **MLPerf** (MLCommons) — vendor-sponsored benchmark consortium; participants partially steer benchmark design.
-- **Scale AI / SEAL** — not strictly sponsored, but eval-as-company revenue creates adjacent capture vectors (see CS4).
+- **Scale AI / SEAL** — not strictly sponsored, but evaluator-capture revenue creates adjacent capture vectors (see CS4).
 
 **The policy question** is: should benchmark sponsorship be (a) disclosed, (b) prohibited, (c) structured with sponsor rotation, or (d) left to market norms? The FrontierMath episode suggests that absence of any of these produces structural unfairness that emerges only after disclosure.
 
@@ -25,8 +25,8 @@ Adjacent patterns:
 - **Per-benchmark `sponsor` attribute** on `BenchmarkGroundTruth`: `Optional[str]` — provider name, or None. Optionally a list for multi-sponsor benchmarks.
 - **Per-benchmark `sponsor_disclosed` flag**: does the public ecosystem know who sponsors this benchmark? Controls reputational downside on disclosure events.
 - **Sponsor pre-access**: reuse the `premium_pre_access` axis reserved in session 38. Sponsor gets N rounds of public-weight observations at t=0 for the sponsored benchmark. Simulates FrontierMath-style item access.
-- **Sponsor submission advantage**: reuse `premium_submissions_per_round` (best-of-M). Matches eval-as-company framing.
-- **Sponsor fee** → evaluator budget: ties into eval-as-company funding mix. Higher sponsor fees shift evaluator dependency toward paying providers.
+- **Sponsor submission advantage**: reuse `premium_submissions_per_round` (best-of-M). Matches evaluator-capture framing.
+- **Sponsor fee** → evaluator budget: ties into evaluator-capture funding mix. Higher sponsor fees shift evaluator dependency toward paying providers.
 
 ### 2.2 Exposure event (optional, richer variant)
 
@@ -74,7 +74,7 @@ Anchor for calibration: the Leaderboard Illusion / Meta 27-variants episode, the
 **Blockers for implementation:**
 
 - Exposure-probability calibration: base rate + investigative-pressure model is unanchored.
-- Interaction with CS4 eval-as-company: sponsor fees and premium-subscription fees stack. Need clear separation of which lever is being tested.
+- Interaction with CS4 evaluator-capture: sponsor fees and premium-subscription fees stack. Need clear separation of which lever is being tested.
 - Disclosure-rule ablations require at least 4 conditions × 30 heuristic seeds = 120 runs; not yet budgeted.
 
 ## 4. Paper claim (hypothetical — not for current paper)
@@ -87,7 +87,7 @@ Undisclosed benchmark sponsorship creates a **late-breaking market reshuffle**: 
 - **Multi-sponsor benchmarks** — ARC Prize has multiple sponsors; how does multi-sponsor affect capture? (First-pass: treat as diluted sponsorship.)
 - **Sponsor visibility gradient** — beyond binary disclosed/undisclosed, there's "technical community knows, general public doesn't" — worth modeling?
 - **Interaction with CS1 privacy ladder** — sponsorship is most consequential on private benchmarks (where pre-access is most valuable). Run sponsorship ablations within each privacy condition or only on baseline privacy?
-- **Scope** — is this a stand-alone case study, or a sub-ablation inside CS4 (eval-as-company)? Argues for standalone because the mechanism (per-benchmark sponsorship, not per-provider subscription) is structurally different.
+- **Scope** — is this a stand-alone case study, or a sub-ablation inside CS4 (evaluator-capture)? Argues for standalone because the mechanism (per-benchmark sponsorship, not per-provider subscription) is structurally different.
 
 ## 6. References
 
@@ -103,7 +103,7 @@ Undisclosed benchmark sponsorship creates a **late-breaking market reshuffle**: 
 
 - `src/visibility.py` — `BenchmarkGroundTruth` (sponsor fields to add)
 - `src/actors/evaluator.py` — `premium_pre_access` hook (unused, reserved for this)
-- `case_studies/eval_as_company.md` (CS4) — overlapping but distinct business-model case
+- `case_studies/evaluator_capture.md` (CS4) — overlapping but distinct business-model case
 - `case_studies/privacy_ladder.md` (CS1) — sponsorship interacts with privacy; most relevant on private benchmarks
 - `case_studies/audit_verification.md` (CS6) — sponsorship exposure is one specific case of the capture-exposure event
 - Session memory: `session33_design_threads.md`, `session38_privacy_mechanism_redesign.md` (§ premium-access axis)

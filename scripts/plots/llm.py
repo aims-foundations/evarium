@@ -50,7 +50,7 @@ THEMES = [
       "no_product_channels", "no_regulator"]),
     ("Evaluation mechanics",
      ["aligned_benchmarks", "bm_orientation_adjustable", "bm_orientation_max",
-      "dynamic_evaluator", "eval_as_company",
+      "dynamic_evaluator", "evaluator_capture",
       "eval_randomized_pool"]),
     ("Consumer / market",
      ["fixed_market_size", "homogeneous_consumers", "static_enterprise_size"]),

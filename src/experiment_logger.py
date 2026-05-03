@@ -33,6 +33,8 @@ class ExperimentMetadata:
     seed: Optional[int] = None
     llm_mode: bool = False
     notes: str = ""
+    llm_model: str = ""
+    llm_provider: str = ""
 
     def __post_init__(self):
         if not self.created_at:
@@ -565,22 +567,34 @@ class DirectoryLogger:
       output/core/<condition>/
     """
 
-    def __init__(self, output_dir: str, lightweight: bool = False):
+    _MODES = ("minimal", "slim", "full")
+
+    def __init__(self, output_dir: str, mode: str = "slim"):
         """
         Args:
             output_dir: Absolute path to write artifacts into.
-            lightweight: If True, skip heavy artifacts (history.json,
-                game_log.md, plots/, providers/, funders/, regulators/,
-                consumers/, ground_truth.json).
+            mode: artifact verbosity, one of:
+                "minimal" — 3-file replication shape: config.json, metadata.json,
+                            rounds.jsonl. For bulk replication runs.
+                "slim"    — canonical 7-file release shape: minimal +
+                            summary.json + ground_truth.json + game_log.md +
+                            dashboard.png. Matches scripts/slim_llm_runs.py
+                            keep-set. DEFAULT.
+                "full"    — everything: slim + history.json, providers/,
+                            consumers/, regulators/, funders/, plots/,
+                            dashboard.pdf. For deep single-run debugging.
         """
+        if mode not in self._MODES:
+            raise ValueError(f"unknown mode {mode!r}; expected one of {self._MODES}")
         self.output_dir = output_dir
-        self.lightweight = lightweight
+        self.mode = mode
         os.makedirs(output_dir, exist_ok=True)
 
     def get_experiment_dir(self) -> str:
         return self.output_dir
 
-    def save_metadata(self, seed=None, llm_mode=False, description=""):
+    def save_metadata(self, seed=None, llm_mode=False, description="",
+                      llm_model="", llm_provider=""):
         """Save metadata.json."""
         metadata = ExperimentMetadata(
             experiment_id=os.path.basename(self.output_dir),
@@ -588,6 +602,8 @@ class DirectoryLogger:
             description=description,
             seed=seed,
             llm_mode=llm_mode,
+            llm_model=llm_model,
+            llm_provider=llm_provider,
         )
         with open(os.path.join(self.output_dir, "metadata.json"), "w") as f:
             json.dump(asdict(metadata), f, indent=2)
@@ -601,17 +617,19 @@ class DirectoryLogger:
             f.write(json.dumps(round_data) + "\n")
 
     def log_summary(self, summary: dict):
+        if self.mode == "minimal":
+            return
         with open(os.path.join(self.output_dir, "summary.json"), "w") as f:
             json.dump(summary, f, indent=2)
 
     def log_history(self, history: list):
-        if self.lightweight:
+        if self.mode != "full":
             return
         with open(os.path.join(self.output_dir, "history.json"), "w") as f:
             json.dump(history, f, indent=2)
 
     def log_providers(self, providers: list):
-        if self.lightweight:
+        if self.mode != "full":
             return
         providers_dir = os.path.join(self.output_dir, "providers")
         os.makedirs(providers_dir, exist_ok=True)
@@ -619,7 +637,7 @@ class DirectoryLogger:
             provider.save(os.path.join(providers_dir, provider.name))
 
     def log_consumers(self, consumers):
-        if self.lightweight:
+        if self.mode != "full":
             return
         consumers_dir = os.path.join(self.output_dir, "consumers")
         os.makedirs(consumers_dir, exist_ok=True)
@@ -631,7 +649,7 @@ class DirectoryLogger:
                 c.save(os.path.join(consumers_dir, c.name))
 
     def log_regulators(self, regulators: list):
-        if self.lightweight:
+        if self.mode != "full":
             return
         d = os.path.join(self.output_dir, "regulators")
         os.makedirs(d, exist_ok=True)
@@ -639,7 +657,7 @@ class DirectoryLogger:
             p.save(os.path.join(d, p.name))
 
     def log_funders(self, funders: list):
-        if self.lightweight:
+        if self.mode != "full":
             return
         d = os.path.join(self.output_dir, "funders")
         os.makedirs(d, exist_ok=True)
@@ -647,14 +665,14 @@ class DirectoryLogger:
             f_.save(os.path.join(d, f_.name))
 
     def log_ground_truth(self, ground_truth: dict):
-        if self.lightweight:
+        if self.mode == "minimal":
             return
         gt_data = {name: gt.to_dict() for name, gt in ground_truth.items()}
         with open(os.path.join(self.output_dir, "ground_truth.json"), "w") as f:
             json.dump(gt_data, f, indent=2)
 
     def save_plot(self, fig, filename: str):
-        if self.lightweight:
+        if self.mode != "full":
             return None
         plots_dir = os.path.join(self.output_dir, "plots")
         os.makedirs(plots_dir, exist_ok=True)
@@ -663,7 +681,7 @@ class DirectoryLogger:
         return path
 
     def save_game_log(self, content: str, filename: str = "game_log.md"):
-        if self.lightweight:
+        if self.mode == "minimal":
             return None
         path = os.path.join(self.output_dir, filename)
         with open(path, "w", encoding="utf-8") as f:

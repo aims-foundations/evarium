@@ -23,7 +23,7 @@ package. Originals deleted. Sandbox-originals also deleted when superseded.
 - `output/analysis/<subject>/` — exploratory/analysis, bucketed by subject
 - `output/diagnostic/` — per-run debugging
 - `<run_dir>/plots/` — per-run auto-saved (from `scripts/run_experiment.py` and per-run tools)
-- `overleaf/figures/validation/` — direct-to-paper-source for a few validation figures (legacy convention, preserved)
+- `evaluation_ecosystem_overleaf/figures/validation/` — direct-to-paper-source for a few validation figures (legacy convention, preserved)
 - `output/heuristic_analysis/`, `output/llm_analysis/` — aggregation CSVs + plots (legacy, preserved; may migrate later)
 
 Use `scripts.plots.paths` helpers: `paper_dir()`, `analysis_dir("<subj>")`, `diagnostic_dir()`, `sandbox_run_dir(batch, ...)`, `hf_data_dir(...)`.
@@ -53,8 +53,8 @@ Use `scripts.plots.paths` helpers: `paper_dir()`, `analysis_dir("<subj>")`, `dia
 | `ablation_ecosystem` | `output/paper/ablation_ecosystem.pdf` | 3-panel ecosystem ablation (incidents / safety alloc / safety cap) |
 | `evaluator_alignment` | `output/paper/evaluator_alignment.pdf` | Leader-capability × benchmark alignment scatter |
 | `llm_vs_heuristic_gap` | `output/paper/llm_vs_heuristic_gap.pdf` | 3-panel heuristic-vs-LLM gap trajectory overlay |
-| `inflation_trajectories` | `overleaf/figures/validation/inflation_traj_*.pdf` | Score inflation trajectory (presets + ablations) |
-| `validation_figures` | `overleaf/figures/validation/*.pdf` | Exploratory runs.jsonl analysis (NOTE: executes at module load, must be run directly) |
+| `inflation_trajectories` | `evaluation_ecosystem_overleaf/figures/validation/inflation_traj_*.pdf` | Score inflation trajectory (presets + ablations) |
+| `validation_figures` | `evaluation_ecosystem_overleaf/figures/validation/*.pdf` | Exploratory runs.jsonl analysis (NOTE: executes at module load, must be run directly) |
 
 ## `scripts/aggregate/` package
 

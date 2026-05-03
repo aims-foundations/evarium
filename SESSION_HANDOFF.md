@@ -1,40 +1,30 @@
-# Session Handoff — 2026-04-24 (session 51 end: paper restructure + eval_lag canonicalization + batch launch)
+# Session Handoff — 2026-05-02 (session 68, evaluator_capture rename + repo cleanup + HF PR #4)
 
 ## Completed
-
-### Paper restructure (summary — see `memory/session51_paper_restructure.md` for detail)
-- §5 reordered: Privacy → Validation → Limitations → Case studies.
-- §5.1 Single-run folded into §4.4 "Example run". Abstract compressed 280→205 words.
-- Appendix 12→11 (A–K): PIMMUR merged into F_validation, G_scope removed, B.regulatory-calibration → A. All files renamed A_architecture / B_design_rationale / C_incidents / D_prompts / E_validation / F_llm_results / G_sonnet_opus / H_case_studies_ext / I_limitations_ext / J_parameters / K_extended_related_work.
-- 23 new BibTeX entries (in `references.bib`) + 5 quick-win text→bibkey swaps; remaining ~20 swaps in K_parameters queued.
-- Deleted unused `sections/5diagnostic.tex` + `sections/6scope.tex`. British→American sweep, showcomments→0. 0 undefined refs.
-
-### Sim code (structural)
-- **`src/simulation.py:179`: `evaluation_lag` default changed 0→3.** Aligns the default with the paper's K=3 empirical calibration; privacy-ladder conditional override in `run_experiment.py:715` is now redundant but kept as explicit. `stakeholders.md` top blockquote updated.
-
-### Data hygiene
-- `sandbox/experiments/_ev1_smoke/` + `sandbox/experiments/_tier2_ablations/` moved to `_preserved/` (both were at lag=0; orphaned from canonical K=3 evidence base). Retained as reference + future paired-test baseline.
-
-### Experiment plan + launch
-- `docs/experiment_plan.md` rewritten with concrete $400 launch plan (5 batches, decision gates, costs).
-- **9 runs launched in background (3 shells × 3 runs, ~$108, ~3h wall-clock, all at lag=3 new canonical):**
-  - Shell 1 `bncoo5z43` → `_core_privacy`: `public_only_s46`, `private_only_s46`, `iid_holdout_s46`
-  - Shell 2 `bdfv2tug0` → `_tier1_ev1` (new batch): `ev1_deepseek_s43/s44/s45`
-  - Shell 3 `b7kibz0fa` → fresh `_tier2_ablations`: `no_incidents_s43`, `initial_uniform_capability_s43`, `homogeneous_consumers_s43`
+- **Condition rename `eval_as_company` → `evaluator_capture`** across active code (src/, scripts/), sandbox dirs, docs, and 6 paper .tex files. Internal flag `evaluator_as_company` (the bool gating the mechanism) intentionally unchanged — clean separation between mechanism (operates-as-company) and framing (capture).
+- **New HF staging bucket `core_evaluator_capture/`** with the 2 Sonnet runs (s42, s43) for the App H worked case study. Lag=0 disclosed in H.1 setup paragraph as the deliberate "no-reporting-lag extreme" of the case-study mechanism.
+- **App F → App H consolidation** (paper). H.1 (worked) + H.2 (media shadow sketch) + H.3 (benchmark sponsorship sketch). New `\paragraph{What we model}` and `\paragraph{Mechanism and calibration}` paragraphs added to H.1 with real-world anchors and per-lever calibration justification. Motivation moved out of A.6 (mechanism-only).
+- **Internal-version-history sweep** — 4 sites in E_validation.tex and I_limitations_ext.tex reframed from "earlier X was fixed by Y" to current-design-state present tense.
+- **PIMMUR audit redo** in E_validation.tex (present-tense, current-state, all 6 principles incl. previously-missing Interaction).
+- **Repo cleanup**: Tier 1 (caches/logs), Tier 2 (root scratch), `scripts/` 24→17, `sandbox/*.py` 15→2, `output/analysis/` 8.3 MB → 4.7 MB. User did parallel cleanup of staged-source sandbox dirs.
+- **HF PR #4 opened** at https://huggingface.co/datasets/aims-foundations/ecosystem/discussions/4 — 1711 files / 862.7 MB / 369 runs across 4 buckets (added: core_evaluator_capture + s5/s8 sequence-robustness + uniform-cap interaction runs since PR #3).
+- **`stakeholders.md` refactor** — line-3 preamble + Session Changelog stripped to a new gitignored `docs/architecture_changelog.md`; ~30 inline version-history-voice rewrites (session attributions, "was X now Y" framings, TODO-flavored "Pending" / "Deferred" status sections); `## Calibration (Pending)` reframed to `## Open Calibrations` with current-state bullets. Total: 1321 → ~1133 lines.
+- **App A.13 merged into App H.1.** App A's standalone `\subsection{Evaluator-as-Company}` (label `app:eval-company`) deleted; the 3-mechanic enumeration (best-of-$N$ + selection-bias formula, early-access blend, discretionary-budget table) absorbed into a new `\paragraph{Mechanism}` block inside H.1, with `\paragraph{Calibration}` split out for the per-lever justification. Removes the circular A.13 ↔ H.1 reference. App A:391 OS PIMMUR-restructure line reframed to current-state. A.tex:221 cross-ref redirected from `app:eval-company` → `app:evaluator-capture-ext`.
+- **Two parallel deep-audit passes** for non-current-state voice. Stakeholders agent flagged 28 sites + 5 structural concerns; appendix agent flagged 15 sites across 7 .tex files (A, C, J, K clean). All firm cases applied (~31 stakeholders + 9 appendix edits): more "was/now" / "replaces" / "old" prose stripped from stakeholders body; B:24, D:244 (deleted prompt-phrasing-history paragraph), E:21+124-125, F:184, G:126, H:47, I:60+80+92 reframed to current-state; B and PIMMUR-audit voice across A, E, I unified.
+- **`scripts/` further cleanup** — `scripts/archive/` removed (3 .py + README, self-labeled "retired"). 8 confirmed-orphan paper-figure scripts removed from `scripts/plots/paper/` (`figure4_combined`, `ecosystem_findings_{verify,wide_scan}`, `trace_ecosystem_scan`, `privacy_mechanism_prototypes`, `capability_surplus_scatter`, `null_model_uniform_cap_{replication,test}`); cross-checked against `output/paper/_active/README.md`. `scripts/plots/paper/` 25 → 17 .py.
 
 ## In Progress
-- **3 background shells running** (shell IDs above). Expected wall-clock ~3h; notifications will fire on completion.
+- **HF PR #4 awaiting manual merge** on the HF web UI.
+- **Anonymous mirror** still pending (carryover from session 67). Once mirror is live: edit `appendix/A_architecture.tex:4` and `checklist.tex:70` to drop in the anonymized URL and remove "URL is withheld."
 
-## Next Steps (priority)
-1. **Await 3 shells; verify completion + round counts.** Flag any fallbacks >2% per run for re-queue.
-2. **Post-launch analysis:** refresh `scripts/plots/per_benchmark_core_privacy.py` + `ablation_main_llm.py` against new data. Verify §5.2 HHI claim survives N=5, Mirage-under-initial_uniform_cap at s43 (seed-robustness check).
-3. **Launch Batch 2 of re-dos: 4 Tier 2 ablations at s42 lag=3** (`no_funders`, `no_regulator`, `no_media`, `no_opensource`) — paired with `_preserved` s42 lag=0 for lag-effect test. ~4 runs, ~$50.
-4. **Commit** — session 48–51 sim + paper changes still uncommitted.
-5. **NeurIPS checklist decisions** (6 CONFIRM markers): IRB, code/data release, broader impacts, compute estimate.
-6. **Text→bibkey swap pass for K_parameters.tex** — ~20 author-year refs, bibkeys now in `references.bib`.
-7. **Optional Batch 3:** 3 hot Tier 2 ablations × s42 lag=3 + all 7 × s43 lag=3 for full coverage (~$120).
-
-## Breaking
-- `evaluation_lag` default 0→3: any code path that depends on the old default silently gets K=3 now. `dynamic_evaluator` heuristic (previously ran at lag=0) would now get lag=3 if re-run — verify this is desired if re-running.
-- `_tier2_ablations/` contents completely swapped (old lag=0 runs → `_preserved/`; new lag=3 runs landing). Plots that point at the directory need no path change, but results will differ.
-- Appendix letter mapping A–L → A–K (from earlier in session) — any external doc citing old letters is stale.
+## Next Steps
+1. Merge HF PR #4 → canonical state goes to 369 runs.
+2. Anonymous mirror setup (deferred from session 67).
+3. **`scripts/tag_reasoning_frames.py` source-path repoint** — script references the now-deleted `sandbox/experiments/_core_privacy/llm/`; needs update to `hf_data_staging/core_privacy/llm/` before next reasoning-frames sweep.
+4. Decide on the 3 borderline scripts (`launch_seq_robustness.py`, `analyze_partial_overpromise.py`, plus the path fix above).
+5. Tier 4 cleanup: deletion of legacy `hf_data/` (2.2 GB local mirror of pre-2026-04-27 sim layout) and `_preserved/` triage (2.1 GB).
+6. Carryover: fresh Overleaf compile to verify F→H restructure and PIMMUR rewrite render cleanly; existing `main.log` is the stale 2026-04-17 crash.
+7. **Limitations section pass** — second half of the limitations section reads as broad / non-specific. Worth a focused read with the lens "is this claim concrete and tied to something measurable, or is it generic AI-paper-style hedging?"
+8. **AI-voice / overused-phrase sweep** — paper-wide audit for stylistic tells of LLM-assisted writing: "it's not X, it's Y" parallel constructions, repeated em-dash patterns, recurring rhetorical templates. Identify any conventions/phrases the writing leans on too heavily; propose alternatives.
+9. **Borderline audit findings** (deferred this session): ~12 borderline calls flagged by the deep-audit agents but not applied — `stakeholders.md` lines 410, 535, 619, 750, 891 + appendix sites E:28, E:117, G:80, H:53, I:86. Each is defensible as honest scope/caveat; revisit if a stricter cut is wanted.
+10. ~~**Verify `\paragraph{Behavioral coherence checks.}` in `appendix/E_validation.tex`**~~ — DONE (session 68). Rewritten to `\paragraph{Per-run instrumentation.}` describing what's actually captured per run (reasoning traces to `rounds.jsonl`, JSON-validation retry + heuristic-fallback path, per-run fallback count); cross-refs to App F privacy traces, App G frame-prevalence, App F LLM caveats. The three claimed diagnostics (strategy drift / prompt sensitivity / role adherence) silently dropped — visibility-tier role adherence is already covered as a structural property in PIMMUR Memory.

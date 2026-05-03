@@ -203,6 +203,14 @@ class OpenAIProvider(LLMProvider):
         self.last_call_time = 0
         self.min_call_interval = 0.1  # seconds between calls
 
+        # GPT-5.x and o-series reasoning models: require `max_completion_tokens`
+        # (not `max_tokens`) and reject any temperature other than 1.0.
+        m = model.lower()
+        self._modern_model = (
+            m.startswith("gpt-5") or m.startswith("o1")
+            or m.startswith("o3") or m.startswith("o4") or m.startswith("o5")
+        )
+
     def _rate_limit(self):
         """Simple rate limiting to avoid hitting API limits."""
         elapsed = time.time() - self.last_call_time
@@ -229,9 +237,16 @@ class OpenAIProvider(LLMProvider):
         kwargs = {
             "model": self.model,
             "messages": messages,
-            "temperature": temperature if temperature is not None else self.default_temperature,
-            "max_tokens": max_tokens if max_tokens is not None else self.default_max_tokens,
         }
+        token_limit = max_tokens if max_tokens is not None else self.default_max_tokens
+        if self._modern_model:
+            # GPT-5.x / o-series: new param name; temperature locked to default 1.0
+            kwargs["max_completion_tokens"] = token_limit
+        else:
+            kwargs["max_tokens"] = token_limit
+            kwargs["temperature"] = (
+                temperature if temperature is not None else self.default_temperature
+            )
 
         if json_mode:
             kwargs["response_format"] = {"type": "json_object"}
@@ -926,7 +941,7 @@ def call_llm(prompt: str, temperature: float = 0.7, max_tokens: int = 500) -> st
 
 PROVIDER_PLANNING_SYSTEM_PROMPT = """You are the strategy team at an AI model company. You compete for market share by developing AI models that are evaluated on public benchmarks and used by real customers.
 
-Benchmarks are reported in three types — public (scored each round on published weights), partial (K=3-round reporting lag, blended public+holdout weights), private (K=3-round lag, holdout-only weights) — each is labeled in your evaluation results.
+Benchmarks are reported in three types — public (scored each round on published weights), partial (K=3-round reporting lag, holdout-only weights with h=0.3 of items held out), private (K=3-round lag, holdout-only weights with h=1.0) — each is labeled in your evaluation results.
 
 Each month you allocate your budget across three areas and set research priorities:
 - Research & Development: advancing your model's core capabilities
@@ -948,7 +963,7 @@ Where <signal> is one of: "much_more", "more", "same", "less", "much_less"."""
 
 PROVIDER_PLANNING_SYSTEM_PROMPT_WITH_ORIENTATION = """You are the strategy team at an AI model company. You compete for market share by developing AI models that are evaluated on public benchmarks and used by real customers.
 
-Benchmarks are reported in three types — public (scored each round on published weights), partial (K=3-round reporting lag, blended public+holdout weights), private (K=3-round lag, holdout-only weights) — each is labeled in your evaluation results.
+Benchmarks are reported in three types — public (scored each round on published weights), partial (K=3-round reporting lag, holdout-only weights with h=0.3 of items held out), private (K=3-round lag, holdout-only weights with h=1.0) — each is labeled in your evaluation results.
 
 Each month you allocate your budget across three areas and set research priorities:
 - Research & Development: advancing your model's core capabilities
@@ -971,7 +986,7 @@ Where <signal> is one of: "much_more", "more", "same", "less", "much_less"."""
 
 PROVIDER_PLANNING_SYSTEM_PROMPT_REFRAMED = """You are the strategy team at an AI model company. You compete for market share by developing AI models that are evaluated on public benchmarks and used by real customers.
 
-Benchmarks are reported in three types — public (scored each round on published weights), partial (K=3-round reporting lag, blended public+holdout weights), private (K=3-round lag, holdout-only weights) — each is labeled in your evaluation results.
+Benchmarks are reported in three types — public (scored each round on published weights), partial (K=3-round reporting lag, holdout-only weights with h=0.3 of items held out), private (K=3-round lag, holdout-only weights with h=1.0) — each is labeled in your evaluation results.
 
 Each month you allocate your budget across three areas and set research priorities:
 - Research & Development: advancing your model's core capabilities
@@ -1080,7 +1095,7 @@ def _build_provider_planning_prompt(
 
     # Benchmark scores and deltas — with type + new-benchmark tag
     prompt += "\n## Evaluation Results\n"
-    prompt += "(types: public — scored every round on published weights; partial — K=3-round reporting lag, blended public+holdout weights; private — K=3-round lag, holdout-only weights)\n"
+    prompt += "(types: public — scored every round on published weights; partial — K=3-round reporting lag, holdout-only weights with h=0.3 of items held out; private — K=3-round lag, holdout-only weights with h=1.0)\n"
     if benchmark_scores:
         prompt += "| Evaluation | Type | Score | Change | Your Priority |\n"
         prompt += "|------------|------|-------|--------|---------------|\n"

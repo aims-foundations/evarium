@@ -129,12 +129,16 @@ def collect_rows(base_path: Path, conditions, stride: int = 1, leader_only: bool
     """
     rows_out = []
     for cond in conditions:
-        cond_dir = base_path / cond / "seeds"
+        # Sandbox layout: <base>/<cond>/seeds/seed_*/ ; canonical staging: <base>/<cond>/seed_*/
+        seeds_subdir = base_path / cond / "seeds"
+        cond_dir = seeds_subdir if seeds_subdir.exists() else base_path / cond
         if not cond_dir.exists():
             print(f"  [missing] {cond}")
             continue
         n_seeds = 0
         for seed_dir in sorted(cond_dir.iterdir()):
+            if not seed_dir.is_dir() or not seed_dir.name.startswith("seed_"):
+                continue
             if not (seed_dir / "rounds.jsonl").exists():
                 continue
             rounds, bm_type = _load_seed(seed_dir)

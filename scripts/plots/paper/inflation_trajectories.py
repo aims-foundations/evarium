@@ -5,7 +5,7 @@ Loads rounds.jsonl for each run in the registry and plots per-round
 gaming gap (mean published score - true capability) with 95% CI bands
 across seeds.
 
-Produces two figures saved to overleaf/figures/validation/:
+Produces two figures saved to evaluation_ecosystem_overleaf/figures/validation/:
   - inflation_traj_presets.pdf   : full_ecosystem x 3 presets, llama + qwen
   - inflation_traj_ablations.pdf : all 9 ablations, balanced preset, llama + qwen
 
@@ -30,7 +30,7 @@ from .. import paths as _paths
 ROOT    = Path(_paths.PROJECT_ROOT)
 HF_DATA = ROOT / "hf_data"
 RUNS    = HF_DATA / "runs.jsonl"
-FIG_DIR = ROOT.parent / "overleaf" / "figures" / "validation"
+FIG_DIR = ROOT.parent / "evaluation_ecosystem_overleaf" / "figures" / "validation"
 FIG_DIR.mkdir(parents=True, exist_ok=True)
 
 # ---------------------------------------------------------------------------
@@ -367,4 +367,4 @@ if __name__ == "__main__":
     print("Plotting Fig 14: LLM vs heuristic ...")
     plot_llm_vs_heuristic(registry)
 
-    print("\nDone. All figures saved to overleaf/figures/validation/")
+    print("\nDone. All figures saved to evaluation_ecosystem_overleaf/figures/validation/")

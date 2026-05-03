@@ -39,7 +39,7 @@ DIMS = ["reasoning", "coding", "knowledge", "safety", "communication", "agentic"
 CONDITIONS = {
     "Randomized Pool":    REPO_ROOT / "sandbox/experiments/llm/eval_randomized_pool_balanced",
     "Dynamic Evaluator":  REPO_ROOT / "sandbox/experiments/llm/dynamic_evaluator_balanced",
-    "Eval as Company":    REPO_ROOT / "sandbox/experiments/llm/eval_as_company_balanced",
+    "Evaluator Capture":  REPO_ROOT / "sandbox/experiments/llm/evaluator_capture_balanced",
 }
 
 BENCHMARK_FAMILIES = {

@@ -122,7 +122,7 @@ evaluation-ecosystem-simulation/
 └── run_qwen_all_phases.sh        # Run all phases with Qwen model
 ```
 
-**Note on paper (`overleaf/`):** The LaTeX paper lives at `../overleaf/` (one level up, in `evaluation-ecosytem-project/overleaf/`). This is intentional — the paper is not nested inside the simulation repository.
+**Note on paper (`evaluation_ecosystem_overleaf/`):** The LaTeX paper lives at `../evaluation_ecosystem_overleaf/` (one level up, in `evaluation-ecosytem-project/evaluation_ecosystem_overleaf/`). This is intentional — the paper is not nested inside the simulation repository. (Renamed from `overleaf/` on 2026-04-24.)
 
 ### Key bugs fixed (for reference)
 - `src/simulation.py` line ~775: `if round_num > 0 and self.config.enable_incidents:` — was missing `enable_incidents` check; caused ablations to still generate incidents

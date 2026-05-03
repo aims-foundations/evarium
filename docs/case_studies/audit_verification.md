@@ -106,5 +106,5 @@ Academic:
 - `src/actors/regulator.py` — current audit lever (sense 1)
 - `docs/stakeholders.md` §Regulator — 5-lever ladder reference
 - `case_studies/transparency_mandate.md` (CS2) — self-attested disclosure, which this extends
-- `case_studies/eval_as_company.md` (CS4) — overlapping capture dynamics
+- `case_studies/evaluator_capture.md` (CS4) — overlapping capture dynamics
 - Session discussions: session 33 (benchmark sponsorship + n_submissions), session 47 (AVERI agent deep-dive, inline in conversation only)

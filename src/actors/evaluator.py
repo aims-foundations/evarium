@@ -233,6 +233,12 @@ BENCHMARK_POOL = [
             "reasoning": 0.10, "coding": 0.04, "knowledge": 0.12,
             "safety": 0.12, "communication": 0.58, "agentic": 0.04,
         }},
+        # LMSYS Arena private holdout: refusal calibration on subtle harm
+        # + long-tail factual queries that arena users actually probe.
+        "holdout_category_dimension_weights": {"overall": {
+            "reasoning": 0.10, "coding": 0.04, "knowledge": 0.18,
+            "safety": 0.19, "communication": 0.45, "agentic": 0.04,
+        }},
     },
     {
         "name": "Hard Knowledge",
@@ -244,6 +250,12 @@ BENCHMARK_POOL = [
         "category_dimension_weights": {"overall": {
             "reasoning": 0.40, "coding": 0.04, "knowledge": 0.40,
             "safety": 0.02, "communication": 0.12, "agentic": 0.02,
+        }},
+        # MMLU-Pro 10-option distractor holdout: tests reasoning
+        # discrimination depth, not just rote recall.
+        "holdout_category_dimension_weights": {"overall": {
+            "reasoning": 0.47, "coding": 0.04, "knowledge": 0.30,
+            "safety": 0.02, "communication": 0.15, "agentic": 0.02,
         }},
     },
     {
@@ -290,6 +302,12 @@ BENCHMARK_POOL = [
             "reasoning": 0.25, "coding": 0.10, "knowledge": 0.55,
             "safety": 0.02, "communication": 0.05, "agentic": 0.03,
         }},
+        # Novel-regime market scenario holdout: quantitative modeling
+        # (coding/math) + risk calibration (safety) under unfamiliar regime.
+        "holdout_category_dimension_weights": {"overall": {
+            "reasoning": 0.28, "coding": 0.16, "knowledge": 0.42,
+            "safety": 0.06, "communication": 0.05, "agentic": 0.03,
+        }},
     },
     {
         "name": "Multilingual Understanding",
@@ -300,6 +318,12 @@ BENCHMARK_POOL = [
         "category_dimension_weights": {"overall": {
             "reasoning": 0.15, "coding": 0.02, "knowledge": 0.25,
             "safety": 0.02, "communication": 0.55, "agentic": 0.01,
+        }},
+        # Low-resource FLORES holdout: cultural/regional knowledge transfer
+        # + cross-lingual reasoning, not surface translation fluency.
+        "holdout_category_dimension_weights": {"overall": {
+            "reasoning": 0.20, "coding": 0.02, "knowledge": 0.33,
+            "safety": 0.02, "communication": 0.42, "agentic": 0.01,
         }},
     },
     {
@@ -352,6 +376,12 @@ BENCHMARK_POOL = [
             "reasoning": 0.10, "coding": 0.08, "knowledge": 0.03,
             "safety": 0.02, "communication": 0.05, "agentic": 0.72,
         }},
+        # Adversarial-UI Mind2Web holdout: anti-phishing / anti-prompt-injection
+        # safety + planning under unfamiliar layouts.
+        "holdout_category_dimension_weights": {"overall": {
+            "reasoning": 0.15, "coding": 0.10, "knowledge": 0.03,
+            "safety": 0.10, "communication": 0.05, "agentic": 0.57,
+        }},
     },
     {
         "name": "Issue Resolution",
@@ -363,6 +393,12 @@ BENCHMARK_POOL = [
             "reasoning": 0.12, "coding": 0.42, "knowledge": 0.04,
             "safety": 0.01, "communication": 0.03, "agentic": 0.38,
         }},
+        # SWE-bench-Verified-Plus private-repo holdout: codebase-convention
+        # familiarity + patch readability humans accept on review.
+        "holdout_category_dimension_weights": {"overall": {
+            "reasoning": 0.16, "coding": 0.30, "knowledge": 0.09,
+            "safety": 0.01, "communication": 0.06, "agentic": 0.38,
+        }},
     },
     {
         "name": "Creative Writing",
@@ -373,6 +409,12 @@ BENCHMARK_POOL = [
         "category_dimension_weights": {"overall": {
             "reasoning": 0.05, "coding": 0.01, "knowledge": 0.08,
             "safety": 0.03, "communication": 0.82, "agentic": 0.01,
+        }},
+        # Novel-prompt creative + non-fiction holdout: factual integration
+        # (knowledge) + trope / cliché avoidance (safety-adjacent style judgment).
+        "holdout_category_dimension_weights": {"overall": {
+            "reasoning": 0.07, "coding": 0.01, "knowledge": 0.16,
+            "safety": 0.08, "communication": 0.67, "agentic": 0.01,
         }},
     },
 ]
@@ -742,7 +784,7 @@ class Evaluator:
                 )
 
                 if is_publish_round:
-                    # Fresh evaluation. Best-of-N trials for premium providers (eval_as_company).
+                    # Fresh evaluation. Best-of-N trials for premium providers (evaluator_capture).
                     n_trials = 1
                     if (self.evaluator_as_company
                             and self.private_state

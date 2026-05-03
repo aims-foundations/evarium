@@ -487,7 +487,7 @@ class EvaluatorPrivateState:
     budget: float = 0.0
     base_funding: float = 0.0
     recent_reasoning: list = field(default_factory=list)
-    # Premium access tracking (eval_as_company)
+    # Premium access tracking (evaluator_capture)
     premium_subscribers: set = field(default_factory=set)
     premium_revenue: float = 0.0
     submission_counts: dict = field(default_factory=dict)

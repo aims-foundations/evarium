@@ -1,7 +1,7 @@
 """
 plot_validation_figures.py
 Exploratory analysis of hf_data/runs.jsonl — LLM models only (no heuristic).
-Saves all plots to overleaf/figures/validation/.
+Saves all plots to evaluation_ecosystem_overleaf/figures/validation/.
 """
 
 import json
@@ -16,7 +16,7 @@ from .. import paths as _paths
 
 ROOT = Path(_paths.PROJECT_ROOT)
 runs_path = ROOT / "hf_data" / "runs.jsonl"
-FIG_DIR = ROOT.parent / "overleaf" / "figures" / "validation"
+FIG_DIR = ROOT.parent / "evaluation_ecosystem_overleaf" / "figures" / "validation"
 FIG_DIR.mkdir(parents=True, exist_ok=True)
 
 def savefig(name):

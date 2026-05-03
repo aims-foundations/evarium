@@ -197,7 +197,8 @@ def _panel_dumbbell(ax, rounds):
     ax.spines["right"].set_visible(False)
 
 
-def main(run_dir: Path, out_path: Path, show: bool = False):
+def main(run_dir: Path, out_path: Path, show: bool = False,
+         orientation: str = "horizontal"):
     rounds = _load_rounds(run_dir)
     providers, T, portfolios, final_shares = extract_portfolio_data(rounds)
     # Order providers by final share (largest first) for consistent legend
@@ -207,10 +208,22 @@ def main(run_dir: Path, out_path: Path, show: bool = False):
     plt.rcParams["figure.constrained_layout.use"] = False
     plt.rcParams["figure.autolayout"] = False
 
-    fig, axes = plt.subplots(1, 4, figsize=(14.0, 4.4),
-                             gridspec_kw={"wspace": 0.55,
-                                          "width_ratios": [1.0, 1.0, 1.0, 1.25]})
-    ax_a, ax_b, ax_c, ax_d = axes
+    if orientation == "vertical":
+        fig, axes = plt.subplots(4, 1, figsize=(6.5, 16.0),
+                                 gridspec_kw={"hspace": 0.50,
+                                              "height_ratios": [1.0, 1.0, 1.0, 1.25]})
+        ax_a, ax_b, ax_c, ax_d = axes
+    elif orientation == "grid":
+        fig, axes = plt.subplots(2, 2, figsize=(11.0, 9.5),
+                                 gridspec_kw={"hspace": 0.42, "wspace": 0.32,
+                                              "width_ratios": [1.0, 1.15]})
+        ax_a, ax_b = axes[0]
+        ax_c, ax_d = axes[1]
+    else:  # horizontal
+        fig, axes = plt.subplots(1, 4, figsize=(14.0, 4.4),
+                                 gridspec_kw={"wspace": 0.55,
+                                              "width_ratios": [1.0, 1.0, 1.0, 1.25]})
+        ax_a, ax_b, ax_c, ax_d = axes
 
     _panel_market_share(ax_a, rounds, providers, p_colors)
     sev_counts = _panel_incidents(ax_b, rounds, providers)
@@ -239,25 +252,63 @@ def main(run_dir: Path, out_path: Path, show: bool = False):
         for a in ESCALATION_ORDER
     ]
 
-    fig.subplots_adjust(left=0.055, right=0.995, top=0.94, bottom=0.28,
-                        wspace=0.55)
-
-    # Row 1 (top): providers.  Row 2 (bottom): severity + intervention ladder.
-    leg1 = fig.legend(handles=prov_handles, loc="upper center",
-                      bbox_to_anchor=(0.5, 0.22), ncol=len(providers),
-                      fontsize=11, frameon=False, handlelength=1.8,
-                      columnspacing=1.8, title="Providers",
-                      title_fontsize=12)
-    leg2 = fig.legend(handles=sev_handles, loc="upper left",
-                      bbox_to_anchor=(0.06, 0.10), ncol=len(sev_handles),
-                      fontsize=11, frameon=False, handlelength=1.2,
-                      columnspacing=1.2, title="Incident severity",
-                      title_fontsize=12)
-    leg3 = fig.legend(handles=intv_handles, loc="upper left",
-                      bbox_to_anchor=(0.38, 0.10), ncol=len(intv_handles),
-                      fontsize=11, frameon=False, handlelength=1.6,
-                      columnspacing=1.2, title="Regulator action ladder",
-                      title_fontsize=12)
+    if orientation == "vertical":
+        fig.subplots_adjust(left=0.13, right=0.97, top=0.975, bottom=0.18,
+                            hspace=0.55)
+        # Three legend rows stacked at the bottom (narrow column).
+        leg1 = fig.legend(handles=prov_handles, loc="upper center",
+                          bbox_to_anchor=(0.5, 0.135), ncol=3,
+                          fontsize=10, frameon=False, handlelength=1.8,
+                          columnspacing=1.6, title="Providers",
+                          title_fontsize=11)
+        leg2 = fig.legend(handles=sev_handles, loc="upper center",
+                          bbox_to_anchor=(0.5, 0.080), ncol=4,
+                          fontsize=10, frameon=False, handlelength=1.2,
+                          columnspacing=1.2, title="Incident severity",
+                          title_fontsize=11)
+        leg3 = fig.legend(handles=intv_handles, loc="upper center",
+                          bbox_to_anchor=(0.5, 0.038), ncol=3,
+                          fontsize=10, frameon=False, handlelength=1.6,
+                          columnspacing=1.2, title="Regulator action ladder",
+                          title_fontsize=11)
+    elif orientation == "grid":
+        fig.subplots_adjust(left=0.07, right=0.985, top=0.965, bottom=0.16,
+                            hspace=0.42, wspace=0.32)
+        # Providers row 1; severity + interventions row 2 (square aspect → fits).
+        leg1 = fig.legend(handles=prov_handles, loc="upper center",
+                          bbox_to_anchor=(0.5, 0.115), ncol=len(providers),
+                          fontsize=10, frameon=False, handlelength=1.8,
+                          columnspacing=1.6, title="Providers",
+                          title_fontsize=11)
+        leg2 = fig.legend(handles=sev_handles, loc="upper left",
+                          bbox_to_anchor=(0.07, 0.055), ncol=len(sev_handles),
+                          fontsize=10, frameon=False, handlelength=1.2,
+                          columnspacing=1.2, title="Incident severity",
+                          title_fontsize=11)
+        leg3 = fig.legend(handles=intv_handles, loc="upper left",
+                          bbox_to_anchor=(0.47, 0.055), ncol=len(intv_handles),
+                          fontsize=10, frameon=False, handlelength=1.4,
+                          columnspacing=1.2, title="Regulator action ladder",
+                          title_fontsize=11)
+    else:  # horizontal
+        fig.subplots_adjust(left=0.055, right=0.995, top=0.94, bottom=0.28,
+                            wspace=0.55)
+        # Row 1 (top): providers.  Row 2 (bottom): severity + intervention ladder.
+        leg1 = fig.legend(handles=prov_handles, loc="upper center",
+                          bbox_to_anchor=(0.5, 0.22), ncol=len(providers),
+                          fontsize=11, frameon=False, handlelength=1.8,
+                          columnspacing=1.8, title="Providers",
+                          title_fontsize=12)
+        leg2 = fig.legend(handles=sev_handles, loc="upper left",
+                          bbox_to_anchor=(0.06, 0.10), ncol=len(sev_handles),
+                          fontsize=11, frameon=False, handlelength=1.2,
+                          columnspacing=1.2, title="Incident severity",
+                          title_fontsize=12)
+        leg3 = fig.legend(handles=intv_handles, loc="upper left",
+                          bbox_to_anchor=(0.38, 0.10), ncol=len(intv_handles),
+                          fontsize=11, frameon=False, handlelength=1.6,
+                          columnspacing=1.2, title="Regulator action ladder",
+                          title_fontsize=12)
     fig.add_artist(leg1)
     fig.add_artist(leg2)
     fig.add_artist(leg3)
@@ -286,5 +337,14 @@ if __name__ == "__main__":
         help="Output PDF path (png written alongside)",
     )
     ap.add_argument("--show", action="store_true")
+    ap.add_argument(
+        "--orientation", choices=["horizontal", "vertical", "grid"],
+        default="horizontal",
+        help="Layout: horizontal (1x4 paper default), vertical (4x1 poster), grid (2x2)",
+    )
     args = ap.parse_args()
-    main(args.run_dir, args.out, args.show)
+    out = args.out
+    default_out = Path(_paths.paper_dir()) / "single_run_loop.pdf"
+    if args.orientation != "horizontal" and out == default_out:
+        out = Path(_paths.paper_dir()) / f"single_run_loop_{args.orientation}.pdf"
+    main(args.run_dir, out, args.show, args.orientation)

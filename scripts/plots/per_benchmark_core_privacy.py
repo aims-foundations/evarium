@@ -68,32 +68,56 @@ plt.rcParams.update({
 _NAME_RE = re.compile(r"^(?P<cond>.+?)_s(?P<seed>\d+)_(?P<model>sonnet|opus)$")
 
 
-def discover_runs(batch: str, model_filter: str | None = None, min_rounds: int = 40):
-    """Yield (condition, seed, model, jsonl_path) for runs under sandbox/experiments/<batch>/llm/*.
+# Map canonical model directory names <-> short forms used by callers (model_filter).
+_CANONICAL_TO_SHORT = {
+    "claude-sonnet-4-6":      "sonnet",
+    "claude-opus-4-6":         "opus",
+    "gpt-5.5-2026-04-23":      "gpt55",
+}
+_SHORT_TO_CANONICAL = {v: k for k, v in _CANONICAL_TO_SHORT.items()}
 
-    Skips runs with fewer than min_rounds rounds in rounds.jsonl (default: full 40-round runs only).
+
+def discover_runs(batch: str, model_filter: str | None = None, min_rounds: int = 40):
+    """Yield (condition, seed, model, jsonl_path) for runs under
+    hf_data_staging/<batch>/llm/<model>/<cond>/seed_*/rounds.jsonl.
+
+    Reads ONLY the canonical hf_data_staging layout (session 60+ layout iii). Legacy
+    sandbox layout `sandbox/experiments/<batch>/llm/<cond>_s<seed>_<model>/seeds/seed_N/`
+    is not searched.
+
+    `batch` accepts either the staging name (`core_privacy`) or the legacy sandbox
+    name with leading underscore (`_core_privacy`); the underscore is stripped.
+
+    `model_filter`: short form ("sonnet"/"opus"/"gpt55") or full canonical name; None = all.
+
+    Skips runs with fewer than min_rounds rounds (default 40).
     """
-    root = os.path.join(_paths.PROJECT_ROOT, "sandbox", "experiments", batch, "llm")
-    dirs = sorted(glob.glob(os.path.join(root, "*")))
-    for d in dirs:
-        name = os.path.basename(d)
-        m = _NAME_RE.match(name)
-        if not m:
+    bucket = batch.lstrip("_")
+    root = os.path.join(_paths.PROJECT_ROOT, "hf_data_staging", bucket, "llm")
+    if not os.path.isdir(root):
+        return
+    # Resolve model filter to canonical name
+    canonical_filter = None
+    if model_filter:
+        canonical_filter = _SHORT_TO_CANONICAL.get(model_filter, model_filter)
+    for model_dir in sorted(glob.glob(os.path.join(root, "*"))):
+        canonical_model = os.path.basename(model_dir)
+        if canonical_filter and canonical_model != canonical_filter:
             continue
-        cond = m.group("cond")
-        seed = int(m.group("seed"))
-        model = m.group("model")
-        if model_filter and model != model_filter:
-            continue
-        jsonl = os.path.join(d, "seeds", f"seed_{seed}", "rounds.jsonl")
-        if not os.path.exists(jsonl):
-            continue
-        with open(jsonl) as f:
-            n_rounds = sum(1 for _ in f)
-        if n_rounds < min_rounds:
-            print(f"SKIP (partial {n_rounds}/{min_rounds}): {name}")
-            continue
-        yield cond, seed, model, jsonl
+        short_model = _CANONICAL_TO_SHORT.get(canonical_model, canonical_model)
+        for cond_dir in sorted(glob.glob(os.path.join(model_dir, "*"))):
+            cond = os.path.basename(cond_dir)
+            for seed_dir in sorted(glob.glob(os.path.join(cond_dir, "seed_*"))):
+                seed = int(os.path.basename(seed_dir).split("_", 1)[1])
+                jsonl = os.path.join(seed_dir, "rounds.jsonl")
+                if not os.path.exists(jsonl):
+                    continue
+                with open(jsonl) as f:
+                    n_rounds = sum(1 for _ in f)
+                if n_rounds < min_rounds:
+                    print(f"SKIP (partial {n_rounds}/{min_rounds}): {canonical_model}/{cond}/seed_{seed}")
+                    continue
+                yield cond, seed, short_model, jsonl
 
 
 def build_long_df(batch: str, model_filter: str | None = None) -> pd.DataFrame:

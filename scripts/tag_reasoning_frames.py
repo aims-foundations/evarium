@@ -1,9 +1,10 @@
-"""Keyword+regex tagging of provider reasoning frames for Appendix K.
+"""Keyword+regex tagging of provider reasoning frames for Appendix G.
 
-For each paired (condition, seed) run under sandbox/experiments/_core_privacy/llm
-where BOTH sonnet and opus have full 40-round traces, load each of the 6
-providers' memory.json files and tag the 'reasoning' field of every
-type='planning' entry with one or more frame labels.
+For each (condition, seed) run under sandbox/experiments/_core_privacy/llm
+where ALL models in MODEL_ORDER (sonnet, opus, gpt55) have full 40-round
+traces, load each of the 6 providers' memory.json files and tag the
+'reasoning' field of every type='planning' entry with one or more frame
+labels.
 
 Frames:
     portfolio   allocation / R&D / safety / product / budget reasoning
@@ -21,12 +22,12 @@ covers portfolio + competitor + market simultaneously). Per-frame count is
 incremented at most once per entry.
 
 Outputs:
-    sonnet_vs_opus_frames_detail.csv    per-entry long form: model, provider,
+    model_robustness_frames_detail.csv  per-entry long form: model, provider,
                                          condition, seed, round, frame_list,
                                          reasoning_excerpt (first 200 chars)
-    sonnet_vs_opus_frames.csv            aggregated for plotting:
+    model_robustness_frames.csv          aggregated for plotting:
                                          model, provider, frame, count
-    sonnet_vs_opus_frames_audit.md       markdown sample of ~3 tagged excerpts
+    model_robustness_frames_audit.md     markdown sample of ~3 tagged excerpts
                                          per frame per model, for hand-audit
 
 CLI:
@@ -46,7 +47,7 @@ from collections import defaultdict
 import pandas as pd
 
 from scripts.plots import paths as _paths
-from scripts.plots.paper.sonnet_vs_opus import discover_paired_runs
+from scripts.plots.paper.model_robustness import discover_paired_runs, MODEL_ORDER
 
 PROVIDERS = ["Apex AI", "Orion Labs", "Genesis Systems",
              "Mirage AI", "OpenCore", "Spark AI"]
@@ -96,34 +97,35 @@ def iter_planning_entries(memory_path: str):
 
 
 def _paired_conditions(batch: str) -> list[tuple[str, int]]:
-    """Return (condition, seed) pairs that have BOTH sonnet and opus full runs."""
+    """Return (condition, seed) pairs that have ALL MODEL_ORDER models full runs."""
     by_key = defaultdict(set)
     for cond, seed, model, *_ in discover_paired_runs(batch):
         by_key[(cond, seed)].add(model)
-    return sorted([k for k, ms in by_key.items() if {"sonnet", "opus"}.issubset(ms)])
+    required = set(MODEL_ORDER)
+    return sorted([k for k, ms in by_key.items() if required.issubset(ms)])
 
 
 def build_frames_detail(batch: str) -> pd.DataFrame:
-    """One row per (model, provider, condition, seed, round) — matched pairs only."""
+    """One row per (model, provider, condition, seed, round) — matched triples only."""
     pairs = _paired_conditions(batch)
     if not pairs:
-        print("No (cond, seed) pairs with both sonnet + opus full runs; nothing to tag.")
+        print(f"No (cond, seed) pairs with all {len(MODEL_ORDER)} models full runs; "
+              f"nothing to tag.")
         return pd.DataFrame()
-    print(f"Tagging {len(pairs)} matched pairs: {pairs}")
+    print(f"Tagging {len(pairs)} matched {len(MODEL_ORDER)}-way pairs: {pairs}")
 
-    # Second-pass discovery so we can resolve run_dir by (cond, seed, model).
-    dirs = {(cond, seed, model): rd
-            for cond, seed, model, rd, _ in discover_paired_runs(batch)}
+    # Second-pass discovery so we can resolve seed_dir by (cond, seed, model).
+    dirs = {(cond, seed, model): seed_dir
+            for cond, seed, model, seed_dir, _ in discover_paired_runs(batch)}
 
     rows = []
     for cond, seed in pairs:
-        for model in ("sonnet", "opus"):
-            run_dir = dirs.get((cond, seed, model))
-            if run_dir is None:
+        for model in MODEL_ORDER:
+            seed_dir = dirs.get((cond, seed, model))
+            if seed_dir is None:
                 continue
             for prov in PROVIDERS:
-                mem = os.path.join(run_dir, "seeds", f"seed_{seed}",
-                                   "providers", prov, "memory.json")
+                mem = os.path.join(seed_dir, "providers", prov, "memory.json")
                 for round_n, text in iter_planning_entries(mem):
                     frames = tag_reasoning(text)
                     rows.append({
@@ -163,7 +165,7 @@ def write_audit_sample(detail: pd.DataFrame, out_path: str, n_per: int = 3, seed
              "not overmatching.", ""]
     for fr in frames_ordered:
         lines.append(f"## Frame: `{fr}`")
-        for model in ("sonnet", "opus"):
+        for model in MODEL_ORDER:
             matches = detail[(detail.frames.str.contains(fr, regex=False)) &
                              (detail.model == model)]
             if fr == "untagged":
@@ -200,12 +202,12 @@ def main():
     if detail.empty:
         sys.exit(1)
 
-    detail_path = os.path.join(out_dir, "sonnet_vs_opus_frames_detail.csv")
+    detail_path = os.path.join(out_dir, "model_robustness_frames_detail.csv")
     detail.to_csv(detail_path, index=False)
     print(f"Saved {detail_path}  ({len(detail)} entries tagged)")
 
     agg = aggregate_for_plot(detail)
-    agg_path = os.path.join(out_dir, "sonnet_vs_opus_frames.csv")
+    agg_path = os.path.join(out_dir, "model_robustness_frames.csv")
     agg.to_csv(agg_path, index=False)
     print(f"Saved {agg_path}")
 
@@ -214,7 +216,7 @@ def main():
                             aggfunc="sum", fill_value=0)
     print(pivot.to_string())
 
-    write_audit_sample(detail, os.path.join(out_dir, "sonnet_vs_opus_frames_audit.md"),
+    write_audit_sample(detail, os.path.join(out_dir, "model_robustness_frames_audit.md"),
                        n_per=args.audit_n)
 
 

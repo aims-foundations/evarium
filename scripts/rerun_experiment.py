@@ -129,7 +129,7 @@ def build_sim_config(config: dict, SimulationConfig) -> "SimulationConfig":
     return SimulationConfig(**kwargs)
 
 
-def run_from_config(config, source_exp_id, output_dir=None, lightweight=False):
+def run_from_config(config, source_exp_id, output_dir=None, mode="slim"):
     """Run a simulation from a saved config dict.
 
     Args:
@@ -137,8 +137,9 @@ def run_from_config(config, source_exp_id, output_dir=None, lightweight=False):
         source_exp_id: Original experiment ID (for naming/tags).
         output_dir: If set, write to this directory using DirectoryLogger
                     instead of creating a new experiment in output/experiments/.
-        lightweight: If True (requires output_dir), skip heavy artifacts
-                     (game_log, plots, history.json, providers/, etc.).
+        mode: artifact verbosity ("minimal" | "slim" | "full"); see
+              DirectoryLogger docstring. Default "slim" matches the canonical
+              7-file release shape.
     """
     _PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     sys.path.insert(0, os.path.join(_PROJECT_ROOT, "src"))
@@ -200,7 +201,7 @@ def run_from_config(config, source_exp_id, output_dir=None, lightweight=False):
 
     # Experiment logging
     if output_dir:
-        logger = DirectoryLogger(output_dir, lightweight=lightweight)
+        logger = DirectoryLogger(output_dir, mode=mode)
         logger.save_metadata(
             seed=sim_config.seed,
             llm_mode=sim_config.llm_mode,
@@ -296,8 +297,8 @@ def run_from_config(config, source_exp_id, output_dir=None, lightweight=False):
     if sim_config.enable_funders and sim.funders:
         logger.log_funders(sim.funders)
 
-    # Game log (skip in lightweight mode)
-    if not lightweight:
+    # Game log (skip in minimal mode)
+    if mode != "minimal":
         benchmarks = full_config.get("benchmarks", [])
         game_log_content = generate_game_log_from_history(
             history=sim.history,
@@ -316,8 +317,8 @@ def run_from_config(config, source_exp_id, output_dir=None, lightweight=False):
         game_log_path = logger.save_game_log(game_log_content)
         print(f"Game log saved to: {game_log_path}")
 
-    # Plots (skip in lightweight mode)
-    if not lightweight:
+    # Per-round plots (full mode only)
+    if mode == "full":
         try:
             import matplotlib
             matplotlib.use('Agg')

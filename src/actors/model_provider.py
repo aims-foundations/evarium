@@ -702,7 +702,7 @@ class ModelProvider:
             orientation_signal = result.get("benchmark_orientation", "same")
             orientation_delta = _ordinal_to_delta(orientation_signal)
 
-        # Evaluator submissions (eval_as_company): integer 1-N from LLM
+        # Evaluator submissions (evaluator_capture): integer 1-N from LLM
         n_subs = result.get("n_submissions")
         if n_subs is not None:
             try:

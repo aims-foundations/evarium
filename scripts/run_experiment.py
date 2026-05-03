@@ -23,6 +23,7 @@ don't pollute hf_data/. Use it for exploratory runs, smoke tests, and PIMMUR che
 """
 import argparse
 import os
+import re
 import sys
 import time
 
@@ -43,7 +44,7 @@ _CONDITION_CHOICES = [
     "no_media", "no_funders", "no_regulator", "no_opensource",
     "no_incidents",
     "bm_orientation_max", "bm_orientation_adjustable",
-    "eval_as_company", "aligned_benchmarks",
+    "evaluator_capture", "aligned_benchmarks",
     "ev1_deepseek_shock",
     "fixed_market_size", "no_product_channels",
     "homogeneous_consumers",
@@ -59,6 +60,13 @@ _CONDITION_CHOICES = [
     "private_dominant", # all benchmarks → partial type (h=0.3, cosine=0.95; SEAL-dominant future)
     "private_only",     # all benchmarks → private type (h=1.0, cosine=0.85; FrontierMath-dominant future)
     "iid_holdout",      # all benchmarks → iid_holdout type (h=1.0, cosine=1.0; reporting-mechanism isolation)
+    # Sequence-robustness conditions (session 62): 9 sequences × 5 ladder rungs.
+    # s0 stays bare; s1-s8 carry thematic suffixes for self-documenting names.
+    # See _SEQUENCE_OVERRIDES near line ~660 for the active-13 + intro-schedule per sequence.
+    *[f"{seq_id}_{rung}"
+      for seq_id in ("s0", "s1_safety", "s2_coding", "s3_knowledge", "s4_comm",
+                     "s5_aligned", "s6_vertical", "s7_multilingual", "s8_agentic")
+      for rung in ("public_only", "baseline", "private_dominant", "private_only", "iid_holdout")],
 ]
 _parser.add_argument("--condition", choices=_CONDITION_CHOICES, default="full_ecosystem",
                      help="Experiment condition (default: full_ecosystem)")
@@ -92,10 +100,23 @@ _parser.add_argument("--batch", type=str, default=None,
                      help="Batch label: groups dev output under sandbox/experiments/<batch>/")
 _parser.add_argument("--name", type=str, default=None,
                      help="Override experiment name (default: <condition>_<policy>)")
-_parser.add_argument("--lightweight", action="store_true",
-                     help="Minimal artifacts only: metadata.json, config.json, rounds.jsonl, summary.json. "
-                          "Skips plots, history.json, game_log.md, providers/, consumers/, regulators/, "
-                          "funders/, ground_truth.json. For bulk replication runs.")
+_artifact_mode_group = _parser.add_mutually_exclusive_group()
+_artifact_mode_group.add_argument("--minimal", action="store_true",
+                     help="Replication shape: metadata.json + config.json + rounds.jsonl only. "
+                          "Skips summary, ground_truth, game_log, dashboard, history, per-actor dumps, plots.")
+_artifact_mode_group.add_argument("--full", action="store_true",
+                     help="Full debug shape: slim + history.json + providers/ + consumers/ + "
+                          "regulators/ + funders/ + plots/ + dashboard.pdf. For deep single-run debugging. "
+                          "Default (no flag) writes the canonical 7-file slim release shape.")
+_parser.add_argument("--bucket", choices=[
+    "core_privacy", "exogenous_validation", "structural_ablations",
+    "case_studies", "heuristic_baseline",
+], default=None,
+    help="Top-level bucket in hf_data_staging/ when --no-dev is set. "
+         "Required in canonical mode; ignored in --dev mode.")
+_parser.add_argument("--study", type=str, default=None,
+    help="Sub-study name under case_studies/ (e.g. 'audit_verification'). "
+         "Required when --bucket=case_studies.")
 _args, _ = _parser.parse_known_args()
 POLICY = _args.policy
 CONDITION = _args.condition
@@ -164,7 +185,7 @@ EXPERIMENT = {
              "opencore", "cost-advantage",
              "5-funder", "safety-diminishing-returns", "safety-lag",
              "regulator-5-lever", "incident-exp-decay",
-             "eval-as-company-fee-0.05", "product-channels",
+             "evaluator-capture-fee-0.05", "product-channels",
              "orientation-ratchet", "rolling-avg-allocations"],
 }
 
@@ -188,6 +209,10 @@ SIMULATION = {
     "breakthrough_magnitude": 0.20,
     "benchmark_introduction_cooldown": 4,
     "max_benchmarks": 13,
+    # Private-benchmark reporting cadence (K=3, empirical median across 24 Epoch
+    # benchmarks × 8 labs). Canonical default for ALL conditions; the conditional
+    # at line ~715 still re-asserts this for the privacy ladder set explicitly.
+    "evaluation_lag": 3,
     # Incident reporting
     "enable_incidents": True,
     # Evaluator-as-company — disabled for clean comparison
@@ -611,6 +636,152 @@ def _format_duration(seconds: float) -> str:
         return f"{int(h)}h {int(m)}m {int(s)}s"
 
 
+# ============================================================
+#  Sequence-robustness configs (S0–S4)
+# ============================================================
+# Each sequence pins a different (active-13, intro schedule) under the same
+# privacy mix as calibrated baseline. Used by the s{N}_<rung> condition prefix
+# to test whether the privacy ladder result is r0-anchor robust. See
+# session-62 design discussion + docs/case_studies/ for full rationale.
+#
+# Privacy mix (held constant across S0–S4):
+#   private:  Adversarial Robustness, Advanced Math
+#   partial:  Safety Evaluation, Scientific Reasoning, Hard Coding
+#   public:   the remaining 8 active benchmarks
+#
+# Composition deltas vs baseline-13:
+#   S0: identical (calibrated reference, re-run for code-path consistency)
+#   S1: identical 13-set (pure r0 swap AdvRob<->InstrFollow)
+#   S2: identical 13-set (pure r0 swap HardCoding<->SafetyEval)
+#   S3: drop CodingEval, add Hard Knowledge at r0 (knowledge-shaped)
+#   S4: drop CodingEval, add Creative Writing at r0 (comm-shaped)
+
+# Sequence IDs: s0 stays bare (calibrated baseline reference); S1-S8 carry thematic
+# suffixes for self-documenting condition strings. Regex allows the optional suffix.
+_SEQUENCE_PREFIX_RE = re.compile(
+    r"^(s0|s[1-8]_[a-z]+)_(public_only|baseline|private_dominant|private_only|iid_holdout)$"
+)
+
+# Sequence-specific overrides to the baseline-rung privacy mix. Used when a sequence
+# drops a benchmark that was assigned partial/private in the global mix, so that the
+# 8/3/2 ratio stays invariant across sequences (clean L1 isolation).
+# Currently only s6_vertical needs an override (drops Hard Coding which was partial).
+_SEQUENCE_MIX_OVERRIDE = {
+    "s6_vertical": {
+        # Hard Coding (partial in baseline) is dropped; promote Financial Analysis
+        # to partial. Anchored on FinanceBench-private / BloombergGPT proprietary
+        # holdouts being realistic in a vertical-AI-led ecosystem.
+        "Financial Analysis": "partial",
+    },
+}
+
+# 1-swap sequences (S0-S4): held privacy mix constant, varied r0 anchor only.
+# 2-swap sequences (S5-S8): each is a radical extension of one S1-S4 theme cluster,
+# allowing 2 composition swaps (drop 2 from baseline-13, add 2 from BENCHMARK_POOL).
+# Mapping: S1 safety -> S5 alignment-led; S2 coding -> S8 agentic-revolution;
+#          S3 knowledge -> S6 vertical-AI; S4 comm -> S7 multilingual.
+_SEQUENCE_OVERRIDES = {
+    "s0": {  # baseline (calibrated reference)
+        "r0":     ["General Capability", "Coding Evaluation", "Safety Evaluation", "Instruction Following"],
+        "intros": ["Scientific Reasoning", "Clinical Reasoning", "Adversarial Robustness", "Hard Coding",
+                   "Agentic Tasks", "Advanced Math", "Function Calling", "Long Context", "Legal Reasoning"],
+    },
+    "s1_safety": {  # safety-shaped: pure r0 swap AdvRob<->InstrFollow
+        "r0":     ["General Capability", "Coding Evaluation", "Safety Evaluation", "Adversarial Robustness"],
+        "intros": ["Scientific Reasoning", "Clinical Reasoning", "Instruction Following", "Hard Coding",
+                   "Agentic Tasks", "Advanced Math", "Function Calling", "Long Context", "Legal Reasoning"],
+    },
+    "s2_coding": {  # coding-shaped: pure r0 swap HardCoding<->SafetyEval
+        "r0":     ["General Capability", "Coding Evaluation", "Hard Coding", "Instruction Following"],
+        "intros": ["Scientific Reasoning", "Clinical Reasoning", "Adversarial Robustness", "Safety Evaluation",
+                   "Agentic Tasks", "Advanced Math", "Function Calling", "Long Context", "Legal Reasoning"],
+    },
+    "s3_knowledge": {  # knowledge-shaped: drop CodingEval, add HardKnowledge at r0
+        "r0":     ["General Capability", "Hard Knowledge", "Safety Evaluation", "Instruction Following"],
+        "intros": ["Scientific Reasoning", "Clinical Reasoning", "Adversarial Robustness", "Hard Coding",
+                   "Agentic Tasks", "Advanced Math", "Function Calling", "Long Context", "Legal Reasoning"],
+    },
+    "s4_comm": {  # comm-shaped: drop CodingEval, add CreativeWriting at r0
+        "r0":     ["General Capability", "Creative Writing", "Safety Evaluation", "Instruction Following"],
+        "intros": ["Scientific Reasoning", "Clinical Reasoning", "Adversarial Robustness", "Hard Coding",
+                   "Agentic Tasks", "Advanced Math", "Function Calling", "Long Context", "Legal Reasoning"],
+    },
+    # --- 2-swap sequences (S5-S8) ---
+    "s5_aligned": {  # alignment-led: 2-swap radical extension of S1.
+        # OUT: Long Context, Function Calling. IN: Agentic Safety, Web Navigation.
+        # r0: AgenticSafety as r0 anchor (safety x2 at day 1: SafetyEval + AgenticSafety).
+        # WebNav at r8 = anticipatory web-agent safety (Greshake Mar 2023 prompt-injection /
+        # WebArena Jul 2023 anchor); ClinReas pushed r8->r16 (vertical evals deprioritized
+        # in alignment-led world). InstrFollow demoted r0->r32 (MT-Bench-style polish lags).
+        "r0":     ["General Capability", "Coding Evaluation", "Safety Evaluation", "Agentic Safety"],
+        "intros": ["Scientific Reasoning", "Web Navigation", "Adversarial Robustness", "Clinical Reasoning",
+                   "Agentic Tasks", "Advanced Math", "Hard Coding", "Instruction Following", "Legal Reasoning"],
+    },
+    "s6_vertical": {  # vertical-AI: 2-swap radical extension of S3.
+        # OUT: General Capability, Hard Coding. IN: Domain Expert, Financial Analysis.
+        # r0: Domain Expert anchor (vertical professional knowledge from day 1, displacing MMLU).
+        # LegalReas r36->r8 (LegalBench Aug 2023 anchor). SciReas r4->r16 (deprioritized).
+        # FinAnal at r20 (BloombergGPT/FinanceBench era). AgenticTasks r20->r36 (vertical
+        # world deprioritizes agentic; verticals emphasize knowledge depth over tool use).
+        "r0":     ["Domain Expert", "Coding Evaluation", "Safety Evaluation", "Instruction Following"],
+        "intros": ["Clinical Reasoning", "Legal Reasoning", "Adversarial Robustness", "Scientific Reasoning",
+                   "Financial Analysis", "Advanced Math", "Function Calling", "Long Context", "Agentic Tasks"],
+    },
+    "s7_multilingual": {  # multilingual: 2-swap radical extension of S4.
+        # OUT: Long Context, Legal Reasoning. IN: Multilingual Understanding, Human Preference.
+        # r0: Multilingual anchor (cross-lingual eval as primary signal from day 1).
+        # SafetyEval demoted r0->r36 (English-language safety holdouts emerge late in
+        # multilingual-led world). HumanPref at r32 (LMSYS-Arena maturation as polyglot
+        # credibility check). Realistic per BAAI/Qwen/Yi/Tsinghua-led counterfactual.
+        "r0":     ["General Capability", "Coding Evaluation", "Multilingual Understanding", "Instruction Following"],
+        "intros": ["Scientific Reasoning", "Clinical Reasoning", "Adversarial Robustness", "Hard Coding",
+                   "Agentic Tasks", "Advanced Math", "Function Calling", "Human Preference", "Safety Evaluation"],
+    },
+    "s8_agentic": {  # agentic-revolution: 2-swap radical extension of S2.
+        # OUT: Long Context, Legal Reasoning. IN: Web Navigation, Issue Resolution.
+        # r0: Function Calling as r0 anchor (BFCL-style tool-use as Day 1 signal).
+        # CodingEval demoted r0->r28 (HumanEval-style eval becomes commoditized verification
+        # by 2025). WebNav at r32, IssueRes at r36 (private-repo SWE-bench-Verified-Plus
+        # crystallizes by Jan 2026 in agentic-led world).
+        "r0":     ["General Capability", "Function Calling", "Safety Evaluation", "Instruction Following"],
+        "intros": ["Scientific Reasoning", "Clinical Reasoning", "Adversarial Robustness", "Hard Coding",
+                   "Agentic Tasks", "Advanced Math", "Coding Evaluation", "Web Navigation", "Issue Resolution"],
+    },
+}
+
+
+def _bm_entry_from_pool(name, pool):
+    """Build a BENCHMARKS / benchmark_sequence dict entry from BENCHMARK_POOL data.
+    Used by _apply_sequence_override to construct active-13 from arbitrary pool names."""
+    for b in pool:
+        if b["name"] == name:
+            return {
+                "name": name,
+                "validity": 0.75,
+                "tags": b["tags"],
+                "noise_level": b["noise_sigma"],
+                "noise_sigma": b["noise_sigma"],
+                "samples": b["samples"],
+                "weight": b["weight"],
+                "category_dimension_weights": b["category_dimension_weights"],
+            }
+    raise ValueError(f"benchmark not in BENCHMARK_POOL: {name}")
+
+
+def _apply_sequence_override(seq_id: str, simulation: dict):
+    """Replace module-level BENCHMARKS and simulation['benchmark_sequence'] with the
+    sequence config for seq_id ('s0'..'s4'). Mutates BENCHMARKS in place via slice
+    assignment (preserves the module-level binding)."""
+    _src = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "src")
+    if _src not in sys.path:
+        sys.path.insert(0, _src)
+    from actors.evaluator import BENCHMARK_POOL
+
+    cfg = _SEQUENCE_OVERRIDES[seq_id]
+    BENCHMARKS[:] = [_bm_entry_from_pool(n, BENCHMARK_POOL) for n in cfg["r0"]]
+    simulation["benchmark_sequence"] = [_bm_entry_from_pool(n, BENCHMARK_POOL) for n in cfg["intros"]]
+
+
 def _apply_condition_overrides(condition: str, simulation: dict, experiment: dict):
     """Apply condition-specific config overrides to SIMULATION and EXPERIMENT dicts.
 
@@ -618,6 +789,15 @@ def _apply_condition_overrides(condition: str, simulation: dict, experiment: dic
     """
     extra_config = {}
     experiment["name"] = _args.name if _args.name else (condition if POLICY == "balanced" else f"{condition}_{POLICY}")
+
+    # Sequence-robustness prefix s{0-4}_<rung>: swap in the sequence's active-13 +
+    # intros, then proceed as if condition were the bare <rung>. See _SEQUENCE_OVERRIDES.
+    seq_match = _SEQUENCE_PREFIX_RE.match(condition)
+    seq_id_active = None  # set when a sequence override applies; used by privacy block
+    if seq_match:
+        seq_id_active, base_rung = seq_match.group(1), seq_match.group(2)
+        _apply_sequence_override(seq_id_active, simulation)
+        condition = base_rung  # local rebind; existing logic below dispatches on base_rung
 
     if condition == "full_ecosystem":
         pass  # baseline — no overrides
@@ -635,13 +815,13 @@ def _apply_condition_overrides(condition: str, simulation: dict, experiment: dic
         extra_config["benchmark_orientation_mode"] = "max"
     elif condition == "bm_orientation_adjustable":
         extra_config["benchmark_orientation_mode"] = "adjustable"
-    elif condition == "eval_as_company":
+    elif condition == "evaluator_capture":
         simulation["evaluator_as_company"] = True
         simulation["evaluator_base_budget"] = 50_000_000
         simulation["fee_per_submission"] = 0.05
         # Conservative retune (session 49, post-funder-recalibration): raise best-of-N cap
         # and early-access belief blend to restore HHI-delta signal that weakened under the
-        # more-diversified funder regime. See docs/case_studies/eval_as_company.md.
+        # more-diversified funder regime. See docs/case_studies/evaluator_capture.md.
         simulation["max_eval_submissions"] = 12
         simulation["early_access_factor"] = 0.7
         # Parent company resources for eval access (only affects submission affordability)
@@ -786,7 +966,26 @@ def _apply_condition_overrides(condition: str, simulation: dict, experiment: dic
             "Function Calling":      "public",
             "Long Context":          "public",
             "Legal Reasoning":       "public",
+            # Sequence-robustness anchors (S3 / S4): added so seq-prefixed conditions
+            # see them as `public` in the baseline rung. Privacy mix unchanged (still 8/3/2).
+            "Hard Knowledge":        "public",   # S3 r0 anchor
+            "Creative Writing":      "public",   # S4 r0 anchor
+            # 2-swap additions (S5-S8): all default to public in baseline rung so
+            # the privacy mix stays 8/3/2 (constant across sequences). Thematic-privacy
+            # variants would override these, e.g. AgenticSafety as partial in S5.
+            "Agentic Safety":        "public",   # S5 r0 anchor
+            "Web Navigation":        "public",   # S5 (r8) and S8 (r32)
+            "Domain Expert":         "public",   # S6 r0 anchor
+            "Financial Analysis":    "public",   # S6 (r20)
+            "Multilingual Understanding": "public",   # S7 r0 anchor
+            "Human Preference":      "public",   # S7 (r32)
+            "Issue Resolution":      "public",   # S8 (r36)
         }
+
+        # Apply sequence-specific overrides (e.g. S6 promotes FinAnal to partial since
+        # dropping HardCoding removed one partial slot; restores 8/3/2 ratio).
+        if seq_id_active and seq_id_active in _SEQUENCE_MIX_OVERRIDE:
+            _BASELINE_MIX = {**_BASELINE_MIX, **_SEQUENCE_MIX_OVERRIDE[seq_id_active]}
 
         def _randomized_baseline_mix(seed: int, benchmark_names: list,
                                      n_private: int = 2, n_partial: int = 3) -> dict:
@@ -1024,7 +1223,7 @@ def run():
                     for dim, val in p["capability_vector"].items()
                 }
 
-    # --- Apply discretionary budgets (eval_as_company) ---
+    # --- Apply discretionary budgets (evaluator_capture) ---
     _disc_budgets = _extra_config.pop("_discretionary_budgets", None)
     if _disc_budgets:
         for p in provider_configs:
@@ -1076,7 +1275,7 @@ def run():
         n_funders=n_funders,
         use_case_profiles=SIMULATION.get("use_case_profiles"),
         enable_incidents=SIMULATION.get("enable_incidents", False),
-        evaluation_lag=SIMULATION.get("evaluation_lag", 0),
+        evaluation_lag=SIMULATION.get("evaluation_lag", 3),
         evaluator_as_company=SIMULATION.get("evaluator_as_company", False),
         evaluator_base_budget=SIMULATION.get("evaluator_base_budget", 0.0),
         fee_per_submission=SIMULATION.get("fee_per_submission", 0.05),
@@ -1118,7 +1317,7 @@ def run():
     if SIMULATION.get("enable_incidents"):
         parts.append("incidents")
     if SIMULATION.get("evaluator_as_company"):
-        parts.append("eval-as-company")
+        parts.append("evaluator-capture")
     print()
     print("=" * 70)
     if DEV:
@@ -1133,13 +1332,10 @@ def run():
     print()
 
     # --- Experiment logging setup ---
-    _model_slug = {
-        "anthropic": "claude-sonnet-4-6",
-        "openai": "gpt-4o",
-        "gemini": "gemini-pro",
-        "ollama": "ollama",
-        "qwen": "qwen-235b",
-    }.get(LLM["provider"], LLM["provider"])
+    # Use the actual resolved model id (from LLM_MODEL env, set above by precedence:
+    # --model > env > config > provider-default) so e.g. opus runs don't land under
+    # the sonnet folder.
+    _model_slug = os.environ.get("LLM_MODEL") or LLM["provider"]
     _condition = EXPERIMENT["name"]          # e.g. full_ecosystem_balanced
     _seed_label = f"seed_{SIMULATION.get('seed', 1)}"
     if DEV:
@@ -1152,22 +1348,39 @@ def run():
             _base, _mode_tag, _condition, "seeds", _seed_label,
         )
     else:
-        # Canonical path per EXPERIMENT_PLAN.md
+        # Canonical path: route to hf_data_staging/ in public-facing layout.
+        # Bucket determines the top-level subdir; case_studies has an extra <study>/ level.
+        # LLM leaf:        <bucket>/[<study>/]llm/<model>/<condition>/seed_<N>/
+        # Heuristic leaf:  <bucket>/heuristic/<condition>/seed_<N>/
+        if not _args.bucket:
+            raise SystemExit(
+                "--no-dev requires --bucket "
+                "(core_privacy | exogenous_validation | structural_ablations | "
+                "case_studies | heuristic_baseline)"
+            )
+        _base = os.path.join(_PROJECT_ROOT, "hf_data_staging", _args.bucket)
+        if _args.bucket == "case_studies":
+            if not _args.study:
+                raise SystemExit(
+                    "--bucket case_studies requires --study (e.g. 'audit_verification')"
+                )
+            _base = os.path.join(_base, _args.study)
         if LLM["llm_mode"]:
             _output_dir = os.path.join(
-                _PROJECT_ROOT, "hf_data", "llm_core",
-                _model_slug, _condition, "seeds", _seed_label,
+                _base, "llm", _model_slug, _condition, _seed_label,
             )
         else:
             _output_dir = os.path.join(
-                _PROJECT_ROOT, "hf_data", "heuristic_baseline",
-                _condition, "seeds", _seed_label,
+                _base, "heuristic", _condition, _seed_label,
             )
-    logger = DirectoryLogger(_output_dir, lightweight=_args.lightweight)
+    _logger_mode = "minimal" if _args.minimal else "full" if _args.full else "slim"
+    logger = DirectoryLogger(_output_dir, mode=_logger_mode)
     logger.save_metadata(
         seed=config.seed,
         llm_mode=config.llm_mode,
         description=EXPERIMENT.get("description", ""),
+        llm_model=os.environ.get("LLM_MODEL", "") if config.llm_mode else "",
+        llm_provider=LLM["provider"] if config.llm_mode else "",
     )
     exp_id = _seed_label
 
@@ -1292,8 +1505,8 @@ def run():
     if config.enable_funders and sim.funders:
         logger.log_funders(sim.funders)
 
-    # Game log (skip in lightweight — content build is expensive and save is a no-op)
-    if not _args.lightweight:
+    # Game log (skip in minimal — content build is expensive and save is a no-op)
+    if _logger_mode != "minimal":
         game_log_content = generate_game_log_from_history(
             history=sim.history,
             providers=sim.providers,
@@ -1305,8 +1518,8 @@ def run():
         game_log_path = logger.save_game_log(game_log_content)
         print(f"Game log saved to: {game_log_path}")
 
-    # Final plots (force save regardless of round number)
-    if not _args.lightweight:
+    # Per-round presentation plots (full mode only — slim and minimal skip plots/)
+    if _logger_mode == "full":
         save_plots_if_needed(n_rounds - 1, force=True)
 
     # Finalize
@@ -1316,6 +1529,22 @@ def run():
     logger.finalize()
 
     print(f"\nExperiment saved to: {logger.get_experiment_dir()}")
+
+    # 9-panel single-run dashboard (LLM runs only; heuristic doesn't have all
+    # the required panels). Failure here is non-fatal — the run is already
+    # saved; a missing dashboard can be regenerated later via
+    # `scripts/dashboard/render_all_staging.py`.
+    if config.llm_mode and _logger_mode != "minimal":
+        try:
+            sys.path.insert(0, os.path.join(_PROJECT_ROOT, "scripts", "dashboard"))
+            from dashboard import render as _dashboard_render  # noqa: E402
+            from pathlib import Path as _Path
+            run_dir_p = _Path(logger.get_experiment_dir())
+            _dashboard_render(run_dir_p, run_dir_p / "dashboard.png",
+                              save_pdf=(_logger_mode == "full"))
+            print(f"Dashboard saved to: {run_dir_p / 'dashboard.png'}")
+        except Exception as _dash_err:
+            print(f"Dashboard render skipped (non-fatal): {_dash_err}")
 
     return sim
 
