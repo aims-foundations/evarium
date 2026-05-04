@@ -11,7 +11,7 @@ glob-style relative to the repo root, e.g.:
 
 The push opens a draft PR on HF, not a direct push to main.
 
-Pre-flight: requires HF_TOKEN with write scope on anon-author-B41C/evaluation-ecosystem-data.
+Pre-flight: requires HF_TOKEN with write scope on evaluation-ecosystem/evaluation-ecosystem-data.
 
 Workflow:
   1. python scripts/run_experiment.py --no-dev --bucket <X> ...   # produce runs into staging
@@ -38,7 +38,7 @@ from dotenv import load_dotenv
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 STAGING = PROJECT_ROOT / "hf_data_staging"
-HF_REPO_ID = "anon-author-B41C/evaluation-ecosystem-data"
+HF_REPO_ID = "evaluation-ecosystem/evaluation-ecosystem-data"
 
 DEFAULT_COMMIT_MESSAGE = "Update dataset"
 DEFAULT_COMMIT_DESCRIPTION = """\
@@ -91,6 +91,9 @@ def main() -> int:
     ap.add_argument("--replace-all", action="store_true",
                     help="DESTRUCTIVE: replace all repo content with the local staging dir "
                          "(equivalent to --delete '*'). Use only for full resets.")
+    ap.add_argument("--large-folder", action="store_true",
+                    help="Use upload_large_folder for batched/resumable upload. "
+                         "Pushes directly to main (no PR). Use for >1k files or >500MB.")
     args = ap.parse_args()
 
     if not STAGING.is_dir():
@@ -127,6 +130,20 @@ def main() -> int:
     from huggingface_hub import HfApi
 
     api = HfApi(token=token)
+
+    if args.large_folder:
+        if delete_patterns:
+            print("ERROR: --large-folder does not support --delete patterns.", file=sys.stderr)
+            return 1
+        print("\nUploading via upload_large_folder (batched, no PR) ...")
+        api.upload_large_folder(
+            repo_id=args.repo_id,
+            folder_path=str(STAGING),
+            repo_type="dataset",
+        )
+        print(f"Push complete: https://huggingface.co/datasets/{args.repo_id}")
+        return 0
+
     print("\nUploading and opening PR ...")
     upload_kwargs = dict(
         folder_path=str(STAGING),

@@ -38,7 +38,7 @@ Run `python scripts/run_experiment.py --help` for the full condition list.
 
 ## Reproducing paper results
 
-The dataset of paper-supporting runs is withheld during double-blind review; the permanent location will be released at camera-ready.
+The dataset of paper-supporting runs is hosted on HuggingFace at [`evaluation-ecosystem/evaluation-ecosystem-data`](https://huggingface.co/datasets/evaluation-ecosystem/evaluation-ecosystem-data/), released under CC-BY-4.0.
 
 To regenerate plots or re-run a saved config:
 

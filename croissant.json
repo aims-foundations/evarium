@@ -1,0 +1,258 @@
+{
+  "@context": {
+    "@language": "en",
+    "@vocab": "https://schema.org/",
+    "arrayShape": "cr:arrayShape",
+    "citeAs": "cr:citeAs",
+    "column": "cr:column",
+    "conformsTo": "dct:conformsTo",
+    "containedIn": "cr:containedIn",
+    "cr": "http://mlcommons.org/croissant/",
+    "data": {
+      "@id": "cr:data",
+      "@type": "@json"
+    },
+    "dataBiases": "cr:dataBiases",
+    "dataCollection": "cr:dataCollection",
+    "dataType": {
+      "@id": "cr:dataType",
+      "@type": "@vocab"
+    },
+    "dct": "http://purl.org/dc/terms/",
+    "extract": "cr:extract",
+    "field": "cr:field",
+    "fileProperty": "cr:fileProperty",
+    "fileObject": "cr:fileObject",
+    "fileSet": "cr:fileSet",
+    "format": "cr:format",
+    "includes": "cr:includes",
+    "isArray": "cr:isArray",
+    "isLiveDataset": "cr:isLiveDataset",
+    "jsonPath": "cr:jsonPath",
+    "key": "cr:key",
+    "md5": "cr:md5",
+    "parentField": "cr:parentField",
+    "path": "cr:path",
+    "personalSensitiveInformation": "cr:personalSensitiveInformation",
+    "prov": "http://www.w3.org/ns/prov#",
+    "rai": "http://mlcommons.org/croissant/RAI/",
+    "recordSet": "cr:recordSet",
+    "references": "cr:references",
+    "regex": "cr:regex",
+    "repeated": "cr:repeated",
+    "replace": "cr:replace",
+    "sc": "https://schema.org/",
+    "separator": "cr:separator",
+    "source": "cr:source",
+    "subField": "cr:subField",
+    "transform": "cr:transform"
+  },
+  "@type": "sc:Dataset",
+  "name": "evaluation-ecosystem-data",
+  "description": "\n\t\n\t\t\n\t\tAI Evaluation Ecosystem Simulation Dataset\n\t\n\nHugging Face dataset repository: evaluation-ecosystem/evaluation-ecosystem-data.\nSimulation outputs supporting the AI Evaluation Ecosystem paper. Each run is a stochastic\nsimulation of an AI evaluation ecosystem (providers, evaluators, consumers, regulators,\nfunders, media) over 40 monthly rounds. This release contains 119 LLM-mode runs (agent policies: claude-opus-4-6, claude-sonnet-4-6, gpt-5.5-2026-04-23) and 250 heuristic-mode runs… See the full description on the dataset page: https://huggingface.co/datasets/evaluation-ecosystem/evaluation-ecosystem-data.",
+  "alternateName": [
+    "evaluation-ecosystem/evaluation-ecosystem-data"
+  ],
+  "url": "https://huggingface.co/datasets/evaluation-ecosystem/evaluation-ecosystem-data",
+  "license": "https://creativecommons.org/licenses/by/4.0/",
+  "creator": {
+    "@type": "Person",
+    "name": "evaluation-ecosystem",
+    "url": "https://huggingface.co/evaluation-ecosystem"
+  },
+  "keywords": [
+    "AI evaluation",
+    "agent-based simulation",
+    "benchmark design",
+    "Goodhart's law",
+    "evaluator capture",
+    "privacy ladder",
+    "holdout construction"
+  ],
+  "citeAs": "Citation withheld during double-blind review.",
+  "conformsTo": "http://mlcommons.org/croissant/1.1",
+  "datePublished": "2026-05-03",
+  "version": "1.0.0",
+  "rai:hasSyntheticData": true,
+  "rai:personalSensitiveInformation": "None. All actors (providers, evaluators, consumers, regulators, funders, media) are synthetic. No real persons or organizations are represented; provider names (Mirage, Spark, OpenCore, Orion, etc.) are fictional.",
+  "rai:dataLimitations": "Simulation data, not real-world ecosystem observations. Six fixed providers, no entry/exit; single global jurisdiction; 40-round horizon; three LLM agent policies (Claude Sonnet 4.6, Claude Opus 4.6, GPT-5.5) plus a heuristic baseline; six-dimensional capability ontology and hand-calibrated consumer need-weights are researcher-imposed structural choices. Mechanism applies to leaderboard-driven, public-benchmark-dominated competitive contexts; not validated for FDA-style gatekeeping, defense procurement, or enterprise B2B contexts.",
+  "rai:dataBiases": "Six-dimension capability ontology (reasoning, coding, knowledge, safety, communication, agentic) is anchored to HELM/LMSYS taxonomies and where industry investment is currently separable; alternative ontologies could shift results. Consumer need-weights derive from US-centric labor-market data (NBER 2024, Stanford AI Index 2025, McKinsey 2024-2025); non-US ecosystems may differ. LLM-driven actor reasoning may inherit biases from the underlying foundation models.",
+  "rai:dataUseCases": "Validating systems-perspective analyses of AI evaluation; studying mechanism behavior under benchmark privacy and holdout-design choices; comparing LLM-driven vs heuristic agent behavior in multi-actor games; testing structural ablations (no_incidents, no_funders, no_regulator, etc.); cross-model robustness comparisons across LLM agent policies.",
+  "rai:dataSocialImpact": "Intended to inform AI evaluation policy design (governance, benchmark composition, holdout protocols). Should not be used to make claims about specific real-world AI providers, products, or markets — provider names and market dynamics are illustrative simulation artifacts. Misuse could occur if results are read as forecasts of real-market behavior; the simulator is a hypothesis generator, not a predictive model.",
+  "prov:wasGeneratedBy": "Generated by the AI Evaluation Ecosystem simulation (source code: anonymized GitHub URL withheld during double-blind review). LLM-mode runs use Anthropic Claude Sonnet 4.6, Claude Opus 4.6, and OpenAI GPT-5.5 (snapshot 2026-04-23) as agent policies for provider, regulator, funder, and media actors; heuristic-mode runs use deterministic rule-based agents. Each run is 40 monthly rounds; full SimulationConfig is captured in per-run config.json.",
+  "prov:wasDerivedFrom": "Calibration of the simulator draws on published real-world data: Stanford AI Index 2025 (benchmark landscape), NBER Bick/Blandin/Deming 2024 (AI task adoption), McKinsey State of AI 2025, HELM/LMSYS benchmark taxonomies, Epoch within-family benchmark correlations. The dataset itself is synthetic simulation output, not a transformation of any source dataset.",
+  "distribution": [
+    {
+      "@type": "cr:FileObject",
+      "@id": "repo",
+      "name": "repo",
+      "description": "The Hugging Face git repository.",
+      "contentUrl": "https://huggingface.co/datasets/evaluation-ecosystem/evaluation-ecosystem-data/tree/refs%2Fconvert%2Fparquet",
+      "encodingFormat": "git+https",
+      "sha256": "https://github.com/mlcommons/croissant/issues/80"
+    },
+    {
+      "@type": "cr:FileObject",
+      "@id": "runs-jsonl",
+      "name": "runs.jsonl",
+      "description": "Per-run registry with provenance and headline metrics. One JSON line per simulation run.",
+      "contentUrl": "https://huggingface.co/datasets/evaluation-ecosystem/evaluation-ecosystem-data/resolve/main/runs.jsonl",
+      "encodingFormat": "application/jsonlines",
+      "sha256": "a2cb2b1f2d1cc5b66a7b589313c830179af5d99f9d1f1936130cf8be9ea5976d"
+    }
+  ],
+  "recordSet": [
+    {
+      "@type": "cr:RecordSet",
+      "@id": "runs",
+      "name": "runs",
+      "description": "Per-run registry: one record per simulation run with provenance and headline metrics.",
+      "field": [
+        {
+          "@type": "cr:Field",
+          "@id": "runs/tier",
+          "name": "tier",
+          "description": "Tier label assigned during organization of the staging dir.",
+          "dataType": "sc:Text",
+          "source": {"fileObject": {"@id": "runs-jsonl"}, "extract": {"column": "tier"}}
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "runs/bucket",
+          "name": "bucket",
+          "description": "Top-level bucket: core_privacy, core_evaluator_capture, exogenous_validation, structural_ablations.",
+          "dataType": "sc:Text",
+          "source": {"fileObject": {"@id": "runs-jsonl"}, "extract": {"column": "bucket"}}
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "runs/mode",
+          "name": "mode",
+          "description": "Execution mode: 'llm' or 'heuristic'.",
+          "dataType": "sc:Text",
+          "source": {"fileObject": {"@id": "runs-jsonl"}, "extract": {"column": "mode"}}
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "runs/model",
+          "name": "model",
+          "description": "LLM model identifier (LLM-mode only). One of: claude-sonnet-4-6, claude-opus-4-6, gpt-5.5-2026-04-23.",
+          "dataType": "sc:Text",
+          "source": {"fileObject": {"@id": "runs-jsonl"}, "extract": {"column": "model"}}
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "runs/condition",
+          "name": "condition",
+          "description": "Experimental condition (e.g., baseline, private_only, no_incidents, evaluator_capture, ev1_deepseek_shock).",
+          "dataType": "sc:Text",
+          "source": {"fileObject": {"@id": "runs-jsonl"}, "extract": {"column": "condition"}}
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "runs/seed",
+          "name": "seed",
+          "description": "Stochastic seed used for the simulation run.",
+          "dataType": "sc:Integer",
+          "source": {"fileObject": {"@id": "runs-jsonl"}, "extract": {"column": "seed"}}
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "runs/path",
+          "name": "path",
+          "description": "Repo-relative path to the per-run directory.",
+          "dataType": "sc:Text",
+          "source": {"fileObject": {"@id": "runs-jsonl"}, "extract": {"column": "path"}}
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "runs/evaluation_lag",
+          "name": "evaluation_lag",
+          "description": "Reporting-lag parameter K (canonical value: 3).",
+          "dataType": "sc:Integer",
+          "source": {"fileObject": {"@id": "runs-jsonl"}, "extract": {"column": "evaluation_lag"}}
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "runs/git_commit",
+          "name": "git_commit",
+          "description": "Git commit SHA of the simulation source code that produced the run.",
+          "dataType": "sc:Text",
+          "source": {"fileObject": {"@id": "runs-jsonl"}, "extract": {"column": "git_commit"}}
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "runs/created_at",
+          "name": "created_at",
+          "description": "ISO 8601 timestamp at which the run was produced.",
+          "dataType": "sc:Date",
+          "source": {"fileObject": {"@id": "runs-jsonl"}, "extract": {"column": "created_at"}}
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "runs/n_rounds",
+          "name": "n_rounds",
+          "description": "Number of simulation rounds completed (canonical: 40).",
+          "dataType": "sc:Integer",
+          "source": {"fileObject": {"@id": "runs-jsonl"}, "extract": {"column": "n_rounds"}}
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "runs/hhi_final",
+          "name": "hhi_final",
+          "description": "Herfindahl-Hirschman Index of provider market shares at the final round.",
+          "dataType": "sc:Float",
+          "source": {"fileObject": {"@id": "runs-jsonl"}, "extract": {"column": "hhi_final"}}
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "runs/mean_satisfaction_final",
+          "name": "mean_satisfaction_final",
+          "description": "Population-mean consumer satisfaction at the final round.",
+          "dataType": "sc:Float",
+          "source": {"fileObject": {"@id": "runs-jsonl"}, "extract": {"column": "mean_satisfaction_final"}}
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "runs/mean_score_final",
+          "name": "mean_score_final",
+          "description": "Cross-benchmark mean published score at the final round.",
+          "dataType": "sc:Float",
+          "source": {"fileObject": {"@id": "runs-jsonl"}, "extract": {"column": "mean_score_final"}}
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "runs/mean_gap_unweighted_final",
+          "name": "mean_gap_unweighted_final",
+          "description": "Unweighted mean per-benchmark score-satisfaction gap at the final round.",
+          "dataType": "sc:Float",
+          "source": {"fileObject": {"@id": "runs-jsonl"}, "extract": {"column": "mean_gap_unweighted_final"}}
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "runs/mean_gap_shareweighted_final",
+          "name": "mean_gap_shareweighted_final",
+          "description": "Market-share-weighted mean per-benchmark score-satisfaction gap at the final round.",
+          "dataType": "sc:Float",
+          "source": {"fileObject": {"@id": "runs-jsonl"}, "extract": {"column": "mean_gap_shareweighted_final"}}
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "runs/safety_share_final",
+          "name": "safety_share_final",
+          "description": "Share-weighted mean of provider safety-investment allocations at the final round.",
+          "dataType": "sc:Float",
+          "source": {"fileObject": {"@id": "runs-jsonl"}, "extract": {"column": "safety_share_final"}}
+        },
+        {
+          "@type": "cr:Field",
+          "@id": "runs/llm_fallbacks",
+          "name": "llm_fallbacks",
+          "description": "Count of LLM-call fallbacks (heuristic-rule substitutions) within the run; LLM-mode only.",
+          "dataType": "sc:Integer",
+          "source": {"fileObject": {"@id": "runs-jsonl"}, "extract": {"column": "llm_fallbacks"}}
+        }
+      ]
+    }
+  ]
+}
