@@ -1,12 +1,12 @@
 # AI Evaluation Ecosystem Simulation
 
-A multi-agent simulation of the AI evaluation ecosystem: model providers, evaluators, consumers, regulators, funders, and media. Provider strategy emerges from portfolio allocation (R&D / safety / product) and per-benchmark focus weights. Goodhart-style score--satisfaction divergence arises when benchmark-need weights misalign with consumer-need weights, not from any explicit gaming lever.
+A generative agent-based model (GABM) of the AI evaluation ecosystem: model providers, evaluators, consumers, regulators, funders, and media. Provider strategy emerges from portfolio allocation (R&D / safety / product) and per-benchmark focus weights. Goodhart-style score--satisfaction divergence arises when benchmark-need weights misalign with consumer-need weights, not from any explicit gaming lever.
 
 The simulation supports two execution modes:
 - **Heuristic mode** — deterministic rules at every actor; no-LLM baseline.
 - **LLM mode** — LLM-driven planning at provider, regulator, funder, and (optionally) evaluator actors.
 
-Inspired by the [Generative Agents](https://github.com/joonspk-research/generative_agents) approach to agent-based simulation.
+In the lineage of [Generative Agents](https://github.com/joonspk-research/generative_agents) and the broader generative agent-based modeling tradition.
 
 ## Installation
 
