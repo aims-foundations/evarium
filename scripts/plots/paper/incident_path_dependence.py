@@ -4,11 +4,19 @@ overlaid with critical + major incident markers.
 Shows that the same provider archetype under the same calibration lands at
 final shares ranging from ~0.1 to ~0.8, governed by incident timing+severity.
 
+Reads from the canonical staging layout:
+  hf_data_staging/<bucket>/llm/<model>/<cond>/seed_*/rounds.jsonl
+
+Restricted to the 5 core privacy conditions (public_only / baseline /
+private_dominant / private_only / iid_holdout); sequence-robustness
+sub-conditions like s5_aligned_* / s8_agentic_* are excluded from the
+"same calibration" figure framing.
+
 Usage:
   python -m scripts.plots.paper.incident_path_dependence
 """
 from __future__ import annotations
-import argparse, glob, json, os, re
+import argparse, glob, json, os
 from pathlib import Path
 
 import matplotlib
@@ -18,9 +26,19 @@ from matplotlib.lines import Line2D
 
 from .. import paths as _paths
 
-_NAME_RE = re.compile(r"^(?P<cond>.+?)_s(?P<seed>\d+)_(?P<model>sonnet|opus)$")
 PROVIDER = "Orion Labs"
 SEV_MARK = {"major": ("^", "#E76F51", 50), "critical": ("X", "#D62828", 90)}
+
+CORE_PRIVACY_CONDS = {
+    "public_only", "baseline", "private_dominant", "private_only", "iid_holdout",
+}
+
+# Short labels used in run-name strings for legend / titles.
+_MODEL_SHORT = {
+    "claude-sonnet-4-6":     "sonnet",
+    "claude-opus-4-6":       "opus",
+    "gpt-5.5-2026-04-23":    "gpt55",
+}
 
 
 def load_trajectory(jsonl_path: str):
@@ -36,22 +54,56 @@ def load_trajectory(jsonl_path: str):
     return xs, ys, incidents, len(rounds)
 
 
-def main(batch: str, out_dir: str, model_filter: str = "sonnet", min_rounds: int = 40):
-    root = Path(_paths.PROJECT_ROOT) / "sandbox" / "experiments" / batch / "llm"
+def main(batch: str, out_dir: str, model_filter: str = "claude-sonnet-4-6",
+         min_rounds: int = 40, conds: set[str] | None = None):
+    """Walk hf_data_staging/<bucket>/llm/<model>/<cond>/seed_*/rounds.jsonl.
+
+    `batch` accepts either the staging name (`core_privacy`) or the legacy
+    sandbox form with leading underscore (`_core_privacy`); the underscore
+    is stripped.
+    """
+    bucket = batch.lstrip("_")
+    root = Path(_paths.PROJECT_ROOT) / "hf_data_staging" / bucket / "llm"
+    if not root.is_dir():
+        raise FileNotFoundError(f"Canonical staging dir not found: {root}")
+
+    accepted_conds = conds if conds is not None else CORE_PRIVACY_CONDS
     runs = []
-    for d in sorted(root.iterdir()):
-        if not d.is_dir(): continue
-        m = _NAME_RE.match(d.name)
-        if not m: continue
-        if model_filter and m.group("model") != model_filter: continue
-        cond, seed = m.group("cond"), int(m.group("seed"))
-        jsonl = d / "seeds" / f"seed_{seed}" / "rounds.jsonl"
-        if not jsonl.exists(): continue
-        xs, ys, inc, n = load_trajectory(str(jsonl))
-        if n < min_rounds: continue
-        runs.append({"cond": cond, "seed": seed, "xs": xs, "ys": ys, "inc": inc, "name": d.name, "final": ys[-1]})
+    for model_dir in sorted(root.iterdir()):
+        if not model_dir.is_dir():
+            continue
+        if model_filter and model_dir.name != model_filter:
+            continue
+        model_short = _MODEL_SHORT.get(model_dir.name, model_dir.name)
+        for cond_dir in sorted(model_dir.iterdir()):
+            if not cond_dir.is_dir():
+                continue
+            cond = cond_dir.name
+            if cond not in accepted_conds:
+                continue
+            for seed_dir in sorted(cond_dir.glob("seed_*")):
+                if not seed_dir.is_dir():
+                    continue
+                try:
+                    seed = int(seed_dir.name.split("_", 1)[1])
+                except ValueError:
+                    continue
+                jsonl = seed_dir / "rounds.jsonl"
+                if not jsonl.exists():
+                    continue
+                xs, ys, inc, n = load_trajectory(str(jsonl))
+                if n < min_rounds:
+                    continue
+                runs.append({"cond": cond, "seed": seed, "xs": xs, "ys": ys,
+                             "inc": inc, "model": model_short,
+                             "name": f"{cond}_s{seed}_{model_short}",
+                             "final": ys[-1]})
     if not runs:
-        raise FileNotFoundError(f"No 40-round runs found under {root}")
+        raise FileNotFoundError(
+            f"No {min_rounds}-round runs found under {root} "
+            f"(model={model_filter}, conds={sorted(accepted_conds)})")
+    print(f"Loaded {len(runs)} runs across {len({r['cond'] for r in runs})} conditions: "
+          f"{sorted({(r['cond'], r['seed']) for r in runs}, key=lambda x: (x[0], x[1]))[:6]}...")
 
     # Identify exemplars: worst-final-share (early wipeout) and best-final-share (recovery + dominance)
     runs_sorted = sorted(runs, key=lambda r: r["final"])
@@ -105,9 +157,10 @@ def main(batch: str, out_dir: str, model_filter: str = "sonnet", min_rounds: int
     ax.legend(handles=line_handles + marker_handles,
               loc="lower right", fontsize=8, frameon=True, framealpha=0.9)
 
+    model_short = _MODEL_SHORT.get(model_filter, model_filter or "all")
     ax.set_title(
         f"Path dependence: {PROVIDER} market share by seed × incident timing\n"
-        f"N={len(runs)} {model_filter} runs in {batch}; exemplars bolded",
+        f"N={len(runs)} {model_short} runs in hf_data_staging/{batch.lstrip('_')}; exemplars bolded",
         loc="left", fontsize=11)
 
     os.makedirs(out_dir, exist_ok=True)
@@ -123,12 +176,28 @@ def main(batch: str, out_dir: str, model_filter: str = "sonnet", min_rounds: int
 
 def cli():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--batch", default="_core_privacy")
-    ap.add_argument("--model", default="sonnet", choices=["sonnet", "opus", "all"])
+    ap.add_argument("--batch", default="core_privacy",
+                    help="HF staging bucket name (e.g. core_privacy). Leading "
+                         "underscore is stripped if present.")
+    ap.add_argument("--model", default="sonnet",
+                    choices=["sonnet", "opus", "gpt55", "all"],
+                    help="Which LLM model dir to walk (default: sonnet).")
+    ap.add_argument("--all-conds", action="store_true",
+                    help="Include all conditions in the bucket (e.g. s5_*/s8_* "
+                         "sequence-robustness sub-conditions). Default: 5 core "
+                         "privacy conditions only.")
     ap.add_argument("--out-dir", default=None)
     args = ap.parse_args()
     out_dir = args.out_dir or _paths.paper_dir()
-    main(args.batch, out_dir, model_filter=None if args.model == "all" else args.model)
+
+    short_to_canonical = {
+        "sonnet": "claude-sonnet-4-6",
+        "opus":   "claude-opus-4-6",
+        "gpt55":  "gpt-5.5-2026-04-23",
+    }
+    model_filter = None if args.model == "all" else short_to_canonical[args.model]
+    conds = None if args.all_conds else CORE_PRIVACY_CONDS
+    main(args.batch, out_dir, model_filter=model_filter, conds=conds)
 
 
 if __name__ == "__main__":

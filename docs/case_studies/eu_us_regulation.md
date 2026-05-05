@@ -1,10 +1,8 @@
-# CS7: EU vs US Regulatory Philosophy
-
-**Status:** Archival. Mechanism implemented and calibrated in the regulator presets; no longer load-bearing for the current paper but preserved as reference for regulator-parameter grounding and as a baseline for any cross-jurisdictional extension of CS2 / CS6.
+# EU vs US Regulatory Philosophy
 
 ## 1. Policy anchor
 
-Two divergent regulatory philosophies shape the frontier-AI policy landscape:
+Two divergent regulatory philosophies shape the frontier-AI policy landscape.
 
 ### 1.1 EU: Precautionary regulation
 
@@ -30,9 +28,9 @@ Key elements:
 - Voluntary codes; public-private collaboration; minimal federal mandates.
 - Federal preemption strategy actively overrides state regulations.
 - Limited enforcement (export controls + biosecurity only).
-- Ex-post problem solving; market-correction primary mechanism.
+- Ex-post problem solving; market correction primary mechanism.
 
-Notable state-level contrast: California (SB 53 — see CS2), Colorado, New York (RAISE — see CS2) have enacted AI-specific regulation that mirrors EU's risk-based approach. Creates tension with federal preemption strategy.
+Notable state-level contrast: California (SB 53), Colorado, and New York (RAISE) have enacted AI-specific regulation that mirrors the EU's risk-based approach. Creates tension with federal preemption strategy.
 
 ## 2. Empirical enforcement record (LLM-specific, 2024–2026)
 
@@ -47,9 +45,9 @@ Notable state-level contrast: California (SB 53 — see CS2), Colorado, New York
 | EU AI Office — Meta GPAI | January 2026 | Investigation ongoing (up to 7% global turnover) |
 | EU AI Act fines | — | **None issued as of Feb 2026** |
 
-The Italy Garante fine (Dec 2024) was the first GDPR fine specifically targeting generative AI. Violations: no lawful basis for training data, insufficient transparency, no age verification, failure to notify of March 2023 breach. Timeline: ~21 months breach → fine (fast by EU standards). OpenAI appealing; fine ≈ 20× OpenAI's Italian revenue during the period.
+The Italy Garante fine (Dec 2024) was the first GDPR fine specifically targeting generative AI. Violations: no lawful basis for training data, insufficient transparency, no age verification, failure to notify of March 2023 breach. Timeline: ~21 months breach to fine (fast by EU standards). OpenAI appealing; fine ≈ 20× OpenAI's Italian revenue during the period.
 
-EU AI Act enforcement mirrors GDPR ramp pattern: first GDPR fine appeared ~8 months post-entry; large fines took 3–5 years.
+EU AI Act enforcement mirrors the GDPR ramp pattern: first GDPR fine appeared ~8 months post-entry; large fines took 3–5 years.
 
 Amazon, Anthropic, Google, IBM, Microsoft, OpenAI signed the GPAI Code of Practice by Dec 2025, reducing (but not eliminating) investigation risk. Meta refused to sign.
 
@@ -75,9 +73,9 @@ Fine sizes: $193K–$15M. **None targeted major LLM providers.**
 - Trump Jan 2025 EO reversed Biden-era safety policies; preempted state AI laws.
 - State AG enforcement against LLMs specifically has been minimal.
 
-Structural summary: EU enforced against the dominant LLM product (ChatGPT) within 21 months, resulting in a real fine. US FTC has only fined small AI firms making deceptive claims; frontier LLM providers remain un-fined. US retreated from AI enforcement since January 2025.
+Structural summary: the EU enforced against the dominant LLM product (ChatGPT) within 21 months, resulting in a real fine. The US FTC has only fined small AI firms making deceptive claims; frontier LLM providers remain un-fined. The US retreated from AI enforcement after January 2025.
 
-## 3. Sim mechanism (implemented)
+## 3. Simulation mechanism
 
 ### 3.1 Calibrated presets (driven by empirical enforcement record above)
 
@@ -94,11 +92,11 @@ All parameters in `Policymaker.__init__()` and `_plan_heuristic()`. Presets in `
 | `mandate_risk_threshold` | float 0–1 | **0.75** | 0.62 | **0.50** | EU: ex-ante mandates; US: almost never |
 | `sanction_min_severity` | str | **"critical"** | "major" | **"major"** | US acts on critical only; EU on major+ |
 
-### 3.2 Graduated sanctions ladder (implemented)
+### 3.2 Graduated sanctions ladder
 
 Five-lever ladder: `commitment → advisory → disclosure → audit → sanction`. Per-lever cooldowns. LLM regulator uses reasoning memory (PIMMUR Option B). Exogenous events (US R24, EU R14) inject regulatory pressure independent of incident chain.
 
-### 3.3 Sanctions and fines (Tier 2, implemented)
+### 3.3 Sanctions and fines
 
 `sanctions_and_fines` action in `actors/policymaker.py`:
 
@@ -112,16 +110,16 @@ Calibrated effects on a 60%-share provider:
 - EU fine: ~16.8% R&D efficiency reduction.
 - US fine: ~1.8% reduction (and rarely triggered due to higher thresholds).
 
-### 3.4 Unimplemented (deferred)
+### 3.4 Not currently modeled
 
 - `compliance_burden` — documentation/testing opportunity cost.
 - `ex_ante_requirements` — pre-deployment gate (EU AI Act model).
-- `independent_audit_threshold` — third-party audit trigger. See CS6.
+- `independent_audit_threshold` — third-party audit trigger. See the audit-and-verification case study.
 - `market_intervention_enabled` — operating restrictions / market bans.
 
-## 4. Paired empirical results (exp032 EU vs exp033 US)
+## 4. Paired simulation results
 
-Paired simulation: 5 providers (OpenAI, Anthropic, Google, MetaAI, StartupDotAI), 30 rounds, heuristic-mode, same seed, `baseline_with_incidents_v2` scenario. Only regulator preset differs.
+A paired simulation contrasting the EU and US presets — five providers, 30 rounds, heuristic mode, same seed, `baseline_with_incidents` scenario, only the regulator preset differs.
 
 ### 4.1 Intervention pattern
 
@@ -132,16 +130,16 @@ Both regulators issued **6 interventions** over 30 rounds, same types. Differenc
 | 1 | transparency_requirement | transparency_requirement |
 | 4 | public_disclosure | public_disclosure |
 | 7 | performance_audit | performance_audit |
-| 9 | **emergency_investigation (StartupDotAI, critical)** | — |
-| 10 | — | **emergency_investigation (Anthropic, critical)** |
+| 9 | **emergency_investigation (Spark AI, critical)** | — |
+| 10 | — | **emergency_investigation (Apex AI, critical)** |
 | 24 | benchmark_mandate (fairness_risk=0.75) | benchmark_mandate (fairness_risk=0.90) |
 | 28 | final intervention | final intervention |
 
-EU acted earlier (R9) against a marginal provider; US waited longer (R10), acted against the market leader.
+The EU regulator acted earlier (R9) against a marginal provider; the US regulator waited longer (R10) and acted against the market leader.
 
 ### 4.2 Incident outcomes
 
-Both produced 12 total incidents — contradicting naive "EU reduces incident count" hypothesis.
+Both produced 12 total incidents — contradicting the naive "EU reduces incident count" hypothesis.
 
 | Severity | EU | US |
 |---|---|---|
@@ -150,26 +148,26 @@ Both produced 12 total incidents — contradicting naive "EU reduces incident co
 | Moderate | 3 | 2 |
 | Minor | 6 | 5 |
 
-EU skewed lower-severity (early interventions dampened escalation); US had more major incidents. Both shared the baseline incident rate driven by capability growth.
+The EU run skewed lower-severity (early interventions dampened escalation); the US run had more major incidents. Both shared the baseline incident rate driven by capability growth.
 
 ### 4.3 The benchmark mandate as market-reshuffling event
 
 R24 benchmark mandate: EU triggered at `fairness_risk=0.75`; US at 0.90.
 
-- **EU outcome:** Google surged from ~8% to 38–46% in the rounds following the mandate, retained 13.4% at R29 (permanently above pre-mandate).
-- **US outcome:** no comparable reshuffling; Anthropic maintained dominance.
+- **EU outcome:** Genesis Systems surged from ~8% to 38–46% in the rounds following the mandate, retained 13.4% at R29 (permanently above pre-mandate).
+- **US outcome:** no comparable reshuffling; Apex AI maintained dominance.
 
 ### 4.4 Final market shares (R29)
 
 | Provider | EU | US |
 |---|---|---|
-| Anthropic | 61.8% | 64.6% |
-| OpenAI | 9.6% | **23.8%** |
-| Google | **13.4%** | 5.4% |
-| MetaAI | 12.6% | 3.8% |
-| StartupDotAI | 2.5% | 2.5% |
+| Apex AI | 61.8% | 64.6% |
+| Orion Labs | 9.6% | **23.8%** |
+| Genesis Systems | **13.4%** | 5.4% |
+| Mirage AI | 12.6% | 3.8% |
+| Spark AI | 2.5% | 2.5% |
 
-OpenAI marginalized in EU (never recovered from adverse benchmark performance + emergency-investigation context); recovered mid-game in US.
+Orion Labs was marginalized in the EU run (never recovered from adverse benchmark performance + emergency-investigation context); recovered mid-game in the US run.
 
 ### 4.5 Counterintuitive result: safety alignment
 
@@ -177,7 +175,7 @@ OpenAI marginalized in EU (never recovered from adverse benchmark performance + 
 |---|---|---|
 | Avg safety_alignment (R29) | ~19% | **~23%** |
 
-**US providers invested more in safety alignment than EU providers.** Inverts naive prediction. Mechanism: under frequent EU interventions, providers invested in evaluation_engineering / compliance-theater rather than fundamental safety. Under US regime, safety alignment became a market-differentiator for consumer trust — market-driven safety rather than regulatory.
+**US providers invested more in safety alignment than EU providers.** Inverts the naive prediction. Mechanism: under frequent EU interventions, providers invested in evaluation engineering and compliance theater rather than fundamental safety. Under the US regime, safety alignment became a market differentiator for consumer trust — market-driven safety rather than regulator-driven.
 
 ### 4.6 Hypothesis verification
 
@@ -189,18 +187,18 @@ OpenAI marginalized in EU (never recovered from adverse benchmark performance + 
 | EU forces higher safety investment | Higher EU safety | **Wrong** — US 23% vs EU 19% |
 | EU maintains higher satisfaction | Higher EU | **Correct** — 0.777 vs 0.739 |
 
-**Summary findings:** formal regulatory pressure did not increase safety investment — market competition did. The benchmark mandate's market-reshuffling effect was the single largest consequence of regulatory style.
+Summary: formal regulatory pressure did not increase safety investment — market competition did. The benchmark mandate's market-reshuffling effect was the single largest consequence of regulatory style.
 
-## 5. Paper claim (archival — not load-bearing)
+## 5. Findings
 
-EU and US regulatory philosophies produce subtly but meaningfully different trajectories over 30 rounds despite identical starting conditions. The difference is qualitative (volatility, market-share dynamics, safety-investment driver) rather than quantitative on headline metrics (incident count, capability growth). This case study's primary contribution is parameter grounding for the regulator presets; the current paper uses those presets to support other case studies (CS2 transparency mandate tests within-preset effects rather than across-preset comparison).
+EU and US regulatory philosophies produce subtly but meaningfully different trajectories over 30 rounds despite identical starting conditions. The difference is qualitative (volatility, market-share dynamics, safety-investment driver) rather than quantitative on headline metrics (incident count, capability growth). The case study's primary contribution is parameter grounding for the regulator presets that other case studies use.
 
 ## 6. Open questions
 
 - **Cross-jurisdictional provider spread** — current roster assumes all providers operate under the same preset. Real-world: providers face multiple jurisdictions simultaneously. Extending to per-provider jurisdictional coverage would multiply the configuration space.
-- **Federal preemption dynamics** — US federal law preempting California/NY state law is a live political dynamic not captured in the preset structure.
+- **Federal preemption dynamics** — US federal law preempting California or New York state law is a live political dynamic not captured in the preset structure.
 - **Enforcement lag** — the 21-month Italy Garante timeline is compressed to 2-round intervention cooldown. Reasonable abstraction at 1 round = 1 month, but should be probed.
-- **Interaction with CS2 (transparency mandate)** — CS2 uses SB 53 (CA state) scope, which sits under the US preset but adds EU-style disclosure duties for covered providers. Cross-preset composition is unexplored.
+- **Interaction with the transparency mandate case study** — uses SB 53 (CA state) scope, which sits under the US preset but adds EU-style disclosure duties for covered providers. Cross-preset composition is unexplored.
 
 ## 7. References
 
@@ -208,33 +206,19 @@ EU and US regulatory philosophies produce subtly but meaningfully different traj
 
 - EU AI Act Official — https://digital-strategy.ec.europa.eu/en/policies/regulatory-framework-ai
 - High-level AI Act Summary — https://artificialintelligenceact.eu/high-level-summary/
-- RAND — "Risk-Based Approach" (RRA3243-3)
-- Italy Garante — ChatGPT GDPR ruling (Dec 2024)
-- EU AI Office — Grok DSA proceedings (Jan 2026); Meta GPAI investigation (Jan 2026)
+- RAND — "Risk-Based Approach" (RRA3243-3).
+- Italy Garante — ChatGPT GDPR ruling (Dec 2024).
+- EU AI Office — Grok DSA proceedings (Jan 2026); Meta GPAI investigation (Jan 2026).
 
 ### US
 
-- White House — America's AI Action Plan (Dec 2025)
-- Squire Patton Boggs — Trump AI Executive Order analysis
-- Pillsbury — Federal AI Regulation overview
-- FTC — Operation AI Comply (Sept 2024); chatbot 6(b) orders (Sept 2025)
-- FTC — Rytr consent order set-aside (Dec 2025)
+- White House — America's AI Action Plan (Dec 2025).
+- Squire Patton Boggs — Trump AI Executive Order analysis.
+- Pillsbury — Federal AI Regulation overview.
+- FTC — Operation AI Comply (Sept 2024); chatbot 6(b) orders (Sept 2025).
+- FTC — Rytr consent order set-aside (Dec 2025).
 
 ### Academic
 
-- Chicago Law Review — "Comparing EU & US AI legislation"
+- Chicago Law Review — "Comparing EU & US AI legislation."
 - Bar-Gill, Sunstein, Talley (various) — precautionary principle analyses.
-
-## 8. Internal pointers
-
-- `src/actors/regulator.py` — preset-driven ladder and sanctions
-- `src/simulation.py` — `POLICYMAKER_PRESETS` (eu_precautionary, us_light_touch, balanced)
-- `case_studies/transparency_mandate.md` (CS2) — SB 53 sits under US preset, adds EU-style duties for covered providers
-- `case_studies/audit_verification.md` (CS6) — `independent_audit_threshold` and `market_intervention_enabled` are the deferred Tier-3 levers
-- Session memory: session 7 (regulator rewrite), session 39c (incident formula recalibration)
-
-## 9. Document history
-
-- 2026-02-16 — Initial research and parameter mapping (from `policy_intervention_case_study.md`).
-- 2026-02-18 — Empirical enforcement record (narrowed to LLM/GenAI-specific enforcement, 2024–2026).
-- 2026-04-22 — Consolidated into case-study bank; paired exp032/033 results absorbed from `US_vs_EU_Comparison_Guide.md`.
