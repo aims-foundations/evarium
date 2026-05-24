@@ -8,6 +8,10 @@ The simulation supports two execution modes:
 
 In the lineage of [Generative Agents](https://github.com/joonspk-research/generative_agents) and the broader generative agent-based modeling tradition.
 
+## Explore runs interactively
+
+A static-first browser for the bundled paper runs lives under [`website/`](website/) &mdash; condition card grid, single-run animation, multi-run comparison. Once deployed, will live at `https://aimslab.stanford.edu/evaluarium/`. See [`website/README.md`](website/README.md) for pages, URL formats, and local-serving instructions.
+
 ## Installation
 
 ```bash
@@ -71,6 +75,8 @@ scripts/              CLI entry points + analysis tools
 docs/
   stakeholders.md         canonical architecture reference
   case_studies/           policy-adjacent case study designs
+website/              Interactive explorer (static; future Pyodide / BYOK LLM tiers)
+  client/                 HTML/JS/CSS + bundled run data
 external-validation/  Real-world data + validation scripts
 ```
 

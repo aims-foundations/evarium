@@ -24,9 +24,13 @@ Provider names are anonymized to prevent LLM reasoning from being biased by real
 
 ## File Reference
 
+For the global project layout (paper, interviews, rough notes) see `../README.md` one level up.
+
 | File | Purpose |
 |------|---------|
 | `docs/stakeholders.md` | This file — canonical architecture reference |
+| `../evaluation_ecosystem_overleaf/interviews/actor/` | Actor one-pagers sent to interview participants (model_provider, evaluator, regulator, funder, consumer, media) |
+| `../evaluation_ecosystem_overleaf/interviews/docs/` | Interview guide, IRB approval, consent scripts |
 | `rough/logging_spec.md` | verbose=False / verbose=True logging spec |
 | `rough/validation_plan.md` | Validation plan — Sargent, PIMMUR, Windrum, Axtell, Park et al. |
 | `src/simulation.py` | Core sim loop, `SimulationConfig`, `EvalEcosystemSimulation`, regulatory presets |
