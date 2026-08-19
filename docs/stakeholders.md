@@ -945,9 +945,10 @@ Funder observes:
 - Benchmark scores at face value (as capability claims — not validity-adjusted)
 - Market share trends and score deltas
 - Incident history per provider
-- Media sentiment per provider
+- Media sentiment (single outlet-level scalar in heuristic mode; headlines naming providers in LLM mode)
 - `public_comms` last 3 rounds per provider (direct — not filtered through media)
 - Other funders' investment behavior (herding signal)
+- Regulator interventions (recent window) and active regulations
 
 Does NOT observe: consumer satisfaction, `score_reliability`, benchmark validity, provider investment allocations.
 
