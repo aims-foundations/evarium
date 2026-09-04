@@ -1,6 +1,6 @@
 /* Evaluarium data loader.
  *
- * Centralizes the data-fetching contract for index.html, viewer.html,
+ * Centralizes the data-fetching contract for explorer.html, viewer.html,
  * and compare.html. Today every load is a static fetch from the
  * bundled data/ directory. At T2 (Pyodide-generated runs), loadRun()
  * grows a memory branch that returns in-memory blobs without touching
