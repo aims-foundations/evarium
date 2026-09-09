@@ -288,7 +288,7 @@ def generate_explorer(source_dir: Path, output_dir: Path, force: bool = False) -
             errors += 1
 
     runs_path = output_dir / "runs.json"
-    runs_path.write_text(json.dumps(index, indent=2), encoding="utf-8")
+    runs_path.write_text(json.dumps(index, separators=(",", ":")), encoding="utf-8")
 
     write_viewer_shell(output_dir)
 
