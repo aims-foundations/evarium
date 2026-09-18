@@ -221,7 +221,7 @@ SIMULATION = {
 
     # Benchmark introduction sequence — 9 benchmarks introduced one per cooldown
     # (interval=4), rounds 4/8/12/16/20/24/28/32/36. Ordering anchored to real-world
-    # AI-eval history (2023 Q2 → 2026 Q1). See docs/stakeholders.md + rough/randomized_baseline_design.md.
+    # AI-eval history (2023 Q2 → 2026 Q1). See docs/stakeholders.md.
     "benchmark_sequence": [
         {
             # Round 4 ≈ May 2023. GPQA / MMLU-Pro era.
@@ -948,10 +948,10 @@ def _apply_condition_overrides(condition: str, simulation: dict, experiment: dic
             )
 
         # `baseline` uses an 8-public / 3-partial / 2-private mix over the
-        # 13-benchmark static set; matches 2024–2025 real-world ratios
-        # (~62% public / 23% partial / 15% private). All other conditions apply
-        # a uniform override. See rough/randomized_baseline_design.md for the
-        # calibration + temporal anchoring (interval=4, 40-round window).
+        # 13-benchmark static set: an 8/3/2 public/partial/private mix reflecting
+        # the coexistence of public, semi-private and fully private evaluation
+        # regimes. All other conditions apply a uniform override. Temporal
+        # anchoring: interval=4, 40-round window (see docs/stakeholders.md).
         _BASELINE_MIX = {
             "General Capability":    "public",
             "Coding Evaluation":     "public",

@@ -6,7 +6,7 @@ Records calibrations of funder parameters against empirical data on the AI model
 
 ## Source data
 
-- `ai_corporate_funder_research.md` (workspace `rough/design-in-progress/`, not in this repo) — timeline of corporate funding events in the frontier AI ecosystem, 2020 through April 2026. Compiled from press reports, SEC filings, and CMA/FTC inquiry documents.
+- A separate research note (not in this repo) — timeline of corporate funding events in the frontier AI ecosystem, 2020 through April 2026. Compiled from press reports, SEC filings, and CMA/FTC inquiry documents.
 
 ## Timescale convention
 

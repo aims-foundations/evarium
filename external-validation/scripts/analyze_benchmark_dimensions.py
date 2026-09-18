@@ -37,10 +37,13 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 EXTVAL = os.path.dirname(HERE)  # external-validation/
 PROC = os.path.join(EXTVAL, "data", "processed")
 
-# Private source (ai-discourse repo). Processed snapshot below makes reruns
-# self-contained if this path is unavailable.
-CENSUS_FROZEN = r"C:\Users\yashd\Desktop\ai-discourse\research\lab-reporting\data\linking\frozen_20260623\census.csv"
-TOP60 = r"C:\Users\yashd\Desktop\ai-discourse\research\lab-reporting\data\linking\test_top60.csv"
+# Private source (a separate benchmark-census project). Set LAB_REPORTING_DIR to its
+# lab-reporting folder; the processed snapshot below makes reruns self-contained
+# if this path is unavailable.
+LAB_REPORTING = os.environ.get("LAB_REPORTING_DIR", os.path.join(
+    os.path.expanduser("~"), "Desktop", "ai-discourse", "research", "lab-reporting"))
+CENSUS_FROZEN = os.path.join(LAB_REPORTING, "data", "linking", "frozen_20260623", "census.csv")
+TOP60 = os.path.join(LAB_REPORTING, "data", "linking", "test_top60.csv")
 
 # --- Crosswalk: census 20 `domain` values -> sim 6 dims (+ explicit UNMODELED) ---
 # UNMODELED buckets are named so the gap is visible, not hidden. Judgment calls

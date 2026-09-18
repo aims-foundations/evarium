@@ -24,15 +24,9 @@ Provider names are anonymized to prevent LLM reasoning from being biased by real
 
 ## File Reference
 
-For the global project layout (paper, interviews, rough notes) see `../README.md` one level up.
-
 | File | Purpose |
 |------|---------|
 | `docs/stakeholders.md` | This file — canonical architecture reference |
-| `../evaluation_ecosystem_overleaf/interviews/actor/` | Actor one-pagers sent to interview participants (model_provider, evaluator, regulator, funder, consumer, media) |
-| `../evaluation_ecosystem_overleaf/interviews/docs/` | Interview guide, IRB approval, consent scripts |
-| `rough/logging_spec.md` | verbose=False / verbose=True logging spec |
-| `rough/validation_plan.md` | Validation plan — Sargent, PIMMUR, Windrum, Axtell, Park et al. |
 | `src/simulation.py` | Core sim loop, `SimulationConfig`, `EvalEcosystemSimulation`, regulatory presets |
 | `src/capability_dimensions.py` | `DIMENSIONS` constant, `dot()`, `normalize()`, `deficit_weights()` utilities |
 | `src/visibility.py` | State classes: PublicState, PrivateState, GroundTruth, AIIncident |
@@ -189,15 +183,15 @@ Cosine values anchored empirically: 0.85 matches Epoch within-family Pearson cor
 | Condition | Pool composition |
 |---|---|
 | `public_only` | All 13 → `public` |
-| `baseline` | 8 `public` + 3 `partial` + 2 `private` (matches 2024–2025 empirical 62/23/15% split) |
-| `baseline_randomized` | 8/3/2 ratio with per-seed randomized assignment (isolates privacy-mechanism coefficient from benchmark-selection confound — see `rough/randomized_baseline_design.md`) |
+| `baseline` | 8 `public` + 3 `partial` + 2 `private` (a mix of public, semi-private and fully private evaluation regimes) |
+| `baseline_randomized` | 8/3/2 ratio with per-seed randomized assignment (isolates privacy-mechanism coefficient from benchmark-selection confound) |
 | `private_dominant` | All 13 → `partial` |
 | `private_only` | All 13 → `private` |
 | `iid_holdout` | All 13 → `iid_holdout` |
 
 Benchmark names are unchanged across conditions — only structural attributes (h, cosine) vary. LLM providers do not observe benchmark types or real-world analog labels; they infer from score patterns.
 
-**Calibrated `baseline` assignment** (8/3/2 ratio anchored to 2024–2025 history): Safety Evaluation + Scientific Reasoning + Hard Coding as `partial` (SEAL-Safety / GPQA-Diamond / LiveCodeBench contamination-mitigated analogs); Adversarial Robustness (r12, Jan 2024, SEAL-Safety / HarmBench-private era) + Advanced Math (r24, Jan 2025, FrontierMath era) as `private`; remaining 8 as `public`. See `rough/randomized_baseline_design.md` for the full timeline anchor.
+**Calibrated `baseline` assignment** (8/3/2 ratio anchored to 2024–2025 history): Safety Evaluation + Scientific Reasoning + Hard Coding as `partial` (SEAL-Safety / GPQA-Diamond / LiveCodeBench contamination-mitigated analogs); Adversarial Robustness (r12, Jan 2024, SEAL-Safety / HarmBench-private era) + Advanced Math (r24, Jan 2025, FrontierMath era) as `private`; remaining 8 as `public`.
 
 **Premium access (orthogonal axis; not activated in primary conditions):**
 
