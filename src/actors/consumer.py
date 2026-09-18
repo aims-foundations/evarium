@@ -41,7 +41,7 @@ USE_CASE_PROFILES = {
     #   Stanford AI Index 2025, Thomson Reuters Legal AI 2025, AMA Physician
     #   AI Sentiment 2024, Gallup Teachers & AI 2024-25, Adobe Creators 2025,
     #   NBER Bick/Blandin/Deming 2024 occupation-level adoption data.
-    # See docs/references.md for full citation list.
+    # Full citations are in the paper's bibliography.
     "software_dev": {
         "label": "Software Developer",
         "benchmark_prefs": {"coding": 0.90, "reasoning": 0.08, "writing": 0.02},
@@ -1525,7 +1525,7 @@ def create_default_segments(
 
     # Adoption-weighted population shares per use-case.
     # Grounded in NBER Bick/Blandin/Deming 2024, Stanford AI Index 2025,
-    # McKinsey State of AI 2025. See docs/references.md.
+    # McKinsey State of AI 2025.
     USE_CASE_POP_WEIGHTS = {
         "software_dev": 0.14, "content_writer": 0.08, "legal": 0.04,
         "healthcare": 0.05, "finance": 0.05, "educator": 0.07,

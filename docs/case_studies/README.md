@@ -35,4 +35,4 @@ Then add a row to the inventory table above.
 ## Related docs
 
 - `docs/stakeholders.md` — canonical architecture reference for all primitives used in these mechanisms.
-- `docs/references.md` — master reference list; case studies cite into it.
+- The paper's bibliography is the reference list; case studies cite into it. A value with no entry there is a modeling choice until someone sources it.

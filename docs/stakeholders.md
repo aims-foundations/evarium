@@ -1,6 +1,6 @@
 # Stakeholder Architecture: No Explicit Gaming
 
-> **Architecture reference.** Sections below describe the simulation's actors, state representations, and mechanics as implemented. Per-session change history: see `docs/architecture_changelog.md`.
+> **Architecture reference.** Sections below describe the simulation's actors, state representations, and mechanics as implemented.
 > Gaming emerges from provider investment decisions and benchmark-need weight mismatch — not from an explicit gaming lever.
 
 ---
@@ -717,7 +717,7 @@ Each segment = use-case profile × behavioral archetype. Archetypes modify obser
 | government_agency | 0.12 | 0.02 | 0.22 | **0.48** | 0.12 | 0.04 | 0.05 |
 | enterprise_hr | 0.20 | 0.02 | 0.20 | **0.35** | 0.18 | 0.05 | 0.04 |
 
-Population weights are adoption-weighted market shares, grounded in NBER Bick/Blandin/Deming 2024 occupation-level AI adoption data, Stanford AI Index 2025, and McKinsey State of AI 2025. `enterprise_hr` is anchored in EEOC 2024 algorithmic-discrimination guidance + NYC Local Law 144 + EU AI Act Annex III §4. See `docs/references.md` for full citations. Raw pop weights sum to 1.04; `create_default_segments` normalizes to 1.0.
+Population weights are adoption-weighted market shares, grounded in NBER Bick/Blandin/Deming 2024 occupation-level AI adoption data, Stanford AI Index 2025, and McKinsey State of AI 2025. `enterprise_hr` is anchored in EEOC 2024 algorithmic-discrimination guidance + NYC Local Law 144 + EU AI Act Annex III §4. Full citations are in the paper's bibliography. Raw pop weights sum to 1.04; `create_default_segments` normalizes to 1.0.
 
 Population-weighted average ≈ `{reasoning: 0.18, coding: 0.12, knowledge: 0.18, safety: 0.17, communication: 0.27, agentic: 0.09}` (`enterprise_hr` ticks safety up ~0.007 via its safety-0.35 weight). `agentic` is intentionally low at simulation start (2023).
 
@@ -756,7 +756,7 @@ When `dynamic_consumer_market=True` (the **default**), enterprise segment `marke
 enterprise_share(t) = start + (end - start) / (1 + exp(-0.25 * (t - midpoint)))
 ```
 
-Default: `enterprise_share_start=0.25`, `enterprise_share_end=0.55`, `enterprise_growth_midpoint=18`. Grounded in McKinsey State of AI (2024-2025), Menlo Ventures (2024-2025), Stanford HAI (2024-2025). See `docs/references.md`.
+Default: `enterprise_share_start=0.25`, `enterprise_share_end=0.55`, `enterprise_growth_midpoint=18`. Informed by the McKinsey State of AI and Stanford AI Index adoption surveys. The enterprise-share curve itself is a modeling choice.
 
 ### Organizational Consumer LLM Mode
 
@@ -821,7 +821,7 @@ Matching logic at `consumer.py:645`: `if seg.use_case in affected_sectors or seg
 - **Regulator:** Risk belief updates; critical incidents may skip escalation levels
 - **Funders:** Incident penalty in provider scoring
 
-**Empirical calibration (see `docs/incident_path_dependence.md`):** Cross-sector survey validates that critical incidents can cause 30+pp market share swings: Boeing 737 MAX (39pp delivery share drop), Avandia (34pp within-class), Cruise robotaxi (50+pp to permanent exit). Severity weights and history escalation (+0.02/prior, cap 0.10, 15-round aging) are sized to prevent death spirals while preserving meaningful differentiation. Across a 5-seed validation, 3 different winners emerge; strategic advantage survives moderate incidents while critical incidents still reshape markets. Key calibration nuances from the evidence:
+**Empirical calibration:** Cross-sector survey validates that critical incidents can cause 30+pp market share swings: Boeing 737 MAX (737 share of 737 + A320-family deliveries 48% in 2018 to 9% in 2020, 31% in 2024), Avandia (rosiglitazone share of TZD Medicaid prescriptions 56% to 19% / 49% to 23%, Hsu et al. 2015), Cruise robotaxi (permit suspension Oct 2023, GM ended robotaxi funding Dec 2024). Severity weights and history escalation (+0.02/prior, cap 0.10, 15-round aging) are sized to prevent death spirals while preserving meaningful differentiation. Across a 5-seed validation, 3 different winners emerge; strategic advantage survives moderate incidents while critical incidents still reshape markets. Key calibration nuances from the evidence:
 - **Incident type matters:** Physical harm + regulatory shutdown produces permanent exits; pure reputational/trust incidents produce ~0pp shifts in AI markets (trust-behavior gap). Media headline competition (critical=guaranteed, major/moderate=pooled with weighted sampling) partially captures this: critical incidents always dominate news, while moderate incidents may be crowded out by other stories.
 - **Recovery is slow and fragile:** Boeing partially recovered in 3 years but was reset by a second incident. Decay half-life (~2.3 rounds) remains unchanged; the reduced severity weights lower the peak penalty rather than extending the tail.
 - **"Liability of good reputation":** Market leaders are MORE vulnerable to incident shocks (Rhee & Haunschild, 2006). The `(1 + market_share^2)` scaling captures this.
