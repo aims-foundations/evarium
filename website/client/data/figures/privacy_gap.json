@@ -1223,7 +1223,7 @@
     "mode": "llm",
     "benchmark": "Agentic Tasks",
     "primary_dim": "agentic",
-    "surplus": -0.29712643749999995,
+    "surplus": -0.2971264374999999,
     "dgap": 0.07959786745059703
    },
    {
@@ -1237,7 +1237,7 @@
     "mode": "llm",
     "benchmark": "Function Calling",
     "primary_dim": "agentic",
-    "surplus": -0.29712643749999995,
+    "surplus": -0.2971264374999999,
     "dgap": 0.1264353876039931
    },
    {
@@ -1258,7 +1258,7 @@
     "mode": "heur",
     "benchmark": "General Capability",
     "primary_dim": "reasoning",
-    "surplus": 0.1070362402777777,
+    "surplus": 0.10703624027777758,
     "dgap": -0.019267979531001102
    },
    {
@@ -1279,14 +1279,14 @@
     "mode": "heur",
     "benchmark": "Instruction Following",
     "primary_dim": "communication",
-    "surplus": 0.02820927361111103,
+    "surplus": 0.02820927361111114,
     "dgap": 0.030839635422827773
    },
    {
     "mode": "heur",
     "benchmark": "Scientific Reasoning",
     "primary_dim": "reasoning",
-    "surplus": 0.1070362402777777,
+    "surplus": 0.10703624027777758,
     "dgap": -0.018490816990484896
    },
    {
@@ -1321,7 +1321,7 @@
     "mode": "heur",
     "benchmark": "Advanced Math",
     "primary_dim": "reasoning",
-    "surplus": 0.1070362402777777,
+    "surplus": 0.10703624027777758,
     "dgap": -0.03498410438463655
    },
    {
@@ -1335,7 +1335,7 @@
     "mode": "heur",
     "benchmark": "Long Context",
     "primary_dim": "communication",
-    "surplus": 0.02820927361111103,
+    "surplus": 0.02820927361111114,
     "dgap": 0.013250466523258607
    },
    {
@@ -1356,24 +1356,24 @@
      "n": 11
     },
     "heur": {
-     "slope": -0.4442415308043479,
-     "intercept": 0.025777481773299974,
-     "r": -0.711169465202787,
-     "p": 0.014137001508286673,
+     "slope": -0.4442415308043486,
+     "intercept": 0.02577748177330001,
+     "r": -0.7111694652027867,
+     "p": 0.014137001508286895,
      "n": 11
     }
    },
    "bm13": {
     "llm": {
-     "slope": -0.30584562866915466,
+     "slope": -0.3058456286691547,
      "intercept": 0.014015353355794201,
-     "r": -0.9292926290293857,
+     "r": -0.9292926290293859,
      "p": 4.363465974543956e-06,
      "n": 13
     },
     "heur": {
-     "slope": -0.3081924281423735,
-     "intercept": 0.016755445157947958,
+     "slope": -0.3081924281423736,
+     "intercept": 0.016755445157947933,
      "r": -0.9344873764625604,
      "p": 2.8971723011750328e-06,
      "n": 13
@@ -1386,7 +1386,7 @@
   "panel_a_title_full": "(a) Per-benchmark gap across privacy ladder (all 13 benchmarks)",
   "panel_a_x": "Gap (g) = score \u2212 matched satisfaction",
   "panel_b_title": "(b) Gap shift tracks capability surplus on dominant dimension",
-  "panel_b_x": "Provider over-investment on benchmark's primary skill",
+  "panel_b_x": "Capability surplus on benchmark's primary dimension",
   "panel_b_y": "\u0394gap shift under privacy (gap @ private_only \u2212 gap @ public_only)"
  }
 }

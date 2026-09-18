@@ -139,7 +139,7 @@ def main():
             "panel_a_title_full": "(a) Per-benchmark gap across privacy ladder (all 13 benchmarks)",
             "panel_a_x": "Gap (g) = score − matched satisfaction",
             "panel_b_title": "(b) Gap shift tracks capability surplus on dominant dimension",
-            "panel_b_x": "Provider over-investment on benchmark's primary skill",
+            "panel_b_x": "Capability surplus on benchmark's primary dimension",
             "panel_b_y": "Δgap shift under privacy (gap @ private_only − gap @ public_only)",
         },
     }

@@ -6,7 +6,7 @@
     Solid bars = LLM Sonnet 4.6; hatched bars = heuristic-mode (larger N).
 
 (b) Unchanged from privacy_gap_main: Δg = gap@private_only − gap@public_only vs
-    provider over-investment on each benchmark's primary dimension.
+    population capability surplus on each benchmark's primary dimension.
 
 Outputs (PDF + PNG):
     output/paper/privacy_gap_bar.pdf

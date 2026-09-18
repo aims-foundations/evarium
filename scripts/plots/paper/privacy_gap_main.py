@@ -5,7 +5,7 @@
     primary capability dimension covered by the benchmark suite. The forest is
     populated from the 11-benchmark non-outlier set (Agentic Tasks and Function
     Calling are excluded as agentic-calibration outliers).
-(b) Δg = gap@private_only − gap@public_only versus provider over-investment on
+(b) Δg = gap@private_only − gap@public_only versus population capability surplus on
     each benchmark's primary dimension (capability on the highest-weighted
     dimension minus the cross-dimension mean, computed from public_only seeds).
     Same 11-benchmark exclusion convention.
@@ -313,7 +313,7 @@ def _draw_scatter(ax, llm_pts: pd.DataFrame, heur_pts: pd.DataFrame):
     ax.axvline(0, color="gray", lw=0.6, alpha=0.5)
     ax.axhline(0, color="gray", lw=0.6, alpha=0.5)
     ax.set_xlim(xlim_lo, xlim_hi)
-    ax.set_xlabel("Provider over-investment on benchmark's primary skill")
+    ax.set_xlabel("Capability surplus on benchmark's primary dimension")
     ax.set_ylabel(r"$\Delta$gap shift under privacy"
                   "\n"
                   r"(gap @ private$\_$only $-$ gap @ public$\_$only)")
