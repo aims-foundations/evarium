@@ -1,4 +1,4 @@
-"""Per-benchmark widening under holdout designs, paired by seed (paper Appendix F, Table tab:holdout-widening).
+"""Per-benchmark widening under holdout designs, paired by seed (the paper's holdout-widening table).
 
 For each benchmark and seed, g is the provider-mean gap (score minus matched satisfaction,
 as in Figure 4). A seed "widens" under a condition when |g_condition| > |g_public_only| for

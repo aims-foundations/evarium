@@ -40,8 +40,7 @@ PROC = os.path.join(EXTVAL, "data", "processed")
 # Private source (a separate benchmark-census project). Set LAB_REPORTING_DIR to its
 # lab-reporting folder; the processed snapshot below makes reruns self-contained
 # if this path is unavailable.
-LAB_REPORTING = os.environ.get("LAB_REPORTING_DIR", os.path.join(
-    os.path.expanduser("~"), "Desktop", "ai-discourse", "research", "lab-reporting"))
+LAB_REPORTING = os.environ.get("LAB_REPORTING_DIR", "lab-reporting")
 CENSUS_FROZEN = os.path.join(LAB_REPORTING, "data", "linking", "frozen_20260623", "census.csv")
 TOP60 = os.path.join(LAB_REPORTING, "data", "linking", "test_top60.csv")
 

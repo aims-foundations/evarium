@@ -1,5 +1,5 @@
 """Within-benchmark rescoring: scoring-layer versus capability share of the holdout gap shift
-(paper Appendix F, Robustness check 3).
+(the paper's rescoring robustness check).
 
 For each benchmark b and matched seed s, with C_priv / C_pub the end-of-run capability
 matrices of the private_only / public_only heuristic runs and w_pub / w_hold the same

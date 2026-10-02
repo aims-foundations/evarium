@@ -1,6 +1,6 @@
 """Within-family benchmark correlations from Epoch AI Benchmarking Hub data.
 
-Grounds the paper's cos(theta) = 0.85 anchor (Appendix C): Pearson correlation, across models
+Grounds the paper's cos(theta) = 0.85 anchor: Pearson correlation, across models
 scored on both, between a public benchmark and its harder or held-out sibling.
 
 Data: external-validation/data/benchmarks/ (Epoch AI, CC-BY-4.0). A model scored more than

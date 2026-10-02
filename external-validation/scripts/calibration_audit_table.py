@@ -35,9 +35,8 @@ EXTVAL = os.path.dirname(HERE)
 PROC = os.path.join(EXTVAL, "data", "processed")
 BENCH = os.path.join(EXTVAL, "data", "benchmarks")
 
-# Private source (a separate benchmark-census project); set LAB_REPORTING_DIR to override.
-AID = os.environ.get("LAB_REPORTING_DIR", os.path.join(
-    os.path.expanduser("~"), "Desktop", "ai-discourse", "research", "lab-reporting"))
+# Private source (a separate benchmark-census project); set LAB_REPORTING_DIR to its lab-reporting folder.
+AID = os.environ.get("LAB_REPORTING_DIR", "lab-reporting")
 CENSUS = os.path.join(AID, "data", "linking", "frozen_20260623", "census.csv")
 CENSUS_V3 = os.path.join(AID, "data", "linking", "frozen_20260623", "census_v3.csv")
 REG_CANON = os.path.join(AID, "data", "linking", "registry_canonical.csv")
