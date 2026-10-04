@@ -1,0 +1,1621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The AI Evaluation Ecosystem</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="stylesheet" href="css/fonts.css?v=1">
+<link rel="stylesheet" href="css/aims.css?v=3">
+<script src="js/ecosystem_data_v2.js?v=54"></script>
+<style>
+/* Reset and body base now live in css/aims.css. */
+
+/* Header now lives in css/aims.css as .site-hdr. */
+
+/* ---- Entry cards (the three ways in) ----
+   AIMS entry cards: square corners, hairline border, hover fills to white.
+   No shadow and no lift; AIMS reserves the lift for its paper cards. */
+/* 200px, not 240: at the narrower column three 240px tracks no longer fit and
+   auto-fit would drop the third card onto its own row. */
+#entry { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0; margin: 34px 0 4px; border-left: 1px solid var(--line); }
+#entry a { display: flex; flex-direction: column; background: none;
+  border: 1px solid var(--line); border-left: none; border-top: 3px solid var(--line);
+  padding: 22px 22px 20px; text-decoration: none; transition: background-color .3s; }
+#entry a:hover { background: var(--surface); }
+#entry a.e-here { border-top-color: var(--accent); background: var(--surface-soft); }
+#entry .en { font-family: var(--rd-mono); font-size: .66rem; font-weight: 400;
+  letter-spacing: .14em; text-transform: uppercase; color: var(--cool-grey);
+  margin-bottom: 10px; }
+#entry .et { font-size: 1.15rem; font-weight: 500; letter-spacing: -.015em;
+  line-height: 1.2; color: var(--ink); margin-bottom: 7px; }
+#entry .ed { font-size: .85rem; font-weight: 300; color: var(--ink-2); line-height: 1.5; }
+#entry .eg { font-size: .8rem; color: var(--accent); font-weight: 500; margin-top: auto;
+  padding-top: 14px; transition: color var(--duration-normal); }
+#entry a:hover .eg { color: var(--accent-warm); }
+#entry a.e-here .eg { color: var(--ink-3); }
+
+/* ---- Layout ---- */
+/* 752px = 704px of content + 24px padding each side, and 704px is exactly the
+   68ch prose measure. The column and the text now end on the same line, which
+   is what "match the alignment" needs; the alternative, widening prose to the
+   old 1012px column, would have put body copy at ~138 characters per line
+   against a comfortable maximum of about 80. The ecosystem figure is
+   unaffected: it breaks out of main via left:50% and keeps its full width. */
+main { max-width: 752px; margin: 0 auto; padding: 36px 24px 64px; }
+/* AIMS type scale: large, light, tightly tracked. The weight drop from 700 to
+   300 does more of the work here than the palette does. */
+.hero h1 { font-size: clamp(2.25rem, 4.8vw, 4.15rem); font-weight: 300;
+  line-height: .98; letter-spacing: -.04em; text-wrap: balance;
+  max-width: 18ch; margin-bottom: 18px; }
+/* Same size and measure as body copy: the motivation runs long, and a lede
+   size that drops to body size one paragraph later reads as a mistake. */
+.hero p { font-size: 1rem; font-weight: 300; line-height: 1.7;
+  color: var(--ink-2); max-width: 68ch; margin-bottom: 12px; }
+.hero .fine { font-size: .9rem; font-weight: 300; line-height: 1.5;
+  color: var(--ink-3); max-width: 64ch; }
+/* Motivation first, then the finding as a question and its answer with the
+   boundary in the same breath. The question uses the same heading scale as
+   every other section; one type scale, and the cards carry the links. */
+section.questions { margin-top: 30px; }
+section.questions .eyebrow { margin-bottom: 4px; }
+/* Question rows: body-size text with a mono status tag in the gutter. Two
+   tags only, run and open; the tag is the whole point of the list. */
+.q-list { margin-top: 6px; border-top: 1px solid var(--line); }
+.q-row { display: flex; gap: 16px; align-items: baseline; padding: 13px 0;
+  border-bottom: 1px solid var(--line-soft); font-size: 1rem; font-weight: 300;
+  line-height: 1.6; color: var(--ink-2); }
+.q-row > div { max-width: 68ch; }
+.q-row b { font-weight: 500; color: var(--ink); }
+.q-row a { color: inherit; text-decoration: underline #8c151559; text-underline-offset: 3px; }
+.q-row a:hover { color: var(--accent); text-decoration-color: var(--accent); }
+.q-s { flex: 0 0 3.2rem; font-family: var(--rd-mono); font-size: .62rem; letter-spacing: .12em;
+  text-transform: uppercase; }
+.q-s.run { color: var(--accent); }
+.q-s.open { color: var(--ink-3); }
+/* The grey-box note sits right above the figure it describes. */
+p.figure-note { font-size: .9rem; font-weight: 300; line-height: 1.5; color: var(--ink-3);
+  max-width: 64ch; margin: 28px 0 14px; }
+
+/* ---- Figure card ---- */
+/* Square corners: AIMS has no mid-radius, only pills and right angles. */
+#fig-card { background: var(--surface); border: 1px solid var(--line);
+  margin: 34px 0 10px; overflow: hidden;
+  position: relative; left: 50%; transform: translateX(-50%);
+  width: min(calc(100vw - 48px), 1280px); }
+#spot-chip { display: inline-flex; align-items: center; gap: 7px; background: var(--rd-dark);
+  color: var(--white); border: 1px solid var(--rd-dark); border-radius: 30px;
+  padding: .28rem .55rem .28rem .85rem; font-family: var(--rd-mono);
+  font-size: .62rem; letter-spacing: .08em; text-transform: uppercase;
+  flex-shrink: 0; white-space: nowrap; }
+#spot-chip[hidden] { display: none; }
+#spot-chip button { background: none; border: none; color: inherit; cursor: pointer;
+  font-size: 13px; line-height: 1; font-family: inherit; padding: 0 2px; }
+#fig-body { display: flex; align-items: stretch; background: var(--ground); position: relative; }
+#fig-wrap { flex: 1; min-width: 0; padding: 8px 0; }
+#fig-wrap svg { display: block; margin: 0 auto; width: 100%; height: auto;
+  user-select: none; -webkit-user-select: none; }
+
+/* ---- Detail pane ---- */
+#pane { width: 0; transition: width .25s ease; background: var(--surface);
+  position: relative; overflow: hidden; flex-shrink: 0; }
+#fig-card.pane-open #pane { width: min(400px, 42vw); border-left: 1px solid var(--line-soft); }
+#pane-inner { position: absolute; inset: 0; overflow-y: auto; padding-bottom: 14px; }
+.pane-head { position: sticky; top: 0; z-index: 2; padding: 10px 14px; color: var(--ground);
+  display: flex; align-items: center; gap: 8px; }
+.pane-head .t { font-weight: 700; font-size: 14px; flex: 1; }
+.pane-head button { background: none; border: none; color: var(--ground); font-size: 17px;
+  cursor: pointer; line-height: 1; font-family: inherit; padding: 0 2px; }
+.pane-sub { padding: 9px 14px 0; font-size: 11px; font-style: italic; color: var(--ink-3); line-height: 1.5; }
+/* Linked titles in the spotlight pane: site accent instead of default link
+   chrome, hyperlink-ness carried by the external-link arrow, not underline */
+.pane-sub a { color: var(--accent); text-decoration: none; font-style: normal; font-weight: 600; }
+.pane-sub a:hover { text-decoration: underline; }
+.pane-sub a::after { content: " ↗"; font-size: 10px; opacity: .75; }
+.pane-priv { margin: 10px 14px 0; padding: 8px 10px; background: var(--ground);
+  border: 1px dashed var(--line); border-radius: 6px; font-size: 11px; color: #6b4e12;
+  font-style: italic; line-height: 1.6; }
+.pane-sec { padding: 12px 14px 0; }
+.pane-sec .lbl { font-size: 9.5px; font-weight: 700; letter-spacing: .07em; color: var(--ink-3);
+  text-transform: uppercase; margin-bottom: 4px; }
+.pane-sec .orgs { font-size: 12px; line-height: 1.75; color: var(--ink-2); }
+.pane-sec .orgs .sep { color: var(--ink-4); }
+.pane-chips { padding: 14px 14px 0; display: flex; gap: 8px; flex-wrap: wrap; }
+.pane-chips a { font-size: 10.5px; background: var(--ground-2); border: 1px solid var(--line);
+  border-radius: 4px; padding: 3px 8px; color: var(--accent); text-decoration: none; font-weight: 600; }
+.pane-chips span { font-size: 10.5px; color: var(--ink-3); font-style: italic; padding: 3px 0; }
+.pane-map { padding: 12px 14px 0; }
+.pm-tier { border: 1px solid var(--line-soft); border-radius: 6px; padding: 6px 10px; background: var(--ground-2); }
+.pm-arrow { text-align: center; color: var(--ink-4); font-size: 12px; line-height: 1.3; }
+.pm-label { font-size: 9.5px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); }
+.pm-items { font-size: 11.5px; color: var(--ink-2); margin-top: 2px; line-height: 1.5; }
+.pm-inputs { font-size: 10px; color: var(--ink-3); font-style: italic; margin-top: 2px; }
+.pm-tag { font-size: 10px; color: var(--accent); font-style: italic; margin-top: 2px; }
+.pm-src { font-size: 10px; color: var(--ink-3); font-style: italic; margin-top: 8px; line-height: 1.5; }
+.pane-matrix { margin: 10px 14px 0; overflow-x: auto; }
+.pane-matrix table { border-collapse: collapse; font-size: 10.5px; }
+.pane-matrix th, .pane-matrix td { border: 1px solid var(--line-soft); padding: 3px 6px;
+  vertical-align: top; text-align: left; }
+.pane-matrix th { font-size: 8.5px; text-transform: uppercase; letter-spacing: .05em;
+  color: #8a2f2b; font-weight: 700; }
+.pane-matrix th.rowlbl, .pane-matrix td.rowlbl { font-style: italic; color: #8a2f2b;
+  font-weight: 700; font-size: 10px; }
+.pane-matrix td .org { display: block; }
+.pane-matrix td.empty { color: var(--line); text-align: center; }
+.pane-matrix td .cellnote { font-style: italic; color: var(--ink-3); }
+.pane-strip { margin: 8px 14px 0; font-size: 10.5px; font-style: italic; color: var(--ink-3); line-height: 1.6; }
+
+/* ---- Spotlight pane: the quote layer, readable at rest.
+   Deliberately quiet (2026-08-09): no badges, no per-kind color coding;
+   argued claims are marked in plain language inside the quote itself. ---- */
+.qe-why { padding: 8px 14px 0; font-size: 11.5px; line-height: 1.55; color: var(--ink-2); }
+.pane-quotes { padding: 10px 14px 0; }
+.pane-quotes .pm-label { margin-bottom: 5px; }
+.qe { border-bottom: 1px dashed var(--line-soft); padding: 6px 2px 7px; }
+.qe:last-child { border-bottom: none; }
+.qe-dir { font-size: 9.5px; font-weight: 700; letter-spacing: .04em; color: var(--ink-3);
+  text-transform: uppercase; }
+.qe-q { font-size: 11.5px; line-height: 1.5; color: var(--ink); margin-top: 3px; }
+.qe-loc { font-size: 10px; color: var(--ink-3); font-style: italic; margin-top: 1px; }
+
+/* org tracing */
+.org.multi { text-decoration: underline; text-decoration-style: dotted;
+  text-decoration-thickness: 1px; text-underline-offset: 2.5px; cursor: pointer; }
+svg g.glow { filter: drop-shadow(0 0 5px rgba(140,21,21,.6)); }
+svg g.glow .box-main { stroke-width: 3; }
+
+/* actor hover card strip */
+/* Click flash (2026-08-09): with a long event title, the nowrap
+   spotlight chip transiently ate the whole strip mid-transition, crushing the
+   detail text into a tall 0-width column. Three guards make every intermediate
+   layout state presentable: the strip wraps, the chip label ellipsizes, and
+   the detail clamps to 3 lines with a min-width that sends it to its own row
+   when squeezed. Full texts stay recoverable via title attrs. */
+#actor-card { border-top: 1px solid var(--line-soft); background: var(--ground-2); padding: 10px 18px;
+  min-height: 58px; font-size: 12px; display: flex; align-items: center; gap: 10px 14px;
+  flex-wrap: wrap; }
+#actor-card .dot { width: 12px; height: 12px; border-radius: 3px; flex-shrink: 0; }
+#actor-card .name { font-weight: 700; max-width: 100%; }
+#actor-card .priv { color: var(--ink-2); font-style: italic; line-height: 1.5; flex: 1;
+  min-width: min(260px, 100%); display: -webkit-box; -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical; overflow: hidden; }
+#spot-chip-label { display: inline-block; max-width: min(46vw, 420px); overflow: hidden;
+  text-overflow: ellipsis; white-space: nowrap; vertical-align: bottom; }
+#actor-card .hint { color: var(--ink-3); font-style: italic; }
+
+svg .edge-group { transition: opacity .18s; }
+svg .node-g, svg .station-g { transition: opacity .18s; }
+svg .x-edge { transition: opacity .2s; pointer-events: none; opacity: 0; }
+svg .x-edge rect, svg .edge-group[data-hasquote] { cursor: help; }
+
+/* Click leaves no focus ring on figure elements (mousedown preventDefault
+   stops click-focus at the source; this rule is the belt to that suspender).
+   Keyboard Tab keeps the site-styled ring via the :focus-visible rule. */
+svg :is(.node-g, .station-g, .leg-item):focus { outline: none; }
+svg :is(.node-g, .station-g, .leg-item):focus-visible { outline: 2px solid var(--digital-blue); outline-offset: 3px; }
+
+/* Pinned state (2026-08-15): the actor whose detail pane is open
+   gets a deliberate selected state on the map itself. */
+svg g.pinned .box-main { stroke-width: 3; }
+svg g.pinned { filter: drop-shadow(0 0 5px rgba(140,21,21,.55)); }
+svg .leg-item { cursor: pointer; }
+
+/* ---- Literature strip ---- */
+#lit { margin-top: 26px; }
+/* Solid hairlines rather than dashes, and the citation title in serif: the two
+   things that make an AIMS paper listing read as one. */
+/* flex-start, not center: with a two-line entry, centring floats the dots and
+   the chips down beside the subtitle and detaches them from the name they
+   belong to. Everything now sits on the first line and the subtitle hangs
+   under it, which is how a bibliography entry reads. */
+.lit-row { display: flex; align-items: flex-start; gap: 12px; padding: 11px 10px;
+  border-bottom: 1px solid var(--line-soft); cursor: pointer;
+  transition: background-color .25s; }
+/* Optical alignment against the serif cap height of the name. */
+.lit-row > .lit-dots { margin-top: 6px; }
+.lit-row > :is(.lit-meta, .lit-state, .ev-status, .ev-study, .lit-approx) { margin-top: 2px; }
+.lit-row:hover { background: var(--ground-2); }
+.lit-row.active { background: var(--ground-2); box-shadow: inset 3px 0 0 var(--accent); }
+.lit-dots { display: flex; gap: 3px; flex-shrink: 0; }
+.lit-dot { width: 9px; height: 9px; }
+/* Two lines per entry: the name on its own line, the rest of the title beneath
+   it. Squeezing both onto one line meant the name competed with the date and
+   the chips for about 240px, so either the name truncated or, once the shrink
+   factors were tuned to protect it, all 15 subtitles did. Stacking them costs
+   about 220px of strip height and truncates nothing at all. */
+.lit-title { flex: 1; min-width: 0; display: flex; flex-direction: column;
+  align-items: flex-start; gap: 2px;
+  font-family: var(--rd-serif); font-size: 1.05rem;
+  font-weight: 400; line-height: 1.2; color: var(--ink); }
+.lit-title > a { display: flex; flex-direction: column; align-items: flex-start;
+  gap: 2px; min-width: 0; max-width: 100%; }
+/* Wrap to a second line before giving up, rather than ellipsing on the first.
+   The chips make the title column vary from 261px to 442px across rows, so a
+   handful of entries are 50 to 200px short of fitting on one line; a clamp at
+   two lines absorbs all of them and only the rows that need it grow. */
+.lit-name { max-width: 100%; overflow: hidden; white-space: normal;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+/* Sans and smaller, so the serif name stays the thing you scan. This echoes the
+   AIMS paper card, which pairs a serif title with sans supporting text. */
+.lit-sub { max-width: 100%; overflow: hidden; white-space: normal;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+  font-family: var(--rd-grotesk); font-size: .8rem;
+  font-weight: 300; line-height: 1.35; color: var(--ink-3); }
+/* Undecorated at rest: AIMS leaves paper titles clean and lets the row carry
+   the affordance. Underline appears on hover only. */
+.lit-title a { color: inherit; text-decoration: none;
+  transition: color var(--duration-normal); }
+.lit-title a:hover { color: var(--accent); text-decoration: underline;
+  text-decoration-color: var(--accent); text-underline-offset: 3px; }
+.lit-meta { font-family: var(--rd-mono); font-size: .65rem; letter-spacing: .08em;
+  text-transform: uppercase; color: var(--ink-3); white-space: nowrap; flex-shrink: 0; }
+.lit-approx { color: #b05f14; font-weight: 700; cursor: help; flex-shrink: 0; }
+.lit-state { font-family: var(--rd-mono); font-size: .58rem; letter-spacing: .05em;
+  text-transform: uppercase; color: var(--ink-3); background: none;
+  border: 1px solid var(--line); border-radius: 30px;
+  padding: .2rem .55rem; text-align: center; flex-shrink: 0;
+  transition: background-color .2s, color .2s, border-color .2s; }
+.lit-row:hover .lit-state { border-color: var(--line-strong); color: var(--ink); }
+.lit-row.active .lit-state { background: var(--rd-dark); border-color: var(--rd-dark); color: var(--white); }
+.litnote { font-size: .8rem; font-weight: 300; color: var(--ink-3); font-style: italic;
+  margin-top: 12px; max-width: 68ch; line-height: 1.5; }
+.lit-group { font-family: var(--rd-mono); font-size: .62rem; letter-spacing: .14em;
+  text-transform: uppercase; color: var(--cool-grey); margin: 22px 0 6px; padding-left: 10px; }
+#lit-more { background: none; border: none; color: var(--accent); font-family: var(--rd-mono);
+  font-size: .66rem; letter-spacing: .08em; text-transform: uppercase; cursor: pointer;
+  padding: 8px 10px; margin-left: 20px; transition: color var(--duration-normal); }
+.lit-hidden { display: none; }
+.ev-status { font-family: var(--rd-mono); font-size: .58rem; letter-spacing: .05em;
+  text-transform: uppercase; border-radius: 30px; padding: .2rem .55rem;
+  white-space: nowrap; flex-shrink: 0; cursor: help; }
+.ev-status.settled { color: var(--palo-alto); border: 1px solid var(--palo-alto); }
+.ev-status.contested { color: #b05f14; border: 1px solid #d8b48c; }
+.ev-study { font-family: var(--rd-mono); font-size: .58rem; letter-spacing: .05em;
+  text-transform: uppercase; color: var(--ink-3); background: none;
+  border: 1px solid var(--line); border-radius: 30px; padding: .2rem .55rem;
+  white-space: nowrap; flex-shrink: 0; cursor: pointer;
+  transition: border-color .2s, color .2s; }
+.ev-study:hover { border-color: var(--line-strong); color: var(--ink); }
+.pathline { font-size: .85rem; font-weight: 300; line-height: 1.6; color: var(--ink-2);
+  max-width: 78ch; margin: 12px auto 0; }
+.pathline b.fam-events { color: #3f7a47; } .pathline b.fam-scores { color: #2f6b9e; }
+.pathline b.fam-capital { color: #b05f14; }
+
+/* ---- Prose sections ---- */
+section { margin-top: 40px; }
+/* Sentence case, not uppercase: the headings are already written in sentence
+   case in the markup, and AIMS reserves uppercase for mono eyebrows. */
+section h2 { font-size: clamp(1.35rem, 2.2vw, 1.875rem); font-weight: 300;
+  line-height: 1.15; letter-spacing: -.01em; color: var(--ink);
+  text-wrap: balance; margin-bottom: 16px; }
+section p { font-size: 1rem; font-weight: 300; line-height: 1.7;
+  color: var(--ink-2); max-width: 68ch; margin-bottom: 12px; }
+section p b.fam-events { color: #3f7a47; } section p b.fam-scores { color: #2f6b9e; }
+section p b.fam-capital { color: #b05f14; }
+/* AIMS prose links: colour inherited, cardinal underline, full cardinal on
+   hover. This is the live site's treatment, which departs from Stanford's own
+   digital-blue rule; see css/aims.css for why we follow aimslab here. */
+section a { color: inherit; text-decoration: underline #8c151559;
+  text-underline-offset: 3px; transition: color var(--duration-normal); }
+section a:hover { color: var(--accent); text-decoration-color: var(--accent); }
+.footer-links { margin-top: 56px; padding-top: 20px; border-top: 1px solid var(--line);
+  font-family: var(--rd-mono); font-size: .66rem; letter-spacing: .08em;
+  text-transform: uppercase; color: var(--ink-3); display: flex; gap: 22px; flex-wrap: wrap; }
+.footer-links a { color: var(--ink-3); text-decoration: none; opacity: .85;
+  transition: opacity var(--duration-normal), color var(--duration-normal); }
+.footer-links a:hover { color: var(--accent); opacity: 1;
+  text-decoration: underline; text-underline-offset: 3px; }
+
+:is(a, button, .lit-row, .leg-item, .node-g, .station-g):focus-visible {
+  outline: 2px solid var(--digital-blue); outline-offset: 2px; }
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
+}
+
+@media (max-width: 720px) {
+  body { overflow-x: hidden; }
+  /* Header responsiveness now lives with .site-hdr in css/aims.css. */
+  main { padding: 26px 14px 48px; }
+  #entry { border-left: none; }
+  #entry a { border-left: 1px solid var(--line); }
+  #fig-card { width: calc(100vw - 28px); }
+  #fig-card.pane-open #pane { position: absolute; inset: 0; width: 100%; border-left: none; }
+  .lit-title { white-space: normal; }
+  /* Mono caps with .08em tracking are much wider than the sans this replaced,
+     so a long author list ("GUHA, ZHANG, TSANG, MANNING, NYARKO & HO (2026)")
+     pushed the page into horizontal scroll while nowrap held it on one line. */
+  .lit-meta { white-space: normal; letter-spacing: .05em;
+    flex-shrink: 1; min-width: 0; }
+  /* A phone has no hover, so the tooltip that carries the full title on desktop
+     is not reachable here. Give both halves a third line rather than clip text
+     the reader has no other way to see. */
+  .lit-name, .lit-sub { -webkit-line-clamp: 3; }
+  /* The "highlight" affordance chips push rows past the viewport at phone
+     widths; the row itself is tappable and the active state restyles it. */
+  .lit-state { display: none; }
+  .lit-row { flex-wrap: wrap; }
+}
+/* ---- Wide screens ----
+   Prose readability is set by characters per line, so the column and the
+   type scale together: 752px at 16px and 860px at 18px both hold ~68
+   characters. The entry cards are read in pieces, not as lines, so they
+   break out to the figure's width instead. */
+@media (min-width: 1200px) {
+  main { max-width: 860px; }
+  .hero p, section p, .q-row { font-size: 1.125rem; }
+  p.figure-note, .pathline { font-size: 1rem; }
+  #entry { width: 1000px; margin-left: calc((100% - 1000px) / 2); }
+}
+</style>
+</head>
+<body>
+
+<div id="hdr" class="site-hdr">
+  <a class="site-lab" href="https://aimslab.stanford.edu/">Stanford AIMS</a>
+  <span class="site-div" aria-hidden="true"></span>
+  <a id="hdr-title" class="site-wordmark" href="index.html">The AI Evaluation Ecosystem</a>
+  <nav class="site-nav">
+    <a href="index.html" class="here">Ecosystem</a>
+    <a href="simulation.html">Simulation</a>
+    <a href="explorer.html">Runs</a>
+  </nav>
+</div>
+
+<main>
+  <div class="hero">
+    <h1>Benchmarks do more than measure.</h1>
+    <p>
+      Once one gains traction, its influence runs in both directions: the same scores that
+      signal progress also reshape how providers allocate research effort, where funders direct
+      capital, and which failure modes regulators attend to. Yet a benchmark is usually judged
+      on its own, as a one-shot measurement, with the world around it held fixed. This work
+      reframes the question from “is this metric well-calibrated?” to “what does the ecosystem
+      do with this benchmark once it exists?”
+    </p>
+  </div>
+
+  <!-- The navigation pane. Three layers, labeled by kind of claim in the
+       eyebrow and by the specific thing in the title: proposition, instrument, runs. -->
+  <div id="entry">
+    <a href="#fig-card" class="e-here">
+      <div class="en">Proposition</div>
+      <div class="et">The ecosystem frame</div>
+      <div class="ed">Evaluation is coupled to its ecosystem: it shapes, and is shaped by, feedback loops among actors that differ in what they want, what they see, and what they can do.</div>
+      <div class="eg">See the map and the literature behind it, below</div>
+    </a>
+    <a href="simulation.html">
+      <div class="en">Instrument</div>
+      <div class="et">A generative agent-based model</div>
+      <div class="ed">Providers, the regulator, and funders reason with an LLM inside a rule-based market, so one design choice can change while everything else holds fixed. The paper studies one design choice in detail through it: benchmark holdout design.</div>
+      <div class="eg">Read the walkthrough →</div>
+    </a>
+    <a href="explorer.html">
+      <div class="en">Runs</div>
+      <div class="et">Every run the instrument has produced</div>
+      <div class="ed">All simulation runs across conditions and seeds, with the ability to filter by condition, mode, or model, and compare conditions side by side.</div>
+      <div class="eg">Browse the runs →</div>
+    </a>
+  </div>
+
+  <!-- Expands the Runs card: what we ask with the simulation. One question
+       studied in detail in the paper; the rest open. -->
+  <section class="questions" id="questions">
+    <div class="eyebrow">Questions we ask with the simulation</div>
+    <div class="q-list">
+      <div class="q-row">
+        <span class="q-s run">run</span>
+        <div>
+          <b>Does making benchmark content private close the gap between what scores say and
+          what simulated users get?</b>
+          <a href="simulation.html#holdouts">Read here for the full case study</a>.
+        </div>
+      </div>
+      <div class="q-row">
+        <span class="q-s open">open</span>
+        <div>What changes when the evaluator runs as a company, charging fees and selling early
+          access? Runs exist; no finding is claimed from them yet.</div>
+      </div>
+      <div class="q-row">
+        <span class="q-s open">open</span>
+        <div>Do EU-style precautionary and US-style light-touch regulatory regimes push safety
+          investment and market structure in different directions?</div>
+      </div>
+      <div class="q-row">
+        <span class="q-s open">open</span>
+        <div>What does a mandate to disclose safety investment, in the style of California
+          SB 53, change for consumers, funders, and media?</div>
+      </div>
+      <div class="q-row">
+        <span class="q-s open">open</span>
+        <div>What happens when informal media signals, rather than formal benchmarks, become
+          the primary channel consumers listen to?</div>
+      </div>
+    </div>
+  </section>
+
+  <p class="fine figure-note">
+    The six actors are a simplification. The grey boxes on the ring are real actor types the
+    simulation leaves out: colored means modeled, grey means outside the modeled core. Click any box
+    to see who's inside.
+  </p>
+
+  <div id="fig-card">
+    <div id="fig-body">
+      <div id="fig-wrap"></div>
+      <div id="pane"><div id="pane-inner"></div></div>
+    </div>
+    <div id="actor-card">
+      <span id="spot-chip" hidden><span id="spot-chip-label"></span><button id="spot-chip-x" title="Show everything">×</button></span>
+      <span class="hint" id="card-hint">Hover an actor for its channels · click any box for its
+        roster · a legend pathway isolates that loop · grey = beyond the modeled core.</span>
+      <span class="dot" id="card-dot" style="display:none"></span>
+      <span class="name" id="card-name"></span>
+      <span class="priv" id="card-priv"></span>
+    </div>
+  </div>
+
+  <p class="pathline"><b class="fam-scores">Benchmark scores</b>: rankings steer headlines,
+    adoption, and R&amp;D. <b class="fam-events">Safety</b>: incidents propagate from providers
+    through coverage to regulatory scrutiny, and disclosure flows back. <b class="fam-capital">
+    Capital</b>: traction and coverage steer funding, which scales the next round. Click a
+    legend chip on the figure to isolate one family.</p>
+
+  <section id="lit">
+    <h2>This ecosystem, in the literature and in the wild</h2>
+    <p>Each row is a study of an interaction between two or more of the actors above, or a
+      public episode that lit up several channels at once. Click a row to highlight what it
+      covers.</p>
+    <div class="lit-group">Studies</div>
+    <div id="lit-rows"></div>
+    <button id="lit-more" type="button"></button>
+    <div class="lit-group">Events</div>
+    <div id="event-rows"></div>
+    <p class="litnote">* approximate mapping; hover the asterisk for the caveat. Dotted edges
+      drawn during a highlight are that row's claims, distinct from the simulation's own channels.
+      Events carry a
+      settled-or-contested tag because what happened in an episode can be disputed in a way a
+      paper's claims are not. During a highlight, hover any lit edge to read the source's own
+      words for it.</p>
+  </section>
+
+  <section>
+    <h2>About the simulation</h2>
+    <p>
+      The simulation combines rule-based market dynamics with LLM-driven strategic actors, a form
+      of generative agent-based modeling. Benchmarks, consumer needs, and provider capabilities
+      are all described by weights over six capability dimensions (reasoning, coding, knowledge,
+      safety, communication, agentic). Information is split into tiers: every actor sees public
+      state and holds its own private state (shown when you click its box), while ground truth,
+      meaning true capabilities, true consumer satisfaction, and the benchmarks' true weights, is
+      held by the simulation and hidden from every actor. The gap between what scores say and
+      what users experience is measured against that hidden tier.
+    </p>
+    <p>
+      The simulation generates hypotheses for empirical work to test. Its findings hold under
+      the stylized simulation model presented here, in settings where benchmark and leaderboard
+      results steer what providers build and what buyers, coverage, and capital reward, and
+      where gaps are measured against a mixed consumer population. The explainer's
+      <a href="simulation.html#limits">claims and limitations</a> section states the full
+      boundary, grades each structural assumption by the evidence behind it, and lists what is
+      left out on purpose.
+    </p>
+  </section>
+
+  <section>
+    <h2>Beyond the six actors</h2>
+    <p>
+      The grey boxes make one point: the real ecosystem is much larger, and the six actors do not
+      divide it cleanly. Real organizations sit at intersections: a
+      government safety institute is both an evaluator and an arm of regulation; an arena
+      leaderboard began as academic research and became a venture-backed company; a nonprofit
+      institute funds research grants, co-develops a benchmark, and maintains the harness it runs
+      on. Clicking any box opens its roster; names with a dotted underline play multiple roles,
+      and hovering one traces it across the map.
+    </p>
+    <p>
+      This ecosystem frame is also distinct from supply-chain and value-chain framings, two
+      neighboring views that deserve their own maps.
+      The <a href="https://arxiv.org/abs/2504.20185">AI supply chain</a> (Hopkins et al. 2025)
+      traces how models, datasets, and services compose into products, the chain the EU AI Act
+      regulates as the “AI value chain”
+      (<a href="https://artificialintelligenceact.eu/article/25/">Article 25</a>). And beneath all
+      of it sits compute and infrastructure (semiconductors, data centers, cloud, energy), studied
+      as <a href="https://arxiv.org/abs/2402.08797">compute governance</a> (Sastry et al. 2024) and
+      mapped by industry as “the AI value chain.” Neither is modeled in our simulation; both shape
+      what gets built and what gets evaluated.
+    </p>
+  </section>
+
+  <div class="footer-links">
+    <a href="simulation.html">How the simulation works</a>
+    <a href="explorer.html">Runs</a>
+    <span>This page accompanies our research paper.</span>
+  </div>
+</main>
+
+<script>
+(function () {
+  const E = window.ECOSYSTEM, P = E.palette, F = E.fig, G = F.GEOM;
+  const NS = "http://www.w3.org/2000/svg";
+  const REDUCED = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  // Shared keyboard activation for click-only elements: Enter or Space
+  // triggers the same click path as a pointer.
+  function keyActivate(e) {
+    if (e.key !== "Enter" && e.key !== " " && e.key !== "Spacebar") return;
+    if (e.key !== "Enter") e.preventDefault();
+    e.currentTarget.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true }));
+  }
+
+  // ---------- helpers ----------
+  function el(tag, attrs, parent) {
+    const n = document.createElementNS(NS, tag);
+    for (const k in attrs) n.setAttribute(k, attrs[k]);
+    if (parent) parent.appendChild(n);
+    return n;
+  }
+  function txt(parent, x, y, str, attrs) {
+    const t = el("text", Object.assign({ x, y, "dominant-baseline": "central" }, attrs || {}), parent);
+    t.textContent = str;
+    return t;
+  }
+  function wrapWords(s, maxChars) {
+    const words = s.split(" "), lines = [];
+    let cur = "";
+    for (const w of words) {
+      if (cur && (cur + " " + w).length > maxChars) { lines.push(cur); cur = w; }
+      else cur = cur ? cur + " " + w : w;
+    }
+    if (cur) lines.push(cur);
+    return lines;
+  }
+  function slug(s) { return s.toLowerCase().replace(/[^a-z0-9]+/g, "-"); }
+  function d2r(d) { return (d - 90) * Math.PI / 180; }
+  function famColor(fam) { return (P.families && P.families[fam]) || F.FAM[fam]; }
+  function actorColor(id) { return (P.actors && P.actors[id]) || F.ACTORS[id].color; }
+  function orgDisp(o) { return typeof o === "string" ? o : o.t; }
+  function orgKeys(o) {
+    if (typeof o === "string") return [slug(o)];
+    const k = o.k || slug(o.t);
+    return Array.isArray(k) ? k : [k];
+  }
+
+  const stationById = {}, railById = {}, spotlightById = {};
+  E.stations.forEach(s => stationById[s.id] = s);
+  E.rails.forEach(r => railById[r.id] = r);
+  E.spotlights.forEach(s => spotlightById[s.id] = s);
+  function displayName(id) {
+    if (F.ACTORS[id]) return F.ACTORS[id].name;
+    if (stationById[id]) return stationById[id].name;
+    if (railById[id]) return railById[id].title;
+    return id;
+  }
+  function headColor(id) { return F.ACTORS[id] ? actorColor(id) : P.station.border; }
+  // Compact citation label: one author verbatim, two joined by "&", three or
+  // more collapsed to "First et al." The data keeps the full list; this is a
+  // display rule only, applied everywhere a short label is drawn so the strip,
+  // the chip, the hover card and the pane header agree.
+  //
+  // In mono caps a six-name list ran wider than the title beside it and forced
+  // the title to ellipsis, which is what prompted this (2026-09-04).
+  function citeAuthors(a) {
+    if (!a) return "";
+    let s = String(a).trim();
+    const etal = /,?\s*et al\.?$/i.test(s);
+    s = s.replace(/,?\s*et al\.?$/i, "");
+    // A trailing comma-separated element containing a space is an affiliation
+    // rather than a surname ("Denain & Barber, Epoch AI"). Every surname in
+    // this set is a single token, so the space is a safe discriminator; the
+    // "&" test keeps "Raji, Xu, Honigsberg & Ho" from matching.
+    let org = "";
+    if (s.includes(",")) {
+      const tail = s.split(/,\s*/).pop();
+      if (tail && /\s/.test(tail) && !tail.includes("&")) {
+        org = tail;
+        s = s.slice(0, s.length - tail.length).replace(/,\s*$/, "");
+      }
+    }
+    const names = s.split(/,\s*|\s*&\s*/).filter(Boolean);
+    const out = (etal || names.length > 2) ? names[0] + " et al." : names.join(" & ");
+    return org ? out + ", " + org : out;
+  }
+  function cite(s) { return citeAuthors(s.authors) + " (" + s.year + ")"; }
+
+  function spotLabel(s) {
+    if (s.kind === "self") return s.chip || "the modeled ecosystem";
+    if (s.kind === "loop") return F.FAM_LABEL[s.fam] + " pathway";
+    if (s.kind === "event") return s.title + " (" + s.date + ")";
+    return cite(s);
+  }
+
+  // ---------- quote layer ----------
+  // Every substantiated edge carries the source's own words while its
+  // spotlight is active. The internal qk provenance tags (M measured,
+  // A argued, R reported, F non-verbatim finding) stay in the data as audit
+  // discipline, but the UI carries only the one distinction a reader needs,
+  // in plain language: argued claims get a lead-in; findings and reported
+  // statements speak for themselves; F-kind lines render without quote marks
+  // because they are ours, not the source's.
+  function quoteTip(q, ql, qk) {
+    const body = qk === "F" ? q
+      : qk === "A" ? "The authors argue: “" + q + "”"
+      : "“" + q + "”";
+    return body + (ql ? "  (" + ql + ")" : "");
+  }
+  // ---------- spotlight pane (papers & events) ----------
+  // The same pane that serves actors, stations, and rails also serves
+  // spotlight rows: the source's content on the right while its mapping stays
+  // lit on the figure. This is where the quote layer is readable at rest;
+  // the edge tooltips remain a shortcut.
+  function edgeLabelOf(from, to) {
+    const e = F.EDGES.find(c => c.from === from && c.to === to);
+    return e ? e.label.replace("\n", " ") : "";
+  }
+  function quoteEntry(sec, from, to, label, eq) {
+    const row = div("qe", sec);
+    // one compact head line; the lit figure beside the pane already shows the
+    // arrow, so direction stays terse
+    const head = div("qe-dir", row, displayName(from) + " → " + displayName(to)
+      + (label ? "  ·  " + label : ""));
+    head.title = "this channel is lit on the figure";
+    if (eq) {
+      div("qe-q", row, eq.qk === "F" ? eq.q
+        : eq.qk === "A" ? "The authors argue: “" + eq.q + "”"
+        : "“" + eq.q + "”");
+      if (eq.ql) div("qe-loc", row, eq.ql);
+    }
+  }
+  function openSpotPane(s) {
+    paneInner.innerHTML = "";
+    const c = s.kind === "event" ? "#00000099" : "#000000";
+    const head = div("pane-head", paneInner);
+    head.style.background = c;
+    div("t", head, s.kind === "event" ? s.date : cite(s));
+    const close = document.createElement("button");
+    close.textContent = "×";
+    close.title = "Close";
+    close.addEventListener("click", () => figCard.classList.remove("pane-open"));
+    head.appendChild(close);
+    const sub = div("pane-sub", paneInner);
+    if (s.href) {
+      const a = document.createElement("a");
+      a.href = s.href; a.target = "_blank";
+      a.textContent = s.title;
+      a.title = s.hrefLabel || "";
+      sub.appendChild(a);
+    } else { sub.textContent = s.title; }
+    if (s.why) div("qe-why", paneInner, s.why);
+    if (s.method) div("pane-strip", paneInner,
+      (s.kind === "event" ? "sources: " : "method: ") + s.method);
+    const sec = div("pane-quotes", paneInner);
+    div("pm-label", sec, "how it maps onto the figure");
+    (s.edges || []).forEach(([f, t]) =>
+      quoteEntry(sec, f, t, edgeLabelOf(f, t), s.edgeQuotes && s.edgeQuotes[f + ">" + t]));
+    (s.extraEdges || []).forEach(ee =>
+      quoteEntry(sec, ee.from, ee.to, ee.label, ee.q ? { q: ee.q, ql: ee.ql, qk: ee.qk } : null));
+    if (s.note) div("pane-strip", paneInner, "* approximate mapping: " + s.note);
+    if (s.kind === "event") {
+      div("pane-strip", paneInner, "factual status: " + s.status);
+      // a contested badge must always say what is contested; a settled one says
+      // what stays open elsewhere but is deliberately not claimed here
+      if (s.statusNote) div("pane-strip", paneInner, s.statusNote);
+    }
+    figCard.classList.add("pane-open");
+  }
+
+  function syncEdgeQuotes(s) {
+    state.edgeGroups.forEach(g => {
+      const old = g.querySelector("title");
+      if (old) old.remove();
+      const eq = s && s.edgeQuotes && s.edgeQuotes[g.dataset.from + ">" + g.dataset.to];
+      if (eq) {
+        el("title", {}, g).textContent = quoteTip(eq.q, eq.ql, eq.qk);
+        g.setAttribute("data-hasquote", "1");
+      } else {
+        g.removeAttribute("data-hasquote");
+      }
+    });
+  }
+
+  // ---------- multi-role registry ----------
+  // key -> [{ownerId, roleLabel}]; an org underlines when any of its keys
+  // appears in more than one role across the whole map.
+  const keyIndex = {};
+  function addRole(o, ownerId, roleLabel) {
+    if (typeof o === "object" && o.note) return;
+    orgKeys(o).forEach(k => (keyIndex[k] = keyIndex[k] || []).push({ ownerId, roleLabel }));
+  }
+  Object.keys(E.panes).forEach(id => {
+    const p = E.panes[id], owner = displayName(id);
+    (p.flavors || []).forEach(f => f.orgs.forEach(o => addRole(o, id, owner + " · " + f.label)));
+    if (p.matrix) {
+      p.matrix.rows.forEach(row => row.cells.forEach((cell, j) =>
+        cell.forEach(o => addRole(o, id, owner + " · " + row.label + " (" + p.matrix.cols[j] + ")"))));
+      p.matrix.strip.forEach((o, i) => { if (i > 0) addRole(o, id, owner + " · infrastructure & harnesses"); });
+    }
+  });
+  function isMulti(o) { return orgKeys(o).some(k => (keyIndex[k] || []).length > 1); }
+
+  // ---------- figure geometry (ported from the Fig-1 source) ----------
+  const POS = {};
+  Object.keys(F.ACTORS).forEach(id => {
+    const a = d2r(F.ACTORS[id].ang);
+    POS[id] = { x: G.CX + G.RX * Math.cos(a), y: G.CY + G.RY * Math.sin(a) };
+  });
+  const NH = G.NHt + G.NHb;
+  const DIR = new Set(F.EDGES.map(e => e.from + ">" + e.to));
+  const isRecip = e => DIR.has(e.to + ">" + e.from);
+
+  function bez(x1, y1, cx, cy, x2, y2, t) {
+    const m = 1 - t;
+    return {
+      x: m * m * x1 + 2 * m * t * cx + t * t * x2,
+      y: m * m * y1 + 2 * m * t * cy + t * t * y2,
+      tx: 2 * m * (cx - x1) + 2 * t * (x2 - cx),
+      ty: 2 * m * (cy - y1) + 2 * t * (y2 - cy)
+    };
+  }
+  function anchorRect(cx2, cy2, hw, hh, tx, ty) {
+    const dx = tx - cx2, dy = ty - cy2;
+    if (!dx && !dy) return { x: cx2, y: cy2 };
+    const t = Math.min(hw / (Math.abs(dx) || 1e-6), hh / (Math.abs(dy) || 1e-6));
+    return { x: cx2 + dx * t, y: cy2 + dy * t };
+  }
+  // standardized arc curvature: reciprocal pairs bow to one consistent side of
+  // travel (symmetric lens); single edges bow outward toward the ring's edge.
+  function computeEdge(e) {
+    const A = POS[e.from], B = POS[e.to];
+    const a1 = anchorRect(A.x, A.y, G.NW / 2, NH / 2, B.x, B.y);
+    const a2 = anchorRect(B.x, B.y, G.NW / 2, NH / 2, A.x, A.y);
+    const x1 = a1.x, y1 = a1.y, x2 = a2.x, y2 = a2.y;
+    const mx = (x1 + x2) / 2, my = (y1 + y2) / 2;
+    const dx = x2 - x1, dy = y2 - y1, len = Math.hypot(dx, dy) || 1;
+    let px, py;
+    if (isRecip(e)) { px = (dy / len) * G.CURVE_SIGN; py = (-dx / len) * G.CURVE_SIGN; }
+    else { const ox = mx - G.CX, oy = my - G.CY, od = Math.hypot(ox, oy) || 1; px = ox / od; py = oy / od; }
+    const mag = Math.max(G.CURVE_MIN, Math.min(G.CURVE_K * len, G.CURVE_MAX));
+    const cpx = mx + px * mag, cpy = my + py * mag;
+    const mid = bez(x1, y1, cpx, cpy, x2, y2, 0.75); // arrowhead sits 75% along the arc
+    const chev = Math.atan2(mid.ty, mid.tx) * 180 / Math.PI;
+    return { x1, y1, cpx, cpy, x2, y2, chevx: mid.x, chevy: mid.y, chev };
+  }
+
+  // Shrink sub/role text that would overrun its node box.
+  function autofit(node, avail) {
+    try {
+      const len = node.getComputedTextLength();
+      const base = parseFloat(node.getAttribute("font-size"));
+      if (len > avail) node.setAttribute("font-size", Math.max(8, base * (avail / len)).toFixed(1));
+    } catch (err) { /* not measurable yet */ }
+  }
+
+  // ---------- hover card strip ----------
+  function setCard(entry, color) {
+    const hint = document.getElementById("card-hint"),
+      dot = document.getElementById("card-dot"),
+      name = document.getElementById("card-name"),
+      priv = document.getElementById("card-priv");
+    if (!entry) {
+      hint.style.display = ""; dot.style.display = "none";
+      name.textContent = ""; priv.textContent = "";
+      return;
+    }
+    hint.style.display = "none"; dot.style.display = "";
+    dot.style.background = color;
+    name.textContent = entry.name;
+    name.style.color = color;
+    priv.textContent = entry.detail;
+    priv.title = entry.detail;
+  }
+
+  // ---------- state ----------
+  // Exactly one spotlight active at a time; pinning a pane clears it and
+  // vice versa (last action wins). Hover previews are transient overlays.
+  const state = { hoverActor: null, pinned: null, spotlight: null, edgeGroups: [] };
+  const boxGroups = {};    // id -> canvas <g>
+  const extraGroups = {};  // spotlight id -> [provenance-edge <g>]
+  const GHOST = 0.3;
+
+  function spotHas(sp, id) {
+    if (sp.kind === "self") return !!F.ACTORS[id];
+    if (sp.kind === "loop") return F.EDGES.some(e => e.fam === sp.fam && (e.from === id || e.to === id));
+    return sp.actors.indexOf(id) >= 0;
+  }
+  function spotEdgeOn(sp, g) {
+    if (sp.kind === "self") return true;
+    if (sp.kind === "loop") return g.dataset.fam === sp.fam;
+    if (sp.edges) return sp.edges.some(p2 => p2[0] === g.dataset.from && p2[1] === g.dataset.to);
+    return sp.actors.indexOf(g.dataset.from) >= 0 && sp.actors.indexOf(g.dataset.to) >= 0;
+  }
+
+  function applyState() {
+    const hovFocus = state.hoverActor || state.pinned;
+    const focus = hovFocus && F.ACTORS[hovFocus] ? hovFocus : null;
+    const sp = state.spotlight ? spotlightById[state.spotlight] : null;
+    // A pinned rail zone is not one of the six ACTORS, so `focus` stayed null
+    // and every box and edge kept full emphasis: selecting a chain lit the
+    // whole ecosystem. Light only the actors that zone docks to. No canonical
+    // channel is claimed by a chain, so the edges recess with everything else.
+    const railSel = hovFocus && railById[hovFocus] ? railById[hovFocus] : null;
+    const related = railSel && railSel.neighbors
+      ? new Set([hovFocus, ...railSel.neighbors]) : null;
+    state.edgeGroups.forEach(g => {
+      let on;
+      if (related) on = false;
+      else if (focus) on = g.dataset.from === focus || g.dataset.to === focus;
+      else if (sp) on = spotEdgeOn(sp, g);
+      else on = true;
+      g.style.opacity = on ? 1 : 0.08;
+    });
+    Object.keys(boxGroups).forEach(id => {
+      // Under the default self view, grey already marks the stations as
+      // unmodeled — fade only gently. Paper/loop spotlights recess hard.
+      const ghost = sp && sp.kind === "self" ? 0.55 : GHOST;
+      if (related) { boxGroups[id].style.opacity = related.has(id) ? 1 : GHOST; return; }
+      boxGroups[id].style.opacity = sp && !spotHas(sp, id) ? ghost : 1;
+    });
+    Object.keys(extraGroups).forEach(sid => {
+      const show = sp && sp.id === sid && !focus;
+      extraGroups[sid].forEach(g => {
+        g.style.opacity = show ? 1 : 0;
+        // visible provenance edges accept pointer events so their quote
+        // tooltips work; hidden ones stay inert (base CSS: pointer-events none)
+        g.style.pointerEvents = show ? "auto" : "none";
+      });
+    });
+  }
+
+  // ---------- spotlight control ----------
+  const chip = document.getElementById("spot-chip");
+  const chipLabel = document.getElementById("spot-chip-label");
+  function updateChip() {
+    if (!state.spotlight) { chip.hidden = true; return; }
+    chip.hidden = false;
+    chipLabel.textContent = "Highlighted: " + spotLabel(spotlightById[state.spotlight]);
+  }
+  function updateLitButtons() {
+    document.querySelectorAll("#lit .lit-row").forEach(row => {
+      const active = row.dataset.spot === state.spotlight;
+      row.classList.toggle("active", active);
+      const st = row.querySelector(".lit-state");
+      if (st) st.textContent = active ? "highlighted" : "highlight";
+    });
+  }
+  function activateSpotlight(id, scroll) {
+    // clearing state.pinned alone left the previously pinned box wearing the
+    // selected stroke for the rest of the session
+    if (state.pinned && boxGroups[state.pinned]) boxGroups[state.pinned].classList.remove("pinned");
+    state.pinned = null;
+    figCard.classList.remove("pane-open");
+    state.spotlight = id;
+    updateChip(); updateLitButtons(); applyState();
+    const s = spotlightById[id];
+    syncEdgeQuotes(s);
+    if (s.kind === "event") {
+      let detail = s.why || "";
+      detail += "  ·  factual status: " + s.status;
+      setCard({ name: s.title + " (" + s.date + ")", detail }, "#000000");
+    } else if (s.kind === "paper") {
+      let detail = s.why || "";
+      if (s.flavors) detail += "  ·  specifically: " + Object.keys(s.flavors)
+        .map(a => s.flavors[a].join(", ") + " (" + displayName(a) + ")").join("; ");
+      if (s.note) detail += "  [" + s.note + "]";
+      setCard({ name: citeAuthors(s.authors) + " " + s.year, detail }, "#000000");
+    } else setCard(null);
+    if (s.kind === "paper" || s.kind === "event") openSpotPane(s);
+    if (scroll) figCard.scrollIntoView({ behavior: REDUCED ? "auto" : "smooth", block: "nearest" });
+  }
+  function clearSpotlight() {
+    state.spotlight = null;
+    updateChip(); updateLitButtons(); setCard(null); applyState();
+    syncEdgeQuotes(null);
+    if (!state.pinned) figCard.classList.remove("pane-open");
+  }
+  document.getElementById("spot-chip-x").addEventListener("click", clearSpotlight);
+
+  // ---------- detail pane ----------
+  const figCard = document.getElementById("fig-card");
+  const paneInner = document.getElementById("pane-inner");
+
+  function div(cls, parent, text) {
+    const d = document.createElement("div");
+    if (cls) d.className = cls;
+    if (text !== undefined) d.textContent = text;
+    if (parent) parent.appendChild(d);
+    return d;
+  }
+  function orgSpan(o) {
+    const s = document.createElement("span");
+    s.textContent = orgDisp(o);
+    s.className = "org";
+    s.dataset.keys = orgKeys(o).join(",");
+    if (isMulti(o)) s.classList.add("multi");
+    return s;
+  }
+  function orgList(parent, orgs) {
+    orgs.forEach((o, i) => {
+      if (i > 0) {
+        const sep = document.createElement("span");
+        sep.className = "sep"; sep.textContent = "  ·  ";
+        parent.appendChild(sep);
+      }
+      parent.appendChild(orgSpan(o));
+    });
+  }
+
+  function openPane(id) {
+    const p = E.panes[id] || {};
+    const c = headColor(id);
+    paneInner.innerHTML = "";
+
+    const head = div("pane-head", paneInner);
+    head.style.background = c;
+    div("t", head, displayName(id));
+    const close = document.createElement("button");
+    close.textContent = "×";
+    close.title = "Close";
+    close.addEventListener("click", unpin);
+    head.appendChild(close);
+
+    let subText = "";
+    if (F.ACTORS[id]) subText = F.ACTORS[id].sub + " · " + F.ACTORS[id].role;
+    else if (stationById[id]) subText = (p.note || "") + " · not modeled in the simulation";
+    else if (railById[id]) subText = railById[id].subtitle + " · an adjacent ecosystem, not a single actor";
+    if (subText) div("pane-sub", paneInner, subText);
+
+    if (p.private) div("pane-priv", paneInner, "private state (simulation): " + p.private.join(" · "));
+
+    if (p.paperMap) {
+      const pm = p.paperMap;
+      const sec = div("pane-map", paneInner);
+      pm.tiers.forEach((t, i) => {
+        if (i > 0) div("pm-arrow", sec, "↓");
+        const tier = div("pm-tier", sec);
+        div("pm-label", tier, t.label);
+        div("pm-items", tier, t.items);
+        if (t.inputs) div("pm-inputs", tier, "inputs: " + t.inputs);
+        if (t.tag) div("pm-tag", tier, t.tag);
+      });
+      div("pm-src", sec, pm.source + (pm.note ? "; " + pm.note : ""));
+    }
+
+    (p.flavors || []).forEach(f => {
+      const sec = div("pane-sec", paneInner);
+      div("lbl", sec, f.label);
+      const orgs = div("orgs", sec);
+      orgList(orgs, f.orgs);
+    });
+
+    if (p.matrix) {
+      // Rendered transposed (institutions as rows, functions as columns): the
+      // longer axis runs vertically so the pane needs little or no scrolling.
+      // The data stays canonical (function x institution).
+      const m = p.matrix;
+      const wrap = div("pane-matrix", paneInner);
+      const table = document.createElement("table");
+      wrap.appendChild(table);
+      const trh = document.createElement("tr");
+      trh.appendChild(document.createElement("th"));
+      m.rows.forEach(row => {
+        const th = document.createElement("th");
+        th.textContent = row.label;
+        trh.appendChild(th);
+      });
+      table.appendChild(trh);
+      m.cols.forEach((colName, i) => {
+        const tr = document.createElement("tr");
+        const tl = document.createElement("td");
+        tl.className = "rowlbl"; tl.textContent = colName;
+        tr.appendChild(tl);
+        m.rows.forEach(row => {
+          const cell = row.cells[i] || [];
+          const td = document.createElement("td");
+          if (!cell.length) { td.className = "empty"; td.textContent = "·"; }
+          cell.forEach(o => {
+            if (o && o.note) {
+              const n = document.createElement("span");
+              n.className = "cellnote"; n.textContent = o.note;
+              td.appendChild(n);
+            } else td.appendChild(orgSpan(o));
+          });
+          tr.appendChild(td);
+        });
+        table.appendChild(tr);
+      });
+      const strip = div("pane-strip", paneInner);
+      m.strip.forEach((o, i) => {
+        if (i === 0) { strip.appendChild(document.createTextNode(orgDisp(o) + " ")); return; }
+        if (i > 1) strip.appendChild(document.createTextNode(" · "));
+        strip.appendChild(orgSpan(o));
+      });
+    }
+
+    if (p.chips && p.chips.length) {
+      const chips = div("pane-chips", paneInner);
+      p.chips.forEach(ch => {
+        if (ch.href) {
+          const a = document.createElement("a");
+          a.href = ch.href; a.target = "_blank"; a.textContent = ch.t;
+          chips.appendChild(a);
+        } else {
+          const s = document.createElement("span");
+          s.textContent = ch.t;
+          chips.appendChild(s);
+        }
+      });
+    }
+
+    figCard.classList.add("pane-open");
+  }
+
+  function pin(id) {
+    state.spotlight = null;
+    // clearSpotlight() does this too; pin() dropping a spotlight must also drop
+    // its edge tooltips, or a quote stays attached to an edge for the rest of
+    // the session, attributed to a paper that is no longer highlighted
+    syncEdgeQuotes(null);
+    updateChip(); updateLitButtons();
+    state.pinned = id;
+    Object.keys(boxGroups).forEach(k => boxGroups[k].classList.toggle("pinned", k === id));
+    applyState();
+    openPane(id);
+  }
+  function unpin() {
+    state.pinned = null;
+    Object.keys(boxGroups).forEach(k => boxGroups[k].classList.remove("pinned"));
+    // mirror of clearSpotlight's `if (!state.pinned)` guard: a pane opened by a
+    // spotlight belongs to that spotlight, so closing a pin must not close it.
+    // Without this, clicking empty canvas left the spotlight lit with its pane
+    // shut, and the row then needed two clicks to reopen.
+    if (!state.spotlight) figCard.classList.remove("pane-open");
+    applyState();
+  }
+  document.addEventListener("keydown", e => {
+    if (e.key !== "Escape") return;
+    unpin();
+    if (state.spotlight) clearSpotlight();
+  });
+
+  // pane org tracing: hover an underlined name -> glow every box that
+  // contains it, narrate its roles in the strip below the figure.
+  paneInner.addEventListener("mouseover", e => {
+    const t = e.target;
+    if (!t.classList || !t.classList.contains("multi")) return;
+    const keys = t.dataset.keys.split(",");
+    const owners = new Set(), roles = [];
+    let note = "";
+    keys.forEach(k => {
+      const isGroup = E.keys && E.keys[k];
+      (keyIndex[k] || []).forEach(r => {
+        owners.add(r.ownerId);   // glow spans the whole group
+        // the strip narrates only this entity's own roles, not the group's
+        if (!isGroup && roles.indexOf(r.roleLabel) < 0) roles.push(r.roleLabel);
+      });
+      if (isGroup && E.keys[k].note) note = E.keys[k].note;
+    });
+    owners.forEach(id => { if (boxGroups[id]) boxGroups[id].classList.add("glow"); });
+    setCard({ name: t.textContent, detail: roles.join("  ·  ") + (note ? (roles.length ? "  ·  " : "") + note : "") }, "#000000");
+  });
+  paneInner.addEventListener("mouseout", e => {
+    const t = e.target;
+    if (!t.classList || !t.classList.contains("multi")) return;
+    Object.values(boxGroups).forEach(g => g.classList.remove("glow"));
+    setCard(null);
+  });
+
+  // ---------- render ----------
+  const centerOf = {}, halfOf = {};
+
+  function render(container) {
+    // viewBox trimmed to content (Fig-1 canvas is 1200x700 with wide margins)
+    const VX = 148, VY = 72, VW = 904, VH = 628;
+    const svg = el("svg", { viewBox: `${VX} ${VY} ${VW} ${VH}`,
+      // role="group", NOT "img": the figure contains a dozen focusable
+      // role="button" children (actors, stations, rail zones, legend items),
+      // and role="img" collapses the whole subtree into one opaque graphic,
+      // so those stops exist in the tab order but announce nothing.
+      // Pinned to the loaded webfont, not a system stack. Under the old
+      // "Inter, system-ui" the figure rendered in Inter for anyone who had it
+      // installed and in Segoe UI / SF for everyone else, so the same figure
+      // set type differently per machine. Google Sans Flex measures ~2.5%
+      // wider; every label still fits its box (tightest slack 4.87px, was
+      // 6.85px), so no label position needed re-solving.
+      "font-family": '"Google Sans Flex", "Helvetica Neue", Arial, sans-serif', role: "group",
+      "aria-label": "Map of the AI evaluation ecosystem: six modeled actors, three unmodeled stations, and the channels between them" }, container);
+    svg.style.aspectRatio = VW + " / " + VH;
+
+    el("ellipse", { cx: G.CX, cy: G.CY, rx: G.RX, ry: G.RY, fill: "none",
+      stroke: "#00000014", "stroke-width": 1, "stroke-dasharray": "3 6" }, svg);
+
+    // ---- family legend: horizontal strip up top; click to isolate a loop ----
+    const legItems = Object.keys(F.FAM), itemW = 190;
+    const legSx = G.CX - (legItems.length * itemW) / 2 + 30, legY = 100;
+    legItems.forEach((k, i) => {
+      const c = famColor(k), ix = legSx + i * itemW;
+      const g = el("g", { class: "leg-item", tabindex: 0, role: "button",
+        "aria-label": F.FAM_LABEL[k] + " pathway: highlight" }, svg);
+      g.addEventListener("keydown", keyActivate);
+      el("rect", { x: ix - 8, y: legY - 11, width: itemW - 24, height: 22, rx: 5, fill: "transparent" }, g);
+      // The head used to sit ON the line end (tip at ix+26, base at ix+18), so
+      // it covered the last 8 of the 26-unit shaft and the arrow read stubby.
+      // Move the head 6 right so it extends past the shaft instead of hiding
+      // it; the text moves with it, keeping the tip-to-text gap at 7.
+      el("line", { x1: ix, y1: legY, x2: ix + 26, y2: legY, stroke: c, "stroke-width": 2.4 }, g);
+      el("polygon", { points: `${ix + 32},${legY} ${ix + 24},${legY - 4} ${ix + 24},${legY + 4}`, fill: c }, g);
+      txt(g, ix + 39, legY, F.FAM_LABEL[k], { fill: c, "font-size": 10, "font-weight": 600 });
+      g.addEventListener("click", e2 => {
+        e2.stopPropagation();
+        const sid = "fam-" + k;
+        if (state.spotlight === sid) clearSpotlight(); else activateSpotlight(sid, false);
+      });
+    });
+
+    // ---- edges: uniform weight (salience left to the reader) ----
+    const edgeTop = el("g", {}, svg);   // chevrons + labels render above arcs
+    // Provenance edges are SPLIT across two layers (2026-08-09): the
+    // dotted paths sit UNDER the boxes (a claim edge must never draw across
+    // an actor box), while their label boxes render topmost so no canonical
+    // label box crosses them. One logical x-edge = one group in each layer.
+    const xLayer = el("g", {}, svg);    // x-edge paths + chevrons: under boxes
+    const xTop = el("g", {}, svg);      // x-edge label boxes: above everything
+    const zoneLayer = el("g", {}, svg); // adjacent-ecosystem zones: under boxes
+    F.EDGES.forEach(e => {
+      const geo = computeEdge(e), c = famColor(e.fam);
+      const g = el("g", { class: "edge-group" }, svg);
+      g.dataset.from = e.from; g.dataset.to = e.to; g.dataset.fam = e.fam;
+      el("path", { d: `M${geo.x1.toFixed(1)},${geo.y1.toFixed(1)} Q${geo.cpx.toFixed(1)},${geo.cpy.toFixed(1)} ${geo.x2.toFixed(1)},${geo.y2.toFixed(1)}`,
+        fill: "none", stroke: c, "stroke-width": 1.9 }, g);
+      const top = el("g", { class: "edge-group" }, edgeTop);
+      top.dataset.from = e.from; top.dataset.to = e.to; top.dataset.fam = e.fam;
+      el("polygon", { points: "0,0 -8,-3.4 -8,3.4", fill: c,
+        transform: `translate(${geo.chevx.toFixed(1)},${geo.chevy.toFixed(1)}) rotate(${geo.chev.toFixed(1)})` }, top);
+      // label at the baked (solved) position
+      const lines = e.label.split("\n");
+      const fs = 8, lh = 10.5;
+      const maxLen = Math.max(...lines.map(l => l.length));
+      // 8, not 12: the 0.52 char-width estimate already overshoots real glyph
+      // widths, so 6 units per side read as slack inside the box (screenshot
+      // 2026-08-17). 4 per side still clears the widest strings in the set.
+      const w = maxLen * fs * 0.52 + 8, h = lines.length * lh + 3;
+      el("rect", { x: e.lx - w / 2, y: e.ly - h / 2, width: w, height: h, rx: 3,
+        fill: "rgba(243,239,236,.94)", stroke: c + "66", "stroke-width": 0.7 }, top);
+      lines.forEach((ln, i) => {
+        txt(top, e.lx, e.ly - ((lines.length - 1) * lh) / 2 + i * lh, ln,
+          { "text-anchor": "middle", fill: c, "font-size": fs });
+      });
+      state.edgeGroups.push(g, top);
+    });
+
+    // ---- the six modeled actors ----
+    const fitQueue = [];
+    Object.keys(F.ACTORS).forEach(id => {
+      const a = F.ACTORS[id], p = POS[id], c = actorColor(id);
+      const x = p.x - G.NW / 2, y = p.y - NH / 2;
+      const g = el("g", { class: "node-g", style: "cursor: pointer", tabindex: 0,
+        role: "button", "aria-label": a.name }, svg);
+      g.addEventListener("keydown", keyActivate);
+      el("rect", { x: x + 1, y: y + 2, width: G.NW, height: NH, rx: 8, fill: "rgba(0,0,0,.13)" }, g);
+      el("rect", { x, y, width: G.NW, height: NH, rx: 8, fill: "#ffffff", stroke: c,
+        "stroke-width": 1.5, class: "box-main" }, g);
+      el("path", { d: `M${x},${y + 8} Q${x},${y} ${x + 8},${y} L${x + G.NW - 8},${y} Q${x + G.NW},${y} ${x + G.NW},${y + 8} L${x + G.NW},${y + G.NHt} L${x},${y + G.NHt} Z`, fill: c }, g);
+      txt(g, p.x, y + G.NHt / 2 + 1, a.name,
+        { "text-anchor": "middle", fill: "#f3efec", "font-size": 11, "font-weight": 700 });
+      const sub = txt(g, p.x, y + G.NHt + 9, a.sub,
+        { "text-anchor": "middle", fill: c, "font-size": 8.5, "font-weight": 600 });
+      const role = txt(g, p.x, y + G.NHt + 21, a.role,
+        { "text-anchor": "middle", fill: c, "fill-opacity": .75, "font-size": 8, "font-style": "italic" });
+      fitQueue.push([sub, G.NW - 14], [role, G.NW - 14]);
+      g.addEventListener("mouseenter", () => {
+        state.hoverActor = id;
+        setCard({ name: a.name, detail: "private state: " + (E.panes[id].private || []).join(" · ") }, c);
+        applyState();
+      });
+      g.addEventListener("mouseleave", () => { state.hoverActor = null; setCard(null); applyState(); });
+      g.addEventListener("click", e => { e.stopPropagation(); pin(id); });
+      boxGroups[id] = g;
+      centerOf[id] = p; halfOf[id] = { hw: G.NW / 2, hh: NH / 2 };
+    });
+
+    // ---- grey stations: unmodeled actors, on-ring in the gaps ----
+    // Grey is the semantic mark ("no modeled channel touches me"); the radial
+    // offset is pure layout, keeping stations clear of the solved edge labels.
+    // Mini-actor anatomy: same form as the six (header band + role line) so
+    // shape says "actor"; grey + dotted border alone carry "not modeled".
+    const SF = 1.3, SW = 150;
+    E.stations.forEach(s => {
+      const r = d2r(s.ang);
+      const sx = G.CX + G.RX * SF * Math.cos(r) + (s.dx || 0);
+      const sy = G.CY + G.RY * SF * Math.sin(r) + (s.dy || 0);
+      const lines = wrapWords(s.name, 22);
+      // Long role lines wrap instead of shrinking: autofit floors at 8px and
+      // "human expertise, datasets, and RL environments" needs ~40% shrink,
+      // so it overflowed the box (reported 2026-08-09).
+      const roleLines = s.role ? wrapWords(s.role, 32) : [];
+      const bandH = lines.length * 12 + 8,
+        bodyH = roleLines.length ? roleLines.length * 11 + 7 : 17,
+        lh2 = bandH + bodyH;
+      const x = sx - SW / 2, y = sy - lh2 / 2;
+      const g = el("g", { class: "station-g", style: "cursor: pointer", tabindex: 0,
+        role: "button", "aria-label": s.name }, svg);
+      g.addEventListener("keydown", keyActivate);
+      el("rect", { x, y, width: SW, height: lh2, rx: 7, fill: P.station.fill,
+        stroke: P.station.border, "stroke-width": 1.2, "stroke-dasharray": "4 3",
+        class: "box-main" }, g);
+      el("path", { d: `M${x},${y + 7} Q${x},${y} ${x + 7},${y} L${x + SW - 7},${y} Q${x + SW},${y} ${x + SW},${y + 7} L${x + SW},${y + bandH} L${x},${y + bandH} Z`,
+        fill: "#00000099" }, g);
+      lines.forEach((ln, i) => {
+        txt(g, sx, y + 8 + i * 12, ln,
+          { "text-anchor": "middle", fill: "#f3efec", "font-size": 8, "font-weight": 700 });
+      });
+      roleLines.forEach((ln, i) => {
+        const roleT = txt(g, sx, y + bandH + 9 + i * 11, ln,
+          { "text-anchor": "middle", fill: P.station.text, "font-size": 8, "font-style": "italic" });
+        fitQueue.push([roleT, SW - 10]);
+      });
+      g.addEventListener("mouseenter", () => {
+        // neighbor glow: related modeled actors light up; no edges are drawn,
+        // so no channel is claimed (grey = no modeled channel, still true)
+        (s.neighbors || []).forEach(n => { if (boxGroups[n]) boxGroups[n].classList.add("glow"); });
+        setCard({ name: s.name, detail: (s.why || E.panes[s.id].note || "") + "  ·  not modeled in the simulation" },
+          P.station.border);
+      });
+      g.addEventListener("mouseleave", () => {
+        (s.neighbors || []).forEach(n => { if (boxGroups[n]) boxGroups[n].classList.remove("glow"); });
+        setCard(null);
+      });
+      g.addEventListener("click", e => { e.stopPropagation(); pin(s.id); });
+      boxGroups[s.id] = g;
+      centerOf[s.id] = { x: sx, y: sy }; halfOf[s.id] = { hw: SW / 2, hh: lh2 / 2 };
+    });
+
+    // ---- rails: adjacent ecosystems as tinted zones running off-canvas ----
+    // Aesthetic prototype (2026-08-04): tinted backgrounds bleeding past the
+    // canvas edge (these ecosystems continue), bigger titles, explicit paper
+    // links, and dotted dock arrows from the most salient overlapping actors.
+    function zoneChips(g, chips, x, y) {
+      let cx2 = x;
+      (chips || []).forEach(ch => {
+        const cw = ch.t.length * 5.2 + 16;
+        if (ch.href) {
+          const a = el("a", { href: ch.href, target: "_blank" }, g);
+          a.addEventListener("click", e2 => e2.stopPropagation());
+          el("rect", { x: cx2, y, width: cw, height: 18, rx: 4, fill: "#f6f2ee", stroke: "#0000001f" }, a);
+          txt(a, cx2 + cw / 2, y + 9, ch.t, { "text-anchor": "middle", fill: P.accent, "font-size": 8, "font-weight": 600 });
+        } else {
+          txt(g, cx2 + 2, y + 9, ch.t, { fill: P.muted, "font-size": 8, "font-style": "italic" });
+        }
+        cx2 += cw + 8;
+      });
+    }
+    function dockArrow(g, x1, y1, x2, y2) {
+      // a run shorter than the 7-unit arrowhead draws as a stray chevron, and a
+      // negative run points it back at the box it started from (appdev sat at
+      // y1 575.5 against y2 574). Adjacency reads without a connector.
+      if (Math.hypot(x2 - x1, y2 - y1) < 12) return;
+      el("line", { x1, y1, x2, y2, stroke: P.station.border, "stroke-width": 1.3, "stroke-dasharray": "4 3" }, g);
+      const ang = Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI;
+      el("polygon", { points: "0,0 -7,-3 -7,3", fill: P.station.border,
+        transform: `translate(${x2},${y2}) rotate(${ang.toFixed(1)})` }, g);
+    }
+    function zoneGroup(rr) {
+      const g = el("g", { class: "station-g", style: "cursor: pointer", tabindex: 0,
+        role: "button", "aria-label": rr.title }, zoneLayer);
+      g.addEventListener("keydown", keyActivate);
+      g.addEventListener("mouseenter", () => {
+        // same neighbor glow the grey stations use: show which modeled actors
+        // this chain touches without claiming a channel
+        (rr.neighbors || []).forEach(n => { if (boxGroups[n]) boxGroups[n].classList.add("glow"); });
+        setCard({ name: rr.title, detail: rr.subtitle + "  ·  an adjacent ecosystem, not a single actor" },
+          P.station.border);
+      });
+      g.addEventListener("mouseleave", () => {
+        (rr.neighbors || []).forEach(n => { if (boxGroups[n]) boxGroups[n].classList.remove("glow"); });
+        setCard(null);
+      });
+      g.addEventListener("click", e2 => { e2.stopPropagation(); pin(rr.id); });
+      boxGroups[rr.id] = g;
+      return g;
+    }
+
+    function dockCurve(g, x1, y1, qx, qy, x2, y2) {
+      el("path", { d: `M${x1},${y1} Q${qx},${qy} ${x2},${y2}`, fill: "none",
+        stroke: P.station.border, "stroke-width": 1.3, "stroke-dasharray": "4 3" }, g);
+      const ang = Math.atan2(y2 - qy, x2 - qx) * 180 / Math.PI;
+      el("polygon", { points: "0,0 -7,-3 -7,3", fill: P.station.border,
+        transform: `translate(${x2},${y2}) rotate(${ang.toFixed(1)})` }, g);
+    }
+    // Two closed panes below the map, symmetric about the midline. Clicking
+    // one opens its detail pane with the paper's fuller chain (paperMap).
+    function zone(rr, x, w, fill) {
+      const g = zoneGroup(rr);
+      el("rect", { x, y: 578, width: w, height: 108, rx: 10, fill,
+        stroke: "#00000014", "stroke-width": 1, "stroke-dasharray": "6 4", class: "box-main" }, g);
+      txt(g, x + 20, 600, rr.title, { fill: P.station.text, "font-size": 12.5, "font-weight": 700 });
+      txt(g, x + 20, 622, rr.flow, { fill: "#00000099", "font-size": 8.5, "font-style": "italic" });
+      txt(g, x + 20, 640, rr.tag, { fill: P.muted, "font-size": 8, "font-style": "italic" });
+      zoneChips(g, E.panes[rr.id].chips, x + 20, 650);
+      centerOf[rr.id] = { x: x + w / 2, y: 632 }; halfOf[rr.id] = { hw: w / 2, hh: 54 };
+      return g;
+    }
+    // compute bottom-left (after Sastry et al. Fig. 10)
+    const gC = zone(railById.compute, 165, 420, "#f6f2ee");
+    // funders' capital routes down the left of Evaluator into compute
+    dockCurve(gC, 210, 283, 138, 428, 210, 574);
+    // providers = Sastry's compute-usage tier
+    dockArrow(gC, centerOf.providers.x - 35, centerOf.providers.y + 31, 542, 574);
+    // supply chain bottom-right (after Hopkins et al.)
+    const gS = zone(railById.supplychain, 615, 420, "#f6f2ee");
+    // providers = the base-model tier; app devs and consumers = downstream tiers
+    dockArrow(gS, centerOf.providers.x + 35, centerOf.providers.y + 31, 658, 574);
+    dockArrow(gS, centerOf.appdev.x, centerOf.appdev.y + halfOf.appdev.hh + 4, centerOf.appdev.x, 574);
+    dockArrow(gS, centerOf.consumers.x, centerOf.consumers.y + halfOf.consumers.hh + 4, centerOf.consumers.x, 574);
+
+    // ---- provenance edges: drawn only while their paper's spotlight is on ----
+    // The only way a non-modeled channel ever appears; each one cites exactly
+    // one source by construction.
+    E.spotlights.filter(s => s.extraEdges).forEach(s => {
+      extraGroups[s.id] = s.extraEdges.map(ee => {
+        const A = centerOf[ee.from], B = centerOf[ee.to];
+        const hA = halfOf[ee.from], hB = halfOf[ee.to];
+        const a1 = anchorRect(A.x, A.y, hA.hw + 3, hA.hh + 3, B.x, B.y);
+        const a2 = anchorRect(B.x, B.y, hB.hw + 3, hB.hh + 3, A.x, A.y);
+        const mx = (a1.x + a2.x) / 2, my = (a1.y + a2.y) / 2;
+        const dxx = a2.x - a1.x, dyy = a2.y - a1.y, elen = Math.hypot(dxx, dyy) || 1;
+        // Curvature harmonized with computeEdge (2026-08-09): provenance
+        // edges use the same shape family as canonical arcs instead of ad-hoc
+        // midpoint bows. Reciprocal x-pairs form a lens via the perpendicular
+        // rule; singles bow ring-outward at clamp(K*len); sharing a corridor
+        // with a canonical edge pushes 24 further out so the dotted arc runs
+        // parallel to its solid neighbor; side:"in" still flips inward to
+        // clear an interposed box. Legacy per-edge `bow` values are no longer
+        // read for geometry (labels carry their own solved lt/ldx/ldy).
+        const hasRecip = s.extraEdges.some(o => o !== ee && o.from === ee.to && o.to === ee.from);
+        const sharesCanon = F.EDGES.some(c =>
+          (c.from === ee.from && c.to === ee.to) || (c.from === ee.to && c.to === ee.from));
+        let px, py;
+        if (hasRecip) { px = (dyy / elen) * G.CURVE_SIGN; py = (-dxx / elen) * G.CURVE_SIGN; }
+        else { const ox = mx - G.CX, oy = my - G.CY, od = Math.hypot(ox, oy) || 1; px = ox / od; py = oy / od; }
+        // Two ways arcs used to resolve to ONE curve (reported 2026-08-19):
+        //  (a) reciprocal pair: the perpendicular already reverses with edge
+        //      direction, so side:"in" flipped it a second time and cancelled
+        //      the lens. Six pairs drew as a single line carrying two heads.
+        //      Fix: the flip applies only where it has meaning, i.e. to a
+        //      single edge bowing inward past an interposed box.
+        //  (b) several edges in the SAME direction between the same pair:
+        //      direction-flip cannot separate those at all (schiff2024 runs
+        //      three evaluator->providers channels). Fix: each gets its own
+        //      lane, stepped outward from the base curvature.
+        const sameDir = s.extraEdges.filter(o => o.from === ee.from && o.to === ee.to);
+        const lane = Math.max(0, sameDir.indexOf(ee));
+        const flip = (ee.side === "in" && !hasRecip) ? -1 : 1;
+        const mag = (Math.max(G.CURVE_MIN, Math.min(G.CURVE_K * elen, G.CURVE_MAX))
+          + (sharesCanon ? 24 : 0) + lane * 26) * flip;
+        const cpx = mx + px * mag, cpy = my + py * mag;
+        const mid = bez(a1.x, a1.y, cpx, cpy, a2.x, a2.y, 0.75);
+        const chev = Math.atan2(mid.ty, mid.tx) * 180 / Math.PI;
+        const ink = "#000000cc";
+        const g = el("g", { class: "x-edge" }, xLayer);
+        const gl = el("g", { class: "x-edge" }, xTop);
+        el("path", { d: `M${a1.x.toFixed(1)},${a1.y.toFixed(1)} Q${cpx.toFixed(1)},${cpy.toFixed(1)} ${a2.x.toFixed(1)},${a2.y.toFixed(1)}`,
+          fill: "none", stroke: ink, "stroke-width": 1.6, "stroke-dasharray": "5 4" }, g);
+        el("polygon", { points: "0,0 -8,-3.4 -8,3.4", fill: ink,
+          transform: `translate(${mid.x.toFixed(1)},${mid.y.toFixed(1)}) rotate(${chev.toFixed(1)})` }, g);
+        if (ee.label) {
+          // lt slides the label along the curve; ldx/ldy nudge it — used to
+          // keep provenance labels clear of boxes and each other
+          const lp = bez(a1.x, a1.y, cpx, cpy, a2.x, a2.y, ee.lt || 0.5);
+          const lxx = lp.x + (ee.ldx || 0), lyy = lp.y + (ee.ldy || 0);
+          const w = ee.label.length * 8 * 0.52 + 7;   // matched to the canonical trim
+          el("rect", { x: lxx - w / 2, y: lyy - 8, width: w, height: 16, rx: 3,
+            fill: "rgba(243,239,236,.95)", stroke: "#0000007a", "stroke-width": 0.7 }, gl);
+          txt(gl, lxx, lyy, ee.label,
+            { "text-anchor": "middle", fill: ink, "font-size": 8, "font-style": "italic" });
+        }
+        if (ee.q) {
+          el("title", {}, g).textContent = quoteTip(ee.q, ee.ql, ee.qk);
+          el("title", {}, gl).textContent = quoteTip(ee.q, ee.ql, ee.qk);
+        }
+        return [g, gl];
+      }).flat();
+    });
+
+    // labels + chevrons render in front of every arc, as in the paper; the
+    // provenance layer then goes above THEM: x-edges exist only during a
+    // spotlight, where they are the foreground content, and their opaque
+    // label boxes must not be crossed by ghosted canonical label boxes
+    // (z-order defect, 2026-08-09).
+    // Layer order among box groups: rail zones first (their dashed dock
+    // connectors start at actor-box edges and must paint UNDER them), then
+    // grey stations, then the six actors on top (reported 2026-08-09:
+    // a dock curve painted over the Funders corner).
+    const layerOf = k => (railById[k] ? 0 : stationById[k] ? 1 : 2);
+    svg.appendChild(xLayer);   // x-edge paths: above arcs, below every box
+    // Opaque page-colored backers under every actor/station box. Ghosted
+    // boxes fade to 0.3 group opacity, which makes them TRANSLUCENT, so the
+    // guide ellipse and edge arcs below showed through the box body (screenshots,
+    // 2026-08-09: the "dashed line over Funders" was the ring
+    // showing through, not a draw-order bug). The backers never fade, so
+    // nothing below a box is ever visible through it.
+    const boxBackers = el("g", {}, svg);
+    Object.keys(boxGroups).forEach(k => {
+      if (railById[k]) return;
+      // .box-main, not the first rect: for the six actors the first rect is the
+      // drop shadow at (x+1, y+2), which offset every backer and left a 1-2px
+      // unbacked strip along each box's top and left edge.
+      const r = boxGroups[k].querySelector(".box-main") || boxGroups[k].querySelector("rect");
+      if (!r) return;
+      el("rect", { x: r.getAttribute("x"), y: r.getAttribute("y"),
+        width: r.getAttribute("width"), height: r.getAttribute("height"),
+        rx: r.getAttribute("rx") || 0, fill: "#f3efec" }, boxBackers);
+    });
+    Object.keys(boxGroups)
+      .sort((a, b) => layerOf(a) - layerOf(b))
+      .forEach(k => svg.appendChild(boxGroups[k]));
+    svg.appendChild(edgeTop);
+    svg.appendChild(xTop);     // x-edge labels: topmost
+
+    // click on empty canvas (background, guide ellipse, edges) closes the pane
+    svg.addEventListener("click", unpin);
+    // Mouse clicks must not move focus to figure elements: the browser's
+    // default focus ring on a clicked box read as an unwanted highlight.
+    // Keyboard focus (Tab) is unaffected.
+    svg.addEventListener("mousedown", e => {
+      const f = e.target.closest && e.target.closest("g[tabindex]");
+      if (f) e.preventDefault();
+    });
+
+    applyState();
+    // measure-dependent text fitting: now, and again once fonts settle
+    fitQueue.forEach(([n, avail]) => autofit(n, avail));
+    if (document.fonts && document.fonts.ready)
+      document.fonts.ready.then(() => fitQueue.forEach(([n, avail]) => autofit(n, avail)));
+  }
+
+  // ---------- literature strip ----------
+  // Dense rows: actor dots communicate each paper's mapping at a glance; the
+  // whole row toggles its highlight (title links stay links). At ~15 entries,
+  // add actor filtering (see TODO).
+  function makeLitRow(s) {
+    const row = document.createElement("div");
+    row.className = "lit-row";
+    row.dataset.spot = s.id;
+    row.tabIndex = 0;
+    row.setAttribute("role", "button");
+    row.setAttribute("aria-label", s.title + ": highlight mapping");
+    row.addEventListener("keydown", keyActivate);
+    if (s.why) row.title = s.why;
+    row.addEventListener("click", () => {
+      if (state.spotlight === s.id) clearSpotlight();
+      else activateSpotlight(s.id, true);
+    });
+    const dots = document.createElement("span");
+    dots.className = "lit-dots";
+    s.actors.forEach(id => {
+      const d = document.createElement("span");
+      d.className = "lit-dot";
+      d.style.background = F.ACTORS[id] ? actorColor(id) : P.station.border;
+      d.title = displayName(id);
+      dots.appendChild(d);
+    });
+    row.appendChild(dots);
+    const title = document.createElement("span");
+    title.className = "lit-title";
+    // Titles here are almost all "Name: what happened". Splitting at the first
+    // colon lets the name hold its full width while only the trailing clause
+    // truncates, so the row never ellipses away the thing you scan for. The
+    // whole title stays in the tooltip and in the pane.
+    // Split at the first colon or question mark followed by a space. The colon
+    // covers "FrontierMath: the benchmark's funder..."; the question mark
+    // covers "More than Marketing? On the Information Value...", where the
+    // question is the name. The punctuation stays with the name in both cases.
+    const m = /^(.*?[:?])\s(.+)$/.exec(s.title);
+    const name = m ? m[1].replace(/:$/, "") : s.title;
+    // No leading colon: the subtitle sits on its own line, where the line
+    // break does the separating and a leading ": " would read as a typo.
+    const rest = m ? m[2] : "";
+    const fill = el2 => {
+      const n = document.createElement("span");
+      n.className = "lit-name";
+      n.textContent = name;
+      el2.appendChild(n);
+      if (rest) {
+        const r = document.createElement("span");
+        r.className = "lit-sub";
+        r.textContent = rest;
+        el2.appendChild(r);
+      }
+    };
+    if (s.href) {
+      const a = document.createElement("a");
+      a.href = s.href; a.target = "_blank";
+      if (s.hrefLabel) a.title = s.hrefLabel;
+      a.addEventListener("click", e => e.stopPropagation());
+      fill(a);
+      title.appendChild(a);
+      title.title = s.title + (s.why ? " · " + s.why : "");
+    } else {
+      fill(title);
+      title.title = s.title;
+    }
+    row.appendChild(title);
+    const meta = document.createElement("span");
+    meta.className = "lit-meta";
+    meta.textContent = s.kind === "self" ? "the simulation above · default view"
+      : s.kind === "event" ? s.date
+      : cite(s);
+    row.appendChild(meta);
+    if (s.kind === "event") {
+      const st = document.createElement("span");
+      st.className = "ev-status " + (s.status === "settled" ? "settled" : "contested");
+      st.textContent = s.status === "settled" ? "settled" : "contested";
+      st.title = s.statusNote || "factual status of the episode";
+      row.appendChild(st);
+      const rs = s.relatedStudy && spotlightById[s.relatedStudy];
+      if (rs) {
+        const chip = document.createElement("span");
+        chip.className = "ev-study";
+        chip.textContent = "study →";
+        chip.title = "documented in: " + rs.title;
+        chip.addEventListener("click", e => {
+          e.stopPropagation();
+          activateSpotlight(rs.id, true);
+        });
+        row.appendChild(chip);
+      }
+    }
+    if (s.fit === "approx") {
+      const ax = document.createElement("span");
+      ax.className = "lit-approx";
+      ax.textContent = "*";
+      ax.title = s.note || "approximate mapping";
+      row.appendChild(ax);
+    }
+    const st = document.createElement("span");
+    st.className = "lit-state";
+    st.textContent = "highlight";
+    row.appendChild(st);
+    return row;
+  }
+
+  function buildLit() {
+    const rows = document.getElementById("lit-rows");
+    const evRows = document.getElementById("event-rows");
+    const moreBtn = document.getElementById("lit-more");
+    const papers = E.spotlights.filter(s => s.kind === "self" || s.kind === "paper");
+    // Featured-first: the self row and featured papers render open; the rest
+    // sit behind the toggle so the strip leads with its strongest rows.
+    // `featured` is a rank (1..5), so the lead order is set in the data file
+    // without disturbing the thematic order of the spotlights array.
+    const litRank = s => s.kind === "self" ? 0 : (s.featured || 0);
+    const front = papers.filter(s => s.kind === "self" || s.featured != null)
+                        .sort((a, b) => litRank(a) - litRank(b));
+    const back  = papers.filter(s => s.kind === "paper" && s.featured == null);
+    front.forEach(s => rows.appendChild(makeLitRow(s)));
+    back.forEach(s => {
+      const row = makeLitRow(s);
+      row.classList.add("lit-hidden");
+      rows.appendChild(row);
+    });
+    let expanded = false;
+    function setMore() {
+      moreBtn.textContent = expanded ? "Show fewer"
+        : "Show all " + (front.length - 1 + back.length) + " papers";
+      moreBtn.setAttribute("aria-expanded", expanded ? "true" : "false");
+      rows.querySelectorAll(".lit-hidden").forEach(r =>
+        r.style.display = expanded ? "flex" : "");
+    }
+    moreBtn.addEventListener("click", () => { expanded = !expanded; setMore(); });
+    setMore();
+    E.spotlights.filter(s => s.kind === "event").forEach(s =>
+      evRows.appendChild(makeLitRow(s)));
+  }
+
+  render(document.getElementById("fig-wrap"));
+  buildLit();
+  activateSpotlight("self", false);   // the landing view IS the paper's model
+})();
+</script>
+</body>
+</html>

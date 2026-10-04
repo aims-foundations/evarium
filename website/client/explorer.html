@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Runs · AI Evaluation Ecosystem</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="stylesheet" href="css/fonts.css?v=1">
+<link rel="stylesheet" href="css/aims.css?v=3">
+<script src="js/loader.js?v=1"></script>
+<script src="js/boundary.js?v=5"></script>
+<style>
+/* Reset and body base now live in css/aims.css. */
+
+/* Header now lives in css/aims.css as .site-hdr. */
+#hdr-count { font-family: var(--rd-mono); font-size: .66rem; letter-spacing: .06em;
+  color: var(--ink-3); border-left: 1px solid var(--line); padding-left: 14px; }
+/* AIMS primary button: black pill, cardinal on hover. */
+#compare-toggle { margin-left: 8px; display: inline-flex; align-items: center;
+  background: var(--rd-dark); border: 1px solid var(--rd-dark); border-radius: 30px;
+  color: var(--white); padding: .42rem 1.1rem; font-family: var(--rd-mono);
+  font-size: .66rem; font-weight: 400; letter-spacing: .08em;
+  text-transform: uppercase; cursor: pointer; white-space: nowrap;
+  transition: background-color .25s, border-color .25s; }
+#compare-toggle:hover { background: var(--accent); border-color: var(--accent); }
+#compare-toggle.active { background: var(--accent); border-color: var(--accent); }
+
+/* ---- Filter bar ---- */
+#filter-bar { position: sticky; top: 60px; z-index: 19; background: var(--ground);
+  border-bottom: 1px solid var(--line); padding: 10px clamp(16px, 3vw, 32px);
+  display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+.fgroup { display: flex; align-items: center; gap: 7px; }
+.flabel { font-family: var(--rd-mono); font-size: .62rem; letter-spacing: .12em;
+  text-transform: uppercase; color: var(--cool-grey); white-space: nowrap; }
+.fpill, .fbtn { background: none; border: 1px solid var(--line); border-radius: 30px;
+  padding: .28rem .8rem; font-family: var(--rd-mono); font-size: .62rem;
+  letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2);
+  cursor: pointer; white-space: nowrap; line-height: 1.6;
+  transition: background-color .2s, border-color .2s, color .2s; }
+.fpill:hover, .fbtn:hover { border-color: var(--line-strong); color: var(--ink); }
+.fpill.active, .fbtn.active { background: var(--rd-dark); border-color: var(--rd-dark); color: var(--white); }
+#model-sel, #cond-search { background: var(--surface); border: 1px solid var(--line);
+  border-radius: 30px; padding: .3rem .85rem; font-size: .78rem; color: var(--ink);
+  font-family: inherit; }
+:is(a, button, select, input):focus-visible { outline: 2px solid var(--digital-blue); outline-offset: 2px; }
+#cond-search { width: 180px; }
+#cond-search:focus { border-color: var(--accent); }
+.fgroup-search { margin-left: auto; }
+
+/* ---- Orientation strip ---- */
+#orient-strip { padding: 14px clamp(16px, 3vw, 32px) 0; font-size: .82rem; font-weight: 300;
+  color: var(--ink-3); line-height: 1.6; max-width: 78ch; }
+
+/* ---- Question strip (lighter than the grid cards: an entry point, not data) ---- */
+#question-strip { padding: 18px clamp(16px, 3vw, 32px) 0; }
+#question-strip .qs-label { font-family: var(--rd-mono); font-size: .62rem;
+  letter-spacing: .14em; text-transform: uppercase; color: var(--cool-grey); margin-bottom: 9px; }
+.qs-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 12px; }
+.qs-card { background: var(--surface-soft); border: 1px solid var(--line);
+  padding: 16px 18px; transition: background-color .3s, border-color .3s; }
+.qs-card:hover { background: var(--surface); border-color: var(--line-strong); }
+.qs-q { font-size: .95rem; font-weight: 500; letter-spacing: -.01em; line-height: 1.25; margin-bottom: 6px; }
+.qs-a { font-size: .82rem; font-weight: 300; color: var(--ink-2); line-height: 1.5; margin-bottom: 10px; }
+.qs-link { font-family: var(--rd-mono); font-size: .62rem; letter-spacing: .08em;
+  text-transform: uppercase; color: var(--accent); text-decoration: none;
+  transition: color var(--duration-normal); }
+.qs-link:hover { color: var(--accent-warm); }
+
+/* ---- Showing count ---- */
+#showing { padding: 14px clamp(16px, 3vw, 32px) 0; font-family: var(--rd-mono);
+  font-size: .62rem; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); }
+
+/* ---- Card grid ---- */
+#grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 14px; padding: 18px clamp(16px, 3vw, 32px) 40px; align-items: start; }
+
+/* ---- Cards ----
+   The AIMS paper-card hover: a small lift and a cardinal-tinted border rather
+   than a drop shadow. */
+.card { background: var(--surface-soft); border: 1px solid var(--line);
+  border-top: 4px solid var(--line); display: flex; flex-direction: column;
+  overflow: hidden; position: relative;
+  transition: border-color .2s, background-color .2s, box-shadow .32s,
+              transform .32s cubic-bezier(.25, 1, .4, 1); }
+.card:hover { background: var(--surface); border-color: #8c151580;
+  transform: translateY(-3px) scale(1.006); box-shadow: 0 10px 24px #40141524; }
+@media (prefers-reduced-motion: reduce) {
+  .card { transition: none; }
+  .card:hover { transform: none; }
+}
+
+.card-top-row { display: flex; align-items: flex-start; justify-content: space-between;
+  gap: 10px; padding: 12px 20px 8px 24px; }
+.card-body { padding: 0 20px 0 24px; }
+.card-header { padding: 0 0 10px 0; cursor: pointer; text-decoration: none; color: inherit; display: block; }
+.card-header:hover .card-condition { opacity: .85; }
+.card-bucket { font-family: var(--rd-mono); font-size: .6rem; letter-spacing: .12em;
+  text-transform: uppercase; color: var(--cool-grey); white-space: nowrap; }
+.card-badges { display: flex; gap: 4px; flex-wrap: wrap; justify-content: flex-end; }
+/* nowrap matters: the mono face plus pill padding is wide enough that
+   "OPUS 4.6 x3" breaks onto three lines and stretches the card header. */
+.badge { font-family: var(--rd-mono); font-size: .55rem; letter-spacing: .06em;
+  text-transform: uppercase; padding: .15rem .55rem; border-radius: 30px;
+  white-space: nowrap; line-height: 1.5; }
+.badge-llm       { background: none; color: var(--lagunita); border: 1px solid var(--lagunita); }
+.badge-heuristic { background: none; color: var(--ink-3); border: 1px solid var(--line); }
+
+.card-mid { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.card-left { flex: 1; min-width: 0; }
+/* Serif, the way AIMS titles a paper card. */
+.card-condition { font-family: var(--rd-serif); font-size: 1.25rem; font-weight: 400;
+  line-height: 1.18; margin-bottom: 5px; }
+/* Three lines, then clipped: the descriptions carry the caveats that keep the
+   runs layer honest, and one line cut most of them off. */
+.card-desc { font-size: .75rem; font-weight: 300; color: var(--ink-3); line-height: 1.4;
+  margin-bottom: 7px; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical; }
+.card-pie { flex-shrink: 0; display: block; }
+.card-stats { display: flex; flex-direction: column; gap: 3px; }
+.card-leader { font-size: .88rem; font-weight: 500; }
+.card-leader span { font-weight: 300; color: var(--ink-2); }
+.card-meta { font-size: .75rem; font-weight: 300; color: var(--ink-3); }
+.card-open-hint { font-family: var(--rd-mono); font-size: .58rem; letter-spacing: .08em;
+  text-transform: uppercase; color: var(--ink-3); margin-top: 7px;
+  transition: color var(--duration-normal); }
+.card-header:hover .card-open-hint { color: var(--accent); }
+
+/* ---- Seed chips area ---- */
+.card-seeds { border-top: 1px solid var(--line-soft); padding: 10px 0 11px 0;
+  display: flex; flex-direction: column; gap: 7px; }
+.seed-group { display: flex; flex-direction: column; gap: 4px; }
+.seed-group-lbl { font-family: var(--rd-mono); font-size: .58rem; letter-spacing: .12em;
+  text-transform: uppercase; color: var(--cool-grey); white-space: nowrap; }
+.seed-chips { display: flex; gap: 4px; flex-wrap: wrap; }
+.seed-chip { display: inline-block; padding: .18rem .65rem; border-radius: 30px;
+  font-family: var(--rd-mono); font-size: .6rem; background: none;
+  border: 1px solid var(--line); color: var(--ink-2); cursor: pointer;
+  text-decoration: none; white-space: nowrap;
+  transition: border-color .2s, color .2s; }
+.seed-chip:hover { border-color: var(--line-strong); color: var(--ink); }
+.seed-chip.chip-rep { border-color: var(--line-strong); color: var(--ink); }
+.seed-more { display: inline-block; padding: .18rem .65rem; border-radius: 30px;
+  font-family: var(--rd-mono); font-size: .6rem; background: none;
+  border: 1px dashed var(--ink-4); color: var(--ink-3); cursor: pointer; }
+.seed-more:hover { color: var(--ink-2); border-color: var(--ink-2); }
+.seed-hidden { display: none; }
+.seed-group.expanded .seed-hidden { display: inline-block; }
+.seed-group.expanded .seed-more { display: none; }
+
+/* ---- Compare bar ---- */
+#compare-bar { position: fixed; bottom: 0; left: 0; right: 0; z-index: 30;
+  background: var(--ink); color: var(--ground); padding: 12px 24px;
+  display: flex; align-items: center; gap: 14px;
+  box-shadow: 0 -4px 18px rgba(0,0,0,.3); }
+#compare-bar.hidden { display: none !important; }
+#compare-count { font-size: 11px; font-weight: 600; flex: 1; }
+#compare-clear { background: none; border: 1px solid rgba(243,239,236,.3); border-radius: 4px;
+  color: rgba(243,239,236,.6); padding: 4px 12px; font-size: 10px; cursor: pointer; font-family: inherit; }
+#compare-clear:hover { border-color: rgba(243,239,236,.7); color: var(--ground); }
+#compare-go { background: var(--accent); border: none; border-radius: 4px; color: var(--ground);
+  padding: 7px 20px; font-size: 10px; font-weight: 700; letter-spacing: .07em;
+  text-transform: uppercase; cursor: pointer; font-family: inherit; }
+#compare-go:hover { background: #4d6a9a; }
+#compare-go[aria-disabled="true"] { opacity: .45; cursor: default; }
+#compare-go[aria-disabled="true"]:hover { background: var(--accent); }
+.card.selected { outline: 2px solid var(--accent); outline-offset: 2px; }
+.card-check { position: absolute; top: 10px; right: 10px; width: 16px; height: 16px;
+  border-radius: 3px; border: 1.5px solid var(--line); background: var(--ground);
+  display: none; align-items: center; justify-content: center; cursor: pointer;
+  font-family: inherit; padding: 0; }
+.compare-mode .card-check { display: flex; }
+.compare-mode .card.selected .card-check { background: var(--accent); border-color: var(--accent); }
+.compare-mode .card.selected .card-check::after { content:"\2713"; color:var(--ground); font-size:10px; }
+.badge.badge-link { cursor: pointer; text-decoration: none; }
+.badge.badge-link:hover { opacity: 0.8; filter: brightness(1.1); }
+
+/* ---- Empty / loading ---- */
+#empty, #loading { padding: 48px 24px; text-align: center; font-size: 12px; color: var(--ink-3); }
+.hidden { display: none !important; }
+
+@media (max-width: 720px) {
+  /* Header responsiveness lives with .site-hdr in css/aims.css; this only
+     drops it out of sticky so the filter bar can take the top slot. */
+  #hdr { position: static; }
+  #filter-bar { top: 0; }
+  #hdr-count { border-left: none; padding-left: 0; }
+  .fpill, .fbtn, .seed-chip, .seed-more { min-height: 24px; padding-top: 5px; padding-bottom: 5px; }
+}
+#error-banner { margin: 20px clamp(16px, 3vw, 32px); padding: 14px 18px;
+  background: var(--surface); border: 1px solid var(--digital-red);
+  border-left: 3px solid var(--digital-red); font-size: .82rem;
+  color: var(--ink-2); line-height: 1.7; }
+</style>
+</head>
+<body>
+
+<div id="hdr" class="site-hdr">
+  <a class="site-lab" href="https://aimslab.stanford.edu/">Stanford AIMS</a>
+  <span class="site-div" aria-hidden="true"></span>
+  <a id="hdr-title" class="site-wordmark" href="index.html">The AI Evaluation Ecosystem</a>
+  <span id="hdr-count"></span>
+  <nav class="site-nav">
+    <a href="index.html">Ecosystem</a>
+    <a href="simulation.html">Simulation</a>
+    <a href="explorer.html" class="here">Runs</a>
+  </nav>
+  <button id="compare-toggle">Compare</button>
+</div>
+
+<div id="filter-bar">
+  <div class="fgroup">
+    <span class="flabel">Bucket</span>
+    <div id="bucket-pills"></div>
+  </div>
+  <div class="fgroup">
+    <span class="flabel">Mode</span>
+    <div id="mode-btns">
+      <button class="fbtn active" data-mode="all">All</button>
+      <button class="fbtn" data-mode="llm">LLM</button>
+      <button class="fbtn" data-mode="heuristic">Heuristic</button>
+    </div>
+  </div>
+  <div class="fgroup">
+    <label class="flabel" for="model-sel">Model</label>
+    <select id="model-sel"><option value="all">All models</option></select>
+  </div>
+  <div class="fgroup fgroup-search">
+    <input id="cond-search" type="text" placeholder="Search conditions" aria-label="Search conditions">
+  </div>
+</div>
+
+<div id="orient-strip">Each card is one experimental condition from the paper. A condition fixes
+the rules of the world (which benchmarks are private, which actors exist); each seed chip is one
+40-round run of that world with different random draws. LLM runs use language-model actors;
+heuristic runs follow fixed decision rules.</div>
+
+<div id="question-strip">
+  <div class="qs-label">Start with a question</div>
+  <div class="qs-cards">
+    <div class="qs-card">
+      <div class="qs-q">Does making benchmark content private close the gap between what scores say and what simulated users get?</div>
+      <div class="qs-a">The one question studied in detail in the paper; the full case study is on the simulation page.</div>
+      <a class="qs-link" href="simulation.html#holdouts">Read the case study &rarr;</a>
+    </div>
+    <div class="qs-card">
+      <div class="qs-q">What changes when the evaluator runs as a company?</div>
+      <div class="qs-a">The condition is implemented and browsable (the evaluator charges fees and sells early access); no finding is claimed from it yet.</div>
+      <a class="qs-link" href="explorer.html?bucket=core_evaluator_capture">Browse the runs &rarr;</a>
+    </div>
+    <div class="qs-card">
+      <div class="qs-q">What happens when a DeepSeek-style shock is replayed into the market?</div>
+      <div class="qs-a">A shock replay. It checks that an injected news narrative reaches provider reasoning and changes what they build; the check would have failed had the narrative stayed in the prompt. Comparing the result with what real labs did is a separate, empirical claim.</div>
+      <a class="qs-link" href="viewer.html?run=exogenous_validation%2Fllm%2Fclaude-sonnet-4-6%2Fev1_deepseek_shock%2Fseed_42">Watch a run &rarr;</a>
+    </div>
+  </div>
+</div>
+
+<div id="compare-bar" class="hidden">
+  <span id="compare-count">0 conditions selected</span>
+  <button id="compare-clear">Clear</button>
+  <button id="compare-go">Compare &rarr;</button>
+</div>
+
+<div id="showing"></div>
+<div id="loading">Loading runs&hellip;</div>
+<div id="error-banner" class="hidden"></div>
+<div id="grid"></div>
+<div id="empty" class="hidden">No runs match the current filters.</div>
+<div data-boundary></div>
+
+<script>
+/* ---- Constants ---- */
+const BUCKET_META = {
+  core_privacy:           { label: "Privacy Ladder"       },
+  structural_ablations:   { label: "Structural Ablations" },
+  core_evaluator_capture: { label: "Evaluator Capture"    },
+  /* Display label only. The data path keeps its original exogenous_validation
+     name because it is baked into the published dataset layout; the run is a
+     propagation check, and the label says so. */
+  exogenous_validation:   { label: "Shock Replay" },
+};
+
+const CONDITION_COLORS = {
+  baseline:                              "#8c1515",
+  public_only:                           "#4a7a3a",
+  private_only:                          "#7a3a4a",
+  private_dominant:                      "#8a5a2a",
+  iid_holdout:                           "#5a3a8a",
+  no_incidents:                          "#3a7a6a",
+  no_funders:                            "#7a6a2a",
+  no_regulator:                          "#8a3a2a",
+  no_media:                              "#4a5a6a",
+  no_opensource:                         "#6a5a3a",
+  homogeneous_consumers:                 "#4a6a3a",
+  initial_uniform_capability:            "#6a3a7a",
+  evaluator_capture:                     "#8a4a2a",
+  ev1_deepseek_shock:                    "#2a7a5a",
+  s5_aligned_private_only:              "#7a3a5a",
+  s5_aligned_public_only:               "#3a7a4a",
+  s8_agentic_private_only:              "#5a3a6a",
+  s8_agentic_public_only:               "#3a5a6a",
+  public_only__initial_uniform_capability: "#5a5a8a",
+  private_only__initial_uniform_capability: "#8a5a8a",
+};
+
+/* One-sentence description per condition (tooltip + card caption) */
+const CONDITION_META = {
+  baseline: "The calibrated mix matching the current ecosystem: mostly public benchmarks, a few partial and private.",
+  public_only: "All benchmarks fully public: providers see exactly what is measured.",
+  partial_only: "Benchmarks hold back 30 percent of their items, with hidden weights close to the public ones.",
+  private_only: "Fully private benchmarks: hidden items, hidden weights roughly twice as far from public, scores published every 3 rounds.",
+  private_dominant: "Every benchmark is partial: 30 percent of items held out, with hidden weights about 0.95 similar to the public ones.",
+  iid_holdout: "Ablation: items are hidden but hidden weights equal the public ones, isolating the reporting mechanism.",
+  evaluator_capture: "The evaluator runs as a company: charges fees, sells early access, and can be captured by provider revenue.",
+  no_incidents: "Structural ablation: removes safety incidents from the world.",
+  no_funders: "Structural ablation: removes funders from the world.",
+  no_regulator: "Structural ablation: removes the regulator from the world.",
+  no_media: "Structural ablation: removes the media actor from the world.",
+  no_opensource: "Structural ablation: removes the open-source provider from the world.",
+  homogeneous_consumers: "Structural ablation: all consumers share the same needs instead of distinct market segments.",
+  initial_uniform_capability: "Every provider starts with identical capabilities.",
+  public_only__initial_uniform_capability: "Combined condition: fully public benchmarks and every provider starts with identical capabilities.",
+  private_only__initial_uniform_capability: "Combined condition: fully private benchmarks and every provider starts with identical capabilities.",
+  ev1_deepseek_shock: "Shock replay, single seed: a DeepSeek-style low-cost entrant is injected at round 25 as a capability jump plus a news narrative. It checks that the narrative reaches provider reasoning and changes R&D allocation; a narrative that sat in the prompt without moving any decision would fail the check. Comparing the result with real 2025 data is a separate empirical claim.",
+  s5_aligned_public_only: "Robustness check: a benchmark schedule whose weights start aligned with population needs, run at the fully public rung.",
+  s5_aligned_private_only: "Robustness check: a benchmark schedule whose weights start aligned with population needs, run at the fully private rung.",
+  s8_agentic_public_only: "Robustness check: an agentic-revolution benchmark schedule (tool-use benchmark from round 0, web navigation and issue resolution arriving late) run at the fully public rung.",
+  s8_agentic_private_only: "Robustness check: an agentic-revolution benchmark schedule (tool-use benchmark from round 0, web navigation and issue resolution arriving late) run at the fully private rung.",
+};
+
+const PROVIDER_COLORS = {
+  "Orion Labs":      "#8c1515",
+  "Apex AI":         "#3d7a5a",
+  "Genesis Systems": "#8a5a7a",
+  "Mirage AI":       "#c46a3c",
+  "OpenCore":        "#8a3a3a",
+  "Spark AI":        "#3a7a7a",
+};
+const FALLBACK_COLORS = ["#8c1515","#3d7a5a","#8a5a7a","#c46a3c","#8a3a3a","#3a7a7a"];
+
+const MODEL_LABELS = {
+  "claude-sonnet-4-6":   "Sonnet 4.6",
+  "claude-opus-4-6":     "Opus 4.6",
+  "gpt-5.5-2026-04-23": "GPT-5.5",
+};
+const MAX_CHIPS_PER_GROUP = 4;
+
+/* ---- Helpers ---- */
+function condColor(c)   { return CONDITION_COLORS[c] || "#8a8a8a"; }
+function bucketLabel(b) { return (BUCKET_META[b] || { label: b }).label; }
+function condDesc(c, bucket) {
+  return CONDITION_META[c] || ("One condition from the " + bucketLabel(bucket) + " experiments.");
+}
+function modelLabel(m)  { return m ? (MODEL_LABELS[m] || m) : "Heuristic"; }
+function seedNum(s)     { return s.replace("seed_", "#"); }
+function fmtCond(c)     { return c.replace(/__/g, " · ").replace(/_/g, " "); }
+function provColor(p, i){ return PROVIDER_COLORS[p] || FALLBACK_COLORS[i % FALLBACK_COLORS.length]; }
+
+function topProvider(shares) {
+  const top = Object.entries(shares || {}).sort((a,b) => b[1]-a[1])[0];
+  return top ? { name: top[0], pct: (top[1]*100).toFixed(1) } : null;
+}
+
+/* ---- Pie chart ---- */
+function pieChart(shares, providers, size=32) {
+  if (!shares || !providers || !providers.length) return "";
+  const total = Object.values(shares).reduce((s,v) => s+v, 0);
+  if (total === 0) return "";
+  const r = size/2, ir = r*0.38;
+  let angle = -Math.PI/2, paths = "";
+  providers.forEach((p, i) => {
+    const share = (shares[p] || 0) / total;
+    if (share < 0.004) return;
+    const sweep = share * Math.PI * 2;
+    const end = angle + sweep;
+    const x1 = r + r*Math.cos(angle),  y1 = r + r*Math.sin(angle);
+    const x2 = r + r*Math.cos(end),    y2 = r + r*Math.sin(end);
+    const ix1= r + ir*Math.cos(angle), iy1= r + ir*Math.sin(angle);
+    const ix2= r + ir*Math.cos(end),   iy2= r + ir*Math.sin(end);
+    const la = sweep > Math.PI ? 1 : 0;
+    const col = provColor(p, i);
+    paths += `<path d="M${x1.toFixed(2)},${y1.toFixed(2)} A${r},${r} 0 ${la},1 ${x2.toFixed(2)},${y2.toFixed(2)} L${ix2.toFixed(2)},${iy2.toFixed(2)} A${ir},${ir} 0 ${la},0 ${ix1.toFixed(2)},${iy1.toFixed(2)} Z" fill="${col}" stroke="#ffffff" stroke-width="0.8"/>`;
+    angle = end;
+  });
+  return `<svg class="card-pie" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">${paths}</svg>`;
+}
+
+/* ---- Group runs by condition ---- */
+function groupByCondition(runs) {
+  const map = {};
+  runs.forEach(r => {
+    if (!map[r.condition]) map[r.condition] = [];
+    map[r.condition].push(r);
+  });
+  return map;
+}
+
+function repRun(runs) {
+  return (
+    runs.find(r => r.mode==="llm" && r.model==="claude-sonnet-4-6" && r.seed==="seed_42") ||
+    runs.find(r => r.mode==="llm" && r.seed==="seed_42") ||
+    runs.find(r => r.mode==="llm") ||
+    runs[0]
+  );
+}
+
+/* ---- Render a condition card ---- */
+function cardHTML(cond, runs, activeMode, activeModel) {
+  const rep   = repRun(runs);
+  const color = condColor(cond);
+  const bkt   = bucketLabel(rep.bucket);
+  const leader= topProvider(rep.final_shares);
+
+  const modelGroups2 = {};
+  runs.forEach(r => {
+    const key = r.model || "__heuristic__";
+    if (!modelGroups2[key]) modelGroups2[key] = 0;
+    modelGroups2[key]++;
+  });
+  let badges = "";
+  Object.entries(modelGroups2).forEach(([key, count]) => {
+    if (key === "__heuristic__") return;
+    const href = `compare.html?mode=variance&condition=${encodeURIComponent(cond)}&model=${encodeURIComponent(key)}`;
+    badges += `<a class="badge badge-llm badge-link" href="${href}" title="View variance across seeds"
+      onclick="event.stopPropagation()">${modelLabel(key)} &times;${count}</a>`;
+  });
+
+  let chipRuns = runs;
+  if (activeMode === "llm")       chipRuns = runs.filter(r => r.mode==="llm");
+  if (activeMode === "heuristic") chipRuns = runs.filter(r => r.mode==="heuristic");
+  if (activeModel !== "all" && activeModel !== "__none__")
+    chipRuns = chipRuns.filter(r => r.model===activeModel);
+  if (activeModel === "__none__") chipRuns = chipRuns.filter(r => !r.model);
+
+  const modelGroups = {};
+  chipRuns.forEach(r => {
+    const key = r.model || "__heuristic__";
+    if (!modelGroups[key]) modelGroups[key] = [];
+    modelGroups[key].push(r);
+  });
+
+  const modelOrder = Object.keys(modelGroups).sort((a,b) => {
+    if (a==="__heuristic__") return 1;
+    if (b==="__heuristic__") return -1;
+    return a.localeCompare(b);
+  });
+
+  let seedsHTML = "";
+  modelOrder.forEach(key => {
+    const grpRuns = modelGroups[key].sort((a,b) => a.seed.localeCompare(b.seed));
+    const label   = key==="__heuristic__" ? "Heuristic" : modelLabel(key);
+    const maxShow = MAX_CHIPS_PER_GROUP;
+    const overflow= grpRuns.length - maxShow;
+
+    let chips = "";
+    grpRuns.forEach((r, i) => {
+      const isRep   = r.path === rep.path;
+      const hidden  = i >= maxShow ? " seed-hidden" : "";
+      const repCls  = isRep ? " chip-rep" : "";
+      const repStyle= isRep ? ` style="border-color:${color};color:${color}"` : "";
+      chips += `<a class="seed-chip${repCls}${hidden}" href="viewer.html?run=${encodeURIComponent(r.path)}"${repStyle}>${seedNum(r.seed)}</a>`;
+    });
+    if (overflow > 0)
+      chips += `<button class="seed-more" onclick="expandSeeds(this)">+${overflow} more</button>`;
+
+    seedsHTML += `<div class="seed-group">
+      <span class="seed-group-lbl">${label}</span>
+      <div class="seed-chips">${chips}</div>
+    </div>`;
+  });
+
+  const pie = pieChart(rep.final_shares, rep.providers);
+
+  const desc  = condDesc(cond, rep.bucket);
+  const isSel = selectedConds.has(cond);
+
+  return `<div class="card${isSel ? " selected" : ""}" style="border-top-color:${color}" data-cond="${cond}">
+    <button class="card-check" type="button" aria-pressed="${isSel}"
+      aria-label="Select ${fmtCond(cond)} for comparison" onclick="toggleSelect(event, '${cond}')"></button>
+    <div class="card-top-row">
+      <span class="card-bucket">${bkt}</span>
+      <span class="card-badges">${badges}</span>
+    </div>
+    <div class="card-body">
+      <a class="card-header" href="viewer.html?run=${encodeURIComponent(rep.path)}">
+        <div class="card-mid">
+          <div class="card-left">
+            <div class="card-condition" style="color:${color}" title="${desc}">${fmtCond(cond)}</div>
+            <div class="card-desc" title="${desc}">${desc}</div>
+            <div class="card-stats">
+              ${leader ? `<div class="card-leader">${leader.name} <span>${leader.pct}%</span></div>` : ""}
+              <div class="card-meta"><span title="largest gap between published score and delivered satisfaction across the run">peak score-satisfaction gap ${rep.peak_gap.toFixed(2)}</span> &nbsp;&middot;&nbsp; ${rep.n_rounds} rounds</div>
+              <div class="card-open-hint">&#8599; ${seedNum(rep.seed)} &nbsp;&middot;&nbsp; ${modelLabel(rep.model) || "Heuristic"}</div>
+            </div>
+          </div>
+          ${pie}
+        </div>
+      </a>
+      <div class="card-seeds">${seedsHTML}</div>
+    </div>
+  </div>`;
+}
+
+function expandSeeds(btn) {
+  btn.closest(".seed-group").classList.add("expanded");
+}
+
+/* ---- State & filter ---- */
+let allRuns = [];
+const state = { bucket: "all", mode: "all", model: "all", search: "" };
+
+function filtered() {
+  const groups = groupByCondition(allRuns);
+  return Object.entries(groups)
+    .map(([cond, runs]) => {
+      let r = runs;
+      if (state.bucket !== "all") r = r.filter(x => x.bucket === state.bucket);
+      if (state.mode   !== "all") r = r.filter(x => x.mode   === state.mode);
+      if (state.model  !== "all") {
+        if (state.model === "__none__") r = r.filter(x => !x.model);
+        else r = r.filter(x => x.model === state.model);
+      }
+      if (state.search) {
+        const q = state.search.toLowerCase();
+        const hay = (cond + " " + fmtCond(cond) + " " + bucketLabel(runs[0].bucket)).toLowerCase();
+        if (!hay.includes(q)) r = [];
+      }
+      return r.length > 0 ? [cond, r, runs] : null;
+    })
+    .filter(Boolean);
+}
+
+function syncURL() {
+  const p = new URLSearchParams();
+  if (state.bucket !== "all") p.set("bucket", state.bucket);
+  if (state.mode   !== "all") p.set("mode",   state.mode);
+  if (state.model  !== "all") p.set("model",  state.model);
+  if (state.search)           p.set("q",      state.search);
+  const qs = p.toString();
+  history.replaceState(null, "", qs ? "?" + qs : location.pathname);
+}
+
+function render() {
+  syncURL();
+  const groups = filtered();
+  document.getElementById("showing").textContent =
+    `Showing ${groups.length} conditions (${groups.reduce((n,[,r])=>n+r.length,0)} runs) of ${allRuns.length} total`;
+  const grid  = document.getElementById("grid");
+  const empty = document.getElementById("empty");
+  if (!groups.length) {
+    grid.innerHTML = ""; empty.classList.remove("hidden"); return;
+  }
+  empty.classList.add("hidden");
+  // Sort: bucket → condition
+  groups.sort((a,b) => {
+    const ba = a[2][0].bucket, bb = b[2][0].bucket;
+    if (ba !== bb) return ba.localeCompare(bb);
+    return a[0].localeCompare(b[0]);
+  });
+  grid.innerHTML = groups.map(([cond, runs]) =>
+    cardHTML(cond, runs, state.mode, state.model)
+  ).join("");
+}
+
+/* ---- Build filters ---- */
+function buildFilters(runs) {
+  const buckets = [...new Set(runs.map(r => r.bucket))].sort();
+  const models  = [...new Set(runs.map(r => r.model).filter(Boolean))].sort();
+
+  const pillsEl = document.getElementById("bucket-pills");
+  [{ id:"all", label:"All" }, ...buckets.map(b => ({ id:b, label:bucketLabel(b) }))]
+    .forEach(({ id, label }) => {
+      const btn = document.createElement("button");
+      btn.className = "fpill" + (id==="all" ? " active" : "");
+      btn.dataset.bucket = id; btn.textContent = label;
+      btn.addEventListener("click", () => {
+        state.bucket = id;
+        pillsEl.querySelectorAll(".fpill").forEach(p => p.classList.remove("active"));
+        btn.classList.add("active"); render();
+      });
+      pillsEl.appendChild(btn);
+    });
+
+  const sel = document.getElementById("model-sel");
+  models.forEach(m => {
+    const opt = document.createElement("option");
+    opt.value = m; opt.textContent = modelLabel(m); sel.appendChild(opt);
+  });
+  if (runs.some(r => !r.model)) {
+    const opt = document.createElement("option");
+    opt.value = "__none__"; opt.textContent = "Heuristic (no model)"; sel.appendChild(opt);
+  }
+}
+
+/* ---- Compare mode ---- */
+const selectedConds = new Set();
+
+function clearSelection() {
+  selectedConds.clear();
+  document.querySelectorAll(".card.selected").forEach(el => el.classList.remove("selected"));
+  updateCompareBar();
+}
+
+function toggleSelect(event, cond) {
+  event.preventDefault();
+  event.stopPropagation();
+  if (selectedConds.has(cond)) selectedConds.delete(cond);
+  else selectedConds.add(cond);
+  document.querySelectorAll(`.card[data-cond="${cond}"]`).forEach(el => {
+    el.classList.toggle("selected", selectedConds.has(cond));
+    const chk = el.querySelector(".card-check");
+    if (chk) chk.setAttribute("aria-pressed", String(selectedConds.has(cond)));
+  });
+  updateCompareBar();
+}
+
+function updateCompareBar() {
+  const n = selectedConds.size;
+  document.getElementById("compare-bar").classList.toggle("hidden", n === 0);
+  document.getElementById("compare-count").textContent = n < 2
+    ? `${n} condition${n!==1?"s":""} selected · select 2+ conditions`
+    : `${n} conditions selected`;
+  document.getElementById("compare-go").setAttribute("aria-disabled", String(n < 2));
+  document.getElementById("grid").style.paddingBottom = n === 0 ? "" : "80px";
+}
+
+document.getElementById("compare-toggle").addEventListener("click", () => {
+  const grid = document.getElementById("grid");
+  const active = grid.classList.toggle("compare-mode");
+  document.getElementById("compare-toggle").classList.toggle("active", active);
+  if (!active) clearSelection();
+});
+
+document.getElementById("compare-clear").addEventListener("click", clearSelection);
+
+document.getElementById("compare-go").addEventListener("click", () => {
+  if (selectedConds.size < 2) return;
+  const conds = [...selectedConds].join("|");
+  let model;
+  if (state.model !== "all" && state.model !== "__none__") model = state.model;
+  else if (state.mode === "heuristic" || state.model === "__none__") model = "__heuristic__";
+  else model = "claude-sonnet-4-6";
+  location.href = `compare.html?mode=across&conditions=${encodeURIComponent(conds)}&model=${encodeURIComponent(model)}`;
+});
+
+/* ---- Event listeners ---- */
+document.getElementById("mode-btns").addEventListener("click", e => {
+  const btn = e.target.closest(".fbtn"); if (!btn) return;
+  state.mode = btn.dataset.mode;
+  document.querySelectorAll("#mode-btns .fbtn").forEach(b => b.classList.remove("active"));
+  btn.classList.add("active"); render();
+});
+document.getElementById("model-sel").addEventListener("change", e => { state.model = e.target.value; render(); });
+document.getElementById("cond-search").addEventListener("input", e => { state.search = e.target.value.trim().toLowerCase(); render(); });
+
+/* ---- Load ---- */
+Evaluarium.loadRunsManifest()
+  .then(data => {
+    allRuns = data;
+    document.getElementById("loading").classList.add("hidden");
+    document.getElementById("hdr-count").textContent = `${data.length} runs · ${[...new Set(data.map(r=>r.condition))].length} conditions`;
+    buildFilters(data);
+    const up = new URLSearchParams(location.search);
+    if (up.has("bucket")) {
+      state.bucket = up.get("bucket");
+      document.querySelectorAll("#bucket-pills .fpill").forEach(p =>
+        p.classList.toggle("active", p.dataset.bucket === state.bucket));
+    }
+    if (up.has("mode")) {
+      state.mode = up.get("mode");
+      document.querySelectorAll("#mode-btns .fbtn").forEach(b =>
+        b.classList.toggle("active", b.dataset.mode === state.mode));
+    }
+    if (up.has("model")) {
+      state.model = up.get("model");
+      document.getElementById("model-sel").value = state.model;
+    }
+    if (up.has("q")) {
+      state.search = up.get("q");
+      document.getElementById("cond-search").value = state.search;
+    }
+    render();
+  })
+  .catch(err => {
+    document.getElementById("loading").classList.add("hidden");
+    const b = document.getElementById("error-banner");
+    b.classList.remove("hidden");
+    // visitor-facing copy; the developer path stays in the console
+    b.setAttribute("role", "alert");
+    b.innerHTML = `<strong>The run data could not be loaded.</strong> Please refresh the page, or try again shortly.`;
+    console.error("runs.json failed to load. If you are running this locally, serve the client folder over HTTP (python -m http.server 8080).", err);
+  });
+</script>
+</body>
+</html>

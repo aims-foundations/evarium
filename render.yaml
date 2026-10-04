@@ -1,0 +1,25 @@
+# Render Blueprint for evaluarium (T1: pure static).
+#
+# Mirrors the deployment pattern of aims-foundations/benchmark-caliper,
+# but uses Render's free Static Site tier (no Docker, no monthly cost)
+# because evaluarium has no backend yet. When T3 (BYOK LLM mode) lands,
+# this file grows into a Docker Web Service matching caliper's
+# render.yaml.
+#
+# For the AIMS handoff: add a Vercel proxy route
+#   /evaluarium/*  ->  https://evaluarium.onrender.com
+# matching the pattern already in place for /benchmark-caliper/*.
+#
+# Render auto-deploys on push to the repo's default branch.
+
+services:
+  - type: web
+    name: evaluarium
+    runtime: static
+    rootDir: website/client
+    buildCommand: "echo 'pure static; no build step'"
+    staticPublishPath: .
+    pullRequestPreviewsEnabled: false
+    # All URLs in the client are relative, so no base-path env var is
+    # needed. If the mount point ever changes from /evaluarium/, edit
+    # Evaluarium.config in website/client/js/loader.js instead.

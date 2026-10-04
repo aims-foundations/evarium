@@ -1,0 +1,28 @@
+.env
+.env.local
+*.env
+
+__pycache__/
+*.pyc
+
+# Experiment output data
+output/
+/hf_data
+/hf_data_staging
+
+# Local audit-history file (cross-session changelog; not for public repo)
+docs/architecture_changelog.md
+CLAUDE.md
+
+# Internal session notes / IDE state — not for public repo
+SESSION_HANDOFF.md
+.claude/
+archive/
+TODO.md
+docs/review_findings/
+# Event registry, per-event dossiers and collected sources. LOCAL ONLY: these hold
+# unverified leads and third-party material, and nothing here is cleared for publication.
+docs/events/
+
+# Local notes are kept outside this repository; the entries above are a safety net.
+internal/
