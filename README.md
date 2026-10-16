@@ -2,6 +2,8 @@
 
 A generative agent-based model (GABM) of the AI evaluation ecosystem: model providers, evaluators, consumers, regulators, funders, and media. Provider strategy emerges from portfolio allocation (R&D / safety / product) and per-benchmark focus weights. Goodhart-style score--satisfaction divergence arises when benchmark-need weights misalign with consumer-need weights, not from any explicit gaming lever.
 
+Paper: [The AI Evaluation Ecosystem](https://arxiv.org/abs/2610.09296) (arXiv:2610.09296).
+
 The simulation supports two execution modes:
 - **Heuristic mode** — deterministic rules at every actor; no-LLM baseline.
 - **LLM mode** — LLM-driven planning at provider, regulator, funder, and (optionally) evaluator actors.
@@ -10,7 +12,7 @@ In the lineage of [Generative Agents](https://github.com/joonspk-research/genera
 
 ## Explore runs interactively
 
-A static-first browser for the bundled paper runs lives under [`website/`](website/) &mdash; condition card grid, single-run animation, multi-run comparison. Once deployed, will live at `https://aimslab.stanford.edu/evaluarium/`. See [`website/README.md`](website/README.md) for pages, URL formats, and local-serving instructions.
+A static-first browser for the bundled paper runs lives under [`website/`](website/) &mdash; condition card grid, single-run animation, multi-run comparison. It is live at <https://aimslab.stanford.edu/evaluation-ecosystem/>. See [`website/README.md`](website/README.md) for pages, URL formats, and local-serving instructions.
 
 ## Installation
 
@@ -87,4 +89,14 @@ external-validation/  Real-world data + validation scripts
 
 ## Citation
 
-Citation details are withheld during double-blind review.
+```bibtex
+@misc{dave2026evaluation,
+  title         = {The AI Evaluation Ecosystem},
+  author        = {Dave, Yash and Truong, Sang T. and Wang, Serena and Koyejo, Sanmi},
+  year          = {2026},
+  eprint        = {2610.09296},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.AI},
+  url           = {https://arxiv.org/abs/2610.09296}
+}
+```
